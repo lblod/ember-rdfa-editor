@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
 module('Unit | commands | undo-command-test', function () {
   const command = new UndoCommand();

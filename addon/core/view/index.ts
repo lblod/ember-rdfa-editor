@@ -1,9 +1,9 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
-import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import ModelNode from '../../model/nodes/model-node';
-import ModelPosition from '../../model/model-position';
+import SelectionWriter from '@lblod/ember-rdfa-editor/core/model/writers/selection-writer';
+import ModelNode from '../model/nodes/model-node';
+import ModelPosition from '../model/model-position';
 import computeDifference, { Difference } from '../../utils/tree-differ';
-import HtmlWriter from '../../model/writers/html-writer';
+import HtmlWriter from '../model/writers/html-writer';
 import {
   domPosToModelPos,
   isTextNode,

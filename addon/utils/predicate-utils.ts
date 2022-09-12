@@ -1,7 +1,7 @@
 import ModelElement, {
   ElementType,
-} from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+} from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 export type Predicate<T> = (item: T) => boolean;
 

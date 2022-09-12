@@ -5,11 +5,11 @@
  *
  * Extensions include support for stopping at an end node, the implementation of the Iterable interface.
  */
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { Walkable, WalkFilter } from './gen-tree-walker';
 
 export enum FilterResult {

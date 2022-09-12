@@ -2,9 +2,9 @@ import State from '../index';
 import ConfigStep from './config-step';
 import OperationStep from './operation-step';
 import SelectionStep from './selection-step';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/model/range-mapper';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 
 export interface BaseStep {
   readonly type: StepType;

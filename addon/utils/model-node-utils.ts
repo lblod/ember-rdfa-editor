@@ -1,6 +1,6 @@
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
   INVISIBLE_SPACE,
   LIST_CONTAINERS,
@@ -10,7 +10,7 @@ import {
   TABLE_CELLS,
   VISUAL_NODES,
 } from '@lblod/ember-rdfa-editor/utils/constants';
-import ModelText from '../model/nodes/model-text';
+import ModelText from '../core/model/nodes/model-text';
 import StringUtils from './string-utils';
 import { Direction } from './types';
 

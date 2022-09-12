@@ -8,7 +8,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
 
 interface Args {

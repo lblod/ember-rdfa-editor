@@ -1,9 +1,9 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import State from '../core/state';
-import ModelPosition from '../model/model-position';
+import ModelPosition from '../core/model/model-position';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     unindentList: UnindentListCommand;

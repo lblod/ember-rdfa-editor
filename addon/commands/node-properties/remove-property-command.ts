@@ -1,7 +1,7 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 declare module '@lblod/ember-rdfa-editor' {

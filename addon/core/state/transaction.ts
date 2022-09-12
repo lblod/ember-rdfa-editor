@@ -4,27 +4,27 @@ import State, {
 import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
-} from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark, MarkSet, MarkSpec } from '../../model/marks/mark';
-import ModelNode from '../../model/nodes/model-node';
-import ModelSelection from '../../model/model-selection';
-import InsertTextOperation from '../../model/operations/insert-text-operation';
-import RangeMapper, { LeftOrRight } from '../../model/range-mapper';
-import { HtmlReaderContext, readHtml } from '../../model/readers/html-reader';
-import SelectionReader from '../../model/readers/selection-reader';
+} from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { Mark, MarkSet, MarkSpec } from '../model/marks/mark';
+import ModelNode from '../model/nodes/model-node';
+import ModelSelection from '../model/model-selection';
+import InsertTextOperation from '../model/operations/insert-text-operation';
+import RangeMapper, { LeftOrRight } from '../model/range-mapper';
+import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
+import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../../utils/dom-helpers';
-import { InitializedPlugin } from '../../model/editor-plugin';
+import { InitializedPlugin } from '../model/editor-plugin';
 import { NotImplementedError } from '../../utils/errors';
 import { View } from '../view';
-import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
-import ModelElement from '../../model/nodes/model-element';
-import MarkOperation from '../../model/operations/mark-operation';
-import ModelPosition from '../../model/model-position';
-import SplitOperation from '../../model/operations/split-operation';
-import MoveOperation from '../../model/operations/move-operation';
+import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
+import ModelElement from '../model/nodes/model-element';
+import MarkOperation from '../model/operations/mark-operation';
+import ModelPosition from '../model/model-position';
+import SplitOperation from '../model/operations/split-operation';
+import MoveOperation from '../model/operations/move-operation';
 import { EditorStore } from '../../utils/datastore/datastore';
 import { AttributeSpec } from '../../utils/render-spec';
-import RemoveOperation from '../../model/operations/remove-operation';
+import RemoveOperation from '../model/operations/remove-operation';
 import {
   CommandExecutor,
   commandMapToCommandExecutor,
@@ -35,7 +35,7 @@ import SelectionStep from './steps/selection-step';
 import OperationStep from './steps/operation-step';
 import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
 
 interface TextInsertion {
   range: ModelRange;

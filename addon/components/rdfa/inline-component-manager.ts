@@ -1,8 +1,8 @@
 import Component from '@glimmer/component';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
+import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/core/model/inline-components/inline-components-registry';
+import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/core/model/inline-components/model-inline-component';
 import { tracked } from '@glimmer/tracking';
 import { isOperationStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 

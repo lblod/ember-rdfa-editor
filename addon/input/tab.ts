@@ -1,8 +1,8 @@
 import Controller from '../core/controllers/controller';
-import ModelElement from '../model/nodes/model-element';
-import ModelNode from '../model/nodes/model-node';
-import ModelPosition from '../model/model-position';
-import ModelRange from '../model/model-range';
+import ModelElement from '../core/model/nodes/model-element';
+import ModelNode from '../core/model/nodes/model-node';
+import ModelPosition from '../core/model/model-position';
+import ModelRange from '../core/model/model-range';
 import GenTreeWalker from '../utils/gen-tree-walker';
 import ModelNodeUtils from '../utils/model-node-utils';
 import { toFilterSkipFalse } from '../utils/model-tree-walker';

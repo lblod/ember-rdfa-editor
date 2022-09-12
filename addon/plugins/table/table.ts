@@ -1,7 +1,7 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 export default class TablePlugin implements EditorPlugin {
   controller!: Controller;

@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
-import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import SelectionReader from '@lblod/ember-rdfa-editor/core/model/readers/selection-reader';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { domStripped } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { stateFromDom } from 'dummy/tests/test-utils';
 

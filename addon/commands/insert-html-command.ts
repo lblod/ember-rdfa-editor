@@ -1,12 +1,12 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import {
   HtmlReaderContext,
   readHtml,
-} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
-import ModelRange from '../model/model-range';
+} from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
+import ModelRange from '../core/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

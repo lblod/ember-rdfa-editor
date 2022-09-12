@@ -3,11 +3,11 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Transaction from '../core/state/transaction';
-import { MarkSet } from '../model/marks/mark';
-import ModelElement from '../model/nodes/model-element';
-import ModelNode from '../model/nodes/model-node';
-import ModelPosition from '../model/model-position';
-import ModelRange from '../model/model-range';
+import { MarkSet } from '../core/model/marks/mark';
+import ModelElement from '../core/model/nodes/model-element';
+import ModelNode from '../core/model/nodes/model-node';
+import ModelPosition from '../core/model/model-position';
+import ModelRange from '../core/model/model-range';
 import GenTreeWalker from '../utils/gen-tree-walker';
 import ModelNodeUtils from '../utils/model-node-utils';
 import { toFilterSkipFalse } from '../utils/model-tree-walker';

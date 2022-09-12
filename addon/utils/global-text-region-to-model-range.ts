@@ -1,11 +1,11 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '../model/nodes/model-text';
-import ModelPosition from '../model/model-position';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '../core/model/nodes/model-text';
+import ModelPosition from '../core/model/model-position';
 import { IllegalArgumentError } from './errors';
 
 const VOID_NODES = [

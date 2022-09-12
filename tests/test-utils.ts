@@ -11,12 +11,12 @@ import {
   InternalWidgetSpec,
   WidgetLocation,
 } from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/core/model/inline-components/inline-components-registry';
+import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { Difference } from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';

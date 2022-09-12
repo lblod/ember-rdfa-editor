@@ -1,6 +1,6 @@
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';

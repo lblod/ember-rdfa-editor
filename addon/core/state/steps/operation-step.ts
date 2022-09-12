@@ -1,12 +1,12 @@
-import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
+import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
 import State from '../index';
 import { BaseStep, StepType } from './step';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import RangeMapper, {
   LeftOrRight,
-} from '@lblod/ember-rdfa-editor/model/range-mapper';
+} from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 
 export default class OperationStep implements BaseStep {
   private readonly _type: StepType = 'operation-step';

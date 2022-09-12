@@ -1,11 +1,11 @@
 import { module, test } from 'qunit';
-import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
+import { XmlReaderResult } from '@lblod/ember-rdfa-editor/core/model/readers/xml-reader';
 import ModelRange, {
   RangeContextStrategy,
-} from '@lblod/ember-rdfa-editor/model/model-range';
+} from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module('Unit | model | model-range | contextNodes', function () {
   //language=XML

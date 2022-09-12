@@ -5,7 +5,7 @@ import {
   handleInsertText,
 } from '@lblod/ember-rdfa-editor/input/insert';
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
-import SelectionReader from '@lblod/ember-rdfa-editor/model/readers/selection-reader';
+import SelectionReader from '@lblod/ember-rdfa-editor/core/model/readers/selection-reader';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Controller from '../core/controllers/controller';
 import { NotImplementedError } from '../utils/errors';
@@ -13,13 +13,13 @@ import { createLogger, Logger } from '../utils/logging-utils';
 import handleCutCopy from './cut-copy';
 import { handleDelete } from './delete';
 import handlePaste from './paste';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { viewToModel } from '@lblod/ember-rdfa-editor/core/view';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import {
   HtmlReaderContext,
   readHtml,
-} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+} from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
 import { flatMap } from 'iter-tools';
 
 /**

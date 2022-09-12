@@ -1,5 +1,5 @@
 import Controller from '../core/controllers/controller';
-import ModelRange from '../model/model-range';
+import ModelRange from '../core/model/model-range';
 import handleEscape from './escape';
 import { handleBasicStyle } from './format';
 import handleTab from './tab';

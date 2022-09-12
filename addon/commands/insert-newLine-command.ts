@@ -1,14 +1,14 @@
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import {
   ImpossibleModelStateError,
   MisbehavedSelectionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelElement from '../model/nodes/model-element';
+import ModelElement from '../core/model/nodes/model-element';
 import Command, { CommandContext } from './command';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

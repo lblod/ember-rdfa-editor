@@ -1,7 +1,7 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import {
   matchText,
   TextMatch,

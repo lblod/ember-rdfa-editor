@@ -1,10 +1,10 @@
 import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import sinon from 'sinon';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 
 module('Unit | model | utils | gen-tree-walker-test', function (hooks) {

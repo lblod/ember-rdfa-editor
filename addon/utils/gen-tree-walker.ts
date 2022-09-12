@@ -1,11 +1,11 @@
 import { FilterResult } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   AssertionError,
   NotImplementedError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { NOOP } from '@lblod/ember-rdfa-editor/utils/constants';
 
 export interface Walkable {

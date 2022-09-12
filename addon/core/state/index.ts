@@ -1,8 +1,8 @@
 import { Commands } from '@lblod/ember-rdfa-editor';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { InitializedPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import { InitializedPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import AddMarkToRangeCommand from '../../commands/add-mark-to-range-command';
 import AddMarkToSelectionCommand from '../../commands/add-mark-to-selection-command';
 import DeleteSelectionCommand from '../../commands/delete-selection-command';
@@ -38,9 +38,9 @@ import UndoCommand from '../../commands/undo-command';
 import UnindentListCommand from '../../commands/unindent-list-command';
 import { defaultKeyMap, KeyMap } from '../../input/keymap';
 import { InternalWidgetSpec, WidgetLocation } from '../controllers/controller';
-import InlineComponentsRegistry from '../../model/inline-components/inline-components-registry';
-import { highlightMarkSpec } from '../../model/marks/mark';
-import MarksRegistry from '../../model/marks/marks-registry';
+import InlineComponentsRegistry from '../model/inline-components/inline-components-registry';
+import { highlightMarkSpec } from '../model/marks/mark';
+import MarksRegistry from '../model/marks/marks-registry';
 import Datastore, { EditorStore } from '../../utils/datastore/datastore';
 import { boldMarkSpec } from '../../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../../plugins/basic-styles/marks/italic';
@@ -60,7 +60,7 @@ import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import {
   HtmlReaderContext,
   readHtml,
-} from '@lblod/ember-rdfa-editor/model/readers/html-reader';
+} from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
 
 export interface StateArgs {
   document: ModelElement;

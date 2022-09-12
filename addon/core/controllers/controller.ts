@@ -1,22 +1,22 @@
 import LiveMarkSet, {
   LiveMarkSetArgs,
-} from '@lblod/ember-rdfa-editor/model/marks/live-mark-set';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/model/marks/mark';
-import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks/marks-registry';
+} from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
+import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
 import ModelElement, {
   ElementType,
-} from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+} from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
   ModelRangeFactory,
   RangeFactory,
-} from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+} from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import {
   AnyEventName,
   EditorEventListener,
@@ -28,8 +28,8 @@ import Transaction, {
   TransactionStepListener,
 } from '../state/transaction';
 import { View } from '../view';
-import { InlineComponentSpec } from '../../model/inline-components/model-inline-component';
-import ModelNode from '../../model/nodes/model-node';
+import { InlineComponentSpec } from '../model/inline-components/model-inline-component';
+import ModelNode from '../model/nodes/model-node';
 import MapUtils from '../../utils/map-utils';
 import { AttributeSpec } from '../../utils/render-spec';
 

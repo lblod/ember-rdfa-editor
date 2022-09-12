@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import RemoveTableColumnCommand from '@lblod/ember-rdfa-editor/commands/remove-table-column-command';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 
 module('Unit | commands | remove-table-column-command-test', function () {

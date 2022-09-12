@@ -1,4 +1,4 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import { parseXml, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { module, test } from 'qunit';
 

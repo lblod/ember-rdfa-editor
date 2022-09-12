@@ -2,9 +2,9 @@ import {
   ModelInlineComponent,
   Properties,
   State,
-} from '../model/inline-components/model-inline-component';
-import ModelElement from '../model/nodes/model-element';
-import ModelRange from '../model/model-range';
+} from '../core/model/inline-components/model-inline-component';
+import ModelElement from '../core/model/nodes/model-element';
+import ModelRange from '../core/model/model-range';
 import { ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
 import Command, { CommandContext } from './command';

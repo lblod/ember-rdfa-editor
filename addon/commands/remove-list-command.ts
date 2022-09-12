@@ -4,9 +4,9 @@ import {
   SelectionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelTreeWalker from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 

@@ -19,7 +19,7 @@ import {
   ModelQuadSubject,
   ModelTerm,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 export class ModelDataFactory extends DataFactory {
   quad(

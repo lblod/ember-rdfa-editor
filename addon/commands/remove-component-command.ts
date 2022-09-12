@@ -1,4 +1,4 @@
-import { ModelInlineComponent } from '../model/inline-components/model-inline-component';
+import { ModelInlineComponent } from '../core/model/inline-components/model-inline-component';
 import { logExecute } from '../utils/logging-utils';
 import Command, { CommandContext } from './command';
 

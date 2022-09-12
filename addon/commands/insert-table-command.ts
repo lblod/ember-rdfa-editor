@@ -1,8 +1,8 @@
 import Command, { CommandContext } from './command';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelTable from '@lblod/ember-rdfa-editor/model/nodes/model-table';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

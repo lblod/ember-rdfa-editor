@@ -1,7 +1,7 @@
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/marks/mark';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';

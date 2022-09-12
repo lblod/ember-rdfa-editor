@@ -1,6 +1,6 @@
 import State from '../core/state';
-import ModelRange from '../model/model-range';
-import SelectionReader from '../model/readers/selection-reader';
+import ModelRange from '../core/model/model-range';
+import SelectionReader from '../core/model/readers/selection-reader';
 import { SelectionError } from '../utils/errors';
 
 export function eventTargetRange(

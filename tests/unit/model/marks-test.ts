@@ -1,6 +1,6 @@
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import MarkOperation from '@lblod/ember-rdfa-editor/model/operations/mark-operation';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import MarkOperation from '@lblod/ember-rdfa-editor/core/model/operations/mark-operation';
 import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
 import computeDifference from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import { domStripped, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';

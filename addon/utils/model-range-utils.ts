@@ -1,10 +1,10 @@
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import ModelPositionUtils from './model-position-utils';
 
 export default class ModelRangeUtils {

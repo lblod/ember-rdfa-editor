@@ -1,6 +1,6 @@
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';

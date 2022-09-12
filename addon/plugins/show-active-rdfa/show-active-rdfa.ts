@@ -6,10 +6,10 @@ import {
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 const PATH_MARKER = 'data-editor-position-level';
 const RDFA_PATH_MARKER = 'data-editor-rdfa-position-level';

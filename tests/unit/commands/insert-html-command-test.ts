@@ -1,8 +1,8 @@
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '@lblod/ember-rdfa-editor/model/nodes/model-text';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelTreeWalker, {
   FilterResult,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';

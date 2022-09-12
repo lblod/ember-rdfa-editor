@@ -1,8 +1,8 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import { Mark } from '@lblod/ember-rdfa-editor/model/marks/mark';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import { Mark } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import {
   MisbehavedSelectionError,
   ModelError,

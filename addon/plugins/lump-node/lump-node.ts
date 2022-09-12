@@ -1,14 +1,14 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 export default class LumpNodePlugin implements EditorPlugin {
   controller!: Controller;

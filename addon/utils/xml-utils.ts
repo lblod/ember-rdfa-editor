@@ -1,8 +1,8 @@
 import XmlReader, {
   XmlReaderResult,
-} from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import XmlWriter from '@lblod/ember-rdfa-editor/model/writers/xml-writer';
+} from '@lblod/ember-rdfa-editor/core/model/readers/xml-reader';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import XmlWriter from '@lblod/ember-rdfa-editor/core/model/writers/xml-writer';
 import { oneLineTrim } from 'common-tags';
 
 export function parseXml(xml: string): XmlReaderResult {

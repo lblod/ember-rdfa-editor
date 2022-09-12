@@ -7,7 +7,7 @@ import config from 'dummy/config/environment';
 import { setApplication } from '@ember/test-helpers';
 import { start } from 'ember-qunit';
 import { setup } from 'qunit-dom';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 setup(QUnit.assert);
 const defaultDumpDepth = QUnit.dump.maxDepth;

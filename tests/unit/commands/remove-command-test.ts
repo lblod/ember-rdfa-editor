@@ -1,6 +1,6 @@
 import RemoveCommand from '@lblod/ember-rdfa-editor/commands/remove-command';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';

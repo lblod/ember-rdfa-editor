@@ -1,7 +1,7 @@
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
@@ -9,10 +9,10 @@ import {
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import State from '../core/state';
 
 declare module '@lblod/ember-rdfa-editor' {

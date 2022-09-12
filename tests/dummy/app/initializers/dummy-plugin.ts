@@ -1,6 +1,6 @@
 import Application from '@ember/application';
 import DummyPlugin from 'dummy/testplugin/dummy-plugin';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 function pluginFactory(plugin: new () => EditorPlugin) {
   return {

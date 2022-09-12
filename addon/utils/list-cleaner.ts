@@ -1,9 +1,9 @@
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
-import ModelPosition from '../model/model-position';
+import ModelPosition from '../core/model/model-position';
 import GenTreeWalker from './gen-tree-walker';
 
 export default class ListCleaner {

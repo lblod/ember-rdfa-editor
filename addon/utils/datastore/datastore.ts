@@ -1,8 +1,8 @@
 import * as RDF from '@rdfjs/types';
 import ModelRange, {
   RangeContextStrategy,
-} from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+} from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   ModelQuadObject,
   ModelQuadPredicate,

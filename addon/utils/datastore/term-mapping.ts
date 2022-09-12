@@ -1,5 +1,5 @@
 import * as RDF from '@rdfjs/types';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   conciseToRdfjs,
   PrefixMapping,

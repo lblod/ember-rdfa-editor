@@ -1,8 +1,8 @@
-import { Mark } from '@lblod/ember-rdfa-editor/model/marks/mark';
+import { Mark } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     removeMark: RemoveMarkCommand;

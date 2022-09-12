@@ -1,12 +1,12 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/model/editor-plugin';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 export default class ListPlugin implements EditorPlugin {
   controller!: Controller;
