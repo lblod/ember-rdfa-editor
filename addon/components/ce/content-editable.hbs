@@ -1,18 +1,8 @@
 {{! template-lint-disable no-invalid-interactive }}
 {{! template-lint-disable no-down-event-binding }}
 <div
-  {{on 'paste' this.paste}}
-  {{on 'cut' this.cut}}
-  {{on 'copy' this.copy}}
-  {{on 'keydown' this.handleKeyDown}}
-  {{on 'keyup' this.handleKeyUp}}
-  {{on 'compositionend' this.compositionEnd}}
-  {{on 'mouseup' this.handleMouseUp}}
-  {{on 'mousedown' this.handleMouseDown}}
-  {{on 'beforeinput' this.beforeInput}}
-  {{on 'input' this.handleInput}}
-  {{on 'dragstart' this.dragstart}}
   {{did-insert this.insertedEditorElement}}
+  {{will-destroy this.teardown}}
   {{did-update this.initialize @plugins}}
   contenteditable='true'
   class={{@class}}

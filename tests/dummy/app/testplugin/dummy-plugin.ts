@@ -1,8 +1,8 @@
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import {
   createLogger,
   Logger,
@@ -13,7 +13,7 @@ export interface DummyPluginOptions {
 }
 
 export default class DummyPlugin implements EditorPlugin {
-  private controller!: Controller;
+  controller!: Controller;
   private logger: Logger = createLogger(this.constructor.name);
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -23,9 +23,9 @@ export default class DummyPlugin implements EditorPlugin {
   ): Promise<void> {
     this.logger('recieved options: ', options);
     this.controller = controller;
-    this.controller.onEvent('contentChanged', () => {
+    this.controller.addTransactionStepListener((tr) => {
       for (const mark of this.controller.ownMarks) {
-        this.controller.executeCommand('remove-mark', mark);
+        tr.commands.removeMark({ mark });
       }
 
       const walker = GenTreeWalker.fromSubTree({
@@ -36,12 +36,11 @@ export default class DummyPlugin implements EditorPlugin {
         ),
       });
       for (const node of walker.nodes()) {
-        this.controller?.executeCommand(
-          'add-mark-to-range',
-          this.controller?.rangeFactory.fromAroundNode(node),
-          'highlighted',
-          { setBy: this.name }
-        );
+        tr.commands.addMarkToRange({
+          range: this.controller?.rangeFactory.fromAroundNode(node),
+          markName: 'highlighted',
+          markAttributes: { setBy: this.name },
+        });
       }
     });
   }

@@ -1,18 +1,14 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | make-list-command', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: MakeListCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new MakeListCommand(ctx.model);
-  });
+module('Unit | commands | make-list-command', function () {
+  const command = new MakeListCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('adds list in an empty document', function (assert) {
     // language=XML
@@ -29,12 +25,10 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('adds list in a document with only a new line', function (assert) {
@@ -55,12 +49,10 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(initial, 1, 1);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('creates list from lines of text', function (assert) {
@@ -92,16 +84,14 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(
-      ctx.model.rootModelNode,
+    const range = ModelRange.fromInNode(
+      initial,
       0,
-      ctx.model.rootModelNode.getMaxOffset()
+      (initial as ModelElement).getMaxOffset()
     );
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('creates list from text before list', function (assert) {
@@ -139,12 +129,13 @@ module('Unit | commands | make-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(firstLine, 1, 3);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
   test('create list from line with link in it', function (assert) {
     const {
@@ -152,7 +143,10 @@ module('Unit | commands | make-list-command', function (hooks) {
       textNodes: { link },
     } = vdom`
       <modelRoot>
-        <text>line before list</text><a><text __id="link">link</text></a>
+        <text>line before list</text>
+        <a>
+          <text __id="link">link</text>
+        </a>
       </modelRoot>
     `;
 
@@ -160,18 +154,19 @@ module('Unit | commands | make-list-command', function (hooks) {
       <modelRoot>
         <ul>
           <li>
-            <text>line before list</text><a><text __id="link">link</text></a>
+            <text>line before list</text>
+            <a>
+              <text __id="link">link</text>
+            </a>
           </li>
         </ul>
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(link, 2, 2);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('create list from line with nested nodes', function (assert) {
     const {
@@ -179,7 +174,17 @@ module('Unit | commands | make-list-command', function (hooks) {
       textNodes: { link2 },
     } = vdom`
       <modelRoot>
-        <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+        <text>first</text>
+        <a>
+          <text>link1</text>
+        </a>
+        <text>second</text>
+        <a>
+          <span>
+            <text __id="link2">link2</text>
+          </span>
+        </a>
+        <text>third</text>
       </modelRoot>
     `;
 
@@ -187,20 +192,25 @@ module('Unit | commands | make-list-command', function (hooks) {
       <modelRoot>
         <ul>
           <li>
-          <text>first</text><a><text>link1</text></a><text>second</text><a><span><text __id="link2">link2</text></span></a><text>third</text>
+            <text>first</text>
+            <a>
+              <text>link1</text>
+            </a>
+            <text>second</text>
+            <a>
+              <span>
+                <text __id="link2">link2</text>
+              </span>
+            </a>
+            <text>third</text>
           </li>
         </ul>
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(link2, 2, 2);
-    ctx.model.selectRange(range);
-
-    command.execute('ul');
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, { listType: 'ul' });
+    assert.true(resultState.document.sameAs(expected));
   });
 });

@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: RdfaDocument;

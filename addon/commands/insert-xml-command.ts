@@ -1,38 +1,46 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import setNodeAndChildDirty from '@lblod/ember-rdfa-editor/model/util/set-node-and-child-dirty';
+
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertXml: InsertXmlCommand;
+  }
+}
+
+export interface InsertXmlCommandArgs {
+  xml: string;
+  range?: ModelRange | null;
+}
 
 /**
  * Allows you to insert model nodes from an xml string.
  * Particularly useful for testing and debugging.
  */
-export default class InsertXmlCommand extends Command {
-  name = 'insert-xml';
-  constructor(model: Model) {
-    super(model);
+export default class InsertXmlCommand
+  implements Command<InsertXmlCommandArgs, void>
+{
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
   execute(
-    xml: string,
-    range: ModelRange | null = this.model.selection.lastRange
+    { transaction }: CommandContext,
+    {
+      xml,
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertXmlCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const parsedModelNodes = parseXmlSiblings(xml);
-    this.model.change((mutator) => {
-      //All nodes are marked as dirty by default when inserted but not in the xml writer
-      // as we need to set dirtiness statuses in the tests, in order to solve bugs related to
-      // nodes not being properly inserted we set them all dirty in this function below
-      parsedModelNodes.forEach((node) => setNodeAndChildDirty(node));
-      const newRange = mutator.insertNodes(range, ...parsedModelNodes);
-      this.model.selectRange(newRange);
-    });
+    transaction.insertNodes(range, ...parsedModelNodes);
   }
 }

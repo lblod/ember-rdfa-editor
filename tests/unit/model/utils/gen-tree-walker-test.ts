@@ -1,11 +1,11 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import sinon from 'sinon';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 
 module('Unit | model | utils | gen-tree-walker-test', function (hooks) {
   hooks.afterEach(() => {

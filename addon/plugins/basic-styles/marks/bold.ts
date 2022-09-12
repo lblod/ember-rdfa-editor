@@ -1,8 +1,5 @@
-import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import {
-  RenderSpec,
-  SLOT,
-} from '@lblod/ember-rdfa-editor/model/util/render-spec';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import { RenderSpec, SLOT } from '@lblod/ember-rdfa-editor/utils/render-spec';
 
 export const boldMarkSpec: MarkSpec = {
   matchers: [{ tag: 'b' }, { tag: 'strong' }],

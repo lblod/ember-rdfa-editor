@@ -1,23 +1,28 @@
-import { ModelInlineComponent } from '../model/inline-components/model-inline-component';
-import Model from '../model/model';
+import { ModelInlineComponent } from '../core/model/inline-components/model-inline-component';
 import { logExecute } from '../utils/logging-utils';
-import Command from './command';
+import Command, { CommandContext } from './command';
 
-export default class RemoveComponentCommand extends Command {
-  name = 'remove-component';
-
-  constructor(model: Model) {
-    super(model);
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeComponent: RemoveComponentCommand;
   }
+}
+export interface RemoveComponentCommandArgs {
+  component: ModelInlineComponent;
+}
 
+export default class RemoveComponentCommand
+  implements Command<RemoveComponentCommandArgs, void>
+{
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute(component: ModelInlineComponent): void {
-    this.model.change(() => {
-      component.remove();
-    });
+  execute(
+    { transaction }: CommandContext,
+    { component }: RemoveComponentCommandArgs
+  ): void {
+    transaction.deleteNode(component);
   }
 }

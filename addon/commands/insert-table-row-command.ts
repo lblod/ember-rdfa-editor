@@ -1,19 +1,28 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+export interface InsertTableRowCommandArgs {
+  selection?: ModelSelection;
+}
 
-export default abstract class InsertTableRowCommand extends Command {
+export default abstract class InsertTableRowCommand
+  implements Command<InsertTableRowCommandArgs, void>
+{
   abstract insertAbove: boolean;
 
-  constructor(model: Model) {
-    super(model);
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection) {
+  execute(
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: InsertTableRowCommandArgs
+  ) {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -36,10 +45,6 @@ export default abstract class InsertTableRowCommand extends Command {
 
     const insertPosition = this.insertAbove ? position.y : position.y + 1;
 
-    this.model.change((mutator) => {
-      table.addRow(mutator, insertPosition);
-    });
-
-    this.model.write();
+    table.addRow(transaction, insertPosition);
   }
 }

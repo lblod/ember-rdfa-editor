@@ -1,15 +1,16 @@
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { parseXml, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { module, test } from 'qunit';
-import { parseXml, vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 
 module('Unit | model | readers | xml-reader-test', function () {
   test('rootNode gets read as a modelrootnode', function (assert) {
-    const context = new ModelTestContext();
-    context.reset();
-
     // language=XML
     const { root } = vdom`<modelRoot />`;
-    assert.true(root.sameAs(context.model.rootModelNode));
+    const rootNode = new ModelElement('div');
+    rootNode.setAttribute('class', 'say-editor_inner say_content');
+    rootNode.setAttribute('contenteditable', '');
+
+    assert.true(root.sameAs(rootNode));
   });
   test('test xml', function (assert) {
     const xml = `

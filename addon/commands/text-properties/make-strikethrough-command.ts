@@ -1,10 +1,24 @@
 import SetTextPropertyCommand from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { CommandContext } from '../command';
 
-export default class MakeStrikethroughCommand extends SetTextPropertyCommand {
-  name = 'make-strikethrough';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    makeStrikethrough: MakeStrikethroughCommand;
+  }
+}
+export default class MakeStrikethroughCommand extends SetTextPropertyCommand<void> {
+  canExecute(): boolean {
+    return true;
+  }
+
   @logExecute
-  execute() {
-    super.setTextProperty('strikethrough', true);
+  execute({ transaction }: CommandContext) {
+    super.setTextProperty(
+      transaction,
+      'strikethrough',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

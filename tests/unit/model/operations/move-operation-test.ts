@@ -1,9 +1,9 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import MoveOperation from '@lblod/ember-rdfa-editor/model/operations/move-operation';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import MoveOperation from '@lblod/ember-rdfa-editor/core/model/operations/move-operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 module('Unit | model | operations | move-operation-test', function () {
@@ -34,7 +34,7 @@ module('Unit | model | operations | move-operation-test', function () {
     const op = new MoveOperation(undefined, srcRange, targetPos);
     const resultRange = op.execute().defaultRange;
 
-    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
+    assert.true(initial.sameAs(expected));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])

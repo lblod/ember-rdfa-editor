@@ -1,11 +1,11 @@
 import { module, test } from 'qunit';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 
 module('Unit | model | model-position', function () {
   module('Unit | model | model-position | getCommonAncestor', function () {

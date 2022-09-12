@@ -1,10 +1,10 @@
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { AnyEventName } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export type EDITOR_EVENT_MAP = {
   dummy: DummyEvent;

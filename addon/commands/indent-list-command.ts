@@ -1,6 +1,7 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
@@ -8,21 +9,28 @@ import {
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import State from '../core/state';
 
-export default class IndentListCommand extends Command {
-  name = 'indent-list';
-
-  constructor(model: Model) {
-    super(model);
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    indentList: IndentListCommand;
   }
+}
 
+export interface IndentListCommandArgs {
+  range?: ModelRange | null;
+}
+
+export default class IndentListCommand
+  implements Command<IndentListCommandArgs, void>
+{
   canExecute(
-    range: ModelRange | null = this.model.selection.lastRange
+    state: State,
+    { range = state.selection.lastRange }: IndentListCommandArgs
   ): boolean {
     if (!range) {
       return false;
@@ -44,10 +52,17 @@ export default class IndentListCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: IndentListCommandArgs
+  ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
+    transaction.deepClone();
+    range = transaction.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
@@ -73,41 +88,29 @@ export default class IndentListCommand extends Command {
       }
     }
 
-    this.model.change((mutator) => {
-      for (const [parent, lis] of setsToIndent.entries()) {
-        // First li of (nested) list can never be selected here, so previousSibling is always another li.
-        const newParent = lis[0].previousSibling;
-        if (!newParent || !ModelNode.isModelElement(newParent)) {
-          throw new IllegalExecutionStateError(
-            "First selected li doesn't have previous sibling"
-          );
-        }
-
-        for (const li of lis) {
-          mutator.deleteNode(li);
-        }
-
-        //First check for already existing sublist on the new parent
-        //If it exists, just add the elements to it, otherwise create a new sublist
-        const possibleNewList = this.hasSublist(newParent);
-        if (possibleNewList) {
-          mutator.insertAtPosition(
-            ModelPosition.fromInElement(
-              possibleNewList,
-              possibleNewList.getMaxOffset()
-            ),
-            ...lis
-          );
-        } else {
-          const newList = new ModelElement(parent.type);
-          newList.appendChildren(...lis);
-          mutator.insertAtPosition(
-            ModelPosition.fromInElement(newParent, newParent.getMaxOffset()),
-            newList
-          );
-        }
+    for (const [parent, lis] of setsToIndent.entries()) {
+      // First li of (nested) list can never be selected here, so previousSibling is always another li.
+      const newParent = lis[0].previousSibling;
+      if (!newParent || !ModelNode.isModelElement(newParent)) {
+        throw new IllegalExecutionStateError(
+          "First selected li doesn't have previous sibling"
+        );
       }
-    });
+      const newParentClone = newParent.clone();
+
+      //First check for already existing sublist on the new parent
+      //If it exists, just add the elements to it, otherwise create a new sublist
+      const possibleNewList = this.hasSublist(newParentClone);
+      if (possibleNewList) {
+        possibleNewList.appendChildren(...lis);
+      } else {
+        const newList = new ModelElement(parent.type);
+        newList.appendChildren(...lis);
+        newParentClone.appendChildren(newList);
+      }
+      transaction.replaceNode(newParent, newParentClone);
+    }
+    transaction.mapInitialSelectionAndSet('left');
   }
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {

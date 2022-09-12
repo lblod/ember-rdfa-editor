@@ -1,13 +1,10 @@
 import { module, test } from 'qunit';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 
 module('Unit | model | operations | insert-operation-test', function () {
   test('inserts into empty root', function (assert) {
@@ -23,8 +20,8 @@ module('Unit | model | operations | insert-operation-test', function () {
       </modelRoot>
     `;
 
-    const { root: nodeToInsert } = asNew(vdom`
-      <text __dirty="content,node">abc</text>`);
+    const { root: nodeToInsert } = vdom`
+      <text __dirty="content,node">abc</text>`;
 
     const op = new InsertOperation(
       undefined,
@@ -32,7 +29,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
+    assert.true(initial.sameAs(expected));
   });
   test('inserts element into empty root', function (assert) {
     // language=XML
@@ -50,10 +47,10 @@ module('Unit | model | operations | insert-operation-test', function () {
     `;
 
     // language=XML
-    const { root: nodeToInsert } = asNew(vdom`
+    const { root: nodeToInsert } = vdom`
       <div>
         <text>abc</text>
-      </div>`);
+      </div>`;
 
     const op = new InsertOperation(
       undefined,
@@ -61,7 +58,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       nodeToInsert
     );
     op.execute();
-    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
+    assert.true(initial.sameAs(expected));
   });
   test('inserts into root when collapsed', function (assert) {
     //language=XML
@@ -74,8 +71,8 @@ module('Unit | model | operations | insert-operation-test', function () {
       </modelRoot>
     `;
     //language=XML
-    const { root: nodeToInsert } = asNew(vdom`
-      <text>abc</text>`);
+    const { root: nodeToInsert } = vdom`
+      <text>abc</text>`;
 
     const op = new InsertOperation(
       undefined,
@@ -90,7 +87,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       </modelRoot>
     `;
     op.execute();
-    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
+    assert.true(expected.sameAs(initial));
   });
   test('inserts into root when collapsed2', function (assert) {
     const root = new ModelElement('div');
@@ -107,8 +104,8 @@ module('Unit | model | operations | insert-operation-test', function () {
     `;
 
     //language=XML
-    const { root: nodeToInsert } = asNew(vdom`
-      <text>abc</text>`);
+    const { root: nodeToInsert } = vdom`
+      <text>abc</text>`;
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
         <span/>
@@ -122,7 +119,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       nodeToInsert
     );
     op.execute();
-    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
+    assert.true(expected.sameAs(initial));
   });
   test('replaces when not collapsed', function (assert) {
     const root = new ModelElement('div');
@@ -164,8 +161,8 @@ module('Unit | model | operations | insert-operation-test', function () {
         <span/>
       </modelRoot>
     `;
-    const { root: nodeToInsert } = asNew(vdom`
-      <text>abc</text>`);
+    const { root: nodeToInsert } = vdom`
+      <text>abc</text>`;
 
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
@@ -184,7 +181,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       nodeToInsert
     );
     op.execute();
-    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
+    assert.true(expected.sameAs(initial));
   });
   test('removes items when no nodes to insert are provided', function (assert) {
     // language=XML
@@ -216,7 +213,7 @@ module('Unit | model | operations | insert-operation-test', function () {
 
     const resultRange = op.execute().defaultRange;
 
-    assert.true(expected.sameAs(initial, { ignoreDirtiness: false }));
+    assert.true(expected.sameAs(initial));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 2], [1])
@@ -272,7 +269,7 @@ module('Unit | model | operations | insert-operation-test', function () {
       new ModelText('ins1')
     );
     const resultRange = op.execute().defaultRange;
-    assert.true(initial.sameAs(expected, { ignoreDirtiness: false }));
+    assert.true(initial.sameAs(expected));
     assert.true(
       resultRange.sameAs(
         ModelRange.fromPaths(initial as ModelElement, [0, 2], [1, 0, 0])
@@ -280,11 +277,3 @@ module('Unit | model | operations | insert-operation-test', function () {
     );
   });
 });
-
-function asNew(result: XmlReaderResult) {
-  const walker = GenTreeWalker.fromSubTree<ModelNode>({ root: result.root });
-  for (const node of walker.nodes()) {
-    node.setDirty('node', 'content');
-  }
-  return result;
-}

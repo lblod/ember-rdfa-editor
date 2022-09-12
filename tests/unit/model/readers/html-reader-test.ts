@@ -1,46 +1,54 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import InlineComponentsRegistry from '@lblod/ember-rdfa-editor/core/model/inline-components/inline-components-registry';
+import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import {
+  HtmlReaderContext,
+  readHtml,
+} from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
 import {
   dom,
   domStripped,
   vdom,
-} from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
+} from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
-import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
+import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
+import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
+import { module, test } from 'qunit';
 
-module('Unit | model | readers | html-reader', function (hooks) {
-  let reader: HtmlReader;
-  const ctx = new ModelTestContext();
-  hooks.beforeEach(() => {
-    ctx.reset();
-    ctx.model.registerMark(boldMarkSpec);
-    ctx.model.registerMark(italicMarkSpec);
-    ctx.model.registerMark(underlineMarkSpec);
-    ctx.model.registerMark(strikethroughMarkSpec);
-    ctx.model.registerMark(highlightMarkSpec);
-    reader = new HtmlReader(ctx.model);
-  });
+module('Unit | model | readers | html-reader', function () {
+  const marksRegistry = new MarksRegistry();
+  const inlineComponentsRegistry = new InlineComponentsRegistry();
+  marksRegistry.registerMark(boldMarkSpec);
+  marksRegistry.registerMark(italicMarkSpec);
+  marksRegistry.registerMark(underlineMarkSpec);
+  marksRegistry.registerMark(strikethroughMarkSpec);
+  marksRegistry.registerMark(highlightMarkSpec);
+  function read(node: Node): ModelNode[] {
+    const ctx = new HtmlReaderContext({
+      marksRegistry,
+      inlineComponentsRegistry,
+    });
+    return readHtml(node, ctx);
+  }
 
   test('read simple tree', function (assert) {
-    const doc = dom`<p>abc</p>`;
+    const doc = dom`<p>abc</p>`.body.children[0];
     // language=XML
     const { root: expected } = vdom`
       <p>
         <text>abc</text>
       </p>`;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('read tree with textStyle elements', function (assert) {
-    const doc = dom`<span><strong>abc</strong></span>`;
+    const doc = dom`<span><strong>abc</strong></span>`.body.children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -49,13 +57,14 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
   test('read tree with nested textStyle elements', function (assert) {
     // language=HTML
-    const doc = dom`<span><strong><em><u>abc</u></em></strong></span>`;
+    const doc = dom`<span><strong><em><u>abc</u></em></strong></span>`.body
+      .children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -64,13 +73,14 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
   test('read tree with nested textStyle elements 2', function (assert) {
     // language=HTML
-    const doc = dom`<span><strong><em><u>abc</u>def</em></strong></span>`;
+    const doc = dom`<span><strong><em><u>abc</u>def</em></strong></span>`.body
+      .children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -80,7 +90,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
 
@@ -100,7 +110,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
             ghi
           </em>
         </strong>
-      </span>`;
+      </span>`.body.children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -115,7 +125,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('read tree with highlights', function (assert) {
@@ -126,7 +136,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
         <strong>
           <span data-editor-highlight="true">def</span>
         </strong>
-      </span>`;
+      </span>`.body.children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -136,7 +146,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </span>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
     assert.true(actual[0].sameAs(expected));
   });
   test('reads table', function (assert) {
@@ -153,7 +163,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
           <th>cell11</th>
         </tr>
         </tbody>
-      </table>`;
+      </table>`.body.children[0];
 
     // language=XML
     const { root: expected } = vdom`
@@ -179,7 +189,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       </table>
     `;
 
-    const actual = reader.read(doc.body.firstChild!)!;
+    const actual = read(doc);
 
     assert.true(actual[0].sameAs(expected));
     assert.strictEqual(
@@ -200,7 +210,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
         'mu: http://mu.semte.ch/vocabularies/core/ eli: http://data.europa.eu/eli/ontology#'
       );
       parent.appendChild(child);
-      const actual = reader.read(child)[0] as ModelElement;
+      const actual = read(child)[0] as ModelElement;
       assert.true(actual.getRdfaPrefixes().has('mu'));
       assert.true(actual.getRdfaPrefixes().has('eli'));
       assert.strictEqual(
@@ -224,7 +234,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       const parent = document.createElement('div');
       parent.setAttribute('vocab', 'http://data.europa.eu/eli/ontology#');
       parent.appendChild(child);
-      const actual = reader.read(child)[0] as ModelElement;
+      const actual = read(child)[0] as ModelElement;
       assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
       assert.strictEqual(
         actual.getRdfaAttributes().properties[0],
@@ -238,7 +248,7 @@ module('Unit | model | readers | html-reader', function (hooks) {
       const parent = document.createElement('div');
       parent.setAttribute('vocab', 'http://data.europa.eu/eli/ontology#');
       parent.appendChild(child);
-      const root = reader.read(child)[0] as ModelElement;
+      const root = read(child)[0] as ModelElement;
       const actual = root.firstChild as ModelElement;
       assert.strictEqual(actual.getRdfaAttributes().properties.length, 1);
       assert.strictEqual(

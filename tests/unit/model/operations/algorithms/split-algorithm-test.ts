@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 module(
   'Unit | model | operations | algorithms | split-algorithm-test | ',

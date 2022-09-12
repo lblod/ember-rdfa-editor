@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
+import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { getEditorElement, delayMs } from 'dummy/tests/test-utils';
 

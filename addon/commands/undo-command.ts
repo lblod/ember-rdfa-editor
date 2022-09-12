@@ -1,16 +1,21 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import { logExecute } from '../utils/logging-utils';
 
-export default class UndoCommand extends Command {
-  name = 'undo';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    undo: UndoCommand;
+  }
+}
 
-  constructor(model: Model) {
-    super(model, false);
+export default class UndoCommand implements Command<void, void> {
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(): void {
-    this.model.restoreSnapshot();
+  execute({ transaction }: CommandContext): void {
+    transaction.restoreSnapshot(1);
   }
 }

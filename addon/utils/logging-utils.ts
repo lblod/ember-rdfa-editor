@@ -1,5 +1,5 @@
 import config from 'ember-get-config';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { debug } from 'debug';
 
 /**

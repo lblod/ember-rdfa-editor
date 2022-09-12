@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
 module(
   'Unit | model | operations | algorithms | remove-algorithm-test | ',

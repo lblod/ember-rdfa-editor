@@ -1,14 +1,17 @@
-import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
-import { SelectionChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
+import {
+  isOperationStep,
+  isSelectionStep,
+  Step,
+} from '@lblod/ember-rdfa-editor/core/state/steps/step';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
 
 interface Args {
-  editor: RawEditor;
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;
@@ -37,50 +40,62 @@ export default class EditorToolbar extends Component<Args> {
 
   constructor(parent: unknown, args: Args) {
     super(parent, args);
-    this.args.controller.onEvent(
-      'selectionChanged',
-      this.updateProperties.bind(this)
-    );
+    this.args.controller.addTransactionStepListener(this.update.bind(this));
   }
 
-  updateProperties(event: SelectionChangedEvent) {
-    this.isBold = event.payload.bold === PropertyState.enabled;
-    this.isItalic = event.payload.italic === PropertyState.enabled;
-    this.isUnderline = event.payload.underline === PropertyState.enabled;
-    this.isStrikethrough =
-      event.payload.strikethrough === PropertyState.enabled;
-    this.isInList = event.payload.inListState === PropertyState.enabled;
-    this.canInsertList = this.args.controller.canExecuteCommand('make-list');
-    this.isInTable = event.payload.inTableState === PropertyState.enabled;
-    this.canIndent =
-      this.isInList && this.args.controller.canExecuteCommand('indent-list');
-    this.canUnindent =
-      this.isInList && this.args.controller.canExecuteCommand('unindent-list');
-    this.selection = event.payload;
+  get controller() {
+    return this.args.controller;
+  }
+
+  modifiesSelection(steps: Step[]) {
+    return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
+  }
+
+  update(transaction: Transaction, steps: Step[]) {
+    if (this.modifiesSelection(steps)) {
+      this.updateProperties(transaction);
+    }
+  }
+
+  updateProperties(transaction: Transaction) {
+    const {
+      currentSelection: selection,
+      commands: { makeList, indentList, unindentList },
+    } = transaction;
+    this.isBold = selection.bold === PropertyState.enabled;
+    this.isItalic = selection.italic === PropertyState.enabled;
+    this.isUnderline = selection.underline === PropertyState.enabled;
+    this.isStrikethrough = selection.strikethrough === PropertyState.enabled;
+    this.isInList = selection.inListState === PropertyState.enabled;
+    this.canInsertList = makeList.canExecute({});
+    this.isInTable = selection.inTableState === PropertyState.enabled;
+    this.canIndent = this.isInList && indentList.canExecute({});
+    this.canUnindent = this.isInList && unindentList.canExecute({});
+    this.selection = selection;
   }
 
   @action
   insertIndent() {
     if (this.isInList) {
-      this.args.controller.executeCommand('indent-list');
+      this.args.controller.perform((tr) => tr.commands.indentList({}));
     }
   }
 
   @action
   insertUnindent() {
     if (this.isInList) {
-      this.args.controller.executeCommand('unindent-list');
+      this.args.controller.perform((tr) => tr.commands.unindentList({}));
     }
   }
 
   @action
   insertNewLine() {
-    this.args.controller.executeCommand('insert-newLine');
+    this.controller.perform((tr) => tr.commands.insertNewLine({}));
   }
 
   @action
   insertNewLi() {
-    this.args.controller.executeCommand('insert-newLi');
+    this.controller.perform((tr) => tr.commands.insertNewLi({}));
   }
 
   @action
@@ -91,18 +106,18 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleUnorderedList() {
     if (this.isInList) {
-      this.args.controller.executeCommand('remove-list');
+      this.controller.perform((tr) => tr.commands.removeList({}));
     } else {
-      this.args.controller.executeCommand('make-list', 'ul');
+      this.controller.perform((tr) => tr.commands.makeList({ listType: 'ul' }));
     }
   }
 
   @action
   toggleOrderedList() {
     if (this.isInList) {
-      this.args.controller.executeCommand('remove-list');
+      this.controller.perform((tr) => tr.commands.removeList({}));
     } else {
-      this.args.controller.executeCommand('make-list', 'ol');
+      this.controller.perform((tr) => tr.commands.makeList({ listType: 'ol' }));
     }
   }
 
@@ -124,23 +139,27 @@ export default class EditorToolbar extends Component<Args> {
   @action
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
-      this.args.controller.executeCommand(
-        'add-mark-to-selection',
-        markName,
-        attributes
-      );
+      this.controller.perform((tr: Transaction) => {
+        tr.commands.addMarkToSelection({
+          markName,
+          markAttributes: attributes,
+        });
+        tr.focus();
+      });
     } else {
-      this.args.controller.executeCommand(
-        'remove-mark-from-selection',
-        markName,
-        attributes
-      );
+      this.controller.perform((tr: Transaction) => {
+        tr.commands.removeMarkFromSelection({
+          markName,
+          markAttributes: attributes,
+        });
+        tr.focus();
+      });
     }
   }
 
   @action
   undo() {
-    this.args.controller.executeCommand('undo');
+    this.controller.perform((tr) => tr.commands.undo(undefined));
   }
 
   // Table commands
@@ -152,46 +171,46 @@ export default class EditorToolbar extends Component<Args> {
       : this.tableAddColumns;
     this.tableAddRows = this.tableAddRows < 1 ? 1 : this.tableAddRows;
     this.tableAddColumns = this.tableAddColumns < 1 ? 1 : this.tableAddColumns;
-    this.args.controller.executeCommand(
-      'insert-table',
-      this.selection,
-      this.tableAddRows,
-      this.tableAddColumns
+    this.controller.perform((tr) =>
+      tr.commands.insertTable({
+        rows: this.tableAddRows,
+        columns: this.tableAddColumns,
+      })
     );
   }
 
   @action
   insertRowBelow() {
-    this.args.controller.executeCommand('insert-table-row-below');
+    this.controller.perform((tr) => tr.commands.insertTableRowBelow({}));
   }
 
   @action
   insertRowAbove() {
-    this.args.controller.executeCommand('insert-table-row-above');
+    this.controller.perform((tr) => tr.commands.insertTableRowAbove({}));
   }
 
   @action
   insertColumnAfter() {
-    this.args.controller.executeCommand('insert-table-column-after');
+    this.controller.perform((tr) => tr.commands.insertTableColumnAfter({}));
   }
 
   @action
   insertColumnBefore() {
-    this.args.controller.executeCommand('insert-table-column-before');
+    this.controller.perform((tr) => tr.commands.insertTableColumnBefore({}));
   }
 
   @action
   removeTableRow() {
-    this.args.controller.executeCommand('remove-table-row');
+    this.controller.perform((tr) => tr.commands.removeTableRow({}));
   }
 
   @action
   removeTableColumn() {
-    this.args.controller.executeCommand('remove-table-column');
+    this.controller.perform((tr) => tr.commands.removeTableColumn({}));
   }
 
   @action
   removeTable() {
-    this.args.controller.executeCommand('remove-table');
+    this.controller.perform((tr) => tr.commands.removeTable({}));
   }
 }

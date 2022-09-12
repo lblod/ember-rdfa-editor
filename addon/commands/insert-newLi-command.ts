@@ -1,28 +1,31 @@
-import Command from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,
   TypeAssertionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import State from '../core/state';
+import Transaction from '../core/state/transaction';
+import Command, { CommandContext } from './command';
 
-export default class InsertNewLiCommand extends Command {
-  name = 'insert-newLi';
-
-  constructor(model: Model) {
-    super(model);
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertNewLi: InsertNewLiCommand;
   }
+}
+export interface InsertNewLiCommandArgs {
+  range?: ModelRange | null;
+}
 
-  canExecute(
-    range: ModelRange | null = this.model.selection.lastRange
-  ): boolean {
+export default class InsertNewLiCommand
+  implements Command<InsertNewLiCommandArgs, void>
+{
+  canExecute(state: State, { range = state.selection.lastRange }): boolean {
     if (!range) {
       return false;
     }
@@ -31,7 +34,12 @@ export default class InsertNewLiCommand extends Command {
   }
 
   @logExecute
-  execute(range: ModelRange | null = this.model.selection.lastRange): void {
+  execute(
+    { transaction }: CommandContext,
+    {
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertNewLiCommandArgs
+  ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
@@ -47,31 +55,29 @@ export default class InsertNewLiCommand extends Command {
       throw new IllegalExecutionStateError("Couldn't locate parent lis");
     }
 
-    this.model.change((mutator) => {
-      // Collapsed selection case
-      if (range.collapsed) {
-        this.insertLi(mutator, range.start);
-      }
-      // Single li expanded selection case
-      else if (startParentLi === endParentLi) {
-        mutator.insertNodes(range);
-        this.insertLi(mutator, range.start);
-      }
-      // Multiple lis selected case
-      else {
-        const newRange = mutator.insertNodes(range);
-        this.model.selectRange(newRange);
-      }
-    });
+    // Collapsed selection case
+    if (range.collapsed) {
+      this.insertLi(transaction, range.start);
+    }
+    // Single li expanded selection case
+    else if (startParentLi === endParentLi) {
+      transaction.insertNodes(range);
+      this.insertLi(transaction, range.start);
+    }
+    // Multiple lis selected case
+    else {
+      const newRange = transaction.insertNodes(range);
+      transaction.selectRange(newRange);
+    }
   }
 
-  private insertLi(mutator: ImmediateModelMutator, position: ModelPosition) {
-    let newPosition = mutator.splitUntil(
+  private insertLi(tr: Transaction, position: ModelPosition) {
+    let newPosition = tr.splitUntil(
       position,
       (node) => ModelNodeUtils.isListContainer(node.parent),
       false
     );
-    newPosition = mutator.splitUntil(
+    newPosition = tr.splitUntil(
       newPosition,
       ModelNodeUtils.isListContainer,
       true
@@ -89,19 +95,19 @@ export default class InsertNewLiCommand extends Command {
       throw new TypeAssertionError('Node right after the cursor is not an li');
     }
     if (nodeBefore.length === 0) {
-      mutator.insertNodes(
+      tr.insertNodes(
         ModelRange.fromInElement(nodeBefore),
         new ModelText(INVISIBLE_SPACE)
       );
     }
     if (nodeAfter.length === 0) {
-      mutator.insertNodes(
+      tr.insertNodes(
         ModelRange.fromInElement(nodeAfter),
         new ModelText(INVISIBLE_SPACE)
       );
-      this.model.selectRange(ModelRange.fromInElement(nodeAfter, 1, 1));
+      tr.selectRange(ModelRange.fromInElement(nodeAfter, 1, 1));
     } else {
-      this.model.selectRange(ModelRange.fromInElement(nodeAfter, 0, 0));
+      tr.selectRange(ModelRange.fromInElement(nodeAfter, 0, 0));
     }
   }
 }

@@ -1,13 +1,13 @@
 import { module, test } from 'qunit';
 import ModelTreeWalker, {
   toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module('Unit | model | utils | tree-walker-test', function () {
   test('finds root when its the only node and position starts there', function (assert) {
@@ -399,7 +399,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0, 0]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -416,7 +416,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7, 6], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -433,7 +433,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7, 3], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -450,7 +450,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [7], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -467,7 +467,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [4], [8]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -484,7 +484,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [0, 4]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -501,7 +501,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [1]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];
@@ -518,7 +518,7 @@ module('Unit | model | utils | tree-walker-test', function () {
     `;
     const range = ModelRange.fromPaths(initial as ModelElement, [0], [2]);
     const walker = new ModelTreeWalker({
-      filter: toFilterSkipFalse(ModelNode.isModelText),
+      filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       range,
     });
     const result = [...walker];

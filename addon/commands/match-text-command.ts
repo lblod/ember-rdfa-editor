@@ -1,22 +1,32 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import {
   matchText,
   TextMatch,
 } from '@lblod/ember-rdfa-editor/utils/match-text';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    matchText: MatchTextCommand;
+  }
+}
+export interface MatchTextCommandArgs {
+  limitRange: ModelRange;
+  regex: RegExp;
+}
 
-export default class MatchTextCommand extends Command<
-  [ModelRange, RegExp],
-  TextMatch[]
-> {
-  name = 'match-text';
-
-  constructor(model: Model) {
-    super(model);
+export default class MatchTextCommand
+  implements Command<MatchTextCommandArgs, TextMatch[]>
+{
+  canExecute(): boolean {
+    return true;
   }
 
-  execute(limitRange: ModelRange, regex: RegExp): TextMatch[] {
+  execute(
+    _: CommandContext,
+    { limitRange, regex }: MatchTextCommandArgs
+  ): TextMatch[] {
     return matchText(limitRange, regex);
   }
 }

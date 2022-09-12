@@ -5,7 +5,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import DOMPurify from 'dompurify';
 import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 
 export const DEFAULT_SAFE_ATTRIBUTES = [
   'colspan',

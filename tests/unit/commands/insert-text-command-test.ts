@@ -1,20 +1,16 @@
-import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | insert-text-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: InsertTextCommand;
+module('Unit | commands | insert-text-command-test', function () {
   const logger = createLogger('test:insert-text-command-test');
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertTextCommand(ctx.model);
-  });
+  const command = new InsertTextCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('inserts character into textnode', function (assert) {
     // language=XML
@@ -28,6 +24,7 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </div>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -38,10 +35,9 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
-    command.execute('c', range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const { resultState } = executeCommand(initialState, { text: 'c', range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('overwrites unconfined range', function (assert) {
     // language=XML
@@ -58,6 +54,7 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </span>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <span>
@@ -68,13 +65,12 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </span>
       </modelRoot>
     `;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInTextNode(rangeStart, 2);
     const end = ModelPosition.fromInTextNode(rangeEnd, 1);
     const range = new ModelRange(start, end);
 
-    command.execute('x', range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const { resultState } = executeCommand(initialState, { text: 'x', range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('overwrites complex range', function (assert) {
     // language=XML
@@ -95,6 +91,7 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
       </modelRoot>
     `;
 
+    const initialState = testState({ document: initial });
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
@@ -109,13 +106,12 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInTextNode(rangeStart, 2);
     const end = ModelPosition.fromInTextNode(rangeEnd, 2);
     const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { text: 'c', range });
 
-    command.execute('c', range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
   });
   test('space does not eat the character before it', function (assert) {
     // language=XML
@@ -132,6 +128,7 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </h1>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -144,14 +141,16 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </h1>
       </modelRoot>
     `;
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInTextNode(selectionFocus, 1, 1);
-    command.execute(SPACE, range);
-    const rslt = ctx.model.rootModelNode.sameAs(expected);
+    const { resultState } = executeCommand(initialState, {
+      text: SPACE,
+      range,
+    });
+    const rslt = resultState.document.sameAs(expected);
     if (!rslt) {
       logger(
         'space does not eat the character before it: ACTUAL:',
-        ctx.model.toXml()
+        resultState.document
       );
     }
     assert.true(rslt);
@@ -169,6 +168,7 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </div>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -180,9 +180,11 @@ module('Unit | commands | insert-text-command-test', function (hooks) {
         </div>
       </modelRoot>
     `;
-    ctx.model.fillRoot(initial);
     const range = ModelRange.fromInElement(parent, 2, 2);
-    command.execute('c\nde', range);
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const { resultState } = executeCommand(initialState, {
+      text: 'c\nde',
+      range,
+    });
+    assert.true(resultState.document.sameAs(expected));
   });
 });

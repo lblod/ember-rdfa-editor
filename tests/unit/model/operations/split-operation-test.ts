@@ -1,9 +1,9 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import SplitOperation from '@lblod/ember-rdfa-editor/core/model/operations/split-operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 module('Unit | model | operations | split-operation-test', function () {
   test("doesn't split root", function (assert) {

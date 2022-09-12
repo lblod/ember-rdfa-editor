@@ -8,7 +8,6 @@
 >
   {{#if this.toolbarController}}
     <Rdfa::EditorToolbar
-      @editor={{this.editor}}
       @showTextStyleButtons='{{if @toolbarOptions.showTextStyleButtons "true"}}'
       @showListButtons='{{if @toolbarOptions.showListButtons "true"}}'
       @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
@@ -47,7 +46,7 @@
       <div class='say-editor__paper'>
         <Ce::ContentEditable
           @class='say-editor__inner say-content'
-          @rawEditorInit={{this.handleRawEditorInit}}
+          @editorInit={{this.handleRawEditorInit}}
           @plugins={{this.editorPlugins}}
           @baseIRI={{@baseIRI}}
           @stealFocus={{@stealFocus}}
@@ -86,13 +85,9 @@
       {{yield}}
     </div>
   </div>
-  {{#each this.inlineComponents as |compEntry|}}
-    {{#in-element compEntry.node insertBefore=null}}
-      {{component
-        compEntry.emberComponentName
-        componentController=compEntry.componentController
-        editorController=compEntry.editorController
-      }}
-    {{/in-element}}
-  {{/each}}
+  {{#if this.inlineComponentController}}
+    <Rdfa::InlineComponentManager
+      @controller={{this.inlineComponentController}}
+    />
+  {{/if}}
 </div>

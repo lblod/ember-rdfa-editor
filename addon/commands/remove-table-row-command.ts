@@ -1,23 +1,30 @@
-import Command from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import Command, { CommandContext } from './command';
 
-export default class RemoveTableRowCommand extends Command {
-  name = 'remove-table-row';
-
-  constructor(model: Model) {
-    super(model);
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeTableRow: RemoveTableRowCommand;
   }
+}
+export interface RemoveTableRowCommandArgs {
+  selection?: ModelSelection;
+}
 
+export default class RemoveTableRowCommand
+  implements Command<RemoveTableRowCommandArgs, void>
+{
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: RemoveTableRowCommandArgs
+  ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -40,21 +47,17 @@ export default class RemoveTableRowCommand extends Command {
 
     const tableDimensions = table.getDimensions();
     if (position.y === 0 && tableDimensions.y === 1) {
-      this.model.change((mutator) => {
-        table.removeTable(mutator);
-      });
+      table.removeTable(transaction);
     } else {
       const cellYToSelect =
         position.y === tableDimensions.y - 1 ? position.y - 1 : position.y;
 
       const cellToSelect = table.getCell(position.x, cellYToSelect);
 
-      this.model.change((mutator) => {
-        if (cellToSelect) {
-          selection.collapseIn(cellToSelect);
-        }
-        table.removeRow(mutator, position.y);
-      });
+      if (cellToSelect) {
+        transaction.collapseIn(cellToSelect);
+      }
+      table.removeRow(transaction, position.y);
     }
   }
 }

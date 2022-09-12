@@ -1,16 +1,12 @@
 import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
-module('Unit | commands | undo-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: UndoCommand;
-
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new UndoCommand(ctx.model);
-  });
+module('Unit | commands | undo-command-test', function () {
+  const command = new UndoCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('undo deletion of only text in document', function (assert) {
     // language=XML
@@ -20,16 +16,15 @@ module('Unit | commands | undo-command-test', function (hooks) {
       </modelRoot>
     `;
 
-    const { root: next } = vdom`
-      <modelRoot/>
-    `;
+    const initialState = testState({ document: initial });
 
-    ctx.model.fillRoot(initial);
-    ctx.model.saveSnapshot();
-    ctx.model.fillRoot(next);
+    const tr = initialState.createTransaction();
+    tr.insertNodes(ModelRange.fromInNode(initial));
+    const newState = tr.apply();
+    const { resultState } = executeCommand(newState, {});
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(initial));
+    console.log(resultState.document.toXml());
+    assert.true(resultState.document.sameAs(initial));
   });
 
   test('undo addition of only text in document', function (assert) {
@@ -37,18 +32,22 @@ module('Unit | commands | undo-command-test', function (hooks) {
     const { root: initial } = vdom`
       <modelRoot/>
     `;
+    const initialState = testState({ document: initial });
 
-    const { root: next } = vdom`
+    const {
+      textNodes: { text },
+    } = vdom`
       <modelRoot>
-        <text>this is the only text available here</text>
+        <text __id="text">this is the only text available here</text>
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    ctx.model.saveSnapshot();
-    ctx.model.fillRoot(next);
+    const tr = initialState.createTransaction();
+    tr.insertNodes(ModelRange.fromInNode(initial), text);
+    const newState = tr.apply();
+    const { resultState } = executeCommand(newState, {});
 
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(initial));
+    console.log(resultState.document.toXml());
+    assert.true(resultState.document.sameAs(initial));
   });
 });

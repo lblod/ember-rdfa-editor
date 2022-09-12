@@ -1,18 +1,18 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
 module(
   'Unit | model | operations | algorithms | remove-new-algorithm-test | ',
 
   () => {
-    /* 
+    /*
       test1
       ==========================
       <div>tes[]t</div>
-      
+
       <div>tes[]t</div>
     */
     test('range is collapsed test', function (assert) {
@@ -40,7 +40,7 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
-    /* 
+    /*
       test2
       ==========================
       <modelRoot>
@@ -55,7 +55,7 @@ module(
           <text __id="text1">test[]st</text>
         </div>
       </modelRoot>
-      
+
     */
     test('start is nested and on edge', function (assert) {
       const {
@@ -83,7 +83,7 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
-    /* 
+    /*
       test3
       ==========================
       <modelRoot>
@@ -96,7 +96,7 @@ module(
       <modelRoot>
         <text __id="text2">te[]</text>
       </modelRoot>
-      
+
     */
     test('end is nested and on edge', function (assert) {
       const {
@@ -122,7 +122,7 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
-    /* 
+    /*
       test4
       ==========================
       <modelRoot>
@@ -151,7 +151,7 @@ module(
         </span>
         <text>staying here</text>
       </modelRoot>
-      
+
     */
     test('deep nesting test', function (assert) {
       const {
@@ -193,7 +193,7 @@ module(
       assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
-    /* 
+    /*
       test5
       ==========================
       <modelRoot>
@@ -219,7 +219,7 @@ module(
           </span>
         </span>
       </modelRoot>
-      
+
     */
     test('sibling tests', function (assert) {
       const {
@@ -243,7 +243,7 @@ module(
 
       const { root: expected } = vdom`
         <modelRoot>
-          <span>  
+          <span>
             <text __id="text1">tet</text>
             <text __id="text2">testtest3</text>
             <span>
@@ -392,7 +392,7 @@ module(
               <text __id="text2">test</text>
             </li>
             <li>
-              <text __id="text3">test</text>    
+              <text __id="text3">test</text>
             </li>
           </ul>
           <text __id="text4">test</text>

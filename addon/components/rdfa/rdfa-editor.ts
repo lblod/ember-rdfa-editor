@@ -1,25 +1,30 @@
+import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from 'tracked-built-ins';
-import RdfaDocument from '../../utils/rdfa/rdfa-document';
-import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
-import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import ApplicationInstance from '@ember/application/instance';
 import Controller, {
   InternalWidgetSpec,
-  RawEditorController,
-} from '@lblod/ember-rdfa-editor/model/controller';
+} from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
+import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
+import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
-import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
+import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
+
+import type IntlService from 'ember-intl/services/intl';
+import { tracked } from 'tracked-built-ins';
+import { default as RdfaDocumentController } from '../../core/controllers/rdfa-document';
 import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
+import PlaceHolderPlugin from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
+import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
+import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
+import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
+import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
+import { View } from '@lblod/ember-rdfa-editor/core/view';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 
 export type PluginConfig =
   | string
@@ -32,6 +37,7 @@ export interface ResolvedPluginConfig {
   instance: EditorPlugin;
   options: unknown;
 }
+
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -70,7 +76,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
-  @tracked inlineComponents = tracked<ActiveComponentEntry>([]);
+  @tracked inlineComponentController: Controller | null = null;
+  // @tracked inlineComponents = tracked(
+  //   new Map<ModelInlineComponent, ActiveComponentEntry>()
+  // );
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -79,14 +88,15 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   get plugins(): PluginConfig[] {
     return this.args.plugins || [];
   }
+
   get editorPlugins(): ResolvedPluginConfig[] {
     return this.getPlugins();
   }
 
   /**
-   * editor controller
+   * editor view
    */
-  @tracked editor?: RawEditor;
+  @tracked controller?: Controller;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -101,22 +111,29 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    *
    * @method handleRawEditorInit
    *
-   * @param {RawEditor} editor, the editor interface
+   * @param {RawEditor} view, the editor interface
    *
    * @private
    */
   @action
-  handleRawEditorInit(editor: RawEditor) {
-    this.editor = editor;
-    this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
-    this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
-    this.toolbarController = new RawEditorController('toolbar', editor);
-    const rdfaDocument = new RdfaDocumentController('host-controller', editor);
+  handleRawEditorInit(view: View) {
+    this.controller = new ViewController('rdfaEditorComponent', view);
+    this.toolbarWidgets =
+      this.controller.currentState.widgetMap.get('toolbar') || [];
+    this.sidebarWidgets =
+      this.controller.currentState.widgetMap.get('sidebar') || [];
+    this.insertSidebarWidgets =
+      this.controller.currentState.widgetMap.get('insertSidebar') || [];
+    this.toolbarController = new ViewController('toolbar', view);
+    this.inlineComponentController = new ViewController(
+      'inline-component-manager',
+      view
+    );
+    const rdfaDocument = new RdfaDocumentController('host', view);
+    window.__EDITOR = new RdfaDocumentController('debug', view);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    this.initializeComponents();
     this.editorLoading = false;
   }
 
@@ -126,6 +143,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       { instance: new BasicStyles(), options: null },
       { instance: new LumpNodePlugin(), options: null },
       { instance: new ShowActiveRdfaPlugin(), options: null },
+      { instance: new PlaceHolderPlugin(), options: null },
+      { instance: new AnchorPlugin(), options: null },
+      { instance: new TablePlugin(), options: null },
+      { instance: new ListPlugin(), options: null },
+      { instance: new RdfaConfirmationPlugin(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;
@@ -158,12 +180,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     } else {
       this.showRdfaBlocks = false;
       this.toolbarController!.setConfig('showRdfaBlocks', null);
-    }
-  }
-
-  initializeComponents() {
-    if (this.editor) {
-      this.inlineComponents = this.editor.getComponentInstances();
     }
   }
 }

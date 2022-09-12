@@ -1,11 +1,24 @@
 import SetTextPropertyCommand from './set-text-property-command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { CommandContext } from '../command';
 
-export default class MakeBoldCommand extends SetTextPropertyCommand {
-  name = 'make-bold';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    makeBold: MakeBoldCommand;
+  }
+}
+export default class MakeBoldCommand extends SetTextPropertyCommand<void> {
+  canExecute(): boolean {
+    return true;
+  }
 
   @logExecute
-  execute() {
-    this.setTextProperty('bold', true);
+  execute({ transaction }: CommandContext) {
+    this.setTextProperty(
+      transaction,
+      'bold',
+      true,
+      transaction.workingCopy.selection
+    );
   }
 }

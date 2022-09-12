@@ -1,47 +1,66 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import { Mark } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { AttributeSpec, Serializable } from '../model/util/render-spec';
+import { AttributeSpec, Serializable } from '../utils/render-spec';
+import { CORE_OWNER } from '../utils/constants';
+import { SelectionChangedEvent } from '../utils/editor-event';
 
-export default class AddMarkToSelectionCommand extends Command<
-  [string, Record<string, Serializable>],
-  void
-> {
-  name = 'add-mark-to-selection';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    addMarkToSelection: AddMarkToSelectionCommand;
+  }
+}
 
-  constructor(model: Model) {
-    super(model);
+export interface AddMarkToSelectionCommandArgs {
+  markName: string;
+  markAttributes?: Record<string, Serializable>;
+}
+
+export default class AddMarkToSelectionCommand
+  implements Command<AddMarkToSelectionCommandArgs, void>
+{
+  canExecute(): boolean {
+    return true;
   }
 
   execute(
-    markName: string,
-    markAttributes: Record<string, Serializable> = {}
+    { transaction }: CommandContext,
+    { markName, markAttributes = {} }: AddMarkToSelectionCommandArgs
   ): void {
-    const selection = this.model.selection;
-    const spec = this.model.marksRegistry.lookupMark(markName);
+    const selection = transaction.workingCopy.selection;
+    const spec = transaction.workingCopy.marksRegistry.lookupMark(markName);
     if (spec) {
       if (selection.isCollapsed) {
-        selection.addMark(new Mark<AttributeSpec>(spec, markAttributes));
-        this.model.rootNode.focus();
-        this.model.emitSelectionChanged();
+        transaction.addMarkToSelection(
+          new Mark<AttributeSpec>(spec, markAttributes)
+        );
+
+        // TODO
+        // this.model.rootNode.focus();
+        // this.model.emitSelectionChanged();
       } else {
         if (!ModelSelection.isWellBehaved(selection)) {
           throw new MisbehavedSelectionError();
         }
-        this.model.change((mutator) => {
-          const resultRange = mutator.addMark(
-            selection.lastRange,
-            spec,
-            markAttributes
-          );
-          this.model.selectRange(resultRange);
-        });
+        const resultRange = transaction.addMark(
+          selection.lastRange,
+          spec,
+          markAttributes
+        );
+        transaction.selectRange(resultRange);
       }
+      transaction.workingCopy.eventBus.emit(
+        new SelectionChangedEvent({
+          owner: CORE_OWNER,
+          payload: transaction.workingCopy.selection,
+        })
+      );
     } else {
       throw new ModelError(`Unrecognized mark: ${markName}`);
     }

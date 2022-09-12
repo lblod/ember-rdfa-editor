@@ -1,78 +1,83 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '../model/model-range';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import { MarkSet } from '../model/mark';
-import ModelNodeUtils from '../model/util/model-node-utils';
-import ModelPosition from '../model/model-position';
+import Transaction from '../core/state/transaction';
+import { MarkSet } from '../core/model/marks/mark';
+import ModelElement from '../core/model/nodes/model-element';
+import ModelNode from '../core/model/nodes/model-node';
+import ModelPosition from '../core/model/model-position';
+import ModelRange from '../core/model/model-range';
+import GenTreeWalker from '../utils/gen-tree-walker';
+import ModelNodeUtils from '../utils/model-node-utils';
+import { toFilterSkipFalse } from '../utils/model-tree-walker';
 import { ImpossibleModelStateError } from '../utils/errors';
-import ImmediateModelMutator from '../model/mutators/immediate-model-mutator';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import ModelElement from '../model/model-element';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
-import ModelNode from '../model/model-node';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    remove: RemoveCommand;
+  }
+}
 
-export default class RemoveCommand extends Command {
-  name = 'remove';
-
-  constructor(model: Model) {
-    super(model);
+export interface RemoveCommandArgs {
+  range: ModelRange;
+}
+export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(range: ModelRange) {
-    this.model.change((mutator) => {
-      // we only have to consider ancestors of the end of the range since we always merge
-      // towards the left
-      // SAFETY: filter guarantees results to be elements
-      const lis = [
-        ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
-      ] as ModelElement[];
-      const lowestLi = lis[0];
-      const highestLi = lis[lis.length - 1];
+  execute({ transaction }: CommandContext, { range }: RemoveCommandArgs): void {
+    // we only have to consider ancestors of the end of the range since we always merge
+    // towards the left
+    // SAFETY: filter guarantees results to be elements
+    const lis = [
+      ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
+    ] as ModelElement[];
+    const lowestLi = lis[0];
+    const highestLi = lis[lis.length - 1];
 
-      let rangeAfterDelete;
-      if (highestLi) {
-        // Isolate the closest li ancestor of the end of our range
-        // so we can safely merge  the remaining content after the end of the range but within the li
-        // without destroying the rest of the list
-        const { adjustedRange, rightSideOfSplit } = isolateLowestLi(
-          mutator,
-          highestLi,
-          lowestLi,
-          range
-        );
-        // perform the deletion
-        rangeAfterDelete = mutator.removeNodes(adjustedRange);
-        if (
-          rightSideOfSplit &&
-          ModelNodeUtils.isListContainer(rightSideOfSplit)
-        ) {
-          // If we did split inside a nested list, the rightside will
-          // now have nested list as the first element, which is not allowed, so we flatten it
-          flattenList(mutator, rightSideOfSplit);
-        }
-        rangeAfterDelete = cleanupRangeAfterDelete(mutator, rangeAfterDelete);
-      } else {
-        rangeAfterDelete = mutator.removeNodes(range);
+    let rangeAfterDelete;
+    if (highestLi) {
+      // Isolate the closest li ancestor of the end of our range
+      // so we can safely merge  the remaining content after the end of the range but within the li
+      // without destroying the rest of the list
+      const { adjustedRange, rightSideOfSplit } = isolateLowestLi(
+        transaction,
+        highestLi,
+        lowestLi,
+        range
+      );
+      // perform the deletion
+      rangeAfterDelete = transaction.removeNodes(adjustedRange);
+      if (
+        rightSideOfSplit &&
+        ModelNodeUtils.isListContainer(rightSideOfSplit)
+      ) {
+        // If we did split inside a nested list, the rightside will
+        // now have nested list as the first element, which is not allowed, so we flatten it
+        flattenList(transaction, rightSideOfSplit);
       }
+      rangeAfterDelete = cleanupRangeAfterDelete(transaction, rangeAfterDelete);
+    } else {
+      rangeAfterDelete = transaction.removeNodes(range);
+    }
 
-      if (rangeAfterDelete.start.parent.length === 0) {
-        const finalRange = mutator.insertText(
-          rangeAfterDelete,
-          '',
-          new MarkSet()
-        );
-        this.model.selectRange(finalRange);
-      } else {
-        this.model.selectRange(rangeAfterDelete);
-      }
-      this.model.emitSelectionChanged();
-    });
+    if (rangeAfterDelete.start.parent.length === 0) {
+      const finalRange = transaction.insertText({
+        range: rangeAfterDelete,
+        text: '',
+        marks: new MarkSet(),
+      });
+      transaction.selectRange(finalRange);
+    } else {
+      transaction.selectRange(rangeAfterDelete);
+    }
+    // this.model.emitSelectionChanged();
   }
 }
 function isolateLowestLi(
-  mutator: ImmediateModelMutator,
+  tr: Transaction,
   highestLi: ModelElement,
   lowestLi: ModelElement,
   removeRange: ModelRange
@@ -94,7 +99,7 @@ function isolateLowestLi(
     splitPos = ModelPosition.fromBeforeNode(nestedUl);
   }
 
-  const splitPoint = mutator.splitUntilElement(splitPos, topUl.parent);
+  const splitPoint = tr.splitUntilElement(splitPos, topUl.parent);
   const newPos = ModelPosition.fromInNode(endParent, end.parentOffset);
   const start = removeRange.start;
 
@@ -103,13 +108,13 @@ function isolateLowestLi(
   return { adjustedRange, rightSideOfSplit };
 }
 function cleanupRangeAfterDelete(
-  mutator: ImmediateModelMutator,
+  tr: Transaction,
   range: ModelRange
 ): ModelRange {
   const nodeAfter = range.start.nodeAfter();
 
   if (ModelNodeUtils.isListContainer(nodeAfter)) {
-    const rangeAfterCleaning = cleanupListWithoutLis(mutator, nodeAfter);
+    const rangeAfterCleaning = cleanupListWithoutLis(tr, nodeAfter);
     if (rangeAfterCleaning) {
       return rangeAfterCleaning;
     }
@@ -121,11 +126,11 @@ function cleanupRangeAfterDelete(
     ) as Generator<ModelElement, void, void>
   ).next().value;
   if (highestUl && ModelNodeUtils.isListContainer(highestUl.nextSibling)) {
-    mutator.moveToPosition(
+    tr.moveToPosition(
       ModelRange.fromInNode(highestUl.nextSibling),
       ModelPosition.fromInNode(highestUl, highestUl.getMaxOffset())
     );
-    flattenList(mutator, highestUl);
+    flattenList(tr, highestUl);
   }
   return range;
 }
@@ -138,13 +143,13 @@ function findNestedListFromPos(
       pos,
       ModelPosition.fromInNode(inLi, inLi.getMaxOffset())
     ),
-    filter: toFilterSkipFalse(ModelNodeUtils.isListContainer),
+    filter: toFilterSkipFalse<ModelNode>(ModelNodeUtils.isListContainer),
   }).nextNode();
 }
 /**
  * Completely flatten a nested list up to the level of the given li container
  */
-function flattenList(mutator: ImmediateModelMutator, list: ModelElement) {
+function flattenList(tr: Transaction, list: ModelElement) {
   const firstLi = list.children.find(ModelNodeUtils.isListElement);
   if (firstLi) {
     // SAFETY: the filter guarantees nodes are elements
@@ -159,22 +164,22 @@ function flattenList(mutator: ImmediateModelMutator, list: ModelElement) {
     let targetPos = ModelPosition.fromAfterNode(firstLi);
 
     for (const list of nestedLists) {
-      const moveRange = mutator.unwrap(list);
+      const moveRange = tr.unwrap(list);
       const remainingLi = moveRange.start.parent;
-      mutator.moveToPosition(moveRange, targetPos);
+      tr.moveToPosition(moveRange, targetPos);
       if (!remainingLi.children.length) {
-        mutator.deleteNode(remainingLi);
+        tr.deleteNode(remainingLi);
       }
       targetPos = ModelPosition.fromAfterNode(firstLi);
     }
   }
 }
 function cleanupListWithoutLis(
-  mutator: ImmediateModelMutator,
+  tr: Transaction,
   list: ModelElement
 ): ModelRange | null {
   if (list.children.filter(ModelNodeUtils.isListElement).length === 0) {
-    return mutator.unwrap(list);
+    return tr.unwrap(list);
   }
   return null;
 }

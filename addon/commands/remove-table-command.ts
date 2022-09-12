@@ -1,23 +1,29 @@
-import Command from './command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelTable from '@lblod/ember-rdfa-editor/model/model-table';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-
-export default class RemoveTableCommand extends Command {
-  name = 'remove-table';
-
-  constructor(model: Model) {
-    super(model);
+import Command, { CommandContext } from './command';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeTable: RemoveTableCommand;
   }
+}
+export interface RemoveTableCommandArgs {
+  selection?: ModelSelection;
+}
 
+export default class RemoveTableCommand
+  implements Command<RemoveTableCommandArgs, void>
+{
   canExecute(): boolean {
     return true;
   }
 
   @logExecute
-  execute(selection: ModelSelection = this.model.selection): void {
+  execute(
+    { transaction }: CommandContext,
+    { selection = transaction.workingCopy.selection }: RemoveTableCommandArgs
+  ): void {
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
@@ -27,16 +33,14 @@ export default class RemoveTableCommand extends Command {
       throw new Error('The selection is not inside a table');
     }
 
-    this.model.change((mutator) => {
-      if (table.parent) {
-        const offset = table.getOffset();
-        if (offset) {
-          selection.collapseIn(table.parent, offset);
-        } else {
-          selection.collapseIn(table.parent);
-        }
+    if (table.parent) {
+      const offset = table.getOffset();
+      if (offset) {
+        transaction.collapseIn(table.parent, offset);
+      } else {
+        transaction.collapseIn(table.parent);
       }
-      table.removeTable(mutator);
-    });
+    }
+    table.removeTable(transaction);
   }
 }

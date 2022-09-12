@@ -1,10 +1,12 @@
 import SelectionCommand from '@lblod/ember-rdfa-editor/commands/selection-command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    deleteSelection: DeleteSelectionCommand;
+  }
+}
 export default class DeleteSelectionCommand extends SelectionCommand {
-  name = 'delete-selection';
-
-  constructor(model: Model) {
-    super(model, true);
+  constructor() {
+    super(true);
   }
 }

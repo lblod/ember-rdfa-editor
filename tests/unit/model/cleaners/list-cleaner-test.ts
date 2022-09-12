@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
-import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ImmediateModelMutator from '@lblod/ember-rdfa-editor/model/mutators/immediate-model-mutator';
+import ListCleaner from '@lblod/ember-rdfa-editor/utils/list-cleaner';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { testState } from 'dummy/tests/test-utils';
 
 module('Unit | model | cleaners | list-cleaner-test', function () {
   test('should merge two adjacent lists', function (assert) {
@@ -38,13 +38,15 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
         </ul>
       </div>
     `;
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
 
     const cleaner = new ListCleaner();
-    const mutator = new ImmediateModelMutator();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range, mutator);
+    cleaner.clean(range, tr);
+    const resultState = tr.apply();
 
-    assert.true(initial.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('does not merge lists on a different level', function (assert) {
@@ -70,12 +72,16 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
     `;
 
     const expected = initial.clone();
-    const mutator = new ImmediateModelMutator();
+
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range, mutator);
+    cleaner.clean(range, tr);
+    const resultState = tr.apply();
 
-    assert.true(initial.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('does not merge lists with different attributes', function (assert) {
@@ -100,12 +106,16 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
 
     const expected = initial.clone();
 
-    const mutator = new ImmediateModelMutator();
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range, mutator);
+    cleaner.clean(range, tr);
 
-    assert.true(initial.sameAs(expected));
+    const resultState = tr.apply();
+
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('should merge lists with different but ignored attributes', function (assert) {
@@ -142,12 +152,16 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
       </div>
     `;
 
-    const mutator = new ImmediateModelMutator();
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range, mutator);
+    cleaner.clean(range, tr);
 
-    assert.true(initial.sameAs(expected));
+    const resultState = tr.apply();
+
+    assert.true(resultState.document.sameAs(expected));
   });
   test('should merge nested lists correctly', function (assert) {
     // language=XML
@@ -201,11 +215,14 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
       </div>
     `;
 
-    const mutator = new ImmediateModelMutator();
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
     const cleaner = new ListCleaner();
     const range = ModelRange.fromInElement(container, 0, 2);
-    cleaner.clean(range, mutator);
+    cleaner.clean(range, tr);
 
-    assert.true(initial.sameAs(expected));
+    const resultState = tr.apply();
+
+    assert.true(resultState.document.sameAs(expected));
   });
 });

@@ -1,28 +1,37 @@
-import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-
-export default class RemoveMarkCommand extends Command<[Mark], boolean> {
-  name = 'remove-mark';
-
-  constructor(model: Model) {
-    super(model);
+import { Mark } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeMark: RemoveMarkCommand;
   }
+}
+export interface RemoveMarkCommandArgs {
+  mark: Mark;
+}
 
-  execute(mark: Mark): boolean {
+export default class RemoveMarkCommand
+  implements Command<RemoveMarkCommandArgs, boolean>
+{
+  canExecute(): boolean {
+    return true;
+  }
+  execute(
+    { transaction }: CommandContext,
+    { mark }: RemoveMarkCommandArgs
+  ): boolean {
     const node = mark.node;
     if (node) {
       if (!node.hasMark(mark)) {
         return false;
       }
-      this.model.change((mutator) => {
-        mutator.removeMark(
-          ModelRange.fromAroundNode(node),
-          mark.spec,
-          mark.attributes
-        );
-      });
+      transaction.removeMark(
+        ModelRange.fromAroundNode(node),
+        mark.spec,
+        mark.attributes
+      );
       return true;
     }
     return false;

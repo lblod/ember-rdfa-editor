@@ -1,26 +1,37 @@
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import Model from '@lblod/ember-rdfa-editor/model/model';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
-export default class RemoveTypeCommand extends Command {
-  name = 'remove-type';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    removeType: RemoveTypeCommand;
+  }
+}
+export interface RemoveTypeCommandArgs {
+  type: string;
+  element: ModelElement;
+}
 
-  constructor(model: Model) {
-    super(model);
+export default class RemoveTypeCommand
+  implements Command<RemoveTypeCommandArgs, void>
+{
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
-  execute(type: string, element: ModelElement) {
+  execute(
+    { transaction }: CommandContext,
+    { type, element }: RemoveTypeCommandArgs
+  ) {
     const oldTypeof = element.getAttribute('typeof');
     const typesArray = oldTypeof ? oldTypeof.split(' ') : [];
     const newTypeof = typesArray.filter((t) => t !== type).join(' ');
-    let newNode;
-    this.model.change((mutator) => {
-      newNode = mutator.setProperty(element, 'typeof', newTypeof);
-      this.model.selectRange(ModelRange.fromInElement(newNode, 0, 0));
-    });
+    const newNode = transaction.setProperty(element, 'typeof', newTypeof);
+    transaction.selectRange(ModelRange.fromInElement(newNode, 0, 0));
     return newNode;
   }
 }

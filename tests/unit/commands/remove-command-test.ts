@@ -1,18 +1,15 @@
 import RemoveCommand from '@lblod/ember-rdfa-editor/commands/remove-command';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module('Unit | commands | remove-command', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: RemoveCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new RemoveCommand(ctx.model);
-  });
+module('Unit | commands | remove-command', function () {
+  const command = new RemoveCommand();
+  const executeCommand = makeTestExecute(command);
+
   test('removing part of first li in list', function (assert) {
     const {
       root: initial,
@@ -27,6 +24,7 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>tesbc</text>
@@ -35,15 +33,12 @@ module('Unit | commands | remove-command', function (hooks) {
           <li><text>abc</text></li>
         </ul>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
+
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing part of first li in nested list', function (assert) {
     const {
@@ -66,6 +61,7 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>tesbc</text>
@@ -74,15 +70,11 @@ module('Unit | commands | remove-command', function (hooks) {
           <li><text>abc</text></li>
         </ul>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing part of second li in nested list', function (assert) {
     const {
@@ -114,6 +106,7 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>tesbc</text>
@@ -124,15 +117,11 @@ module('Unit | commands | remove-command', function (hooks) {
           <li><text>abc</text></li>
         </ul>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(text1, 3);
     const end = ModelPosition.fromInNode(text2, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing part of complex nested list', function (assert) {
     const {
@@ -159,6 +148,7 @@ module('Unit | commands | remove-command', function (hooks) {
           </li>
         </ul>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
 
     const { root: expected } = vdom`
       <modelRoot>
@@ -168,15 +158,11 @@ module('Unit | commands | remove-command', function (hooks) {
           <li><text>555</text></li>
         </ul>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(text1, 2);
     const end = ModelPosition.fromInNode(text2, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove second li', function (assert) {
     const {
@@ -191,6 +177,7 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
     <modelRoot>
       <ul>
@@ -198,15 +185,11 @@ module('Unit | commands | remove-command', function (hooks) {
       </ul>
     </modelRoot>`;
 
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(li);
     const end = ModelPosition.fromInNode(text, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove first li at the beginning of the document', function (assert) {
     const {
@@ -221,6 +204,7 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
     <modelRoot>
       <text>abc</text>
@@ -228,15 +212,11 @@ module('Unit | commands | remove-command', function (hooks) {
         <li><text>d</text></li>
       </ul>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(ul);
     const end = ModelPosition.fromInNode(text, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove first li and its content at the beginning of the document', function (assert) {
     const {
@@ -251,21 +231,18 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
     <modelRoot>
       <ul>
         <li><text>abc</text></li>
       </ul>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(ul);
     const end = ModelPosition.fromInNode(text, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove only li at the beginning of the document', function (assert) {
     const {
@@ -278,20 +255,17 @@ module('Unit | commands | remove-command', function (hooks) {
           <li><text __id="text">abc</text></li>
         </ul>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
 
     const { root: expected } = vdom`
     <modelRoot>
       <text>abc</text>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(ul);
     const end = ModelPosition.fromInNode(text, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove only li with content at the beginning of the document', function (assert) {
     const {
@@ -305,19 +279,16 @@ module('Unit | commands | remove-command', function (hooks) {
         </ul>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
     <modelRoot>
       <text></text>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(ul);
     const end = ModelPosition.fromInNode(text, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('remove break between divs', function (assert) {
     const {
@@ -332,6 +303,7 @@ module('Unit | commands | remove-command', function (hooks) {
         <div __id="div"><text>this block is followed by two breaks</text></div>
       </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
     <modelRoot>
       <div>
@@ -341,15 +313,11 @@ module('Unit | commands | remove-command', function (hooks) {
         <text>this block is followed by two breaks</text>
       </div>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(br);
     const end = ModelPosition.fromBeforeNode(div);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('collapse into div', function (assert) {
     const {
@@ -363,22 +331,19 @@ module('Unit | commands | remove-command', function (hooks) {
         </div>
         <text __id="foo">foo</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <div __id="div">
           <text>textfoo</text>
         </div>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInElement(div, 4);
     const end = ModelPosition.fromBeforeNode(foo);
     // const start = end.shiftedVisually(-1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing second break of two breaks', function (assert) {
     const {
@@ -392,21 +357,18 @@ module('Unit | commands | remove-command', function (hooks) {
         <br __id="br"/>
         <text __id="foo">foo</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>baz</text>
         <br/>
         <text __id="foo">foo</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(br);
     const end = ModelPosition.fromInNode(foo, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing invisible span', function (assert) {
     const {
@@ -418,19 +380,16 @@ module('Unit | commands | remove-command', function (hooks) {
         <span></span>
         <text __id="foo">foo</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text __id="foo">bazfoo</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(baz, 3);
     const end = ModelPosition.fromInNode(foo, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('collapse into span', function (assert) {
     const {
@@ -442,20 +401,17 @@ module('Unit | commands | remove-command', function (hooks) {
         <span><text __id="bar">bar</text></span>
         <text __id="foo">foo</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
       <text>baz</text>
       <span><text>barfoo</text></span>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(bar, 3);
     const end = ModelPosition.fromInNode(foo, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing br in div', function (assert) {
     const {
@@ -468,6 +424,7 @@ module('Unit | commands | remove-command', function (hooks) {
           <br __id="br"/>
         </div>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
 
     const { root: expected } = vdom`
     <modelRoot>
@@ -475,15 +432,11 @@ module('Unit | commands | remove-command', function (hooks) {
         <text>foo</text>
       </div>
     </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(br);
     const end = ModelPosition.fromAfterNode(div);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing empty div', function (assert) {
     const {
@@ -495,19 +448,16 @@ module('Unit | commands | remove-command', function (hooks) {
         <div></div>
         <text __id="foo">foo</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>bazfoo</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(baz, 3);
     const end = ModelPosition.fromInNode(foo, 0);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('removing lump node', function (assert) {
     const {
@@ -520,19 +470,16 @@ module('Unit | commands | remove-command', function (hooks) {
       <text>foo</text>
     </modelRoot>`;
 
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text>bazfoo</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromBeforeNode(div);
     const end = ModelPosition.fromAfterNode(div);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('spaces at the end are preserved', function (assert) {
     const {
@@ -542,19 +489,16 @@ module('Unit | commands | remove-command', function (hooks) {
       <modelRoot>
         <text __id="baz">foobaz${NON_BREAKING_SPACE}t</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text __id="baz">foobaz${NON_BREAKING_SPACE}</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(baz, 7);
     const end = ModelPosition.fromInNode(baz, 8);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('spaces at the beginning are preserved', function (assert) {
     const {
@@ -564,18 +508,15 @@ module('Unit | commands | remove-command', function (hooks) {
       <modelRoot>
         <text __id="baz">t${NON_BREAKING_SPACE}foobaz</text>
       </modelRoot>`;
+    const initialState = testState({ document: initial });
     const { root: expected } = vdom`
       <modelRoot>
         <text __id="baz">${NON_BREAKING_SPACE}foobaz</text>
       </modelRoot>`;
-    ctx.model.fillRoot(initial);
     const start = ModelPosition.fromInNode(baz, 0);
     const end = ModelPosition.fromInNode(baz, 1);
-    const removeRange = new ModelRange(start, end);
-    command.execute(removeRange);
-    assert.true(
-      ctx.model.rootModelNode.sameAs(expected),
-      QUnit.dump.parse(ctx.model.rootModelNode)
-    );
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(resultState.document.sameAs(expected));
   });
 });

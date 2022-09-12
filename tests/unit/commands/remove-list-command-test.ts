@@ -1,19 +1,13 @@
 import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 
-module('Unit | commands | remove-list-command', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: RemoveListCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new RemoveListCommand(ctx.model);
-  });
+module('Unit | commands | remove-list-command', function () {
+  const command = new RemoveListCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('removing a simple list', function (assert) {
     // language=XML
@@ -37,33 +31,36 @@ module('Unit | commands | remove-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
+    const range = ModelRange.fromInNode(content, 0, 0);
 
-    ctx.modelSelection.collapseIn(content);
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removing a nested list', function (assert) {
-    const { modelSelection, model } = ctx;
-    const ul = new ModelElement('ul');
-    const li = new ModelElement('li');
+    const {
+      root: initial,
+      textNodes: { content },
+    } = vdom`
+      <modelRoot>
+        <ul>
+          <li>
+            <ul>
+              <li><text __id="content">test</text></li>
+            </ul>
+          </li>
+        </ul>
+      </modelRoot>`;
 
-    const ul2 = new ModelElement('ul');
-    const li2 = new ModelElement('li');
-    const content = new ModelText('test');
-
-    model.rootModelNode.addChild(ul);
-    ul.addChild(li);
-    li.addChild(ul2);
-    ul2.addChild(li2);
-    li2.addChild(content);
-
-    modelSelection.collapseIn(content);
-    command.execute();
-
-    assert.strictEqual(model.rootModelNode.firstChild, content);
-    assert.strictEqual(model.rootModelNode.children.length, 1);
+    const { root: expected } = vdom`
+      <modelRoot>
+        <text __id="content">test</text>
+      </modelRoot>`;
+    const range = ModelRange.fromInNode(content, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removing a nested list item with more elements', function (assert) {
@@ -124,10 +121,10 @@ module('Unit | commands | remove-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    ctx.model.selection.collapseIn(rangeStart, 0);
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(rangeStart, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removing a complex nested list', function (assert) {
@@ -206,18 +203,19 @@ module('Unit | commands | remove-list-command', function (hooks) {
       </modelRoot>
     `;
 
-    ctx.model.fillRoot(initial);
-    ctx.modelSelection.collapseIn(rangeStart);
-    command.execute();
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInNode(rangeStart, 0, 0);
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('removing list and a sublist using a selection', function (assert) {
     // language=XML
     const {
-      root: initialState,
+      root: initial,
       textNodes: { rangeStart, rangeEnd },
     } = vdom`
+      <modelRoot>
       <ul>
         <li>
           <text __id="rangeStart">top item 1</text>
@@ -237,11 +235,12 @@ module('Unit | commands | remove-list-command', function (hooks) {
           <text>top item 2</text>
         </li>
       </ul>
+      </modelRoot>
     `;
 
     // language=XML
-    const { root: expectedRoot } = vdom`
-      <dummy>
+    const { root: expected } = vdom`
+      <modelRoot>
         <text>top item 1</text>
         <br/>
         <text>subitem 1</text>
@@ -254,25 +253,14 @@ module('Unit | commands | remove-list-command', function (hooks) {
             <text>top item 2</text>
           </li>
         </ul>
-      </dummy>
+      </modelRoot>
     `;
 
-    const { modelSelection, model } = ctx;
-    model.rootModelNode.addChild(initialState);
     const startPosition = ModelPosition.fromInTextNode(rangeStart, 3);
     const endPosition = ModelPosition.fromInTextNode(rangeEnd, rangeEnd.length);
     const range = new ModelRange(startPosition, endPosition);
-    modelSelection.clearRanges();
-    modelSelection.addRange(range);
-    command.execute();
-    const resultRoot = model.rootModelNode;
-
-    assert.expect(resultRoot.children.length);
-
-    for (let i = 0; i < resultRoot.children.length; i++) {
-      const actual = resultRoot.children[i];
-      const expected = (expectedRoot as ModelElement).children[i];
-      assert.true(actual.sameAs(expected));
-    }
+    const initialState = stateWithRange(initial, range);
+    const { resultState } = executeCommand(initialState, {});
+    assert.true(resultState.document.sameAs(expected));
   });
 });

@@ -1,21 +1,38 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
-import ModelRange from '../model/model-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import {
+  HtmlReaderContext,
+  readHtml,
+} from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
+import ModelRange from '../core/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertHtml: InsertHtmlCommand;
+  }
+}
+export interface InsertHtmlCommandArgs {
+  htmlString: string;
+  range?: ModelRange | null;
+}
 
-export default class InsertHtmlCommand extends Command {
-  name = 'insert-html';
-
-  constructor(model: Model) {
-    super(model);
+export default class InsertHtmlCommand
+  implements Command<InsertHtmlCommandArgs, void>
+{
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
   execute(
-    htmlString: string,
-    range: ModelRange | null = this.model.selection.lastRange
+    { transaction }: CommandContext,
+
+    {
+      htmlString,
+      range = transaction.workingCopy.selection.lastRange,
+    }: InsertHtmlCommandArgs
   ) {
     if (!range) {
       return;
@@ -24,20 +41,24 @@ export default class InsertHtmlCommand extends Command {
     const parser = new DOMParser();
     const html = parser.parseFromString(htmlString, 'text/html');
     const bodyContent = html.body.childNodes;
-    const reader = new HtmlReader(this.model);
 
-    this.model.change((mutator) => {
-      // dom NodeList doesn't have a map method
-      const modelNodes: ModelNode[] = [];
-      bodyContent.forEach((node) => {
-        const parsed = reader.read(node, true);
-        if (parsed) {
-          modelNodes.push(...parsed);
-        }
-      });
-
-      const newRange = mutator.insertNodes(range, ...modelNodes);
-      this.model.selectRange(newRange);
+    // dom NodeList doesn't have a map method
+    const modelNodes: ModelNode[] = [];
+    bodyContent.forEach((node) => {
+      const parsed = readHtml(
+        node,
+        new HtmlReaderContext({
+          marksRegistry: transaction.workingCopy.marksRegistry,
+          shouldConvertWhitespace: true,
+          inlineComponentsRegistry:
+            transaction.workingCopy.inlineComponentsRegistry,
+        })
+      );
+      if (parsed) {
+        modelNodes.push(...parsed);
+      }
     });
+
+    transaction.insertNodes(range, ...modelNodes);
   }
 }

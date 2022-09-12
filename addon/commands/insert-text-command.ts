@@ -1,54 +1,77 @@
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
+import Command, {
+  CommandContext,
+} from '@lblod/ember-rdfa-editor/commands/command';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelElement from '../model/model-element';
+import ModelElement from '../core/model/nodes/model-element';
 import { logExecute } from '../utils/logging-utils';
-import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
+import { MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 
-export default class InsertTextCommand extends Command {
-  name = 'insert-text';
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    insertText: InsertTextCommand;
+  }
+}
 
-  constructor(model: Model) {
-    super(model);
+export interface InsertTextCommandArgs {
+  text: string;
+  range: ModelRange | null;
+  marks?: MarkSet;
+  needsToWrite?: boolean;
+}
+
+export default class InsertTextCommand
+  implements Command<InsertTextCommandArgs, void>
+{
+  canExecute(): boolean {
+    return true;
   }
 
   @logExecute
   execute(
-    text: string,
-    range: ModelRange | null = this.model.selection.lastRange,
-    marks: MarkSet = range === this.model.selection.lastRange
-      ? this.model.selection.activeMarks
-      : range?.getMarks() || new MarkSet()
+    { transaction }: CommandContext,
+    {
+      text,
+      range,
+      marks = transaction.workingCopy.selection.lastRange &&
+      range?.sameAs(transaction.workingCopy.selection.lastRange)
+        ? transaction.workingCopy.selection.activeMarks
+        : range?.getMarks() || new MarkSet(),
+    }: InsertTextCommandArgs
   ): void {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
 
     const newLines = text.matchAll(/\n/g);
-    this.model.change((mutator) => {
-      let resultRange = range;
-      if (newLines) {
-        let previousIndex = 0;
-        for (const newLineMatch of newLines) {
-          const position = newLineMatch.index!;
-          const line = text.substring(previousIndex, position);
-          resultRange = mutator.insertText(resultRange, line, marks);
-          resultRange.collapse(false);
-          resultRange = mutator.insertNodes(
-            resultRange,
-            new ModelElement('br')
-          );
-          resultRange.collapse(false);
-          previousIndex = position + 1;
-        }
-        const lastLine = text.substring(previousIndex, text.length);
-        resultRange = mutator.insertText(resultRange, lastLine, marks);
-      } else {
-        resultRange = mutator.insertText(range, text, marks);
+    let resultRange = range;
+    if (newLines) {
+      let previousIndex = 0;
+      for (const newLineMatch of newLines) {
+        const position = newLineMatch.index!;
+        const line = text.substring(previousIndex, position);
+        resultRange = transaction.insertText({
+          range: resultRange,
+          text: line,
+          marks,
+        });
+        resultRange.collapse(false);
+        resultRange = transaction.insertNodes(
+          resultRange,
+          new ModelElement('br')
+        );
+        resultRange.collapse(false);
+        previousIndex = position + 1;
       }
-      resultRange.collapse(false);
-      this.model.selectRange(resultRange);
-    });
+      const lastLine = text.substring(previousIndex, text.length);
+      transaction.insertText({
+        range: resultRange,
+        text: lastLine,
+        marks,
+      });
+    } else {
+      transaction.insertText({ range, text, marks });
+    }
+    transaction.collapseSelection();
   }
 }

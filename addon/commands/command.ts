@@ -1,33 +1,26 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import {
-  createLogger,
-  Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import State from '../core/state';
+import Transaction from '../core/state/transaction';
+
+export interface CommandContext {
+  transaction: Transaction;
+}
 
 /**
- * Commands are the only things that are allowed to modify the model.
- * TODO: Currently this restriction is not enforced yet.
- * They need to be registered with {@link RawEditor.registerCommand()} before they
- * can be executed with {@link RawEditor.executeCommand()}.
- */
-export default abstract class Command<
-  A extends unknown[] = unknown[],
-  R = void
-> {
-  abstract name: string;
-  protected model: Model;
-  protected logger: Logger;
-  createSnapshot: boolean;
+ * Represents an editing action at the highest level, and are built on top of the @link{Transaction} primitive.
+ * You can think of it this way:
+ * if a series of edits made with transactions would be a private script,
+ * turning them into a command would be to turn that script into a real, published package
+ *
+ * Emacs users might also consider them "interactive" functions as opposed to non-interactive ones.
+ *
+ * Essentially commands are the answer to the question "Hey editor, what can you do?"
+ * Whereas transactions are the answer to the followup question "Ah but what if I wanted to do _this other thing_?"
+ *
+ * You may encounter commands that do not follow this logic, that's because commands predate
+ * this insight.
+ * */
+export default interface Command<A, R> {
+  canExecute(state: State, args: A): boolean;
 
-  protected constructor(model: Model, createSnapshot = true) {
-    this.model = model;
-    this.createSnapshot = createSnapshot;
-    this.logger = createLogger(`command:${this.constructor.name}`);
-  }
-
-  canExecute(..._args: A): boolean {
-    return true;
-  }
-
-  abstract execute(...args: A): R;
+  execute(context: CommandContext, args: A): R;
 }

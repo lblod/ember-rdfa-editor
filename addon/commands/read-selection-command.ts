@@ -1,10 +1,12 @@
 import SelectionCommand from '@lblod/ember-rdfa-editor/commands/selection-command';
-import Model from '@lblod/ember-rdfa-editor/model/model';
 
+declare module '@lblod/ember-rdfa-editor' {
+  export interface Commands {
+    readSelection: ReadSelectionCommand;
+  }
+}
 export default class ReadSelectionCommand extends SelectionCommand {
-  name = 'read-selection';
-
-  constructor(model: Model) {
-    super(model, false);
+  constructor() {
+    super(false);
   }
 }

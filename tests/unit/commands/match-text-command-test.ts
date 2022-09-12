@@ -1,18 +1,14 @@
-import { module, test } from 'qunit';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
 import MatchTextCommand from '@lblod/ember-rdfa-editor/commands/match-text-command';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | match-text-command-text', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: MatchTextCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new MatchTextCommand(ctx.model);
-  });
+module('Unit | commands | match-text-command-text', function () {
+  const command = new MatchTextCommand();
+  const executeCommand = makeTestExecute(command);
   test('finds text in simple range', function (assert) {
     //language=XML
     const {
@@ -25,11 +21,12 @@ module('Unit | commands | match-text-command-text', function (hooks) {
     `;
 
     const expectedRange = ModelRange.fromInNode(contentNode, 4, 8);
-    const result = command.execute(
-      ModelRange.fromInElement(root as ModelElement),
-      /test/g
-    );
-    ctx.model.fillRoot(root);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: result } = executeCommand(initialState, {
+      limitRange,
+      regex: /test/g,
+    });
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0].text, 'test');
     assert.strictEqual(result[0].index, 4);
@@ -50,9 +47,12 @@ module('Unit | commands | match-text-command-text', function (hooks) {
       [2],
       [4, 2]
     );
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const result = command.execute(searchRange, /3456/);
-    ctx.model.fillRoot(root);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: result } = executeCommand(initialState, {
+      limitRange,
+      regex: /3456/g,
+    });
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0].text, '3456');
     assert.strictEqual(result[0].index, 2);
@@ -81,8 +81,13 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         </span>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const results = command.execute(searchRange, /test/g);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /test/g,
+    });
     const expectedRange1 = ModelRange.fromPaths(root as ModelElement, [0], [4]);
     const expectedRange2 = ModelRange.fromPaths(
       root as ModelElement,
@@ -95,7 +100,6 @@ module('Unit | commands | match-text-command-text', function (hooks) {
       [7, 1]
     );
 
-    ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 3);
     assert.true(results[0].range.sameAs(expectedRange1));
     assert.true(results[1].range.sameAs(expectedRange2));
@@ -113,10 +117,13 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         </div>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const results = command.execute(searchRange, /test/g);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /test/g,
+    });
 
-    ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 0);
   });
   test('match across invisible spaces', function (assert) {
@@ -128,10 +135,13 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         </div>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const results = command.execute(searchRange, /test/g);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /test/g,
+    });
 
-    ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 1);
   });
   test('match block node boundary as newline', function (assert) {
@@ -146,15 +156,18 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         </div>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const results = command.execute(searchRange, /te\nst/g);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /te\nst/g,
+    });
 
     const expectedRange = ModelRange.fromPaths(
       root as ModelElement,
       [0, 0],
       [1, 2]
     );
-    ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 1);
 
     assert.true(results[0].range.sameAs(expectedRange));
@@ -171,15 +184,18 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         </div>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(root as ModelElement);
-    const results = command.execute(searchRange, /\n\n\n/g);
+    const limitRange = ModelRange.fromInElement(root as ModelElement);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /\n\n\n/g,
+    });
 
     const expectedRange = ModelRange.fromPaths(
       root as ModelElement,
       [1],
       [3, 0]
     );
-    ctx.model.fillRoot(root as ModelElement);
     assert.strictEqual(results.length, 1);
 
     assert.true(results[0].range.sameAs(expectedRange));
@@ -187,6 +203,7 @@ module('Unit | commands | match-text-command-text', function (hooks) {
   test('only match inside of searchRange', function (assert) {
     //language=XML
     const {
+      root,
       textNodes: { resultNode },
       elements: { searchContainer },
     } = vdom`
@@ -197,14 +214,19 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         <span>text</span>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(searchContainer);
-    const results = command.execute(searchRange, /text/g);
+    const limitRange = ModelRange.fromInElement(searchContainer);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /text/g,
+    });
     assert.strictEqual(results.length, 1);
     assert.true(results[0].range.sameAs(ModelRange.fromAroundNode(resultNode)));
   });
   test('only match greedy', function (assert) {
     //language=XML
     const {
+      root,
       textNodes: { resultNode },
       elements: { searchContainer },
     } = vdom`
@@ -215,8 +237,12 @@ module('Unit | commands | match-text-command-text', function (hooks) {
         <span>text</span>
       </modelRoot>
     `;
-    const searchRange = ModelRange.fromInElement(searchContainer);
-    const results = command.execute(searchRange, /t.*/g);
+    const limitRange = ModelRange.fromInElement(searchContainer);
+    const initialState = testState({ document: root });
+    const { resultValue: results } = executeCommand(initialState, {
+      limitRange,
+      regex: /t.*/g,
+    });
     assert.strictEqual(results.length, 1);
     assert.true(results[0].range.sameAs(ModelRange.fromAroundNode(resultNode)));
   });

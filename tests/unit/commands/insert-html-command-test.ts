@@ -1,29 +1,26 @@
-import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import ModelTestContext from 'dummy/tests/utilities/model-test-context';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import InsertHtmlCommand from '@lblod/ember-rdfa-editor/commands/insert-html-command';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
+import ModelTreeWalker, {
+  FilterResult,
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { oneLineTrim } from 'common-tags';
-import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { FilterResult } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
+import { makeTestExecute, testState } from 'dummy/tests/test-utils';
+import { module, test } from 'qunit';
 
-module('Unit | commands | insert-html-command-test', function (hooks) {
-  const ctx = new ModelTestContext();
-  let command: InsertHtmlCommand;
-  hooks.beforeEach(() => {
-    ctx.reset();
-    command = new InsertHtmlCommand(ctx.model);
-  });
+module('Unit | commands | insert-html-command-test', function () {
+  const command = new InsertHtmlCommand();
+  const executeCommand = makeTestExecute(command);
 
   test('inserts correctly in empty document', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -35,11 +32,13 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
     `;
 
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    command.execute(htmlToInsert, range);
+    const range = ModelRange.fromInElement(initialState.document, 0, 0);
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
 
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
   });
   test('inserts correctly in document with empty textnode', function (assert) {
     // language=XML
@@ -49,6 +48,7 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
       </modelRoot>
     `;
 
+    const initialState = testState({ document: initial });
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
@@ -60,11 +60,13 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
     `;
 
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 0, 0);
-    command.execute(htmlToInsert, range);
+    const range = ModelRange.fromInElement(initialState.document, 0, 0);
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
 
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('inserts correctly inside textnode', function (assert) {
@@ -75,6 +77,7 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
       </modelRoot>
     `;
 
+    const initialState = testState({ document: initial });
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
@@ -87,11 +90,12 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
     `;
 
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 2, 2);
-    command.execute(htmlToInsert, range);
-
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInElement(initialState.document, 2, 2);
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('correctly replaces part of textnode', function (assert) {
     // language=XML
@@ -100,6 +104,7 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
         <text>abcd</text>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -113,11 +118,12 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
     `;
 
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
-    ctx.model.fillRoot(initial);
-    const range = ModelRange.fromInElement(ctx.model.rootModelNode, 1, 3);
-    command.execute(htmlToInsert, range);
-
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const range = ModelRange.fromInElement(initialState.document, 1, 3);
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
+    assert.true(resultState.document.sameAs(expected));
   });
   test('correctly replaces complex range', function (assert) {
     // language=XML
@@ -137,6 +143,7 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
         </div>
       </modelRoot>
     `;
+    const initialState = testState({ document: initial });
 
     // language=XML
     const { root: expected } = vdom`
@@ -156,38 +163,42 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
     `;
 
     const htmlToInsert = oneLineTrim`<div>hello world</div>`;
-    ctx.model.fillRoot(initial);
 
     const start = ModelPosition.fromInTextNode(rangeStart, 1);
     const end = ModelPosition.fromInTextNode(rangeEnd, 3);
     const range = new ModelRange(start, end);
-    command.execute(htmlToInsert, range);
-
-    assert.true(ctx.model.rootModelNode.sameAs(expected));
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('can insert bold text as a direct child of the root node', function (assert) {
     // language=XML
     const { root: initial } = vdom`
       <modelRoot/>`;
+    const initialState = testState({ document: initial });
     // language=XML
     const { root: expected } = vdom`
       <modelRoot>
         <text __marks="bold">my text</text>
       </modelRoot>`;
     const htmlToInsert = oneLineTrim`<strong>my text</strong>`;
-    ctx.model.fillRoot(initial);
-    ctx.model.registerMark(boldMarkSpec);
-    const root = ctx.model.rootModelNode;
+    const root = initialState.document;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
-    command.execute(htmlToInsert, range);
-    assert.true(root.sameAs(expected));
+    const { resultState } = executeCommand(initialState, {
+      htmlString: htmlToInsert,
+      range,
+    });
+    assert.true(resultState.document.sameAs(expected));
   });
 
   test('properly removes empty text nodes', function (assert) {
     // language=XML
     const { root: initial } = vdom`
 <modelRoot/>`;
+    const initialState = testState({ document: initial });
     // language=HTML
     const htmlString = `
 <div>
@@ -197,29 +208,36 @@ module('Unit | commands | insert-html-command-test', function (hooks) {
 \t\t
 </div>
 `;
-    ctx.model.fillRoot(initial);
-    const root = ctx.model.rootModelNode;
+    const root = initialState.document;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
-    command.execute(htmlString, range);
+    const { resultState } = executeCommand(initialState, {
+      htmlString,
+      range,
+    });
     const filter = (node: ModelNode) =>
       ModelNode.isModelText(node)
         ? FilterResult.FILTER_ACCEPT
         : FilterResult.FILTER_SKIP;
-    const textNodes = Array.from(new ModelTreeWalker({ range, filter }));
+    const textNodes = Array.from(
+      new ModelTreeWalker({ range: range.clone(resultState.document), filter })
+    );
     assert.strictEqual(textNodes.length, 1);
   });
   test('properly collapses spaces', function (assert) {
     // language=XML
     const { root: initial } = vdom`
 <modelRoot/>`;
+    const initialState = testState({ document: initial });
     // language=HTML
     const htmlString = `  the spaces before this don't show and should be removed`;
-    ctx.model.fillRoot(initial);
-    const root = ctx.model.rootModelNode;
+    const root = initialState.document;
     const range = ModelRange.fromInElement(root, 0, root.getMaxOffset());
-    command.execute(htmlString, range);
+    const { resultState } = executeCommand(initialState, {
+      htmlString,
+      range,
+    });
     assert.strictEqual(
-      (root.firstChild as ModelText).content,
+      (resultState.document.firstChild as ModelText).content,
       "the spaces before this don't show and should be removed"
     );
   });
