@@ -96,10 +96,10 @@ export default class RdfaDocumentController
   }
 
   on<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this.on(eventName, callback);
+    this.onEvent(eventName, callback);
   }
 
   off<E extends AnyEventName>(eventName: E, callback: EditorEventListener<E>) {
-    this.off(eventName, callback);
+    this.offEvent(eventName, callback);
   }
 }
