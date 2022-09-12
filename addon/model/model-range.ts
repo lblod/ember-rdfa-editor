@@ -1,20 +1,20 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import { Predicate } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import ModelTreeWalker, {
   FilterResult,
   toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import GenTreeWalker, {
   WalkFilter,
-} from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+} from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { IllegalArgumentError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
 
 export type StickySide = 'none' | 'left' | 'right' | 'both';

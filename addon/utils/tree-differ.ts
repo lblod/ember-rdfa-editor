@@ -1,4 +1,4 @@
-import ModelNode, { DirtyType } from '../model-node';
+import ModelNode, { DirtyType } from '../model/model-node';
 
 export type Difference = {
   node: ModelNode;

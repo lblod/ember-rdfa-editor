@@ -6,8 +6,8 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import {
   ImpossibleModelStateError,
   MisbehavedSelectionError,

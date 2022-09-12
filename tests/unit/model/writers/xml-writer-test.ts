@@ -1,8 +1,5 @@
 import { module, test } from 'qunit';
-import {
-  printModel,
-  vdom,
-} from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { printModel, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 
 module('Unit | model | writers | xml-writer-test', function () {
   test('writes out a sensible document', function (assert) {

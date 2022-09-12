@@ -4,8 +4,8 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class ListPlugin implements EditorPlugin {

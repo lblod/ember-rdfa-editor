@@ -6,8 +6,8 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import {
   MisbehavedSelectionError,
   ModelError,
@@ -15,9 +15,9 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../model/model-element';
 import ModelText from '../model/model-text';
-import { PropertyState } from '../model/util/types';
-import { INVISIBLE_SPACE } from '../model/util/constants';
-import GenTreeWalker from '../model/util/gen-tree-walker';
+import { PropertyState } from '../utils/types';
+import { INVISIBLE_SPACE } from '../utils/constants';
+import GenTreeWalker from '../utils/gen-tree-walker';
 import State from '../core/state';
 
 declare module '@lblod/ember-rdfa-editor' {

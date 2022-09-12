@@ -16,22 +16,22 @@ import {
   ConciseTerm,
   conciseToRdfjs,
   TermConverter,
-} from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
+} from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
-import { ResultSet } from '@lblod/ember-rdfa-editor/model/util/datastore/result-set';
-import { TermMapping } from '@lblod/ember-rdfa-editor/model/util/datastore/term-mapping';
+import { ResultSet } from '@lblod/ember-rdfa-editor/utils/datastore/result-set';
+import { TermMapping } from '@lblod/ember-rdfa-editor/utils/datastore/term-mapping';
 import {
   isPrimitive,
   ObjectSpec,
   PredicateSpec,
   SubjectSpec,
-} from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+} from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
 import {
   matchText,
   TextMatch,
 } from '@lblod/ember-rdfa-editor/utils/match-text';
-import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
-import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { GraphyDataset } from './graphy-dataset';
 
 interface TermNodesResponse {

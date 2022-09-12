@@ -3,12 +3,12 @@ import {
   MisbehavedSelectionError,
   SelectionError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelTreeWalker from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

@@ -1,7 +1,7 @@
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';

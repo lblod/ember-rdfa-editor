@@ -1,8 +1,8 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import {
   IllegalExecutionStateError,
   MisbehavedSelectionError,

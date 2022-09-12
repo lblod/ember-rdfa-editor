@@ -1,5 +1,5 @@
-import ModelNode from '../model-node';
-import ModelPosition from '../model-position';
+import ModelNode from '../model/model-node';
+import ModelPosition from '../model/model-position';
 
 export default class ModelPositionUtils {
   static isValid(position: ModelPosition) {

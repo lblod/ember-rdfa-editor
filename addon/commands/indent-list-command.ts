@@ -10,8 +10,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import State from '../core/state';
 

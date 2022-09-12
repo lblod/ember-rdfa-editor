@@ -20,8 +20,8 @@ import MarkOperation from '../model/operations/mark-operation';
 import ModelPosition from '../model/model-position';
 import SplitOperation from '../model/operations/split-operation';
 import MoveOperation from '../model/operations/move-operation';
-import { EditorStore } from '../model/util/datastore/datastore';
-import { AttributeSpec } from '../model/util/render-spec';
+import { EditorStore } from '../utils/datastore/datastore';
+import { AttributeSpec } from '../utils/render-spec';
 import RemoveOperation from '../model/operations/remove-operation';
 import {
   CommandExecutor,

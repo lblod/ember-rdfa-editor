@@ -13,7 +13,7 @@ import {
   dom,
   domStripped,
   vdom,
-} from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+} from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';

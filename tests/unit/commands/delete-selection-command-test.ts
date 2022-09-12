@@ -4,8 +4,8 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 

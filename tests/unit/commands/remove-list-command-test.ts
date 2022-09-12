@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import RemoveListCommand from '@lblod/ember-rdfa-editor/commands/remove-list-command';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 
 module('Unit | commands | remove-list-command', function () {

@@ -1,5 +1,5 @@
 import Controller from '../controller';
-import { Serializable } from '../util/render-spec';
+import { Serializable } from '../../utils/render-spec';
 import {
   ModelInlineComponent,
   Properties,

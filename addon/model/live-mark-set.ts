@@ -1,4 +1,4 @@
-import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
+import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import EventBus, {
   AnyEventName,
@@ -7,9 +7,9 @@ import EventBus, {
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
-import { AttributeSpec } from './util/render-spec';
+import { AttributeSpec } from '../utils/render-spec';
 import Transaction from '../core/transaction';
-import ModelRangeUtils from './util/model-range-utils';
+import ModelRangeUtils from '../utils/model-range-utils';
 import { isOperationStep, Step } from '../core/steps/step';
 
 export type LiveMarkSpec =

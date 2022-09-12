@@ -1,6 +1,6 @@
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import { AnyEventName } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';

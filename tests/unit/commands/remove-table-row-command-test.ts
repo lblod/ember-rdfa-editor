@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import RemoveTableRowCommand from '@lblod/ember-rdfa-editor/commands/remove-table-row-command';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 

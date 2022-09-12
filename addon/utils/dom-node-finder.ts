@@ -1,5 +1,5 @@
-import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
-import NodeFinder from '@lblod/ember-rdfa-editor/model/util/node-finder';
+import { Direction } from '@lblod/ember-rdfa-editor/utils/types';
+import NodeFinder from '@lblod/ember-rdfa-editor/utils/node-finder';
 
 /**
  * {@link Node domNode} implementation of a {@link NodeFinder}

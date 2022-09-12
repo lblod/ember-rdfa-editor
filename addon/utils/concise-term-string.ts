@@ -1,9 +1,6 @@
 import * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import {
-  RDF_TYPE,
-  XSD_PREFIX,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
+import { RDF_TYPE, XSD_PREFIX } from '@lblod/ember-rdfa-editor/utils/constants';
 import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**

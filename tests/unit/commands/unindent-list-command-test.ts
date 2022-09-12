@@ -1,6 +1,6 @@
 import UnindentListCommand from '@lblod/ember-rdfa-editor/commands/unindent-list-command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 

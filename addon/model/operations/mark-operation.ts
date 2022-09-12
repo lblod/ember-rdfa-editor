@@ -5,15 +5,15 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import {
   CORE_OWNER,
   INVISIBLE_SPACE,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
+} from '@lblod/ember-rdfa-editor/utils/constants';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
-import { AttributeSpec } from '../util/render-spec';
-import GenTreeWalker from '../util/gen-tree-walker';
+import { AttributeSpec } from '../../utils/render-spec';
+import GenTreeWalker from '../../utils/gen-tree-walker';
 import Operation from './operation';
 
 type MarkAction = 'add' | 'remove';

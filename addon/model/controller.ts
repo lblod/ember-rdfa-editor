@@ -11,11 +11,11 @@ import {
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import Datastore from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
+import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import GenTreeWalker, {
   TreeWalkerFactory,
-} from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+} from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 import {
   AnyEventName,
@@ -30,8 +30,8 @@ import Transaction, {
 import { View } from '../core/view';
 import { InlineComponentSpec } from './inline-components/model-inline-component';
 import ModelNode from './model-node';
-import MapUtils from './util/map-utils';
-import { AttributeSpec } from './util/render-spec';
+import MapUtils from '../utils/map-utils';
+import { AttributeSpec } from '../utils/render-spec';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 

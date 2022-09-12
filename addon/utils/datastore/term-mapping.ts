@@ -3,9 +3,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   conciseToRdfjs,
   PrefixMapping,
-} from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
+} from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 import { first, isEmpty, flatMap, map, filter, execPipe } from 'iter-tools';
-import { TermSpec } from '@lblod/ember-rdfa-editor/model/util/datastore/term-spec';
+import { TermSpec } from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
 import { single } from '../iterator-utils';
 
 /**

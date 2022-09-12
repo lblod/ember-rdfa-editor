@@ -7,8 +7,8 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import readHtmlNode from '@lblod/ember-rdfa-editor/model/readers/html-node-reader';
 import InlineComponentsRegistry from '../inline-components/inline-components-registry';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
-import { calculateRdfaPrefixes } from '../util/rdfa-utils';
-import { AttributeSpec } from '../util/render-spec';
+import { calculateRdfaPrefixes } from '../../utils/rdfa-utils';
+import { AttributeSpec } from '../../utils/render-spec';
 
 export interface HtmlReaderContextArgs {
   rdfaPrefixes?: Map<string, string>;

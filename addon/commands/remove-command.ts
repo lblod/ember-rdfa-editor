@@ -8,9 +8,9 @@ import ModelElement from '../model/model-element';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
 import ModelRange from '../model/model-range';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import ModelNodeUtils from '../model/util/model-node-utils';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
+import GenTreeWalker from '../utils/gen-tree-walker';
+import ModelNodeUtils from '../utils/model-node-utils';
+import { toFilterSkipFalse } from '../utils/model-tree-walker';
 import { ImpossibleModelStateError } from '../utils/errors';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

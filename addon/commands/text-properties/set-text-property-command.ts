@@ -1,7 +1,7 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/utils/constants';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import Command, { CommandContext } from '../command';
 

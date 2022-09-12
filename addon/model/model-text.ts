@@ -6,7 +6,7 @@ import ModelNode, {
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/editor/utils';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 
 const NON_BREAKING_SPACE = '\u00A0';

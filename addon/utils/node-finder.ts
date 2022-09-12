@@ -1,5 +1,5 @@
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import { Direction } from '@lblod/ember-rdfa-editor/model/util/types';
+import { Direction } from '@lblod/ember-rdfa-editor/utils/types';
 
 export type NodeFinderFilter<T, R extends T> = (node: T) => node is R;
 export type NodeFinderPredicate<T, R extends T> = (node: R) => boolean;

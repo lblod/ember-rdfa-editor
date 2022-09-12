@@ -1,4 +1,4 @@
-import { FilterResult } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import { FilterResult } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
@@ -6,7 +6,7 @@ import {
   NotImplementedError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { NOOP } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { NOOP } from '@lblod/ember-rdfa-editor/utils/constants';
 
 export interface Walkable {
   parentNode: Walkable | null;

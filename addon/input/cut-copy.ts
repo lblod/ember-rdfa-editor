@@ -1,8 +1,8 @@
 import { CommandName } from '@lblod/ember-rdfa-editor';
 import Controller from '../model/controller';
 import ModelNode from '../model/model-node';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
+import GenTreeWalker from '../utils/gen-tree-walker';
+import { toFilterSkipFalse } from '../utils/model-tree-walker';
 import writeExportedHtml from '../model/writers/html-export-writer';
 
 export default function handleCutCopy(

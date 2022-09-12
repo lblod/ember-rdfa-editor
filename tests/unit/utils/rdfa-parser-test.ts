@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { RdfaParser } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { conciseToRdfjs } from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
+import { conciseToRdfjs } from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 
 module('Unit | utils | rdfa-parser-test', function () {
   test('parses simple dom correctly', function (assert) {

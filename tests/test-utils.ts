@@ -17,8 +17,8 @@ import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
-import { Difference } from '@lblod/ember-rdfa-editor/model/util/tree-differ';
+import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { Difference } from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import hbs from 'htmlbars-inline-precompile';
 

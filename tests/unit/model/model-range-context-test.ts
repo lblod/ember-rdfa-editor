@@ -3,7 +3,7 @@ import { XmlReaderResult } from '@lblod/ember-rdfa-editor/model/readers/xml-read
 import ModelRange, {
   RangeContextStrategy,
 } from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 

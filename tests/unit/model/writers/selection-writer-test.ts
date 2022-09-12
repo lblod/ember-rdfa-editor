@@ -1,6 +1,6 @@
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
 import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { testState, testView } from 'dummy/tests/test-utils';

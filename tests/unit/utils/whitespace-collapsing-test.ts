@@ -3,7 +3,7 @@ import {
   preWrapToNormalWhiteSpace,
   normalToPreWrapWhiteSpace,
 } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
-import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 
 module(
   'Unit | utils | whitespace-collapsing | pre-wrap-to-normal ',

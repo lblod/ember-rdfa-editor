@@ -1,4 +1,4 @@
-import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import {
@@ -9,8 +9,8 @@ import {
   PLACEHOLDER_CLASS,
   TABLE_CELLS,
   VISUAL_NODES,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelText from '../model-text';
+} from '@lblod/ember-rdfa-editor/utils/constants';
+import ModelText from '../model/model-text';
 import StringUtils from './string-utils';
 import { Direction } from './types';
 

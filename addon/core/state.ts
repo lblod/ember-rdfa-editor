@@ -41,7 +41,7 @@ import { InternalWidgetSpec, WidgetLocation } from '../model/controller';
 import InlineComponentsRegistry from '../model/inline-components/inline-components-registry';
 import { highlightMarkSpec } from '../model/mark';
 import MarksRegistry from '../model/marks-registry';
-import Datastore, { EditorStore } from '../model/util/datastore/datastore';
+import Datastore, { EditorStore } from '../utils/datastore/datastore';
 import { boldMarkSpec } from '../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '../plugins/basic-styles/marks/strikethrough';

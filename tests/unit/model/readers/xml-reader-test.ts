@@ -1,5 +1,5 @@
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { parseXml, vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { parseXml, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { module, test } from 'qunit';
 
 module('Unit | model | readers | xml-reader-test', function () {

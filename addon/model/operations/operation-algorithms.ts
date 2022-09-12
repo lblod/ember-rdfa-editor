@@ -1,14 +1,14 @@
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelTreeWalker, {
   toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import RangeMapper, {
   LeftOrRight,
 } from '@lblod/ember-rdfa-editor/model/range-mapper';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/model/util/types';
+import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 
 export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;

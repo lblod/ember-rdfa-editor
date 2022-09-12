@@ -2,7 +2,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   ModelNodeFinderFilter,
   ModelNodeFinderPredicate,
-} from '@lblod/ember-rdfa-editor/model/util/model-node-finder';
+} from '@lblod/ember-rdfa-editor/utils/model-node-finder';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 
 export type HtmlTag = keyof HTMLElementTagNameMap;

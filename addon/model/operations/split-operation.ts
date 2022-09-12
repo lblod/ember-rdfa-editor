@@ -3,7 +3,7 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/opera
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import Operation from './operation';
 
 export default class SplitOperation extends Operation {

@@ -3,7 +3,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import RangeMapper from '@lblod/ember-rdfa-editor/model/range-mapper';
 import Operation from './operation';
 

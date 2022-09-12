@@ -1,11 +1,9 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import {
-  domStripped,
-  vdom,
-} from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { domStripped, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { domPosToModelPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
+
 module('Unit | model | dom-pos-to-model-pos', function () {
   test('converts position in empty root', function (assert) {
     const dom = domStripped`

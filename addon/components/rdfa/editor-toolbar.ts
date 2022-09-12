@@ -9,7 +9,7 @@ import {
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
+import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
 
 interface Args {
   showTextStyleButtons: boolean;

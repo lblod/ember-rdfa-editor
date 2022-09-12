@@ -1,8 +1,8 @@
 import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import ModelRangeUtils from '@lblod/ember-rdfa-editor/model/util/model-range-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class PlaceHolderPlugin implements EditorPlugin {

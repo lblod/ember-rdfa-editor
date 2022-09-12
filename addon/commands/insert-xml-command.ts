@@ -2,7 +2,7 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { parseXmlSiblings } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 

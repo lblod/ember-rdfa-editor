@@ -3,10 +3,10 @@ import ModelElement from '../model/model-element';
 import ModelNode from '../model/model-node';
 import ModelPosition from '../model/model-position';
 import ModelRange from '../model/model-range';
-import GenTreeWalker from '../model/util/gen-tree-walker';
-import ModelNodeUtils from '../model/util/model-node-utils';
-import { toFilterSkipFalse } from '../model/util/model-tree-walker';
-import { Direction } from '../model/util/types';
+import GenTreeWalker from '../utils/gen-tree-walker';
+import ModelNodeUtils from '../utils/model-node-utils';
+import { toFilterSkipFalse } from '../utils/model-tree-walker';
+import { Direction } from '../utils/types';
 
 export default function handleTab(dir: 1 | -1) {
   return function (controller: Controller, event: KeyboardEvent) {

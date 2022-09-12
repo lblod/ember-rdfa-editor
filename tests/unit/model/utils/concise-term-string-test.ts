@@ -3,9 +3,9 @@ import { DataFactory } from 'rdf-data-factory';
 import {
   conciseToRdfjs,
   xsd,
-} from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
+} from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 import sinon from 'sinon';
-import { RDF_TYPE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { RDF_TYPE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 module('Unit | model | utils | concise-term-string-test', function () {

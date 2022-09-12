@@ -7,8 +7,8 @@ import {
   MisbehavedSelectionError,
   ModelError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import { AttributeSpec, Serializable } from '../model/util/render-spec';
-import { CORE_OWNER } from '../model/util/constants';
+import { AttributeSpec, Serializable } from '../utils/render-spec';
+import { CORE_OWNER } from '../utils/constants';
 import { SelectionChangedEvent } from '../utils/editor-event';
 
 declare module '@lblod/ember-rdfa-editor' {

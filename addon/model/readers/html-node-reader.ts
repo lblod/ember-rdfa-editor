@@ -9,8 +9,8 @@ import {
 import readHtmlText from '@lblod/ember-rdfa-editor/model/readers/html-text-reader';
 import readHtmlTable from '@lblod/ember-rdfa-editor/model/readers/html-table-reader';
 import readHtmlSpan from '@lblod/ember-rdfa-editor/model/readers/html-span-reader';
-import { pushOrExpand } from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import SetUtils from '@lblod/ember-rdfa-editor/model/util/set-utils';
+import { pushOrExpand } from '@lblod/ember-rdfa-editor/utils/array-utils';
+import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import readHtmlInlineComponent from './html-inline-component-reader';
 import { HtmlReaderContext } from './html-reader';
 import readHtmlElement from './html-element-reader';

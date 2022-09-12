@@ -5,8 +5,8 @@ import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelTreeWalker, {
   FilterResult,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { oneLineTrim } from 'common-tags';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';

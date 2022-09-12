@@ -2,7 +2,7 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { AttributeSpec } from '../model/util/render-spec';
+import { AttributeSpec } from '../utils/render-spec';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {

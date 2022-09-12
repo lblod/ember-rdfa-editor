@@ -1,5 +1,5 @@
 import { module, test } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import SplitOperation from '@lblod/ember-rdfa-editor/model/operations/split-operation';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';

@@ -1,8 +1,5 @@
 import { MarkSpec } from '@lblod/ember-rdfa-editor/model/mark';
-import {
-  RenderSpec,
-  SLOT,
-} from '@lblod/ember-rdfa-editor/model/util/render-spec';
+import { RenderSpec, SLOT } from '@lblod/ember-rdfa-editor/utils/render-spec';
 
 export const strikethroughMarkSpec: MarkSpec = {
   matchers: [{ tag: 's' }, { tag: 'del' }],

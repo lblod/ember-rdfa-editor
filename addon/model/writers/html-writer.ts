@@ -14,8 +14,8 @@ import {
   WriterError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
-import ModelNodeUtils from '../util/model-node-utils';
-import { isTextOrElement, TextOrElement } from '../util/types';
+import ModelNodeUtils from '../../utils/model-node-utils';
+import { isTextOrElement, TextOrElement } from '../../utils/types';
 import writeAdjacentHtmlText from './html-adjacent-text-writer';
 import writeHtmlInlineComponent from './html-inline-component-writer';
 

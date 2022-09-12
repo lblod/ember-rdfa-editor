@@ -5,19 +5,19 @@ import ModelNode, {
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { Cloneable } from '@lblod/ember-rdfa-editor/model/util/types';
+import { Cloneable } from '@lblod/ember-rdfa-editor/utils/types';
 import {
   LEAF_NODES,
   LUMP_NODE_PROPERTY,
   NON_BLOCK_NODES,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
+} from '@lblod/ember-rdfa-editor/utils/constants';
 import {
   IndexOutOfRangeError,
   ModelError,
   OffsetOutOfRangeError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { parsePrefixString } from '@lblod/ember-rdfa-editor/model/util/rdfa-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import { parsePrefixString } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RdfaAttributes from '@lblod/marawa/rdfa-attributes';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 

@@ -4,10 +4,10 @@ import { SelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { analyse } from '@lblod/marawa/rdfa-context-scanner';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { PropertyState } from '@lblod/ember-rdfa-editor/model/util/types';
-import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/model/util/predicate-utils';
+import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
+import { nodeIsElementOfType } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
-import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/utils/constants';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/model/mark';
 

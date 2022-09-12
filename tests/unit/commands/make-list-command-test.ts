@@ -1,8 +1,8 @@
 import MakeListCommand from '@lblod/ember-rdfa-editor/commands/make-list-command';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 

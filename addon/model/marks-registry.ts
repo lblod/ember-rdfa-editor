@@ -1,15 +1,15 @@
 import { Mark, MarkSpec, TagMatch } from '@lblod/ember-rdfa-editor/model/mark';
-import MapUtils from '@lblod/ember-rdfa-editor/model/util/map-utils';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import { CORE_OWNER } from '@lblod/ember-rdfa-editor/model/util/constants';
-import HashSet from '@lblod/ember-rdfa-editor/model/util/hash-set';
+import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
+import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import { AttributeSpec } from './util/render-spec';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import { AttributeSpec } from '../utils/render-spec';
 
 export interface SpecAttributes {
   spec: MarkSpec;

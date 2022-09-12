@@ -1,6 +1,6 @@
 import { module, test, todo } from 'qunit';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
-import { EditorStore } from '@lblod/ember-rdfa-editor/model/util/datastore/datastore';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 

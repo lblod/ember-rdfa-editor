@@ -1,8 +1,8 @@
 import InsertTextCommand from '@lblod/ember-rdfa-editor/commands/insert-text-command';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';

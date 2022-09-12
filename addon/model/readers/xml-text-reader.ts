@@ -1,7 +1,7 @@
 import Reader from '@lblod/ember-rdfa-editor/model/readers/reader';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import { XmlNodeRegistry } from '@lblod/ember-rdfa-editor/model/readers/xml-reader';
-import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { compatTextAttributeMap } from '@lblod/ember-rdfa-editor/utils/constants';
 import { Mark } from '@lblod/ember-rdfa-editor/model/mark';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 

@@ -2,8 +2,8 @@ import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class RdfaConfirmationPlugin implements EditorPlugin {

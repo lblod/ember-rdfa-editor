@@ -3,7 +3,7 @@ import {
   ConBlankNode,
   ConLiteral,
   ConNamedNode,
-} from '@lblod/ember-rdfa-editor/model/util/concise-term-string';
+} from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 
 export type TermSpec = SubjectSpec | PredicateSpec | ObjectSpec;
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;

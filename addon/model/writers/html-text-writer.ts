@@ -2,7 +2,7 @@ import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import {
   isTextOrElement,
   TextOrElement,
-} from '@lblod/ember-rdfa-editor/model/util/types';
+} from '@lblod/ember-rdfa-editor/utils/types';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 /**

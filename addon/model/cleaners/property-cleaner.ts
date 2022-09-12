@@ -2,9 +2,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelTreeWalker, {
   toFilterSkipFalse,
-} from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+} from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 
 export default class PropertyCleaner {
   clean(range: ModelRange) {

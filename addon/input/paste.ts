@@ -1,6 +1,6 @@
 import Controller from '../model/controller';
-import ModelRangeUtils from '../model/util/model-range-utils';
-import { PropertyState } from '../model/util/types';
+import ModelRangeUtils from '../utils/model-range-utils';
+import { PropertyState } from '../utils/types';
 import { MisbehavedSelectionError } from '../utils/errors';
 import HTMLInputParser, { LIMITED_SAFE_TAGS } from '../utils/html-input-parser';
 import { createLogger } from '../utils/logging-utils';

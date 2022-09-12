@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import UndoCommand from '@lblod/ember-rdfa-editor/commands/undo-command';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 

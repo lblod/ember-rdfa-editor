@@ -4,7 +4,7 @@ import Controller from '../controller';
 import { DomNodeMatcher } from '../mark';
 import ModelElement from '../model-element';
 import ModelNode, { DirtyType, ModelNodeType } from '../model-node';
-import { AttributeSpec, Serializable } from '../util/render-spec';
+import { AttributeSpec, Serializable } from '../../utils/render-spec';
 
 export type Properties = Record<string, Serializable | undefined>;
 

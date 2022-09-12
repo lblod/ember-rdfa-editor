@@ -7,15 +7,15 @@ import {
 import {
   Direction,
   RelativePosition,
-} from '@lblod/ember-rdfa-editor/model/util/types';
-import ArrayUtils from '@lblod/ember-rdfa-editor/model/util/array-utils';
+} from '@lblod/ember-rdfa-editor/utils/types';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import arrayEquals from '../utils/array-equals';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
-import ModelNodeUtils from './util/model-node-utils';
-import { INVISIBLE_SPACE } from './util/constants';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import ModelNodeUtils from '../utils/model-node-utils';
+import { INVISIBLE_SPACE } from '../utils/constants';
 
 /**
  * Represents a single position in the model. In contrast to the dom,

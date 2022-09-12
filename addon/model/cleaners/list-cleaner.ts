@@ -1,10 +1,10 @@
 import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
 import ModelElement from '@lblod/ember-rdfa-editor/model/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelPosition from '../model-position';
-import GenTreeWalker from '../util/gen-tree-walker';
+import GenTreeWalker from '../../utils/gen-tree-walker';
 
 export default class ListCleaner {
   clean(range: ModelRange, tr: Transaction) {

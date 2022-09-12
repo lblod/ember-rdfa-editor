@@ -1,5 +1,5 @@
-import computeDifference from '@lblod/ember-rdfa-editor/model/util/tree-differ';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import computeDifference from '@lblod/ember-rdfa-editor/utils/tree-differ';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { module, test } from 'qunit';
 
 module('Unit | utils | array-utils', function () {
@@ -211,7 +211,7 @@ module('Unit | utils | array-utils', function () {
               <text __id="text2">test</text>
             </li>
             <li>
-              <text __id="text3">test</text>    
+              <text __id="text3">test</text>
             </li>
           </ul>
           <text __id="text4">test</text>

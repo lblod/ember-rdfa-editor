@@ -5,9 +5,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/model/util/gen-tree-walker';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/model/util/model-node-utils';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/model/util/model-tree-walker';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
 
 export default class LumpNodePlugin implements EditorPlugin {

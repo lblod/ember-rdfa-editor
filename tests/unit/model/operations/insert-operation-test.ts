@@ -4,7 +4,7 @@ import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-op
 import ModelText from '@lblod/ember-rdfa-editor/model/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 
 module('Unit | model | operations | insert-operation-test', function () {
   test('inserts into empty root', function (assert) {

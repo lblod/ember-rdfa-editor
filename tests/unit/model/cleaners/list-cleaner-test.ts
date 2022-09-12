@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import ListCleaner from '@lblod/ember-rdfa-editor/model/cleaners/list-cleaner';
-import { vdom } from '@lblod/ember-rdfa-editor/model/util/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { testState } from 'dummy/tests/test-utils';
 
