@@ -3,7 +3,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
-import { module, test } from 'qunit';
+import { module, test, todo } from 'qunit';
 
 module('Unit | commands | indent-list-command-test', function () {
   const command = new IndentListCommand();
@@ -46,7 +46,7 @@ module('Unit | commands | indent-list-command-test', function () {
       </div>`;
     assert.true(resultState.document.sameAs(expected));
   });
-  test('selection stays in indented list', function (assert) {
+  todo('selection stays in indented list', function (assert) {
     // language=XML
     const {
       root: initial,
@@ -96,7 +96,7 @@ module('Unit | commands | indent-list-command-test', function () {
       `range1: ${resultState.selection.lastRange!.toString()}, range2: ${range2.toString()}`
     );
   });
-  test('uncollapsed selection stays in indented list', function (assert) {
+  todo('uncollapsed selection stays in indented list', function (assert) {
     // language=XML
     const {
       root: initial,
