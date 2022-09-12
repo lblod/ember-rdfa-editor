@@ -4,7 +4,6 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import Controller, {
   InternalWidgetSpec,
-  ViewController,
 } from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
@@ -25,6 +24,7 @@ import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
 import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
 import { View } from '@lblod/ember-rdfa-editor/core/view';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 
 export type PluginConfig =
   | string

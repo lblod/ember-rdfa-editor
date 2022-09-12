@@ -1,7 +1,7 @@
 import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import { createView, View, ViewArgs } from './view';
 import { InitializedPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
-import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 
 export interface EditorArgs extends ViewArgs {
   /**

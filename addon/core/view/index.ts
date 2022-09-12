@@ -16,7 +16,7 @@ import {
   EditorInputHandler,
   InputHandler,
 } from '@lblod/ember-rdfa-editor/input/input-handler';
-import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 
 export type Dispatch = (transaction: Transaction) => void;
 
