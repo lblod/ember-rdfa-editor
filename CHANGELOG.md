@@ -24,6 +24,71 @@
 
 
 
+
+
+
+
+## 0.63.1 (2022-09-07)
+
+#### :house: Internal
+* [#342](https://github.com/lblod/ember-rdfa-editor/pull/342) build(deps-dev): bump eslint-plugin-ember from 10.6.1 to 11.0.6 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#340](https://github.com/lblod/ember-rdfa-editor/pull/340) Bump eslint-plugin-qunit from 7.2.0 to 7.3.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#339](https://github.com/lblod/ember-rdfa-editor/pull/339) Bump @types/sinon from 10.0.11 to 10.0.13 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#338](https://github.com/lblod/ember-rdfa-editor/pull/338) Bump @embroider/test-setup from 1.6.0 to 1.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#341](https://github.com/lblod/ember-rdfa-editor/pull/341) Update to new codemirror name and fix associated problems ([@abeforgit](https://github.com/abeforgit))
+* [#337](https://github.com/lblod/ember-rdfa-editor/pull/337) Bump prettier from 2.6.2 to 2.7.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.63.0 (2022-09-07)
+
+#### :boom: Breaking Change
+* [#319](https://github.com/lblod/ember-rdfa-editor/pull/319) Fix/ember appuniversum ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#336](https://github.com/lblod/ember-rdfa-editor/pull/336) Bump parse-path, release-it and release-it-lerna-changelog ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#333](https://github.com/lblod/ember-rdfa-editor/pull/333) Bump @typescript-eslint/parser from 5.22.0 to 5.36.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#332](https://github.com/lblod/ember-rdfa-editor/pull/332) Bump ember-cli-typescript from 5.1.0 to 5.1.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#330](https://github.com/lblod/ember-rdfa-editor/pull/330) Bump @types/ember__utils from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#329](https://github.com/lblod/ember-rdfa-editor/pull/329) Bump @types/ember__array from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#326](https://github.com/lblod/ember-rdfa-editor/pull/326) Bump @types/ember__engine from 4.0.0 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#328](https://github.com/lblod/ember-rdfa-editor/pull/328) Bump @types/ember from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#327](https://github.com/lblod/ember-rdfa-editor/pull/327) Bump prettier from 2.6.2 to 2.7.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#325](https://github.com/lblod/ember-rdfa-editor/pull/325) Bump sinon from 13.0.2 to 14.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#320](https://github.com/lblod/ember-rdfa-editor/pull/320) Bump ember-cli-htmlbars from 5.7.2 to 6.1.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#324](https://github.com/lblod/ember-rdfa-editor/pull/324) Bump ember-cli-autoprefixer from 1.0.3 to 2.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#323](https://github.com/lblod/ember-rdfa-editor/pull/323) Bump @embroider/test-setup from 1.6.0 to 1.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#321](https://github.com/lblod/ember-rdfa-editor/pull/321) Bump @typescript-eslint/eslint-plugin from 5.22.0 to 5.36.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 0.62.2 (2022-09-06)
+
+#### :bug: Bug Fix
+* [#318](https://github.com/lblod/ember-rdfa-editor/pull/318) Modify emit order of selectionChangedEvents and modelReadEvents ([@elpoelma](https://github.com/elpoelma))
+
+#### :memo: Documentation
+* [#315](https://github.com/lblod/ember-rdfa-editor/pull/315) RFC: Efficient datastore calculations ([@abeforgit](https://github.com/abeforgit))
+* [#314](https://github.com/lblod/ember-rdfa-editor/pull/314) RFC: ModelNode rework ([@abeforgit](https://github.com/abeforgit))
+* [#311](https://github.com/lblod/ember-rdfa-editor/pull/311) RFC: Transactional Edits ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 0.62.1 (2022-09-05)
+
+#### :bug: Bug Fix
+* [#316](https://github.com/lblod/ember-rdfa-editor/pull/316) Fix getRdfaAttributes() behaviour ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.62.0 (2022-09-01)
 
 #### :boom: Breaking Change

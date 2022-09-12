@@ -4,10 +4,11 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 import xmlFormat from 'xml-formatter';
-import { basicSetup, EditorState, EditorView } from '@codemirror/basic-setup';
+import { basicSetup, EditorView } from 'codemirror';
 import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../../config/sample-data';
+import { EditorState } from '@codemirror/state';
 
 interface FeaturesService {
   disable: (feature: string) => void;

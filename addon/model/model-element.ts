@@ -431,6 +431,7 @@ export default class ModelElement
   updateRdfaPrefixes(
     prefixes: Map<string, string> = this._currentRdfaPrefixes
   ) {
+    // TODO: calculating rdfa prefixes and attributes for specific nodes should be improved in the future.
     const myPrefixString = this.getAttribute('prefix');
     if (myPrefixString) {
       const myPrefixes = parsePrefixString(myPrefixString);
@@ -438,6 +439,11 @@ export default class ModelElement
     } else {
       this._currentRdfaPrefixes = prefixes;
     }
+    this.children.forEach((child) => {
+      if (ModelNode.isModelElement(child)) {
+        child.updateRdfaPrefixes(this.getRdfaPrefixes());
+      }
+    });
   }
 
   setAttribute(key: string, value: string) {

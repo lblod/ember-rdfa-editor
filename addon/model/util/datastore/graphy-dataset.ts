@@ -152,10 +152,10 @@ export class GraphyDataset implements QuadDataSet {
 
   reduce<A>(
     iteratee: (accumulator: A, quad: RDF.Quad, dataset: this) => A,
-    initialValue?: A
+    initialValue: A | RDF.Quad | null = this[Symbol.iterator]().next()
+      .value as RDF.Quad | null
   ): A {
-    const firstQuad = this[Symbol.iterator]().next().value as RDF.Quad | null;
-    let accumulator = initialValue || firstQuad;
+    let accumulator = initialValue;
     // some bad typing in the spec causes these ugly casts
     for (const quad of this) {
       accumulator = iteratee(accumulator as A, quad, this);
