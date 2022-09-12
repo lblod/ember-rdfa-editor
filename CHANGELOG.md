@@ -28,6 +28,26 @@
 
 
 
+
+## v1.0.0-alpha.1 (2022-09-12)
+
+#### :boom: Breaking Change
+* [#310](https://github.com/lblod/ember-rdfa-editor/pull/310) Transactional Edits ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#301](https://github.com/lblod/ember-rdfa-editor/pull/301) Internal/tree diffing ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#344](https://github.com/lblod/ember-rdfa-editor/pull/344) build(deps-dev): bump ember-cli-sass from 10.0.1 to 11.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#306](https://github.com/lblod/ember-rdfa-editor/pull/306) Merge latest dev, Remove non-TEDI code, cleanup types&tests, rework commands ([@abeforgit](https://github.com/abeforgit))
+* [#307](https://github.com/lblod/ember-rdfa-editor/pull/307) Feature/transactional api steps ([@elpoelma](https://github.com/elpoelma))
+* [#302](https://github.com/lblod/ember-rdfa-editor/pull/302) Improve selection handler ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.63.1 (2022-09-07)
 
 #### :house: Internal
