@@ -44,7 +44,12 @@ export default class RemoveMarkFromSelectionCommand
         throw new MisbehavedSelectionError();
       }
       if (spec) {
-        transaction.removeMark(selection.lastRange, spec, markAttributes);
+        const resultRange = transaction.removeMark(
+          selection.lastRange,
+          spec,
+          markAttributes
+        );
+        transaction.selectRange(resultRange);
       } else {
         throw new ModelError(`Unrecognized mark: ${markName}`);
       }

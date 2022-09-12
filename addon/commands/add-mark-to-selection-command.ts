@@ -48,7 +48,12 @@ export default class AddMarkToSelectionCommand
         if (!ModelSelection.isWellBehaved(selection)) {
           throw new MisbehavedSelectionError();
         }
-        transaction.addMark(selection.lastRange, spec, markAttributes);
+        const resultRange = transaction.addMark(
+          selection.lastRange,
+          spec,
+          markAttributes
+        );
+        transaction.selectRange(resultRange);
       }
       transaction.workingCopy.eventBus.emit(
         new SelectionChangedEvent({
