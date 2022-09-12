@@ -1,5 +1,5 @@
 import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
-import Transaction from '../../core/transaction';
+import Transaction from '../../core/state/transaction';
 import ModelPosition from '../model-position';
 import ModelSelection from '../model-selection';
 import ModelText from './model-text';

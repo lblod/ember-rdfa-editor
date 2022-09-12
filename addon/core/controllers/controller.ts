@@ -26,7 +26,7 @@ import State from '../state';
 import Transaction, {
   TransactionDispatchListener,
   TransactionStepListener,
-} from '../transaction';
+} from '../state/transaction';
 import { View } from '../view';
 import { InlineComponentSpec } from '../../model/inline-components/model-inline-component';
 import ModelNode from '../../model/nodes/model-node';

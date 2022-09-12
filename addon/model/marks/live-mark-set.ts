@@ -8,9 +8,9 @@ import EventBus, {
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from '../../utils/render-spec';
-import Transaction from '../../core/transaction';
+import Transaction from '../../core/state/transaction';
 import ModelRangeUtils from '../../utils/model-range-utils';
-import { isOperationStep, Step } from '../../core/steps/step';
+import { isOperationStep, Step } from '../../core/state/steps/step';
 
 export type LiveMarkSpec =
   | string

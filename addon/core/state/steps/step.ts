@@ -1,4 +1,4 @@
-import State from '../state';
+import State from '../index';
 import ConfigStep from './config-step';
 import OperationStep from './operation-step';
 import SelectionStep from './selection-step';

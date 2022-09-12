@@ -1,32 +1,34 @@
-import State, { cloneStateShallow } from '@lblod/ember-rdfa-editor/core/state';
+import State, {
+  cloneStateShallow,
+} from '@lblod/ember-rdfa-editor/core/state/index';
 import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
-import { Mark, MarkSet, MarkSpec } from '../model/marks/mark';
-import ModelNode from '../model/nodes/model-node';
-import ModelSelection from '../model/model-selection';
-import InsertTextOperation from '../model/operations/insert-text-operation';
-import RangeMapper, { LeftOrRight } from '../model/range-mapper';
-import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
-import SelectionReader from '../model/readers/selection-reader';
-import { getWindowSelection } from '../utils/dom-helpers';
-import { InitializedPlugin } from '../model/editor-plugin';
-import { NotImplementedError } from '../utils/errors';
-import { View } from './view';
+import { Mark, MarkSet, MarkSpec } from '../../model/marks/mark';
+import ModelNode from '../../model/nodes/model-node';
+import ModelSelection from '../../model/model-selection';
+import InsertTextOperation from '../../model/operations/insert-text-operation';
+import RangeMapper, { LeftOrRight } from '../../model/range-mapper';
+import { HtmlReaderContext, readHtml } from '../../model/readers/html-reader';
+import SelectionReader from '../../model/readers/selection-reader';
+import { getWindowSelection } from '../../utils/dom-helpers';
+import { InitializedPlugin } from '../../model/editor-plugin';
+import { NotImplementedError } from '../../utils/errors';
+import { View } from '../view';
 import InsertOperation from '@lblod/ember-rdfa-editor/model/operations/insert-operation';
-import ModelElement from '../model/nodes/model-element';
-import MarkOperation from '../model/operations/mark-operation';
-import ModelPosition from '../model/model-position';
-import SplitOperation from '../model/operations/split-operation';
-import MoveOperation from '../model/operations/move-operation';
-import { EditorStore } from '../utils/datastore/datastore';
-import { AttributeSpec } from '../utils/render-spec';
-import RemoveOperation from '../model/operations/remove-operation';
+import ModelElement from '../../model/nodes/model-element';
+import MarkOperation from '../../model/operations/mark-operation';
+import ModelPosition from '../../model/model-position';
+import SplitOperation from '../../model/operations/split-operation';
+import MoveOperation from '../../model/operations/move-operation';
+import { EditorStore } from '../../utils/datastore/datastore';
+import { AttributeSpec } from '../../utils/render-spec';
+import RemoveOperation from '../../model/operations/remove-operation';
 import {
   CommandExecutor,
   commandMapToCommandExecutor,
-} from '../commands/command-manager';
+} from '../../commands/command-manager';
 import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
 import { isOperationStep, Step } from './steps/step';
 import SelectionStep from './steps/selection-step';

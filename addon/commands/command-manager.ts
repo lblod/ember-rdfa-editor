@@ -5,7 +5,7 @@ import {
   ExecuteArgs,
   ExecuteReturn,
 } from '@lblod/ember-rdfa-editor';
-import Transaction from '../core/transaction';
+import Transaction from '../core/state/transaction';
 export type WrappedCommand<N extends CommandName> = {
   (args: ExecuteArgs<N>): ExecuteReturn<N>;
   canExecute: (args: CanExecuteArgs<N>) => boolean;

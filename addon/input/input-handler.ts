@@ -15,7 +15,7 @@ import { handleDelete } from './delete';
 import handlePaste from './paste';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { viewToModel } from '@lblod/ember-rdfa-editor/core/view';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import {
   HtmlReaderContext,
   readHtml,

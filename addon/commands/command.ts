@@ -1,5 +1,5 @@
 import State from '../core/state';
-import Transaction from '../core/transaction';
+import Transaction from '../core/state/transaction';
 
 export interface CommandContext {
   transaction: Transaction;

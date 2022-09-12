@@ -1,4 +1,4 @@
-import State, { SayState } from '../state';
+import State, { SayState } from '../index';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';

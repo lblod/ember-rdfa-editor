@@ -5,7 +5,7 @@ import State, {
   SayState,
   StateArgs,
 } from '@lblod/ember-rdfa-editor/core/state';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import { EditorView } from '@lblod/ember-rdfa-editor/core/view';
 import {
   InternalWidgetSpec,

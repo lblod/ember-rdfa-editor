@@ -1,17 +1,17 @@
 import State from '@lblod/ember-rdfa-editor/core/state';
 import SelectionWriter from '@lblod/ember-rdfa-editor/model/writers/selection-writer';
-import ModelNode from '../model/nodes/model-node';
-import ModelPosition from '../model/model-position';
-import computeDifference, { Difference } from '../utils/tree-differ';
-import HtmlWriter from '../model/writers/html-writer';
+import ModelNode from '../../model/nodes/model-node';
+import ModelPosition from '../../model/model-position';
+import computeDifference, { Difference } from '../../utils/tree-differ';
+import HtmlWriter from '../../model/writers/html-writer';
 import {
   domPosToModelPos,
   isTextNode,
   modelPosToDomPos,
-} from '../utils/dom-helpers';
-import { PositionError } from '../utils/errors';
-import { createLogger, Logger } from '../utils/logging-utils';
-import Transaction from './transaction';
+} from '../../utils/dom-helpers';
+import { PositionError } from '../../utils/errors';
+import { createLogger, Logger } from '../../utils/logging-utils';
+import Transaction from '../state/transaction';
 import {
   EditorInputHandler,
   InputHandler,

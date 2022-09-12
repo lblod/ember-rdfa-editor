@@ -2,7 +2,7 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Transaction from '../core/transaction';
+import Transaction from '../core/state/transaction';
 import { MarkSet } from '../model/marks/mark';
 import ModelElement from '../model/nodes/model-element';
 import ModelNode from '../model/nodes/model-node';

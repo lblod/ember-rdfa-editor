@@ -1,4 +1,4 @@
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';

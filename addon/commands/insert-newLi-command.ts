@@ -10,7 +10,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import State from '../core/state';
-import Transaction from '../core/transaction';
+import Transaction from '../core/state/transaction';
 import Command, { CommandContext } from './command';
 
 declare module '@lblod/ember-rdfa-editor' {

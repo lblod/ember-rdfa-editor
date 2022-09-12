@@ -1,5 +1,5 @@
 import Operation from '@lblod/ember-rdfa-editor/model/operations/operation';
-import State from '../state';
+import State from '../index';
 import { BaseStep, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';

@@ -1,10 +1,10 @@
-import ConfigStep from '@lblod/ember-rdfa-editor/core/steps/config-step';
+import ConfigStep from '@lblod/ember-rdfa-editor/core/state/steps/config-step';
 import {
   isConfigStep,
   isSelectionStep,
   Step,
-} from '@lblod/ember-rdfa-editor/core/steps/step';
-import Transaction from '@lblod/ember-rdfa-editor/core/transaction';
+} from '@lblod/ember-rdfa-editor/core/state/steps/step';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelElement from '@lblod/ember-rdfa-editor/model/nodes/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/model/nodes/model-node';
