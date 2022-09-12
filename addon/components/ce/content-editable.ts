@@ -1,8 +1,11 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { createEditorView } from '@lblod/ember-rdfa-editor/core/editor';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
-import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
+import {
+  createEditorView,
+  Dispatch,
+  View,
+} from '@lblod/ember-rdfa-editor/core/view';
 import { createNewStateFromHtmlElement } from '@lblod/ember-rdfa-editor/core/state';
 
 // interface FeatureService {
