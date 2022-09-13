@@ -14,6 +14,9 @@ import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { AttributeSpec } from '../../../utils/render-spec';
+import Controller from '@ember/controller';
+import Transaction from '../../state/transaction';
+import { Step } from '../../state/steps/step';
 
 export interface SpecAttributes {
   spec: MarkSpec;
@@ -21,17 +24,6 @@ export interface SpecAttributes {
 }
 
 export default class MarksRegistry {
-  private _eventBus?: EventBus;
-
-  constructor(eventBus?: EventBus) {
-    this._eventBus = eventBus;
-    if (this._eventBus) {
-      this._eventBus.on('contentChanged', this.updateMarks, {
-        priority: 'internal',
-      });
-    }
-  }
-
   /**
    * A map of all unique markNames in the document
    * onto the nodes that have them currently active
@@ -56,20 +48,19 @@ export default class MarksRegistry {
    */
   private registeredMarks: Map<string, MarkSpec> = new Map<string, MarkSpec>();
 
-  updateMarks = (event: ContentChangedEvent) => {
-    const { payload } = event;
-    if (payload.type === 'insert') {
-      const { overwrittenNodes, insertedNodes, _markCheckNodes } = payload;
-      this.updateMarksForNodes(insertedNodes);
-      this.updateMarksForNodes(_markCheckNodes);
-      this.removeMarksForNodes(overwrittenNodes);
-    } else if (payload.type === 'move') {
-      const { insertedNodes, _markCheckNodes } = payload;
-      this.updateMarksForNodes(insertedNodes);
-      this.updateMarksForNodes(_markCheckNodes);
-    } else if (payload.type === 'unknown') {
-      this.updateMarksForNodes(payload.rootModelNode.children);
-    }
+  updateMarks = ({
+    insertedNodes,
+    overwrittenNodes,
+    markCheckNodes,
+  }: {
+    insertedNodes: ModelNode[];
+    overwrittenNodes: ModelNode[];
+    markCheckNodes: ModelNode[];
+  }) => {
+    console.log('UPDATE MARKS');
+    this.updateMarksForNodes(insertedNodes);
+    this.updateMarksForNodes(markCheckNodes);
+    this.removeMarksForNodes(overwrittenNodes);
   };
 
   private updateMarksForNodes(nodes: ModelNode[]) {

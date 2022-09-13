@@ -44,7 +44,13 @@ export default class SplitOperation extends Operation {
           },
         })
       );
-      return { defaultRange: newRange, mapper };
+      return {
+        defaultRange: newRange,
+        mapper,
+        overwrittenNodes: [],
+        insertedNodes: [],
+        markCheckNodes: nodeAfter ? [nodeAfter] : [],
+      };
     } else {
       // this is very fragile and depends heavily on execution order.
       // be careful making changes here
@@ -77,7 +83,13 @@ export default class SplitOperation extends Operation {
         })
       );
 
-      return { defaultRange: newRange, mapper: finalMapper };
+      return {
+        defaultRange: newRange,
+        mapper: finalMapper,
+        overwrittenNodes: [],
+        insertedNodes: [],
+        markCheckNodes: _markCheckNodes,
+      };
     }
   }
 
