@@ -8,15 +8,10 @@ import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
-import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { AttributeSpec } from '../../../utils/render-spec';
-import Controller from '@ember/controller';
-import Transaction from '../../state/transaction';
-import { Step } from '../../state/steps/step';
 
 export interface SpecAttributes {
   spec: MarkSpec;
@@ -57,7 +52,6 @@ export default class MarksRegistry {
     overwrittenNodes: ModelNode[];
     markCheckNodes: ModelNode[];
   }) => {
-    console.log('UPDATE MARKS');
     this.updateMarksForNodes(insertedNodes);
     this.updateMarksForNodes(markCheckNodes);
     this.removeMarksForNodes(overwrittenNodes);
