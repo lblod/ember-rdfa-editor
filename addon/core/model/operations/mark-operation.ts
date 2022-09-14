@@ -70,7 +70,7 @@ export default class MarkOperation extends Operation {
     action: MarkAction
   ) {
     if (action === 'add') {
-      node.addMark(new Mark(spec, attributes, node));
+      node.addMark(new Mark(spec, attributes));
     } else {
       node.removeMarkByName(`${spec.name}-${attributes.setBy || CORE_OWNER}`);
     }

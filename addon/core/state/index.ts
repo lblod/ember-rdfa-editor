@@ -61,6 +61,7 @@ import {
   HtmlReaderContext,
   readHtml,
 } from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
+import MarksManager from '../model/marks/marks-manager';
 
 export interface StateArgs {
   document: ModelElement;
@@ -70,6 +71,7 @@ export interface StateArgs {
   transactionDispatchListeners: TransactionDispatchListener[];
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
   datastore: Datastore;
@@ -101,6 +103,7 @@ export default interface State {
   plugins: InitializedPlugin[];
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
@@ -126,6 +129,7 @@ export class SayState implements State {
   commands: Partial<Commands>;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
   transactionStepListeners: TransactionStepListener[];
@@ -158,6 +162,7 @@ export class SayState implements State {
     this.plugins = args.plugins;
     this.commands = args.commands;
     this.marksRegistry = args.marksRegistry;
+    this.marksManager = args.marksManager;
     this.inlineComponentsRegistry = args.inlineComponentsRegistry;
     this.previousState = previousState;
     this.marksRegistry.registerMark(boldMarkSpec);
@@ -249,6 +254,7 @@ export function emptyState(eventBus = new EventBus()): State {
     commands: defaultCommands(),
     config: new Map<string, string | null>(),
     marksRegistry: new MarksRegistry(),
+    marksManager: new MarksManager(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
     datastore: EditorStore.empty(),
@@ -267,6 +273,7 @@ export function cloneState(state: State): State {
   return new SayState({
     document: documentClone,
     marksRegistry: state.marksRegistry,
+    marksManager: state.marksManager,
     inlineComponentsRegistry: state.inlineComponentsRegistry.clone(
       state.document,
       documentClone
@@ -316,6 +323,7 @@ export function createState({
     commands,
     config,
     marksRegistry,
+    marksManager: MarksManager.fromDocument(document),
     inlineComponentsRegistry,
     widgetMap,
     eventBus,

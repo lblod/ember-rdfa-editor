@@ -18,18 +18,7 @@ export default class OperationStep implements BaseStep {
     if (initialState.document !== operation.range.root) {
       throw new OperationError();
     }
-    const {
-      mapper,
-      defaultRange,
-      insertedNodes,
-      overwrittenNodes,
-      markCheckNodes,
-    } = this.operation.execute();
-    initialState.marksRegistry.updateMarks({
-      insertedNodes,
-      overwrittenNodes,
-      markCheckNodes,
-    });
+    const { mapper, defaultRange } = this.operation.execute();
     this.mapper = mapper;
     this._defaultRange = defaultRange;
     initialState.selection = this.mapper.mapSelection(initialState.selection);

@@ -1,5 +1,6 @@
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
+import { Mark } from '../marks/mark';
 import { HtmlReaderContext } from './html-reader';
 
 /**
@@ -24,8 +25,8 @@ export default function readHtmlText(
   }
 
   const result = new ModelText(trimmed);
-  context.activeMarks.forEach(({ spec, attributes }) =>
-    context.addMark(result, spec, attributes)
-  );
+  context.activeMarks.forEach(({ spec, attributes }) => {
+    result.addMark(new Mark(spec, attributes));
+  });
   return [result];
 }
