@@ -20,14 +20,24 @@ export interface SpecAttributes {
 
 export default class MarksRegistry {
   /**
-   * A map of all unique markNames in the document
-   * onto the nodes that have them currently active
+   * A map of mark owners onto the nodes
+   * that have a mark set by them currently active
+   * @private
+   */
+  private markOwnerMapping: Map<string, Set<ModelText>> = new Map<
+    string,
+    Set<ModelText>
+  >();
+
+  /**
+   * A map of unique mark types onto the text nodes that have an active mark applied of that type
    * @private
    */
   private markStore: Map<string, Set<ModelText>> = new Map<
     string,
     Set<ModelText>
   >();
+
   /**
    * A map of html element tagnames onto the markspecs that
    * match on them.
@@ -66,16 +76,10 @@ export default class MarksRegistry {
       for (const textNode of walker.nodes() as Generator<ModelText>) {
         for (const mark of textNode.marks) {
           const owner = mark.attributes.setBy || CORE_OWNER;
-          const ownerNodes = this.markStore.get(owner);
-          if (ownerNodes) {
-            if (textNode.marks.size) {
-              ownerNodes.add(textNode);
-            } else {
-              ownerNodes.delete(textNode);
-            }
-          } else {
-            this.markStore.set(owner, new Set([textNode]));
-          }
+          MapUtils.setOrAdd(this.markOwnerMapping, owner, textNode);
+
+          const type = mark.name;
+          MapUtils.setOrAdd(this.markStore, type, textNode);
         }
       }
     }
@@ -90,10 +94,11 @@ export default class MarksRegistry {
       for (const textNode of walker.nodes() as Generator<ModelText>) {
         for (const mark of textNode.marks) {
           const owner = mark.attributes.setBy || CORE_OWNER;
-          const ownerNodes = this.markStore.get(owner);
-          if (ownerNodes) {
-            ownerNodes.delete(textNode);
-          }
+          const ownerNodes = this.markOwnerMapping.get(owner);
+          ownerNodes?.delete(textNode);
+
+          const markNodes = this.markStore.get(mark.name);
+          markNodes?.delete(textNode);
         }
       }
     }
@@ -136,22 +141,25 @@ export default class MarksRegistry {
     const mark = new Mark(spec, attributes, node);
     node.addMark(mark);
     MapUtils.setOrAdd(
-      this.markStore,
+      this.markOwnerMapping,
       attributes.setBy ?? CORE_OWNER,
       mark.node
     );
+
+    MapUtils.setOrAdd(this.markStore, mark.name, mark.node);
   }
 
-  removeMarkByName(node: ModelText, markName: string) {
-    node.removeMarkByName(markName);
-    const mark = node.marks.lookupHash(markName);
-    if (mark) {
-      const marks = this.markStore.get(mark.attributes.setBy ?? CORE_OWNER);
-      if (marks && mark.node) {
-        marks.delete(mark.node);
-      }
-    }
-  }
+  // TODO: see if we still use this
+  // removeMarkByName(node: ModelText, markName: string) {
+  //   node.removeMarkByName(markName);
+  //   const mark = node.marks.lookupHash(markName);
+  //   if (mark) {
+  //     const marks = this.markStore.get(mark.attributes.setBy ?? CORE_OWNER);
+  //     if (marks && mark.node) {
+  //       marks.delete(mark.node);
+  //     }
+  //   }
+  // }
 
   lookupMark(name: string): MarkSpec | null {
     return this.registeredMarks.get(name) || null;
@@ -164,13 +172,28 @@ export default class MarksRegistry {
     }
   }
 
-  getMarksFor(name: string): Set<Mark> {
+  getMarksByOwner(owner: string): Set<Mark> {
+    const nodes = this.markOwnerMapping.get(owner);
+    const result = new Set<Mark>();
+    if (nodes) {
+      for (const node of nodes) {
+        for (const mark of node.marks) {
+          if (mark.attributes.setBy === owner) {
+            result.add(mark);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  getMarksByMarkName(name: string): Set<Mark> {
     const nodes = this.markStore.get(name);
     const result = new Set<Mark>();
     if (nodes) {
       for (const node of nodes) {
         for (const mark of node.marks) {
-          if (mark.attributes.setBy === name) {
+          if (mark.name === name) {
             result.add(mark);
           }
         }
@@ -180,6 +203,6 @@ export default class MarksRegistry {
   }
 
   clear() {
-    this.markStore.clear();
+    this.markOwnerMapping.clear();
   }
 }

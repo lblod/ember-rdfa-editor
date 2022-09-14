@@ -136,7 +136,7 @@ export class ViewController implements Controller {
   }
 
   getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
-    return this.marksRegistry.getMarksFor(owner);
+    return this.marksRegistry.getMarksByOwner(owner);
   }
 
   registerWidget(spec: WidgetSpec): void {
