@@ -1,7 +1,7 @@
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
 import ModelElement, {
   ElementType,
@@ -25,6 +25,7 @@ import { View } from '../view';
 import { InlineComponentSpec } from '../model/inline-components/model-inline-component';
 import ModelNode from '../model/nodes/model-node';
 import { EditorUtils } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
+import { MarkInstanceEntry } from '../model/marks/marks-manager';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -55,7 +56,7 @@ export default interface Controller {
 
   get util(): EditorUtils;
 
-  get ownMarks(): Set<Mark>;
+  get ownMarks(): Set<MarkInstanceEntry>;
 
   get modelRoot(): ModelElement;
 
@@ -65,7 +66,7 @@ export default interface Controller {
 
   get currentState(): State;
 
-  getMarksFor(owner: string): Set<Mark>;
+  getMarksFor(owner: string): Set<MarkInstanceEntry>;
 
   createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
 

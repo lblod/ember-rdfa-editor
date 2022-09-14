@@ -27,7 +27,6 @@ import ReadSelectionCommand from '../../commands/read-selection-command';
 import RemoveCommand from '../../commands/remove-command';
 import RemoveComponentCommand from '../../commands/remove-component-command';
 import RemoveListCommand from '../../commands/remove-list-command';
-import RemoveMarkCommand from '../../commands/remove-mark-command';
 import RemoveMarkFromRangeCommand from '../../commands/remove-mark-from-range-command';
 import RemoveMarkFromSelectionCommand from '../../commands/remove-mark-from-selection-command';
 import RemoveMarksFromRangesCommand from '../../commands/remove-marks-from-ranges-command';
@@ -62,6 +61,7 @@ import {
   readHtml,
 } from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
 import MarksManager from '../model/marks/marks-manager';
+import RemoveMarkFromNodeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-node-command';
 
 export interface StateArgs {
   document: ModelElement;
@@ -230,7 +230,7 @@ export function defaultCommands(): Partial<Commands> {
     readSelection: new ReadSelectionCommand(),
     removeComponent: new RemoveComponentCommand(),
     removeList: new RemoveListCommand(),
-    removeMark: new RemoveMarkCommand(),
+    removeMarkFromNode: new RemoveMarkFromNodeCommand(),
     removeMarkFromRange: new RemoveMarkFromRangeCommand(),
     removeMarkFromSelection: new RemoveMarkFromSelectionCommand(),
     removeMarksFromRanges: new RemoveMarksFromRangesCommand(),

@@ -9,7 +9,7 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
-import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/utils/render-spec';
 import ModelElement, {
   ElementType,
@@ -33,6 +33,7 @@ import Controller, {
   WidgetSpec,
 } from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import { MarkInstanceEntry } from '../model/marks/marks-manager';
 
 export interface EditorUtils {
   toFilterSkipFalse: typeof toFilterSkipFalse;
@@ -75,7 +76,7 @@ export class ViewController implements Controller {
     throw new Error('Method not implemented.');
   }
 
-  get ownMarks(): Set<Mark<AttributeSpec>> {
+  get ownMarks(): Set<MarkInstanceEntry> {
     return this.getMarksFor(this.name);
   }
 
@@ -135,8 +136,8 @@ export class ViewController implements Controller {
     // this._rawEditor.registerComponent(component);
   }
 
-  getMarksFor(owner: string): Set<Mark<AttributeSpec>> {
-    return this.marksRegistry.getMarksByOwner(owner);
+  getMarksFor(owner: string): Set<MarkInstanceEntry> {
+    return this.currentState.marksManager.getMarksByOwner(owner);
   }
 
   registerWidget(spec: WidgetSpec): void {

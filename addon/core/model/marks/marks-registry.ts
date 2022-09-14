@@ -1,5 +1,4 @@
 import {
-  Mark,
   MarkSpec,
   TagMatch,
 } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
@@ -15,15 +14,6 @@ export interface SpecAttributes {
 }
 
 export default class MarksRegistry {
-  /**
-   * A map of mark owners onto the currently active marks created by the owner
-   * @private
-   */
-  private markOwnerMapping: Map<string, Set<Mark>> = new Map<
-    string,
-    Set<Mark>
-  >();
-
   /**
    * A map of html element tagnames onto the markspecs that
    * match on them.
@@ -77,9 +67,5 @@ export default class MarksRegistry {
     for (const matcher of mark.matchers) {
       MapUtils.setOrPush(this.markMatchMap, matcher.tag, mark);
     }
-  }
-
-  getMarksByOwner(owner: string): Set<Mark> {
-    return this.markOwnerMapping.get(owner) || new Set();
   }
 }

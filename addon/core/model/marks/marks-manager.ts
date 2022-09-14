@@ -1,3 +1,4 @@
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
@@ -12,56 +13,71 @@ export type MarksManagerArgs = {
   ownerMapping?: Map<string, Set<Mark>>;
 };
 
+export type MarkInstanceEntry = {
+  mark: Mark;
+  node: ModelText;
+};
+
+export type VisualMarkGroup = MarkInstanceEntry[];
+
 export default class MarksManager {
   /**
    * A map of mark owners onto the currently active marks created by the owner
    * @private
    */
-  private markOwnerMapping: Map<string, Set<Mark>>;
+  private markOwnerMapping: Map<string, Set<MarkInstanceEntry>> = new Map();
 
-  /**
-   * A map of unique mark types onto the currently active marks of that type
-   * @private
-   */
-  private markStore: Map<string, Set<Mark>>;
+  private visualMarkGroups: Map<string, Array<VisualMarkGroup>> = new Map();
 
-  constructor(args?: MarksManagerArgs) {
-    this.markStore = args?.store || new Map<string, Set<Mark>>();
-    this.markOwnerMapping = args?.ownerMapping || new Map<string, Set<Mark>>();
-  }
-
-  getMarksByOwner(owner: string): Set<Mark> {
+  getMarksByOwner(owner: string): Set<MarkInstanceEntry> {
     return this.markOwnerMapping.get(owner) || new Set();
   }
 
-  getMarksByMarkName(name: string): Set<Mark> {
-    return this.markStore.get(name) || new Set();
+  getVisualMarkGroupsByMarkName(name: string): Array<VisualMarkGroup> {
+    return this.visualMarkGroups.get(name) || [];
   }
 
   static fromDocument(document: ModelElement) {
-    const markStore = new Map<string, Set<Mark>>();
-    const markOwnerMapping = new Map<string, Set<Mark>>();
+    const markOwnerMapping = new Map<string, Set<MarkInstanceEntry>>();
+    const visualMarkGroups = new Map<string, Array<VisualMarkGroup>>();
     const textModels: GenTreeWalker<ModelText> = GenTreeWalker.fromSubTree({
       root: document,
       filter: toFilterSkipFalse((node: ModelNode) =>
         ModelNode.isModelText(node)
       ),
     }) as GenTreeWalker<ModelText>;
-
     for (const textModel of textModels.nodes()) {
       for (const mark of textModel.marks) {
-        MapUtils.setOrAdd(markStore, mark.name, mark);
+        const entry = {
+          mark,
+          node: textModel,
+        };
         MapUtils.setOrAdd(
           markOwnerMapping,
           mark.attributes.setBy || CORE_OWNER,
-          mark
+          entry
         );
+
+        if (visualMarkGroups.has(mark.name)) {
+          const visualMarkGroupList = visualMarkGroups.get(mark.name)!;
+          const lastVisualMarkGroup = ArrayUtils.lastItem(visualMarkGroupList)!;
+          if (
+            ArrayUtils.lastItem(lastVisualMarkGroup)?.node.nextSibling ===
+            textModel
+          ) {
+            lastVisualMarkGroup.push(entry);
+          } else {
+            visualMarkGroupList.push([entry]);
+          }
+        } else {
+          visualMarkGroups.set(mark.name, [[entry]]);
+        }
       }
     }
 
-    return new MarksManager({
-      store: markStore,
-      ownerMapping: markOwnerMapping,
-    });
+    const manager = new MarksManager();
+    manager.markOwnerMapping = markOwnerMapping;
+    manager.visualMarkGroups = visualMarkGroups;
+    return manager;
   }
 }
