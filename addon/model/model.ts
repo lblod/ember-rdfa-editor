@@ -18,6 +18,7 @@ import SimplifiedModel from '@lblod/ember-rdfa-editor/model/simplified-model';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import {
   ModelReadEvent,
+  ModelWrittenEvent,
   SelectionChangedEvent,
 } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import MarksRegistry from '@lblod/ember-rdfa-editor/model/marks-registry';
@@ -173,6 +174,7 @@ export default class Model {
     if (writeSelection) {
       this.writeSelection(moveSelectionIntoView);
     }
+    this._eventBus?.emit(new ModelWrittenEvent());
   }
 
   registerMark(markSpec: MarkSpec) {

@@ -70,7 +70,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
-  @tracked inlineComponents = tracked<ActiveComponentEntry>([]);
+  @tracked inlineComponents: ActiveComponentEntry[] = [];
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -108,6 +108,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   handleRawEditorInit(editor: RawEditor) {
     this.editor = editor;
+    this.editor.on('modelWritten', () => {
+      this.inlineComponents = this.editor!.getComponentInstances();
+    });
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
     this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
     this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
@@ -116,7 +119,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    this.initializeComponents();
+    // this.initializeComponents();
     this.editorLoading = false;
   }
 
@@ -158,12 +161,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     } else {
       this.showRdfaBlocks = false;
       this.toolbarController!.setConfig('showRdfaBlocks', null);
-    }
-  }
-
-  initializeComponents() {
-    if (this.editor) {
-      this.inlineComponents = this.editor.getComponentInstances();
     }
   }
 }
