@@ -255,8 +255,11 @@
         </button>
       {{/if}}
     </div>
+    <div class='say-toolbar__group'>
+      {{yield to='middle'}}
+    </div>
   </div>
   <div class='say-toolbar__actions'>
-    {{yield}}
+    {{yield to='right'}}
   </div>
 </div>

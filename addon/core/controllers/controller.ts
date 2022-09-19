@@ -27,7 +27,11 @@ import ModelNode from '../model/nodes/model-node';
 import { EditorUtils } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { MarkInstanceEntry } from '../model/marks/marks-manager';
 
-export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
+export type WidgetLocation =
+  | 'toolbarMiddle'
+  | 'toolbarRight'
+  | 'sidebar'
+  | 'insertSidebar';
 
 export interface WidgetSpec {
   componentName: string;
