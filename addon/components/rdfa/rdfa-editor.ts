@@ -119,7 +119,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    // this.initializeComponents();
     this.editorLoading = false;
   }
 
