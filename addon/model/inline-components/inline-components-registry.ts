@@ -1,6 +1,5 @@
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { TagMatch } from '../mark';
-import { tracked } from 'tracked-built-ins';
 import MapUtils from '../util/map-utils';
 import {
   InlineComponentSpec,
@@ -22,7 +21,7 @@ export default class InlineComponentsRegistry {
     InlineComponentSpec[]
   >();
 
-  activeComponents = tracked<ActiveComponentEntry>([]);
+  activeComponents: ActiveComponentEntry[] = [];
 
   matchInlineComponentSpec(node: Node): InlineComponentSpec | null {
     const potentialMatches =
@@ -89,10 +88,8 @@ export default class InlineComponentsRegistry {
 
   getComponentInstances(filter?: { componentName: string }) {
     if (filter) {
-      return tracked<ActiveComponentEntry>(
-        this.activeComponents.filter(
-          (entry) => entry.emberComponentName === filter.componentName
-        )
+      return this.activeComponents.filter(
+        (entry) => entry.emberComponentName === filter.componentName
       );
     } else {
       return this.activeComponents;
