@@ -7,7 +7,7 @@ import {
 import ModelSelection from '@lblod/ember-rdfa-editor/model/model-selection';
 import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import {
+import ModelRange, {
   ModelRangeFactory,
   RangeFactory,
 } from '@lblod/ember-rdfa-editor/model/model-range';
@@ -29,6 +29,7 @@ import { InlineComponentSpec } from './inline-components/model-inline-component'
 import NodeView from './node-view';
 import { ConfigUpdatedEvent } from '../utils/editor-event';
 import ModelNode from './model-node';
+import HTMLExportWriter from './writers/html-export-writer';
 
 export type WidgetLocation = 'toolbar' | 'sidebar' | 'insertSidebar';
 
@@ -68,6 +69,10 @@ export default interface Controller {
   get modelRoot(): ModelElement;
 
   get marksRegistry(): MarksRegistry;
+
+  get htmlContent(): string;
+
+  set htmlContent(html: string);
 
   getMutator(): ImmediateModelMutator;
 
@@ -162,6 +167,23 @@ export class RawEditorController implements Controller {
 
   get marksRegistry(): MarksRegistry {
     return this._rawEditor.model.marksRegistry;
+  }
+
+  get htmlContent() {
+    const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
+    this._rawEditor.model.read();
+    const output = htmlWriter.write(
+      this._rawEditor.model.rootModelNode
+    ) as HTMLElement;
+    return output.innerHTML;
+  }
+
+  set htmlContent(html: string) {
+    const root = this._rawEditor.model.rootModelNode;
+    const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
+    this._rawEditor.executeCommand('insert-html', html, range);
+    this._rawEditor.selection.lastRange?.collapse(true);
+    this._rawEditor.model.writeSelection();
   }
 
   getMutator(): ImmediateModelMutator {

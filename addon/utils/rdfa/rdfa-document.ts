@@ -1,5 +1,4 @@
 import xmlFormat from 'xml-formatter';
-import HTMLExportWriter from '@lblod/ember-rdfa-editor/model/writers/html-export-writer';
 import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import {
   AnyEventName,
@@ -14,10 +13,6 @@ import { RawEditorController } from '@lblod/ember-rdfa-editor/model/controller';
  * backwards compat in this way
  */
 interface RdfaDocument {
-  get htmlContent(): string;
-
-  set htmlContent(html: string);
-
   get xmlContent(): string;
 
   set xmlContent(xml: string);
@@ -50,23 +45,6 @@ export default class RdfaDocumentController
   extends RawEditorController
   implements RdfaDocument
 {
-  get htmlContent() {
-    const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
-    this._rawEditor.model.read();
-    const output = htmlWriter.write(
-      this._rawEditor.model.rootModelNode
-    ) as HTMLElement;
-    return output.innerHTML;
-  }
-
-  set htmlContent(html: string) {
-    const root = this._rawEditor.model.rootModelNode;
-    const range = ModelRange.fromPaths(root, [0], [root.getMaxOffset()]);
-    this._rawEditor.executeCommand('insert-html', html, range);
-    this._rawEditor.selection.lastRange?.collapse(true);
-    this._rawEditor.model.writeSelection();
-  }
-
   get model() {
     return this._rawEditor.model;
   }
