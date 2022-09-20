@@ -17,15 +17,20 @@ export default class InlineComponentManager extends Component<InlineComponentMan
     this.args.controller.addTransactionDispatchListener(
       this.updateInlineComponents.bind(this)
     );
+    this.refreshInlineComponents();
   }
 
   updateInlineComponents(transaction: Transaction) {
     if (transaction.steps.some((step) => isOperationStep(step))) {
-      const inlineComponentsMap =
-        this.args.controller?.currentState.inlineComponentsRegistry
-          .activeComponents ||
-        new Map<ModelInlineComponent, ActiveComponentEntry>();
-      this.inlineComponents = [...inlineComponentsMap.values()];
+      this.refreshInlineComponents();
     }
+  }
+
+  refreshInlineComponents() {
+    const inlineComponentsMap =
+      this.args.controller?.currentState.inlineComponentsRegistry
+        .activeComponents ||
+      new Map<ModelInlineComponent, ActiveComponentEntry>();
+    this.inlineComponents = [...inlineComponentsMap.values()];
   }
 }
