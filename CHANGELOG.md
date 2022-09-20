@@ -29,6 +29,18 @@
 
 
 
+
+## 0.63.3 (2022-09-20)
+
+#### :bug: Bug Fix
+* [#363](https://github.com/lblod/ember-rdfa-editor/pull/363) Remove tracked array from inline components registry ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#362](https://github.com/lblod/ember-rdfa-editor/pull/362) Implement htmlContent setter and getter on the RawEditorController ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.63.2 (2022-09-13)
 
 #### :house: Internal
