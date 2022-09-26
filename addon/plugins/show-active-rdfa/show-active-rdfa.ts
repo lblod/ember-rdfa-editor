@@ -26,13 +26,13 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(controller: Controller) {
     this.controller = controller;
-    controller.addTransactionStepListener(
+    controller.addTransactionDispatchListener(
       this.onTransactionDispatch.bind(this)
     );
   }
 
-  onTransactionDispatch(transaction: Transaction, steps: Step[]) {
-    const configSteps: ConfigStep[] = steps.filter(
+  onTransactionDispatch(transaction: Transaction) {
+    const configSteps: ConfigStep[] = transaction.steps.filter(
       (step) => isConfigStep(step) && step.key === 'showRdfaBlocks'
     ) as ConfigStep[];
     if (configSteps.length) {
@@ -44,15 +44,15 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
         rootNode.classList.remove(SHOW_RDFA_CLASS);
       }
     }
-    if (steps.some(isSelectionStep)) {
-      this.updateAttributes(transaction);
+    if (transaction.steps.some(isSelectionStep)) {
+      this.updateAttributes();
     }
   }
 
-  updateAttributes(transaction: Transaction) {
+  updateAttributes() {
     removePathAttributes();
     const ancestryPath =
-      transaction.currentSelection.lastRange?.findCommonAncestorsWhere(
+      this.controller.selection.lastRange?.findCommonAncestorsWhere(
         ModelNode.isModelElement
       );
     if (ancestryPath) {
@@ -61,7 +61,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
 
       for (const element of ancestryPath) {
         const domNode = this.controller.view.modelToView(
-          transaction.workingCopy,
+          this.controller.currentState,
           element
         );
 
