@@ -2,7 +2,6 @@ import ConfigStep from '@lblod/ember-rdfa-editor/core/state/steps/config-step';
 import {
   isConfigStep,
   isSelectionStep,
-  Step,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
