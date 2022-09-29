@@ -5,6 +5,7 @@ import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/core/model/inline
 import { ModelInlineComponent } from '@lblod/ember-rdfa-editor/core/model/inline-components/model-inline-component';
 import { tracked } from '@glimmer/tracking';
 import { isOperationStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
+import { action } from '@ember/object';
 
 interface InlineComponentManagerArgs {
   controller: Controller;
@@ -12,12 +13,21 @@ interface InlineComponentManagerArgs {
 
 export default class InlineComponentManager extends Component<InlineComponentManagerArgs> {
   @tracked inlineComponents: ActiveComponentEntry[] = [];
-  constructor(parent: unknown, args: InlineComponentManagerArgs) {
-    super(parent, args);
+
+  @action
+  didInsert() {
     this.args.controller.addTransactionDispatchListener(
       this.updateInlineComponents.bind(this)
     );
     this.refreshInlineComponents();
+  }
+
+  @action
+  willDestroy(): void {
+    this.args.controller.removeTransactionDispatchListener(
+      this.updateInlineComponents.bind(this)
+    );
+    super.willDestroy();
   }
 
   updateInlineComponents(transaction: Transaction) {
