@@ -3,8 +3,13 @@ import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/editor/utils';
+import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
 
-export default class AuDropdown extends Component {
+interface Args {
+  editor: RawEditor;
+}
+
+export default class ToolbarDropdown extends Component<Args> {
   // Create a dropdown ID
   dropdownId = 'dropdown-' + guidFor(this);
 
@@ -17,7 +22,7 @@ export default class AuDropdown extends Component {
   }
 
   @action
-  async closeDropdown(event) {
+  async closeDropdown(event: Event) {
     if (event) {
       event.preventDefault();
     }
@@ -26,7 +31,10 @@ export default class AuDropdown extends Component {
     // some kind of focus event always seems to happen at the wrong time
     // so this is a bit of hack, but it works well.
     await paintCycleHappened();
-    this.args.editor.model.selection.lastRange.start.parent.viewRoot?.focus();
+    const { lastRange } = this.args.editor.selection;
+    if (lastRange) {
+      this.args.editor.rootNode.focus();
+    }
     this.args.editor.model.writeSelection();
     return true;
   }
