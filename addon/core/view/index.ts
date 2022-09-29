@@ -211,8 +211,14 @@ export function viewToModel(
   if (domNode === viewRoot) {
     return state.document;
   }
+
   const position = domPosToModelPos(state, viewRoot, domNode, 0);
-  const node = position.nodeAfter();
+  let node : ModelNode | null;
+  if (position.path.length === 0) {
+    node = position.root;
+  } else {
+    node = position.parent.childAtOffset(position.parentOffset, true);
+  }
   if (!node) {
     throw new PositionError('no node found after position');
   }
