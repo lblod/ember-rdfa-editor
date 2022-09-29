@@ -3,6 +3,7 @@ import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { module, test } from 'qunit';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 module('Unit | model | model-element-test', function () {
   module('Unit | model | model-element-test | offsetToIndex', function () {
@@ -68,6 +69,13 @@ module('Unit | model | model-element-test', function () {
       assert.strictEqual(div.offsetToIndex(3), 1);
       assert.strictEqual(div.offsetToIndex(4), 2);
       assert.strictEqual(div.offsetToIndex(5), 3);
+    });
+    test('two empty text children', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.offsetToIndex(0), 2);
     });
   });
 
@@ -224,6 +232,22 @@ module('Unit | model | model-element-test', function () {
         child.getVocab(),
         'http://mu.semte.ch/vocabularies/core/'
       );
+    });
+  });
+  module('Unit | model | model-element-test | childAtOffset', function () {
+    test('two empty text children - includeLast = false', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.childAtOffset(0, false), null);
+    });
+    test('two empty text children - includeLast = true', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.childAtOffset(0, true), text2);
     });
   });
 });
