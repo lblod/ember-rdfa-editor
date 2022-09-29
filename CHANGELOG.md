@@ -30,6 +30,32 @@
 
 
 
+
+## 0.63.4 (2022-09-29)
+
+#### :bug: Bug Fix
+* [#376](https://github.com/lblod/ember-rdfa-editor/pull/376) fix(selection-handler): handle cases where selection is empty ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#380](https://github.com/lblod/ember-rdfa-editor/pull/380) build(deps-dev): bump @types/qunit from 2.19.2 to 2.19.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#379](https://github.com/lblod/ember-rdfa-editor/pull/379) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.37.0 to 5.38.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#378](https://github.com/lblod/ember-rdfa-editor/pull/378) build(deps-dev): bump sass from 1.54.9 to 1.55.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#377](https://github.com/lblod/ember-rdfa-editor/pull/377) build(deps-dev): bump typescript from 4.8.3 to 4.8.4 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#375](https://github.com/lblod/ember-rdfa-editor/pull/375) build(deps): bump @codemirror/state from 6.1.1 to 6.1.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#374](https://github.com/lblod/ember-rdfa-editor/pull/374) build(deps): bump @codemirror/view from 6.2.5 to 6.3.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#371](https://github.com/lblod/ember-rdfa-editor/pull/371) build(deps-dev): bump eslint from 8.22.0 to 8.24.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#372](https://github.com/lblod/ember-rdfa-editor/pull/372) build(deps-dev): bump @types/ember-qunit from 5.0.1 to 5.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#370](https://github.com/lblod/ember-rdfa-editor/pull/370) build(deps): bump mout from 1.2.3 to 1.2.4 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#369](https://github.com/lblod/ember-rdfa-editor/pull/369) build(deps): bump iter-tools from 7.4.0 to 7.5.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#368](https://github.com/lblod/ember-rdfa-editor/pull/368) build(deps-dev): bump @typescript-eslint/parser from 5.37.0 to 5.38.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#367](https://github.com/lblod/ember-rdfa-editor/pull/367) build(deps): bump @codemirror/view from 6.2.3 to 6.2.5 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#366](https://github.com/lblod/ember-rdfa-editor/pull/366) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.6.0 to 1.7.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#360](https://github.com/lblod/ember-rdfa-editor/pull/360) build(deps-dev): bump release-it from 15.4.1 to 15.4.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.63.3 (2022-09-20)
 
 #### :bug: Bug Fix
