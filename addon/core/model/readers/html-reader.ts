@@ -58,14 +58,6 @@ export class HtmlReaderContext {
     return this.inlineComponentsRegistry.matchInlineComponentSpec(node);
   }
 
-  // addMark<A extends AttributeSpec>(
-  //   node: ModelText,
-  //   spec: MarkSpec<A>,
-  //   attributes: A
-  // ) {
-  //   return this.marksRegistry.addMark(node, spec, attributes);
-  // }
-
   addComponentInstance(
     element: HTMLElement,
     componentName: string,
