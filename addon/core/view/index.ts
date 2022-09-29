@@ -213,7 +213,7 @@ export function viewToModel(
   }
 
   const position = domPosToModelPos(state, viewRoot, domNode, 0);
-  let node : ModelNode | null;
+  let node: ModelNode | null;
   if (position.path.length === 0) {
     node = position.root;
   } else {

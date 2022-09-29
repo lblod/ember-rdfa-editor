@@ -3,7 +3,6 @@ import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { IndexOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { module, test } from 'qunit';
-import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 module('Unit | model | model-element-test', function () {
   module('Unit | model | model-element-test | offsetToIndex', function () {
