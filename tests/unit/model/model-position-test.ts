@@ -849,4 +849,14 @@ module('Unit | model | model-position', function () {
       assert.true(oneRight.sameAs(shiftedRight), shiftedRight.path.toString());
     });
   });
+  module('Unit | model | model-position | nodeAfter', () => {
+    test('two empty text nodes', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      const pos = ModelPosition.fromBeforeNode(text1);
+      assert.strictEqual(pos.nodeAfter(), null);
+    });
+  });
 });
