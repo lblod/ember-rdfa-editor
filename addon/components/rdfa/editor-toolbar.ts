@@ -38,9 +38,15 @@ export default class EditorToolbar extends Component<Args> {
   @tracked tableAddColumns = 2;
   selection: ModelSelection | null = null;
 
-  constructor(parent: unknown, args: Args) {
-    super(parent, args);
+  @action
+  didInsert() {
     this.args.controller.addTransactionStepListener(this.update.bind(this));
+  }
+
+  @action
+  willDestroy(): void {
+    this.args.controller.removeTransactionStepListener(this.update.bind(this));
+    super.willDestroy();
   }
 
   get controller() {
