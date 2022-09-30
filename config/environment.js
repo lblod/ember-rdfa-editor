@@ -4,10 +4,8 @@ module.exports = function (environment) {
   var ENV = {
     featureFlags: {
       'editor-html-paste': true,
-      'editor-force-paragraph': false,
       'editor-cut': true,
       'editor-copy': true,
-      'editor-browser-delete': false,
     },
   };
 
