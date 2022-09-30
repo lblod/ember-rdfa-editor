@@ -617,7 +617,8 @@ export function domPosToModelPos(
       cur = cur.children[index];
     }
   }
-  if (!(offset == null)) {
+  if (!(offset === null || offset === undefined)) {
+    // offset may not be null or undefined but can be 0
     const modelOffset = domOffsetToModelOffset(state, offset, container);
     if (ModelNode.isModelText(cur) || cur.isLeaf) {
       offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
