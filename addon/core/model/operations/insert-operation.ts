@@ -61,6 +61,9 @@ export default class InsertOperation extends Operation {
     return {
       defaultRange,
       mapper: resultMapper,
+      insertedNodes: this.nodes,
+      overwrittenNodes,
+      markCheckNodes: _markCheckNodes,
     };
   }
 }

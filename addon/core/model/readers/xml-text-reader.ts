@@ -23,7 +23,7 @@ export default class XmlTextReader implements Reader<Element, ModelText, void> {
           if (specAttribute) {
             console.warn('ADDING MARK WITHOUT PASSING REGISTRY');
             rslt.addMark(
-              new Mark(specAttribute.spec, specAttribute.attributes, rslt)
+              new Mark(specAttribute.spec, specAttribute.attributes)
             );
           }
         }

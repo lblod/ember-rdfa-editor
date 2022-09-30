@@ -70,7 +70,7 @@ export default class MarkOperation extends Operation {
     action: MarkAction
   ) {
     if (action === 'add') {
-      node.addMark(new Mark(spec, attributes, node));
+      node.addMark(new Mark(spec, attributes));
     } else {
       node.removeMarkByName(`${spec.name}-${attributes.setBy || CORE_OWNER}`);
     }
@@ -112,7 +112,13 @@ export default class MarkOperation extends Operation {
           },
         })
       );
-      return { defaultRange: newRange, mapper: new RangeMapper() };
+      return {
+        defaultRange: newRange,
+        mapper: new RangeMapper(),
+        overwrittenNodes: [],
+        insertedNodes: [node],
+        markCheckNodes: [node],
+      };
     } else {
       OperationAlgorithms.splitText(this.range.start);
       OperationAlgorithms.splitText(this.range.end);
@@ -153,7 +159,13 @@ export default class MarkOperation extends Operation {
           },
         })
       );
-      return { defaultRange: this.range, mapper: new RangeMapper() };
+      return {
+        defaultRange: this.range,
+        mapper: new RangeMapper(),
+        overwrittenNodes: [],
+        insertedNodes: [],
+        markCheckNodes: _markCheckNodes,
+      };
     }
   }
 }

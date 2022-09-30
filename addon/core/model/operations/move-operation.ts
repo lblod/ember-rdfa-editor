@@ -58,7 +58,13 @@ export default class MoveOperation extends Operation {
           },
         })
       );
-      return { defaultRange: newRange, mapper };
+      return {
+        defaultRange: newRange,
+        mapper,
+        insertedNodes: movedNodes,
+        overwrittenNodes: [],
+        markCheckNodes: _markCheckNodes,
+      };
     } else {
       const newRange = new ModelRange(this.targetPosition, this.targetPosition);
       this.emit(
@@ -74,7 +80,13 @@ export default class MoveOperation extends Operation {
           },
         })
       );
-      return { defaultRange: newRange, mapper };
+      return {
+        defaultRange: newRange,
+        mapper,
+        insertedNodes: [],
+        overwrittenNodes: [],
+        markCheckNodes: _markCheckNodes,
+      };
     }
   }
 }

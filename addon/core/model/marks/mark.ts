@@ -1,6 +1,5 @@
 import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import renderFromSpec, {
   AttributeSpec,
@@ -24,12 +23,12 @@ export interface MarkSpec<A extends AttributeSpec = AttributeSpec> {
 export class Mark<A extends AttributeSpec = AttributeSpec> {
   private readonly _spec: MarkSpec<A>;
   private readonly _attributes: A;
-  private readonly _node?: ModelText;
+  // private _node?: ModelText;
 
-  constructor(spec: MarkSpec<A>, attributes: A, node?: ModelText) {
+  constructor(spec: MarkSpec<A>, attributes: A) {
     this._spec = spec;
     this._attributes = attributes;
-    this._node = node;
+    // this._node = node;
   }
 
   get attributes(): A {
@@ -40,9 +39,13 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
     return this._spec.name;
   }
 
-  get node(): ModelText | undefined {
-    return this._node;
-  }
+  // get node(): ModelText | undefined {
+  //   return this._node;
+  // }
+
+  // set node(value: ModelText | undefined) {
+  //   this._node = value;
+  // }
 
   get priority(): number {
     return this._spec.priority;
@@ -59,7 +62,7 @@ export class Mark<A extends AttributeSpec = AttributeSpec> {
   }
 
   clone(): Mark<A> {
-    return new Mark<A>(this._spec, this.attributes, this.node);
+    return new Mark<A>(this._spec, this.attributes);
   }
 }
 

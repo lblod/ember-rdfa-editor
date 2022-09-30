@@ -13,7 +13,7 @@ module('Unit | model | model-text-test', function () {
     test('textnodes with different properties are not the same', function (assert) {
       const t0 = new ModelText('abc');
       const t1 = new ModelText('abc');
-      t1.addMark(new Mark(boldMarkSpec, {}, t1));
+      t1.addMark(new Mark(boldMarkSpec, {}));
       assert.false(t0.sameAs(t1));
     });
   });

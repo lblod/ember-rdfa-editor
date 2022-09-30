@@ -7,11 +7,15 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '../model-range';
+import ModelNode from '../nodes/model-node';
 import RangeMapper from '../range-mapper';
 
 export interface OperationResult {
   mapper: RangeMapper;
   defaultRange: ModelRange;
+  insertedNodes: ModelNode[];
+  overwrittenNodes: ModelNode[];
+  markCheckNodes: ModelNode[];
 }
 
 export default abstract class Operation {

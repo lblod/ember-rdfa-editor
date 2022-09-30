@@ -24,8 +24,8 @@ export default class DummyPlugin implements EditorPlugin {
     this.logger('recieved options: ', options);
     this.controller = controller;
     this.controller.addTransactionStepListener((tr) => {
-      for (const mark of this.controller.ownMarks) {
-        tr.commands.removeMark({ mark });
+      for (const { mark, node } of this.controller.ownMarks) {
+        tr.commands.removeMarkFromNode({ mark, node });
       }
 
       const walker = GenTreeWalker.fromSubTree({

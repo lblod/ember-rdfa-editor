@@ -1,14 +1,11 @@
-import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import MarksRegistry, {
   SpecAttributes,
 } from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
-import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import readHtmlNode from '@lblod/ember-rdfa-editor/core/model/readers/html-node-reader';
 import InlineComponentsRegistry from '../inline-components/inline-components-registry';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import { calculateRdfaPrefixes } from '../../../utils/rdfa-utils';
-import { AttributeSpec } from '../../../utils/render-spec';
 
 export interface HtmlReaderContextArgs {
   rdfaPrefixes?: Map<string, string>;
@@ -59,14 +56,6 @@ export class HtmlReaderContext {
 
   matchInlineComponent(node: Node) {
     return this.inlineComponentsRegistry.matchInlineComponentSpec(node);
-  }
-
-  addMark<A extends AttributeSpec>(
-    node: ModelText,
-    spec: MarkSpec<A>,
-    attributes: A
-  ) {
-    return this.marksRegistry.addMark(node, spec, attributes);
   }
 
   addComponentInstance(
