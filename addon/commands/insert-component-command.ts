@@ -8,6 +8,10 @@ import ModelRange from '../core/model/model-range';
 import { ModelError } from '../utils/errors';
 import { logExecute } from '../utils/logging-utils';
 import Command, { CommandContext } from './command';
+import ModelText from '../core/model/nodes/model-text';
+import { INVISIBLE_SPACE } from '../utils/constants';
+import ModelNode from '../core/model/nodes/model-node';
+import ModelPosition from '../core/model/model-position';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -53,14 +57,12 @@ export default class InsertComponentCommand
         props,
         componentState
       );
-      const newRange = transaction.insertNodes(range, component);
-      newRange.collapse();
-      if (!component.nextSibling) {
-        const brAfterComponent = new ModelElement('br');
-        brAfterComponent.setAttribute('class', 'trailing');
-        transaction.insertNodes(newRange, brAfterComponent);
-      }
-
+      const newRange = transaction.insertNodes(
+        range,
+        new ModelText(INVISIBLE_SPACE),
+        component,
+        new ModelText(INVISIBLE_SPACE)
+      );
       transaction.selectRange(newRange);
       if (createSnapshot) {
         transaction.createSnapshot();

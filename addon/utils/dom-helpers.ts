@@ -173,6 +173,14 @@ export function isDisplayedAsBlock(domNode: Node): boolean {
   return displayStyle === 'block' || displayStyle === 'list-item';
 }
 
+export function isContentEditable(node: Node) {
+  if (isElement(node)) {
+    return node.isContentEditable;
+  } else {
+    return node.parentElement?.isContentEditable;
+  }
+}
+
 /**
  * Aggressive splitting specifically for content in an li.
  *
