@@ -25,6 +25,7 @@ import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
 import { View } from '@lblod/ember-rdfa-editor/core/view';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
+import LiveMarkSetPlugin from '@lblod/ember-rdfa-editor/plugins/live-mark-set/live-mark-set';
 
 export type PluginConfig =
   | string
@@ -151,6 +152,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       { instance: new TablePlugin(), options: null },
       { instance: new ListPlugin(), options: null },
       { instance: new RdfaConfirmationPlugin(), options: null },
+      { instance: new LiveMarkSetPlugin(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;

@@ -2,8 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import {
-  isOperationStep,
-  isSelectionStep,
+  modifiesSelection,
   Step,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
@@ -47,12 +46,8 @@ export default class EditorToolbar extends Component<Args> {
     return this.args.controller;
   }
 
-  modifiesSelection(steps: Step[]) {
-    return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
-  }
-
   update(transaction: Transaction, steps: Step[]) {
-    if (this.modifiesSelection(steps)) {
+    if (modifiesSelection(steps)) {
       this.updateProperties(transaction);
     }
   }

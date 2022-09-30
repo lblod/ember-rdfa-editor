@@ -31,6 +31,14 @@ export function isOperationStep(step: Step): step is OperationStep {
   return step.type === 'operation-step';
 }
 
+export function modifiesSelection(steps: Step[]) {
+  return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
+}
+
+export function modifiesContent(steps: Step[]) {
+  return steps.some((step) => isOperationStep(step));
+}
+
 export type StepResult = {
   state: State;
 };
