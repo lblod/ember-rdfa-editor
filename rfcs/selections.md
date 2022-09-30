@@ -95,7 +95,7 @@ class ComponentSelection extends ModelSelection {
 }
 ```
 
-### Handling and display selections
+### Handling and displaying selections
 
 This section includes some ideas on how to handle and display both `BasicSelections` and `ComponentSelections`.
 
