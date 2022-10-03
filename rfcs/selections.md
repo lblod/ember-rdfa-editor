@@ -8,7 +8,7 @@ Release Date: unreleased
 
 ## Summary
 
-This RFC includes a proposal in how we can represent ModelSelections in a more versatile way. It introduces some different types of selections and abstractions built on top of the currently used ModelSelection.
+This RFC includes a proposal in how we can represent ModelSelections in a more versatile way. It introduces some different types of selections and abstractions built on top of the currently used ModelSelection inspired by the selection representations in [ProseMirror](https://prosemirror.net/).
 
 Additionally this RFC also includes some proprosals on how we handle and display these selections in the editor.
 
@@ -101,7 +101,7 @@ This section includes some ideas on how to handle and display both `BasicSelecti
 
 `BasicSelection` objects should be displayed and handled as before: these are just shown as simple text cursors in the document.
 
-When a instance of a `ComponentSelection` is active, an attribute to the specific component can be added to indicate it is selected. Additionally the text cursor should be disabled. The selection of the component can be displayed using the attribute.
+When a instance of a `ComponentSelection` is active, an HTML attribute can be added to the specific component to indicate it is selected. Additionally the text cursor should be disabled. The selection of the component can be displayed using the attribute.
 
 When writing a selection to the DOM, we can determine which type of selection is active and display the selection accordingly.
 
