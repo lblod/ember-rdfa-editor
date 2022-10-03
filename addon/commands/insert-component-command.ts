@@ -20,7 +20,7 @@ export interface InsertComponentCommandArgs {
   props?: Properties;
   componentState?: State;
   createSnapshot?: boolean;
-  range: ModelRange | null;
+  range?: ModelRange | null;
 }
 
 export default class InsertComponentCommand

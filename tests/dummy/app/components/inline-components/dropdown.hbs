@@ -1,0 +1,9 @@
+<AuDropdown
+  @title={{this.title}}
+  @alignment='left'
+  typeof='reglementaireBijlage'
+>
+  {{#each this.articles as |article|}}
+    <AuLinkExternal role='menuitem'>{{article}}</AuLinkExternal>
+  {{/each}}
+</AuDropdown>
