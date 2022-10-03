@@ -36,6 +36,7 @@ import OperationStep from './steps/operation-step';
 import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
+import MarksManager from '../model/marks/marks-manager';
 
 interface TextInsertion {
   range: ModelRange;
@@ -62,6 +63,7 @@ export default class Transaction {
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
   rdfInvalid = true;
+  marksInvalid = true;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
 
@@ -133,6 +135,17 @@ export default class Transaction {
       this.rdfInvalid = false;
     }
     return this._workingCopy.datastore;
+  }
+
+  getMarksManager() {
+    if (this.marksInvalid) {
+      MarksManager.fromDocument(this._workingCopy.document);
+      this._workingCopy.marksManager = MarksManager.fromDocument(
+        this._workingCopy.document
+      );
+      this.marksInvalid = false;
+    }
+    return this._workingCopy.marksManager;
   }
 
   setPlugins(plugins: InitializedPlugin[]): void {
@@ -236,6 +249,7 @@ export default class Transaction {
       this._workingCopy.document !== this.initialState.document
     ) {
       this.getCurrentDataStore();
+      this.getMarksManager();
     }
     return this._workingCopy;
   }
@@ -335,6 +349,7 @@ export default class Transaction {
     this._workingCopy = step.resultState;
     if (isOperationStep(step)) {
       this.rdfInvalid = true;
+      this.marksInvalid = true;
     }
   }
 

@@ -82,6 +82,12 @@ export default class InsertTextOperation extends Operation {
         },
       })
     );
-    return { mapper, defaultRange };
+    return {
+      mapper,
+      defaultRange,
+      insertedNodes: [newText],
+      overwrittenNodes,
+      markCheckNodes: _markCheckNodes,
+    };
   }
 }

@@ -13,20 +13,33 @@
       @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
       @controller={{this.toolbarController}}
     >
-      {{#if @editorOptions.showToggleRdfaAnnotations}}
-        <AuToggleSwitch
-          {{on 'click' this.toggleRdfaBlocks}}
-          @label='Toon annotaties'
-        />
-      {{/if}}
-      {{#each this.toolbarWidgets as |widget|}}
-        {{component
-          widget.componentName
-          controller=widget.controller
-          plugin=widget.plugin
-          widgetArgs=widget.widgetArgs
-        }}
-      {{/each}}
+      <:middle>
+        {{#each this.toolbarMiddleWidgets as |widget|}}
+          {{component
+            widget.componentName
+            controller=widget.controller
+            plugin=widget.plugin
+            widgetArgs=widget.widgetArgs
+          }}
+        {{/each}}
+      </:middle>
+      <:right>
+        {{#if @editorOptions.showToggleRdfaAnnotations}}
+          <AuToggleSwitch
+            {{on 'click' this.toggleRdfaBlocks}}
+            @label='Toon annotaties'
+          />
+        {{/if}}
+        {{#each this.toolbarRightWidgets as |widget|}}
+          {{component
+            widget.componentName
+            controller=widget.controller
+            plugin=widget.plugin
+            widgetArgs=widget.widgetArgs
+          }}
+        {{/each}}
+      </:right>
+
     </Rdfa::EditorToolbar>
   {{/if}}
 

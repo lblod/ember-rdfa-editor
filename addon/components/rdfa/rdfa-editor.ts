@@ -72,7 +72,8 @@ interface RdfaEditorArgs {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
 
-  @tracked toolbarWidgets: InternalWidgetSpec[] = [];
+  @tracked toolbarMiddleWidgets: InternalWidgetSpec[] = [];
+  @tracked toolbarRightWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
@@ -118,8 +119,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   handleRawEditorInit(view: View) {
     this.controller = new ViewController('rdfaEditorComponent', view);
-    this.toolbarWidgets =
-      this.controller.currentState.widgetMap.get('toolbar') || [];
+    this.toolbarMiddleWidgets =
+      this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
+    this.toolbarRightWidgets =
+      this.controller.currentState.widgetMap.get('toolbarRight') || [];
     this.sidebarWidgets =
       this.controller.currentState.widgetMap.get('sidebar') || [];
     this.insertSidebarWidgets =

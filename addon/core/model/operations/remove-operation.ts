@@ -51,6 +51,9 @@ export default class RemoveOperation extends Operation {
     return {
       defaultRange,
       mapper: resultMapper,
+      insertedNodes: [],
+      overwrittenNodes,
+      markCheckNodes: _markCheckNodes,
     };
   }
 }

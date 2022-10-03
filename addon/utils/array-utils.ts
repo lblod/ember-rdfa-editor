@@ -62,6 +62,13 @@ export default class ArrayUtils {
   static all<T>(array: Array<T>, condition: (e: T) => boolean) {
     return !array.some((e) => !condition(e));
   }
+
+  static lastItem<T>(array: Array<T>): T | null {
+    if (array.length) {
+      return array[array.length - 1];
+    }
+    return null;
+  }
 }
 
 export function pushOrExpand<T>(parent: T[], child: T | T[]): void {

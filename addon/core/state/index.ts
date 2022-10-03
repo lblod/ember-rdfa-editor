@@ -27,7 +27,6 @@ import ReadSelectionCommand from '../../commands/read-selection-command';
 import RemoveCommand from '../../commands/remove-command';
 import RemoveComponentCommand from '../../commands/remove-component-command';
 import RemoveListCommand from '../../commands/remove-list-command';
-import RemoveMarkCommand from '../../commands/remove-mark-command';
 import RemoveMarkFromRangeCommand from '../../commands/remove-mark-from-range-command';
 import RemoveMarkFromSelectionCommand from '../../commands/remove-mark-from-selection-command';
 import RemoveMarksFromRangesCommand from '../../commands/remove-marks-from-ranges-command';
@@ -61,6 +60,8 @@ import {
   HtmlReaderContext,
   readHtml,
 } from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
+import MarksManager from '../model/marks/marks-manager';
+import RemoveMarkFromNodeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-node-command';
 
 export interface StateArgs {
   document: ModelElement;
@@ -70,6 +71,7 @@ export interface StateArgs {
   transactionDispatchListeners: TransactionDispatchListener[];
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
   datastore: Datastore;
@@ -101,6 +103,7 @@ export default interface State {
   plugins: InitializedPlugin[];
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
@@ -126,6 +129,7 @@ export class SayState implements State {
   commands: Partial<Commands>;
   datastore: Datastore;
   marksRegistry: MarksRegistry;
+  marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
   transactionStepListeners: TransactionStepListener[];
@@ -158,6 +162,7 @@ export class SayState implements State {
     this.plugins = args.plugins;
     this.commands = args.commands;
     this.marksRegistry = args.marksRegistry;
+    this.marksManager = args.marksManager;
     this.inlineComponentsRegistry = args.inlineComponentsRegistry;
     this.previousState = previousState;
     this.marksRegistry.registerMark(boldMarkSpec);
@@ -225,7 +230,7 @@ export function defaultCommands(): Partial<Commands> {
     readSelection: new ReadSelectionCommand(),
     removeComponent: new RemoveComponentCommand(),
     removeList: new RemoveListCommand(),
-    removeMark: new RemoveMarkCommand(),
+    removeMarkFromNode: new RemoveMarkFromNodeCommand(),
     removeMarkFromRange: new RemoveMarkFromRangeCommand(),
     removeMarkFromSelection: new RemoveMarkFromSelectionCommand(),
     removeMarksFromRanges: new RemoveMarksFromRangesCommand(),
@@ -249,6 +254,7 @@ export function emptyState(eventBus = new EventBus()): State {
     commands: defaultCommands(),
     config: new Map<string, string | null>(),
     marksRegistry: new MarksRegistry(),
+    marksManager: new MarksManager(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
     datastore: EditorStore.empty(),
@@ -267,6 +273,7 @@ export function cloneState(state: State): State {
   return new SayState({
     document: documentClone,
     marksRegistry: state.marksRegistry,
+    marksManager: state.marksManager,
     inlineComponentsRegistry: state.inlineComponentsRegistry.clone(
       state.document,
       documentClone
@@ -316,6 +323,7 @@ export function createState({
     commands,
     config,
     marksRegistry,
+    marksManager: MarksManager.fromDocument(document),
     inlineComponentsRegistry,
     widgetMap,
     eventBus,
