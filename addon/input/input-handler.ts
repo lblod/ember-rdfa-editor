@@ -116,13 +116,15 @@ export class EditorInputHandler implements InputHandler {
     event.preventDefault();
   };
 
-  paste = (
-    event: ClipboardEvent,
-    pasteHTML?: boolean,
-    pasteExtendedHTML?: boolean
-  ) => {
+  paste = (event: ClipboardEvent) => {
     event.preventDefault();
-    handlePaste(this.inputController, event, pasteHTML, pasteExtendedHTML);
+    const pasteBehaviour = this.inputController.getConfig('pasteBehaviour');
+    handlePaste(
+      this.inputController,
+      event,
+      pasteBehaviour === 'standard-html' || pasteBehaviour === 'full-html',
+      pasteBehaviour === 'full-html'
+    );
   };
 
   cut = (event: ClipboardEvent) => {

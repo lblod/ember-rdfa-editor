@@ -37,8 +37,16 @@ To include the editor in a template (ember octane syntax) you can use the follow
     showListButtons="true" 
     showIndentButtons="true"
   }}
+  @pasteBehaviour='standard-html' {{! default is standard-html }}
 />
 ```
+
+The `pasteBehaviour` property can be one of three different values:
+- `textonly`: no structural html is kept
+- `standard-html`: structural html which is supported by the editor is kept intact
+- `full-html`: all structural html is kept intact
+
+The default default value for `pasteBehaviour` is `standard-html`.
 
 The callback provided to rdfaEditorInit is called when the editor element is inserted and provides an object with the following interface:
  - property `htmlContent`: a cleaned up (with as much as possible internal state remove) version of the htmlContent
@@ -64,33 +72,6 @@ You can pass basic options when you load the editor. Add a value of "true" to en
 - showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
 - showListButtons: Show list styling buttons (ordered list, unordered list)
 - showIndentButtons: Show indent buttons (indent, reverse indent)
-
-
-## Feature flags
-
-Some experimental features of the editor are hidden behind feature flags. They can be enabled for testing, but probably should not be enabled on a production system. 
-The flags can be set in the config/environment.js of your application.
-
-```javascript
-// config/environment.js
-module.exports = function(environment) {
-  var ENV = {
-    featureFlags: {
-      'editor-html-paste': true,
-    }
-  };
-
-  if (environment === 'production') {
-    ENV.featureFlags['editor-html-paste'] = false;
-  }
-
-  return ENV;
-};
-```
-
-* editor-html-paste: if enabled, support html paste input
-* editor-extended-html-paste: if enabled, support extended html paste input (old behavior)
-* editor-force-paragraph: if enabled, wrap text input in a paragraph if it's not already wrapped.
 
 ## Styling
 
@@ -299,4 +280,3 @@ created by [Ruben Taelman](https://github.com/rubensworks) and distributed under
 
 Due to unique requirements which would not benefit the original project we opted to make our modifications 
 in-house rather than contributing to the upstream.
-

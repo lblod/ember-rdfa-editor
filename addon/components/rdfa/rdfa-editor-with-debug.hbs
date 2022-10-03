@@ -12,8 +12,8 @@
       </label>
       <select id="pasteSelect" {{on "input" this.setPasteBehaviour}}>
         <option value="textonly">text only</option>
-        <option value="limited">limited html</option>
-        <option value="full" selected>full html</option>
+        <option value="standard-html">standard html</option>
+        <option value="full-html" selected>full html</option>
       </select>
     </div>
     {{#if this.rdfaEditor}}
@@ -45,6 +45,7 @@
           @profile="default"
           @editorOptions={{@editorOptions}}
           @toolbarOptions={{@toolbarOptions}}
+          @pasteBehaviour={{this.pasteBehaviour}}
         />
       </div>
     </div>
