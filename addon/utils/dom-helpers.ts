@@ -583,7 +583,7 @@ export function domPosToModelPos(
   state: State,
   viewRoot: Element,
   container: Node,
-  offset: number
+  offset?: number
 ): ModelPosition {
   // get the path of dom index to the container node
   const path = getPositionPathFromAncestor(viewRoot, container);
@@ -617,16 +617,19 @@ export function domPosToModelPos(
       cur = cur.children[index];
     }
   }
-  const modelOffset = domOffsetToModelOffset(state, offset, container);
-  if (ModelNode.isModelText(cur) || cur.isLeaf) {
-    offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
-  } else if (ModelNode.isModelElement(cur)) {
-    if (!cur.length) {
-      offsetPath.push(0);
-    } else if (cur.children.length > modelOffset) {
-      offsetPath.push(cur.children[modelOffset].getOffset());
-    } else {
-      offsetPath.push(cur.getMaxOffset());
+  if (!(offset === null || offset === undefined)) {
+    // offset may not be null or undefined but can be 0
+    const modelOffset = domOffsetToModelOffset(state, offset, container);
+    if (ModelNode.isModelText(cur) || cur.isLeaf) {
+      offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
+    } else if (ModelNode.isModelElement(cur)) {
+      if (!cur.length) {
+        offsetPath.push(0);
+      } else if (cur.children.length > modelOffset) {
+        offsetPath.push(cur.children[modelOffset].getOffset());
+      } else {
+        offsetPath.push(cur.getMaxOffset());
+      }
     }
   }
 
