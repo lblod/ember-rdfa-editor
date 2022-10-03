@@ -15,7 +15,7 @@ export interface BaseStep {
   mapRange(range: ModelRange, bias?: LeftOrRight): ModelRange;
 }
 
-export type StepType = 'operation-step' | 'selection-step' | 'config-step';
+export type StepType = 'operation-step' | 'selection-step' | 'config-step' | 'plugin-step';
 
 export type Step = SelectionStep | OperationStep | ConfigStep;
 

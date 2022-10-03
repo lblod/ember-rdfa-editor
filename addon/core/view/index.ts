@@ -18,7 +18,6 @@ import {
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
-import { InitializedPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -252,28 +251,8 @@ export async function createEditorView({
 }: EditorArgs): Promise<View> {
   const state = initialState;
   const view = createView({ domRoot, dispatch, initialState: state });
-  const initPlugins = await initializePlugins(view, plugins);
   const tr = view.currentState.createTransaction();
-  tr.setPlugins(initPlugins);
+  await tr.setPlugins(plugins, view);
   view.dispatch(tr);
   return view;
-}
-
-/**
- * Before use, plugins need to be initialized, which provides them with the controller
- * they need to interact with the editor. Since plugins often interact with backends,
- * this is async.
- * */
-async function initializePlugins(
-  view: View,
-  configs: ResolvedPluginConfig[]
-): Promise<InitializedPlugin[]> {
-  const result: InitializedPlugin[] = [];
-  for (const config of configs) {
-    const plugin = config.instance;
-    const controller = new ViewController(plugin.name, view);
-    await plugin.initialize(controller, config.options);
-    result.push(plugin);
-  }
-  return result;
 }

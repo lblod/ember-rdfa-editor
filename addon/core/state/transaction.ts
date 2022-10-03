@@ -13,7 +13,6 @@ import RangeMapper, { LeftOrRight } from '../model/range-mapper';
 import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../../utils/dom-helpers';
-import { InitializedPlugin } from '../model/editor-plugin';
 import { NotImplementedError } from '../../utils/errors';
 import { View } from '../view';
 import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
@@ -37,6 +36,9 @@ import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
 import MarksManager from '../model/marks/marks-manager';
+import { ViewController } from '../controllers/view-controller';
+import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
+import PluginStep from './steps/plugin-step';
 
 interface TextInsertion {
   range: ModelRange;
@@ -148,8 +150,14 @@ export default class Transaction {
     return this._workingCopy.marksManager;
   }
 
-  setPlugins(plugins: InitializedPlugin[]): void {
-    this._workingCopy.plugins = plugins;
+  async setPlugins(configs: ResolvedPluginConfig[], view: View): Promise<void> {
+    const step = new PluginStep(configs, view, this);
+    this.commitStep(step);
+    for (const config of configs) {
+      const plugin = config.instance;
+      const controller = new ViewController(plugin.name, view);
+      await plugin.initialize(this, controller, config.options);
+    }
   }
 
   setBaseIRI(iri: string): void {

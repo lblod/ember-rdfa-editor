@@ -4,6 +4,7 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 
 export default class PlaceHolderPlugin implements EditorPlugin {
   controller!: Controller;
@@ -12,7 +13,11 @@ export default class PlaceHolderPlugin implements EditorPlugin {
     return 'placeholder';
   }
 
-  initialize(_controller: Controller, _options: unknown): Promise<void> {
+  initialize(
+    _transaction: Transaction,
+    _controller: Controller,
+    _options: unknown
+  ): Promise<void> {
     this.controller = _controller;
     return Promise.resolve();
   }
