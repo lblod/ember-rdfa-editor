@@ -7,6 +7,8 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import CounterSpec from './models/inline-components/counter';
+import DropdownSpec from './models/inline-components/dropdown';
 
 export interface DummyPluginOptions {
   testKey: string;
@@ -43,6 +45,13 @@ export default class DummyPlugin implements EditorPlugin {
         });
       }
     });
+
+    controller.registerWidget({
+      componentName: 'rdfa-ic-plugin-insert',
+      desiredLocation: 'insertSidebar',
+    });
+    controller.registerInlineComponent(new CounterSpec(this.controller));
+    controller.registerInlineComponent(new DropdownSpec(this.controller));
   }
 
   get name(): string {

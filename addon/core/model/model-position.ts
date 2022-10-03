@@ -85,6 +85,8 @@ export default class ModelPosition {
       return ModelPosition.fromInTextNode(node, offset);
     } else if (ModelNode.isModelElement(node)) {
       return ModelPosition.fromInElement(node, offset);
+    } else if (ModelNode.isModelInlineComponent(node)) {
+      return ModelPosition.fromBeforeNode(node);
     } else {
       throw new NotImplementedError('Unsupported node type');
     }
