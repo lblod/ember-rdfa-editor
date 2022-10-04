@@ -4,7 +4,7 @@
     {{if @editorOptions.showPaper "say-container--paper"}}
     {{if @editorOptions.showSidebar "say-container--sidebar-right"}}
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
-  {{did-update this.updateProfile @profile}}
+  {{did-update (fn this.updateConfig 'pasteBehaviour' this.pasteBehaviour) @pasteBehaviour}}
 >
   {{#if this.toolbarController}}
     <Rdfa::EditorToolbar
