@@ -1,5 +1,4 @@
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
-import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
@@ -12,14 +11,11 @@ export default class BasicStyles implements EditorPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async initialize(
-    _transaction: Transaction,
-    controller: Controller
-  ): Promise<void> {
+  async initialize(transaction: Transaction): Promise<void> {
     // TODO: change to transaction.registerMark
-    controller.registerMark(boldMarkSpec);
-    controller.registerMark(italicMarkSpec);
-    controller.registerMark(strikethroughMarkSpec);
-    controller.registerMark(underlineMarkSpec);
+    transaction.registerMark(boldMarkSpec);
+    transaction.registerMark(italicMarkSpec);
+    transaction.registerMark(strikethroughMarkSpec);
+    transaction.registerMark(underlineMarkSpec);
   }
 }

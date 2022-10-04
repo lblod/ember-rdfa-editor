@@ -9,8 +9,6 @@ import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
-import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
-import { AttributeSpec } from '@lblod/ember-rdfa-editor/utils/render-spec';
 import ModelElement, {
   ElementType,
 } from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
@@ -22,16 +20,12 @@ import Transaction, {
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
-import { InlineComponentSpec } from '@lblod/ember-rdfa-editor/core/model/inline-components/model-inline-component';
-import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   EditorEventListener,
   ListenerConfig,
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
-import Controller, {
-  WidgetSpec,
-} from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { MarkInstanceEntry } from '../model/marks/marks-manager';
 
@@ -131,24 +125,8 @@ export class ViewController implements Controller {
     return new ModelElement(type);
   }
 
-  registerInlineComponent(component: InlineComponentSpec) {
-    this.currentState.inlineComponentsRegistry.registerComponent(component);
-    // this._rawEditor.registerComponent(component);
-  }
-
   getMarksFor(owner: string): Set<MarkInstanceEntry> {
     return this.currentState.marksManager.getMarksByOwner(owner);
-  }
-
-  registerWidget(spec: WidgetSpec): void {
-    MapUtils.setOrPush(this.currentState.widgetMap, spec.desiredLocation, {
-      controller: this,
-      ...spec,
-    });
-  }
-
-  registerMark(spec: MarkSpec<AttributeSpec>): void {
-    this.marksRegistry.registerMark(spec);
   }
 
   getConfig(key: string): string | null {

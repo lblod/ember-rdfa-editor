@@ -39,6 +39,9 @@ import MarksManager from '../model/marks/marks-manager';
 import { ViewController } from '../controllers/view-controller';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
 import PluginStep from './steps/plugin-step';
+import Controller, { WidgetSpec } from '../controllers/controller';
+import { InlineComponentSpec } from '../model/inline-components/model-inline-component';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 
 interface TextInsertion {
   range: ModelRange;
@@ -151,7 +154,7 @@ export default class Transaction {
   }
 
   async setPlugins(configs: ResolvedPluginConfig[], view: View): Promise<void> {
-    const step = new PluginStep(configs, view, this);
+    const step = new PluginStep(this.workingCopy, configs, view);
     this.commitStep(step);
     for (const config of configs) {
       const plugin = config.instance;
@@ -669,6 +672,21 @@ export default class Transaction {
   registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {
     this.workingCopy.commands[name] = command;
     this._commandCache = undefined;
+  }
+
+  registerWidget(spec: WidgetSpec, controller: Controller): void {
+    MapUtils.setOrPush(this.workingCopy.widgetMap, spec.desiredLocation, {
+      controller,
+      ...spec,
+    });
+  }
+
+  registerMark(spec: MarkSpec<AttributeSpec>): void {
+    this.workingCopy.marksRegistry.registerMark(spec);
+  }
+
+  registerInlineComponent(component: InlineComponentSpec) {
+    this.workingCopy.inlineComponentsRegistry.registerComponent(component);
   }
 
   get commands(): CommandExecutor {

@@ -4,13 +4,11 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
 import { View } from '../../view';
-import { ViewController } from '../../controllers/view-controller';
-import Transaction from '../transaction';
 
 export default class PluginStep implements BaseStep {
   private readonly _type: StepType = 'plugin-step';
 
-  private _resultState?: State;
+  private _resultState: State;
 
   readonly configs: ResolvedPluginConfig[] = [];
 
@@ -38,7 +36,7 @@ export default class PluginStep implements BaseStep {
     return this._type;
   }
 
-  get resultState(): State | undefined {
+  get resultState(): State {
     return this._resultState;
   }
 

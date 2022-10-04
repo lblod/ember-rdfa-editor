@@ -1,7 +1,6 @@
 import LiveMarkSet, {
   LiveMarkSetArgs,
 } from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
-import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
 import ModelElement, {
   ElementType,
@@ -22,7 +21,6 @@ import Transaction, {
   TransactionStepListener,
 } from '../state/transaction';
 import { View } from '../view';
-import { InlineComponentSpec } from '../model/inline-components/model-inline-component';
 import ModelNode from '../model/nodes/model-node';
 import { EditorUtils } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { MarkInstanceEntry } from '../model/marks/marks-manager';
@@ -83,12 +81,6 @@ export default interface Controller {
   dryRun<R>(action: (transaction: Transaction) => R): R;
 
   dispatchTransaction(tr: Transaction, updateView?: boolean): void;
-
-  registerWidget(spec: WidgetSpec): void;
-
-  registerMark(spec: MarkSpec): void;
-
-  registerInlineComponent(component: InlineComponentSpec): void;
 
   modelToView(node: ModelNode): Node | null;
 
