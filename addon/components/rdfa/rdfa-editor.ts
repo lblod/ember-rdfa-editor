@@ -26,6 +26,9 @@ import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confir
 import { View } from '@lblod/ember-rdfa-editor/core/view';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 
 export type PluginConfig =
   | string
@@ -122,14 +125,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   handleRawEditorInit(view: View) {
     this.controller = new ViewController('rdfaEditorComponent', view);
-    this.toolbarMiddleWidgets =
-      this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
-    this.toolbarRightWidgets =
-      this.controller.currentState.widgetMap.get('toolbarRight') || [];
-    this.sidebarWidgets =
-      this.controller.currentState.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets =
-      this.controller.currentState.widgetMap.get('insertSidebar') || [];
+    this.updateWidgets();
     this.toolbarController = new ViewController('toolbar', view);
     this.inlineComponentController = new ViewController(
       'inline-component-manager',
@@ -141,6 +137,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
+    this.controller.addTransactionDispatchListener(
+      this.onTransactionDispatch.bind(this)
+    );
     this.editorLoading = false;
   }
 
@@ -196,6 +195,25 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.controller.perform((tr) => {
         tr.setConfig(key, value.toString());
       });
+    }
+  }
+
+  onTransactionDispatch(transaction: Transaction) {
+    if (transaction.steps.some((step) => isPluginStep(step))) {
+      this.updateWidgets();
+    }
+  }
+
+  updateWidgets() {
+    if (this.controller) {
+      this.toolbarMiddleWidgets =
+        this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
+      this.toolbarRightWidgets =
+        this.controller.currentState.widgetMap.get('toolbarRight') || [];
+      this.sidebarWidgets =
+        this.controller.currentState.widgetMap.get('sidebar') || [];
+      this.insertSidebarWidgets =
+        this.controller.currentState.widgetMap.get('insertSidebar') || [];
     }
   }
 }

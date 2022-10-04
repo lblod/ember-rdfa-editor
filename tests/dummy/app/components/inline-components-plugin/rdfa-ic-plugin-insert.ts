@@ -11,7 +11,7 @@ export default class RdfaIcPluginInsertComponent extends Component<RdfaIcPluginI
   insertCounter() {
     this.args.controller.perform((transaction) => {
       transaction.commands.insertComponent({
-        componentName: 'inline-components/counter',
+        componentName: 'inline-components-plugin/counter',
       });
     });
   }
@@ -20,7 +20,7 @@ export default class RdfaIcPluginInsertComponent extends Component<RdfaIcPluginI
   insertDropdown() {
     this.args.controller.perform((transaction) => {
       transaction.commands.insertComponent({
-        componentName: 'inline-components/dropdown',
+        componentName: 'inline-components-plugin/dropdown',
       });
     });
   }

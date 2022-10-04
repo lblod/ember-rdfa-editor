@@ -8,8 +8,6 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import CounterSpec from './models/inline-components/counter';
-import DropdownSpec from './models/inline-components/dropdown';
 
 export interface HighlightPluginOptions {
   testKey: string;
@@ -49,16 +47,6 @@ export default class HighlightPlugin implements EditorPlugin {
         });
       }
     });
-
-    transaction.registerWidget(
-      {
-        componentName: 'rdfa-ic-plugin-insert',
-        desiredLocation: 'insertSidebar',
-      },
-      controller
-    );
-    transaction.registerInlineComponent(new CounterSpec(this.controller));
-    transaction.registerInlineComponent(new DropdownSpec(this.controller));
   }
 
   get name(): string {

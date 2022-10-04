@@ -2,11 +2,11 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import InlineComponentController from '@lblod/ember-rdfa-editor/core/model/inline-components/inline-component-controller';
 
-type InlineComponentsCounterArgs = {
+type CounterArgs = {
   componentController: InlineComponentController;
 };
 
-export default class InlineComponentsCounter extends Component<InlineComponentsCounterArgs> {
+export default class InlineComponentsPluginCounter extends Component<CounterArgs> {
   get componentController() {
     return this.args.componentController;
   }
