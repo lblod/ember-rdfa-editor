@@ -7,54 +7,61 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import CounterSpec from './models/inline-components/counter';
 import DropdownSpec from './models/inline-components/dropdown';
 
-export interface DummyPluginOptions {
+export interface HighlightPluginOptions {
   testKey: string;
 }
 
-export default class DummyPlugin implements EditorPlugin {
+export default class HighlightPlugin implements EditorPlugin {
   controller!: Controller;
   private logger: Logger = createLogger(this.constructor.name);
 
   // eslint-disable-next-line @typescript-eslint/require-await
   async initialize(
+    transaction: Transaction,
     controller: Controller,
-    options: DummyPluginOptions
+    options: HighlightPluginOptions
   ): Promise<void> {
-    this.logger('recieved options: ', options);
+    this.logger('received options: ', options);
     this.controller = controller;
-    this.controller.addTransactionStepListener((tr) => {
-      for (const { mark, node } of this.controller.ownMarks) {
+    transaction.addTransactionStepListener((tr) => {
+      for (const { mark, node } of tr
+        .getMarksManager()
+        .getMarksByOwner(this.name)) {
         tr.commands.removeMarkFromNode({ mark, node });
       }
 
       const walker = GenTreeWalker.fromSubTree({
-        root: this.controller.modelRoot,
+        root: tr.currentDocument,
         filter: toFilterSkipFalse(
           (node) =>
-            ModelNode.isModelText(node) && node.content.search('yeet') > -1
+            ModelNode.isModelText(node) && node.content.search('test') > -1
         ),
       });
       for (const node of walker.nodes()) {
         tr.commands.addMarkToRange({
-          range: this.controller?.rangeFactory.fromAroundNode(node),
+          range: tr.rangeFactory.fromAroundNode(node),
           markName: 'highlighted',
           markAttributes: { setBy: this.name },
         });
       }
     });
 
-    controller.registerWidget({
-      componentName: 'rdfa-ic-plugin-insert',
-      desiredLocation: 'insertSidebar',
-    });
-    controller.registerInlineComponent(new CounterSpec(this.controller));
-    controller.registerInlineComponent(new DropdownSpec(this.controller));
+    transaction.registerWidget(
+      {
+        componentName: 'rdfa-ic-plugin-insert',
+        desiredLocation: 'insertSidebar',
+      },
+      controller
+    );
+    transaction.registerInlineComponent(new CounterSpec(this.controller));
+    transaction.registerInlineComponent(new DropdownSpec(this.controller));
   }
 
   get name(): string {
-    return 'dummy';
+    return 'highlight';
   }
 }

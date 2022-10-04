@@ -1,6 +1,6 @@
 import Application from '@ember/application';
-import DummyPlugin from 'dummy/testplugin/dummy-plugin';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import HighlightPlugin from '../dummy-plugins/highlight-plugin/highlight-plugin';
 
 function pluginFactory(plugin: new () => EditorPlugin) {
   return {
@@ -13,7 +13,7 @@ function pluginFactory(plugin: new () => EditorPlugin) {
 }
 
 export function initialize(application: Application) {
-  application.register('plugin:dummy', pluginFactory(DummyPlugin), {
+  application.register('plugin:highlight', pluginFactory(HighlightPlugin), {
     singleton: false,
   });
 }
