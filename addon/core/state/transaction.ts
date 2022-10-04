@@ -154,6 +154,11 @@ export default class Transaction {
   }
 
   async setPlugins(configs: ResolvedPluginConfig[], view: View): Promise<void> {
+    for (const plugin of this.workingCopy.plugins) {
+      if (plugin.willDestroy) {
+        await plugin.willDestroy(this);
+      }
+    }
     const step = new PluginStep(this.workingCopy, configs, view);
     this.commitStep(step);
     for (const config of configs) {

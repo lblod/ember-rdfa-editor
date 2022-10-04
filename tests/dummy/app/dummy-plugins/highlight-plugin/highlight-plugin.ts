@@ -25,29 +25,35 @@ export default class HighlightPlugin implements EditorPlugin {
   ): Promise<void> {
     this.logger('received options: ', options);
     this.controller = controller;
-    transaction.addTransactionStepListener((tr) => {
-      for (const { mark, node } of tr
-        .getMarksManager()
-        .getMarksByOwner(this.name)) {
-        tr.commands.removeMarkFromNode({ mark, node });
-      }
-
-      const walker = GenTreeWalker.fromSubTree({
-        root: tr.currentDocument,
-        filter: toFilterSkipFalse(
-          (node) =>
-            ModelNode.isModelText(node) && node.content.search('test') > -1
-        ),
-      });
-      for (const node of walker.nodes()) {
-        tr.commands.addMarkToRange({
-          range: tr.rangeFactory.fromAroundNode(node),
-          markName: 'highlighted',
-          markAttributes: { setBy: this.name },
-        });
-      }
-    });
+    transaction.addTransactionStepListener(this.onTransactionStep);
   }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async willDestroy(transaction: Transaction): Promise<void> {
+    transaction.removeTransactionStepListener(this.onTransactionStep);
+  }
+
+  onTransactionStep = (transaction: Transaction) => {
+    for (const { mark, node } of transaction
+      .getMarksManager()
+      .getMarksByOwner(this.name)) {
+      transaction.commands.removeMarkFromNode({ mark, node });
+    }
+
+    const walker = GenTreeWalker.fromSubTree({
+      root: transaction.currentDocument,
+      filter: toFilterSkipFalse(
+        (node) =>
+          ModelNode.isModelText(node) && node.content.search('test') > -1
+      ),
+    });
+    for (const node of walker.nodes()) {
+      transaction.commands.addMarkToRange({
+        range: transaction.rangeFactory.fromAroundNode(node),
+        markName: 'highlighted',
+        markAttributes: { setBy: this.name },
+      });
+    }
+  };
 
   get name(): string {
     return 'highlight';

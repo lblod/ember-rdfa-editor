@@ -27,7 +27,6 @@ import { View } from '@lblod/ember-rdfa-editor/core/view';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 
 export type PluginConfig =

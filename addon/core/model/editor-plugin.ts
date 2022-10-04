@@ -49,6 +49,8 @@ export interface EditorPlugin {
     options: unknown
   ): Promise<void>;
 
+  willDestroy?(transaction: Transaction): Promise<void>;
+
   handleEvent?(event: InputEvent): { handled: boolean };
 }
 export type InitializedPlugin = Omit<EditorPlugin, 'initialize'>;
