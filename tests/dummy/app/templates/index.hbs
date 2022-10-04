@@ -23,7 +23,6 @@
     <Input
       @type='checkbox'
       id='plugin-highlight'
-      value='highlight'
       @checked={{true}}
       {{on "input" (fn this.togglePlugin 'highlight')}}
     />
@@ -31,7 +30,6 @@
     <Input
       @type='checkbox'
       id='plugin-code-mark'
-      value='code-mark'
       @checked={{true}}
       {{on "input" (fn this.togglePlugin 'code-mark')}}
     />
@@ -39,7 +37,6 @@
     <Input
       @type='checkbox'
       id='plugin-inline-components'
-      value='inline-components'
       @checked={{true}}
       {{on "input" (fn this.togglePlugin 'inline-components')}}
     />
