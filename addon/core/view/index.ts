@@ -119,26 +119,27 @@ export class EditorView implements View {
     // notify listeners while there are new operations added to the transaction
     let newSteps = transaction.size > 0;
     const handledSteps = new Array<number>(
-      transaction.workingCopy.transactionStepListeners.length
+      transaction.workingCopy.transactionStepListeners.size
     ).fill(0);
+    const transactionStepListenersArray = [
+      ...transaction.workingCopy.transactionStepListeners,
+    ];
     // keep track if any listeners added any steps at all
     let listenersAddedSteps = false;
     while (newSteps) {
       newSteps = false;
-      transaction.workingCopy.transactionStepListeners.forEach(
-        (listener, i) => {
-          const oldTransactionSize = transaction.size;
-          if (handledSteps[i] < transaction.size) {
-            // notify listener of new operations
-            listener(transaction, transaction.steps.slice(handledSteps[i]));
-            handledSteps[i] = transaction.size;
-          }
-          if (transaction.size > oldTransactionSize) {
-            newSteps = true;
-            listenersAddedSteps = true;
-          }
+      transactionStepListenersArray.forEach((listener, i) => {
+        const oldTransactionSize = transaction.size;
+        if (handledSteps[i] < transaction.size) {
+          // notify listener of new operations
+          listener(transaction, transaction.steps.slice(handledSteps[i]));
+          handledSteps[i] = transaction.size;
         }
-      );
+        if (transaction.size > oldTransactionSize) {
+          newSteps = true;
+          listenersAddedSteps = true;
+        }
+      });
     }
     const newState = transaction.apply();
     const differences =

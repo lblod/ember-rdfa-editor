@@ -91,7 +91,7 @@ export function testState({
   const baseIRI = 'http://example.org';
   return new SayState({
     document,
-    transactionStepListeners: [],
+    transactionStepListeners: new Set(),
     commands,
     marksRegistry,
     marksManager,
@@ -99,7 +99,7 @@ export function testState({
     plugins,
     selection,
     baseIRI,
-    transactionDispatchListeners: [],
+    transactionDispatchListeners: new Set(),
     config: new Map(),
     datastore: EditorStore.fromParse({ baseIRI, modelRoot: document }),
     eventBus: new EventBus(),

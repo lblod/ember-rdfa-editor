@@ -177,26 +177,19 @@ export default class Transaction {
   }
 
   addTransactionStepListener(listener: TransactionStepListener) {
-    this._workingCopy.transactionStepListeners.push(listener);
+    this._workingCopy.transactionStepListeners.add(listener);
   }
 
   removeTransactionStepListener(listener: TransactionStepListener) {
-    const index = this._workingCopy.transactionStepListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionStepListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionStepListeners.delete(listener);
   }
 
   addTransactionDispatchListener(listener: TransactionDispatchListener) {
-    this._workingCopy.transactionDispatchListeners.push(listener);
+    this._workingCopy.transactionDispatchListeners.add(listener);
   }
 
   removeTransactionDispatchListener(listener: TransactionDispatchListener) {
-    const index =
-      this._workingCopy.transactionDispatchListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionDispatchListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionDispatchListeners.delete(listener);
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
