@@ -80,7 +80,7 @@ export default interface Controller {
 
   dryRun<R>(action: (transaction: Transaction) => R): R;
 
-  dispatchTransaction(tr: Transaction, updateView?: boolean): void;
+  dispatchTransaction(tr: Transaction): void;
 
   modelToView(node: ModelNode): Node | null;
 
