@@ -9,7 +9,7 @@ import {
   isTextNode,
   modelPosToDomPos,
 } from '../../utils/dom-helpers';
-import { NotImplementedError, PositionError } from '../../utils/errors';
+import { PositionError } from '../../utils/errors';
 import { createLogger, Logger } from '../../utils/logging-utils';
 import Transaction from '../state/transaction';
 import {
@@ -18,7 +18,6 @@ import {
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
-import { readHtml, HtmlReaderContext } from '../model/readers/html-reader';
 
 export type Dispatch = (transaction: Transaction) => void;
 
