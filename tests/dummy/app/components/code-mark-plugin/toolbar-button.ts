@@ -43,13 +43,11 @@ export default class CodeMarkToolbarButton extends Component<Args> {
 
   updateProperties(transaction: Transaction) {
     const { currentSelection: selection } = transaction;
-    console.log('CODE-MARK', selection.hasMark('code-mark'));
     this.isCode = selection.hasMark('code-mark');
   }
   @action
   toggleCode() {
     if (!this.isCode) {
-      console.log('ADD CODE MARK');
       this.args.controller.perform((tr) => {
         tr.commands.addMarkToSelection({
           markName: 'code-mark',
@@ -57,8 +55,6 @@ export default class CodeMarkToolbarButton extends Component<Args> {
         });
       });
     } else {
-      console.log('REMOVE CODE MARK');
-
       this.args.controller.perform((tr) => {
         tr.commands.removeMarkFromSelection({
           markName: 'code-mark',
