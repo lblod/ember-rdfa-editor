@@ -17,7 +17,7 @@ export default class InlineComponentManager extends Component<InlineComponentMan
   @action
   didInsert() {
     this.args.controller.addTransactionDispatchListener(
-      this.updateInlineComponents.bind(this)
+      this.updateInlineComponents
     );
     this.refreshInlineComponents();
   }
@@ -25,16 +25,16 @@ export default class InlineComponentManager extends Component<InlineComponentMan
   @action
   willDestroy(): void {
     this.args.controller.removeTransactionDispatchListener(
-      this.updateInlineComponents.bind(this)
+      this.updateInlineComponents
     );
     super.willDestroy();
   }
 
-  updateInlineComponents(transaction: Transaction) {
+  updateInlineComponents = (transaction: Transaction) => {
     if (transaction.steps.some((step) => isOperationStep(step))) {
       this.refreshInlineComponents();
     }
-  }
+  };
 
   refreshInlineComponents() {
     const inlineComponentsMap =

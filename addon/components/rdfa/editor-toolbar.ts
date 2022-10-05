@@ -40,12 +40,12 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   didInsert() {
-    this.args.controller.addTransactionStepListener(this.update.bind(this));
+    this.args.controller.addTransactionStepListener(this.update);
   }
 
   @action
   willDestroy(): void {
-    this.args.controller.removeTransactionStepListener(this.update.bind(this));
+    this.args.controller.removeTransactionStepListener(this.update);
     super.willDestroy();
   }
 
@@ -57,11 +57,11 @@ export default class EditorToolbar extends Component<Args> {
     return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
   }
 
-  update(transaction: Transaction, steps: Step[]) {
+  update = (transaction: Transaction, steps: Step[]) => {
     if (this.modifiesSelection(steps)) {
       this.updateProperties(transaction);
     }
-  }
+  };
 
   updateProperties(transaction: Transaction) {
     const {
