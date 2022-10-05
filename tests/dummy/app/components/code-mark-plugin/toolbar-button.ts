@@ -13,7 +13,7 @@ type Args = {
   controller: Controller;
 };
 
-export default class InlineComponentsCounter extends Component<Args> {
+export default class CodeMarkToolbarButton extends Component<Args> {
   @tracked isCode = false;
 
   @action
