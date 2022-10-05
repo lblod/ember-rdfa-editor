@@ -145,27 +145,11 @@ export class EditorView implements View {
     const newState = transaction.apply();
 
     let differences: Difference[] = [];
-    // we can only optimize for browserdefault flow if
-    // no listeners added any steps
     if (calculateDiffs || listenersAddedSteps) {
-      // Ensure that the document we compare with corresponds correctly to the current DOM
-      const parsedNodes = readHtml(
-        this.domRoot,
-        new HtmlReaderContext({
-          inlineComponentsRegistry:
-            transaction.workingCopy.inlineComponentsRegistry,
-          marksRegistry: transaction.workingCopy.marksRegistry,
-        })
+      differences = computeDifference(
+        this.currentState.document,
+        newState.document
       );
-      if (parsedNodes.length !== 1) {
-        throw new NotImplementedError();
-      }
-      const currentDocument = parsedNodes[0];
-      if (!ModelNode.isModelElement(currentDocument)) {
-        throw new NotImplementedError();
-      }
-      // const currentDocument = this.currentState.document;
-      differences = computeDifference(currentDocument, newState.document);
     }
     this.currentState = newState;
     this.update(this.currentState, differences, transaction.shouldFocus);

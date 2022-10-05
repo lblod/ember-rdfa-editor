@@ -19,15 +19,13 @@ export function handleInsertText(
   controller: Controller,
   event: InputEvent
 ): void {
-  if (controller.selection.activeMarks.size !== 0) {
-    event.preventDefault();
-    controller.perform((tr) => {
-      tr.commands.insertText({
-        range: controller.selection.lastRange!,
-        text: event.data ?? '',
-      });
+  event.preventDefault();
+  controller.perform((tr) => {
+    tr.commands.insertText({
+      range: controller.selection.lastRange!,
+      text: event.data ?? '',
     });
-  }
+  });
 }
 
 export function handleInsertListItem(
