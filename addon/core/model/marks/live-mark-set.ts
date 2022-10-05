@@ -29,6 +29,9 @@ export interface TextMatchDiff {
   matchesToAdd: Set<TextMatch>;
 }
 
+/**
+ * @deprecated The LiveMarkSet class is replaced by the LiveMarkSetPlugin.
+ */
 export default class LiveMarkSet {
   private _controller: Controller;
   private _datastoreQuery: (datastore: Datastore) => TextMatch[];

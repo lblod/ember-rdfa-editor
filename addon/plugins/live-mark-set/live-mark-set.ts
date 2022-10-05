@@ -1,7 +1,6 @@
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import { MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
-import MarksManager from '@lblod/ember-rdfa-editor/core/model/marks/marks-manager';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import {
   modifiesContent,
@@ -69,8 +68,7 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
   };
 
   updateMarks(transaction: Transaction) {
-    const manager = transaction.getMarksManager();
-    this._removeExistingMarks(transaction, manager);
+    this._removeExistingMarks(transaction);
     for (const rule of this.rules) {
       this._updateMarksByRule(transaction, rule);
     }
@@ -103,8 +101,9 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
     }
   }
 
-  _removeExistingMarks(transaction: Transaction, manager: MarksManager) {
-    const markInstances = manager.getMarksByOwner(this.controller.name);
+  _removeExistingMarks(transaction: Transaction) {
+    const manager = transaction.getMarksManager();
+    const markInstances = manager.getMarksByOwner(this.name);
     for (const instance of markInstances) {
       transaction.removeMark(
         ModelRange.fromAroundNode(instance.node),
