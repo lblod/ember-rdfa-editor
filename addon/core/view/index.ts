@@ -148,6 +148,7 @@ export class EditorView implements View {
     // we can only optimize for browserdefault flow if
     // no listeners added any steps
     if (calculateDiffs || listenersAddedSteps) {
+      // Ensure that the document we compare with corresponds correctly to the current DOM
       const parsedNodes = readHtml(
         this.domRoot,
         new HtmlReaderContext({
