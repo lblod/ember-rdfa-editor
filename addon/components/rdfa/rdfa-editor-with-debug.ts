@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { inject as service } from '@ember/service';
 import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import xmlFormat from 'xml-formatter';
 import { basicSetup, EditorView } from 'codemirror';
@@ -9,11 +8,6 @@ import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../../config/sample-data';
 import { EditorState } from '@codemirror/state';
-
-interface FeaturesService {
-  disable: (feature: string) => void;
-  enable: (feature: string) => void;
-}
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: RdfaDocument) => void;
@@ -24,7 +18,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
   @tracked debuggerContent = '';
-  @service features!: FeaturesService;
+  @tracked pasteBehaviour = 'full-html';
   @tracked htmlDebuggerOpen = false;
   @tracked sampleData = sampleData;
   @tracked exportContent = '';
@@ -147,16 +141,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action
   setPasteBehaviour(event: InputEvent) {
     const val = (event.target as HTMLSelectElement).value;
-    if (val === 'textonly') {
-      this.features.disable('editor-extended-html-paste');
-      this.features.disable('editor-html-paste');
-    } else if (val === 'limited') {
-      this.features.disable('editor-extended-html-paste');
-      this.features.enable('editor-html-paste');
-    } else if (val === 'full') {
-      this.features.enable('editor-extended-html-paste');
-      this.features.enable('editor-html-paste');
-    }
+    this.pasteBehaviour = val;
   }
 
   @action

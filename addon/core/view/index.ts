@@ -9,7 +9,7 @@ import {
   isTextNode,
   modelPosToDomPos,
 } from '../../utils/dom-helpers';
-import { PositionError } from '../../utils/errors';
+import { NotImplementedError, PositionError } from '../../utils/errors';
 import { createLogger, Logger } from '../../utils/logging-utils';
 import Transaction from '../state/transaction';
 import {
@@ -18,7 +18,7 @@ import {
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
-import { InitializedPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import { readHtml, HtmlReaderContext } from '../model/readers/html-reader';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -120,34 +120,52 @@ export class EditorView implements View {
     // notify listeners while there are new operations added to the transaction
     let newSteps = transaction.size > 0;
     const handledSteps = new Array<number>(
-      transaction.workingCopy.transactionStepListeners.length
+      transaction.workingCopy.transactionStepListeners.size
     ).fill(0);
+    const transactionStepListenersArray = [
+      ...transaction.workingCopy.transactionStepListeners,
+    ];
     // keep track if any listeners added any steps at all
     let listenersAddedSteps = false;
     while (newSteps) {
       newSteps = false;
-      transaction.workingCopy.transactionStepListeners.forEach(
-        (listener, i) => {
-          const oldTransactionSize = transaction.size;
-          if (handledSteps[i] < transaction.size) {
-            // notify listener of new operations
-            listener(transaction, transaction.steps.slice(handledSteps[i]));
-            handledSteps[i] = transaction.size;
-          }
-          if (transaction.size > oldTransactionSize) {
-            newSteps = true;
-            listenersAddedSteps = true;
-          }
+      transactionStepListenersArray.forEach((listener, i) => {
+        const oldTransactionSize = transaction.size;
+        if (handledSteps[i] < transaction.size) {
+          // notify listener of new operations
+          listener(transaction, transaction.steps.slice(handledSteps[i]));
+          handledSteps[i] = transaction.size;
         }
-      );
+        if (transaction.size > oldTransactionSize) {
+          newSteps = true;
+          listenersAddedSteps = true;
+        }
+      });
     }
     const newState = transaction.apply();
-    const differences =
-      // we can only optimize for browserdefault flow if
-      // no listeners added any steps
-      calculateDiffs || listenersAddedSteps
-        ? computeDifference(this.currentState.document, newState.document)
-        : [];
+
+    let differences: Difference[] = [];
+    // we can only optimize for browserdefault flow if
+    // no listeners added any steps
+    if (calculateDiffs || listenersAddedSteps) {
+      const parsedNodes = readHtml(
+        this.domRoot,
+        new HtmlReaderContext({
+          inlineComponentsRegistry:
+            transaction.workingCopy.inlineComponentsRegistry,
+          marksRegistry: transaction.workingCopy.marksRegistry,
+        })
+      );
+      if (parsedNodes.length !== 1) {
+        throw new NotImplementedError();
+      }
+      const currentDocument = parsedNodes[0];
+      if (!ModelNode.isModelElement(currentDocument)) {
+        throw new NotImplementedError();
+      }
+      // const currentDocument = this.currentState.document;
+      differences = computeDifference(currentDocument, newState.document);
+    }
     this.currentState = newState;
     this.update(this.currentState, differences, transaction.shouldFocus);
     this.currentState.transactionDispatchListeners.forEach((listener) => {
@@ -211,8 +229,14 @@ export function viewToModel(
   if (domNode === viewRoot) {
     return state.document;
   }
-  const position = domPosToModelPos(state, viewRoot, domNode, 0);
-  const node = position.nodeAfter();
+
+  const position = domPosToModelPos(state, viewRoot, domNode);
+  let node: ModelNode | null;
+  if (position.path.length === 0) {
+    node = position.root;
+  } else {
+    node = position.parent.childAtOffset(position.parentOffset, true);
+  }
   if (!node) {
     throw new PositionError('no node found after position');
   }
@@ -246,28 +270,8 @@ export async function createEditorView({
 }: EditorArgs): Promise<View> {
   const state = initialState;
   const view = createView({ domRoot, dispatch, initialState: state });
-  const initPlugins = await initializePlugins(view, plugins);
   const tr = view.currentState.createTransaction();
-  tr.setPlugins(initPlugins);
+  await tr.setPlugins(plugins, view);
   view.dispatch(tr);
   return view;
-}
-
-/**
- * Before use, plugins need to be initialized, which provides them with the controller
- * they need to interact with the editor. Since plugins often interact with backends,
- * this is async.
- * */
-async function initializePlugins(
-  view: View,
-  configs: ResolvedPluginConfig[]
-): Promise<InitializedPlugin[]> {
-  const result: InitializedPlugin[] = [];
-  for (const config of configs) {
-    const plugin = config.instance;
-    const controller = new ViewController(plugin.name, view);
-    await plugin.initialize(controller, config.options);
-    result.push(plugin);
-  }
-  return result;
 }

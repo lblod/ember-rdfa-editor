@@ -1,9 +1,8 @@
 import MarksManager from '@lblod/ember-rdfa-editor/core/model/marks/marks-manager';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
-import { XmlReaderResult } from '@lblod/ember-rdfa-editor/core/model/readers/xml-reader';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
-import { domStripped, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 
 import { module, test } from 'qunit';
 
@@ -68,6 +67,10 @@ module('Unit | model | marks-manager-test | getMarksByOwner', function () {
     assert.strictEqual(markInstances[0].mark.name, 'bold');
     assert.strictEqual(markInstances[1].mark.name, 'underline');
     assert.strictEqual(markInstances[2].mark.name, 'italic');
+
+    assert.strictEqual(markInstances[0].node, text1);
+    assert.strictEqual(markInstances[1].node, text2);
+    assert.strictEqual(markInstances[2].node, text3);
   });
 });
 

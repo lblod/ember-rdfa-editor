@@ -6,7 +6,10 @@ import {
 } from '@lblod/ember-rdfa-editor/input/insert';
 import { mapKeyEvent } from '@lblod/ember-rdfa-editor/input/keymap';
 import SelectionReader from '@lblod/ember-rdfa-editor/core/model/readers/selection-reader';
-import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  getWindowSelection,
+  isContentEditable,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import Controller from '../core/controllers/controller';
 import { NotImplementedError } from '../utils/errors';
 import { createLogger, Logger } from '../utils/logging-utils';
@@ -116,13 +119,15 @@ export class EditorInputHandler implements InputHandler {
     event.preventDefault();
   };
 
-  paste = (
-    event: ClipboardEvent,
-    pasteHTML?: boolean,
-    pasteExtendedHTML?: boolean
-  ) => {
+  paste = (event: ClipboardEvent) => {
     event.preventDefault();
-    handlePaste(this.inputController, event, pasteHTML, pasteExtendedHTML);
+    const pasteBehaviour = this.inputController.getConfig('pasteBehaviour');
+    handlePaste(
+      this.inputController,
+      event,
+      pasteBehaviour === 'standard-html' || pasteBehaviour === 'full-html',
+      pasteBehaviour === 'full-html'
+    );
   };
 
   cut = (event: ClipboardEvent) => {
@@ -254,6 +259,9 @@ export class EditorInputHandler implements InputHandler {
     mutations: MutationRecord[],
     _observer: MutationObserver
   ) => {
+    mutations = mutations.filter((mutation) =>
+      isContentEditable(mutation.target)
+    );
     if (!mutations.length) {
       return;
     }

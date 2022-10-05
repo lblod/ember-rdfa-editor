@@ -67,8 +67,8 @@ export interface StateArgs {
   document: ModelElement;
   selection: ModelSelection;
   plugins: InitializedPlugin[];
-  transactionStepListeners: TransactionStepListener[];
-  transactionDispatchListeners: TransactionDispatchListener[];
+  transactionStepListeners: Set<TransactionStepListener>;
+  transactionDispatchListeners: Set<TransactionDispatchListener>;
   commands: Partial<Commands>;
   marksRegistry: MarksRegistry;
   marksManager: MarksManager;
@@ -118,8 +118,8 @@ export default interface State {
 
   eventBus: EventBus;
   config: Map<string, string | null>;
-  transactionStepListeners: TransactionStepListener[];
-  transactionDispatchListeners: TransactionDispatchListener[];
+  transactionStepListeners: Set<TransactionStepListener>;
+  transactionDispatchListeners: Set<TransactionDispatchListener>;
 }
 
 export class SayState implements State {
@@ -132,8 +132,8 @@ export class SayState implements State {
   marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   eventBus: EventBus;
-  transactionStepListeners: TransactionStepListener[];
-  transactionDispatchListeners: TransactionDispatchListener[];
+  transactionStepListeners: Set<TransactionStepListener>;
+  transactionDispatchListeners: Set<TransactionDispatchListener>;
   /**
    * The previous "relevant" state. This is not necessarily
    * the state directly preceding this one. It is up to the discretion
@@ -262,8 +262,8 @@ export function emptyState(eventBus = new EventBus()): State {
     baseIRI: 'http://example.org',
     eventBus,
     keymap: defaultKeyMap,
-    transactionStepListeners: [],
-    transactionDispatchListeners: [],
+    transactionStepListeners: new Set(),
+    transactionDispatchListeners: new Set(),
   });
 }
 
@@ -313,8 +313,8 @@ export function createState({
   pathFromDomRoot = [],
   baseIRI = window.document.baseURI,
   keymap = defaultKeyMap,
-  transactionStepListeners: transactionStepListeners = [],
-  transactionDispatchListeners: transactionDispatchListeners = [],
+  transactionStepListeners: transactionStepListeners = new Set(),
+  transactionDispatchListeners: transactionDispatchListeners = new Set(),
 }: InitialStateArgs): State {
   return new SayState({
     document,

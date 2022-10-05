@@ -24,8 +24,11 @@ import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
 import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
 import { View } from '@lblod/ember-rdfa-editor/core/view';
-import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import LiveMarkSetPlugin from '@lblod/ember-rdfa-editor/plugins/live-mark-set/live-mark-set';
+import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
+import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
+import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 
 export type PluginConfig =
   | string
@@ -49,6 +52,7 @@ interface RdfaEditorArgs {
 
   plugins: PluginConfig[];
   stealFocus?: boolean;
+  pasteBehaviour?: string;
 }
 
 /**
@@ -79,9 +83,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
   @tracked toolbarController: Controller | null = null;
   @tracked inlineComponentController: Controller | null = null;
-  // @tracked inlineComponents = tracked(
-  //   new Map<ModelInlineComponent, ActiveComponentEntry>()
-  // );
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -93,6 +94,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get editorPlugins(): ResolvedPluginConfig[] {
     return this.getPlugins();
+  }
+
+  get pasteBehaviour() {
+    return this.args.pasteBehaviour ?? 'standard-html';
   }
 
   /**
@@ -120,14 +125,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @action
   handleRawEditorInit(view: View) {
     this.controller = new ViewController('rdfaEditorComponent', view);
-    this.toolbarMiddleWidgets =
-      this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
-    this.toolbarRightWidgets =
-      this.controller.currentState.widgetMap.get('toolbarRight') || [];
-    this.sidebarWidgets =
-      this.controller.currentState.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets =
-      this.controller.currentState.widgetMap.get('insertSidebar') || [];
+    this.updateWidgets();
     this.toolbarController = new ViewController('toolbar', view);
     this.inlineComponentController = new ViewController(
       'inline-component-manager',
@@ -135,9 +133,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     );
     const rdfaDocument = new RdfaDocumentController('host', view);
     window.__EDITOR = new RdfaDocumentController('debug', view);
+    this.updateConfig('pasteBehaviour', this.pasteBehaviour);
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
+    this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
     this.editorLoading = false;
   }
 
@@ -185,6 +185,34 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     } else {
       this.showRdfaBlocks = false;
       this.toolbarController!.setConfig('showRdfaBlocks', null);
+    }
+  }
+
+  @action
+  updateConfig(key: string, value: Serializable) {
+    if (this.controller) {
+      this.controller.perform((tr) => {
+        tr.setConfig(key, value.toString());
+      });
+    }
+  }
+
+  onTransactionDispatch = (transaction: Transaction) => {
+    if (transaction.steps.some((step) => isPluginStep(step))) {
+      this.updateWidgets();
+    }
+  };
+
+  updateWidgets() {
+    if (this.controller) {
+      this.toolbarMiddleWidgets =
+        this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
+      this.toolbarRightWidgets =
+        this.controller.currentState.widgetMap.get('toolbarRight') || [];
+      this.sidebarWidgets =
+        this.controller.currentState.widgetMap.get('sidebar') || [];
+      this.insertSidebarWidgets =
+        this.controller.currentState.widgetMap.get('insertSidebar') || [];
     }
   }
 }

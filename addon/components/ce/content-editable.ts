@@ -76,6 +76,15 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
   }
 
   @action
+  async refreshPlugins() {
+    if (this.editorView) {
+      const transaction = this.editorView?.currentState.createTransaction();
+      await transaction.setPlugins(this.args.plugins, this.editorView);
+      this.editorView.dispatch(transaction);
+    }
+  }
+
+  @action
   teardown() {
     this.editorView?.tearDown();
   }

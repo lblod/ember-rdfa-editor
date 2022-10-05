@@ -23,14 +23,12 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async initialize(controller: Controller) {
+  async initialize(_transaction: Transaction, controller: Controller) {
     this.controller = controller;
-    controller.addTransactionDispatchListener(
-      this.onTransactionDispatch.bind(this)
-    );
+    controller.addTransactionDispatchListener(this.onTransactionDispatch);
   }
 
-  onTransactionDispatch(transaction: Transaction) {
+  onTransactionDispatch = (transaction: Transaction) => {
     const configSteps: ConfigStep[] = transaction.steps.filter(
       (step) => isConfigStep(step) && step.key === 'showRdfaBlocks'
     ) as ConfigStep[];
@@ -46,7 +44,7 @@ export default class ShowActiveRdfaPlugin implements EditorPlugin {
     if (transaction.steps.some(isSelectionStep)) {
       this.updateAttributes();
     }
-  }
+  };
 
   updateAttributes() {
     removePathAttributes();

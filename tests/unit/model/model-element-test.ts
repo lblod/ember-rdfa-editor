@@ -69,6 +69,13 @@ module('Unit | model | model-element-test', function () {
       assert.strictEqual(div.offsetToIndex(4), 2);
       assert.strictEqual(div.offsetToIndex(5), 3);
     });
+    test('two empty text children', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.offsetToIndex(0), 2);
+    });
   });
 
   module('Unit | model | model-element-test | isolateChildAt', function () {
@@ -224,6 +231,22 @@ module('Unit | model | model-element-test', function () {
         child.getVocab(),
         'http://mu.semte.ch/vocabularies/core/'
       );
+    });
+  });
+  module('Unit | model | model-element-test | childAtOffset', function () {
+    test('two empty text children - includeLast = false', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.childAtOffset(0, false), null);
+    });
+    test('two empty text children - includeLast = true', function (assert) {
+      const div = new ModelElement('div');
+      const text1 = new ModelText('');
+      const text2 = new ModelText('');
+      div.appendChildren(text1, text2);
+      assert.strictEqual(div.childAtOffset(0, true), text2);
     });
   });
 });

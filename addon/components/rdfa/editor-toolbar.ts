@@ -2,7 +2,8 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import {
-  modifiesSelection,
+  isOperationStep,
+  isSelectionStep,
   Step,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
@@ -37,20 +38,30 @@ export default class EditorToolbar extends Component<Args> {
   @tracked tableAddColumns = 2;
   selection: ModelSelection | null = null;
 
-  constructor(parent: unknown, args: Args) {
-    super(parent, args);
-    this.args.controller.addTransactionStepListener(this.update.bind(this));
+  @action
+  didInsert() {
+    this.args.controller.addTransactionDispatchListener(this.update);
+  }
+
+  @action
+  willDestroy(): void {
+    this.args.controller.removeTransactionDispatchListener(this.update);
+    super.willDestroy();
   }
 
   get controller() {
     return this.args.controller;
   }
 
-  update(transaction: Transaction, steps: Step[]) {
-    if (modifiesSelection(steps)) {
+  modifiesSelection(steps: Step[]) {
+    return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
+  }
+
+  update = (transaction: Transaction) => {
+    if (this.modifiesSelection(transaction.steps)) {
       this.updateProperties(transaction);
     }
-  }
+  };
 
   updateProperties(transaction: Transaction) {
     const {

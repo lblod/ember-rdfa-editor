@@ -13,7 +13,6 @@ import RangeMapper, { LeftOrRight } from '../model/range-mapper';
 import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../../utils/dom-helpers';
-import { InitializedPlugin } from '../model/editor-plugin';
 import { NotImplementedError } from '../../utils/errors';
 import { View } from '../view';
 import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
@@ -37,6 +36,12 @@ import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
 import MarksManager from '../model/marks/marks-manager';
+import { ViewController } from '../controllers/view-controller';
+import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
+import PluginStep from './steps/plugin-step';
+import Controller, { WidgetSpec } from '../controllers/controller';
+import { InlineComponentSpec } from '../model/inline-components/model-inline-component';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 
 interface TextInsertion {
   range: ModelRange;
@@ -62,8 +67,8 @@ export default class Transaction {
   rangeMapper: RangeMapper;
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
-  rdfInvalid = true;
-  marksInvalid = true;
+  rdfInvalid = false;
+  marksInvalid = false;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
 
@@ -121,6 +126,8 @@ export default class Transaction {
           this.initialState.document,
           documentClone
         );
+      this.rdfInvalid = true;
+      this.marksInvalid = true;
     }
   }
 
@@ -148,8 +155,19 @@ export default class Transaction {
     return this._workingCopy.marksManager;
   }
 
-  setPlugins(plugins: InitializedPlugin[]): void {
-    this._workingCopy.plugins = plugins;
+  async setPlugins(configs: ResolvedPluginConfig[], view: View): Promise<void> {
+    for (const plugin of this.workingCopy.plugins) {
+      if (plugin.willDestroy) {
+        await plugin.willDestroy(this);
+      }
+    }
+    const step = new PluginStep(this.workingCopy, configs, view);
+    this.commitStep(step);
+    for (const config of configs) {
+      const plugin = config.instance;
+      const controller = new ViewController(plugin.name, view);
+      await plugin.initialize(this, controller, config.options);
+    }
   }
 
   setBaseIRI(iri: string): void {
@@ -161,26 +179,19 @@ export default class Transaction {
   }
 
   addTransactionStepListener(listener: TransactionStepListener) {
-    this._workingCopy.transactionStepListeners.push(listener);
+    this._workingCopy.transactionStepListeners.add(listener);
   }
 
   removeTransactionStepListener(listener: TransactionStepListener) {
-    const index = this._workingCopy.transactionStepListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionStepListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionStepListeners.delete(listener);
   }
 
   addTransactionDispatchListener(listener: TransactionDispatchListener) {
-    this._workingCopy.transactionDispatchListeners.push(listener);
+    this._workingCopy.transactionDispatchListeners.add(listener);
   }
 
   removeTransactionDispatchListener(listener: TransactionDispatchListener) {
-    const index =
-      this._workingCopy.transactionDispatchListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionDispatchListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionDispatchListeners.delete(listener);
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
@@ -354,10 +365,6 @@ export default class Transaction {
   }
 
   selectRange(range: ModelRange): void {
-    // const op = new SelectionOperation(undefined, this._workingCopy.selection, [
-    //   this.cloneRange(range),
-    // ]);
-    // this.executeOperation(op);
     const clone = this.cloneSelection(this.workingCopy.selection);
     clone.selectRange(range, clone.isRightToLeft);
     clone.isRightToLeft = this.workingCopy.selection.isRightToLeft;
@@ -661,6 +668,21 @@ export default class Transaction {
   registerCommand<N extends CommandName>(name: N, command: Commands[N]): void {
     this.workingCopy.commands[name] = command;
     this._commandCache = undefined;
+  }
+
+  registerWidget(spec: WidgetSpec, controller: Controller): void {
+    MapUtils.setOrPush(this.workingCopy.widgetMap, spec.desiredLocation, {
+      controller,
+      ...spec,
+    });
+  }
+
+  registerMark(spec: MarkSpec<AttributeSpec>): void {
+    this.workingCopy.marksRegistry.registerMark(spec);
+  }
+
+  registerInlineComponent(component: InlineComponentSpec) {
+    this.workingCopy.inlineComponentsRegistry.registerComponent(component);
   }
 
   get commands(): CommandExecutor {

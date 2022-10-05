@@ -33,9 +33,9 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
   get name(): string {
     return 'live-mark-set';
   }
-  initialize(controller: Controller): Promise<void> {
+  initialize(transaction: Transaction, controller: Controller): Promise<void> {
     this.controller = controller;
-    controller.addTransactionStepListener(this.onTransactionUpdate.bind(this));
+    transaction.addTransactionStepListener(this.onTransactionUpdate);
     this.controller.perform((tr) => {
       tr.registerCommand(
         'addLiveMarkRule',
@@ -49,6 +49,11 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
     return Promise.resolve();
   }
 
+  willDestroy(transaction: Transaction): Promise<void> {
+    transaction.removeTransactionStepListener(this.onTransactionUpdate);
+    return Promise.resolve();
+  }
+
   addRule(rule: LiveMarkRule) {
     this.rules.add(rule);
   }
@@ -57,11 +62,11 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
     this.rules.delete(rule);
   }
 
-  onTransactionUpdate(transaction: Transaction, steps: Step[]) {
+  onTransactionUpdate = (transaction: Transaction, steps: Step[]) => {
     if (modifiesContent(steps)) {
       this.updateMarks(transaction);
     }
-  }
+  };
 
   updateMarks(transaction: Transaction) {
     const manager = transaction.getMarksManager();

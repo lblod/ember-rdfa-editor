@@ -3,7 +3,7 @@
 <div
   {{did-insert this.insertedEditorElement}}
   {{will-destroy this.teardown}}
-  {{did-update this.initialize @plugins}}
+  {{did-update this.refreshPlugins @plugins}}
   contenteditable='true'
   class={{@class}}
   ...attributes

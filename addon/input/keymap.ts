@@ -114,7 +114,8 @@ function moveCursor(steps: number) {
       const resultRange = new ModelRange(newPosition);
       const tr = controller.createTransaction();
       tr.selectRange(resultRange);
-      controller.dispatchTransaction(tr);
+      controller.view.stateOnlyDispatch(tr);
+      // controller.dispatchTransaction(tr);
     }
   };
 }

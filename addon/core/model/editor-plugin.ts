@@ -9,6 +9,7 @@
  * they use the exact same interface to do their thing.
  */
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import Transaction from '../state/transaction';
 
 export interface EditorPlugin {
   controller?: Controller;
@@ -42,7 +43,13 @@ export interface EditorPlugin {
    * However, it is not advised to depend on this fact.
    * @param controller Each plugin receives a unique controller instance. It is their only interface to the editor.
    */
-  initialize(controller: Controller, options: unknown): Promise<void>;
+  initialize(
+    transaction: Transaction,
+    controller: Controller,
+    options: unknown
+  ): Promise<void>;
+
+  willDestroy?(transaction: Transaction): Promise<void>;
 
   handleEvent?(event: InputEvent): { handled: boolean };
 }
