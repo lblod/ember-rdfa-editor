@@ -67,8 +67,8 @@ export default class Transaction {
   rangeMapper: RangeMapper;
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
-  rdfInvalid = true;
-  marksInvalid = true;
+  rdfInvalid = false;
+  marksInvalid = false;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
 
@@ -126,6 +126,8 @@ export default class Transaction {
           this.initialState.document,
           documentClone
         );
+      this.rdfInvalid = true;
+      this.marksInvalid = true;
     }
   }
 
@@ -363,10 +365,6 @@ export default class Transaction {
   }
 
   selectRange(range: ModelRange): void {
-    // const op = new SelectionOperation(undefined, this._workingCopy.selection, [
-    //   this.cloneRange(range),
-    // ]);
-    // this.executeOperation(op);
     const clone = this.cloneSelection(this.workingCopy.selection);
     clone.selectRange(range, clone.isRightToLeft);
     clone.isRightToLeft = this.workingCopy.selection.isRightToLeft;

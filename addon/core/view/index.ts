@@ -9,7 +9,7 @@ import {
   isTextNode,
   modelPosToDomPos,
 } from '../../utils/dom-helpers';
-import { PositionError } from '../../utils/errors';
+import { NotImplementedError, PositionError } from '../../utils/errors';
 import { createLogger, Logger } from '../../utils/logging-utils';
 import Transaction from '../state/transaction';
 import {
@@ -18,6 +18,7 @@ import {
 } from '@lblod/ember-rdfa-editor/input/input-handler';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor';
+import { readHtml, HtmlReaderContext } from '../model/readers/html-reader';
 
 export type Dispatch = (transaction: Transaction) => void;
 
@@ -142,12 +143,29 @@ export class EditorView implements View {
       });
     }
     const newState = transaction.apply();
-    const differences =
-      // we can only optimize for browserdefault flow if
-      // no listeners added any steps
-      calculateDiffs || listenersAddedSteps
-        ? computeDifference(this.currentState.document, newState.document)
-        : [];
+
+    let differences: Difference[] = [];
+    // we can only optimize for browserdefault flow if
+    // no listeners added any steps
+    if (calculateDiffs || listenersAddedSteps) {
+      const parsedNodes = readHtml(
+        this.domRoot,
+        new HtmlReaderContext({
+          inlineComponentsRegistry:
+            transaction.workingCopy.inlineComponentsRegistry,
+          marksRegistry: transaction.workingCopy.marksRegistry,
+        })
+      );
+      if (parsedNodes.length !== 1) {
+        throw new NotImplementedError();
+      }
+      const currentDocument = parsedNodes[0];
+      if (!ModelNode.isModelElement(currentDocument)) {
+        throw new NotImplementedError();
+      }
+      // const currentDocument = this.currentState.document;
+      differences = computeDifference(currentDocument, newState.document);
+    }
     this.currentState = newState;
     this.update(this.currentState, differences, transaction.shouldFocus);
     this.currentState.transactionDispatchListeners.forEach((listener) => {
