@@ -68,13 +68,13 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
   };
 
   updateMarks(transaction: Transaction) {
-    this._removeExistingMarks(transaction);
+    this.removeExistingMarks(transaction);
     for (const rule of this.rules) {
-      this._updateMarksByRule(transaction, rule);
+      this.updateMarksByRule(transaction, rule);
     }
   }
 
-  _updateMarksByRule(transaction: Transaction, rule: LiveMarkRule) {
+  private updateMarksByRule(transaction: Transaction, rule: LiveMarkRule) {
     const newMatches = rule.matcher(transaction.getCurrentDataStore());
     for (const liveSpec of rule.liveSpecs) {
       for (const match of newMatches) {
@@ -101,7 +101,7 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
     }
   }
 
-  _removeExistingMarks(transaction: Transaction) {
+  private removeExistingMarks(transaction: Transaction) {
     const manager = transaction.getMarksManager();
     const markInstances = manager.getMarksByOwner(this.name);
     for (const instance of markInstances) {
