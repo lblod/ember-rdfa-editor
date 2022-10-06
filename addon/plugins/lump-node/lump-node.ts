@@ -9,6 +9,7 @@ import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 
 export default class LumpNodePlugin implements EditorPlugin {
   controller!: Controller;
@@ -19,7 +20,7 @@ export default class LumpNodePlugin implements EditorPlugin {
     return 'lump-node';
   }
 
-  initialize(controller: Controller): Promise<void> {
+  initialize(_transaction: Transaction, controller: Controller): Promise<void> {
     this.controller = controller;
     controller.onEvent('selectionChanged', this.selectionChanged.bind(this));
     return Promise.resolve();

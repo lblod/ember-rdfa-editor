@@ -1,21 +1,45 @@
 <RdfaEditorWithDebug
   @rdfaEditorInit={{this.rdfaEditorInit}}
   @editorOptions={{hash
-  showToggleRdfaAnnotations="true"
-  showInsertButton=null
-  showRdfa="true"
-  showRdfaHighlight="true"
-  showRdfaHover="true"
-  showPaper="true"
-  showSidebar="true"
-  showToolbarBottom=null
-}}
+    showToggleRdfaAnnotations='true'
+    showInsertButton=null
+    showRdfa='true'
+    showRdfaHighlight='true'
+    showRdfaHover='true'
+    showPaper='true'
+    showSidebar='true'
+    showToolbarBottom=null
+  }}
   @toolbarOptions={{hash
-    showTextStyleButtons="true"
-    showListButtons="true"
-    showIndentButtons="true"
+    showTextStyleButtons='true'
+    showListButtons='true'
+    showIndentButtons='true'
   }}
   @plugins={{this.plugins}}
 >
-  App version: {{app-version versionOnly=true showExtended=true}}
+  App version:
+  {{app-version versionOnly=true showExtended=true}}
+  <p>Dummy plugins:
+    <Input
+      @type='checkbox'
+      id='plugin-highlight'
+      @checked={{true}}
+      {{on "input" (fn this.togglePlugin 'highlight')}}
+    />
+    Highlight
+    <Input
+      @type='checkbox'
+      id='plugin-code-mark'
+      @checked={{true}}
+      {{on "input" (fn this.togglePlugin 'code-mark')}}
+    />
+    Code Mark
+    <Input
+      @type='checkbox'
+      id='plugin-inline-components'
+      @checked={{true}}
+      {{on "input" (fn this.togglePlugin 'inline-components')}}
+    />
+    Inline Components
+  </p>
 </RdfaEditorWithDebug>

@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 
-export default class InlineComponentsDropdown extends Component {
+export default class InlineComponentsPluginDropdown extends Component {
   get title() {
     return 'Example Dropdown';
   }

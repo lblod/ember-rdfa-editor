@@ -1,12 +1,8 @@
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import {
-  InlineComponentSpec,
-  Properties,
-  State,
-} from '@lblod/ember-rdfa-editor/core/model/inline-components/model-inline-component';
+import { InlineComponentSpec } from '@lblod/ember-rdfa-editor/core/model/inline-components/model-inline-component';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-export default class CounterSpec extends InlineComponentSpec {
+export default class DropdownSpec extends InlineComponentSpec {
   matcher = {
     tag: this.tag,
     attributeBuilder: (node: Node) => {
@@ -21,13 +17,12 @@ export default class CounterSpec extends InlineComponentSpec {
       return null;
     },
   };
-  _renderStatic(_props: Properties, state: State) {
-    const count = state.count?.toString() || '0';
+  _renderStatic() {
     return `
-      <p>${count}</p>
+      <p>Dropdown</p>
     `;
   }
   constructor(controller: Controller) {
-    super('inline-components/counter', 'span', controller);
+    super('inline-components-plugin/dropdown', 'span', controller);
   }
 }

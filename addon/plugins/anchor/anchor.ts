@@ -2,6 +2,7 @@ import { eventTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
 import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 
 export class AnchorPlugin implements EditorPlugin {
   controller!: Controller;
@@ -9,7 +10,11 @@ export class AnchorPlugin implements EditorPlugin {
   get name() {
     return 'anchor';
   }
-  initialize(_controller: Controller, _options: unknown): Promise<void> {
+  initialize(
+    _transaction: Transaction,
+    _controller: Controller,
+    _options: unknown
+  ): Promise<void> {
     this.controller = _controller;
     return Promise.resolve();
   }

@@ -7,6 +7,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 
 export default class ListPlugin implements EditorPlugin {
   controller!: Controller;
@@ -15,7 +16,11 @@ export default class ListPlugin implements EditorPlugin {
     return 'list';
   }
 
-  initialize(_controller: Controller, _options: unknown): Promise<void> {
+  initialize(
+    _transaction: Transaction,
+    _controller: Controller,
+    _options: unknown
+  ): Promise<void> {
     this.controller = _controller;
     return Promise.resolve();
   }
