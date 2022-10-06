@@ -20,7 +20,6 @@ export type EDITOR_EVENT_MAP = {
   insertLineBreak: InsertLineBreakEvent;
   deleteContentBackward: DeleteContentBackwardEvent;
   deleteContentForward: DeleteContentForwardEvent;
-  liveMarkSetUpdated: LiveMarkSetUpdatedEvent;
   configUpdated: ConfigUpdatedEvent;
 };
 
@@ -182,10 +181,6 @@ export class InsertLineBreakEvent extends AbstractEditorEvent<InputEvent> {
 
 export class SelectionChangedEvent extends AbstractEditorEvent<ModelSelection> {
   _name: EditorEventName = 'selectionChanged';
-}
-
-export class LiveMarkSetUpdatedEvent extends VoidEvent {
-  _name: EditorEventName = 'liveMarkSetUpdated';
 }
 export interface ConfigUpdatedEventPayload {
   changedKey: string;

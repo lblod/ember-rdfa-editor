@@ -17,9 +17,6 @@ import Transaction, {
   TransactionDispatchListener,
   TransactionStepListener,
 } from '@lblod/ember-rdfa-editor/core/state/transaction';
-import LiveMarkSet, {
-  LiveMarkSetArgs,
-} from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   EditorEventListener,
@@ -115,10 +112,6 @@ export class ViewController implements Controller {
     return this.currentState.inlineComponentsRegistry.getComponentInstances(
       filter
     );
-  }
-
-  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet {
-    return new LiveMarkSet(this, args);
   }
 
   createModelElement(type: ElementType): ModelElement {
