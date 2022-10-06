@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
 import Controller from '../controller';
 import { DomNodeMatcher } from '../mark';
