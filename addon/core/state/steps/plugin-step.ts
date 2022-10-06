@@ -21,14 +21,11 @@ export default class PluginStep implements BaseStep {
   ) {
     this.configs = configs;
     this.view = view;
-    const state = new SayState({
-      ...initialState,
-      widgetMap: new Map(),
-    });
     const plugins = this.configs.map((config) => config.instance);
     this._resultState = new SayState({
-      ...state,
+      ...initialState,
       plugins,
+      widgetMap: new Map(),
     });
   }
 
