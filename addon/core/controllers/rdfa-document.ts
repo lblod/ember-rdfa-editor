@@ -1,4 +1,3 @@
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import writeExportedHtml from '@lblod/ember-rdfa-editor/core/model/writers/html-export-writer';
 import {
   AnyEventName,
@@ -7,6 +6,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import xmlFormat from 'xml-formatter';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
+import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
 
 /**
  * Legacy interface for external consumers. They expect to receive this interface
@@ -14,10 +14,6 @@ import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-c
  * backwards compat in this way
  */
 interface RdfaDocument {
-  get htmlContent(): string;
-
-  set htmlContent(html: string);
-
   get xmlContent(): string;
 
   set xmlContent(xml: string);

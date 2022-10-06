@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import { tracked } from 'tracked-built-ins';
 import Controller from '../../controllers/controller';
 import { DomNodeMatcher } from '../marks/mark';
@@ -45,8 +44,7 @@ function render(
   node.contentEditable = 'false';
   node.classList.add('inline-component', spec.name);
   if (!dynamic) {
-    const template = Handlebars.compile(spec._renderStatic(props, state));
-    node.innerHTML = template({});
+    node.innerHTML = spec._renderStatic(props, state);
   }
   return node;
 }
