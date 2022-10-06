@@ -67,8 +67,8 @@ export default class Transaction {
   rangeMapper: RangeMapper;
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
-  rdfInvalid = true;
-  marksInvalid = true;
+  rdfInvalid = false;
+  marksInvalid = false;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
 
@@ -126,6 +126,8 @@ export default class Transaction {
           this.initialState.document,
           documentClone
         );
+      this.rdfInvalid = true;
+      this.marksInvalid = true;
     }
   }
 
@@ -177,26 +179,19 @@ export default class Transaction {
   }
 
   addTransactionStepListener(listener: TransactionStepListener) {
-    this._workingCopy.transactionStepListeners.push(listener);
+    this._workingCopy.transactionStepListeners.add(listener);
   }
 
   removeTransactionStepListener(listener: TransactionStepListener) {
-    const index = this._workingCopy.transactionStepListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionStepListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionStepListeners.delete(listener);
   }
 
   addTransactionDispatchListener(listener: TransactionDispatchListener) {
-    this._workingCopy.transactionDispatchListeners.push(listener);
+    this._workingCopy.transactionDispatchListeners.add(listener);
   }
 
   removeTransactionDispatchListener(listener: TransactionDispatchListener) {
-    const index =
-      this._workingCopy.transactionDispatchListeners.indexOf(listener);
-    if (index !== -1) {
-      this._workingCopy.transactionDispatchListeners.splice(index, 1);
-    }
+    this._workingCopy.transactionDispatchListeners.delete(listener);
   }
 
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
@@ -370,10 +365,6 @@ export default class Transaction {
   }
 
   selectRange(range: ModelRange): void {
-    // const op = new SelectionOperation(undefined, this._workingCopy.selection, [
-    //   this.cloneRange(range),
-    // ]);
-    // this.executeOperation(op);
     const clone = this.cloneSelection(this.workingCopy.selection);
     clone.selectRange(range, clone.isRightToLeft);
     clone.isRightToLeft = this.workingCopy.selection.isRightToLeft;

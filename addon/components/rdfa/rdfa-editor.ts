@@ -136,9 +136,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(rdfaDocument);
     }
-    this.controller.addTransactionDispatchListener(
-      this.onTransactionDispatch.bind(this)
-    );
+    this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
     this.editorLoading = false;
   }
 
@@ -197,11 +195,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     }
   }
 
-  onTransactionDispatch(transaction: Transaction) {
+  onTransactionDispatch = (transaction: Transaction) => {
     if (transaction.steps.some((step) => isPluginStep(step))) {
       this.updateWidgets();
     }
-  }
+  };
 
   updateWidgets() {
     if (this.controller) {

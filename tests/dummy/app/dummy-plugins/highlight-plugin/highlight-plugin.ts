@@ -8,6 +8,10 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
+import {
+  isOperationStep,
+  Step,
+} from '@lblod/ember-rdfa-editor/core/state/steps/step';
 
 export interface HighlightPluginOptions {
   testKey: string;
@@ -32,7 +36,8 @@ export default class HighlightPlugin implements EditorPlugin {
     transaction.removeTransactionStepListener(this.onTransactionStep);
   }
 
-  onTransactionStep = (transaction: Transaction) => {
+  onTransactionStep = (transaction: Transaction, steps: Step[]) => {
+    if (!steps.some(isOperationStep)) return;
     for (const { mark, node } of transaction
       .getMarksManager()
       .getMarksByOwner(this.name)) {
