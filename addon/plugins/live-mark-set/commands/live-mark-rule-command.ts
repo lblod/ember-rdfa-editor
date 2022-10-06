@@ -6,10 +6,6 @@ import LiveMarkSetPlugin, { LiveMarkRule } from '../live-mark-set';
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     addLiveMarkRule: LiveMarkRuleCommand;
-  }
-}
-declare module '@lblod/ember-rdfa-editor' {
-  export interface Commands {
     removeLiveMarkRule: LiveMarkRuleCommand;
   }
 }
