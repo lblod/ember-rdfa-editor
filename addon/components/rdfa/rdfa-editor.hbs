@@ -87,7 +87,7 @@
     </div>
   </div>
   {{#each this.inlineComponents as |compEntry|}}
-    {{#in-element compEntry.node insertBefore=null}}
+    {{#in-element compEntry.node }}
       {{component
         compEntry.emberComponentName
         componentController=compEntry.componentController
