@@ -1,6 +1,3 @@
-import LiveMarkSet, {
-  LiveMarkSetArgs,
-} from '@lblod/ember-rdfa-editor/core/model/marks/live-mark-set';
 import MarksRegistry from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
 import ModelElement, {
   ElementType,
@@ -69,8 +66,6 @@ export default interface Controller {
   get currentState(): State;
 
   getMarksFor(owner: string): Set<MarkInstanceEntry>;
-
-  createLiveMarkSet(args: LiveMarkSetArgs): LiveMarkSet;
 
   createModelElement(type: ElementType): ModelElement;
 
