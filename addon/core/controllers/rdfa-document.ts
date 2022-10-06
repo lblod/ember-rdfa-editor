@@ -6,7 +6,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/event-bus';
 import xmlFormat from 'xml-formatter';
 import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
-import ModelRange from "@lblod/ember-rdfa-editor/core/model/model-range";
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
 /**
  * Legacy interface for external consumers. They expect to receive this interface
