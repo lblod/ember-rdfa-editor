@@ -42,7 +42,7 @@ To include the editor in a template (ember octane syntax) you can use the follow
 ```
 
 The `pasteBehaviour` property can be one of three different values:
-- `textonly`: no structural html is kept
+- `textonly`: the `text/plain` buffer of the clipboard is read and pasted.
 - `standard-html`: structural html which is supported by the editor is kept intact
 - `full-html`: all structural html is kept intact
 
