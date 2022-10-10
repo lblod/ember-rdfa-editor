@@ -60,6 +60,12 @@ export class NoParentError extends ModelError {
 
 export class PositionError extends CustomError {}
 
+export class SimplePositionOutOfRangeError extends PositionError {
+  constructor(position: number) {
+    super(`Simple position ${position} not valid in this document`);
+  }
+}
+
 /**
  * Error to throw in tests when asserting something you also want
  * typescript to know about
@@ -101,6 +107,7 @@ export class ParseError extends CustomError {}
  * Thrown when a method is invoked with an argument which it can not reasonably deal with
  */
 export class IllegalArgumentError extends CustomError {}
+
 export class UnkownCommandError extends IllegalArgumentError {
   constructor(name: string) {
     super(`Could not find command with name ${name}`);
