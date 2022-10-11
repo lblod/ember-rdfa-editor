@@ -1,6 +1,8 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { SimplePositionOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 export type SimplePosition = number;
 
@@ -45,5 +47,45 @@ export function simplePosToModelPos(
 }
 
 export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
-  return 0;
+  const { path } = modelPos;
+  if (path.length === 0) {
+    return 0;
+  }
+  let cur: ModelNode | null = modelPos.root;
+  let counter = -1;
+  for (const offset of path.slice(0, path.length - 1)) {
+    if (ModelNode.isModelElement(cur)) {
+      cur = cur.childAtOffset(offset, true);
+      counter += 1;
+      if (cur) {
+        counter += countPreviousSiblings(cur);
+      }
+    }
+  }
+  if (cur && ModelNode.isModelElement(cur)) {
+    const lastOffset = unwrap(ArrayUtils.lastItem(path));
+    const last = cur.childAtOffset(lastOffset, true);
+    counter += 1;
+    if (last) {
+      counter += countPreviousSiblings(last);
+      if (ModelNode.isModelElement(last)) {
+        if (lastOffset === cur.getMaxOffset()) {
+          counter += last.size;
+        }
+      } else {
+        counter += lastOffset - last.getOffset();
+      }
+    }
+  }
+  return counter;
+}
+
+function countPreviousSiblings(node: ModelNode): number {
+  let counter = 0;
+  let sib = node.previousSibling;
+  while (sib) {
+    counter += sib.size;
+    sib = sib.previousSibling;
+  }
+  return counter;
 }
