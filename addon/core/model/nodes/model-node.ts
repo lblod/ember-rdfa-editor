@@ -3,6 +3,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-elemen
 import {
   ModelError,
   NoParentError,
+  NotImplementedError,
   OutsideRootError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import XmlWriter from '@lblod/ember-rdfa-editor/core/model/writers/xml-writer';
@@ -143,6 +144,20 @@ export default abstract class ModelNode implements Walkable {
     return 1;
   }
 
+  get size(): number {
+    if (ModelNode.isModelText(this)) {
+      return this.content.length;
+    } else if (this.isLeaf) {
+      return 1;
+    } else if (ModelNode.isModelInlineComponent(this)) {
+      return 1;
+    } else if (ModelNode.isModelElement(this)) {
+      return this.children.reduce((prev, node) => prev + node.size, 0) + 2;
+    } else {
+      throw new NotImplementedError();
+    }
+  }
+
   get connected(): boolean {
     if (this.parent) {
       return this.parent.children.indexOf(this) !== -1;
@@ -185,6 +200,7 @@ export default abstract class ModelNode implements Walkable {
   }
 
   abstract hasVisibleText(): boolean;
+
   /**
    * Debugging utility
    */
@@ -226,6 +242,7 @@ export default abstract class ModelNode implements Walkable {
   setTextAttribute(_key: TextAttribute, _value: boolean) {
     //no-op function
   }
+
   *findSelfOrAncestors(
     predicate: Predicate<ModelNode>
   ): Generator<ModelNode, void, void> {
@@ -270,6 +287,7 @@ export default abstract class ModelNode implements Walkable {
 
     return oldParent;
   }
+
   remove() {
     if (!this.parent) {
       throw new ModelError('Cannot remove root');
