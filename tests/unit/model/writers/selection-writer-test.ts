@@ -7,7 +7,7 @@ import { testState, testView } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | model | writers | selection-writer', function () {
+module('Unit | model | writers | selection-writer', function () {
   test(`converts a simple selection correctly`, function (assert) {
     const {
       root: initial,

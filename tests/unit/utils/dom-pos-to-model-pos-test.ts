@@ -5,7 +5,7 @@ import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '../../../addon/core/model/nodes/model-element';
 
-module.skip('Unit | model | dom-pos-to-model-pos', function () {
+module('Unit | model | dom-pos-to-model-pos', function () {
   test('converts position in empty root', function (assert) {
     const dom = domStripped`
       <div />`.body.children[0];

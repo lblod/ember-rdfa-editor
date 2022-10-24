@@ -8,7 +8,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | model | model-range | contextNodes', function () {
+module('Unit | model | model-range | contextNodes', function () {
   //language=XML
   const testDoc: XmlReaderResult = vdom`
     <modelRoot>

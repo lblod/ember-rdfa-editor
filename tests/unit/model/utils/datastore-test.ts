@@ -5,7 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | model | utils | datastore-test', function () {
+module('Unit | model | utils | datastore-test', function () {
   test('simple match gives correct nodes', function (assert) {
     //language=XML
     const {

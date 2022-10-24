@@ -4,7 +4,7 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip(
+module(
   'Unit | model | operations | algorithms | split-algorithm-test | ',
   function () {
     test('rangeMapping is correct after split', function (assert) {

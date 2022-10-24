@@ -11,7 +11,7 @@ import {
   nodeIsElementOfType,
 } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 
-module.skip('Unit | model | model-range', function () {
+module('Unit | model | model-range', function () {
   module('Unit | model | model-range | getMinimumConfinedRanges', function () {
     test('returns range if range is confined', function (assert) {
       const root = new ModelElement('div');

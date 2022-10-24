@@ -5,7 +5,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import globalTextRegionToModelRange from '@lblod/ember-rdfa-editor/utils/global-text-region-to-model-range';
 
-module.skip('Unit | Utility | global-offset-to-path', function () {
+module('Unit | Utility | global-offset-to-path', function () {
   test('returns the correct range for a simple text', function (assert) {
     // language=XML
     const {

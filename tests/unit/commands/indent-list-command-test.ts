@@ -6,7 +6,7 @@ import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test, todo } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | indent-list-command-test', function () {
+module('Unit | commands | indent-list-command-test', function () {
   const command = new IndentListCommand();
   const executeCommand = makeTestExecute(command);
 

@@ -6,7 +6,7 @@ import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | insert-new-line-test', function () {
+module('Unit | commands | insert-new-line-test', function () {
   const command = new InsertNewLineCommand();
   const executeCommand = makeTestExecute(command);
   test('inserts a new line before a table', function (assert) {

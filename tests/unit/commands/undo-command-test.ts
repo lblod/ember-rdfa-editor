@@ -5,7 +5,7 @@ import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | undo-command-test', function () {
+module('Unit | commands | undo-command-test', function () {
   const command = new UndoCommand();
   const executeCommand = makeTestExecute(command);
 
