@@ -197,6 +197,7 @@ export default class Transaction {
   addMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
     this.deepClone();
     const op = new MarkOperation(
+      this.currentDocument,
       undefined,
       this.cloneRange(range),
       spec,
@@ -268,6 +269,7 @@ export default class Transaction {
   insertText({ range, text, marks }: TextInsertion): ModelRange {
     this.deepClone();
     const operation = new InsertTextOperation(
+      this.currentDocument,
       undefined,
       this.cloneRange(range),
       text,
@@ -279,7 +281,12 @@ export default class Transaction {
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     this.deepClone();
-    const op = new InsertOperation(undefined, this.cloneRange(range), ...nodes);
+    const op = new InsertOperation(
+      this.currentDocument,
+      undefined,
+      this.cloneRange(range),
+      ...nodes
+    );
     this.createSnapshot();
     return this.executeOperation(op);
   }
@@ -345,7 +352,12 @@ export default class Transaction {
   removeNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
     this.deepClone();
     const clonedRange = this.cloneRange(range);
-    const op = new RemoveOperation(undefined, clonedRange, ...nodes);
+    const op = new RemoveOperation(
+      this.currentDocument,
+      undefined,
+      clonedRange,
+      ...nodes
+    );
     return this.executeOperation(op);
   }
 
@@ -385,7 +397,12 @@ export default class Transaction {
     this.deepClone();
     const rangeClone = this.cloneRange(rangeToMove);
     const posClone = this.clonePos(targetPosition);
-    const op = new MoveOperation(undefined, rangeClone, posClone);
+    const op = new MoveOperation(
+      this.currentDocument,
+      undefined,
+      rangeClone,
+      posClone
+    );
     return this.executeOperation(op);
   }
 
@@ -457,11 +474,18 @@ export default class Transaction {
     );
 
     if (afterEnd) {
-      return new ModelRange(startpos, ModelPosition.fromBeforeNode(afterEnd));
+      return new ModelRange(
+        startpos,
+        ModelPosition.fromBeforeNode(this.currentDocument, afterEnd)
+      );
     } else {
       return new ModelRange(
         startpos,
-        ModelPosition.fromInElement(endPos.parent, endPos.parent.getMaxOffset())
+        ModelPosition.fromInElement(
+          this.currentDocument,
+          endPos.parent,
+          endPos.parent.getMaxOffset()
+        )
       );
     }
   }
@@ -511,11 +535,11 @@ export default class Transaction {
       if (position.parentOffset === 0) {
         return !wrapAround || position.parent === position.root
           ? position
-          : ModelPosition.fromBeforeNode(position.parent);
+          : ModelPosition.fromBeforeNode(this.currentDocument, position.parent);
       } else if (position.parentOffset === position.parent.getMaxOffset()) {
         return !wrapAround || position.parent === position.root
           ? position
-          : ModelPosition.fromAfterNode(position.parent);
+          : ModelPosition.fromAfterNode(this.currentDocument, position.parent);
       }
     }
 
@@ -527,6 +551,7 @@ export default class Transaction {
   private executeSplitOperation(position: ModelPosition, splitParent = true) {
     const range = new ModelRange(position, position);
     const op = new SplitOperation(
+      this.currentDocument,
       undefined,
       this.cloneRange(range),
       splitParent
@@ -544,14 +569,20 @@ export default class Transaction {
 
   deleteNode(node: ModelNode): ModelRange {
     this.deepClone();
-    const range = this.cloneRange(ModelRange.fromAroundNode(node));
+    const range = this.cloneRange(
+      ModelRange.fromAroundNode(this.currentDocument, node)
+    );
     this.createSnapshot();
     return this.delete(range);
   }
 
   delete(range: ModelRange): ModelRange {
     this.deepClone();
-    const op = new InsertOperation(undefined, this.cloneRange(range));
+    const op = new InsertOperation(
+      this.currentDocument,
+      undefined,
+      this.cloneRange(range)
+    );
     this.createSnapshot();
     return this.executeOperation(op);
   }
@@ -592,7 +623,9 @@ export default class Transaction {
   collapseIn(node: ModelNode, offset = 0) {
     this._workingCopy.selection.clearRanges();
     this._workingCopy.selection.addRange(
-      this.cloneRange(ModelRange.fromInNode(node, offset, offset))
+      this.cloneRange(
+        ModelRange.fromInNode(this.currentDocument, node, offset, offset)
+      )
     );
   }
 
@@ -605,12 +638,14 @@ export default class Transaction {
   unwrap(element: ModelElement, ensureBlock = false): ModelRange {
     this.deepClone();
     const srcRange = ModelRange.fromInElement(
+      this.currentDocument,
       element,
       0,
       element.getMaxOffset()
     );
-    const target = ModelPosition.fromBeforeNode(element);
+    const target = ModelPosition.fromBeforeNode(this.currentDocument, element);
     const op = new MoveOperation(
+      this.currentDocument,
       undefined,
       this.cloneRange(srcRange),
       this.clonePos(target)
@@ -649,12 +684,16 @@ export default class Transaction {
   }
 
   replaceNode(oldNode: ModelNode, ...newNodes: ModelNode[]): void {
-    this.insertNodes(ModelRange.fromAroundNode(oldNode), ...newNodes);
+    this.insertNodes(
+      ModelRange.fromAroundNode(this.currentDocument, oldNode),
+      ...newNodes
+    );
   }
 
   removeMark(range: ModelRange, spec: MarkSpec, attributes: AttributeSpec) {
     this.deepClone();
     const op = new MarkOperation(
+      this.currentDocument,
       undefined,
       this.cloneRange(range),
       spec,
@@ -716,10 +755,12 @@ export default class Transaction {
    * TODO: this is a shortcut, should ultimately not be needed
    * */
   inWorkingCopy<N extends ModelNode>(node: N): N {
-    if (node.root === this._workingCopy.document) {
+    if (node.isConnected(this._workingCopy.document)) {
       return node;
     }
-    const pos = this.clonePos(ModelPosition.fromBeforeNode(node));
+    const pos = this.clonePos(
+      ModelPosition.fromBeforeNode(this.currentDocument, node)
+    );
     return pos.nodeAfter()! as N;
   }
 

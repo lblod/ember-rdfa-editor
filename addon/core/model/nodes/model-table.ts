@@ -61,12 +61,14 @@ export default class ModelTable extends ModelElement {
     }
     if (index || index === 0) {
       const positionOfIndex = ModelPosition.fromInElement(
+        tr.currentDocument,
         tBody,
         tBody.indexToOffset(index)
       );
       tr.insertAtPosition(positionOfIndex, row);
     } else {
       const lastPositionInsideTBody = ModelPosition.fromInElement(
+        tr.currentDocument,
         tBody,
         tBody.getMaxOffset()
       );
@@ -82,12 +84,14 @@ export default class ModelTable extends ModelElement {
       cell.addChild(new ModelText(INVISIBLE_SPACE));
       if (index || index === 0) {
         const positionOfIndex = ModelPosition.fromInElement(
+          tr.currentDocument,
           row,
           row.indexToOffset(index)
         );
         tr.insertAtPosition(positionOfIndex, cell);
       } else {
         const lastPositionInsideRow = ModelPosition.fromInElement(
+          tr.currentDocument,
           row,
           row.getMaxOffset()
         );
@@ -115,12 +119,12 @@ export default class ModelTable extends ModelElement {
     tr.deleteNode(this);
   }
 
-  static getCellIndex(cell: ModelElement): TableIndex {
+  static getCellIndex(root: ModelElement, cell: ModelElement): TableIndex {
     if (cell.type !== 'td') throw Error('Cell is not a TD');
-    const row = cell.parent;
+    const row = cell.getParent(root);
     if (!row) throw Error("Table doesn't have the expected structure");
     const xIndex = row.getChildIndex(cell) as number;
-    const rowParent = row.parent;
+    const rowParent = row.getParent(root);
     if (!rowParent) throw Error("Table doesn't have the expected structure");
     const yIndex = rowParent.getChildIndex(row) as number;
     return { x: xIndex, y: yIndex };

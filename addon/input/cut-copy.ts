@@ -38,8 +38,8 @@ export default function handleCutCopy(
     let textString = '';
     for (const modelNode of modelNodes) {
       if (ModelNode.isModelElement(modelNode)) {
-        modelNode.parent = null;
         const treeWalker = GenTreeWalker.fromSubTree({
+          documentRoot: tr.currentDocument,
           root: modelNode,
           filter,
         });

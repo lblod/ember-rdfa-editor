@@ -7,18 +7,20 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import Operation from './operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export default class InsertTextOperation extends Operation {
   private _text: string;
   private _marks: MarkSet;
 
   constructor(
+    root: ModelElement,
     eventbus: EventBus | undefined,
     range: ModelRange,
     text: string,
     marks: MarkSet
   ) {
-    super(eventbus, range);
+    super(root, eventbus, range);
     this._text = text;
     this._marks = marks;
   }
@@ -45,8 +47,8 @@ export default class InsertTextOperation extends Operation {
       newText.addMark(mark.clone());
     }
     const { mapper, overwrittenNodes, _markCheckNodes } =
-      OperationAlgorithms.insert(this.range, newText);
-    const defaultRange = ModelRange.fromAroundNode(newText);
+      OperationAlgorithms.insert(this.root, this.range, newText);
+    const defaultRange = ModelRange.fromAroundNode(this.root, newText);
 
     const previousSibling = newText.previousSibling;
     if (
@@ -55,7 +57,7 @@ export default class InsertTextOperation extends Operation {
       newText.isMergeable(previousSibling)
     ) {
       previousSibling.content = previousSibling.content + newText.content;
-      newText.remove();
+      newText.remove(this.root);
       newText = previousSibling;
     }
     const nextSibling = newText.nextSibling;
@@ -65,7 +67,7 @@ export default class InsertTextOperation extends Operation {
       newText.isMergeable(nextSibling)
     ) {
       nextSibling.content = newText.content + nextSibling.content;
-      newText.remove();
+      newText.remove(this.root);
       newText = nextSibling;
     }
 

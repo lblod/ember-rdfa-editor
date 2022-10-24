@@ -10,6 +10,7 @@ export class AnchorPlugin implements EditorPlugin {
   get name() {
     return 'anchor';
   }
+
   initialize(
     _transaction: Transaction,
     _controller: Controller,
@@ -38,7 +39,10 @@ export class AnchorPlugin implements EditorPlugin {
       let anyAnchors = false;
       if (startParent.type === 'a' && start.parentOffset === 0) {
         anyAnchors = true;
-        range.start = ModelPosition.fromBeforeNode(startParent);
+        range.start = ModelPosition.fromBeforeNode(
+          this.controller.modelRoot,
+          startParent
+        );
         if (collapsed) {
           range.collapse(true);
         }
@@ -49,7 +53,10 @@ export class AnchorPlugin implements EditorPlugin {
         end.parentOffset === endParent.getMaxOffset()
       ) {
         anyAnchors = true;
-        range.end = ModelPosition.fromAfterNode(endParent);
+        range.end = ModelPosition.fromAfterNode(
+          this.controller.modelRoot,
+          endParent
+        );
         if (collapsed) {
           range.collapse();
         }

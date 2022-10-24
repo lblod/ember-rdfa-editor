@@ -35,7 +35,7 @@ export default class HtmlWriter {
         );
       let updatedView = currentView;
       if (changes.has('node')) {
-        updatedView = this.parseElement(node);
+        updatedView = this.parseElement(state.document, node);
         this.swapElement(currentView, updatedView);
       }
       if (changes.has('content')) {
@@ -71,9 +71,10 @@ export default class HtmlWriter {
       }
     }
   }
+
   private parseNode(modelNode: ModelNode, state: State): Node {
     if (ModelNode.isModelElement(modelNode)) {
-      return this.parseElement(modelNode);
+      return this.parseElement(state.document, modelNode);
     } else if (ModelNode.isModelText(modelNode)) {
       return this.parseText(modelNode);
     } else if (ModelNode.isModelInlineComponent(modelNode)) {
@@ -82,6 +83,7 @@ export default class HtmlWriter {
       throw new NotImplementedError('Unsupported node type');
     }
   }
+
   parseSubTree(modelNode: ModelNode, state: State): Node {
     if (
       modelNode.isLeaf &&
@@ -96,6 +98,7 @@ export default class HtmlWriter {
       return result;
     }
   }
+
   parseChildren(children: ModelNode[], state: State): Node[] {
     let adjacentTextNodes = [];
     const parsedChildren = [];
@@ -116,11 +119,12 @@ export default class HtmlWriter {
     }
     return parsedChildren;
   }
+
   private parseTextNodes(modelTexts: ModelText[]): Set<Node> {
     return new Set(writeAdjacentHtmlText(modelTexts));
   }
 
-  private parseElement(element: ModelElement): HTMLElement {
+  private parseElement(root: ModelElement, element: ModelElement): HTMLElement {
     const result = document.createElement(element.type);
 
     // This will disable the selection of multiple cells on table.
@@ -129,7 +133,7 @@ export default class HtmlWriter {
       result.contentEditable = 'false';
     }
     if (element.type === 'td' || element.type === 'th') {
-      if (ModelNodeUtils.parentIsLumpNode(element)) {
+      if (ModelNodeUtils.parentIsLumpNode(root, element)) {
         result.contentEditable = 'false';
       } else {
         result.contentEditable = 'true';
@@ -144,6 +148,7 @@ export default class HtmlWriter {
     }
     return result;
   }
+
   private parseText(text: ModelText): Node {
     const contentRoot: Text = new Text(text.content);
     let current: TextOrElement = contentRoot;

@@ -36,7 +36,11 @@ export default class ListCleaner {
     node2: ModelElement,
     tr: Transaction
   ) {
-    const positionToInsert = ModelPosition.fromInElement(node2, 0);
+    const positionToInsert = ModelPosition.fromInElement(
+      tr.currentDocument,
+      node2,
+      0
+    );
     tr.insertAtPosition(positionToInsert, ...node1.children);
     tr.deleteNode(node1);
   }

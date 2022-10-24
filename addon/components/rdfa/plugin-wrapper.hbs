@@ -1,17 +1,13 @@
-<div class="say-editor-hints__insert">
-  <div class="au-c-accordion au-c-accordion--reverse au-c-accordion--border">
-    <AuToolbar
-      @nowrap={{true}}
-      @reverse={{true}}
-      {{on 'click' this.toggle}}
-    >
+<div class='say-editor-hints__insert'>
+  <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
+    <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}>
       <AuToolbarGroup>
         <div>
           <AuButton
             @skin='tertiary'
             aria-hidden='true'
             focusable='false'
-            aria-expanded='{{if this.expanded 'true' 'false'}}'
+            aria-expanded='{{if this.expanded "true" "false"}}'
           >
             {{@title}}
           </AuButton>
@@ -20,7 +16,7 @@
       <AuToolbarGroup>
         {{#if this.expanded}}
           <AuIcon
-            @icon="remove"
+            @icon='remove'
             @alignment='left'
             @size='large'
             @ariaHidden='true'
@@ -30,7 +26,7 @@
           </span>
         {{else}}
           <AuIcon
-            @icon="add"
+            @icon='add'
             @alignment='left'
             @size='large'
             @ariaHidden='true'
@@ -41,7 +37,7 @@
         {{/if}}
       </AuToolbarGroup>
     </AuToolbar>
-    <div class={{if this.expanded "au-c-accordion__content" "au-u-hidden"}}>
+    <div class={{if this.expanded 'au-c-accordion__content' 'au-u-hidden'}}>
       <AuList @divider={{true}}>
         {{yield}}
       </AuList>

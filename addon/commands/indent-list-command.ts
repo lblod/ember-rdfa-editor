@@ -14,6 +14,7 @@ import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import State from '../core/state';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -43,7 +44,7 @@ export default class IndentListCommand
       false
     );
     for (const li of treeWalker) {
-      if (!li || li.index === 0) {
+      if (!li || li.getIndex(state.document) === 0) {
         return false;
       }
     }
@@ -76,15 +77,19 @@ export default class IndentListCommand
         throw new TypeAssertionError('Current node is not an element.');
       }
 
-      if (!li.parent) {
+      if (!li.getParent(transaction.currentDocument)) {
         throw new NoParentError();
       }
 
-      const parentInSet = setsToIndent.get(li.parent);
+      const parentInSet = setsToIndent.get(
+        unwrap(li.getParent(transaction.currentDocument))
+      );
       if (parentInSet) {
         parentInSet.push(li);
       } else {
-        setsToIndent.set(li.parent, [li]);
+        setsToIndent.set(unwrap(li.getParent(transaction.currentDocument)), [
+          li,
+        ]);
       }
     }
 

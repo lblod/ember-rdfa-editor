@@ -41,6 +41,7 @@ export default class MarksManager {
     const markOwnerMapping = new Map<string, Set<MarkInstanceEntry>>();
     const visualMarkGroups = new Map<string, Array<VisualMarkGroup>>();
     const textModels: GenTreeWalker<ModelText> = GenTreeWalker.fromSubTree({
+      documentRoot: document,
       root: document,
       filter: toFilterSkipFalse((node: ModelNode) =>
         ModelNode.isModelText(node)

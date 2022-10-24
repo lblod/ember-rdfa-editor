@@ -12,6 +12,8 @@ import GenTreeWalker from '../utils/gen-tree-walker';
 import ModelNodeUtils from '../utils/model-node-utils';
 import { toFilterSkipFalse } from '../utils/model-tree-walker';
 import { ImpossibleModelStateError } from '../utils/errors';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     remove: RemoveCommand;
@@ -21,6 +23,7 @@ declare module '@lblod/ember-rdfa-editor' {
 export interface RemoveCommandArgs {
   range: ModelRange;
 }
+
 export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
   canExecute(): boolean {
     return true;
@@ -32,7 +35,10 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
     // towards the left
     // SAFETY: filter guarantees results to be elements
     const lis = [
-      ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
+      ...range.end.parent.findSelfOrAncestors(
+        transaction.currentDocument,
+        ModelNodeUtils.isListElement
+      ),
     ] as ModelElement[];
     const lowestLi = lis[0];
     const highestLi = lis[lis.length - 1];
@@ -76,6 +82,7 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
     // this.model.emitSelectionChanged();
   }
 }
+
 function isolateLowestLi(
   tr: Transaction,
   highestLi: ModelElement,
@@ -83,30 +90,38 @@ function isolateLowestLi(
   removeRange: ModelRange
 ): { adjustedRange: ModelRange; rightSideOfSplit: ModelNode | null } {
   const { end } = removeRange;
-  const topUl = highestLi.parent;
+  const topUl = highestLi.getParent(tr.currentDocument);
   if (!topUl) {
     throw new ImpossibleModelStateError('Li cannot be root');
   }
-  if (!topUl.parent) {
+  if (!topUl.getParent(tr.currentDocument)) {
     throw new ImpossibleModelStateError('Ul cannot be root');
   }
   const endParent = end.parent;
 
-  let splitPos = ModelPosition.fromAfterNode(lowestLi);
-  const nestedUl = findNestedListFromPos(end, lowestLi);
+  let splitPos = ModelPosition.fromAfterNode(tr.currentDocument, lowestLi);
+  const nestedUl = findNestedListFromPos(tr.currentDocument, end, lowestLi);
 
   if (nestedUl) {
-    splitPos = ModelPosition.fromBeforeNode(nestedUl);
+    splitPos = ModelPosition.fromBeforeNode(tr.currentDocument, nestedUl);
   }
 
-  const splitPoint = tr.splitUntilElement(splitPos, topUl.parent);
-  const newPos = ModelPosition.fromInNode(endParent, end.parentOffset);
+  const splitPoint = tr.splitUntilElement(
+    splitPos,
+    unwrap(topUl.getParent(tr.currentDocument))
+  );
+  const newPos = ModelPosition.fromInNode(
+    tr.currentDocument,
+    endParent,
+    end.parentOffset
+  );
   const start = removeRange.start;
 
   const adjustedRange = new ModelRange(start, newPos);
   const rightSideOfSplit = splitPoint.nodeAfter();
   return { adjustedRange, rightSideOfSplit };
 }
+
 function cleanupRangeAfterDelete(
   tr: Transaction,
   range: ModelRange
@@ -122,30 +137,38 @@ function cleanupRangeAfterDelete(
   // SAFETY: filter guarantees modelelement
   const highestUl = (
     range.start.parent.findSelfOrAncestors(
+      tr.currentDocument,
       ModelNodeUtils.isListContainer
     ) as Generator<ModelElement, void, void>
   ).next().value;
   if (highestUl && ModelNodeUtils.isListContainer(highestUl.nextSibling)) {
     tr.moveToPosition(
-      ModelRange.fromInNode(highestUl.nextSibling),
-      ModelPosition.fromInNode(highestUl, highestUl.getMaxOffset())
+      ModelRange.fromInNode(tr.currentDocument, highestUl.nextSibling),
+      ModelPosition.fromInNode(
+        tr.currentDocument,
+        highestUl,
+        highestUl.getMaxOffset()
+      )
     );
     flattenList(tr, highestUl);
   }
   return range;
 }
+
 function findNestedListFromPos(
+  documentRoot: ModelElement,
   pos: ModelPosition,
   inLi: ModelElement
 ): ModelNode | null {
   return GenTreeWalker.fromRange({
     range: new ModelRange(
       pos,
-      ModelPosition.fromInNode(inLi, inLi.getMaxOffset())
+      ModelPosition.fromInNode(documentRoot, inLi, inLi.getMaxOffset())
     ),
     filter: toFilterSkipFalse<ModelNode>(ModelNodeUtils.isListContainer),
   }).nextNode();
 }
+
 /**
  * Completely flatten a nested list up to the level of the given li container
  */
@@ -155,13 +178,14 @@ function flattenList(tr: Transaction, list: ModelElement) {
     // SAFETY: the filter guarantees nodes are elements
     const nestedLists = [
       ...GenTreeWalker.fromSubTree({
+        documentRoot: tr.currentDocument,
         root: firstLi,
         filter: toFilterSkipFalse((node: ModelNode) =>
           ModelNodeUtils.isListContainer(node)
         ),
       }).nodes(),
     ] as ModelElement[];
-    let targetPos = ModelPosition.fromAfterNode(firstLi);
+    let targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
 
     for (const list of nestedLists) {
       const moveRange = tr.unwrap(list);
@@ -170,10 +194,11 @@ function flattenList(tr: Transaction, list: ModelElement) {
       if (!remainingLi.children.length) {
         tr.deleteNode(remainingLi);
       }
-      targetPos = ModelPosition.fromAfterNode(firstLi);
+      targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
     }
   }
 }
+
 function cleanupListWithoutLis(
   tr: Transaction,
   list: ModelElement

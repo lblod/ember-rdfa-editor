@@ -69,6 +69,7 @@ export default class ModelNodeUtils {
   }
 
   static findAncestor(
+    root: ModelElement,
     node: ModelNode | null,
     predicate: (node: ModelNode) => boolean,
     includeSelf = false
@@ -77,9 +78,9 @@ export default class ModelNodeUtils {
       return null;
     }
 
-    let current = includeSelf ? node : node.parent;
+    let current = includeSelf ? node : node.getParent(root);
     while (current && !predicate(current)) {
-      current = current.parent;
+      current = current.getParent(root);
     }
 
     return current;
@@ -146,6 +147,7 @@ export default class ModelNodeUtils {
   static getIndex(node: ModelText, steps: number, forwards: boolean) {
     return forwards ? steps : node.content.length - steps;
   }
+
   static siblingInDirection(node: ModelNode, direction: Direction) {
     if (direction === Direction.FORWARDS) {
       return node.nextSibling;
@@ -168,13 +170,14 @@ export default class ModelNodeUtils {
     }
   }
 
-  static parentIsLumpNode(modelNode: ModelNode): boolean {
-    while (modelNode.parent) {
-      const properties = modelNode.parent.getRdfaAttributes().properties;
+  static parentIsLumpNode(root: ModelElement, modelNode: ModelNode): boolean {
+    let parent = modelNode.getParent(root);
+    while (parent) {
+      const properties = parent.getRdfaAttributes().properties;
       if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
         return true;
       }
-      modelNode = modelNode.parent;
+      parent = modelNode.getParent(root);
     }
     return false;
   }
@@ -186,14 +189,21 @@ export default class ModelNodeUtils {
     }
     return false;
   }
-  static isInLumpNode(node: ModelNode): boolean {
-    return !!ModelNodeUtils.getParentLumpNode(node);
+
+  static isInLumpNode(root: ModelElement, node: ModelNode): boolean {
+    return !!ModelNodeUtils.getParentLumpNode(root, node);
   }
-  static getParentLumpNode(node: ModelNode): ModelElement | void {
+
+  static getParentLumpNode(
+    root: ModelElement,
+    node: ModelNode
+  ): ModelElement | void {
     // SAFETY: hesLumpNodeProperty filters out non-element nodes
-    return node.findSelfOrAncestors(ModelNodeUtils.hasLumpNodeProperty).next()
-      .value as ModelElement;
+    return node
+      .findSelfOrAncestors(root, ModelNodeUtils.hasLumpNodeProperty)
+      .next().value as ModelElement;
   }
+
   static hasLumpNodeProperty(node: ModelNode): node is ModelElement {
     if (!ModelNode.isModelElement(node)) {
       return false;

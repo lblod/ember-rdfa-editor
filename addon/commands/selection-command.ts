@@ -31,6 +31,7 @@ export default abstract class SelectionCommand
   protected constructor(createSnapshot: boolean) {
     this.deleteSelection = createSnapshot;
   }
+
   canExecute(): boolean {
     return true;
   }
@@ -53,9 +54,14 @@ export default abstract class SelectionCommand
     if (
       ModelNodeUtils.isListContainer(commonAncestor) ||
       (ModelNodeUtils.isListElement(commonAncestor) &&
-        SelectionCommand.isElementFullySelected(commonAncestor, range))
+        SelectionCommand.isElementFullySelected(
+          transaction.currentDocument,
+          commonAncestor,
+          range
+        ))
     ) {
       const newAncestor = ModelNodeUtils.findAncestor(
+        transaction.currentDocument,
         commonAncestor,
         (node) => !ModelNodeUtils.isListContainer(node)
       );
@@ -104,11 +110,13 @@ export default abstract class SelectionCommand
   /**
    * Check if range perfectly surrounds element, e.g.:
    * <ul>|<li>foo</li>|</ul>
+   * @param documentRoot
    * @param element
    * @param range
    * @private
    */
   private static isElementFullySelected(
+    documentRoot: ModelElement,
     element: ModelElement,
     range: ModelRange
   ): boolean {
@@ -117,7 +125,10 @@ export default abstract class SelectionCommand
       startPosition.parent !== element &&
       startPosition.parentOffset === 0
     ) {
-      startPosition = ModelPosition.fromBeforeNode(startPosition.parent);
+      startPosition = ModelPosition.fromBeforeNode(
+        documentRoot,
+        startPosition.parent
+      );
     }
 
     if (startPosition.parentOffset !== 0) {
@@ -129,7 +140,10 @@ export default abstract class SelectionCommand
       endPosition.parent !== element &&
       endPosition.parentOffset === endPosition.parent.getMaxOffset()
     ) {
-      endPosition = ModelPosition.fromAfterNode(endPosition.parent);
+      endPosition = ModelPosition.fromAfterNode(
+        documentRoot,
+        endPosition.parent
+      );
     }
 
     return endPosition.parentOffset === endPosition.parent.getMaxOffset();

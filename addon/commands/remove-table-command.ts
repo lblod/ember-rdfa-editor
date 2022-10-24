@@ -3,11 +3,14 @@ import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Command, { CommandContext } from './command';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     removeTable: RemoveTableCommand;
   }
 }
+
 export interface RemoveTableCommandArgs {
   selection?: ModelSelection;
 }
@@ -33,12 +36,17 @@ export default class RemoveTableCommand
       throw new Error('The selection is not inside a table');
     }
 
-    if (table.parent) {
+    if (table.getParent(transaction.currentDocument)) {
       const offset = table.getOffset();
       if (offset) {
-        transaction.collapseIn(table.parent, offset);
+        transaction.collapseIn(
+          unwrap(table.getParent(transaction.currentDocument)),
+          offset
+        );
       } else {
-        transaction.collapseIn(table.parent);
+        transaction.collapseIn(
+          unwrap(table.getParent(transaction.currentDocument))
+        );
       }
     }
     table.removeTable(transaction);

@@ -4,6 +4,7 @@ import Command, {
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+
 export interface AddTypeCommandArgs {
   type: string;
   element: ModelElement;
@@ -30,6 +31,8 @@ export default class AddTypeCommand
     if (!oldTypeof) oldTypeof = '';
     const newType = `${oldTypeof} ${type}`;
     const newNode = transaction.setProperty(element, 'typeof', newType);
-    transaction.selectRange(ModelRange.fromInElement(newNode, 0, 0));
+    transaction.selectRange(
+      ModelRange.fromInElement(transaction.currentDocument, newNode, 0, 0)
+    );
   }
 }

@@ -4,8 +4,9 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test, todo } from 'qunit';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module('Unit | commands | indent-list-command-test', function () {
+module.skip('Unit | commands | indent-list-command-test', function () {
   const command = new IndentListCommand();
   const executeCommand = makeTestExecute(command);
 
@@ -26,7 +27,11 @@ module('Unit | commands | indent-list-command-test', function () {
         </ul>
       </div>`;
 
-    const start = ModelPosition.fromInTextNode(content, 0);
+    const start = ModelPosition.fromInTextNode(
+      initial as ModelElement,
+      content,
+      0
+    );
     const range = new ModelRange(start, start);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
@@ -64,7 +69,11 @@ module('Unit | commands | indent-list-command-test', function () {
         </ul>
       </div>`;
 
-    const start = ModelPosition.fromInTextNode(iniContent, 3);
+    const start = ModelPosition.fromInTextNode(
+      initial as ModelElement,
+      iniContent,
+      3
+    );
     const range1 = new ModelRange(start, start);
     const initialState = stateWithRange(initial, range1);
     const { resultState } = executeCommand(initialState, {});
@@ -86,7 +95,12 @@ module('Unit | commands | indent-list-command-test', function () {
           </li>
         </ul>
       </div>`;
-    const range2 = ModelRange.fromInTextNode(expContent, 3, 3);
+    const range2 = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      expContent,
+      3,
+      3
+    );
     assert.true(
       resultState.document.sameAs(expected),
       QUnit.dump.parse(resultState.document)
@@ -114,7 +128,12 @@ module('Unit | commands | indent-list-command-test', function () {
         </ul>
       </div>`;
 
-    const range1 = ModelRange.fromInTextNode(iniContent, 0, 3);
+    const range1 = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      iniContent,
+      0,
+      3
+    );
     const initialState = stateWithRange(initial, range1);
     const { resultState } = executeCommand(initialState, {});
     // language=XML
@@ -135,7 +154,12 @@ module('Unit | commands | indent-list-command-test', function () {
           </li>
         </ul>
       </div>`;
-    const range2 = ModelRange.fromInTextNode(expContent, 0, 3);
+    const range2 = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      expContent,
+      0,
+      3
+    );
     assert.true(
       resultState.document.sameAs(expected),
       QUnit.dump.parse(resultState.document)

@@ -12,11 +12,17 @@ export default class ModelRangeUtils {
     const copyRange = range.clone();
 
     if (ModelNodeUtils.isPlaceHolder(copyRange.start.parent)) {
-      copyRange.start = ModelPosition.fromBeforeNode(copyRange.start.parent);
+      copyRange.start = ModelPosition.fromBeforeNode(
+        copyRange.root,
+        copyRange.start.parent
+      );
     }
 
     if (ModelNodeUtils.isPlaceHolder(copyRange.end.parent)) {
-      copyRange.end = ModelPosition.fromAfterNode(copyRange.end.parent);
+      copyRange.end = ModelPosition.fromAfterNode(
+        copyRange.root,
+        copyRange.end.parent
+      );
     }
 
     return copyRange;
@@ -51,7 +57,7 @@ export default class ModelRangeUtils {
       // Select first ancestor.
       if (startAncestors.length > 0) {
         range = new ModelRange(
-          ModelPosition.fromBeforeNode(startAncestors[0]),
+          ModelPosition.fromBeforeNode(range.root, startAncestors[0]),
           range.end
         );
       }

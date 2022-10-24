@@ -34,7 +34,12 @@ module('Unit | commands | delete-selection-command-test', function () {
         <text __id="text">i am the only text available here</text>
       </modelRoot>
     `;
-    const range = ModelRange.fromInTextNode(text, 0, text.length);
+    const range = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      text,
+      0,
+      text.length
+    );
     const initialState = stateWithRange(initial, range);
 
     // language=XML
@@ -60,7 +65,12 @@ module('Unit | commands | delete-selection-command-test', function () {
         <text __id="text">i am the only text available here</text>
       </modelRoot>
     `;
-    const range = ModelRange.fromInTextNode(text, 9, 16);
+    const range = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      text,
+      9,
+      16
+    );
     const initialState = stateWithRange(initial, range);
 
     // language=XML
@@ -117,6 +127,7 @@ module('Unit | commands | delete-selection-command-test', function () {
     `;
 
     const range = ModelRange.fromInTextNode(
+      initial as ModelElement,
       selectedText,
       0,
       selectedText.length
@@ -187,6 +198,7 @@ module('Unit | commands | delete-selection-command-test', function () {
     `;
 
     const range = ModelRange.fromInElement(
+      initial as ModelElement,
       firstList,
       0,
       firstList.getMaxOffset()
@@ -212,7 +224,7 @@ module('Unit | commands | delete-selection-command-test', function () {
       <modelRoot>
         <ul __id="firstList">
           <li __id="firstLi">
-            <text >first1</text>
+            <text>first1</text>
           </li>
           <li>
             <text>first2</text>
@@ -252,8 +264,16 @@ module('Unit | commands | delete-selection-command-test', function () {
       </modelRoot>
     `;
 
-    const startPos = ModelPosition.fromInElement(firstLi, 0);
-    const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
+    const startPos = ModelPosition.fromInElement(
+      initial as ModelElement,
+      firstLi,
+      0
+    );
+    const endPos = ModelPosition.fromInElement(
+      initial as ModelElement,
+      lastLi,
+      lastLi.getMaxOffset()
+    );
 
     const range = new ModelRange(startPos, endPos);
     const initialState = stateWithRange(initial, range);
@@ -300,6 +320,7 @@ module('Unit | commands | delete-selection-command-test', function () {
     `;
 
     const range = ModelRange.fromInElement(
+      initial as ModelElement,
       firstList,
       0,
       firstList.getMaxOffset()
@@ -347,8 +368,16 @@ module('Unit | commands | delete-selection-command-test', function () {
       </modelRoot>
     `;
 
-    const startPos = ModelPosition.fromInElement(firstLi, 0);
-    const endPos = ModelPosition.fromInElement(lastLi, lastLi.getMaxOffset());
+    const startPos = ModelPosition.fromInElement(
+      initial as ModelElement,
+      firstLi,
+      0
+    );
+    const endPos = ModelPosition.fromInElement(
+      initial as ModelElement,
+      lastLi,
+      lastLi.getMaxOffset()
+    );
 
     const range = new ModelRange(startPos, endPos);
     const initialState = stateWithRange(initial, range);
@@ -414,7 +443,12 @@ module('Unit | commands | delete-selection-command-test', function () {
       </modelRoot>
     `;
 
-    const range = ModelRange.fromInTextNode(firstLine, 0, firstLine.length);
+    const range = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      firstLine,
+      0,
+      firstLine.length
+    );
     const initialState = stateWithRange(initial, range);
 
     const { resultState, resultValue: deletedNodes } = executeCommand(
@@ -480,8 +514,16 @@ module('Unit | commands | delete-selection-command-test', function () {
       </modelRoot>
     `;
 
-    const startPos = ModelPosition.fromInTextNode(middleText, 0);
-    const endPos = ModelPosition.fromInTextNode(lastText, lastText.length);
+    const startPos = ModelPosition.fromInTextNode(
+      initial as ModelElement,
+      middleText,
+      0
+    );
+    const endPos = ModelPosition.fromInTextNode(
+      initial as ModelElement,
+      lastText,
+      lastText.length
+    );
     const range = new ModelRange(startPos, endPos);
     const initialState = stateWithRange(initial, range);
 
@@ -536,7 +578,12 @@ module('Unit | commands | delete-selection-command-test', function () {
       </modelRoot>
     `;
 
-    const range = ModelRange.fromInTextNode(firstText, 0, 3);
+    const range = ModelRange.fromInTextNode(
+      initial as ModelElement,
+      firstText,
+      0,
+      3
+    );
     const initialState = stateWithRange(initial, range);
 
     const { resultState, resultValue: deletedNodes } = executeCommand(

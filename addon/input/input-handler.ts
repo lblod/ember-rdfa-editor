@@ -276,7 +276,7 @@ export class EditorInputHandler implements InputHandler {
             mutation.target
           );
           tr.insertText({
-            range: ModelRange.fromInNode(oldNode),
+            range: ModelRange.fromInNode(tr.currentDocument, oldNode),
             text: mutation.target.textContent ?? '',
           });
 
@@ -312,7 +312,10 @@ export class EditorInputHandler implements InputHandler {
       node.childNodes
     );
     const oldModelNode = viewToModel(tr.workingCopy, this.domRoot, node);
-    return tr.insertNodes(ModelRange.fromInNode(oldModelNode), ...newNodes);
+    return tr.insertNodes(
+      ModelRange.fromInNode(tr.currentDocument, oldModelNode),
+      ...newNodes
+    );
   }
 
   tearDown() {

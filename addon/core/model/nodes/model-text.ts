@@ -8,6 +8,8 @@ import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { stringToVisibleText } from '@lblod/ember-rdfa-editor/utils/editor-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { Mark, MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -69,9 +71,9 @@ export default class ModelText extends ModelNode {
     this.marks.deleteHash(markName);
   }
 
-  insertTextNodeAt(index: number): ModelText {
-    const { right } = this.split(index);
-    return right.split(0).left;
+  insertTextNodeAt(root: ModelElement, index: number): ModelText {
+    const { right } = this.split(root, index);
+    return right.split(root, 0).left;
   }
 
   clone(): ModelText {
@@ -88,9 +90,11 @@ export default class ModelText extends ModelNode {
    * Mostly for internal use, prefer using {@link ModelPosition.split} where
    * possible.
    * @param index
+   * @param root
    * @param keepRight
    */
   split(
+    root: ModelElement,
     index: number,
     keepRight = false
   ): {
@@ -110,13 +114,13 @@ export default class ModelText extends ModelNode {
       this.content = rightContent;
       const left = this.clone();
       left.content = leftContent;
-      if (!this.parent) {
+      if (!this.getParent(root)) {
         throw new ModelError('splitting a node without a parent');
       }
 
-      const childIndex = this.parent.children.indexOf(this);
+      const childIndex = unwrap(this.getParent(root)).children.indexOf(this);
 
-      this.parent.addChild(left, childIndex);
+      unwrap(this.getParent(root)).addChild(left, childIndex);
 
       return { left, right: this };
     } else {
@@ -124,13 +128,13 @@ export default class ModelText extends ModelNode {
       const right = this.clone();
       right.content = rightContent;
 
-      if (!this.parent) {
+      if (!this.getParent(root)) {
         throw new ModelError('splitting a node without a parent');
       }
 
-      const childIndex = this.parent.children.indexOf(this);
+      const childIndex = unwrap(this.getParent(root)).children.indexOf(this);
 
-      this.parent.addChild(right, childIndex + 1);
+      unwrap(this.getParent(root)).addChild(right, childIndex + 1);
 
       return { left: this, right };
     }

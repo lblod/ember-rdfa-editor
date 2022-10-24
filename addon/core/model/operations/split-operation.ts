@@ -5,16 +5,18 @@ import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import Operation from './operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export default class SplitOperation extends Operation {
   private _splitParent: boolean;
 
   constructor(
+    root: ModelElement,
     eventbus: EventBus | undefined,
     range: ModelRange,
     splitParent = true
   ) {
-    super(eventbus, range);
+    super(root, eventbus, range);
     this._splitParent = splitParent;
   }
 
@@ -95,7 +97,7 @@ export default class SplitOperation extends Operation {
 
   private doSplit(position: ModelPosition) {
     if (this._splitParent) {
-      return OperationAlgorithms.split(position);
+      return OperationAlgorithms.split(this.root, position);
     } else {
       return OperationAlgorithms.splitText(position);
     }

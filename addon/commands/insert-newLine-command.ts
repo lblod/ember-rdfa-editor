@@ -10,11 +10,13 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelElement from '../core/model/nodes/model-element';
 import Command, { CommandContext } from './command';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     insertNewLine: InsertNewLineCommand;
   }
 }
+
 export interface InsertNewLineCommandArgs {
   range?: ModelRange | null;
 }
@@ -50,20 +52,27 @@ export default class InsertNewLineCommand
       ModelNode.isModelText(nodeBefore) &&
       nodeBefore.content === INVISIBLE_SPACE
     ) {
-      range.start = ModelPosition.fromBeforeNode(nodeBefore);
+      range.start = ModelPosition.fromBeforeNode(
+        transaction.currentDocument,
+        nodeBefore
+      );
     }
 
     transaction.insertNodes(range, br);
-    const cursorPos = ModelPosition.fromAfterNode(br);
+    const cursorPos = ModelPosition.fromAfterNode(
+      transaction.currentDocument,
+      br
+    );
     let newRange = new ModelRange(cursorPos, cursorPos);
 
-    if (!br.parent) {
+    const parent = br.getParent(transaction.currentDocument);
+    if (!parent) {
       throw new ImpossibleModelStateError();
     }
 
     // If the br is the last child of a block element, it won't render properly.
     // Thanks to the magic of the dom spec, so we insert a good old invisible space.
-    if (br.parent.isBlock && br === br.parent.lastChild) {
+    if (parent.isBlock && br === parent.lastChild) {
       const dummyText = new ModelText(INVISIBLE_SPACE);
       newRange = transaction.insertNodes(newRange, dummyText);
     }

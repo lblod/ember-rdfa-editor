@@ -11,6 +11,7 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { Walkable, WalkFilter } from './gen-tree-walker';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 export enum FilterResult {
   // We like the node.
@@ -138,7 +139,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     let node: ModelNode | null = this._currentNode;
 
     while (node && node !== this.root) {
-      node = node.parent;
+      node = node.getParent(this.root);
       if (node && this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
         this._currentNode = node;
         return node as ModelElement;
@@ -189,11 +190,11 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         sibling = node.previousSibling;
       }
 
-      if (node === this.root || !node.parent) {
+      if (node === this.root || !node.getParent(this.root)) {
         return null;
       }
 
-      node = node.parent;
+      node = unwrap(node.getParent(this.root));
       if (this.filterNode(node) === FilterResult.FILTER_ACCEPT) {
         this._currentNode = node;
         return node;
@@ -257,7 +258,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
 
         // Walk back up and try to find a sibling there.
         // We don't care about these nodes since we've already visited them.
-        temporary = temporary.parent;
+        temporary = temporary.getParent(this.root);
         if (this.visitParentUpwards && temporary) {
           result = this.filterNode(temporary);
           if (result === FilterResult.FILTER_ACCEPT) {
@@ -290,7 +291,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
       return this.root;
     }
     while (!startNode.nextSibling && startNode !== this.root) {
-      startNode = startNode.parent!;
+      startNode = startNode.getParent(this.root)!;
     }
 
     // This would mean the given range is empty.
@@ -325,7 +326,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     }
 
     while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
-      nodeAfterEnd = nodeAfterEnd.parent!;
+      nodeAfterEnd = nodeAfterEnd.getParent(this.root)!;
     }
 
     if (nodeAfterEnd === this.root) {
@@ -368,7 +369,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
           break;
         }
 
-        const parent: ModelElement | null = node.parent;
+        const parent: ModelElement | null = node.getParent(this.root);
         if (!parent || parent === this.root || parent === this._currentNode) {
           return null;
         }
@@ -406,7 +407,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         }
       }
 
-      node = node.parent;
+      node = node.getParent(this.root);
       if (!node || node === this.root) {
         return null;
       }

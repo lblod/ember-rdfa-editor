@@ -3,18 +3,19 @@ import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { SimplePositionOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export type SimplePosition = number;
 
 export function simplePosToModelPos(
   simplePos: SimplePosition,
-  root: ModelNode
+  root: ModelElement
 ): ModelPosition {
   if (simplePos < 0) {
     throw new SimplePositionOutOfRangeError(simplePos);
   }
   if (simplePos === 0) {
-    return ModelPosition.fromInNode(root, 0);
+    return ModelPosition.fromInNode(root, root, 0);
   }
   let cur: ModelNode | null = root.firstChild;
   let count = 0;
@@ -24,20 +25,20 @@ export function simplePosToModelPos(
       count += curSize;
       cur = cur.nextSibling;
     } else if (count + curSize === simplePos) {
-      return ModelPosition.fromAfterNode(cur);
+      return ModelPosition.fromAfterNode(root, cur);
     } else {
       if (ModelNode.isModelElement(cur) && !cur.isLeaf) {
         count += 1;
         if (cur.firstChild) {
           cur = cur.firstChild;
         } else {
-          return ModelPosition.fromInNode(cur, simplePos - count);
+          return ModelPosition.fromInNode(root, cur, simplePos - count);
         }
       } else {
         if (ModelNode.isModelText(cur)) {
-          return ModelPosition.fromInNode(cur, simplePos - count);
+          return ModelPosition.fromInNode(root, cur, simplePos - count);
         } else {
-          return ModelPosition.fromBeforeNode(cur);
+          return ModelPosition.fromBeforeNode(root, cur);
         }
       }
     }

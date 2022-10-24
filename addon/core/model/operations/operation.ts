@@ -9,6 +9,7 @@ import {
 import ModelRange from '../model-range';
 import ModelNode from '../nodes/model-node';
 import RangeMapper from '../range-mapper';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export interface OperationResult {
   mapper: RangeMapper;
@@ -20,13 +21,19 @@ export interface OperationResult {
 
 export default abstract class Operation {
   private _range: ModelRange;
+  protected root: ModelElement;
   protected eventBus?: EventBus;
   protected logger: Logger;
 
-  protected constructor(eventBus: EventBus | undefined, range: ModelRange) {
+  protected constructor(
+    root: ModelElement,
+    eventBus: EventBus | undefined,
+    range: ModelRange
+  ) {
     this.eventBus = eventBus;
     this.logger = createLogger(this.constructor.name);
     this._range = range;
+    this.root = root;
   }
 
   get range(): ModelRange {

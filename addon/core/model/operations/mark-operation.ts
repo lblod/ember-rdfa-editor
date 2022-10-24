@@ -15,6 +15,7 @@ import RangeMapper from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import { AttributeSpec } from '../../../utils/render-spec';
 import GenTreeWalker from '../../../utils/gen-tree-walker';
 import Operation from './operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
@@ -23,13 +24,14 @@ export default class MarkOperation extends Operation {
   private _attributes: AttributeSpec;
 
   constructor(
+    root: ModelElement,
     eventbus: EventBus | undefined,
     range: ModelRange,
     spec: MarkSpec,
     attributes: AttributeSpec,
     action: MarkAction
   ) {
-    super(eventbus, range);
+    super(root, eventbus, range);
     this._spec = spec;
     this._attributes = attributes;
     this._action = action;
@@ -98,7 +100,7 @@ export default class MarkOperation extends Operation {
       this.range.start.parent.addChild(node, insertionIndex);
 
       //put the cursor inside that node
-      const newRange = ModelRange.fromInNode(node, 1, 1);
+      const newRange = ModelRange.fromInNode(this.root, node, 1, 1);
       this.emit(
         new ContentChangedEvent({
           owner: CORE_OWNER,
@@ -133,12 +135,12 @@ export default class MarkOperation extends Operation {
       for (const node of textNodes) {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
-      OperationAlgorithms.mergeTextNodes(textNodes);
+      OperationAlgorithms.mergeTextNodes(this.root, textNodes);
       const before = this.range.start.nodeBefore();
       const after = this.range.end.nodeAfter();
       if (before) {
         if (ModelNode.isModelText(before)) {
-          OperationAlgorithms.mergeTextNodes([before]);
+          OperationAlgorithms.mergeTextNodes(this.root, [before]);
         }
 
         _markCheckNodes.push(before);

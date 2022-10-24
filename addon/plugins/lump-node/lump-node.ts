@@ -35,7 +35,7 @@ export default class LumpNodePlugin implements EditorPlugin {
         if (
           this.lumpNodePreviouslyBeforeCursor &&
           !this.lastPosition?.equals(newPosition) &&
-          this.lumpNodePreviouslyBeforeCursor.connected &&
+          this.lumpNodePreviouslyBeforeCursor.isConnected(tr.currentDocument) &&
           this.lumpNodePreviouslyBeforeCursor.attributeMap.has(
             'data-flagged-remove'
           )

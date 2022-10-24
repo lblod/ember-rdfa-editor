@@ -18,6 +18,7 @@ declare module '@lblod/ember-rdfa-editor' {
     insertNewLi: InsertNewLiCommand;
   }
 }
+
 export interface InsertNewLiCommandArgs {
   range?: ModelRange | null;
 }
@@ -74,7 +75,8 @@ export default class InsertNewLiCommand
   private insertLi(tr: Transaction, position: ModelPosition) {
     let newPosition = tr.splitUntil(
       position,
-      (node) => ModelNodeUtils.isListContainer(node.parent),
+      (node) =>
+        ModelNodeUtils.isListContainer(node.getParent(tr.currentDocument)),
       false
     );
     newPosition = tr.splitUntil(
@@ -96,18 +98,22 @@ export default class InsertNewLiCommand
     }
     if (nodeBefore.length === 0) {
       tr.insertNodes(
-        ModelRange.fromInElement(nodeBefore),
+        ModelRange.fromInElement(tr.currentDocument, nodeBefore),
         new ModelText(INVISIBLE_SPACE)
       );
     }
     if (nodeAfter.length === 0) {
       tr.insertNodes(
-        ModelRange.fromInElement(nodeAfter),
+        ModelRange.fromInElement(tr.currentDocument, nodeAfter),
         new ModelText(INVISIBLE_SPACE)
       );
-      tr.selectRange(ModelRange.fromInElement(nodeAfter, 1, 1));
+      tr.selectRange(
+        ModelRange.fromInElement(tr.currentDocument, nodeAfter, 1, 1)
+      );
     } else {
-      tr.selectRange(ModelRange.fromInElement(nodeAfter, 0, 0));
+      tr.selectRange(
+        ModelRange.fromInElement(tr.currentDocument, nodeAfter, 0, 0)
+      );
     }
   }
 }

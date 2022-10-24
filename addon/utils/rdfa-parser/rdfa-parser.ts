@@ -20,6 +20,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/datastore/graphy-dataset';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
@@ -46,7 +47,7 @@ export interface ModelQuad extends RDF.Quad {
 }
 
 export interface RdfaParseConfig {
-  modelRoot: ModelNode;
+  modelRoot: ModelElement;
   baseIRI: string;
   pathFromDomRoot?: Node[];
 }
@@ -170,6 +171,7 @@ export class RdfaParser {
       }
     }
     const walker = GenTreeWalker.fromSubTree({
+      documentRoot: modelRoot,
       root: modelRoot,
       onEnterNode: parser.onEnterNode,
       onLeaveNode: parser.onLeaveNode,

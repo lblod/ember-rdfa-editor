@@ -5,7 +5,6 @@ import ModelNode, {
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
-import { Cloneable } from '@lblod/ember-rdfa-editor/utils/types';
 import {
   LEAF_NODES,
   LUMP_NODE_PROPERTY,
@@ -23,10 +22,7 @@ import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties
 
 export type ElementType = keyof HTMLElementTagNameMap;
 
-export default class ModelElement
-  extends ModelNode
-  implements Cloneable<ModelElement>
-{
+export default class ModelElement extends ModelNode {
   modelNodeType: ModelNodeType = 'ELEMENT';
 
   private _children: ModelNode[] = [];
@@ -139,9 +135,6 @@ export default class ModelElement
   addChild(child: ModelNode, position?: number) {
     let prev;
     let next = null;
-    if (child.parent) {
-      child.parent.removeChild(child);
-    }
     if (position === undefined) {
       prev = this.children[this.childCount - 1];
       this._children.push(child);
@@ -164,8 +157,6 @@ export default class ModelElement
     if (ModelNode.isModelElement(child)) {
       child.updateRdfaPrefixes(this.getRdfaPrefixes());
     }
-
-    child.parent = this;
   }
 
   insertChildAtOffset(child: ModelNode, offset: number) {
@@ -234,7 +225,10 @@ export default class ModelElement
    * where possible
    * @param index
    */
-  split(index: number): { left: ModelElement; right: ModelElement } {
+  split(
+    root: ModelElement,
+    index: number
+  ): { left: ModelElement; right: ModelElement } {
     if (index < 0) {
       index = 0;
     }
@@ -253,7 +247,7 @@ export default class ModelElement
     const right = this.clone();
     right.children = [];
     right.appendChildren(...rightChildren);
-    this.parent?.addChild(right, this.index! + 1);
+    this.getParent(root)?.addChild(right, this.getIndex(root)! + 1);
 
     return { left: this, right };
   }
@@ -263,22 +257,22 @@ export default class ModelElement
    * If withBreaks is true, insert a break after every child
    * @param withBreaks
    */
-  unwrap(withBreaks = false) {
-    const parent = this.parent;
+  unwrap(root: ModelElement, withBreaks = false) {
+    const parent = this.getParent(root);
     if (!parent) {
       throw new ModelError("Can't unwrap root node");
     }
 
-    let insertIndex = this.index! + 1;
+    let insertIndex = this.getIndex(root)! + 1;
     for (const child of [...this.children]) {
-      this.parent?.addChild(child, insertIndex);
+      parent?.addChild(child, insertIndex);
       insertIndex++;
       if (withBreaks) {
-        this.parent?.addChild(new ModelElement('br'), insertIndex);
+        parent?.addChild(new ModelElement('br'), insertIndex);
         insertIndex++;
       }
     }
-    this.parent?.removeChild(this);
+    parent?.removeChild(this);
   }
 
   hasVisibleText(): boolean {
@@ -300,7 +294,10 @@ export default class ModelElement
    * Throws an exception if index is out of range.
    * @param index
    */
-  isolateChildAt(index: number): {
+  isolateChildAt(
+    root: ModelElement,
+    index: number
+  ): {
     left: ModelElement | null;
     middle: ModelElement;
     right: ModelElement | null;
@@ -314,17 +311,17 @@ export default class ModelElement
     }
 
     if (index === 0) {
-      const { left, right } = this.split(index + 1);
+      const { left, right } = this.split(root, index + 1);
       return { left: null, middle: left, right };
     }
 
     if (index === this.length - 1) {
-      const { left, right } = this.split(index);
+      const { left, right } = this.split(root, index);
       return { left, middle: right, right: null };
     }
 
-    const firstSplit = this.split(index + 1);
-    const secondSplit = firstSplit.left.split(index);
+    const firstSplit = this.split(root, index + 1);
+    const secondSplit = firstSplit.left.split(root, index);
 
     return {
       left: secondSplit.left,
@@ -520,12 +517,11 @@ export default class ModelElement
       dirtiness.add('content');
     } else {
       if (
-        (this.type !== other.type ||
-          !ModelNodeUtils.areAttributeMapsSame(
-            this.attributeMap,
-            other.attributeMap
-          )) &&
-        !(other === other.root)
+        this.type !== other.type ||
+        !ModelNodeUtils.areAttributeMapsSame(
+          this.attributeMap,
+          other.attributeMap
+        )
       ) {
         dirtiness.add('node');
       }

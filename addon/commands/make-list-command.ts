@@ -77,6 +77,7 @@ export default class MakeListCommand
 
     const fullRange = ModelRange.fromInElement(
       transaction.currentDocument,
+      transaction.currentDocument,
       0,
       transaction.currentDocument.getMaxOffset()
     );
@@ -91,24 +92,29 @@ export default class MakeListCommand
     // Expand range until it is bound by blocks.
     let walker = GenTreeWalker.fromRange({
       range: new ModelRange(
-        ModelPosition.fromInNode(range.root, 0),
+        ModelPosition.fromInNode(documentRoot, range.root, 0),
         range.start
       ),
       reverse: true,
     });
     let nextNode = walker.nextNode();
     while (nextNode && !nextNode.isBlock) {
-      range.start = ModelPosition.fromInNode(nextNode, 0);
+      range.start = ModelPosition.fromInNode(documentRoot, nextNode, 0);
       nextNode = walker.nextNode();
     }
 
     if (range.start.parentOffset === 0) {
       if (range.start.parent === documentRoot) {
         // Expanded to the start of the root node.
-        range.start = ModelPosition.fromInElement(documentRoot, 0);
+        range.start = ModelPosition.fromInElement(
+          documentRoot,
+          documentRoot,
+          0
+        );
       } else {
         range.start = ModelPosition.fromInElement(
-          range.start.parent.parent!,
+          documentRoot,
+          range.start.parent.getParent(documentRoot)!,
           range.start.parent.getOffset()
         );
       }
@@ -117,12 +123,16 @@ export default class MakeListCommand
     walker = GenTreeWalker.fromRange({
       range: new ModelRange(
         range.end,
-        ModelPosition.fromInNode(range.root, range.root.getMaxOffset())
+        ModelPosition.fromInNode(
+          documentRoot,
+          range.root,
+          range.root.getMaxOffset()
+        )
       ),
     });
     nextNode = walker.nextNode();
     while (nextNode && !nextNode.isBlock) {
-      range.end = ModelPosition.fromAfterNode(nextNode);
+      range.end = ModelPosition.fromAfterNode(documentRoot, nextNode);
       nextNode = walker.nextNode();
     }
 
@@ -131,11 +141,13 @@ export default class MakeListCommand
         // Expanded to the end of root node.
         range.end = ModelPosition.fromInElement(
           documentRoot,
+          documentRoot,
           documentRoot.getMaxOffset()
         );
       } else {
         range.end = ModelPosition.fromInElement(
-          range.end.parent.parent!,
+          documentRoot,
+          range.end.parent.getParent(documentRoot)!,
           range.end.parent.getOffset() + range.end.parent.offsetSize
         );
       }

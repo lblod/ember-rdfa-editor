@@ -16,7 +16,7 @@ export default function handleTab(dir: 1 | -1) {
     let pos = selRange.start;
     if (pos.isInsideText()) {
       // SAFETY: pos inside text guarantees nodeAfter to be non-null
-      pos = ModelPosition.fromAfterNode(pos.nodeAfter()!);
+      pos = ModelPosition.fromAfterNode(controller.modelRoot, pos.nodeAfter()!);
     }
     const direction = dir < 0 ? Direction.BACKWARDS : Direction.FORWARDS;
     let filter;
@@ -27,12 +27,13 @@ export default function handleTab(dir: 1 | -1) {
           (ModelNode.isModelText(node) ||
             (ModelNode.isModelElement(node) &&
               !node.getRdfaAttributes().isEmpty)) &&
-          !ModelNodeUtils.parentIsLumpNode(node)
+          !ModelNodeUtils.parentIsLumpNode(controller.modelRoot, node)
       );
     } else {
       filter = toFilterSkipFalse(
         (node: ModelNode) =>
-          ModelNode.isModelText(node) && !ModelNodeUtils.parentIsLumpNode(node)
+          ModelNode.isModelText(node) &&
+          !ModelNodeUtils.parentIsLumpNode(controller.modelRoot, node)
       );
     }
 
@@ -45,16 +46,19 @@ export default function handleTab(dir: 1 | -1) {
     let resultPos;
     const nextNode = nodes.next().value;
     if (ModelNode.isModelElement(nextNode)) {
-      resultPos = ModelPosition.fromInNode(nextNode, 0);
+      resultPos = ModelPosition.fromInNode(controller.modelRoot, nextNode, 0);
     } else if (nextNode) {
-      resultPos = ModelPosition.fromBeforeNode(nextNode);
+      resultPos = ModelPosition.fromBeforeNode(controller.modelRoot, nextNode);
     }
     if (resultPos && resultPos.sameAs(pos)) {
       const nextNode = nodes.next().value;
       if (ModelNode.isModelElement(nextNode)) {
-        resultPos = posInside(nextNode, direction);
+        resultPos = posInside(controller.modelRoot, nextNode, direction);
       } else if (nextNode) {
-        resultPos = ModelPosition.fromBeforeNode(nextNode);
+        resultPos = ModelPosition.fromBeforeNode(
+          controller.modelRoot,
+          nextNode
+        );
       }
     }
     if (resultPos) {
@@ -66,10 +70,18 @@ export default function handleTab(dir: 1 | -1) {
   };
 }
 
-function posInside(element: ModelElement, direction: Direction): ModelPosition {
+function posInside(
+  documentRoot: ModelElement,
+  element: ModelElement,
+  direction: Direction
+): ModelPosition {
   if (direction === Direction.BACKWARDS) {
-    return ModelPosition.fromInElement(element, element.getMaxOffset());
+    return ModelPosition.fromInElement(
+      documentRoot,
+      element,
+      element.getMaxOffset()
+    );
   } else {
-    return ModelPosition.fromInElement(element, 0);
+    return ModelPosition.fromInElement(documentRoot, element, 0);
   }
 }

@@ -6,16 +6,18 @@ import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
 import Operation from './operation';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export default class MoveOperation extends Operation {
   private _targetPosition: ModelPosition;
 
   constructor(
+    root: ModelElement,
     eventbus: EventBus | undefined,
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ) {
-    super(eventbus, rangeToMove);
+    super(root, eventbus, rangeToMove);
     this._targetPosition = targetPosition;
   }
 
@@ -36,12 +38,14 @@ export default class MoveOperation extends Operation {
       throw new OperationError('Cannot move to target inside source range');
     }
     const { movedNodes, _markCheckNodes, mapper } = OperationAlgorithms.move(
+      this.root,
       this.range,
       this.targetPosition
     );
     if (movedNodes.length) {
-      const start = ModelPosition.fromBeforeNode(movedNodes[0]);
+      const start = ModelPosition.fromBeforeNode(this.root, movedNodes[0]);
       const end = ModelPosition.fromAfterNode(
+        this.root,
         movedNodes[movedNodes.length - 1]
       );
       const newRange = new ModelRange(start, end);

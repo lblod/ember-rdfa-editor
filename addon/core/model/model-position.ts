@@ -39,33 +39,41 @@ export default class ModelPosition {
     return result;
   }
 
-  static fromAfterNode(node: ModelNode): ModelPosition {
-    const basePath = node.getOffsetPath();
+  static fromAfterNode(root: ModelElement, node: ModelNode): ModelPosition {
+    const basePath = node.getOffsetPath(root);
     basePath[basePath.length - 1] += node.offsetSize;
 
-    return ModelPosition.fromPath(node.root, basePath);
+    return ModelPosition.fromPath(root, basePath);
   }
 
-  static fromBeforeNode(node: ModelNode): ModelPosition {
-    return ModelPosition.fromPath(node.root, node.getOffsetPath());
+  static fromBeforeNode(root: ModelElement, node: ModelNode): ModelPosition {
+    return ModelPosition.fromPath(root, node.getOffsetPath(root));
   }
 
-  static fromInTextNode(node: ModelText, offset: number): ModelPosition {
+  static fromInTextNode(
+    root: ModelElement,
+    node: ModelText,
+    offset: number
+  ): ModelPosition {
     if (offset < 0 || offset > node.length) {
       throw new PositionError(
         `Offset ${offset} out of range of text node with length ${node.length}`
       );
     }
 
-    const path = node.getOffsetPath();
+    const path = node.getOffsetPath(root);
     path[path.length - 1] += offset;
 
-    return ModelPosition.fromPath(node.root, path);
+    return ModelPosition.fromPath(root, path);
   }
 
-  static fromInElement(element: ModelElement, offset: number) {
+  static fromInElement(
+    root: ModelElement,
+    element: ModelElement,
+    offset: number
+  ) {
     if (element.type === 'br') {
-      return ModelPosition.fromBeforeNode(element);
+      return ModelPosition.fromBeforeNode(root, element);
     }
 
     if (offset < 0 || offset > element.getMaxOffset()) {
@@ -74,19 +82,19 @@ export default class ModelPosition {
       );
     }
 
-    const path = element.getOffsetPath();
+    const path = element.getOffsetPath(root);
     path.push(offset);
 
-    return ModelPosition.fromPath(element.root, path);
+    return ModelPosition.fromPath(root, path);
   }
 
-  static fromInNode(node: ModelNode, offset: number) {
+  static fromInNode(root: ModelElement, node: ModelNode, offset: number) {
     if (ModelNode.isModelText(node)) {
-      return ModelPosition.fromInTextNode(node, offset);
+      return ModelPosition.fromInTextNode(root, node, offset);
     } else if (ModelNode.isModelElement(node)) {
-      return ModelPosition.fromInElement(node, offset);
+      return ModelPosition.fromInElement(root, node, offset);
     } else if (ModelNode.isModelInlineComponent(node)) {
-      return ModelPosition.fromBeforeNode(node);
+      return ModelPosition.fromBeforeNode(root, node);
     } else {
       throw new NotImplementedError('Unsupported node type');
     }
@@ -142,8 +150,8 @@ export default class ModelPosition {
     }
 
     if (ModelNode.isModelText(current)) {
-      this.parentCache = current.parent;
-      return current.parent!;
+      this.parentCache = current.getParent(this.root);
+      return current.getParent(this.root)!;
     }
 
     if (i > 0 && i !== this.path.length - 1) {
@@ -255,24 +263,24 @@ export default class ModelPosition {
     if (lengthDiff > 0) {
       // left position is lower than right position
       for (let i = 0; i < lengthDiff; i++) {
-        if (!left.parent) {
+        if (!left?.getParent(this.root)) {
           throw new PositionError('impossible position');
         }
-        left = left.parent;
+        left = left?.getParent(this.root);
       }
     } else if (lengthDiff < 0) {
       // right position is lower than left position
       for (let i = 0; i < Math.abs(lengthDiff); i++) {
-        if (!right.parent) {
+        if (!right?.getParent(this.root)) {
           throw new PositionError('impossible position');
         }
-        right = right.parent;
+        right = right?.getParent(this.root);
       }
     }
 
     while (left && right && left !== right) {
-      left = left.parent;
-      right = right.parent;
+      left = left.getParent(this.root);
+      right = right.getParent(this.root);
     }
 
     if (left) {
@@ -316,7 +324,11 @@ export default class ModelPosition {
 
     if (ModelNode.isModelText(before)) {
       if (before === after) {
-        before.split(this.parentOffset - before.getOffset(), keepRight);
+        before.split(
+          this.root,
+          this.parentOffset - before.getOffset(),
+          keepRight
+        );
       }
       this.parentCache = null;
     }
@@ -451,21 +463,21 @@ export default class ModelPosition {
     if (newOffset > maxOffset) {
       newOffset = maxOffset;
     }
-    return ModelPosition.fromInElement(this.parent, newOffset);
+    return ModelPosition.fromInElement(this.root, this.parent, newOffset);
   }
 
   _shiftedVisuallyBackwards(steps: number) {
     let stepsToShift = steps;
     let currentPos: ModelPosition = this.clone();
 
-    const startOfDoc = ModelPosition.fromInNode(currentPos.root, 0);
+    const startOfDoc = ModelPosition.fromInNode(this.root, currentPos.root, 0);
     const walker = GenTreeWalker.fromRange({
       range: new ModelRange(startOfDoc, currentPos),
       reverse: true,
       filter: toFilterSkipFalse(
         (node) =>
           ModelNodeUtils.getVisualLength(node) > 0 &&
-          !ModelNodeUtils.parentIsLumpNode(node)
+          !ModelNodeUtils.parentIsLumpNode(this.root, node)
       ),
       visitParentUpwards: true,
     });
@@ -477,7 +489,7 @@ export default class ModelPosition {
         !currentPos.parent.sameAs(this.root) &&
         currentPos.parentOffset === 0
       ) {
-        currentPos = ModelPosition.fromBeforeNode(currentPos.parent);
+        currentPos = ModelPosition.fromBeforeNode(this.root, currentPos.parent);
       }
       if (currentPos.isInsideText()) {
         // If the current position is situated inside a text node, traverse in the right direction
@@ -515,6 +527,7 @@ export default class ModelPosition {
         ) {
           //TODO: Check correctness
           currentPos = ModelPosition.fromInNode(
+            this.root,
             nextNode,
             (nextNode.lastChild?.getOffset() || 0) +
               (nextNode.lastChild?.offsetSize || 0)
@@ -528,7 +541,10 @@ export default class ModelPosition {
           blockNodeFound = true;
           const previousNode = nextNode;
           nextNode = walker.nextNode();
-          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+          if (
+            nextNode &&
+            !previousNode.getParent(this.root)?.sameAs(nextNode)
+          ) {
             break;
           }
         }
@@ -536,6 +552,7 @@ export default class ModelPosition {
           if (ModelElement.isModelText(nextNode)) {
             // If the next leaf is text, determine the correct next position based on the number of steps to take
             currentPos = ModelPosition.fromInNode(
+              this.root,
               nextNode,
               ModelNodeUtils.getVisibleIndex(
                 nextNode,
@@ -551,6 +568,7 @@ export default class ModelPosition {
             if (blockNodeFound && !nextNode.isLeaf) {
               //TODO: Check correctness
               currentPos = ModelPosition.fromInNode(
+                this.root,
                 nextNode,
                 (nextNode.lastChild?.getOffset() || 0) +
                   (nextNode.lastChild?.offsetSize || 0)
@@ -559,10 +577,11 @@ export default class ModelPosition {
             } else {
               if (nextNode.previousSibling) {
                 currentPos = ModelPosition.fromAfterNode(
+                  this.root,
                   nextNode.previousSibling
                 );
               } else {
-                currentPos = ModelPosition.fromBeforeNode(nextNode);
+                currentPos = ModelPosition.fromBeforeNode(this.root, nextNode);
               }
             }
           }
@@ -580,6 +599,7 @@ export default class ModelPosition {
     let stepsToShift = steps;
     let currentPos: ModelPosition = this.clone();
     const endOfDoc = ModelPosition.fromInNode(
+      this.root,
       currentPos.root,
       currentPos.root.getMaxOffset()
     );
@@ -589,7 +609,7 @@ export default class ModelPosition {
       filter: toFilterSkipFalse(
         (node) =>
           ModelNodeUtils.getVisualLength(node) > 0 &&
-          !ModelNodeUtils.parentIsLumpNode(node)
+          !ModelNodeUtils.parentIsLumpNode(this.root, node)
       ),
       visitParentUpwards: true,
     });
@@ -601,7 +621,7 @@ export default class ModelPosition {
         !currentPos.parent.sameAs(this.root) &&
         currentPos.parentOffset === currentPos.parent.getMaxOffset()
       ) {
-        currentPos = ModelPosition.fromAfterNode(currentPos.parent);
+        currentPos = ModelPosition.fromAfterNode(this.root, currentPos.parent);
       }
       if (currentPos.isInsideText()) {
         // If the current position is situated inside a text node, traverse in the right direction
@@ -635,7 +655,7 @@ export default class ModelPosition {
           !nextNode.isLeaf &&
           ModelNode.isModelElement(nextNode)
         ) {
-          currentPos = ModelPosition.fromInNode(nextNode, 0);
+          currentPos = ModelPosition.fromInNode(this.root, nextNode, 0);
           if (!blockNodeFound) {
             stepsToShift = Math.max(
               stepsToShift - ModelNodeUtils.getVisualLength(nextNode),
@@ -645,7 +665,10 @@ export default class ModelPosition {
           blockNodeFound = true;
           const previousNode = nextNode;
           nextNode = walker.nextNode();
-          if (nextNode && !previousNode.parent?.sameAs(nextNode)) {
+          if (
+            nextNode &&
+            !previousNode.getParent(this.root)?.sameAs(nextNode)
+          ) {
             break;
           }
         }
@@ -653,6 +676,7 @@ export default class ModelPosition {
           if (ModelElement.isModelText(nextNode)) {
             // If the next leaf is text, determine the correct next position based on the number of steps to take
             currentPos = ModelPosition.fromInNode(
+              this.root,
               nextNode,
               ModelNodeUtils.getVisibleIndex(
                 nextNode,
@@ -667,12 +691,16 @@ export default class ModelPosition {
             // If the next leaf is a node, set the position after or before the node based on the direction
 
             if (blockNodeFound && !nextNode.isLeaf) {
-              currentPos = ModelPosition.fromInNode(nextNode, 0);
+              currentPos = ModelPosition.fromInNode(this.root, nextNode, 0);
             } else {
               if (nextNode.nextSibling) {
-                currentPos = ModelPosition.fromInNode(nextNode.nextSibling, 0);
+                currentPos = ModelPosition.fromInNode(
+                  this.root,
+                  nextNode.nextSibling,
+                  0
+                );
               } else {
-                currentPos = ModelPosition.fromAfterNode(nextNode);
+                currentPos = ModelPosition.fromAfterNode(this.root, nextNode);
               }
             }
           }
@@ -734,7 +762,7 @@ export default class ModelPosition {
         result.push(current);
       }
 
-      current = current.parent!;
+      current = current.getParent(this.root)!;
     }
 
     if (predicate(current)) {

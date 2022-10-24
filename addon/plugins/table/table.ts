@@ -35,11 +35,19 @@ export default class TablePlugin implements EditorPlugin {
     const range = deleteTargetRange(this.controller.currentState, direction);
 
     const startCell =
-      range.start.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
-        .value || null;
+      range.start.parent
+        .findSelfOrAncestors(
+          this.controller.modelRoot,
+          ModelNodeUtils.isTableCell
+        )
+        .next().value || null;
     const endCell =
-      range.end.parent.findSelfOrAncestors(ModelNodeUtils.isTableCell).next()
-        .value || null;
+      range.end.parent
+        .findSelfOrAncestors(
+          this.controller.modelRoot,
+          ModelNodeUtils.isTableCell
+        )
+        .next().value || null;
     if (!startCell && !endCell) {
       return { handled: false };
     }

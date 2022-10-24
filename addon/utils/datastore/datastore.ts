@@ -33,6 +33,7 @@ import {
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { GraphyDataset } from './graphy-dataset';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 interface TermNodesResponse {
   nodes: Set<ModelNode>;
@@ -184,6 +185,7 @@ export default interface Datastore {
 }
 
 interface DatastoreConfig {
+  documentRoot: ModelElement;
   dataset: RDF.Dataset;
   subjectToNodes: Map<string, ModelNode[]>;
   nodeToSubject: Map<ModelNode, ModelQuadSubject>;
@@ -198,6 +200,7 @@ interface DatastoreConfig {
 }
 
 export class EditorStore implements Datastore {
+  private _documentRoot: ModelElement;
   private _dataset: RDF.Dataset;
   private _subjectToNodes: Map<string, ModelNode[]>;
   private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
@@ -209,6 +212,7 @@ export class EditorStore implements Datastore {
   private _quadToNodes: Map<string, QuadNodes>;
 
   constructor({
+    documentRoot,
     dataset,
     nodeToSubject,
     subjectToNodes,
@@ -219,6 +223,7 @@ export class EditorStore implements Datastore {
     objectToNodes,
     quadToNodes,
   }: DatastoreConfig) {
+    this._documentRoot = documentRoot;
     this._dataset = dataset;
     this._nodeToSubject = nodeToSubject;
     this._subjectToNodes = subjectToNodes;
@@ -229,7 +234,8 @@ export class EditorStore implements Datastore {
     this._objectToNodes = objectToNodes;
     this._quadToNodes = quadToNodes;
   }
-  static empty(): Datastore {
+
+  static empty(documentRoot: ModelElement): Datastore {
     const subjectToNodes = new Map<string, ModelNode[]>();
     const nodeToSubject = new Map<ModelNode, ModelQuadSubject>();
     const prefixMapping = new Map<string, string>();
@@ -239,6 +245,7 @@ export class EditorStore implements Datastore {
     const objectToNodes = new Map<string, ModelNode[]>();
     const quadToNodes = new Map<string, QuadNodes>();
     return new EditorStore({
+      documentRoot,
       dataset: new GraphyDataset(),
       subjectToNodes,
       nodeToObjects,
@@ -269,6 +276,7 @@ export class EditorStore implements Datastore {
     }
 
     return new EditorStore({
+      documentRoot: config.modelRoot,
       dataset,
       subjectToNodes: subjectToNodesMapping,
       nodeToSubject: nodeToSubjectMapping,
@@ -313,7 +321,7 @@ export class EditorStore implements Datastore {
       convertedObject,
       null
     );
-    return this.fromDataset(newSet);
+    return this.fromDataset(this._documentRoot, newSet);
   }
 
   limitToRange(range: ModelRange, strategy: RangeContextStrategy): Datastore {
@@ -512,7 +520,10 @@ export class EditorStore implements Datastore {
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
   ): Datastore {
-    return this.fromDataset(action(this.dataset, this.termConverter));
+    return this.fromDataset(
+      this._documentRoot,
+      action(this.dataset, this.termConverter)
+    );
   }
 
   searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[] {
@@ -529,18 +540,22 @@ export class EditorStore implements Datastore {
       let searchRange;
       // we test if the node is root, which will be the case when the
       // rdfa knowledge is defined above the document root.
-      if (node.parent) {
-        searchRange = ModelRange.fromAroundNode(node);
+      if (node.getParent(this._documentRoot)) {
+        searchRange = ModelRange.fromAroundNode(this._documentRoot, node);
       } else {
-        searchRange = ModelRange.fromInNode(node);
+        searchRange = ModelRange.fromInNode(this._documentRoot, node);
       }
       results.push(...matchText(searchRange, regex));
     }
     return results;
   }
 
-  private fromDataset(dataset: RDF.Dataset): Datastore {
+  private fromDataset(
+    documentRoot: ModelElement,
+    dataset: RDF.Dataset
+  ): Datastore {
     return new EditorStore({
+      documentRoot,
       dataset,
       nodeToSubject: this._nodeToSubject,
       subjectToNodes: this._subjectToNodes,
@@ -572,7 +587,7 @@ export class EditorStore implements Datastore {
     let subject;
     while (current && !subject) {
       subject = this._nodeToSubject.get(current);
-      current = current.parent;
+      current = current.getParent(this._documentRoot);
     }
     return subject;
   }
@@ -582,7 +597,7 @@ export class EditorStore implements Datastore {
     let predicates;
     while (current && !predicates) {
       predicates = this._nodeToPredicates.get(current);
-      current = current.parent;
+      current = current.getParent(this._documentRoot);
     }
     return predicates;
   }

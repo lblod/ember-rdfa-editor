@@ -247,8 +247,9 @@ export function defaultCommands(): Partial<Commands> {
 }
 
 export function emptyState(eventBus = new EventBus()): State {
+  const document = new ModelElement('div');
   return new SayState({
-    document: new ModelElement('div'),
+    document,
     selection: new ModelSelection(),
     plugins: [],
     commands: defaultCommands(),
@@ -257,7 +258,7 @@ export function emptyState(eventBus = new EventBus()): State {
     marksManager: new MarksManager(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
-    datastore: EditorStore.empty(),
+    datastore: EditorStore.empty(document),
     pathFromDomRoot: [],
     baseIRI: 'http://example.org',
     eventBus,

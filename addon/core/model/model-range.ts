@@ -182,43 +182,46 @@ export default class ModelRange {
   }
 
   static fromInElement(
+    root: ModelElement,
     element: ModelElement,
     startOffset = 0,
     endOffset: number = element.getMaxOffset()
   ) {
-    const start = ModelPosition.fromInElement(element, startOffset);
-    const end = ModelPosition.fromInElement(element, endOffset);
+    const start = ModelPosition.fromInElement(root, element, startOffset);
+    const end = ModelPosition.fromInElement(root, element, endOffset);
     return new ModelRange(start, end);
   }
 
-  static fromAroundNode(node: ModelNode) {
-    if (!node.parent) {
+  static fromAroundNode(root: ModelElement, node: ModelNode) {
+    if (!node.getParent(root)) {
       throw new IllegalArgumentError('Cannot create a range around the root');
     }
-    const start = ModelPosition.fromBeforeNode(node);
-    const end = ModelPosition.fromAfterNode(node);
+    const start = ModelPosition.fromBeforeNode(root, node);
+    const end = ModelPosition.fromAfterNode(root, node);
     return new ModelRange(start, end);
   }
 
   static fromInTextNode(
+    root: ModelElement,
     node: ModelText,
     startOffset: number,
     endOffset: number
   ) {
-    const start = ModelPosition.fromInTextNode(node, startOffset);
-    const end = ModelPosition.fromInTextNode(node, endOffset);
+    const start = ModelPosition.fromInTextNode(root, node, startOffset);
+    const end = ModelPosition.fromInTextNode(root, node, endOffset);
     return new ModelRange(start, end);
   }
 
   static fromInNode(
+    root: ModelElement,
     node: ModelNode,
     startOffset = 0,
     endOffset: number = ModelNode.isModelElement(node)
       ? node.getMaxOffset()
       : node.length
   ) {
-    const start = ModelPosition.fromInNode(node, startOffset);
-    const end = ModelPosition.fromInNode(node, endOffset);
+    const start = ModelPosition.fromInNode(root, node, startOffset);
+    const end = ModelPosition.fromInNode(root, node, endOffset);
     return new ModelRange(start, end);
   }
 
@@ -266,9 +269,6 @@ export default class ModelRange {
    */
   visualize(truncate = true): string {
     let root = this.root;
-    while (root.parent) {
-      root = root.parent;
-    }
     root = root.clone();
     const range = ModelRange.fromPaths(root, this.start.path, this.end.path);
 
@@ -286,9 +286,9 @@ export default class ModelRange {
       endSplit = true;
     }
 
-    new InsertOperation(undefined, endRange, endText).execute();
+    new InsertOperation(this.root, undefined, endRange, endText).execute();
 
-    new InsertOperation(undefined, startRange, startText).execute();
+    new InsertOperation(this.root, undefined, startRange, startText).execute();
 
     let modelString = (root.toXml() as Element).innerHTML;
 
@@ -386,7 +386,7 @@ export default class ModelRange {
       if (predicate(commonAncestor)) {
         yield commonAncestor;
       }
-      commonAncestor = commonAncestor.parent;
+      commonAncestor = commonAncestor.getParent(this.root);
     }
   }
 
@@ -491,12 +491,12 @@ export default class ModelRange {
       const parent = startCur.parent;
       const range = new ModelRange(
         startCur,
-        ModelPosition.fromInElement(parent, parent.getMaxOffset())
+        ModelPosition.fromInElement(this.root, parent, parent.getMaxOffset())
       );
       if (!range.collapsed) {
         result.push(range);
       }
-      startCur = ModelPosition.fromAfterNode(parent);
+      startCur = ModelPosition.fromAfterNode(this.root, parent);
     }
 
     const temp = [];
@@ -504,13 +504,13 @@ export default class ModelRange {
     while (endCur.path.length > commonLength + 1) {
       const parent = endCur.parent;
       const range = new ModelRange(
-        ModelPosition.fromInElement(parent, 0),
+        ModelPosition.fromInElement(this.root, parent, 0),
         endCur
       );
       if (!range.collapsed) {
         temp.push(range);
       }
-      endCur = ModelPosition.fromBeforeNode(parent);
+      endCur = ModelPosition.fromBeforeNode(this.root, parent);
     }
     if (startCur.path.length === endCur.path.length) {
       const middle = new ModelRange(startCur, endCur);
@@ -524,6 +524,7 @@ export default class ModelRange {
       // endCur is one level lower than startCur, so we can safely take
       // the range from the beginning of its parent and ignore startCur (the remaining range would be collapsed)
       const middle = ModelRange.fromInElement(
+        this.root,
         endCur.parent,
         0,
         endCur.parentOffset
@@ -538,6 +539,7 @@ export default class ModelRange {
       // starCur is one level lower than endCur, so we can safely take
       // the range from startcur to the end of its parent and ignore endCur (the remaining range would be collapsed)
       const middle = ModelRange.fromInElement(
+        this.root,
         startCur.parent,
         startCur.parentOffset,
         startCur.parent.getMaxOffset()
@@ -708,7 +710,7 @@ export default class ModelRange {
         const pattern = new RegExp(`${INVISIBLE_SPACE}`, 'g');
         const sanitizedContent = node.content.replace(pattern, '');
         if (calculateMapping) {
-          const path = ModelPosition.fromBeforeNode(node).path;
+          const path = ModelPosition.fromBeforeNode(this.root, node).path;
           mapping.push([
             currentIndex + sanitizedContent.length - startOffset,
             path,
@@ -719,8 +721,8 @@ export default class ModelRange {
       } else if (node.isBlock) {
         if (calculateMapping) {
           const path = node.length
-            ? ModelPosition.fromInNode(node, 0).path
-            : ModelPosition.fromBeforeNode(node).path;
+            ? ModelPosition.fromInNode(this.root, node, 0).path
+            : ModelPosition.fromBeforeNode(this.root, node).path;
           mapping.push([currentIndex + 1 - startOffset, path]);
           currentIndex += 1;
         }
@@ -781,7 +783,7 @@ export default class ModelRange {
     ) {
       start = this.start;
     } else {
-      start = ModelPosition.fromBeforeNode(textNodes[0]);
+      start = ModelPosition.fromBeforeNode(this.root, textNodes[0]);
     }
     if (
       // we are right after the opening of a block tag
@@ -790,7 +792,10 @@ export default class ModelRange {
     ) {
       end = this.end;
     } else {
-      end = ModelPosition.fromAfterNode(textNodes[textNodes.length - 1]);
+      end = ModelPosition.fromAfterNode(
+        this.root,
+        textNodes[textNodes.length - 1]
+      );
     }
     return new ModelRange(start, end);
   }
@@ -846,11 +851,11 @@ export class ModelRangeFactory implements RangeFactory {
     startOffset = 0,
     endOffset: number = element.getMaxOffset()
   ): ModelRange {
-    return ModelRange.fromInElement(element, startOffset, endOffset);
+    return ModelRange.fromInElement(this.root, element, startOffset, endOffset);
   }
 
   fromAroundNode(node: ModelNode): ModelRange {
-    return ModelRange.fromAroundNode(node);
+    return ModelRange.fromAroundNode(this.root, node);
   }
 
   fromInTextNode(
@@ -858,7 +863,7 @@ export class ModelRangeFactory implements RangeFactory {
     startOffset = 0,
     endOffset: number = node.length
   ): ModelRange {
-    return ModelRange.fromInTextNode(node, startOffset, endOffset);
+    return ModelRange.fromInTextNode(this.root, node, startOffset, endOffset);
   }
 
   fromInNode(
@@ -866,7 +871,7 @@ export class ModelRangeFactory implements RangeFactory {
     startOffset?: number,
     endOffset?: number
   ): ModelRange {
-    return ModelRange.fromInNode(node, startOffset, endOffset);
+    return ModelRange.fromInNode(this.root, node, startOffset, endOffset);
   }
 
   fromAroundAll(): ModelRange {

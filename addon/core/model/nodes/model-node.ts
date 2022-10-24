@@ -7,10 +7,11 @@ import {
   OutsideRootError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
 import XmlWriter from '@lblod/ember-rdfa-editor/core/model/writers/xml-writer';
-import { Walkable } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import { Walkable } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 
 export type ModelNodeType =
   | 'TEXT'
@@ -34,12 +35,11 @@ export interface NodeCompareOpts {
  */
 export default abstract class ModelNode implements Walkable {
   abstract modelNodeType: ModelNodeType;
-
   private _attributeMap: Map<string, string>;
-  private _parent: ModelElement | null = null;
   private _nextSibling: ModelNode | null = null;
   private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
+  private parentCache: WeakMap<ModelNode, ModelElement> = new WeakMap();
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
@@ -98,34 +98,54 @@ export default abstract class ModelNode implements Walkable {
     this._nextSibling = value;
   }
 
-  get parent(): ModelElement | null {
-    return this._parent;
+  setParentCache(root: ModelElement, parent: ModelElement) {
+    this.parentCache.set(root, parent);
   }
 
-  set parent(value: ModelElement | null) {
-    this._parent = value;
-  }
-
-  get root(): ModelElement {
-    let root = this.parent;
-    if (!root) {
-      if (ModelNode.isModelElement(this)) {
-        return this;
-      } else {
-        throw new ModelError('Non-element node cannot be root');
+  getParent(root: ModelElement): ModelElement | null {
+    const parent = this.parentCache.get(root);
+    if (parent) {
+      return parent;
+    }
+    const stack: ModelElement[] = [root];
+    while (stack.length > 0) {
+      const node = unwrap(stack.shift());
+      for (const child of node.children) {
+        child.setParentCache(root, node);
+        if (child === this) {
+          return node;
+        }
+        if (
+          ModelNode.isModelElement(child) ||
+          ModelNode.isModelInlineComponent(child)
+        )
+          stack.push(child);
       }
     }
-    while (root.parent) {
-      root = root.parent;
-    }
-    return root;
+    return null;
+  }
+
+  getNextSibling(): Walkable | null {
+    return this.nextSibling;
+  }
+
+  getPreviousSibling(): Walkable | null {
+    return this.previousSibling;
+  }
+
+  getLastChild(): Walkable | null {
+    return this.lastChild;
+  }
+
+  getFirstChild(): Walkable | null {
+    return this.firstChild;
   }
 
   abstract get length(): number;
 
-  get index(): number | null {
-    if (this.parent) {
-      return this.parent.getChildIndex(this);
+  getIndex(root: ModelElement): number | null {
+    if (this.getParent(root)) {
+      return this.getParent(root)?.getChildIndex(this) || null;
     }
 
     return null;
@@ -158,12 +178,11 @@ export default abstract class ModelNode implements Walkable {
     }
   }
 
-  get connected(): boolean {
-    if (this.parent) {
-      return this.parent.children.indexOf(this) !== -1;
-    } else {
+  isConnected(root: ModelElement): boolean {
+    if ((this as ModelNode) === root) {
       return true;
     }
+    return !!this.getParent(root);
   }
 
   /**
@@ -183,15 +202,16 @@ export default abstract class ModelNode implements Walkable {
   /**
    * Get the path from root to the start of this node
    */
-  getOffsetPath(): number[] {
+  getOffsetPath(root: ModelElement): number[] {
     const result = [];
+    const parent = this.getParent(root);
 
-    if (this.parent) {
+    if (this.getParent(root)) {
       result.push(this.getOffset());
-      let cur = this.parent;
-      while (cur.parent) {
+      let cur = parent;
+      while (cur?.getParent(root)) {
         result.push(cur.getOffset());
-        cur = cur.parent;
+        cur = cur?.getParent(root);
       }
       result.reverse();
     }
@@ -244,23 +264,25 @@ export default abstract class ModelNode implements Walkable {
   }
 
   *findSelfOrAncestors(
+    root: ModelElement,
     predicate: Predicate<ModelNode>
   ): Generator<ModelNode, void, void> {
     if (predicate(this)) {
       yield this;
     }
-    yield* this.findAncestors(predicate);
+    yield* this.findAncestors(root, predicate);
   }
 
   *findAncestors(
+    root: ModelElement,
     predicate: Predicate<ModelElement>
   ): Generator<ModelElement, void, void> {
-    let cur = this.parent;
+    let cur = this.getParent(root);
     while (cur) {
       if (predicate(cur)) {
         yield cur;
       }
-      cur = cur.parent;
+      cur = cur.getParent(root);
     }
   }
 
@@ -270,17 +292,17 @@ export default abstract class ModelNode implements Walkable {
    * @param after Whether the node will end up after its parent or before
    * @return the old parent
    */
-  promote(after = false): ModelElement {
-    const oldParent = this.parent;
+  promote(root: ModelElement, after = false): ModelElement {
+    const oldParent = this.getParent(root);
     if (!oldParent) {
       throw new NoParentError();
     }
-    if (!oldParent.parent) {
+    const grandparent = oldParent.getParent(root);
+    if (!grandparent) {
       // if parent is root, this operation is not allowed
       throw new OutsideRootError();
     }
-    const grandparent = oldParent.parent;
-    const parentIndex = oldParent.index!;
+    const parentIndex = oldParent.getIndex(root)!;
 
     oldParent.removeChild(this);
     grandparent.addChild(this, after ? parentIndex + 1 : parentIndex);
@@ -288,11 +310,11 @@ export default abstract class ModelNode implements Walkable {
     return oldParent;
   }
 
-  remove() {
-    if (!this.parent) {
+  remove(root: ModelElement) {
+    if ((this as ModelNode) === root) {
       throw new ModelError('Cannot remove root');
     }
-    this.parent.removeChild(this);
+    this.getParent(root)?.removeChild(this);
   }
 
   /**
@@ -324,8 +346,4 @@ export default abstract class ModelNode implements Walkable {
   abstract get firstChild(): ModelNode | null;
 
   abstract get lastChild(): ModelNode | null;
-
-  get parentNode(): ModelElement | null {
-    return this.parent;
-  }
 }

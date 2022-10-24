@@ -127,10 +127,12 @@ export default function globalTextRegionToModelRange(
     'endOffset'
   );
   const startPosition = ModelPosition.fromInTextNode(
+    root,
     textForStart.node,
     regionStart - textForStart.startOffset
   );
   const endPosition = ModelPosition.fromInTextNode(
+    root,
     textForEnd.node,
     regionEnd - textForEnd.startOffset
   );

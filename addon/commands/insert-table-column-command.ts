@@ -5,6 +5,7 @@ import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection'
 import ModelTable from '@lblod/ember-rdfa-editor/core/model/nodes/model-table';
 import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+
 export interface InsertTableColumnCommandArgs {
   selection?: ModelSelection;
 }
@@ -39,7 +40,7 @@ export default abstract class InsertTableColumnCommand
       throw new Error('The selection is not inside a table');
     }
 
-    const position = ModelTable.getCellIndex(cell);
+    const position = ModelTable.getCellIndex(transaction.currentDocument, cell);
     if (!position || position.x === null) {
       //Shouldn't happen
       throw new Error('Position is null');

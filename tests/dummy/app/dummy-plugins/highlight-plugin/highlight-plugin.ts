@@ -31,6 +31,7 @@ export default class HighlightPlugin implements EditorPlugin {
     this.controller = controller;
     transaction.addTransactionStepListener(this.onTransactionStep);
   }
+
   // eslint-disable-next-line @typescript-eslint/require-await
   async willDestroy(transaction: Transaction): Promise<void> {
     transaction.removeTransactionStepListener(this.onTransactionStep);
@@ -45,6 +46,7 @@ export default class HighlightPlugin implements EditorPlugin {
     }
 
     const walker = GenTreeWalker.fromSubTree({
+      documentRoot: transaction.currentDocument,
       root: transaction.currentDocument,
       filter: toFilterSkipFalse(
         (node) =>

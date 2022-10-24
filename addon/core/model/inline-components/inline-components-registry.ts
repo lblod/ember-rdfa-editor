@@ -112,12 +112,14 @@ export default class InlineComponentsRegistry {
       ActiveComponentEntry
     >();
     const oldInlineComponentModels = GenTreeWalker.fromSubTree({
+      documentRoot: oldDocument,
       root: oldDocument,
       filter: toFilterSkipFalse((node: ModelNode) =>
         ModelNode.isModelInlineComponent(node)
       ),
     });
     const newInlineComponentModels = GenTreeWalker.fromSubTree({
+      documentRoot: newDocument,
       root: newDocument,
       filter: toFilterSkipFalse((node: ModelNode) =>
         ModelNode.isModelInlineComponent(node)

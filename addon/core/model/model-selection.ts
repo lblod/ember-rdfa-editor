@@ -270,19 +270,20 @@ export default class ModelSelection {
     return PropertyState.unknown;
   }
 
-  collapseIn(node: ModelNode, offset = 0) {
+  collapseIn(root: ModelElement, node: ModelNode, offset = 0) {
     this.clearRanges();
-    this.addRange(ModelRange.fromInNode(node, offset, offset));
+    this.addRange(ModelRange.fromInNode(root, node, offset, offset));
   }
 
   setStartAndEnd(
+    root: ModelElement,
     start: ModelNode,
     startOffset: number,
     end: ModelNode,
     endOffset: number
   ) {
-    const startPos = ModelPosition.fromInNode(start, startOffset);
-    const endPos = ModelPosition.fromInNode(end, endOffset);
+    const startPos = ModelPosition.fromInNode(root, start, startOffset);
+    const endPos = ModelPosition.fromInNode(root, end, endOffset);
     const range = new ModelRange(startPos, endPos);
     this.clearRanges();
     this.addRange(range);

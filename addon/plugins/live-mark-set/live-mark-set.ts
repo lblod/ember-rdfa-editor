@@ -32,6 +32,7 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
   get name(): string {
     return 'live-mark-set';
   }
+
   initialize(transaction: Transaction, controller: Controller): Promise<void> {
     this.controller = controller;
     transaction.addTransactionStepListener(this.onTransactionUpdate);
@@ -106,7 +107,7 @@ export default class LiveMarkSetPlugin implements EditorPlugin {
     const markInstances = manager.getMarksByOwner(this.name);
     for (const instance of markInstances) {
       transaction.removeMark(
-        ModelRange.fromAroundNode(instance.node),
+        ModelRange.fromAroundNode(transaction.currentDocument, instance.node),
         instance.mark.spec,
         instance.mark.attributes
       );

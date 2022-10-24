@@ -15,11 +15,14 @@ import {
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import State from '../core/state';
 import ModelPosition from '../core/model/model-position';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     unindentList: UnindentListCommand;
   }
 }
+
 export interface UnindentListCommandArgs {
   range?: ModelRange | null;
 }
@@ -35,11 +38,13 @@ export default class UnindentListCommand
       // Set `includeSelf` to true, because this predicate will be used in `findModelNodes`, where we start
       // searching from the parent of the current node. If we set it to false, the first parent will always be skipped.
       const firstAncestorLi = ModelNodeUtils.findAncestor(
+        state.document,
         node,
         ModelNodeUtils.isListElement,
         true
       );
       const secondAncestorLi = ModelNodeUtils.findAncestor(
+        state.document,
         firstAncestorLi,
         ModelNodeUtils.isListElement
       );
@@ -87,19 +92,25 @@ export default class UnindentListCommand
     }
 
     // Get the shallowest common ancestors.
-    const lisToShift = this.relatedChunks(elements);
+    const lisToShift = this.relatedChunks(
+      transaction.currentDocument,
+      elements
+    );
     if (lisToShift) {
       // Iterate over all found li elements.
       for (const li of lisToShift) {
         const parent = ModelNodeUtils.findAncestor(
+          transaction.currentDocument,
           li,
           ModelNodeUtils.isListContainer
         );
         const grandParent = ModelNodeUtils.findAncestor(
+          transaction.currentDocument,
           parent,
           ModelNodeUtils.isListElement
         );
         const greatGrandParent = ModelNodeUtils.findAncestor(
+          transaction.currentDocument,
           grandParent,
           ModelNodeUtils.isListContainer
         );
@@ -115,9 +126,9 @@ export default class UnindentListCommand
           ModelElement.isModelElement(greatGrandParent)
         ) {
           // Remove node.
-          const liIndex = li.index;
+          const liIndex = li.getIndex(transaction.currentDocument);
 
-          if (grandParent.index === null) {
+          if (grandParent.getIndex(transaction.currentDocument) === null) {
             throw new IllegalExecutionStateError(
               "Couldn't find index of grandparent li"
             );
@@ -127,8 +138,9 @@ export default class UnindentListCommand
             // Remove parent ul/ol if node is only child.
             transaction.deleteNode(li);
             const positionToInsert = ModelPosition.fromInElement(
+              transaction.currentDocument,
               greatGrandParent,
-              grandParent.index + 1
+              unwrap(grandParent.getIndex(transaction.currentDocument)) + 1
             );
             transaction.insertAtPosition(positionToInsert, li);
             transaction.deleteNode(parent);
@@ -138,7 +150,7 @@ export default class UnindentListCommand
                 "Couldn't find index of current li"
               );
             }
-            const split = parent.split(liIndex);
+            const split = parent.split(transaction.currentDocument, liIndex);
 
             // Remove empty uls.
             if (split.left.length === 0) {
@@ -158,7 +170,10 @@ export default class UnindentListCommand
 
               //After the parent li, add the unindenting li (and its sublist at once)
               transaction.insertAtPosition(
-                ModelPosition.fromAfterNode(grandParent),
+                ModelPosition.fromAfterNode(
+                  transaction.currentDocument,
+                  grandParent
+                ),
                 li
               );
             }
@@ -169,17 +184,25 @@ export default class UnindentListCommand
   }
 
   private relatedChunks(
+    documentRoot: ModelElement,
     elementArray: ModelElement[],
     result: ModelElement[] = []
   ): ModelElement[] {
     // Check if the li is nested.
     elementArray = elementArray.filter((element) =>
-      ModelNodeUtils.findAncestor(element, ModelNodeUtils.isListElement)
+      ModelNodeUtils.findAncestor(
+        documentRoot,
+        element,
+        ModelNodeUtils.isListElement
+      )
     );
 
     // Sort array, by depth, shallowest first.
     elementArray = elementArray.sort((a, b) => {
-      return b.getOffsetPath().length - a.getOffsetPath().length;
+      return (
+        b.getOffsetPath(documentRoot).length -
+        a.getOffsetPath(documentRoot).length
+      );
     });
 
     // Use shallowest as base.
@@ -189,7 +212,7 @@ export default class UnindentListCommand
     // Compare all paths to see if base is parent. Remove those that are related.
     // Loop backwards since we are deleting from list during loop.
     for (let i = elementArray.length - 1; i >= 0; i--) {
-      if (UnindentListCommand.areRelated(base, elementArray[i])) {
+      if (UnindentListCommand.areRelated(documentRoot, base, elementArray[i])) {
         elementArray.splice(i, 1);
       }
     }
@@ -199,18 +222,19 @@ export default class UnindentListCommand
       return result;
     } else {
       // Otherwise some hot recursive action.
-      this.relatedChunks(elementArray, result);
+      this.relatedChunks(documentRoot, elementArray, result);
     }
 
     return result;
   }
 
   private static areRelated(
+    documentRoot: ModelElement,
     base: ModelElement,
     compare: ModelElement
   ): boolean {
-    const basePath = base.getOffsetPath();
-    const comparePath = compare.getOffsetPath();
+    const basePath = base.getOffsetPath(documentRoot);
+    const comparePath = compare.getOffsetPath(documentRoot);
 
     for (let i = 0; i < basePath.length; i++) {
       if (basePath[i] !== comparePath[i]) {

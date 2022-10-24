@@ -40,16 +40,22 @@ export default class ListPlugin implements EditorPlugin {
     const range = deleteTargetRange(this.controller.currentState, direction);
     if (range.collapsed && direction === -1) {
       const lis = [
-        ...range.end.parent.findSelfOrAncestors(ModelNodeUtils.isListElement),
+        ...range.end.parent.findSelfOrAncestors(
+          this.controller.modelRoot,
+          ModelNodeUtils.isListElement
+        ),
       ] as ModelElement[];
       const highestLi = lis[lis.length - 1];
       if (highestLi) {
-        const topUl = highestLi.parent;
+        const topUl = highestLi.getParent(this.controller.modelRoot);
         //check if the li is just at the beginning of the document and adjust the start of the range accordingly
 
         if (topUl && ArrayUtils.all(range.start.path, (i) => i === 0)) {
           event.preventDefault();
-          const start = ModelPosition.fromBeforeNode(topUl);
+          const start = ModelPosition.fromBeforeNode(
+            this.controller.modelRoot,
+            topUl
+          );
           this.controller.perform((tr) => {
             tr.commands.remove({ range: new ModelRange(start, range.end) });
           });
@@ -64,7 +70,7 @@ export default class ListPlugin implements EditorPlugin {
         tr.commands.remove({
           range: new ModelRange(
             range.start,
-            ModelPosition.fromInNode(nodeAfter, 0)
+            ModelPosition.fromInNode(tr.currentDocument, nodeAfter, 0)
           ),
         });
       });

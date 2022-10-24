@@ -9,6 +9,7 @@ declare module '@lblod/ember-rdfa-editor' {
     removeTableColumn: RemoveTableColumnCommand;
   }
 }
+
 export interface RemoveTableColumnCommandArgs {
   selection?: ModelSelection;
 }
@@ -41,7 +42,7 @@ export default class RemoveTableColumnCommand
       throw new Error('The selection is not inside a table');
     }
 
-    const position = ModelTable.getCellIndex(cell);
+    const position = ModelTable.getCellIndex(transaction.currentDocument, cell);
     if (!position || position.x === null) {
       //Shouldn't happen
       throw new Error('Position is null');
