@@ -9,7 +9,7 @@ import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
-module.skip('Unit | model | utils | tree-walker-test', function () {
+module('Unit | model | utils | tree-walker-test', function () {
   test('finds root when its the only node and position starts there', function (assert) {
     const root = new ModelElement('div', { debugInfo: 'root' });
 

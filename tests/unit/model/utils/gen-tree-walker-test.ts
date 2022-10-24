@@ -8,7 +8,7 @@ import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | model | utils | gen-tree-walker-test', function (hooks) {
+module('Unit | model | utils | gen-tree-walker-test', function (hooks) {
   hooks.afterEach(() => {
     sinon.restore();
   });

@@ -476,7 +476,7 @@ function getNextSibling(
   node: Walkable,
   reverse: boolean
 ): Walkable | null {
-  return reverse ? node.getParent(root) : node.getNextSibling(root);
+  return reverse ? node.getPreviousSibling(root) : node.getNextSibling(root);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
