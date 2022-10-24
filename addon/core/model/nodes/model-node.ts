@@ -99,14 +99,14 @@ export default abstract class ModelNode implements Walkable {
   }
 
   setParentCache(root: ModelElement, parent: ModelElement) {
-    this.parentCache.set(root, parent);
+    // this.parentCache.set(root, parent);
   }
 
   getParent(root: ModelElement): ModelElement | null {
-    const parent = this.parentCache.get(root);
-    if (parent) {
-      return parent;
-    }
+    // const parent = this.parentCache.get(root);
+    // if (parent) {
+    //   return parent;
+    // }
     const stack: ModelElement[] = [root];
     while (stack.length > 0) {
       const node = unwrap(stack.shift());
@@ -145,7 +145,7 @@ export default abstract class ModelNode implements Walkable {
 
   getIndex(root: ModelElement): number | null {
     if (this.getParent(root)) {
-      return this.getParent(root)?.getChildIndex(this) || null;
+      return this.getParent(root)?.getChildIndex(this) ?? null;
     }
 
     return null;
@@ -314,7 +314,11 @@ export default abstract class ModelNode implements Walkable {
     if ((this as ModelNode) === root) {
       throw new ModelError('Cannot remove root');
     }
-    this.getParent(root)?.removeChild(this);
+    const parent = this.getParent(root);
+    if (!parent) {
+      throw new NoParentError();
+    }
+    parent.removeChild(this);
   }
 
   /**
