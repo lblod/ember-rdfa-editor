@@ -8,7 +8,7 @@ import {
 import { SimplePositionOutOfRangeError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '../../../addon/core/model/nodes/model-element';
 
-module.skip('Unit | model | simple-position-test', function () {
+module('Unit | model | simple-position-test', function () {
   module('Unit | model | simple-position-test | model to simple', function () {
     test('0 is only valid pos in empty document', function (assert) {
       //language=XML

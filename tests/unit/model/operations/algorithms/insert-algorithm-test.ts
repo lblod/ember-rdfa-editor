@@ -6,7 +6,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip(
+module(
   'Unit | model | operations | algorithms | insert-algorithm-test | ',
 
   function () {

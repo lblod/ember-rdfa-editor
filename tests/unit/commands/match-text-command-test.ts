@@ -6,7 +6,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | commands | match-text-command-text', function () {
+module('Unit | commands | match-text-command-text', function () {
   const command = new MatchTextCommand();
   const executeCommand = makeTestExecute(command);
   test('finds text in simple range', function (assert) {

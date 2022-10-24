@@ -5,7 +5,7 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip(
+module(
   'Unit | model | operations | algorithms | remove-algorithm-test | ',
 
   function () {

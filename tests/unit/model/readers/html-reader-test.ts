@@ -20,7 +20,7 @@ import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-st
 import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
 import { module, test } from 'qunit';
 
-module.skip('Unit | model | readers | html-reader', function () {
+module('Unit | model | readers | html-reader', function () {
   const marksRegistry = new MarksRegistry();
   const inlineComponentsRegistry = new InlineComponentsRegistry();
   marksRegistry.registerMark(boldMarkSpec);

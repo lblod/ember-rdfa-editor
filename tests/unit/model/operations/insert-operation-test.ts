@@ -6,7 +6,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 
-module.skip('Unit | model | operations | insert-operation-test', function () {
+module('Unit | model | operations | insert-operation-test', function () {
   test('inserts into empty root', function (assert) {
     // language=XML
     const { root: initial } = vdom`

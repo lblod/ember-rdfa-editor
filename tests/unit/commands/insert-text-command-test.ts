@@ -8,7 +8,7 @@ import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | insert-text-command-test', function () {
+module('Unit | commands | insert-text-command-test', function () {
   const logger = createLogger('test:insert-text-command-test');
   const command = new InsertTextCommand();
   const executeCommand = makeTestExecute(command);

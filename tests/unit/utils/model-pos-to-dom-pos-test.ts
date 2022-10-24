@@ -5,7 +5,7 @@ import { modelPosToDomPos } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | model | model-pos-to-dom-pos', function () {
+module('Unit | model | model-pos-to-dom-pos', function () {
   test('converts position in empty root', function (assert) {
     const dom = domStripped`
       <div />`.body.children[0] as HTMLElement;
