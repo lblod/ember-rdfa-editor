@@ -4,7 +4,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { OutsideRootError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { module, test } from 'qunit';
 
-module.skip('Unit | model | model-node', function () {
+module('Unit | model | model-node', function () {
   module('Unit | model | model-node | getOffsetPath', function () {
     test('path of root is empty list', function (assert) {
       const elem = new ModelElement('div');
