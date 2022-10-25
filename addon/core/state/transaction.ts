@@ -13,7 +13,7 @@ import RangeMapper, { LeftOrRight } from '../model/range-mapper';
 import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../../utils/dom-helpers';
-import { NotImplementedError } from '../../utils/errors';
+import { ModelError, NotImplementedError } from '../../utils/errors';
 import { View } from '../view';
 import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
 import ModelElement from '../model/nodes/model-element';
@@ -636,18 +636,22 @@ export default class Transaction {
    */
   unwrap(element: ModelElement, ensureBlock = false): ModelRange {
     this.deepClone();
+    const targetElement = this.inWorkingCopy(element);
     const srcRange = ModelRange.fromInElement(
       this.currentDocument,
-      element,
+      targetElement,
       0,
-      element.getMaxOffset()
+      targetElement.getMaxOffset()
     );
-    const target = ModelPosition.fromBeforeNode(this.currentDocument, element);
+    const target = ModelPosition.fromBeforeNode(
+      this.currentDocument,
+      targetElement
+    );
     const op = new MoveOperation(
       this.currentDocument,
       undefined,
-      this.cloneRange(srcRange),
-      this.clonePos(target)
+      srcRange,
+      target
     );
     const resultRange = this.executeOperation(op);
     this.deleteNode(resultRange.end.nodeAfter()!);
@@ -757,10 +761,16 @@ export default class Transaction {
     if (node.isConnected(this._workingCopy.document)) {
       return node;
     }
-    const pos = this.clonePos(
-      ModelPosition.fromBeforeNode(this.currentDocument, node)
-    );
-    return pos.nodeAfter()! as N;
+    if (node.isConnected(this.initialState.document)) {
+      const pos = this.clonePos(
+        ModelPosition.fromBeforeNode(this.initialState.document, node)
+      );
+      return pos.nodeAfter()! as N;
+    } else {
+      throw new ModelError(
+        'Cannot match node that didnt come from initialState'
+      );
+    }
   }
 
   mapSelection(
