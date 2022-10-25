@@ -1,6 +1,7 @@
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
+  AssertionError,
   ModelError,
   NoParentError,
   NotImplementedError,
@@ -54,12 +55,26 @@ export default abstract class ModelNode implements Walkable {
     return !!node && node.modelNodeType === 'ELEMENT';
   }
 
+  static assertModelElement(
+    node?: ModelNode | null
+  ): asserts node is ModelElement {
+    if (!ModelNode.isModelElement(node)) {
+      throw new AssertionError();
+    }
+  }
+
   /**
    * Typechecking utility to verify whether the node is {@link ModelText}
    * @param node
    */
   static isModelText(node?: ModelNode | null): node is ModelText {
     return !!node && node.modelNodeType === 'TEXT';
+  }
+
+  static assertModelText(node?: ModelNode | null): asserts node is ModelText {
+    if (!ModelNode.isModelText(node)) {
+      throw new AssertionError();
+    }
   }
 
   /**
@@ -70,6 +85,14 @@ export default abstract class ModelNode implements Walkable {
     node?: ModelNode | null
   ): node is ModelInlineComponent {
     return !!node && node.modelNodeType === 'INLINE-COMPONENT';
+  }
+
+  static assertModelInlineComponent(
+    node?: ModelNode | null
+  ): asserts node is ModelInlineComponent {
+    if (!ModelNode.isModelInlineComponent(node)) {
+      throw new AssertionError();
+    }
   }
 
   get attributeMap(): Map<string, string> {
