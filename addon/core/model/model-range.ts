@@ -373,6 +373,10 @@ export default class ModelRange {
     return this.start.getCommonAncestor(this.end);
   }
 
+  getCommonAncestorChain(): ModelElement[] {
+    return this.start.getCommonAncestorChain(this.end);
+  }
+
   hasCommonAncestorWhere(predicate: Predicate<ModelElement>): boolean {
     const result = this.findCommonAncestorsWhere(predicate).next();
     return !!result.value;
