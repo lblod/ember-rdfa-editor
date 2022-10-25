@@ -114,6 +114,9 @@ export default class IndentListCommand
         newParentClone.appendChildren(newList);
       }
       transaction.replaceNode(newParent, newParentClone);
+      for (const li of lis) {
+        li.remove(transaction.currentDocument);
+      }
     }
     transaction.mapInitialSelectionAndSet('left');
   }
