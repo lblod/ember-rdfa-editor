@@ -1,6 +1,6 @@
 import Operation from '@lblod/ember-rdfa-editor/core/model/operations/operation';
 import State from '../index';
-import { BaseStep, StepType } from './step';
+import { BaseStep, StepResult, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
@@ -46,5 +46,9 @@ export default class OperationStep implements BaseStep {
 
   mapRange(range: ModelRange, bias: LeftOrRight = 'right'): ModelRange {
     return this.mapper.mapRange(range, bias);
+  }
+
+  getResult(): StepResult {
+    return { state: this.resultState };
   }
 }

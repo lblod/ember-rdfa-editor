@@ -1,5 +1,5 @@
 import State, { SayState } from '../index';
-import { BaseStep, StepType } from './step';
+import { BaseStep, StepResult, StepType } from './step';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 
@@ -37,5 +37,9 @@ export default class ConfigStep implements BaseStep {
 
   mapRange(range: ModelRange): ModelRange {
     return range;
+  }
+
+  getResult(): StepResult {
+    return { state: this._resultState };
   }
 }

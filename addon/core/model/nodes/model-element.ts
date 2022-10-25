@@ -125,7 +125,11 @@ export default class ModelElement extends ModelNode {
   }
 
   shallowClone(): ModelElement {
-    const result = new ModelElement(this.type);
+    const config = {
+      debugInfo: '',
+      rdfaPrefixes: new Map<string, string>(this._currentRdfaPrefixes),
+    };
+    const result = new ModelElement(this.type, config);
     result.attributeMap = new Map<string, string>(this.attributeMap);
     result.modelNodeType = this.modelNodeType;
     return result;

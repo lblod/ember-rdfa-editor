@@ -2,27 +2,35 @@ import State from '../index';
 import ConfigStep from './config-step';
 import OperationStep from './operation-step';
 import SelectionStep from './selection-step';
-import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import PluginStep from './plugin-step';
+import ReplaceStep from '@lblod/ember-rdfa-editor/core/state/steps/replace-step';
+import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 export interface BaseStep {
   readonly type: StepType;
-  readonly resultState: State;
 
   mapPosition(position: ModelPosition, bias?: LeftOrRight): ModelPosition;
 
   mapRange(range: ModelRange, bias?: LeftOrRight): ModelRange;
+
+  getResult(): StepResult;
 }
 
 export type StepType =
+  | 'replace-step'
   | 'operation-step'
   | 'selection-step'
   | 'config-step'
   | 'plugin-step';
 
-export type Step = SelectionStep | OperationStep | ConfigStep | PluginStep;
+export type Step =
+  | SelectionStep
+  | OperationStep
+  | ConfigStep
+  | PluginStep
+  | ReplaceStep;
 
 export function isSelectionStep(step: Step): step is SelectionStep {
   return step.type === 'selection-step';
