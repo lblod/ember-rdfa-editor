@@ -192,11 +192,10 @@ function flattenList(tr: Transaction, list: ModelElement) {
     for (const nestedList of nestedLists) {
       const moveRange = tr.unwrap(nestedList);
       const remainingLi = moveRange.start.parent;
-      const resultRange = tr.moveToPosition(moveRange, targetPos);
+      tr.moveToPosition(moveRange, targetPos);
       if (!remainingLi.children.length) {
         tr.deleteNode(remainingLi);
       }
-      targetPos = resultRange.end;
       firstLi = unwrap(list.children.find(ModelNodeUtils.isListElement));
       targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
     }
