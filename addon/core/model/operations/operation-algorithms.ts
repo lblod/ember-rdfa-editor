@@ -127,7 +127,9 @@ export default class OperationAlgorithms {
 
     //remove nodes that are fully confined in the selection
     confinedNodes.forEach((node) => {
-      node.remove(root);
+      if (node.getParent(root)) {
+        node.remove(root);
+      }
     });
 
     //merge the nodes we collected before (siblings at the end position) to the start position
@@ -230,7 +232,7 @@ export default class OperationAlgorithms {
     )) {
       node.remove(root);
     }
-    if (!range.collapsed && newEndNode) {
+    if (!range.collapsed && newEndNode && !(newStartNode === newEndNode)) {
       newEndNode.remove(root);
     }
 
