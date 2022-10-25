@@ -69,7 +69,7 @@ function testMarkToggling(assert: Assert, start: number, end: number) {
   assert.strictEqual(emNode.textContent, 'abcdefghi');
 }
 
-module.skip('Unit | model | marks-test', function () {
+module('Unit | model | marks-test', function () {
   test('reading works', function (assert) {
     const html = domStripped`
     <div>
