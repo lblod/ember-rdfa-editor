@@ -562,9 +562,7 @@ module(
         <div>
           <span>
             <p __id="p1">
-              <text __id="text1">
-                test
-              </text>
+              <text __id="text1">test</text>
             </p>
           </span>
         </div>
@@ -573,9 +571,7 @@ module(
       <div>
         <span>
           <p __id="p1">
-            <text __id="text1">
-              test
-            </text>
+            <text __id="text1">test</text>
           </p>
         </span>
       </div>
@@ -589,7 +585,6 @@ module(
         initial as ModelElement,
         new ModelRange(start1, end1)
       );
-      assert.expect(1);
       assert.true(initial.sameAs(expected));
     });
   }
