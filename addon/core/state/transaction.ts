@@ -510,8 +510,7 @@ export default class Transaction {
     splitAtEnds = false
   ): ModelPosition {
     this.deepClone();
-    let pos = position;
-
+    let pos = this.clonePos(position);
     // Execute split at least once
     if (pos.parent === pos.root || untilPredicate(pos.parent)) {
       return this.executeSplit(pos, splitAtEnds, false, false);
