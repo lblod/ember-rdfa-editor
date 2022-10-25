@@ -177,7 +177,7 @@ export default class ModelNodeUtils {
       if (properties && properties.includes(LUMP_NODE_PROPERTY)) {
         return true;
       }
-      parent = modelNode.getParent(root);
+      parent = parent.getParent(root);
     }
     return false;
   }
