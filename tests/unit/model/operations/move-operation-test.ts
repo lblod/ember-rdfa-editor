@@ -6,7 +6,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-elemen
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
 
-module.skip('Unit | model | operations | move-operation-test', function () {
+module('Unit | model | operations | move-operation-test', function () {
   test('move simple range', function (assert) {
     // language=XML
     const {
