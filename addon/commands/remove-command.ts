@@ -31,11 +31,13 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
 
   @logExecute
   execute({ transaction }: CommandContext, { range }: RemoveCommandArgs): void {
+    transaction.deepClone();
+    const clonedRange = transaction.cloneRange(range);
     // we only have to consider ancestors of the end of the range since we always merge
     // towards the left
     // SAFETY: filter guarantees results to be elements
     const lis = [
-      ...range.end.parent.findSelfOrAncestors(
+      ...clonedRange.end.parent.findSelfOrAncestors(
         transaction.currentDocument,
         ModelNodeUtils.isListElement
       ),
@@ -52,7 +54,7 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
         transaction,
         highestLi,
         lowestLi,
-        range
+        clonedRange
       );
       // perform the deletion
       rangeAfterDelete = transaction.removeNodes(adjustedRange);
@@ -66,7 +68,7 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       }
       rangeAfterDelete = cleanupRangeAfterDelete(transaction, rangeAfterDelete);
     } else {
-      rangeAfterDelete = transaction.removeNodes(range);
+      rangeAfterDelete = transaction.removeNodes(clonedRange);
     }
 
     if (rangeAfterDelete.start.parent.length === 0) {
