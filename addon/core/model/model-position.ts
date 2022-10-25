@@ -249,45 +249,22 @@ export default class ModelPosition {
   }
 
   getCommonAncestor(other: ModelPosition): ModelElement {
-    if (this.root !== other.root) {
-      throw new PositionError('Cannot compare nodes with different roots');
-    }
+    const commonPath = ArrayUtils.findCommonSlice(this.path, other.path);
 
-    const leftLength = this.path.length;
-    const rightLength = other.path.length;
-    const lengthDiff = leftLength - rightLength;
-
-    let left: ModelElement | null = this.parent;
-    let right: ModelElement | null = other.parent;
-
-    if (lengthDiff > 0) {
-      // left position is lower than right position
-      for (let i = 0; i < lengthDiff; i++) {
-        if (!left?.getParent(this.root)) {
-          throw new PositionError('impossible position');
+    let result = this.root;
+    for (const offset of commonPath) {
+      const child = result.childAtOffset(offset, false);
+      if (!child) {
+        return result;
+      } else {
+        if (ModelNode.isModelElement(child)) {
+          result = child;
+        } else {
+          return result;
         }
-        left = left?.getParent(this.root);
-      }
-    } else if (lengthDiff < 0) {
-      // right position is lower than left position
-      for (let i = 0; i < Math.abs(lengthDiff); i++) {
-        if (!right?.getParent(this.root)) {
-          throw new PositionError('impossible position');
-        }
-        right = right?.getParent(this.root);
       }
     }
-
-    while (left && right && left !== right) {
-      left = left.getParent(this.root);
-      right = right.getParent(this.root);
-    }
-
-    if (left) {
-      return left;
-    } else {
-      return this.root;
-    }
+    return result;
   }
 
   /**
