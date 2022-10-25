@@ -26,21 +26,24 @@ export default class RemoveTableRowCommand
     { transaction }: CommandContext,
     { selection = transaction.workingCopy.selection }: RemoveTableRowCommandArgs
   ): void {
+    transaction.deepClone();
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
+    const workingSelection = transaction.cloneSelection(selection);
+    const root = transaction.currentDocument;
 
-    const cell = ModelTable.getCellFromSelection(selection);
+    const cell = ModelTable.getCellFromSelection(workingSelection);
     if (!cell) {
       throw new Error('The selection is not inside a cell');
     }
 
-    const table = ModelTable.getTableFromSelection(selection);
+    const table = ModelTable.getTableFromSelection(workingSelection);
     if (!table) {
       throw new Error('The selection is not inside a table');
     }
 
-    const position = ModelTable.getCellIndex(transaction.currentDocument, cell);
+    const position = ModelTable.getCellIndex(root, cell);
     if (!position || position.y === null) {
       //Shouldn't happen
       throw new Error('Position is null');

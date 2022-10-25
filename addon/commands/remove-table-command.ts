@@ -27,26 +27,24 @@ export default class RemoveTableCommand
     { transaction }: CommandContext,
     { selection = transaction.workingCopy.selection }: RemoveTableCommandArgs
   ): void {
+    transaction.deepClone();
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
+    const workingSelection = transaction.cloneSelection(selection);
+    const root = transaction.currentDocument;
 
-    const table = ModelTable.getTableFromSelection(selection);
+    const table = ModelTable.getTableFromSelection(workingSelection);
     if (!table) {
       throw new Error('The selection is not inside a table');
     }
 
-    if (table.getParent(transaction.currentDocument)) {
+    if (table.getParent(root)) {
       const offset = table.getOffset();
       if (offset) {
-        transaction.collapseIn(
-          unwrap(table.getParent(transaction.currentDocument)),
-          offset
-        );
+        transaction.collapseIn(unwrap(table.getParent(root)), offset);
       } else {
-        transaction.collapseIn(
-          unwrap(table.getParent(transaction.currentDocument))
-        );
+        transaction.collapseIn(unwrap(table.getParent(root)));
       }
     }
     table.removeTable(transaction);

@@ -28,16 +28,18 @@ export default class RemoveTableColumnCommand
       selection = transaction.workingCopy.selection,
     }: RemoveTableColumnCommandArgs
   ): void {
+    transaction.deepClone();
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }
+    const workingSelection = transaction.cloneSelection(selection);
 
-    const cell = ModelTable.getCellFromSelection(selection);
+    const cell = ModelTable.getCellFromSelection(workingSelection);
     if (!cell) {
       throw new Error('The selection is not inside a cell');
     }
 
-    const table = ModelTable.getTableFromSelection(selection);
+    const table = ModelTable.getTableFromSelection(workingSelection);
     if (!table) {
       throw new Error('The selection is not inside a table');
     }
