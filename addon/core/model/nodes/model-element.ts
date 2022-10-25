@@ -103,10 +103,9 @@ export default class ModelElement extends ModelNode {
    * "<" of the closing tag in html
    */
   getMaxOffset() {
-    if (!this.lastChild) {
-      return 0;
-    }
-    return this.lastChild.getOffset() + this.lastChild.offsetSize;
+    let sum = 0;
+    this.children.forEach((node) => (sum += node.offsetSize));
+    return sum;
   }
 
   clone(): ModelElement {
@@ -133,26 +132,11 @@ export default class ModelElement extends ModelNode {
   }
 
   addChild(child: ModelNode, position?: number) {
-    let prev;
-    let next = null;
     if (position === undefined) {
-      prev = this.children[this.childCount - 1];
       this._children.push(child);
     } else {
-      next = this.children[position];
-      prev = this.children[position - 1];
-
       this._children.splice(position, 0, child);
     }
-
-    if (prev) {
-      prev.nextSibling = child;
-    }
-    if (next) {
-      next.previousSibling = child;
-    }
-    child.previousSibling = prev;
-    child.nextSibling = next;
 
     if (ModelNode.isModelElement(child)) {
       child.updateRdfaPrefixes(this.getRdfaPrefixes());
@@ -193,17 +177,6 @@ export default class ModelElement extends ModelNode {
     if (index === -1) {
       return;
     }
-    if (child.previousSibling) {
-      child.previousSibling.nextSibling = child.nextSibling;
-    }
-    if (child.nextSibling) {
-      child.nextSibling.previousSibling = child.previousSibling;
-    }
-
-    if (this.length > index + 1) {
-      this.children[index + 1].previousSibling =
-        this.children[index - 1] || null;
-    }
     this.children.splice(index, 1);
   }
 
@@ -232,17 +205,8 @@ export default class ModelElement extends ModelNode {
     if (index < 0) {
       index = 0;
     }
-
     const leftChildren = this.children.slice(0, index);
-    if (leftChildren.length) {
-      leftChildren[leftChildren.length - 1].nextSibling = null;
-    }
-
     const rightChildren = this.children.slice(index);
-    if (rightChildren.length) {
-      rightChildren[0].previousSibling = null;
-    }
-
     this.children = leftChildren;
     const right = this.clone();
     right.children = [];
@@ -355,8 +319,6 @@ export default class ModelElement extends ModelNode {
 
   /**
    * Convert an index to the startoffset of the child at that index
-   * If index is one more than the index of the last child, return the
-   * {@link getMaxOffset maxOffset}
    *
    * This behavior is to facilitate converting domOffsets (which are a bit like
    * weird indices)
@@ -364,10 +326,11 @@ export default class ModelElement extends ModelNode {
    * @param index
    */
   indexToOffset(index: number): number {
-    if (index === this.length) {
-      return this.getMaxOffset();
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      offset += this.children[i].offsetSize;
     }
-    return this.children[index].getOffset();
+    return offset;
   }
 
   /**

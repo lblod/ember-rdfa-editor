@@ -40,7 +40,7 @@ export default class RemoveTableCommand
     }
 
     if (table.getParent(root)) {
-      const offset = table.getOffset();
+      const offset = table.getOffset(transaction.currentDocument);
       if (offset) {
         transaction.collapseIn(unwrap(table.getParent(root)), offset);
       } else {

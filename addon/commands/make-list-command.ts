@@ -115,7 +115,7 @@ export default class MakeListCommand
         range.start = ModelPosition.fromInElement(
           documentRoot,
           range.start.parent.getParent(documentRoot)!,
-          range.start.parent.getOffset()
+          range.start.parent.getOffset(documentRoot)
         );
       }
     }
@@ -148,7 +148,7 @@ export default class MakeListCommand
         range.end = ModelPosition.fromInElement(
           documentRoot,
           range.end.parent.getParent(documentRoot)!,
-          range.end.parent.getOffset() + range.end.parent.offsetSize
+          range.end.parent.getOffset(documentRoot) + range.end.parent.offsetSize
         );
       }
     }

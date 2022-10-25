@@ -1,5 +1,5 @@
-import {module, test} from 'qunit';
-import {vdom} from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import { module, test } from 'qunit';
+import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
@@ -10,7 +10,7 @@ module('Unit | model | operations | operation-algorithms-test', function () {
     // language=XML
     const {
       root: initial,
-      textNodes: {rangeStart},
+      textNodes: { rangeStart },
     } = vdom`
       <modelRoot>
         <text __id="rangeStart">abcd</text>
@@ -18,7 +18,7 @@ module('Unit | model | operations | operation-algorithms-test', function () {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <text>ab</text>
         <text>cd</text>
@@ -38,7 +38,7 @@ module('Unit | model | operations | operation-algorithms-test', function () {
     // language=XML
     const {
       root: initial,
-      textNodes: {rangeStart, rangeEnd},
+      textNodes: { rangeStart, rangeEnd },
     } = vdom`
       <modelRoot>
         <div>
@@ -59,7 +59,7 @@ module('Unit | model | operations | operation-algorithms-test', function () {
     `;
 
     // language=XML
-    const {root: expected} = vdom`
+    const { root: expected } = vdom`
       <modelRoot>
         <div>
           <text>ab</text>

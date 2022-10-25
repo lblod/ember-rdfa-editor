@@ -56,7 +56,7 @@ module('Unit | model | model-node', function () {
         </modelRoot>`;
 
       content.promote(root as ModelElement);
-      assert.strictEqual(div.previousSibling, content);
+      assert.strictEqual(div.getPreviousSibling(root as ModelElement), content);
     });
 
     test('promote returns old parent', function (assert) {
@@ -106,7 +106,7 @@ module('Unit | model | model-node', function () {
         </modelRoot>`;
 
       content.promote(root as ModelElement, true);
-      assert.strictEqual(div.nextSibling, content);
+      assert.strictEqual(div.getNextSibling(root as ModelElement), content);
     });
 
     test('promote(true) returns old parent', function (assert) {

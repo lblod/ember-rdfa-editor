@@ -17,7 +17,7 @@ export default class ListCleaner {
     }).nodes() as Generator<ModelElement>;
 
     for (const listNode of listNodes) {
-      const next = listNode.nextSibling;
+      const next = listNode.getNextSibling(tr.currentDocument);
       if (
         next &&
         ModelNodeUtils.isListContainer(next) &&

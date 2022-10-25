@@ -143,16 +143,19 @@ function cleanupRangeAfterDelete(
       ModelNodeUtils.isListContainer
     ) as Generator<ModelElement, void, void>
   ).next().value;
-  if (highestUl && ModelNodeUtils.isListContainer(highestUl.nextSibling)) {
-    tr.moveToPosition(
-      ModelRange.fromInNode(tr.currentDocument, highestUl.nextSibling),
-      ModelPosition.fromInNode(
-        tr.currentDocument,
-        highestUl,
-        highestUl.getMaxOffset()
-      )
-    );
-    flattenList(tr, highestUl);
+  if (highestUl) {
+    const nextSibling = highestUl.getNextSibling(tr.currentDocument);
+    if (ModelNodeUtils.isListContainer(nextSibling)) {
+      tr.moveToPosition(
+        ModelRange.fromInNode(tr.currentDocument, nextSibling),
+        ModelPosition.fromInNode(
+          tr.currentDocument,
+          highestUl,
+          highestUl.getMaxOffset()
+        )
+      );
+      flattenList(tr, highestUl);
+    }
   }
   return range;
 }

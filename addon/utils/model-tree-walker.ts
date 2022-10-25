@@ -172,7 +172,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
 
     let node = this._currentNode;
     while (node !== this.root) {
-      let sibling = node.previousSibling;
+      let sibling = node.getPreviousSibling(this.root);
 
       while (sibling) {
         node = sibling;
@@ -187,7 +187,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
           return node;
         }
 
-        sibling = node.previousSibling;
+        sibling = node.getPreviousSibling(this.root);
       }
 
       if (node === this.root || !node.getParent(this.root)) {
@@ -249,7 +249,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
         }
 
         // Try going sideways first.
-        sibling = temporary.nextSibling;
+        sibling = temporary.getNextSibling(this.root);
         if (sibling) {
           // There was a sibling, break here.
           node = sibling;
@@ -290,8 +290,8 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     if (!startNode) {
       return this.root;
     }
-    while (!startNode.nextSibling && startNode !== this.root) {
-      startNode = startNode.getParent(this.root)!;
+    while (!startNode.getNextSibling(this.root) && startNode !== this.root) {
+      startNode = unwrap(startNode.getParent(this.root));
     }
 
     // This would mean the given range is empty.
@@ -299,7 +299,7 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
       return null;
       // return startNode;
     }
-    return startNode.nextSibling!;
+    return unwrap(startNode.getNextSibling(this.root));
   }
 
   private getNodeAfterEndFromPosition(
@@ -309,10 +309,10 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     let nodeAfterEnd = position.nodeAfter();
     if (nodeAfterEnd) {
       if (
-        position.parentOffset - nodeAfterEnd.getOffset() > 0 ||
+        position.parentOffset - nodeAfterEnd.getOffset(this.root) > 0 ||
         nodeAfterEnd === startNode
       ) {
-        nodeAfterEnd = nodeAfterEnd.nextSibling;
+        nodeAfterEnd = nodeAfterEnd.getNextSibling(this.root);
       }
 
       if (nodeAfterEnd) {
@@ -325,17 +325,20 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
       return null;
     }
 
-    while (!nodeAfterEnd.nextSibling && nodeAfterEnd !== this.root) {
-      nodeAfterEnd = nodeAfterEnd.getParent(this.root)!;
+    while (
+      !nodeAfterEnd.getNextSibling(this.root) &&
+      nodeAfterEnd !== this.root
+    ) {
+      nodeAfterEnd = unwrap(nodeAfterEnd.getParent(this.root));
     }
 
     if (nodeAfterEnd === this.root) {
       return null;
     }
 
-    nodeAfterEnd = nodeAfterEnd.nextSibling;
+    nodeAfterEnd = nodeAfterEnd.getNextSibling(this.root);
     if (nodeAfterEnd === startNode) {
-      return nodeAfterEnd.nextSibling;
+      return nodeAfterEnd.getNextSibling(this.root);
     }
 
     return nodeAfterEnd;
@@ -423,9 +426,9 @@ export default class ModelTreeWalker<T extends ModelNode = ModelNode>
     traverseType: TraverseType
   ): ModelNode | null {
     if (traverseType === TraverseType.FIRST) {
-      return node.nextSibling;
+      return node.getNextSibling(this.root);
     } else {
-      return node.previousSibling;
+      return node.getPreviousSibling(this.root);
     }
   }
 

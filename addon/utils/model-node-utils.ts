@@ -148,11 +148,15 @@ export default class ModelNodeUtils {
     return forwards ? steps : node.content.length - steps;
   }
 
-  static siblingInDirection(node: ModelNode, direction: Direction) {
+  static siblingInDirection(
+    root: ModelElement,
+    node: ModelNode,
+    direction: Direction
+  ) {
     if (direction === Direction.FORWARDS) {
-      return node.nextSibling;
+      return node.getNextSibling(root);
     } else {
-      return node.previousSibling;
+      return node.getPreviousSibling(root);
     }
   }
 

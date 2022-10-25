@@ -699,7 +699,7 @@ export default class ModelRange {
 
     // calculate difference between start of range and start of the first textnode
     const startOffset = this.start.isInsideText()
-      ? this.start.parentOffset - this.start.nodeAfter()!.getOffset()
+      ? this.start.parentOffset - this.start.nodeAfter()!.getOffset(this.root)
       : 0;
 
     let currentIndex = 0;
@@ -735,7 +735,7 @@ export default class ModelRange {
     let endOffset = textContent.length;
     if (this.end.isInsideText()) {
       const textNode = this.end.nodeAfter()!;
-      const maxOffset = textNode.getOffset() + textNode.length;
+      const maxOffset = textNode.getOffset(this.root) + textNode.length;
       endOffset -= maxOffset - this.end.parentOffset;
     }
 

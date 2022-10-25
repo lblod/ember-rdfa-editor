@@ -50,7 +50,7 @@ export default class InsertTextOperation extends Operation {
       OperationAlgorithms.insert(this.root, this.range, newText);
     const defaultRange = ModelRange.fromAroundNode(this.root, newText);
 
-    const previousSibling = newText.previousSibling;
+    const previousSibling = newText.getPreviousSibling(this.root);
     if (
       previousSibling &&
       ModelNode.isModelText(previousSibling) &&
@@ -60,7 +60,7 @@ export default class InsertTextOperation extends Operation {
       newText.remove(this.root);
       newText = previousSibling;
     }
-    const nextSibling = newText.nextSibling;
+    const nextSibling = newText.getNextSibling(this.root);
     if (
       nextSibling &&
       ModelNode.isModelText(nextSibling) &&

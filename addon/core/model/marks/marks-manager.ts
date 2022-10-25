@@ -63,8 +63,9 @@ export default class MarksManager {
           const visualMarkGroupList = visualMarkGroups.get(mark.name)!;
           const lastVisualMarkGroup = ArrayUtils.lastItem(visualMarkGroupList)!;
           if (
-            ArrayUtils.lastItem(lastVisualMarkGroup)?.node.nextSibling ===
-            textModel
+            ArrayUtils.lastItem(lastVisualMarkGroup)?.node.getNextSibling(
+              document
+            ) === textModel
           ) {
             lastVisualMarkGroup.push(entry);
           } else {

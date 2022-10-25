@@ -326,7 +326,7 @@ export default class ModelPosition {
       if (before === after) {
         before.split(
           this.root,
-          this.parentOffset - before.getOffset(),
+          this.parentOffset - before.getOffset(this.root),
           keepRight
         );
       }
@@ -416,7 +416,7 @@ export default class ModelPosition {
         (cur === this.nodeBefore() && forwards) ||
         (cur === this.nodeAfter() && !forwards)
       ) {
-        startSearch = this.parentOffset - cur.getOffset();
+        startSearch = this.parentOffset - cur.getOffset(this.root);
       } else {
         startSearch = forwards ? 0 : cur.length;
       }
@@ -432,7 +432,9 @@ export default class ModelPosition {
         i++;
         charIndex += direction;
       }
-      cur = forwards ? cur.nextSibling : cur.previousSibling;
+      cur = forwards
+        ? cur.getNextSibling(this.root)
+        : cur.getPreviousSibling(this.root);
     }
     if (!forwards) {
       result.reverse();
@@ -529,7 +531,7 @@ export default class ModelPosition {
           currentPos = ModelPosition.fromInNode(
             this.root,
             nextNode,
-            (nextNode.lastChild?.getOffset() || 0) +
+            (nextNode.lastChild?.getOffset(this.root) || 0) +
               (nextNode.lastChild?.offsetSize || 0)
           );
           if (!blockNodeFound) {
@@ -570,15 +572,16 @@ export default class ModelPosition {
               currentPos = ModelPosition.fromInNode(
                 this.root,
                 nextNode,
-                (nextNode.lastChild?.getOffset() || 0) +
+                (nextNode.lastChild?.getOffset(this.root) || 0) +
                   (nextNode.lastChild?.offsetSize || 0)
               );
               // currentPos = ModelPosition.fromAfterNode(nextNode);
             } else {
-              if (nextNode.previousSibling) {
+              const previousSibling = nextNode.getPreviousSibling(this.root);
+              if (previousSibling) {
                 currentPos = ModelPosition.fromAfterNode(
                   this.root,
-                  nextNode.previousSibling
+                  previousSibling
                 );
               } else {
                 currentPos = ModelPosition.fromBeforeNode(this.root, nextNode);
@@ -693,10 +696,11 @@ export default class ModelPosition {
             if (blockNodeFound && !nextNode.isLeaf) {
               currentPos = ModelPosition.fromInNode(this.root, nextNode, 0);
             } else {
-              if (nextNode.nextSibling) {
+              const nextSibling = nextNode.getNextSibling(this.root);
+              if (nextSibling) {
                 currentPos = ModelPosition.fromInNode(
                   this.root,
-                  nextNode.nextSibling,
+                  nextSibling,
                   0
                 );
               } else {

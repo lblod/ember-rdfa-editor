@@ -23,7 +23,7 @@ export function simplePosToModelPos(
     const curSize = cur.size;
     if (count + curSize < simplePos) {
       count += curSize;
-      cur = cur.nextSibling;
+      cur = cur.getNextSibling(root);
     } else if (count + curSize === simplePos) {
       return ModelPosition.fromAfterNode(root, cur);
     } else {
@@ -47,7 +47,10 @@ export function simplePosToModelPos(
   throw new SimplePositionOutOfRangeError(simplePos);
 }
 
-export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
+export function modelPosToSimplePos(
+  root: ModelElement,
+  modelPos: ModelPosition
+): SimplePosition {
   const { path } = modelPos;
   if (path.length === 0) {
     return 0;
@@ -59,7 +62,7 @@ export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
       cur = cur.childAtOffset(offset, true);
       counter += 1;
       if (cur) {
-        counter += countPreviousSiblings(cur);
+        counter += countPreviousSiblings(root, cur);
       }
     }
   }
@@ -68,25 +71,25 @@ export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
     const last = cur.childAtOffset(lastOffset, true);
     counter += 1;
     if (last) {
-      counter += countPreviousSiblings(last);
+      counter += countPreviousSiblings(root, last);
       if (ModelNode.isModelElement(last)) {
         if (lastOffset === cur.getMaxOffset()) {
           counter += last.size;
         }
       } else {
-        counter += lastOffset - last.getOffset();
+        counter += lastOffset - last.getOffset(root);
       }
     }
   }
   return counter;
 }
 
-function countPreviousSiblings(node: ModelNode): number {
+function countPreviousSiblings(root: ModelElement, node: ModelNode): number {
   let counter = 0;
-  let sib = node.previousSibling;
+  let sib = node.getPreviousSibling(root);
   while (sib) {
     counter += sib.size;
-    sib = sib.previousSibling;
+    sib = sib.getPreviousSibling(root);
   }
   return counter;
 }

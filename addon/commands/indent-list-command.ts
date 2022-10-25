@@ -95,7 +95,7 @@ export default class IndentListCommand
 
     for (const [parent, lis] of setsToIndent.entries()) {
       // First li of (nested) list can never be selected here, so previousSibling is always another li.
-      const newParent = lis[0].previousSibling;
+      const newParent = lis[0].getPreviousSibling(transaction.currentDocument);
       if (!newParent || !ModelNode.isModelElement(newParent)) {
         throw new IllegalExecutionStateError(
           "First selected li doesn't have previous sibling"

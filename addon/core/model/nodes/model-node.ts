@@ -36,8 +36,6 @@ export interface NodeCompareOpts {
 export default abstract class ModelNode implements Walkable {
   abstract modelNodeType: ModelNodeType;
   private _attributeMap: Map<string, string>;
-  private _nextSibling: ModelNode | null = null;
-  private _previousSibling: ModelNode | null = null;
   private _debugInfo: unknown;
   private parentCache: WeakMap<ModelNode, ModelElement> = new WeakMap();
 
@@ -82,23 +80,7 @@ export default abstract class ModelNode implements Walkable {
     this._attributeMap = value;
   }
 
-  get previousSibling(): ModelNode | null {
-    return this._previousSibling;
-  }
-
-  set previousSibling(value: ModelNode | null) {
-    this._previousSibling = value;
-  }
-
-  get nextSibling(): ModelNode | null {
-    return this._nextSibling;
-  }
-
-  set nextSibling(value: ModelNode | null) {
-    this._nextSibling = value;
-  }
-
-  setParentCache(root: ModelElement, parent: ModelElement) {
+  setParentCache(_root: ModelElement, _parent: ModelElement) {
     // this.parentCache.set(root, parent);
   }
 
@@ -125,12 +107,23 @@ export default abstract class ModelNode implements Walkable {
     return null;
   }
 
-  getNextSibling(): Walkable | null {
-    return this.nextSibling;
+  getNextSibling(root: ModelElement): ModelNode | null {
+    const parent = this.getParent(root);
+    if (parent) {
+      const childIndex = unwrap(parent.getChildIndex(this));
+      if (childIndex + 1 < parent.childCount)
+        return parent.children[childIndex + 1];
+    }
+    return null;
   }
 
-  getPreviousSibling(): Walkable | null {
-    return this.previousSibling;
+  getPreviousSibling(root: ModelElement): ModelNode | null {
+    const parent = this.getParent(root);
+    if (parent) {
+      const childIndex = unwrap(parent.getChildIndex(this));
+      if (childIndex - 1 >= 0) return parent.children[childIndex - 1];
+    }
+    return null;
   }
 
   getLastChild(): Walkable | null {
@@ -189,12 +182,12 @@ export default abstract class ModelNode implements Walkable {
    * Get the offset of the cursorposition right before this node
    * In other words, get the offset at which this node starts in the parent
    */
-  getOffset(): number {
+  getOffset(root: ModelElement): number {
     let counter = 0;
-    let sibling = this.previousSibling;
+    let sibling = this.getPreviousSibling(root);
     while (sibling) {
       counter += sibling.offsetSize;
-      sibling = sibling.previousSibling;
+      sibling = sibling.getPreviousSibling(root);
     }
     return counter;
   }
@@ -207,10 +200,10 @@ export default abstract class ModelNode implements Walkable {
     const parent = this.getParent(root);
 
     if (this.getParent(root)) {
-      result.push(this.getOffset());
+      result.push(this.getOffset(root));
       let cur = parent;
       while (cur?.getParent(root)) {
-        result.push(cur.getOffset());
+        result.push(cur.getOffset(root));
         cur = cur?.getParent(root);
       }
       result.reverse();

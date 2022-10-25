@@ -67,7 +67,7 @@ export default class OperationAlgorithms {
 
     while (nextNode) {
       nodesToMove.push(nextNode);
-      nextNode = nextNode.nextSibling;
+      nextNode = nextNode.getNextSibling(root);
     }
 
     //grab all nodes inside the range
@@ -384,12 +384,6 @@ export default class OperationAlgorithms {
           0,
           before.getIndex(root)!
         );
-        if (parent.firstChild) {
-          parent.firstChild.previousSibling = null;
-        }
-        if (leftSideChildren[leftSideChildren.length - 1]) {
-          leftSideChildren[leftSideChildren.length - 1].nextSibling = null;
-        }
         left.appendChildren(...leftSideChildren);
       }
       grandParent.addChild(left, parent.getIndex(root)!);
@@ -409,12 +403,6 @@ export default class OperationAlgorithms {
       const after = position.nodeAfter();
       if (after) {
         const rightSideChildren = parent.children.splice(after.getIndex(root)!);
-        if (parent.lastChild) {
-          parent.lastChild.nextSibling = null;
-        }
-        if (rightSideChildren[0]) {
-          rightSideChildren[0].previousSibling = null;
-        }
         right.appendChildren(...rightSideChildren);
       }
       grandParent.addChild(right, parent.getIndex(root)! + 1);
@@ -434,7 +422,7 @@ export default class OperationAlgorithms {
 
   static mergeTextNodes(root: ModelElement, nodes: ModelText[]) {
     for (const node of nodes) {
-      const sibling = node.nextSibling;
+      const sibling = node.getNextSibling(root);
       if (
         sibling &&
         ModelNode.isModelText(sibling) &&

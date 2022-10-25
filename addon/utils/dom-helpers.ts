@@ -629,12 +629,13 @@ export function domPosToModelPos(
     // offset may not be null or undefined but can be 0
     const modelOffset = domOffsetToModelOffset(state, offset, container);
     if (ModelNode.isModelText(cur) || cur.isLeaf) {
-      offsetPath[offsetPath.length - 1] = cur.getOffset() + modelOffset;
+      offsetPath[offsetPath.length - 1] =
+        cur.getOffset(state.document) + modelOffset;
     } else if (ModelNode.isModelElement(cur)) {
       if (!cur.length) {
         offsetPath.push(0);
       } else if (cur.children.length > modelOffset) {
-        offsetPath.push(cur.children[modelOffset].getOffset());
+        offsetPath.push(cur.children[modelOffset].getOffset(state.document));
       } else {
         offsetPath.push(cur.getMaxOffset());
       }
@@ -798,18 +799,18 @@ export function modelPosToDomPos(
   let endsInText = false;
   if (cur) {
     if (ModelNode.isModelText(cur)) {
-      indexPath.push(path[path.length - 1] - cur.getOffset());
+      indexPath.push(path[path.length - 1] - cur.getOffset(state.document));
       endsInText = true;
     } else if (collapseIntoText) {
       if (pos.nodeAfter() && ModelNode.isModelText(pos.nodeAfter())) {
         cur = pos.nodeAfter()!;
         indexPath[indexPath.length - 1] += 1;
-        indexPath.push(path[path.length - 1] - cur.getOffset());
+        indexPath.push(path[path.length - 1] - cur.getOffset(state.document));
         endsInText = true;
       } else if (pos.nodeBefore() && ModelNode.isModelText(pos.nodeBefore())) {
         cur = pos.nodeBefore()!;
         indexPath[indexPath.length - 1] -= 1;
-        indexPath.push(path[path.length - 1] - cur.getOffset());
+        indexPath.push(path[path.length - 1] - cur.getOffset(state.document));
         endsInText = true;
       }
     }
