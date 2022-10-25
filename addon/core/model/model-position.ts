@@ -16,6 +16,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelNodeUtils from '../../utils/model-node-utils';
 import { INVISIBLE_SPACE } from '../../utils/constants';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 /**
  * Represents a single position in the model. In contrast to the dom,
@@ -249,16 +250,22 @@ export default class ModelPosition {
   }
 
   getCommonAncestor(other: ModelPosition): ModelElement {
+    return unwrap(ArrayUtils.lastItem(this.getCommonAncestorChain(other)));
+  }
+
+  getCommonAncestorChain(other: ModelPosition): ModelElement[] {
     const commonPath = ArrayUtils.findCommonSlice(this.path, other.path);
 
-    let result = this.root;
+    const result = [this.root];
+    let cur = this.root;
     for (const offset of commonPath) {
-      const child = result.childAtOffset(offset, false);
+      const child = cur.childAtOffset(offset, false);
       if (!child) {
         return result;
       } else {
         if (ModelNode.isModelElement(child)) {
-          result = child;
+          result.push(child);
+          cur = child;
         } else {
           return result;
         }
