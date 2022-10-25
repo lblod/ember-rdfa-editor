@@ -6,7 +6,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | core | transaction-test', function () {
+module('Unit | core | transaction-test', function () {
   test('splitUntil splits until predicate true', function (assert) {
     // language=XML
     const {

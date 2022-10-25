@@ -9,7 +9,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | commands | delete-selection-command-test', function () {
+module('Unit | commands | delete-selection-command-test', function () {
   const command = new DeleteSelectionCommand();
   const executeCommand = makeTestExecute(command);
 

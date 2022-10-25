@@ -5,7 +5,7 @@ import SplitOperation from '@lblod/ember-rdfa-editor/core/model/operations/split
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
-module.skip('Unit | model | operations | split-operation-test', function () {
+module('Unit | model | operations | split-operation-test', function () {
   test("doesn't split root", function (assert) {
     // language=XML
     const { root: initial } = vdom`

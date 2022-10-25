@@ -12,7 +12,7 @@ import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | insert-html-command-test', function () {
+module('Unit | commands | insert-html-command-test', function () {
   const command = new InsertHtmlCommand();
   const executeCommand = makeTestExecute(command);
 

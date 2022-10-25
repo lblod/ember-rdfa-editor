@@ -8,7 +8,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | commands | read-selection-command-test', function () {
+module('Unit | commands | read-selection-command-test', function () {
   const command = new ReadSelectionCommand();
   const executeCommand = makeTestExecute(command);
 

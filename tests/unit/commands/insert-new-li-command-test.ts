@@ -11,7 +11,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-elemen
 // regressions for things that might depend on its behavior.
 // In particular, all the extra empty textnodes should not be there.
 
-module.skip('Unit | commands | insert-new-li-command-test', function () {
+module('Unit | commands | insert-new-li-command-test', function () {
   const command = new InsertNewLiCommand();
   const executeCommand = makeTestExecute(command);
 

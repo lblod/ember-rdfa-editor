@@ -6,7 +6,7 @@ import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip(
+module(
   'Unit | commands | insert-table-column-before-command-test',
   function () {
     const command = new InsertTableColumnBeforeCommand();

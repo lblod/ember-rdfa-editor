@@ -7,7 +7,7 @@ import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | insert-xml-command-test', function () {
+module('Unit | commands | insert-xml-command-test', function () {
   const command = new InsertXmlCommand();
   const executeCommand = makeTestExecute(command);
 

@@ -5,7 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | remove-table-column-command-test', function () {
+module('Unit | commands | remove-table-column-command-test', function () {
   const command = new RemoveTableColumnCommand();
   const executeCommand = makeTestExecute(command);
 

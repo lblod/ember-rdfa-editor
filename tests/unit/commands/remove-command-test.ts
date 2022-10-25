@@ -7,7 +7,7 @@ import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | remove-command', function () {
+module('Unit | commands | remove-command', function () {
   const command = new RemoveCommand();
   const executeCommand = makeTestExecute(command);
 

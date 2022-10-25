@@ -6,7 +6,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 
-module.skip('Unit | commands | make-list-command', function () {
+module('Unit | commands | make-list-command', function () {
   const command = new MakeListCommand();
   const executeCommand = makeTestExecute(command);
 

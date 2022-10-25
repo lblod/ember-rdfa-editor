@@ -6,7 +6,7 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-module.skip('Unit | commands | remove-list-command', function () {
+module('Unit | commands | remove-list-command', function () {
   const command = new RemoveListCommand();
   const executeCommand = makeTestExecute(command);
 
