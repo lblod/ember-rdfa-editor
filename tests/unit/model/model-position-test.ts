@@ -7,7 +7,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 
-module.skip('Unit | model | model-position', function () {
+module('Unit | model | model-position', function () {
   module('Unit | model | model-position | getCommonAncestor', function () {
     test('returns null when start and end have different root', function (assert) {
       const root = new ModelElement('div');

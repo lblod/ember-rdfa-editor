@@ -18,8 +18,8 @@ module('Unit | model | model-range', function () {
       const text = new ModelText('abc');
       root.addChild(text);
 
-      const p1 = ModelPosition.fromInTextNode(root as ModelElement, text, 0);
-      const p2 = ModelPosition.fromInTextNode(root as ModelElement, text, 2);
+      const p1 = ModelPosition.fromInTextNode(root, text, 0);
+      const p2 = ModelPosition.fromInTextNode(root, text, 2);
       const range = new ModelRange(p1, p2);
       const rslt = range.getMinimumConfinedRanges();
 
@@ -34,8 +34,8 @@ module('Unit | model | model-range', function () {
       const t3 = new ModelText('ghi');
       root.appendChildren(t1, div, t2, t3);
 
-      const p1 = ModelPosition.fromInTextNode(root as ModelElement, t1, 0);
-      const p2 = ModelPosition.fromInTextNode(root as ModelElement, t3, 2);
+      const p1 = ModelPosition.fromInTextNode(root, t1, 0);
+      const p2 = ModelPosition.fromInTextNode(root, t3, 2);
       const range = new ModelRange(p1, p2);
       const rslt = range.getMinimumConfinedRanges();
 
@@ -64,8 +64,8 @@ module('Unit | model | model-range', function () {
       s0.appendChildren(t00, t01, t02);
       s2.appendChildren(t20, t21, t22);
 
-      const p1 = ModelPosition.fromInTextNode(root as ModelElement, t00, 0);
-      const p2 = ModelPosition.fromInTextNode(root as ModelElement, t22, 3);
+      const p1 = ModelPosition.fromInTextNode(root, t00, 0);
+      const p2 = ModelPosition.fromInTextNode(root, t22, 3);
       const range = new ModelRange(p1, p2);
       let rslt = range.getMinimumConfinedRanges();
 
@@ -80,12 +80,8 @@ module('Unit | model | model-range', function () {
         rslt[2].sameAs(ModelRange.fromPaths(range.root, [2, 0], [2, 9]))
       );
       assert.true(rslt[2].isConfined());
-      const startInCA = ModelPosition.fromInElement(
-        root as ModelElement,
-        root,
-        0
-      );
-      const end = ModelPosition.fromInTextNode(root as ModelElement, t22, 3);
+      const startInCA = ModelPosition.fromInElement(root, root, 0);
+      const end = ModelPosition.fromInTextNode(root, t22, 3);
       const rangeWithStartInCA = new ModelRange(startInCA, end);
       rslt = rangeWithStartInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
@@ -98,12 +94,8 @@ module('Unit | model | model-range', function () {
         )
       );
 
-      const start = ModelPosition.fromInTextNode(root as ModelElement, t00, 0);
-      const endInCA = ModelPosition.fromInElement(
-        root as ModelElement,
-        root,
-        3
-      );
+      const start = ModelPosition.fromInTextNode(root, t00, 0);
+      const endInCA = ModelPosition.fromInElement(root, root, 3);
       const rangeWithEndInCA = new ModelRange(start, endInCA);
       rslt = rangeWithEndInCA.getMinimumConfinedRanges();
       assert.strictEqual(rslt.length, 2);
