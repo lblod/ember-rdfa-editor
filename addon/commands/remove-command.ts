@@ -175,7 +175,7 @@ function findNestedListFromPos(
  * Completely flatten a nested list up to the level of the given li container
  */
 function flattenList(tr: Transaction, list: ModelElement) {
-  const firstLi = list.children.find(ModelNodeUtils.isListElement);
+  let firstLi = list.children.find(ModelNodeUtils.isListElement);
   if (firstLi) {
     // SAFETY: the filter guarantees nodes are elements
     const nestedLists = [
@@ -189,13 +189,15 @@ function flattenList(tr: Transaction, list: ModelElement) {
     ] as ModelElement[];
     let targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
 
-    for (const list of nestedLists) {
-      const moveRange = tr.unwrap(list);
+    for (const nestedList of nestedLists) {
+      const moveRange = tr.unwrap(nestedList);
       const remainingLi = moveRange.start.parent;
-      tr.moveToPosition(moveRange, targetPos);
+      const resultRange = tr.moveToPosition(moveRange, targetPos);
       if (!remainingLi.children.length) {
         tr.deleteNode(remainingLi);
       }
+      targetPos = resultRange.end;
+      firstLi = unwrap(list.children.find(ModelNodeUtils.isListElement));
       targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
     }
   }
