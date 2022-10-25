@@ -1,4 +1,5 @@
 import {
+  modelPosToSimplePos,
   SimplePosition,
   simplePosToModelPos,
 } from '@lblod/ember-rdfa-editor/core/model/simple-position';
@@ -18,4 +19,11 @@ export function simpleRangeToModelRange(
     simplePosToModelPos(simpleRange.start, root),
     simplePosToModelPos(simpleRange.end, root)
   );
+}
+
+export function modelRangeToSimpleRange(modelRange: ModelRange): SimpleRange {
+  return {
+    start: modelPosToSimplePos(modelRange.root, modelRange.start),
+    end: modelPosToSimplePos(modelRange.root, modelRange.end),
+  };
 }

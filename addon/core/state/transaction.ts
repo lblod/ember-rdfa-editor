@@ -369,7 +369,7 @@ export default class Transaction {
 
   private commitStep(step: Step): void {
     this._steps.push(step);
-    this._workingCopy = step.resultState;
+    this._workingCopy = step.getResult().state;
     if (isOperationStep(step)) {
       this.rdfInvalid = true;
       this.marksInvalid = true;
