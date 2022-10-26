@@ -20,6 +20,7 @@ export default class HtmlInlineComponentReader
     context: HtmlReaderContext
   ): ModelInlineComponent[] {
     const { element, spec } = from;
+    from.element.replaceChildren();
     const propsAttribute = element.dataset['__props'];
     let props: Properties = {};
     if (propsAttribute) {
