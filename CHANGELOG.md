@@ -32,6 +32,17 @@
 
 
 
+
+## 0.63.6 (2022-10-27)
+
+#### :house: Internal
+* [#429](https://github.com/lblod/ember-rdfa-editor/pull/429) build(deps-dev): bump @types/ember__utils from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#428](https://github.com/lblod/ember-rdfa-editor/pull/428) build(deps-dev): bump @types/ember__array from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#427](https://github.com/lblod/ember-rdfa-editor/pull/427) build(deps-dev): bump @typescript-eslint/parser from 5.40.1 to 5.41.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#426](https://github.com/lblod/ember-rdfa-editor/pull/426) build(deps-dev): bump @types/ember-resolver from 5.0.11 to 5.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#432](https://github.com/lblod/ember-rdfa-editor/pull/432) build(deps): bump ember-cli-typescript from 5.1.1 to 5.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+
 ## 0.63.5 (2022-10-26)
 
 #### :bug: Bug Fix
