@@ -62,6 +62,11 @@ import {
 } from '@lblod/ember-rdfa-editor/core/model/readers/html-reader';
 import MarksManager from '../model/marks/marks-manager';
 import RemoveMarkFromNodeCommand from '@lblod/ember-rdfa-editor/commands/remove-mark-from-node-command';
+import {
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 
 export interface StateArgs {
   document: ModelElement;
@@ -357,4 +362,27 @@ export function createNewStateFromHtmlElement(element: Element) {
     inlineComponentsRegistry,
     pathFromDomRoot: getPathFromRoot(element, false),
   });
+}
+
+export function cloneStateInRange(
+  range: SimpleRange,
+  initialState: State
+): State {
+  const newRoot = cloneDocumentInRange(range, initialState.document);
+  const resultState = cloneStateShallow(initialState);
+  resultState.document = newRoot;
+  return resultState;
+}
+
+export function cloneDocumentInRange(
+  range: SimpleRange,
+  document: ModelElement
+): ModelElement {
+  const resolvedRange = simpleRangeToModelRange(range, document);
+  const commonAncestor = resolvedRange.getCommonAncestor();
+  return ModelNodeUtils.replaceNodeInTree(
+    document,
+    commonAncestor,
+    commonAncestor.clone()
+  );
 }

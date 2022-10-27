@@ -13,6 +13,9 @@ import {
 import ModelText from '../core/model/nodes/model-text';
 import StringUtils from './string-utils';
 import { Direction } from './types';
+import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
 export default class ModelNodeUtils {
   static DEFAULT_IGNORED_ATTRS: Set<string> = new Set([
@@ -217,5 +220,103 @@ export default class ModelNodeUtils {
       return false;
     }
     return attrs.properties.indexOf(LUMP_NODE_PROPERTY) > -1;
+  }
+
+  static replaceNodeInTree(
+    root: ModelElement,
+    nodeToReplace: ModelNode,
+    newNode: ModelNode
+  ): ModelElement {
+    const path = ModelNodeUtils.pathFromRoot(root, nodeToReplace);
+    const clonedPath = ModelNodeUtils.shallowCloneNodePath(path);
+    if (path.length !== clonedPath.length) {
+      throw new AssertionError(
+        'Erroneous path from root to target node, contains a leafnode'
+      );
+    }
+    const newRoot = clonedPath[0];
+    ModelNode.assertModelElement(newRoot);
+
+    const parentOfNodeToReplace = nodeToReplace.getParent(root);
+    ModelNode.assertModelElement(parentOfNodeToReplace);
+    const parentClone = unwrap(ArrayUtils.lastItem(clonedPath));
+    ModelNode.assertModelElement(parentClone);
+
+    for (const child of parentOfNodeToReplace.children) {
+      if (child === nodeToReplace) {
+        parentClone.addChild(newNode);
+      } else {
+        parentClone.addChild(child);
+      }
+    }
+    return newRoot;
+  }
+
+  static shallowCloneNodePath(path: ModelNode[]): ModelNode[] {
+    const result = [];
+    if (path.length === 1) {
+      result.push(path[0].clone());
+    } else {
+      let cur = path[0];
+      if (cur.isLeaf) {
+        result.push(cur.clone());
+      } else {
+        // SAFETY: we check for isLeaf, which implies element-ness
+        ModelNode.assertModelElement(cur);
+        let curClone = cur.shallowClone();
+        result.push(curClone);
+
+        for (const node of path.slice(1, path.length - 1)) {
+          if (node.isLeaf) {
+            result.push(node.clone());
+            return result;
+          } else {
+            ModelNode.assertModelElement(cur);
+            ModelNode.assertModelElement(node);
+            const nodeClone = node.shallowClone();
+            for (const child of cur.children) {
+              if (child === node) {
+                curClone.addChild(nodeClone);
+              } else {
+                curClone.addChild(child);
+              }
+            }
+            cur = node;
+            curClone = nodeClone;
+          }
+        }
+        const last = path[path.length - 1];
+        ModelNode.assertModelElement(cur);
+        for (const child of cur.children) {
+          if (child === last) {
+            if (!last.isLeaf && ModelNode.isModelElement(last)) {
+              curClone.addChild(last.shallowClone());
+            } else {
+              curClone.addChild(last.clone());
+            }
+          } else {
+            curClone.addChild(child);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  static pathFromRoot(
+    root: ModelElement,
+    node: ModelNode,
+    includeTarget = false
+  ): ModelNode[] {
+    let result: ModelNode[] = [];
+    if (includeTarget) {
+      result = [node];
+    }
+    let cur = node.getParent(root);
+    while (cur) {
+      result.push(cur);
+      cur = cur.getParent(root);
+    }
+    return result.reverse();
   }
 }

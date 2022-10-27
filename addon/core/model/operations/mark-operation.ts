@@ -17,7 +17,7 @@ import GenTreeWalker from '../../../utils/gen-tree-walker';
 import Operation from './operation';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
-type MarkAction = 'add' | 'remove';
+export type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
   private _action: MarkAction;
   private _spec: MarkSpec;

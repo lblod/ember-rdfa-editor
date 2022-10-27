@@ -9,6 +9,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -37,7 +38,6 @@ export default class RemoveListCommand
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    transaction.deepClone();
     const clonedRange = transaction.cloneRange(range);
 
     const endLis = clonedRange.end.findAncestors(ModelNodeUtils.isListElement);
@@ -96,7 +96,10 @@ export default class RemoveListCommand
     let resultRange;
     for (const node of nodesInRange) {
       if (ModelNodeUtils.isListRelated(node)) {
-        resultRange = transaction.unwrap(node, true);
+        resultRange = transaction.unwrap(
+          modelPosToSimplePos(ModelPosition.fromBeforeNode(range.root, node)),
+          true
+        );
       } else if (ModelNode.isModelText(node)) {
         unwrappedNodes.push(node);
       }

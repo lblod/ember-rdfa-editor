@@ -59,10 +59,9 @@ module('Unit | core | replace-step-test', function () {
     const initialState = testState({ document: initial });
 
     const step = new ReplaceStep({
-      initialState,
       range: replaceRange,
     });
-    const resultState = step.getResult().state;
+    const resultState = step.getResult(initialState).state;
     assert.true(
       resultState.document.sameAs(expected),
       QUnit.dump.parse(resultState.document.toXml())

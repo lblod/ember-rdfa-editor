@@ -3,11 +3,15 @@ import Command, {
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
     setProperty: SetPropertyCommand;
   }
 }
+
 export interface SetPropertyCommandArgs {
   property: string;
   value: string;
@@ -26,6 +30,16 @@ export default class SetPropertyCommand
     { transaction }: CommandContext,
     { property, value, element }: SetPropertyCommandArgs
   ) {
-    transaction.setProperty(element, property, value);
+    const elementInLatestState = transaction.inWorkingCopy(element);
+    transaction.setProperty(
+      modelPosToSimplePos(
+        ModelPosition.fromBeforeNode(
+          transaction.apply().document,
+          elementInLatestState
+        )
+      ),
+      property,
+      value
+    );
   }
 }

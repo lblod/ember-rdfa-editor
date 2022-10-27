@@ -27,7 +27,6 @@ export default class RemoveTableCommand
     { transaction }: CommandContext,
     { selection = transaction.workingCopy.selection }: RemoveTableCommandArgs
   ): void {
-    transaction.deepClone();
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }

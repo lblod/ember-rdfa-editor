@@ -8,7 +8,6 @@ import GenTreeWalker from './gen-tree-walker';
 
 export default class ListCleaner {
   clean(range: ModelRange, tr: Transaction) {
-    tr.deepClone();
     const clonedRange = tr.cloneRange(range);
     // SAFETY: listcontainers are always elements
     const listNodes = GenTreeWalker.fromRange({

@@ -66,13 +66,6 @@ export class SimplePositionOutOfRangeError extends PositionError {
   }
 }
 
-/**
- * Error to throw in tests when asserting something you also want
- * typescript to know about
- * This is a workaround for qunit assertions not informing typescript about their result
- */
-export class AssertionError extends CustomError {}
-
 export class IndexOutOfRangeError extends CustomError {}
 
 export class OffsetOutOfRangeError extends CustomError {
@@ -123,13 +116,17 @@ export class KeyError extends CustomError {
   }
 }
 
-export class IllegalAccessToRawEditor extends CustomError {
-  constructor() {
-    super('raw editor was used before it was initialized');
-  }
-}
+/**
+ * Supertype for errors arrising from runtime checks of invariants
+ */
+export class AssertionError extends CustomError {}
 
-export class TypeAssertionError extends CustomError {}
+/**
+ * Error to throw in tests when asserting something you also want
+ * typescript to know about
+ * This is a workaround for qunit assertions not informing typescript about their result
+ */
+export class TypeAssertionError extends AssertionError {}
 
 /**
  * When a command gets executed in a state it shouldn't.

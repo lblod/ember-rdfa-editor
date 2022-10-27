@@ -62,7 +62,6 @@ export default class IndentListCommand
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-    transaction.deepClone();
     range = transaction.cloneRange(range);
 
     const treeWalker = ModelRangeUtils.findModelNodes(

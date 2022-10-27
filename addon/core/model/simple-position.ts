@@ -47,15 +47,12 @@ export function simplePosToModelPos(
   throw new SimplePositionOutOfRangeError(simplePos);
 }
 
-export function modelPosToSimplePos(
-  root: ModelElement,
-  modelPos: ModelPosition
-): SimplePosition {
-  const { path } = modelPos;
+export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
+  const { root, path } = modelPos;
   if (path.length === 0) {
     return 0;
   }
-  let cur: ModelNode | null = modelPos.root;
+  let cur: ModelNode | null = root;
   let counter = -1;
   for (const offset of path.slice(0, path.length - 1)) {
     if (ModelNode.isModelElement(cur)) {

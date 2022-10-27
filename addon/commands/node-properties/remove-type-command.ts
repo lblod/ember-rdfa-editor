@@ -3,7 +3,8 @@ import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -31,10 +32,16 @@ export default class RemoveTypeCommand
     const oldTypeof = element.getAttribute('typeof');
     const typesArray = oldTypeof ? oldTypeof.split(' ') : [];
     const newTypeof = typesArray.filter((t) => t !== type).join(' ');
-    const newNode = transaction.setProperty(element, 'typeof', newTypeof);
-    transaction.selectRange(
-      ModelRange.fromInElement(transaction.currentDocument, newNode, 0, 0)
+    const elementInLatestState = transaction.inWorkingCopy(element);
+    transaction.setProperty(
+      modelPosToSimplePos(
+        ModelPosition.fromBeforeNode(
+          transaction.apply().document,
+          elementInLatestState
+        )
+      ),
+      'typeof',
+      newTypeof
     );
-    return newNode;
   }
 }

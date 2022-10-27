@@ -23,7 +23,11 @@ export function simpleRangeToModelRange(
 
 export function modelRangeToSimpleRange(modelRange: ModelRange): SimpleRange {
   return {
-    start: modelPosToSimplePos(modelRange.root, modelRange.start),
-    end: modelPosToSimplePos(modelRange.root, modelRange.end),
+    start: modelPosToSimplePos(modelRange.start),
+    end: modelPosToSimplePos(modelRange.end),
   };
+}
+
+export function simpleRangesEqual(range1: SimpleRange, range2: SimpleRange) {
+  return range1.start === range2.start && range1.end === range2.end;
 }

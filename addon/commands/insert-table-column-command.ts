@@ -26,7 +26,6 @@ export default abstract class InsertTableColumnCommand
       selection = transaction.workingCopy.selection,
     }: InsertTableColumnCommandArgs
   ) {
-    transaction.deepClone();
     if (!ModelSelection.isWellBehaved(selection)) {
       throw new MisbehavedSelectionError();
     }

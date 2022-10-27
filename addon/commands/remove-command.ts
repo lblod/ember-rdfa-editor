@@ -13,6 +13,7 @@ import ModelNodeUtils from '../utils/model-node-utils';
 import { toFilterSkipFalse } from '../utils/model-tree-walker';
 import { ImpossibleModelStateError } from '../utils/errors';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -31,7 +32,6 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
 
   @logExecute
   execute({ transaction }: CommandContext, { range }: RemoveCommandArgs): void {
-    transaction.deepClone();
     const clonedRange = transaction.cloneRange(range);
     // we only have to consider ancestors of the end of the range since we always merge
     // towards the left
@@ -64,9 +64,13 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       ) {
         // If we did split inside a nested list, the rightside will
         // now have nested list as the first element, which is not allowed, so we flatten it
-        flattenList(transaction, rightSideOfSplit);
+        flattenList(range.root, transaction, rightSideOfSplit);
       }
-      rangeAfterDelete = cleanupRangeAfterDelete(transaction, rangeAfterDelete);
+      rangeAfterDelete = cleanupRangeAfterDelete(
+        range.root,
+        transaction,
+        rangeAfterDelete
+      );
     } else {
       rangeAfterDelete = transaction.removeNodes(clonedRange);
     }
@@ -125,13 +129,14 @@ function isolateLowestLi(
 }
 
 function cleanupRangeAfterDelete(
+  root: ModelElement,
   tr: Transaction,
   range: ModelRange
 ): ModelRange {
   const nodeAfter = range.start.nodeAfter();
 
   if (ModelNodeUtils.isListContainer(nodeAfter)) {
-    const rangeAfterCleaning = cleanupListWithoutLis(tr, nodeAfter);
+    const rangeAfterCleaning = cleanupListWithoutLis(root, tr, nodeAfter);
     if (rangeAfterCleaning) {
       return rangeAfterCleaning;
     }
@@ -154,7 +159,7 @@ function cleanupRangeAfterDelete(
           highestUl.getMaxOffset()
         )
       );
-      flattenList(tr, highestUl);
+      flattenList(root, tr, highestUl);
     }
   }
   return range;
@@ -177,7 +182,7 @@ function findNestedListFromPos(
 /**
  * Completely flatten a nested list up to the level of the given li container
  */
-function flattenList(tr: Transaction, list: ModelElement) {
+function flattenList(root: ModelElement, tr: Transaction, list: ModelElement) {
   let firstLi = list.children.find(ModelNodeUtils.isListElement);
   if (firstLi) {
     // SAFETY: the filter guarantees nodes are elements
@@ -193,7 +198,9 @@ function flattenList(tr: Transaction, list: ModelElement) {
     let targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
 
     for (const nestedList of nestedLists) {
-      const moveRange = tr.unwrap(nestedList);
+      const moveRange = tr.unwrap(
+        modelPosToSimplePos(ModelPosition.fromBeforeNode(root, nestedList))
+      );
       const remainingLi = moveRange.start.parent;
       tr.moveToPosition(moveRange, targetPos);
       if (!remainingLi.children.length) {
@@ -206,11 +213,14 @@ function flattenList(tr: Transaction, list: ModelElement) {
 }
 
 function cleanupListWithoutLis(
+  root: ModelElement,
   tr: Transaction,
   list: ModelElement
 ): ModelRange | null {
   if (list.children.filter(ModelNodeUtils.isListElement).length === 0) {
-    return tr.unwrap(list);
+    return tr.unwrap(
+      modelPosToSimplePos(ModelPosition.fromBeforeNode(root, list))
+    );
   }
   return null;
 }

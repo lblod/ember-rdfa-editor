@@ -17,7 +17,6 @@ module('Unit | model | simple-position-test', function () {
       `;
 
       const actualValid = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, doc, 0)
       );
       const expected = 0;
@@ -36,19 +35,16 @@ module('Unit | model | simple-position-test', function () {
       `;
 
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, doc, 0)
       );
       const expected1 = 0;
 
       const actual2 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, textNode, 1)
       );
       const expected2 = 1;
 
       const actual3 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, textNode, 3)
       );
       const expected3 = 3;
@@ -70,13 +66,11 @@ module('Unit | model | simple-position-test', function () {
         </modelRoot>
       `;
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromBeforeNode(doc as ModelElement, br)
       );
       const expected1 = 3;
 
       const actual2 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, br)
       );
       const expected2 = 4;
@@ -100,24 +94,20 @@ module('Unit | model | simple-position-test', function () {
         </modelRoot>
       `;
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromBeforeNode(doc as ModelElement, span)
       );
       const expected1 = 3;
       const actual2 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, span, 0)
       );
       const expected2 = 4;
 
       const actual3 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, innerText)
       );
       const expected3 = 8;
 
       const actual4 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, span)
       );
       const expected4 = 9;
@@ -139,19 +129,16 @@ module('Unit | model | simple-position-test', function () {
         </modelRoot>
       `;
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromBeforeNode(doc as ModelElement, span)
       );
       const expected1 = 0;
 
       const actual2 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, span, 0)
       );
       const expected2 = 1;
 
       const actual3 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, span)
       );
       const expected3 = 2;
@@ -174,31 +161,26 @@ module('Unit | model | simple-position-test', function () {
         </modelRoot>
       `;
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromBeforeNode(doc as ModelElement, span)
       );
       const expected1 = 0;
 
       const actual2 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromInNode(doc as ModelElement, span, 0)
       );
       const expected2 = 1;
 
       const actual3 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, br1)
       );
       const expected3 = 2;
 
       const actual4 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, br2)
       );
       const expected4 = 3;
 
       const actual5 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromAfterNode(doc as ModelElement, br3)
       );
       const expected5 = 4;
@@ -221,7 +203,6 @@ module('Unit | model | simple-position-test', function () {
         </modelRoot>
       `;
       const actual1 = modelPosToSimplePos(
-        doc as ModelElement,
         ModelPosition.fromBeforeNode(doc as ModelElement, text1)
       );
       const expected1 = 0;

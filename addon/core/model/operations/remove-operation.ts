@@ -9,24 +9,12 @@ import Operation from './operation';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export default class RemoveOperation extends Operation {
-  private _nodes: ModelNode[];
-
   constructor(
     root: ModelElement,
     eventBus: EventBus | undefined,
-    range: ModelRange,
-    ...nodes: ModelNode[]
+    range: ModelRange
   ) {
     super(root, eventBus, range);
-    this._nodes = nodes;
-  }
-
-  get nodes(): ModelNode[] {
-    return this._nodes;
-  }
-
-  set nodes(value: ModelNode[]) {
-    this._nodes = value;
   }
 
   execute() {

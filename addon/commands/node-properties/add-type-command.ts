@@ -2,8 +2,9 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 
 export interface AddTypeCommandArgs {
   type: string;
@@ -30,9 +31,16 @@ export default class AddTypeCommand
     let oldTypeof = element.getAttribute('typeof');
     if (!oldTypeof) oldTypeof = '';
     const newType = `${oldTypeof} ${type}`;
-    const newNode = transaction.setProperty(element, 'typeof', newType);
-    transaction.selectRange(
-      ModelRange.fromInElement(transaction.currentDocument, newNode, 0, 0)
+    const elementInLatestState = transaction.inWorkingCopy(element);
+    transaction.setProperty(
+      modelPosToSimplePos(
+        ModelPosition.fromBeforeNode(
+          transaction.apply().document,
+          elementInLatestState
+        )
+      ),
+      'typeof',
+      newType
     );
   }
 }
