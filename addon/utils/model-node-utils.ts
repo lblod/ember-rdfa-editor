@@ -227,7 +227,12 @@ export default class ModelNodeUtils {
     nodeToReplace: ModelNode,
     newNode: ModelNode
   ): ModelElement {
+    if (nodeToReplace === root) {
+      ModelNode.assertModelElement(newNode);
+      return newNode;
+    }
     const path = ModelNodeUtils.pathFromRoot(root, nodeToReplace);
+    console.log('PATH', path);
     const clonedPath = ModelNodeUtils.shallowCloneNodePath(path);
     if (path.length !== clonedPath.length) {
       throw new AssertionError(
@@ -309,6 +314,9 @@ export default class ModelNodeUtils {
     includeTarget = false
   ): ModelNode[] {
     let result: ModelNode[] = [];
+    if (root === node) {
+      return [root];
+    }
     if (includeTarget) {
       result = [node];
     }

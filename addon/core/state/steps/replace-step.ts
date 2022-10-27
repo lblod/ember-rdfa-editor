@@ -1,10 +1,11 @@
 import {
-  BaseStep,
-  StepResult,
+  OperationStep,
+  OperationStepResult,
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import State, { cloneStateInRange } from '@lblod/ember-rdfa-editor/core/state';
 import {
+  modelRangeToSimpleRange,
   SimpleRange,
   simpleRangeToModelRange,
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
@@ -18,7 +19,7 @@ export interface ReplaceStepArgs {
   nodes?: ModelNode[];
 }
 
-export default class ReplaceStep implements BaseStep {
+export default class ReplaceStep implements OperationStep {
   private readonly _type: StepType = 'replace-step';
   private range: SimpleRange;
   private nodes: ModelNode[];
@@ -32,7 +33,7 @@ export default class ReplaceStep implements BaseStep {
     return this._type;
   }
 
-  getResult(initialState: State): StepResult {
+  getResult(initialState: State): OperationStepResult {
     const resultState = cloneStateInRange(this.range, initialState);
     const op = new InsertOperation(
       resultState.document,
@@ -40,8 +41,11 @@ export default class ReplaceStep implements BaseStep {
       simpleRangeToModelRange(this.range, resultState.document),
       ...this.nodes
     );
-    op.execute();
-    return { state: resultState };
+    const { defaultRange } = op.execute();
+    return {
+      state: resultState,
+      defaultRange: modelRangeToSimpleRange(defaultRange),
+    };
   }
 
   mapPosition(position: SimplePosition, _bias?: LeftOrRight): SimplePosition {
