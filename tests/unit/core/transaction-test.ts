@@ -667,7 +667,7 @@ module('Unit | core | transaction-test', function () {
       assert.true(result.sameAs(expected), QUnit.dump.parse(result));
       assert.true(
         resultRange.sameAs(
-          ModelRange.fromInElement(initial as ModelElement, result, 0, 3)
+          ModelRange.fromInElement(initial as ModelElement, result, 3, 3)
         ),
         resultRange.toString()
       );
@@ -741,7 +741,7 @@ module('Unit | core | transaction-test', function () {
 
       assert.true(
         resultRange.sameAs(
-          ModelRange.fromInElement(initial as ModelElement, result, 2, 4)
+          ModelRange.fromInElement(initial as ModelElement, result, 4, 4)
         ),
         resultRange.toString()
       );

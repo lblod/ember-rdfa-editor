@@ -46,7 +46,6 @@ import {
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import MarkStep from '@lblod/ember-rdfa-editor/core/state/steps/mark-step';
-import InsertTextStep from '@lblod/ember-rdfa-editor/core/state/steps/insert-text-step';
 import ReplaceStep from '@lblod/ember-rdfa-editor/core/state/steps/replace-step';
 import RemoveStep from '@lblod/ember-rdfa-editor/core/state/steps/remove-step';
 import MoveStep from '@lblod/ember-rdfa-editor/core/state/steps/move-step';
@@ -57,6 +56,8 @@ import {
 } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
+import ModelText from '../model/nodes/model-text';
+import InsertTextStep from './steps/insert-text-step';
 
 interface TextInsertion {
   range: ModelRange;
@@ -283,16 +284,22 @@ export default class Transaction {
   }
 
   insertText({ range, text, marks }: TextInsertion): ModelRange {
-    const defaultRange = this.addAndCommitOperationStep(
-      new InsertTextStep({
-        text,
-        marks: marks || new MarkSet(),
-        range: modelRangeToSimpleRange(range),
-      })
-    );
+    // const defaultRange = this.addAndCommitOperationStep(
+    //   new InsertTextStep({
+    //     text,
+    //     marks: marks || new MarkSet(),
+    //     range: modelRangeToSimpleRange(range),
+    //   })
+    // );
 
-    this.createSnapshot();
-    return simpleRangeToModelRange(defaultRange, this.apply().document);
+    // this.createSnapshot();
+    // return simpleRangeToModelRange(defaultRange, this.apply().document);
+    const textNode = new ModelText(text);
+    if (marks) {
+      textNode.marks = marks;
+    }
+
+    return this.insertNodes(range, textNode);
   }
 
   insertNodes(range: ModelRange, ...nodes: ModelNode[]): ModelRange {
@@ -626,6 +633,19 @@ export default class Transaction {
       this.currentDocument,
       targetElement
     );
+    // const targetRange = modelRangeToSimpleRange(
+    //   ModelRange.fromAroundNode(this.currentDocument, targetElement)
+    // );
+    // const resultRange = simpleRangeToModelRange(
+    //   this.addAndCommitOperationStep(
+    //     new ReplaceStep({
+    //       range: targetRange,
+    //       nodes: targetElement.children,
+    //     })
+    //   ),
+    //   this.apply().document
+    // );
+
     const resultRange = simpleRangeToModelRange(
       this.addAndCommitOperationStep(
         new MoveStep({

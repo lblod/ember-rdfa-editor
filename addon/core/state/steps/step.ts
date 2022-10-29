@@ -15,7 +15,6 @@ import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
 
 const OPERATION_STEP_TYPES = new Set<StepType>([
-  'insert-text-step',
   'replace-step',
   'remove-step',
   'mark-step',

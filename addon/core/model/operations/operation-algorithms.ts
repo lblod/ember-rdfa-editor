@@ -313,6 +313,33 @@ export default class OperationAlgorithms {
         new RangeMapper([buildPositionMapping(rangeAfterRemove, newEndPos)])
       );
     }
+    const startNode = nodes[0];
+    let endNode = nodes[nodes.length - 1];
+    if (ModelNode.isModelText(startNode)) {
+      const previousSibling = startNode.getPreviousSibling(root);
+      if (
+        previousSibling &&
+        ModelNode.isModelText(previousSibling) &&
+        startNode.isMergeable(previousSibling)
+      ) {
+        previousSibling.content = previousSibling.content + startNode.content;
+        startNode.remove(root);
+        if (startNode === endNode) {
+          endNode = previousSibling;
+        }
+      }
+    }
+    if (ModelNode.isModelText(endNode)) {
+      const nextSibling = endNode.getNextSibling(root);
+      if (
+        nextSibling &&
+        ModelNode.isModelText(nextSibling) &&
+        endNode.isMergeable(nextSibling)
+      ) {
+        endNode.content = endNode.content + nextSibling.content;
+        nextSibling.remove(root);
+      }
+    }
     return {
       overwrittenNodes,
       _markCheckNodes,
