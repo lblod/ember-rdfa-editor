@@ -260,7 +260,12 @@ export default class ModelNodeUtils {
   static shallowCloneNodePath(path: ModelNode[]): ModelNode[] {
     const result = [];
     if (path.length === 1) {
-      result.push(path[0].clone());
+      if (path[0].isLeaf) {
+        result.push(path[0].clone());
+      } else {
+        ModelNode.assertModelElement(path[0]);
+        result.push(path[0].shallowClone());
+      }
     } else {
       let cur = path[0];
       if (cur.isLeaf) {

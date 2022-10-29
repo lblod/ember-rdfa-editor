@@ -57,7 +57,6 @@ import {
 import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
 import ModelText from '../model/nodes/model-text';
-import InsertTextStep from './steps/insert-text-step';
 
 interface TextInsertion {
   range: ModelRange;
