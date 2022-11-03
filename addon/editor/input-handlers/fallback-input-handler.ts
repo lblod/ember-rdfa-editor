@@ -20,6 +20,7 @@ export default class FallbackInputHandler extends InputHandler {
     'keydown',
     'keyup',
     'mousedown',
+    'mouseup',
     'beforeinput',
   ];
 
