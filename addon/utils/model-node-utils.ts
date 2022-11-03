@@ -287,6 +287,7 @@ export default class ModelNodeUtils {
             for (const child of cur.children) {
               if (child === node) {
                 curClone.addChild(nodeClone);
+                result.push(nodeClone);
               } else {
                 curClone.addChild(child);
               }
@@ -297,13 +298,13 @@ export default class ModelNodeUtils {
         }
         const last = path[path.length - 1];
         ModelNode.assertModelElement(cur);
+        const lastClone = last.isLeaf
+          ? last.clone()
+          : (last as ModelElement).shallowClone();
         for (const child of cur.children) {
           if (child === last) {
-            if (!last.isLeaf && ModelNode.isModelElement(last)) {
-              curClone.addChild(last.shallowClone());
-            } else {
-              curClone.addChild(last.clone());
-            }
+            curClone.addChild(lastClone);
+            result.push(lastClone);
           } else {
             curClone.addChild(child);
           }
