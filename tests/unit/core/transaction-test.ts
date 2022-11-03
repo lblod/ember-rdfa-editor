@@ -5,6 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module('Unit | core | transaction-test', function () {
   test('splitUntil splits until predicate true', function (assert) {
@@ -340,18 +341,14 @@ module('Unit | core | transaction-test', function () {
           </div>
         </modelRoot>
       `;
+      ModelNode.assertModelElement(initial);
       const initialState = testState({ document: initial });
       const tr = initialState.createTransaction();
-      const range = ModelRange.fromInTextNode(
-        initial as ModelElement,
-        rangeStart,
-        2,
-        2
-      );
+      const range = ModelRange.fromInTextNode(initial, rangeStart, 2, 2);
       const resultRange = tr.splitRangeUntilElements(
         range,
-        initial as ModelElement,
-        initial as ModelElement,
+        initial,
+        initial,
         false
       );
       const result = tr.apply().document;

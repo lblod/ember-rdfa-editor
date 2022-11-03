@@ -450,16 +450,16 @@ export default class Transaction {
   ) {
     const latestState = this.apply();
     const simplePos = modelPosToSimplePos(position);
-    const stepResult = this.stepCache.find(
-      (result) => result.state.document === position.root
-    );
-    if (!stepResult) {
+    const stepResult =
+      this.stepCache.find((result) => result.state.document === position.root)
+        ?.state ?? this.initialState;
+    if (!stepResult || stepResult.document !== position.root) {
       throw new AssertionError(
         'The root of this position did not arise from this transaction'
       );
     }
     return simplePosToModelPos(
-      this.mapPosition(simplePos, { bias, fromState: stepResult.state }),
+      this.mapPosition(simplePos, { bias, fromState: stepResult }),
       latestState.document
     );
   }
@@ -477,10 +477,10 @@ export default class Transaction {
   mapModelRange(range: ModelRange, config?: RangeMapConfig) {
     const latestState = this.apply();
     const simpleRange = modelRangeToSimpleRange(range);
-    const stepResult = this.stepCache.find(
-      (result) => result.state.document === range.root
-    );
-    if (!stepResult) {
+    const stepResult =
+      this.stepCache.find((result) => result.state.document === range.root)
+        ?.state ?? this.initialState;
+    if (!stepResult || stepResult.document !== range.root) {
       throw new AssertionError(
         'The root of this position did not arise from this transaction'
       );
@@ -488,7 +488,7 @@ export default class Transaction {
     return simpleRangeToModelRange(
       this.mapRange(simpleRange, {
         ...config,
-        fromState: stepResult.state,
+        fromState: stepResult,
       }),
       latestState.document
     );
