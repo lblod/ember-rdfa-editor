@@ -8,11 +8,12 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '../model-range';
 import ModelNode from '../nodes/model-node';
-import RangeMapper from '../range-mapper';
+import { SimpleRangeMapper } from '../range-mapper';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 export interface OperationResult {
-  mapper: RangeMapper;
+  mapper: SimpleRangeMapper;
   defaultRange: ModelRange;
   insertedNodes: ModelNode[];
   overwrittenNodes: ModelNode[];
@@ -20,7 +21,7 @@ export interface OperationResult {
 }
 
 export default abstract class Operation {
-  private _range: ModelRange;
+  private _range: SimpleRange;
   protected root: ModelElement;
   protected eventBus?: EventBus;
   protected logger: Logger;
@@ -28,7 +29,7 @@ export default abstract class Operation {
   protected constructor(
     root: ModelElement,
     eventBus: EventBus | undefined,
-    range: ModelRange
+    range: SimpleRange
   ) {
     this.eventBus = eventBus;
     this.logger = createLogger(this.constructor.name);
@@ -36,11 +37,11 @@ export default abstract class Operation {
     this.root = root;
   }
 
-  get range(): ModelRange {
+  get range(): SimpleRange {
     return this._range;
   }
 
-  set range(value: ModelRange) {
+  set range(value: SimpleRange) {
     this._range = value;
   }
 

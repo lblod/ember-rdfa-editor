@@ -3,7 +3,10 @@ import {
   StepResult,
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import {
+  EMPTY_MAPPER,
+  LeftOrRight,
+} from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import State from '@lblod/ember-rdfa-editor/core/state';
@@ -25,7 +28,7 @@ export default class StateStep implements BaseStep {
 
   getResult(initialState: State): StepResult {
     const result = this.manip(initialState);
-    return { state: result };
+    return { state: result, mapper: EMPTY_MAPPER };
   }
 
   mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {

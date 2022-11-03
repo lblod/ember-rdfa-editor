@@ -4,15 +4,20 @@ import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
 import { CORE_OWNER } from '@lblod/ember-rdfa-editor/utils/constants';
-import RangeMapper from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import { SimpleRangeMapper } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import Operation from './operation';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import { simplePosToModelPos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 
 export default class RemoveOperation extends Operation {
   constructor(
     root: ModelElement,
     eventBus: EventBus | undefined,
-    range: ModelRange
+    range: SimpleRange
   ) {
     super(root, eventBus, range);
   }
@@ -25,15 +30,16 @@ export default class RemoveOperation extends Operation {
       this.range
     );
     const overwrittenNodes: ModelNode[] = removedNodes;
-    const resultMapper: RangeMapper = mapper;
+    const resultMapper: SimpleRangeMapper = mapper;
 
-    const defaultRange = new ModelRange(this.range.start, this.range.start);
+    const defaultPos = simplePosToModelPos(this.range.start, this.root);
+    const defaultRange = new ModelRange(defaultPos, defaultPos);
     this.emit(
       new ContentChangedEvent({
         owner: CORE_OWNER,
         payload: {
           type: 'remove',
-          oldRange: this.range,
+          oldRange: simpleRangeToModelRange(this.range, this.root),
           newRange: defaultRange,
           insertedNodes: [],
           overwrittenNodes,

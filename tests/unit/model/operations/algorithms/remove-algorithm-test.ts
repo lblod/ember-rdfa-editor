@@ -2,8 +2,9 @@ import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import { pathToSimplePos } from 'dummy/tests/test-utils';
 
 module(
   'Unit | model | operations | algorithms | remove-algorithm-test | ',
@@ -77,74 +78,69 @@ module(
           </span>
         </modelRoot>
       `;
-      const start = ModelPosition.fromInElement(
-        initial as ModelElement,
-        div1,
-        0
+      ModelNode.assertModelElement(initial);
+      const start = modelPosToSimplePos(
+        ModelPosition.fromInElement(initial, div1, 0)
       );
-      const end = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text4,
-        2
+      const end = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text4, 2)
       );
-      const testpos1 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text4,
-        3
+      const testpos1 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text4, 3)
       );
-      const testpos2 = ModelPosition.fromAfterNode(
-        initial as ModelElement,
-        span3
+      const testpos2 = modelPosToSimplePos(
+        ModelPosition.fromAfterNode(initial, span3)
       );
-      const testpos3 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text7,
-        2
+      const testpos3 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text7, 2)
       );
       // position inside deleted range
-      const testpos4 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text3,
-        2
+      const testpos4 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text3, 2)
       );
-      const testpos5 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text6,
-        2
+      const testpos5 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text6, 2)
       );
 
-      const deepPos = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        superDeep,
-        2
+      const deepPos = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, superDeep, 2)
       );
-      const { mapper: removeMapper } = OperationAlgorithms.remove(
-        initial as ModelElement,
-        new ModelRange(start, end)
-      );
+      const { mapper: removeMapper } = OperationAlgorithms.remove(initial, {
+        start,
+        end,
+      });
 
       const newEndPos = removeMapper.mapPosition(end);
       const newStartPos = removeMapper.mapPosition(start);
-      const newStartPosLeft = removeMapper.mapPosition(start, 'left');
+      const newStartPosLeft = removeMapper.mapPosition(start, {
+        bias: 'left',
+      });
       const newTestPos1 = removeMapper.mapPosition(testpos1);
       const newTestPos2 = removeMapper.mapPosition(testpos2);
       const newTestPos3 = removeMapper.mapPosition(testpos3);
-      const newTestPos4LeftBias = removeMapper.mapPosition(testpos4, 'left');
-      const newTestPos4RightBias = removeMapper.mapPosition(testpos4, 'right');
+      const newTestPos4LeftBias = removeMapper.mapPosition(testpos4, {
+        bias: 'left',
+      });
+      const newTestPos4RightBias = removeMapper.mapPosition(testpos4, {
+        bias: 'right',
+      });
       const newTestPos5 = removeMapper.mapPosition(testpos5);
       const newDeepPos = removeMapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newEndPos.path, [1, 0, 0, 0]);
-      assert.deepEqual(newStartPos.path, [1, 0, 0, 0]);
-      assert.deepEqual(newStartPosLeft.path, [1, 0]);
-      assert.deepEqual(newTestPos1.path, [1, 0, 0, 1]);
-      assert.deepEqual(newTestPos2.path, [1, 0, 1]);
-      assert.deepEqual(newTestPos3.path, [4]);
-      assert.true(newTestPos4LeftBias.sameAs(newStartPosLeft));
-      assert.true(newTestPos4RightBias.sameAs(newEndPos));
-      assert.deepEqual(newTestPos5.path, [1, 0, 0, 8, 2]);
-      assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
+      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 0, 0]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 0, 0]));
+      assert.strictEqual(newStartPosLeft, pathToSimplePos(initial, [1, 0]));
+      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 0, 1]));
+      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 1]));
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(newTestPos4LeftBias, newStartPosLeft);
+      assert.strictEqual(newTestPos4RightBias, newEndPos);
+      assert.strictEqual(
+        newTestPos5,
+        pathToSimplePos(initial, [1, 0, 0, 8, 2])
+      );
+      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
     });
   }
 );

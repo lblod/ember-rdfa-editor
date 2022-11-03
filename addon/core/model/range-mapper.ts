@@ -1,6 +1,8 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 export type LeftOrRight = 'left' | 'right';
 export type PositionMapping = (
@@ -49,3 +51,55 @@ export default class RangeMapper {
     return this;
   }
 }
+export type SimplePositionMapping = (
+  position: SimplePosition,
+  bias?: LeftOrRight
+) => SimplePosition;
+
+export interface RangeMapConfig {
+  startBias?: LeftOrRight;
+  endBias?: LeftOrRight;
+}
+
+export interface PositionMapConfig {
+  bias?: LeftOrRight;
+}
+
+export class SimpleRangeMapper {
+  private mappings: SimplePositionMapping[];
+
+  constructor(mappings: SimplePositionMapping[] = []) {
+    this.mappings = mappings;
+  }
+
+  mapPosition(
+    position: SimplePosition,
+    { bias = 'left' }: PositionMapConfig = {}
+  ): SimplePosition {
+    let current = position;
+    for (const mapping of this.mappings) {
+      current = mapping(current, bias);
+    }
+    return current;
+  }
+
+  mapRange(
+    range: SimpleRange,
+    { startBias = 'left', endBias = 'right' }: RangeMapConfig = {}
+  ): SimpleRange {
+    if (range.start === range.end) {
+      const newPos = this.mapPosition(range.start, { bias: startBias });
+      return { start: newPos, end: newPos };
+    }
+    const newStart = this.mapPosition(range.start, { bias: startBias });
+    const newEnd = this.mapPosition(range.end, { bias: endBias });
+    return { start: newStart, end: newEnd };
+  }
+
+  appendMapper(mapper: SimpleRangeMapper): this {
+    this.mappings.push(...mapper.mappings);
+    return this;
+  }
+}
+
+export const EMPTY_MAPPER = new SimpleRangeMapper([]);

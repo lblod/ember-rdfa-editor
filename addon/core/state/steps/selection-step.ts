@@ -4,6 +4,7 @@ import { BaseStep, StepResult, StepType } from './step';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {EMPTY_MAPPER} from "@lblod/ember-rdfa-editor/core/model/range-mapper";
 
 export default class SelectionStep implements BaseStep {
   private readonly _type: StepType = 'selection-step';
@@ -35,6 +36,6 @@ export default class SelectionStep implements BaseStep {
     }
 
     newState.selection = this.selection;
-    return { state: newState };
+    return { state: newState, mapper: EMPTY_MAPPER };
   }
 }

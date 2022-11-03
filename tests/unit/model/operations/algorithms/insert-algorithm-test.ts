@@ -4,13 +4,17 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import { pathToSimplePos } from 'dummy/tests/test-utils';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 module(
   'Unit | model | operations | algorithms | insert-algorithm-test | ',
 
   function () {
     test('should insert properly', function (assert) {
+      //language=XML
       const {
         root: initial,
         elements: { span3, div1 },
@@ -102,78 +106,75 @@ module(
           </div>
         </div>
       `;
-      const start = ModelPosition.fromInElement(
-        initial as ModelElement,
-        div1,
-        0
+      ModelNode.assertModelElement(initial);
+      const start = modelPosToSimplePos(
+        ModelPosition.fromInElement(initial, div1, 0)
       );
-      const end = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text4,
-        2
+      const end = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text4, 2)
       );
-      const testpos1 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text4,
-        3
+      const testpos1 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text4, 3)
       );
-      const testpos2 = ModelPosition.fromAfterNode(
-        initial as ModelElement,
-        span3
+      const testpos2 = modelPosToSimplePos(
+        ModelPosition.fromAfterNode(initial, span3)
       );
-      const testpos3 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text7,
-        2
+      const testpos3 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text7, 2)
       );
       // position inside deleted range
-      const testpos4 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text3,
-        2
+      const testpos4 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text3, 2)
       );
-      const testpos5 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text6,
-        2
+      const testpos5 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text6, 2)
       );
 
-      const deepPos = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        superDeep,
-        2
+      const deepPos = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, superDeep, 2)
       );
       const { mapper } = OperationAlgorithms.insert(
-        initial as ModelElement,
-        new ModelRange(start, end),
+        initial,
+        { start, end },
         insertNode1,
         insertNode2
       );
 
       const newEndPos = mapper.mapPosition(end);
-      const newStartPos = mapper.mapPosition(start, 'left');
-      const newStartPosRight = mapper.mapPosition(start, 'right');
+      const newStartPos = mapper.mapPosition(start, { bias: 'left' });
+      const newStartPosRight = mapper.mapPosition(start, { bias: 'right' });
       const newTestPos1 = mapper.mapPosition(testpos1);
       const newTestPos2 = mapper.mapPosition(testpos2);
       const newTestPos3 = mapper.mapPosition(testpos3);
-      const newTestPos4LeftBias = mapper.mapPosition(testpos4, 'left');
-      const newTestPos4RightBias = mapper.mapPosition(testpos4, 'right');
+      const newTestPos4LeftBias = mapper.mapPosition(testpos4, {
+        bias: 'left',
+      });
+      const newTestPos4RightBias = mapper.mapPosition(testpos4, {
+        bias: 'right',
+      });
       const newTestPos5 = mapper.mapPosition(testpos5);
       const newDeepPos = mapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newEndPos.path, [1, 2, 0, 0]);
-      assert.deepEqual(newStartPos.path, [1, 0]);
-      assert.deepEqual(newStartPosRight.path, [1, 2, 0, 0]);
-      assert.deepEqual(newTestPos1.path, [1, 2, 0, 1]);
-      assert.deepEqual(newTestPos2.path, [1, 2, 1]);
-      assert.deepEqual(newTestPos3.path, [4]);
-      assert.true(newTestPos4LeftBias.sameAs(newStartPos));
-      assert.true(newTestPos4RightBias.sameAs(newEndPos));
-      assert.deepEqual(newTestPos5.path, [1, 2, 0, 8, 2]);
-      assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
+      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 2, 0, 0]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0]));
+      assert.strictEqual(
+        newStartPosRight,
+        pathToSimplePos(initial, [1, 2, 0, 0])
+      );
+      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 2, 0, 1]));
+      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 2, 1]));
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(newTestPos4LeftBias, newStartPos);
+      assert.strictEqual(newTestPos4RightBias, newEndPos);
+      assert.strictEqual(
+        newTestPos5,
+        pathToSimplePos(initial, [1, 2, 0, 8, 2])
+      );
+      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
     });
     test('collapsed insertion', function (assert) {
+      //language=XML
       const {
         root: initial,
         elements: { span3 },
@@ -270,39 +271,28 @@ module(
           </div>
         </div>
       `;
-      const insertionRange = ModelRange.fromInTextNode(
-        initial as ModelElement,
-        text2,
-        2,
-        2
+      ModelNode.assertModelElement(initial);
+      const insertionRange = modelRangeToSimpleRange(
+        ModelRange.fromInTextNode(initial, text2, 2, 2)
       );
-      const testpos1 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text4,
-        3
+      const testpos1 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text4, 3)
       );
-      const testpos2 = ModelPosition.fromAfterNode(
-        initial as ModelElement,
-        span3
+      const testpos2 = modelPosToSimplePos(
+        ModelPosition.fromAfterNode(initial, span3)
       );
-      const testpos3 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text7,
-        2
+      const testpos3 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text7, 2)
       );
-      const testpos5 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        text6,
-        2
+      const testpos5 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, text6, 2)
       );
 
-      const deepPos = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        superDeep,
-        2
+      const deepPos = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, superDeep, 2)
       );
       const { mapper } = OperationAlgorithms.insert(
-        initial as ModelElement,
+        initial,
         insertionRange,
         insertNode1,
         insertNode2
@@ -317,15 +307,19 @@ module(
       const newDeepPos = mapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newEndPos.path, [1, 0, 4]);
-      assert.deepEqual(newStartPos.path, [1, 0, 4]);
-      assert.deepEqual(newTestPos1.path, [1, 0, 7, 4]);
-      assert.deepEqual(newTestPos2.path, [1, 0, 8]);
-      assert.deepEqual(newTestPos3.path, [4]);
-      assert.deepEqual(newTestPos5.path, [1, 0, 7, 11, 2]);
-      assert.deepEqual(newDeepPos.path, [7, 0, 0, 0, 2]);
+      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 4]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 4]));
+      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 7, 4]));
+      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 8]));
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(
+        newTestPos5,
+        pathToSimplePos(initial, [1, 0, 7, 11, 2])
+      );
+      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
     });
     test('insert single char', function (assert) {
+      //language=XML
       const {
         root: initial,
         textNodes: { text1 },
@@ -334,6 +328,7 @@ module(
           <text __id="text1">test</text>
         </modelRoot>
       `;
+      //language=XML
       const { root: expected } = vdom`
         <modelRoot>
           <text __id="text1">t</text>
@@ -341,22 +336,26 @@ module(
           <text>est</text>
         </modelRoot>
       `;
+      ModelNode.assertModelElement(initial);
       const insertNode = new ModelText('x');
-      const insertionRange = ModelRange.fromInTextNode(
-        initial as ModelElement,
-        text1,
-        1,
-        1
-      );
+      const insertionRange = ModelRange.fromInTextNode(initial, text1, 1, 1);
       const { mapper } = OperationAlgorithms.insert(
-        initial as ModelElement,
-        insertionRange,
+        initial,
+        modelRangeToSimpleRange(insertionRange),
         insertNode
       );
-      const cursorPosition = insertionRange.end;
+      const cursorPosition = modelPosToSimplePos(insertionRange.end);
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(mapper.mapPosition(cursorPosition, 'left').path, [1]);
-      assert.deepEqual(mapper.mapPosition(cursorPosition, 'right').path, [2]);
+      assert.strictEqual(
+        mapper.mapPosition(cursorPosition, { bias: 'left' }),
+        pathToSimplePos(initial, [1])
+      );
+      assert.strictEqual(
+        mapper.mapPosition(cursorPosition, {
+          bias: 'right',
+        }),
+        pathToSimplePos(initial, [2])
+      );
     });
   }
 );

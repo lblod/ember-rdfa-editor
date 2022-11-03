@@ -8,7 +8,11 @@ import ModelRange, {
 import { Mark, MarkSet, MarkSpec } from '../model/marks/mark';
 import ModelNode from '../model/nodes/model-node';
 import ModelSelection from '../model/model-selection';
-import RangeMapper, { LeftOrRight } from '../model/range-mapper';
+import {
+  PositionMapConfig,
+  RangeMapConfig,
+  SimpleRangeMapper,
+} from '../model/range-mapper';
 import { HtmlReaderContext, readHtml } from '../model/readers/html-reader';
 import SelectionReader from '../model/readers/selection-reader';
 import { getWindowSelection } from '../../utils/dom-helpers';
@@ -28,7 +32,7 @@ import {
   commandMapToCommandExecutor,
 } from '../../commands/command-manager';
 import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
-import { isOperationStep, Step } from './steps/step';
+import { isOperationStep, Step, StepResult } from './steps/step';
 import SelectionStep from './steps/selection-step';
 import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
@@ -48,7 +52,6 @@ import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import MarkStep from '@lblod/ember-rdfa-editor/core/state/steps/mark-step';
 import ReplaceStep from '@lblod/ember-rdfa-editor/core/state/steps/replace-step';
 import RemoveStep from '@lblod/ember-rdfa-editor/core/state/steps/remove-step';
-import MoveStep from '@lblod/ember-rdfa-editor/core/state/steps/move-step';
 import {
   modelPosToSimplePos,
   SimplePosition,
@@ -78,11 +81,13 @@ export default class Transaction {
   initialState: State;
   private _steps: Step[];
   private _shouldFocus: boolean;
-  rangeMapper: RangeMapper;
+  private stepCache: StepResult[];
+  private stepCount: number;
   // we clone the nodes, so rdfa is invalid even if nothing happens to them
   // TODO: improve this
   rdfInvalid = false;
   marksInvalid = false;
+  mapper: SimpleRangeMapper;
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
   private willCreateSnapshot = false;
@@ -96,8 +101,10 @@ export default class Transaction {
      * so is an immediate target for improvement later.
      */
     this._steps = [];
-    this.rangeMapper = new RangeMapper();
     this._shouldFocus = false;
+    this.stepCache = [];
+    this.stepCount = 0;
+    this.mapper = new SimpleRangeMapper();
   }
 
   get currentDocument() {
@@ -254,8 +261,13 @@ export default class Transaction {
    * */
   apply(): State {
     let cur = this.initialState;
-    for (const step of this.steps) {
-      cur = step.getResult(cur).state;
+    for (let i = this.stepCount; i < this.steps.length; i++) {
+      const step = this.steps[i];
+      const result = step.getResult(cur);
+      this.stepCache[i] = result;
+      cur = result.state;
+      this.mapper.appendMapper(result.mapper);
+      this.stepCount = i;
     }
     if (
       this.initialState.baseIRI !== cur.baseIRI ||
@@ -378,13 +390,129 @@ export default class Transaction {
     rangeToMove: ModelRange,
     targetPosition: ModelPosition
   ): ModelRange {
-    const defaultRange = this.addAndCommitOperationStep(
-      new MoveStep({
-        rangeToMove: modelRangeToSimpleRange(rangeToMove),
-        targetPosition: modelPosToSimplePos(targetPosition),
+    const startState = this.apply();
+    if (targetPosition.isBetween(rangeToMove.start, rangeToMove.end)) {
+      throw new AssertionError(
+        'Cannot move range to position within that range'
+      );
+    }
+    if (rangeToMove.root !== startState.document) {
+      throw new AssertionError(
+        'Root of range not equal to current working state'
+      );
+    }
+    const range = modelRangeToSimpleRange(rangeToMove);
+    const position = modelPosToSimplePos(targetPosition);
+
+    const splitStep = new SplitStep({ range });
+    this.addStep(splitStep);
+    const stateAfterSplit = this.apply();
+
+    const nodesToMove = simpleRangeToModelRange(
+      range,
+      stateAfterSplit.document
+    ).contextNodes('rangeContains');
+
+    const rangeAfterSplit = this.mapRange(range, { fromState: startState });
+
+    const deleteStep = new ReplaceStep({ range: rangeAfterSplit, nodes: [] });
+    this.addStep(deleteStep);
+
+    const positionAfterDelete = this.mapPosition(position, {
+      fromState: startState,
+    });
+
+    this.addStep(
+      new ReplaceStep({
+        range: { start: positionAfterDelete, end: positionAfterDelete },
+        nodes: [...nodesToMove],
       })
     );
-    return simpleRangeToModelRange(defaultRange, this.apply().document);
+    return simpleRangeToModelRange(
+      this.mapRange(range, { fromState: startState }),
+      this.apply().document
+    );
+  }
+
+  mapPosition(
+    position: SimplePosition,
+    config: PositionMapConfig & {
+      fromState?: State;
+    } = {}
+  ): SimplePosition {
+    const fromState = config.fromState ?? this.initialState;
+    return this.getMapper(fromState).mapPosition(position, config);
+  }
+
+  mapModelPosition(
+    position: ModelPosition,
+    { bias = 'left' }: PositionMapConfig = {}
+  ) {
+    const latestState = this.apply();
+    const simplePos = modelPosToSimplePos(position);
+    const stepResult = this.stepCache.find(
+      (result) => result.state.document === position.root
+    );
+    if (!stepResult) {
+      throw new AssertionError(
+        'The root of this position did not arise from this transaction'
+      );
+    }
+    return simplePosToModelPos(
+      this.mapPosition(simplePos, { bias, fromState: stepResult.state }),
+      latestState.document
+    );
+  }
+
+  mapRange(
+    range: SimpleRange,
+    config: RangeMapConfig & {
+      fromState?: State;
+    } = {}
+  ): SimpleRange {
+    const fromState = config.fromState ?? this.initialState;
+    return this.getMapper(fromState).mapRange(range, config);
+  }
+
+  mapModelRange(range: ModelRange, config?: RangeMapConfig) {
+    const latestState = this.apply();
+    const simpleRange = modelRangeToSimpleRange(range);
+    const stepResult = this.stepCache.find(
+      (result) => result.state.document === range.root
+    );
+    if (!stepResult) {
+      throw new AssertionError(
+        'The root of this position did not arise from this transaction'
+      );
+    }
+    return simpleRangeToModelRange(
+      this.mapRange(simpleRange, {
+        ...config,
+        fromState: stepResult.state,
+      }),
+      latestState.document
+    );
+  }
+
+  getMapper(fromState = this.initialState): SimpleRangeMapper {
+    this.apply();
+    if (fromState === this.initialState) {
+      return this.mapper;
+    } else {
+      const stateIndex = this.stepCache.findIndex(
+        (result) => result.state === fromState
+      );
+      if (stateIndex < 0) {
+        throw new IllegalArgumentError(
+          'Provided state is not a state that was produced in this transaction'
+        );
+      }
+      const mapper = new SimpleRangeMapper();
+      for (let i = stateIndex; i < this.steps.length; i++) {
+        mapper.appendMapper(this.stepCache[i].mapper);
+      }
+      return mapper;
+    }
   }
 
   removeMarkFromSelection(markname: string) {
@@ -520,23 +648,15 @@ export default class Transaction {
     }
 
     this.createSnapshot();
-
-    return this.executeSplitOperation(position, splitParent);
-  }
-
-  private executeSplitOperation(
-    position: ModelPosition,
-    splitParent = true
-  ): ModelPosition {
     const simplePos = modelPosToSimplePos(position);
-    const defaultRange = this.addAndCommitOperationStep(
+
+    this.addStep(
       new SplitStep({
         range: { start: simplePos, end: simplePos },
         splitParent,
       })
     );
-    this.createSnapshot();
-    return simpleRangeToModelRange(defaultRange, this.apply().document).start;
+    return this.mapModelPosition(position);
   }
 
   insertAtPosition(position: ModelPosition, ...nodes: ModelNode[]): ModelRange {
@@ -575,17 +695,14 @@ export default class Transaction {
    * which depended on stateful logic, but should eventually become private or dissapear
    * */
   cloneRange(range: ModelRange): ModelRange {
-    return simpleRangeToModelRange(
-      modelRangeToSimpleRange(range),
-      this.apply().document
-    );
+    return this.mapModelRange(range);
   }
 
   /**
    * Position version of @link{cloneRange}
    * */
   clonePos(pos: ModelPosition): ModelPosition {
-    return simplePosToModelPos(modelPosToSimplePos(pos), this.apply().document);
+    return this.mapModelPosition(pos);
   }
 
   /**
@@ -645,15 +762,7 @@ export default class Transaction {
     //   this.apply().document
     // );
 
-    const resultRange = simpleRangeToModelRange(
-      this.addAndCommitOperationStep(
-        new MoveStep({
-          rangeToMove: modelRangeToSimpleRange(srcRange),
-          targetPosition: modelPosToSimplePos(target),
-        })
-      ),
-      this.apply().document
-    );
+    const resultRange = this.moveToPosition(srcRange, target);
     this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
@@ -782,27 +891,27 @@ export default class Transaction {
 
   mapSelection(
     selection: ModelSelection,
-    bias: LeftOrRight = 'right'
+    config?: RangeMapConfig
   ): ModelSelection {
     const clone = this.cloneSelection(selection);
-    let simpleRanges = clone.ranges.map((range) =>
+    const simpleRanges = clone.ranges.map((range) =>
       modelRangeToSimpleRange(range)
     );
-    for (const step of this.steps) {
-      simpleRanges = simpleRanges.map((range) => step.mapRange(range, bias));
-    }
     clone.ranges = simpleRanges.map((range) =>
-      simpleRangeToModelRange(range, this.apply().document)
+      simpleRangeToModelRange(
+        this.mapRange(range, config),
+        this.apply().document
+      )
     );
     return clone;
   }
 
-  mapInitialSelection(bias: LeftOrRight = 'right'): ModelSelection {
-    return this.mapSelection(this.initialState.selection, bias);
+  mapInitialSelection(config?: RangeMapConfig): ModelSelection {
+    return this.mapSelection(this.initialState.selection, config);
   }
 
-  mapInitialSelectionAndSet(bias: LeftOrRight = 'right'): void {
-    const result = this.mapInitialSelection(bias);
+  mapInitialSelectionAndSet(config?: RangeMapConfig): void {
+    const result = this.mapInitialSelection(config);
     this.setSelection(result);
   }
 

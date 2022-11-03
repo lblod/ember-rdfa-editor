@@ -21,6 +21,8 @@ import {
 } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 function testMarkToggling(assert: Assert, start: number, end: number) {
   const {
@@ -31,22 +33,23 @@ function testMarkToggling(assert: Assert, start: number, end: number) {
         <text __id="text" __marks="italic">abcdefghi</text>
       </modelRoot>`;
 
+  ModelNode.assertModelElement(initial);
   const rangeBeginning = new ModelRange(
-    ModelPosition.fromInTextNode(initial as ModelElement, text, start),
-    ModelPosition.fromInTextNode(initial as ModelElement, text, end)
+    ModelPosition.fromInTextNode(initial, text, start),
+    ModelPosition.fromInTextNode(initial, text, end)
   );
   const op1 = new MarkOperation(
-    initial as ModelElement,
+    initial,
     undefined,
-    rangeBeginning,
+    modelRangeToSimpleRange(rangeBeginning),
     boldMarkSpec,
     {},
     'add'
   );
   const op2 = new MarkOperation(
-    initial as ModelElement,
+    initial,
     undefined,
-    rangeBeginning,
+    modelRangeToSimpleRange(rangeBeginning),
     boldMarkSpec,
     {},
     'remove'

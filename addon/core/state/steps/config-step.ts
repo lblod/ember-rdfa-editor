@@ -2,6 +2,7 @@ import State, { SayState } from '../index';
 import { BaseStep, StepResult, StepType } from './step';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import { EMPTY_MAPPER } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 
 export default class ConfigStep implements BaseStep {
   private readonly _type: StepType = 'config-step';
@@ -34,6 +35,6 @@ export default class ConfigStep implements BaseStep {
       ...initialState,
       config: newConfig,
     });
-    return { state };
+    return { state, mapper: EMPTY_MAPPER };
   }
 }

@@ -1,18 +1,27 @@
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import ModelTreeWalker, {
   toFilterSkipFalse,
 } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
-import RangeMapper, {
+import {
   LeftOrRight,
+  SimplePositionMapping,
+  SimpleRangeMapper,
 } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
-import { RelativePosition } from '@lblod/ember-rdfa-editor/utils/types';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import {
+  modelPosToSimplePos,
+  SimplePosition,
+  simplePosToModelPos,
+} from '@lblod/ember-rdfa-editor/core/model/simple-position';
 
-export type OperationAlgorithmResponse<T> = { mapper: RangeMapper } & T;
+export type OperationAlgorithmResponse<T> = { mapper: SimpleRangeMapper } & T;
 /**
  * A shared library of algorithms to be used by operations only
  * Any use outside of operations is not supported
@@ -41,29 +50,32 @@ const cantRemoveOpeningTagNodeTypes = new Set<string>([
 export default class OperationAlgorithms {
   static removeNew(
     root: ModelElement,
-    range: ModelRange
+    range: SimpleRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     //start algorithm
-    if (range.collapsed) {
+    const modelRange = simpleRangeToModelRange(range, root);
+    if (modelRange.collapsed) {
       return {
         removedNodes: [],
-        mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
+        mapper: new SimpleRangeMapper([
+          buildPositionMappingForInsert(range.start, range.end, 0),
+        ]),
       };
     }
 
     //split end and start if they are inside a text node
-    if (range.start.isInsideText()) {
-      range.start.split();
+    if (modelRange.start.isInsideText()) {
+      modelRange.start.split();
     }
-    if (range.end.isInsideText()) {
-      range.end.split(true);
+    if (modelRange.end.isInsideText()) {
+      modelRange.end.split(true);
     }
 
     //get nodes that will move after the delition operation
     //these are siblings of the closest node to the end of the range (if any)
     //assumption: nodeAfter doesn't grab anything if the next node to the end of the range is one level up
     const nodesToMove: ModelNode[] = [];
-    let nextNode = range.end.nodeAfter();
+    let nextNode = modelRange.end.nodeAfter();
 
     while (nextNode) {
       nodesToMove.push(nextNode);
@@ -74,7 +86,7 @@ export default class OperationAlgorithms {
     //assumption: the only partial nodes that treewalker grabs are the ones that have opening tags in the selection
     //assumption: opening tag nodes are always parents of the last node in range
     const walker = GenTreeWalker.fromRange({
-      range: range,
+      range: modelRange,
       filter: toFilterSkipFalse((node) => ModelNode.isModelElement(node)),
     });
     const allNodes = [...walker.nodes()];
@@ -83,7 +95,7 @@ export default class OperationAlgorithms {
     //ie [<span><text>abc</text>]</span>
     //would grab just the text node
     const confinedNodes: ModelNode[] = [];
-    const confinedRanges = range.getMinimumConfinedRanges();
+    const confinedRanges = modelRange.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = GenTreeWalker.fromRange({ range: range });
@@ -134,11 +146,11 @@ export default class OperationAlgorithms {
 
     //merge the nodes we collected before (siblings at the end position) to the start position
     //unless if the start position is a descendant of one of the tags we dont merge into
-    const parent = range.start.parent;
+    const parent = modelRange.start.parent;
 
     let index;
-    const nodeBefore = range.start.nodeBefore();
-    const nodeAfter = range.start.nodeAfter();
+    const nodeBefore = modelRange.start.nodeBefore();
+    const nodeAfter = modelRange.start.nodeAfter();
     if (nodeBefore) {
       index = nodeBefore.getIndex(root)! + 1;
     } else if (nodeAfter) {
@@ -170,8 +182,8 @@ export default class OperationAlgorithms {
     }
 
     //merge text nodes that end up next to each other
-    const after = range.start.nodeAfter();
-    const before = range.start.nodeBefore();
+    const after = modelRange.start.nodeAfter();
+    const before = modelRange.start.nodeBefore();
     if (before && after) {
       if (ModelNode.isModelText(before) && ModelNode.isModelText(after)) {
         this.mergeTextNodes(root, [before]);
@@ -185,38 +197,39 @@ export default class OperationAlgorithms {
 
     return {
       removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
-      mapper: new RangeMapper([buildPositionMapping(range, range.start)]),
+      mapper: new SimpleRangeMapper([
+        buildPositionMappingForInsert(range.start, range.end, 0),
+      ]),
     };
   }
 
   static remove(
     root: ModelElement,
-    range: ModelRange
+    range: SimpleRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     let newStartNode: ModelNode | null = null;
     let newEndNode: ModelNode | null = null;
     let splitStart = false;
     let splitEnd = false;
-    if (range.start.isInsideText()) {
-      range.start.split();
+    const modelRange = simpleRangeToModelRange(range, root);
+    if (modelRange.start.isInsideText()) {
+      modelRange.start.split();
       splitStart = true;
     }
-    if (range.end.isInsideText()) {
-      range.end.split(true);
+    if (modelRange.end.isInsideText()) {
+      modelRange.end.split(true);
       splitEnd = true;
     }
     if (splitStart) {
-      newStartNode = range.start.nodeAfter();
+      newStartNode = modelRange.start.nodeAfter();
     }
     if (splitEnd) {
-      newEndNode = range.end.nodeBefore();
+      newEndNode = modelRange.end.nodeBefore();
     }
-    const afterEnd = range.end.nodeAfter();
-    const endParent = range.end.parent;
 
     const nodesToRemove = [];
 
-    const confinedRanges = range.getMinimumConfinedRanges();
+    const confinedRanges = modelRange.getMinimumConfinedRanges();
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({ range, descend: false });
@@ -224,7 +237,7 @@ export default class OperationAlgorithms {
       }
     }
 
-    if (!range.collapsed && newStartNode) {
+    if (!modelRange.collapsed && newStartNode) {
       newStartNode.remove(root);
     }
     for (const node of nodesToRemove.filter(
@@ -232,59 +245,52 @@ export default class OperationAlgorithms {
     )) {
       node.remove(root);
     }
-    if (!range.collapsed && newEndNode && !(newStartNode === newEndNode)) {
+    if (!modelRange.collapsed && newEndNode && !(newStartNode === newEndNode)) {
       newEndNode.remove(root);
-    }
-
-    let newEndPos;
-    if (afterEnd) {
-      newEndPos = ModelPosition.fromBeforeNode(root, afterEnd);
-    } else {
-      newEndPos = ModelPosition.fromInNode(
-        root,
-        endParent,
-        endParent.getMaxOffset()
-      );
     }
 
     return {
       removedNodes: nodesToRemove,
-      mapper: new RangeMapper([buildPositionMapping(range, newEndPos)]),
+      mapper: new SimpleRangeMapper([
+        buildPositionMappingForInsert(range.start, range.end, 0),
+      ]),
     };
   }
 
   static insert(
     root: ModelElement,
-    range: ModelRange,
+    range: SimpleRange,
     ...nodes: ModelNode[]
   ): OperationAlgorithmResponse<{
     overwrittenNodes: ModelNode[];
     _markCheckNodes: ModelNode[];
   }> {
     let overwrittenNodes: ModelNode[] = [];
-    let newEndPos;
-    let mapper: RangeMapper;
+    let mapper: SimpleRangeMapper;
+    const modelRange = simpleRangeToModelRange(range, root);
     const _markCheckNodes: ModelNode[] = [...nodes];
-    if (range.collapsed) {
-      if (range.start.path.length === 0) {
-        range.root.appendChildren(...nodes);
+    const insertSize = nodes.reduce((prev, current) => current.size + prev, 0);
+    if (modelRange.collapsed) {
+      if (modelRange.start.path.length === 0) {
+        modelRange.root.appendChildren(...nodes);
       } else {
-        range.start.split();
-        const before = range.start.nodeBefore();
-        const after = range.start.nodeAfter();
+        modelRange.start.split();
+        const before = modelRange.start.nodeBefore();
+        const after = modelRange.start.nodeAfter();
         if (before) {
           _markCheckNodes.push(before);
         }
         if (after) {
           _markCheckNodes.push(after);
         }
-        range.start.parent.insertChildrenAtOffset(
-          range.start.parentOffset,
+        modelRange.start.parent.insertChildrenAtOffset(
+          modelRange.start.parentOffset,
           ...nodes
         );
       }
-      newEndPos = ModelPosition.fromAfterNode(root, nodes[nodes.length - 1]);
-      mapper = new RangeMapper([buildPositionMapping(range, newEndPos)]);
+      mapper = new SimpleRangeMapper([
+        buildPositionMappingForInsert(range.start, range.end, insertSize),
+      ]);
     } else {
       const { removedNodes, mapper: removeMapper } = OperationAlgorithms.remove(
         root,
@@ -292,25 +298,24 @@ export default class OperationAlgorithms {
       );
       overwrittenNodes = removedNodes;
       const rangeAfterRemove = removeMapper.mapRange(range);
-      const afterEnd = rangeAfterRemove.end.nodeAfter();
-      const endParent = rangeAfterRemove.end.parent;
+      const modelRangeAfterRemove = simpleRangeToModelRange(
+        rangeAfterRemove,
+        root
+      );
 
-      rangeAfterRemove.start.parent.insertChildrenAtOffset(
-        rangeAfterRemove.start.parentOffset,
+      modelRangeAfterRemove.start.parent.insertChildrenAtOffset(
+        modelRangeAfterRemove.start.parentOffset,
         ...nodes
       );
 
-      if (afterEnd) {
-        newEndPos = ModelPosition.fromBeforeNode(root, afterEnd);
-      } else {
-        newEndPos = ModelPosition.fromInNode(
-          root,
-          endParent,
-          endParent.getMaxOffset()
-        );
-      }
       mapper = removeMapper.appendMapper(
-        new RangeMapper([buildPositionMapping(rangeAfterRemove, newEndPos)])
+        new SimpleRangeMapper([
+          buildPositionMappingForInsert(
+            rangeAfterRemove.start,
+            rangeAfterRemove.end,
+            insertSize
+          ),
+        ])
       );
     }
     const startNode = nodes[0];
@@ -349,8 +354,8 @@ export default class OperationAlgorithms {
 
   static move(
     root: ModelElement,
-    rangeToMove: ModelRange,
-    targetPosition: ModelPosition
+    rangeToMove: SimpleRange,
+    targetPosition: SimplePosition
   ): OperationAlgorithmResponse<{
     movedNodes: ModelNode[];
     overwrittenNodes: ModelNode[];
@@ -358,7 +363,7 @@ export default class OperationAlgorithms {
   }> {
     const { removedNodes: nodesToMove, mapper: deletionMapper } =
       OperationAlgorithms.remove(root, rangeToMove);
-    const targetRange = new ModelRange(targetPosition, targetPosition);
+    const targetRange = { start: targetPosition, end: targetPosition };
     if (nodesToMove.length) {
       const {
         overwrittenNodes,
@@ -381,31 +386,34 @@ export default class OperationAlgorithms {
   }
 
   static splitText(
-    position: ModelPosition,
+    root: ModelElement,
+    position: SimplePosition,
     keepright = false
-  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
-    position.split(keepright);
-    return { position, mapper: new RangeMapper() };
+  ): OperationAlgorithmResponse<{ position: SimplePosition }> {
+    const modelPosition = simplePosToModelPos(position, root);
+    modelPosition.split(keepright);
+    return { position, mapper: new SimpleRangeMapper() };
   }
 
   static split(
     root: ModelElement,
-    position: ModelPosition,
+    position: SimplePosition,
     keepright = false
-  ): OperationAlgorithmResponse<{ position: ModelPosition }> {
-    OperationAlgorithms.splitText(position, keepright);
-    const parent = position.parent;
-    if (parent === position.root) {
-      return { position, mapper: new RangeMapper() };
+  ): OperationAlgorithmResponse<{ position: SimplePosition }> {
+    OperationAlgorithms.splitText(root, position, keepright);
+    const modelPosition = simplePosToModelPos(position, root);
+    const parent = modelPosition.parent;
+    if (parent === modelPosition.root) {
+      return { position, mapper: new SimpleRangeMapper() };
     }
     const grandParent = parent.getParent(root);
     if (!grandParent) {
-      return { position, mapper: new RangeMapper() };
+      return { position, mapper: new SimpleRangeMapper() };
     }
 
     if (keepright) {
       const left = parent.shallowClone();
-      const before = position.nodeBefore();
+      const before = modelPosition.nodeBefore();
       if (before) {
         const leftSideChildren = parent.children.splice(
           0,
@@ -415,34 +423,22 @@ export default class OperationAlgorithms {
       }
       grandParent.addChild(left, parent.getIndex(root)!);
       return {
-        position: ModelPosition.fromAfterNode(root, left),
-        mapper: new RangeMapper([
-          buildPositionMapping(
-            new ModelRange(position, position),
-            left.lastChild
-              ? ModelPosition.fromAfterNode(root, left.lastChild)
-              : ModelPosition.fromAfterNode(root, left)
-          ),
-        ]),
+        position: modelPosToSimplePos(ModelPosition.fromAfterNode(root, left)),
+        mapper: new SimpleRangeMapper([buildSplitMapping(position)]),
       };
     } else {
       const right = parent.shallowClone();
-      const after = position.nodeAfter();
+      const after = modelPosition.nodeAfter();
       if (after) {
         const rightSideChildren = parent.children.splice(after.getIndex(root)!);
         right.appendChildren(...rightSideChildren);
       }
       grandParent.addChild(right, parent.getIndex(root)! + 1);
       return {
-        position: ModelPosition.fromBeforeNode(root, right),
-        mapper: new RangeMapper([
-          buildPositionMapping(
-            new ModelRange(position, position),
-            right.firstChild
-              ? ModelPosition.fromBeforeNode(root, right.firstChild)
-              : ModelPosition.fromBeforeNode(root, right)
-          ),
-        ]),
+        position: modelPosToSimplePos(
+          ModelPosition.fromBeforeNode(root, right)
+        ),
+        mapper: new SimpleRangeMapper([buildSplitMapping(position)]),
       };
     }
   }
@@ -462,56 +458,46 @@ export default class OperationAlgorithms {
   }
 }
 
-function buildPositionMapping(
-  affectedRange: ModelRange,
-  newEndPosition: ModelPosition
-) {
-  const pathOffsets = newEndPosition.path.map(
-    (val, index) => val - affectedRange.end.path[index]
-  );
-  return function (position: ModelPosition, bias: LeftOrRight = 'right') {
-    if (position.compare(affectedRange.start) === RelativePosition.BEFORE) {
-      return position;
-    }
-    if (position.compare(affectedRange.start) === RelativePosition.EQUAL) {
+function buildPositionMappingForInsert(
+  start: SimplePosition,
+  end: SimplePosition,
+  insertSize: number
+): SimplePositionMapping {
+  return function (
+    position: SimplePosition,
+    bias: LeftOrRight = 'left'
+  ): SimplePosition {
+    let result;
+    const newEnd = start + insertSize;
+    if (position < start) {
+      result = position;
+    } else if (position <= end) {
       if (bias === 'left') {
-        return position;
+        result = position;
       } else {
-        return newEndPosition;
+        result = newEnd;
       }
-    }
-
-    if (
-      [RelativePosition.AFTER, RelativePosition.EQUAL].includes(
-        position.compare(affectedRange.end)
-      )
-    ) {
-      const root = position.root;
-      const path = [...position.path];
-      const newPath: number[] = [];
-      let outOfSubtree = false;
-      path.forEach((value, index) => {
-        if (outOfSubtree) {
-          newPath.push(value);
-        } else {
-          if (
-            pathOffsets[index] === 0 &&
-            value !== affectedRange.end.path[index]
-          ) {
-            outOfSubtree = true;
-            newPath.push(value);
-          } else {
-            newPath.push(value + (pathOffsets[index] ?? 0));
-          }
-        }
-      });
-      return ModelPosition.fromPath(root, newPath);
     } else {
-      if (bias === 'left') {
-        return affectedRange.start.clone();
-      } else {
-        return newEndPosition.clone(position.root);
-      }
+      result = newEnd;
     }
+    return result;
+  };
+}
+
+function buildSplitMapping(splitPos: SimplePosition) {
+  return function (position: SimplePosition, bias: LeftOrRight = 'left') {
+    let result;
+    if (position < splitPos) {
+      result = position;
+    } else if (position === splitPos) {
+      if (bias === 'left') {
+        result = position;
+      } else {
+        result = position + 2;
+      }
+    } else {
+      result = position + 2;
+    }
+    return result;
   };
 }

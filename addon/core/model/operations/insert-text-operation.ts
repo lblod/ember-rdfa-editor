@@ -8,6 +8,10 @@ import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import Operation from './operation';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 export default class InsertTextOperation extends Operation {
   private _text: string;
@@ -16,7 +20,7 @@ export default class InsertTextOperation extends Operation {
   constructor(
     root: ModelElement,
     eventbus: EventBus | undefined,
-    range: ModelRange,
+    range: SimpleRange,
     text: string,
     marks: MarkSet
   ) {
@@ -76,7 +80,7 @@ export default class InsertTextOperation extends Operation {
         owner: CORE_OWNER,
         payload: {
           type: 'insert',
-          oldRange: this.range,
+          oldRange: simpleRangeToModelRange(this.range, this.root),
           newRange: defaultRange,
           insertedNodes: [newText],
           overwrittenNodes,

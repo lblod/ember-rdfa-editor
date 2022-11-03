@@ -31,3 +31,7 @@ export function modelRangeToSimpleRange(modelRange: ModelRange): SimpleRange {
 export function simpleRangesEqual(range1: SimpleRange, range2: SimpleRange) {
   return range1.start === range2.start && range1.end === range2.end;
 }
+
+export function isCollapsed(range: SimpleRange) {
+  return range.start === range.end;
+}

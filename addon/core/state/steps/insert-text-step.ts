@@ -4,15 +4,13 @@ import {
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import State, { cloneStateInRange } from '@lblod/ember-rdfa-editor/core/state';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import { EMPTY_MAPPER } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import {
   modelRangeToSimpleRange,
   SimpleRange,
-  simpleRangeToModelRange,
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import { MarkSet } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import InsertTextOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-text-operation';
-import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 
 interface Args {
   range: SimpleRange;
@@ -37,7 +35,7 @@ export default class InsertTextStep implements OperationStep {
     const op = new InsertTextOperation(
       resultState.document,
       undefined,
-      simpleRangeToModelRange(range, resultState.document),
+      range,
       text,
       marks
     );
@@ -45,14 +43,7 @@ export default class InsertTextStep implements OperationStep {
     return {
       state: resultState,
       defaultRange: modelRangeToSimpleRange(defaultRange),
+      mapper: EMPTY_MAPPER,
     };
-  }
-
-  mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {
-    return position;
-  }
-
-  mapRange(range: SimpleRange, bias?: LeftOrRight): SimpleRange {
-    return range;
   }
 }

@@ -22,6 +22,9 @@ import { Difference } from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import hbs from 'htmlbars-inline-precompile';
 import MarksManager from '@lblod/ember-rdfa-editor/core/model/marks/marks-manager';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -157,4 +160,19 @@ export function vdomToDom(vdom: ModelNode): Node {
   ];
   view.update(state, differences);
   return view.domRoot;
+}
+
+export function pathToSimplePos(root: ModelElement, path: number[]) {
+  return modelPosToSimplePos(ModelPosition.fromPath(root, path));
+}
+
+export function pathsToSimpleRange(
+  root: ModelElement,
+  startPath: number[],
+  endPath: number[]
+): SimpleRange {
+  return {
+    start: pathToSimplePos(root, startPath),
+    end: pathToSimplePos(root, endPath),
+  };
 }

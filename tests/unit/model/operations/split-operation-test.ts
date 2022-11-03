@@ -1,9 +1,11 @@
 import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import SplitOperation from '@lblod/ember-rdfa-editor/core/model/operations/split-operation';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { pathsToSimpleRange, testState } from 'dummy/tests/test-utils';
+import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
+import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 module('Unit | model | operations | split-operation-test', function () {
   test("doesn't split root", function (assert) {
@@ -18,13 +20,16 @@ module('Unit | model | operations | split-operation-test', function () {
       <modelRoot>
       </modelRoot>
     `;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
 
-    const range = ModelRange.fromPaths(initial as ModelElement, [0], [0]);
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
-
-    assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(range));
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromPaths(initial, [0], [0])
+    );
+    const step = new SplitStep({ range });
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
+    assert.deepEqual(actual.defaultRange, range);
   });
 
   test("doesn't split root with content", function (assert) {
@@ -46,17 +51,16 @@ module('Unit | model | operations | split-operation-test', function () {
       </modelRoot>
     `;
 
-    const range = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      2,
-      2
-    );
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
 
-    assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(range));
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromInTextNode(initial, rangeStart, 2, 2)
+    );
+    const step = new SplitStep({ range });
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
+    assert.deepEqual(actual.defaultRange, range);
   });
   test('splits an element', function (assert) {
     // language=XML
@@ -82,21 +86,21 @@ module('Unit | model | operations | split-operation-test', function () {
         </div>
       </modelRoot>
     `;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
 
-    const range = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      selectionStart,
-      2,
-      2
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromInTextNode(initial, selectionStart, 2, 2)
     );
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
+    const step = new SplitStep({ range });
 
-    assert.true(initial.sameAs(expected));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [1], [1])
-      )
+    const actual = step.getResult(initialState);
+    const resultRange = actual.defaultRange;
+    assert.true(actual.state.document.sameAs(expected));
+
+    assert.deepEqual(
+      resultRange,
+      pathsToSimpleRange(actual.state.document, [1], [1])
     );
   });
   test('only splits text when configured', function (assert) {
@@ -122,22 +126,17 @@ module('Unit | model | operations | split-operation-test', function () {
       </modelRoot>
     `;
 
-    const range = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      selectionStart,
-      2,
-      2
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromInTextNode(initial, selectionStart, 2, 2)
     );
-    const op = new SplitOperation(
-      initial as ModelElement,
-      undefined,
-      range,
-      false
-    );
-    const resultRange = op.execute().defaultRange;
+    const step = new SplitStep({ range, splitParent: false });
+    const actual = step.getResult(initialState);
+    const resultRange = actual.defaultRange;
+    assert.true(actual.state.document.sameAs(expected));
 
-    assert.true(initial.sameAs(expected));
-    assert.true(resultRange.sameAs(range));
+    assert.deepEqual(resultRange, range);
   });
   test('uncollapsed splits both ends', function (assert) {
     // language=XML
@@ -165,20 +164,20 @@ module('Unit | model | operations | split-operation-test', function () {
         </div>
       </modelRoot>
     `;
-    const range = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      selectionStart,
-      1,
-      3
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromInTextNode(initial, selectionStart, 1, 3)
     );
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
+    const step = new SplitStep({ range });
 
-    assert.true(initial.sameAs(expected));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [1], [2])
-      )
+    const actual = step.getResult(initialState);
+    const resultRange = actual.defaultRange;
+    assert.true(actual.state.document.sameAs(expected));
+
+    assert.deepEqual(
+      resultRange,
+      pathsToSimpleRange(actual.state.document, [1], [2])
     );
   });
 
@@ -214,25 +213,20 @@ module('Unit | model | operations | split-operation-test', function () {
         </div>
       </modelRoot>
     `;
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      selectionStart,
-      2
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      selectionEnd,
-      0
-    );
-    const range = new ModelRange(start, end);
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const start = ModelPosition.fromInTextNode(initial, selectionStart, 2);
+    const end = ModelPosition.fromInTextNode(initial, selectionEnd, 0);
+    const range = modelRangeToSimpleRange(new ModelRange(start, end));
 
-    assert.true(initial.sameAs(expected));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [1], [2])
-      )
+    const step = new SplitStep({ range });
+    const actual = step.getResult(initialState);
+    const resultRange = actual.defaultRange;
+    assert.true(actual.state.document.sameAs(expected));
+
+    assert.deepEqual(
+      resultRange,
+      pathsToSimpleRange(actual.state.document, [1], [2])
     );
   });
 
@@ -271,25 +265,20 @@ module('Unit | model | operations | split-operation-test', function () {
         </div>
       </modelRoot>
     `;
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      selectionStart,
-      2
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      selectionEnd,
-      0
-    );
-    const range = new ModelRange(start, end);
-    const op = new SplitOperation(initial as ModelElement, undefined, range);
-    const resultRange = op.execute().defaultRange;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const start = ModelPosition.fromInTextNode(initial, selectionStart, 2);
+    const end = ModelPosition.fromInTextNode(initial, selectionEnd, 0);
+    const range = modelRangeToSimpleRange(new ModelRange(start, end));
+    const step = new SplitStep({ range });
+    const actual = step.getResult(initialState);
+    const resultRange = actual.defaultRange;
+    assert.true(actual.state.document.sameAs(expected));
 
     assert.true(initial.sameAs(expected));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [1], [1, 2])
-      )
+    assert.deepEqual(
+      resultRange,
+      pathsToSimpleRange(actual.state.document, [1], [1, 2])
     );
   });
 });

@@ -3,7 +3,10 @@ import {
   StepResult,
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import {
+  EMPTY_MAPPER,
+  LeftOrRight,
+} from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import {
   SimplePosition,
   simplePosToModelPos,
@@ -70,7 +73,10 @@ export default class AttributeStep implements BaseStep {
       editedNode
     );
 
-    return { state: createState({ ...initialState, document: newRoot }) };
+    return {
+      state: createState({ ...initialState, document: newRoot }),
+      mapper: EMPTY_MAPPER,
+    };
   }
 
   mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {

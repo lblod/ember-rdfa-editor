@@ -1,17 +1,11 @@
-import {
-  modelRangeToSimpleRange,
-  SimpleRange,
-  simpleRangeToModelRange,
-} from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import {
   OperationStep,
   OperationStepResult,
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import State, { cloneStateInRange } from '@lblod/ember-rdfa-editor/core/state';
-import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
-import RemoveOperation from '@lblod/ember-rdfa-editor/core/model/operations/remove-operation';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 
 interface Args {
   range: SimpleRange;
@@ -32,23 +26,14 @@ export default class RemoveStep implements OperationStep {
   getResult(initialState: State): OperationStepResult {
     const { range } = this.args;
     const resultState = cloneStateInRange(range, initialState);
-    const op = new RemoveOperation(
+    const { mapper } = OperationAlgorithms.removeNew(
       resultState.document,
-      undefined,
-      simpleRangeToModelRange(range, resultState.document)
+      range
     );
-    const { defaultRange } = op.execute();
     return {
       state: resultState,
-      defaultRange: modelRangeToSimpleRange(defaultRange),
+      defaultRange: mapper.mapRange(range),
+      mapper,
     };
-  }
-
-  mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {
-    return position;
-  }
-
-  mapRange(range: SimpleRange, bias?: LeftOrRight): SimpleRange {
-    return range;
   }
 }

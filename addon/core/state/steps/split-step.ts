@@ -4,14 +4,14 @@ import {
   StepType,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import {
-  modelRangeToSimpleRange,
+  isCollapsed,
   SimpleRange,
-  simpleRangeToModelRange,
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import State, { cloneStateInRange } from '@lblod/ember-rdfa-editor/core/state';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
-import SplitOperation from '@lblod/ember-rdfa-editor/core/model/operations/split-operation';
+import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { SimpleRangeMapper } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 
 interface Args {
   range: SimpleRange;
@@ -31,26 +31,43 @@ export default class SplitStep implements OperationStep {
   }
 
   getResult(initialState: State): OperationStepResult {
-    const { range, splitParent } = this.args;
+    const { range } = this.args;
     const resultState = cloneStateInRange(range, initialState);
-    const op = new SplitOperation(
-      resultState.document,
-      undefined,
-      simpleRangeToModelRange(range, resultState.document),
-      splitParent
-    );
-    const { defaultRange } = op.execute();
-    return {
-      state: resultState,
-      defaultRange: modelRangeToSimpleRange(defaultRange),
-    };
+    const root = resultState.document;
+
+    if (isCollapsed(range)) {
+      const { position, mapper } = this.doSplit(root, range.start);
+      return {
+        state: resultState,
+        defaultRange: { start: position, end: position },
+        mapper,
+      };
+    } else {
+      const { position: end, mapper: endMapper } = this.doSplit(
+        root,
+        range.end
+      );
+      const { position: start, mapper: startMapper } = this.doSplit(
+        root,
+        endMapper.mapPosition(range.start)
+      );
+      const mapper = endMapper.appendMapper(startMapper);
+      return {
+        state: resultState,
+        defaultRange: { start: start, end: startMapper.mapPosition(end) },
+        mapper,
+      };
+    }
   }
 
-  mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {
-    return position;
-  }
-
-  mapRange(range: SimpleRange, bias?: LeftOrRight): SimpleRange {
-    return range;
+  private doSplit(
+    root: ModelElement,
+    position: SimplePosition
+  ): { position: SimplePosition; mapper: SimpleRangeMapper } {
+    if (this.args.splitParent) {
+      return OperationAlgorithms.split(root, position);
+    } else {
+      return OperationAlgorithms.splitText(root, position);
+    }
   }
 }

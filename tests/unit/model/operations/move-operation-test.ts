@@ -1,10 +1,10 @@
 import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import MoveOperation from '@lblod/ember-rdfa-editor/core/model/operations/move-operation';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { testState } from 'dummy/tests/test-utils';
 
 module('Unit | model | operations | move-operation-test', function () {
   test('move simple range', function (assert) {
@@ -28,31 +28,19 @@ module('Unit | model | operations | move-operation-test', function () {
         </div>
       </modelRoot>
     `;
+    ModelNode.assertModelElement(initial);
 
-    const srcRange = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      source,
-      0,
-      4
-    );
-    const targetPos = ModelPosition.fromInElement(
-      initial as ModelElement,
-      target,
-      0
-    );
-    const op = new MoveOperation(
-      initial as ModelElement,
-      undefined,
-      srcRange,
-      targetPos
-    );
-    const resultRange = op.execute().defaultRange;
+    const srcRange = ModelRange.fromInTextNode(initial, source, 0, 4);
+    const targetPos = ModelPosition.fromInElement(initial, target, 0);
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+    tr.moveToPosition(srcRange, targetPos);
 
-    assert.true(initial.sameAs(expected));
+    const actual = tr.apply();
+    const resultRange = tr.mapModelRange(srcRange);
+    assert.true(actual.document.sameAs(expected));
     assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 4])
-      )
+      resultRange.sameAs(ModelRange.fromPaths(actual.document, [0, 0], [0, 4]))
     );
   });
 
@@ -80,30 +68,18 @@ module('Unit | model | operations | move-operation-test', function () {
       </modelRoot>
     `;
 
-    const srcRange = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      source,
-      1,
-      3
-    );
-    const targetPos = ModelPosition.fromInElement(
-      initial as ModelElement,
-      target,
-      0
-    );
-    const op = new MoveOperation(
-      initial as ModelElement,
-      undefined,
-      srcRange,
-      targetPos
-    );
-    const resultRange = op.execute().defaultRange;
+    ModelNode.assertModelElement(initial);
+    const srcRange = ModelRange.fromInTextNode(initial, source, 1, 3);
+    const targetPos = ModelPosition.fromInElement(initial, target, 0);
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+    tr.moveToPosition(srcRange, targetPos);
+    const actual = tr.apply();
+    const resultRange = tr.mapModelRange(srcRange);
 
-    assert.true(initial.sameAs(expected));
+    assert.true(actual.document.sameAs(expected));
     assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 0], [0, 2])
-      )
+      resultRange.sameAs(ModelRange.fromPaths(actual.document, [0, 0], [0, 2]))
     );
   });
   test('move uneven range inside textnode', function (assert) {
@@ -135,16 +111,13 @@ module('Unit | model | operations | move-operation-test', function () {
     const { root: expected } = vdom`
       <modelRoot>
         <div>
-          <text>ab</text>
-          <text>gh</text>
+          <text>abgh</text>
           <span>
             <text>ijkl</text>
           </span>
 
           <text>mnop</text>
-          <text>qr</text>
-
-          <text>cd</text>
+          <text>qrcd</text>
         </div>
 
         <div>
@@ -158,35 +131,27 @@ module('Unit | model | operations | move-operation-test', function () {
       </modelRoot>
     `;
 
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      2
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeEnd,
-      2
-    );
+    ModelNode.assertModelElement(initial);
+    const start = ModelPosition.fromInTextNode(initial, rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(initial, rangeEnd, 2);
     const srcRange = new ModelRange(start, end);
-    const targetPos = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      target,
-      2
-    );
-    const op = new MoveOperation(
-      initial as ModelElement,
-      undefined,
-      srcRange,
-      targetPos
-    );
-    const resultRange = op.execute().defaultRange;
+    const targetPos = ModelPosition.fromInTextNode(initial, target, 2);
 
-    assert.true(initial.sameAs(expected));
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+    tr.moveToPosition(srcRange, targetPos);
+    const actual = tr.apply();
+    const resultRange = tr.mapModelRange(srcRange);
+
+    assert.true(
+      actual.document.sameAs(expected),
+      QUnit.dump.parse(initial.toXml())
+    );
     assert.true(
       resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 2], [0, 11])
-      )
+        ModelRange.fromPaths(actual.document, [0, 2], [0, 11])
+      ),
+      resultRange.toString()
     );
   });
   test('throws when target inside src', function (assert) {
@@ -202,31 +167,17 @@ module('Unit | model | operations | move-operation-test', function () {
         <text __id="rangeEnd">cd</text>
       </div>
     `;
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      0
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeEnd,
-      2
-    );
-    const targetPos = ModelPosition.fromInElement(
-      initial as ModelElement,
-      target,
-      0
-    );
+    ModelNode.assertModelElement(initial);
+    const start = ModelPosition.fromInTextNode(initial, rangeStart, 0);
+    const end = ModelPosition.fromInTextNode(initial, rangeEnd, 2);
+    const targetPos = ModelPosition.fromInElement(initial, target, 0);
     const srcRange = new ModelRange(start, end);
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
 
-    const op = new MoveOperation(
-      initial as ModelElement,
-      undefined,
-      srcRange,
-      targetPos
-    );
     assert.throws(() => {
-      op.execute();
+      tr.moveToPosition(srcRange, targetPos);
+      tr.apply();
     }, new OperationError('Cannot move to target inside source range'));
   });
 });

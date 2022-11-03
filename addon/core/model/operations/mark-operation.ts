@@ -10,12 +10,15 @@ import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
-import { ContentChangedEvent } from '@lblod/ember-rdfa-editor/utils/editor-event';
-import RangeMapper from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import { SimpleRangeMapper } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import { AttributeSpec } from '../../../utils/render-spec';
 import GenTreeWalker from '../../../utils/gen-tree-walker';
 import Operation from './operation';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 export type MarkAction = 'add' | 'remove';
 export default class MarkOperation extends Operation {
@@ -26,7 +29,7 @@ export default class MarkOperation extends Operation {
   constructor(
     root: ModelElement,
     eventbus: EventBus | undefined,
-    range: ModelRange,
+    range: SimpleRange,
     spec: MarkSpec,
     attributes: AttributeSpec,
     action: MarkAction
@@ -82,51 +85,39 @@ export default class MarkOperation extends Operation {
     if (!this.canExecute()) {
       throw new UnconfinedRangeError();
     }
+    const modelRange = simpleRangeToModelRange(this.range, this.root);
 
-    if (this.range.collapsed) {
-      this.range.start.split();
+    if (modelRange.collapsed) {
+      modelRange.start.split();
 
       const referenceNode =
-        this.range.start.nodeBefore() || this.range.start.nodeAfter()!;
+        modelRange.start.nodeBefore() || modelRange.start.nodeAfter()!;
       const node = new ModelText(INVISIBLE_SPACE);
       if (ModelNode.isModelText(referenceNode)) {
         node.marks = referenceNode.marks.clone();
       }
       //insert new textNode with property set
       this.markAction(node, this.spec, this.attributes, this.action);
-      const insertionIndex = this.range.start.parent.offsetToIndex(
-        this.range.start.parentOffset
+      const insertionIndex = modelRange.start.parent.offsetToIndex(
+        modelRange.start.parentOffset
       );
-      this.range.start.parent.addChild(node, insertionIndex);
+      modelRange.start.parent.addChild(node, insertionIndex);
 
       //put the cursor inside that node
       const newRange = ModelRange.fromInNode(this.root, node, 1, 1);
-      this.emit(
-        new ContentChangedEvent({
-          owner: CORE_OWNER,
-          payload: {
-            type: 'insert',
-            oldRange: this.range,
-            newRange,
-            overwrittenNodes: [],
-            insertedNodes: [node],
-            _markCheckNodes: [node],
-          },
-        })
-      );
       return {
         defaultRange: newRange,
-        mapper: new RangeMapper(),
+        mapper: new SimpleRangeMapper(),
         overwrittenNodes: [],
         insertedNodes: [node],
         markCheckNodes: [node],
       };
     } else {
-      OperationAlgorithms.splitText(this.range.start);
-      OperationAlgorithms.splitText(this.range.end);
+      OperationAlgorithms.splitText(this.root, this.range.start);
+      OperationAlgorithms.splitText(this.root, this.range.end);
 
       const walker = GenTreeWalker.fromRange({
-        range: this.range,
+        range: modelRange,
         filter: toFilterSkipFalse<ModelNode>(ModelNode.isModelText),
       });
       const textNodes = [...walker.nodes()] as ModelText[];
@@ -136,8 +127,8 @@ export default class MarkOperation extends Operation {
         this.markAction(node, this.spec, this.attributes, this.action);
       }
       OperationAlgorithms.mergeTextNodes(this.root, textNodes);
-      const before = this.range.start.nodeBefore();
-      const after = this.range.end.nodeAfter();
+      const before = modelRange.start.nodeBefore();
+      const after = modelRange.end.nodeAfter();
       if (before) {
         if (ModelNode.isModelText(before)) {
           OperationAlgorithms.mergeTextNodes(this.root, [before]);
@@ -148,22 +139,9 @@ export default class MarkOperation extends Operation {
       if (after) {
         _markCheckNodes.push(after);
       }
-      this.emit(
-        new ContentChangedEvent({
-          owner: CORE_OWNER,
-          payload: {
-            type: 'insert',
-            oldRange: this.range,
-            newRange: this.range,
-            overwrittenNodes: [],
-            insertedNodes: [],
-            _markCheckNodes,
-          },
-        })
-      );
       return {
-        defaultRange: this.range,
-        mapper: new RangeMapper(),
+        defaultRange: simpleRangeToModelRange(this.range, this.root),
+        mapper: new SimpleRangeMapper(),
         overwrittenNodes: [],
         insertedNodes: [],
         markCheckNodes: _markCheckNodes,

@@ -1,15 +1,13 @@
 import State from '../index';
 import ConfigStep from './config-step';
 import SelectionStep from './selection-step';
-import { LeftOrRight } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
+import { SimpleRangeMapper } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 import PluginStep from './plugin-step';
 import ReplaceStep from '@lblod/ember-rdfa-editor/core/state/steps/replace-step';
-import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import MarkStep from '@lblod/ember-rdfa-editor/core/state/steps/mark-step';
 import InsertTextStep from '@lblod/ember-rdfa-editor/core/state/steps/insert-text-step';
 import RemoveStep from '@lblod/ember-rdfa-editor/core/state/steps/remove-step';
-import MoveStep from '@lblod/ember-rdfa-editor/core/state/steps/move-step';
 import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
@@ -18,7 +16,7 @@ const OPERATION_STEP_TYPES = new Set<StepType>([
   'replace-step',
   'remove-step',
   'mark-step',
-  'move-step',
+  'split-step',
 ]);
 
 const DOCUMENT_STEP_TYPES = new Set<StepType>([
@@ -28,10 +26,6 @@ const DOCUMENT_STEP_TYPES = new Set<StepType>([
 
 export interface BaseStep {
   readonly type: StepType;
-
-  mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition;
-
-  mapRange(range: SimpleRange, bias?: LeftOrRight): SimpleRange;
 
   getResult(initialState: State): StepResult;
 }
@@ -67,7 +61,6 @@ export type Step =
   | AttributeStep
   | SplitStep
   | RemoveStep
-  | MoveStep
   | InsertTextStep;
 
 export function isSelectionStep(step: Step): step is SelectionStep {
@@ -96,4 +89,5 @@ export function isPluginStep(step: Step): step is SelectionStep {
 
 export type StepResult = {
   state: State;
+  mapper: SimpleRangeMapper;
 };

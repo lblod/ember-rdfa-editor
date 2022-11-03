@@ -3,7 +3,8 @@ import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module('Unit | model | operations | operation-algorithms-test', function () {
   test('remove splits when range is collapsed', function (assert) {
@@ -24,13 +25,11 @@ module('Unit | model | operations | operation-algorithms-test', function () {
         <text>cd</text>
       </modelRoot>
     `;
-    const range = ModelRange.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      2,
-      2
+    ModelNode.assertModelElement(initial);
+    const range = modelRangeToSimpleRange(
+      ModelRange.fromInTextNode(initial, rangeStart, 2, 2)
     );
-    OperationAlgorithms.remove(initial as ModelElement, range);
+    OperationAlgorithms.remove(initial, range);
     assert.true(initial.sameAs(expected));
   });
 
@@ -71,18 +70,11 @@ module('Unit | model | operations | operation-algorithms-test', function () {
         </div>
       </modelRoot>
     `;
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      2
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeEnd,
-      2
-    );
-    const range = new ModelRange(start, end);
-    OperationAlgorithms.remove(initial as ModelElement, range);
+    ModelNode.assertModelElement(initial);
+    const start = ModelPosition.fromInTextNode(initial, rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(initial, rangeEnd, 2);
+    const range = modelRangeToSimpleRange(new ModelRange(start, end));
+    OperationAlgorithms.remove(initial, range);
     assert.true(initial.sameAs(expected));
   });
 });

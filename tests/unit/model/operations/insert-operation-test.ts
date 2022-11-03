@@ -1,10 +1,13 @@
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
-import InsertOperation from '@lblod/ember-rdfa-editor/core/model/operations/insert-operation';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
+import ReplaceStep from '@lblod/ember-rdfa-editor/core/state/steps/replace-step';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
+import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import { testState } from 'dummy/tests/test-utils';
 
 module('Unit | model | operations | insert-operation-test', function () {
   test('inserts into empty root', function (assert) {
@@ -22,20 +25,18 @@ module('Unit | model | operations | insert-operation-test', function () {
 
     const { root: nodeToInsert } = vdom`
       <text __dirty="content,node">abc</text>`;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
 
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
-      ModelRange.fromInElement(
-        initial as ModelElement,
-        initial as ModelElement,
-        0,
-        0
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(
+        ModelRange.fromInElement(initial, initial, 0, 0)
       ),
-      nodeToInsert
-    );
-    op.execute();
-    assert.true(initial.sameAs(expected));
+      nodes: [nodeToInsert],
+    });
+    const actual = step.getResult(initialState);
+
+    assert.true(actual.state.document.sameAs(expected));
   });
   test('inserts element into empty root', function (assert) {
     // language=XML
@@ -57,20 +58,17 @@ module('Unit | model | operations | insert-operation-test', function () {
       <div>
         <text>abc</text>
       </div>`;
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
 
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
-      ModelRange.fromInElement(
-        initial as ModelElement,
-        initial as ModelElement,
-        0,
-        0
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(
+        ModelRange.fromInElement(initial, initial, 0, 0)
       ),
-      nodeToInsert
-    );
-    op.execute();
-    assert.true(initial.sameAs(expected));
+      nodes: [nodeToInsert],
+    });
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
   });
   test('inserts into root when collapsed', function (assert) {
     //language=XML
@@ -86,12 +84,14 @@ module('Unit | model | operations | insert-operation-test', function () {
     const { root: nodeToInsert } = vdom`
       <text>abc</text>`;
 
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
-      ModelRange.fromInNode(initial as ModelElement, rangeAnchor, 0, 0),
-      nodeToInsert
-    );
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(
+        ModelRange.fromInNode(initial, rangeAnchor, 0, 0)
+      ),
+      nodes: [nodeToInsert],
+    });
     //language=XML
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
@@ -99,8 +99,8 @@ module('Unit | model | operations | insert-operation-test', function () {
         <span/>
       </modelRoot>
     `;
-    op.execute();
-    assert.true(expected.sameAs(initial));
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
   });
   test('inserts into root when collapsed2', function (assert) {
     const root = new ModelElement('div');
@@ -126,14 +126,16 @@ module('Unit | model | operations | insert-operation-test', function () {
       </modelRoot>
     `;
 
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
-      ModelRange.fromInNode(initial as ModelElement, rangeAnchor, 1, 1),
-      nodeToInsert
-    );
-    op.execute();
-    assert.true(expected.sameAs(initial));
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(
+        ModelRange.fromInNode(initial, rangeAnchor, 1, 1)
+      ),
+      nodes: [nodeToInsert],
+    });
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
   });
   test('replaces when not collapsed', function (assert) {
     const root = new ModelElement('div');
@@ -142,15 +144,15 @@ module('Unit | model | operations | insert-operation-test', function () {
 
     const nodeToInsert = new ModelText('abc');
 
-    const op = new InsertOperation(
-      root,
-      undefined,
-      ModelRange.fromPaths(root, [0], [1]),
-      nodeToInsert
-    );
-    op.execute();
-    assert.strictEqual(root.length, 1);
-    assert.strictEqual(root.firstChild, nodeToInsert);
+    const initialState = testState({ document: root });
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(ModelRange.fromPaths(root, [0], [1])),
+      nodes: [nodeToInsert],
+    });
+
+    const actual = step.getResult(initialState);
+    assert.strictEqual(actual.state.document.length, 1);
+    assert.strictEqual(actual.state.document.firstChild, nodeToInsert);
   });
   test('replaces complex range', function (assert) {
     const {
@@ -188,16 +190,17 @@ module('Unit | model | operations | insert-operation-test', function () {
         <span/>
       </modelRoot>
     `;
-    const p1 = ModelPosition.fromInTextNode(initial as ModelElement, t00, 0);
-    const p2 = ModelPosition.fromInTextNode(initial as ModelElement, t22, 3);
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
-      new ModelRange(p1, p2),
-      nodeToInsert
-    );
-    op.execute();
-    assert.true(expected.sameAs(initial));
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const p1 = ModelPosition.fromInTextNode(initial, t00, 0);
+    const p2 = ModelPosition.fromInTextNode(initial, t22, 3);
+
+    const step = new ReplaceStep({
+      range: modelRangeToSimpleRange(new ModelRange(p1, p2)),
+      nodes: [nodeToInsert],
+    });
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
   });
   test('removes items when no nodes to insert are provided', function (assert) {
     // language=XML
@@ -222,25 +225,20 @@ module('Unit | model | operations | insert-operation-test', function () {
         <text __dirty="content">st</text>
       </modelRoot>
     `;
-    const start = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      2
-    );
-    const end = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeEnd,
-      2
-    );
-    const range = new ModelRange(start, end);
-    const op = new InsertOperation(initial as ModelElement, undefined, range);
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const start = ModelPosition.fromInTextNode(initial, rangeStart, 2);
+    const end = ModelPosition.fromInTextNode(initial, rangeEnd, 2);
+    const range = modelRangeToSimpleRange(new ModelRange(start, end));
+    const step = new ReplaceStep({ range });
 
-    const resultRange = op.execute().defaultRange;
-
-    assert.true(expected.sameAs(initial));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 2], [1])
+    const actual = step.getResult(initialState);
+    assert.true(actual.state.document.sameAs(expected));
+    const resultRange = actual.mapper.mapRange(range);
+    assert.strictEqual(
+      resultRange,
+      modelRangeToSimpleRange(
+        ModelRange.fromPaths(actual.state.document, [0, 2], [1])
       )
     );
   });
@@ -293,19 +291,21 @@ module('Unit | model | operations | insert-operation-test', function () {
       rangeEnd,
       2
     );
-    const range = new ModelRange(start, end);
-    const op = new InsertOperation(
-      initial as ModelElement,
-      undefined,
+    const range = modelRangeToSimpleRange(new ModelRange(start, end));
+    ModelNode.assertModelElement(initial);
+    const initialState = testState({ document: initial });
+    const step = new ReplaceStep({
       range,
-      new ModelText('ins0'),
-      new ModelText('ins1')
-    );
-    const resultRange = op.execute().defaultRange;
-    assert.true(initial.sameAs(expected));
-    assert.true(
-      resultRange.sameAs(
-        ModelRange.fromPaths(initial as ModelElement, [0, 2], [1, 0, 0])
+
+      nodes: [new ModelText('ins0'), new ModelText('ins1')],
+    });
+    const actual = step.getResult(initialState);
+    const resultRange = actual.mapper.mapRange(range);
+    assert.true(actual.state.document.sameAs(expected));
+    assert.strictEqual(
+      resultRange,
+      modelRangeToSimpleRange(
+        ModelRange.fromPaths(actual.state.document, [0, 2], [1, 0, 0])
       )
     );
   });

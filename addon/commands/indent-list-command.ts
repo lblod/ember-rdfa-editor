@@ -117,7 +117,7 @@ export default class IndentListCommand
         li.remove(transaction.currentDocument);
       }
     }
-    transaction.mapInitialSelectionAndSet('left');
+    transaction.mapInitialSelectionAndSet({ startBias: 'left' });
   }
 
   hasSublist(listElement: ModelElement): ModelElement | undefined {

@@ -2,7 +2,9 @@ import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import OperationAlgorithms from '@lblod/ember-rdfa-editor/core/model/operations/operation-algorithms';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import { pathToSimplePos } from 'dummy/tests/test-utils';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module(
   'Unit | model | operations | algorithms | split-algorithm-test | ',
@@ -29,35 +31,32 @@ module(
           </div>
         </modelRoot>
       `;
-      const testPos1 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        splitPoint,
-        3
+      ModelNode.assertModelElement(initial);
+      const testPos1 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, splitPoint, 3)
       );
-      const testPos2 = ModelPosition.fromAfterNode(
-        initial as ModelElement,
-        div1
+      const testPos2 = modelPosToSimplePos(
+        ModelPosition.fromAfterNode(initial, div1)
       );
-      const splitPos = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        splitPoint,
-        2
+      const splitPos = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, splitPoint, 2)
       );
-      const { mapper } = OperationAlgorithms.split(
-        initial as ModelElement,
-        splitPos
-      );
+      const { mapper } = OperationAlgorithms.split(initial, splitPos);
       const newSplitPos = mapper.mapPosition(splitPos);
-      const newSplitPosLeft = mapper.mapPosition(splitPos, 'left');
+      const newSplitPosLeft = mapper.mapPosition(splitPos, {
+        bias: 'left',
+      });
       const newTestPos1 = mapper.mapPosition(testPos1);
-      const newTestPos1Left = mapper.mapPosition(testPos1, 'left');
+      const newTestPos1Left = mapper.mapPosition(testPos1, {
+        bias: 'left',
+      });
       const newTestPos2 = mapper.mapPosition(testPos2);
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newSplitPos.path, [1, 0]);
-      assert.deepEqual(newSplitPosLeft.path, [0, 2]);
-      assert.deepEqual(newTestPos1.path, [1, 1]);
-      assert.deepEqual(newTestPos1Left.path, [1, 1]);
-      assert.deepEqual(newTestPos2.path, [2]);
+      assert.deepEqual(newSplitPos, pathToSimplePos(initial, [1, 0]));
+      assert.deepEqual(newSplitPosLeft, pathToSimplePos(initial, [0, 2]));
+      assert.deepEqual(newTestPos1, pathToSimplePos(initial, [1, 1]));
+      assert.deepEqual(newTestPos1Left, pathToSimplePos(initial, [1, 1]));
+      assert.deepEqual(newTestPos2, pathToSimplePos(initial, [2]));
     });
     test('rangeMapping is correct after split at end', function (assert) {
       const {
@@ -79,35 +78,32 @@ module(
           <div/>
         </modelRoot>
       `;
-      const testPos1 = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        splitPoint,
-        3
+      ModelNode.assertModelElement(initial);
+      const testPos1 = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, splitPoint, 3)
       );
-      const testPos2 = ModelPosition.fromAfterNode(
-        initial as ModelElement,
-        div1
+      const testPos2 = modelPosToSimplePos(
+        ModelPosition.fromAfterNode(initial, div1)
       );
-      const splitPos = ModelPosition.fromInTextNode(
-        initial as ModelElement,
-        splitPoint,
-        4
+      const splitPos = modelPosToSimplePos(
+        ModelPosition.fromInTextNode(initial, splitPoint, 4)
       );
-      const { mapper } = OperationAlgorithms.split(
-        initial as ModelElement,
-        splitPos
-      );
+      const { mapper } = OperationAlgorithms.split(initial, splitPos);
       const newSplitPos = mapper.mapPosition(splitPos);
-      const newSplitPosLeft = mapper.mapPosition(splitPos, 'left');
+      const newSplitPosLeft = mapper.mapPosition(splitPos, {
+        bias: 'left',
+      });
       const newTestPos1 = mapper.mapPosition(testPos1);
-      const newTestPos1Left = mapper.mapPosition(testPos1, 'left');
+      const newTestPos1Left = mapper.mapPosition(testPos1, {
+        bias: 'left',
+      });
       const newTestPos2 = mapper.mapPosition(testPos2);
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newSplitPos.path, [1]);
-      assert.deepEqual(newSplitPosLeft.path, [0, 4]);
-      assert.deepEqual(newTestPos1.path, [0, 3]);
-      assert.deepEqual(newTestPos1Left.path, [0, 3]);
-      assert.deepEqual(newTestPos2.path, [2]);
+      assert.strictEqual(newSplitPos, pathToSimplePos(initial, [1]));
+      assert.strictEqual(newSplitPosLeft, pathToSimplePos(initial, [0, 4]));
+      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [0, 3]));
+      assert.strictEqual(newTestPos1Left, pathToSimplePos(initial, [0, 3]));
+      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [2]));
     });
   }
 );
