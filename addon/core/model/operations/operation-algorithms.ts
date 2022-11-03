@@ -490,11 +490,12 @@ function buildSplitMapping(splitPos: SimplePosition) {
     if (position < splitPos) {
       result = position;
     } else if (position === splitPos) {
-      if (bias === 'left') {
-        result = position;
-      } else {
-        result = position + 2;
-      }
+      result = position + 1;
+      // if (bias === 'left') {
+      //   result = position;
+      // } else {
+      //   result = position + 2;
+      // }
     } else {
       result = position + 2;
     }

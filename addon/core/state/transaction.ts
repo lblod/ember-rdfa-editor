@@ -260,14 +260,14 @@ export default class Transaction {
    * providing flexibility to implement batch-style editing or otherwise.
    * */
   apply(): State {
-    let cur = this.initialState;
+    let cur = this.stepCache[this.stepCount - 1]?.state ?? this.initialState;
     for (let i = this.stepCount; i < this.steps.length; i++) {
       const step = this.steps[i];
       const result = step.getResult(cur);
       this.stepCache[i] = result;
       cur = result.state;
       this.mapper.appendMapper(result.mapper);
-      this.stepCount = i;
+      this.stepCount += 1;
     }
     if (
       this.initialState.baseIRI !== cur.baseIRI ||
