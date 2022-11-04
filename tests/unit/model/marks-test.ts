@@ -1,6 +1,5 @@
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import MarkOperation from '@lblod/ember-rdfa-editor/core/model/operations/mark-operation';
 import HashSet from '@lblod/ember-rdfa-editor/utils/hash-set';
 import computeDifference from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import { domStripped, vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
@@ -23,6 +22,7 @@ import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { modelRangeToSimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import MarkStep from '@lblod/ember-rdfa-editor/core/state/steps/mark-step';
 
 function testMarkToggling(assert: Assert, start: number, end: number) {
   const {
@@ -34,38 +34,32 @@ function testMarkToggling(assert: Assert, start: number, end: number) {
       </modelRoot>`;
 
   ModelNode.assertModelElement(initial);
+  const initialState = testState({ document: initial });
   const rangeBeginning = new ModelRange(
     ModelPosition.fromInTextNode(initial, text, start),
     ModelPosition.fromInTextNode(initial, text, end)
   );
-  const op1 = new MarkOperation(
-    initial,
-    undefined,
-    modelRangeToSimpleRange(rangeBeginning),
-    boldMarkSpec,
-    {},
-    'add'
-  );
-  const op2 = new MarkOperation(
-    initial,
-    undefined,
-    modelRangeToSimpleRange(rangeBeginning),
-    boldMarkSpec,
-    {},
-    'remove'
-  );
-  let result;
-  op1.execute();
-  result = vdomToDom(initial);
-  op2.execute();
-  result = vdomToDom(initial);
-  op1.execute();
-  result = vdomToDom(initial);
-  op2.execute();
-  result = vdomToDom(initial);
+  const tr = initialState.createTransaction();
+  const step1 = new MarkStep({
+    range: modelRangeToSimpleRange(rangeBeginning),
+    spec: boldMarkSpec,
+    attributes: {},
+    action: 'add',
+  });
+  const step2 = new MarkStep({
+    range: modelRangeToSimpleRange(rangeBeginning),
+    spec: boldMarkSpec,
+    attributes: {},
+    action: 'remove',
+  });
+  tr.addStep(step1);
+  tr.addStep(step2);
+  tr.addStep(step1);
+  tr.addStep(step2);
+  const dom = vdomToDom(tr.apply().document);
 
-  assert.strictEqual(result.childNodes.length, 1);
-  const emNode = result.childNodes[0];
+  assert.strictEqual(dom.childNodes.length, 1);
+  const emNode = dom.childNodes[0];
   assert.strictEqual(tagName(emNode), 'em');
   assert.strictEqual(emNode.childNodes.length, 1);
   assert.true(emNode.childNodes[0] instanceof Text);
