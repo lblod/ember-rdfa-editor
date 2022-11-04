@@ -96,7 +96,10 @@ module('Unit | model | operations | split-operation-test', function () {
 
     const actual = step.getResult(initialState);
     const resultRange = actual.defaultRange;
-    assert.true(actual.state.document.sameAs(expected));
+    assert.true(
+      actual.state.document.sameAs(expected),
+      QUnit.dump.parse(actual.state.document)
+    );
 
     assert.deepEqual(
       resultRange,
@@ -275,7 +278,6 @@ module('Unit | model | operations | split-operation-test', function () {
     const resultRange = actual.defaultRange;
     assert.true(actual.state.document.sameAs(expected));
 
-    assert.true(initial.sameAs(expected));
     assert.deepEqual(
       resultRange,
       pathsToSimpleRange(actual.state.document, [1], [1, 2])

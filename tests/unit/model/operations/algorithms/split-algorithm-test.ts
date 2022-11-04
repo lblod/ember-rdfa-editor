@@ -52,7 +52,7 @@ module(
       });
       const newTestPos2 = mapper.mapPosition(testPos2);
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newSplitPos, pathToSimplePos(initial, [1, 0]));
+      assert.deepEqual(newSplitPos, pathToSimplePos(initial, [1]));
       assert.deepEqual(newSplitPosLeft, pathToSimplePos(initial, [0, 2]));
       assert.deepEqual(newTestPos1, pathToSimplePos(initial, [1, 1]));
       assert.deepEqual(newTestPos1Left, pathToSimplePos(initial, [1, 1]));

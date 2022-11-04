@@ -74,7 +74,7 @@ export class SimpleRangeMapper {
 
   mapPosition(
     position: SimplePosition,
-    { bias = 'left' }: PositionMapConfig = {}
+    { bias }: PositionMapConfig = {}
   ): SimplePosition {
     let current = position;
     for (const mapping of this.mappings) {
@@ -85,7 +85,7 @@ export class SimpleRangeMapper {
 
   mapRange(
     range: SimpleRange,
-    { startBias = 'left', endBias = 'right' }: RangeMapConfig = {}
+    { startBias, endBias }: RangeMapConfig = {}
   ): SimpleRange {
     if (range.start === range.end) {
       const newPos = this.mapPosition(range.start, { bias: startBias });

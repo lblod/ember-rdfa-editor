@@ -27,7 +27,8 @@ export default class SplitStep implements OperationStep {
   private readonly args: Args;
 
   constructor(args: Args) {
-    this.args = args;
+    const { range, splitParent = true } = args;
+    this.args = { range, splitParent };
   }
 
   getResult(initialState: State): OperationStepResult {

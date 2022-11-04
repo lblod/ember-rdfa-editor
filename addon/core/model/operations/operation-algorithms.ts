@@ -485,17 +485,17 @@ function buildPositionMappingForInsert(
 }
 
 function buildSplitMapping(splitPos: SimplePosition) {
-  return function (position: SimplePosition, bias: LeftOrRight = 'left') {
+  return function (position: SimplePosition, bias: LeftOrRight = 'right') {
     let result;
     if (position < splitPos) {
       result = position;
     } else if (position === splitPos) {
-      result = position + 1;
-      // if (bias === 'left') {
-      //   result = position;
-      // } else {
-      //   result = position + 2;
-      // }
+      // result = position + 1;
+      if (bias === 'left') {
+        result = position;
+      } else {
+        result = position + 1;
+      }
     } else {
       result = position + 2;
     }
