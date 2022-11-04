@@ -568,16 +568,11 @@ export default class Transaction {
     endLimit: ModelElement,
     splitAtEnds = false
   ) {
-    console.log('startrange', range.toString());
     const clonedRange = this.cloneRange(range);
-    console.log('clonedRange', clonedRange.toString());
     this.splitUntilElement(clonedRange.end, endLimit, splitAtEnds);
     const startPos = this.mapModelPosition(clonedRange.start, {
       bias: 'right',
     });
-    console.log('INTERMEDIATE', this.apply().document.toXml());
-    console.log('Startsplit', startPos.path);
-    console.log('Startsplit remapped', this.mapModelPosition(startPos));
     const newStartLimit = this.inWorkingCopy(startLimit);
     console.log(newStartLimit);
     this.splitUntilElement(startPos, newStartLimit, splitAtEnds);
@@ -602,9 +597,7 @@ export default class Transaction {
     untilPredicate: (element: ModelElement) => boolean,
     splitAtEnds = false
   ): ModelPosition {
-    console.log('BEFOREWHAT', position);
     let pos = this.mapModelPosition(position, { bias: 'right' });
-    console.log('WHAT', pos);
     // Execute split at least once
     if (pos.parent === pos.root || untilPredicate(pos.parent)) {
       return this.executeSplit(pos, splitAtEnds, false, false);
