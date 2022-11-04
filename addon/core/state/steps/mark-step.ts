@@ -12,7 +12,6 @@ import {
 import State, { cloneStateInRange } from '@lblod/ember-rdfa-editor/core/state';
 import { Mark, MarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/utils/render-spec';
-import { MarkAction } from '@lblod/ember-rdfa-editor/core/model/operations/mark-operation';
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import {
   CORE_OWNER,
@@ -25,6 +24,7 @@ import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
+export type MarkAction = 'add' | 'remove';
 interface Args {
   range: SimpleRange;
   spec: MarkSpec;
