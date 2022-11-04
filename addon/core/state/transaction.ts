@@ -60,6 +60,7 @@ import {
 import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
 import ModelText from '../model/nodes/model-text';
+import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
 
 interface TextInsertion {
   range: ModelRange;
@@ -444,11 +445,11 @@ export default class Transaction {
     return this.getMapper(fromState).mapPosition(position, config);
   }
 
-  mapModelPosition(
-    position: ModelPosition,
-    { bias = 'left' }: PositionMapConfig = {}
-  ) {
+  mapModelPosition(position: ModelPosition, { bias }: PositionMapConfig = {}) {
     const latestState = this.apply();
+    if (position.root === latestState.document) {
+      return position;
+    }
     const simplePos = modelPosToSimplePos(position);
     const stepResult =
       this.stepCache.find((result) => result.state.document === position.root)
@@ -567,34 +568,20 @@ export default class Transaction {
     endLimit: ModelElement,
     splitAtEnds = false
   ) {
+    console.log('startrange', range.toString());
     const clonedRange = this.cloneRange(range);
-    const endPos = this.splitUntilElement(
-      clonedRange.end,
-      this.inWorkingCopy(endLimit),
-      splitAtEnds
-    );
-    const afterEnd = endPos.nodeAfter();
-    const startpos = this.splitUntilElement(
-      clonedRange.start,
-      this.inWorkingCopy(startLimit),
-      splitAtEnds
-    );
-
-    if (afterEnd) {
-      return new ModelRange(
-        startpos,
-        ModelPosition.fromBeforeNode(this.currentDocument, afterEnd)
-      );
-    } else {
-      return new ModelRange(
-        startpos,
-        ModelPosition.fromInElement(
-          this.currentDocument,
-          endPos.parent,
-          endPos.parent.getMaxOffset()
-        )
-      );
-    }
+    console.log('clonedRange', clonedRange.toString());
+    this.splitUntilElement(clonedRange.end, endLimit, splitAtEnds);
+    const startPos = this.mapModelPosition(clonedRange.start, {
+      bias: 'right',
+    });
+    console.log('INTERMEDIATE', this.apply().document.toXml());
+    console.log('Startsplit', startPos.path);
+    console.log('Startsplit remapped', this.mapModelPosition(startPos));
+    const newStartLimit = this.inWorkingCopy(startLimit);
+    console.log(newStartLimit);
+    this.splitUntilElement(startPos, newStartLimit, splitAtEnds);
+    return this.mapModelRange(range);
   }
 
   splitUntilElement(
@@ -615,7 +602,9 @@ export default class Transaction {
     untilPredicate: (element: ModelElement) => boolean,
     splitAtEnds = false
   ): ModelPosition {
-    let pos = this.clonePos(position);
+    console.log('BEFOREWHAT', position);
+    let pos = this.mapModelPosition(position, { bias: 'right' });
+    console.log('WHAT', pos);
     // Execute split at least once
     if (pos.parent === pos.root || untilPredicate(pos.parent)) {
       return this.executeSplit(pos, splitAtEnds, false, false);
@@ -877,16 +866,22 @@ export default class Transaction {
     if (node.isConnected(this.apply().document)) {
       return node;
     }
-    if (node.isConnected(this.initialState.document)) {
-      const pos = this.clonePos(
-        ModelPosition.fromBeforeNode(this.initialState.document, node)
-      );
-      return pos.nodeAfter()! as N;
-    } else {
-      throw new ModelError(
-        'Cannot match node that didnt come from initialState'
-      );
+    for (const result of [{ state: this.initialState }, ...this.stepCache]) {
+      if (node.isConnected(result.state.document)) {
+        if (
+          ModelNode.isModelElement(node) &&
+          node === this.initialState.document
+        ) {
+          return this.apply().document as unknown as N;
+        } else {
+          const pos = this.mapModelPosition(
+            ModelPosition.fromBeforeNode(this.initialState.document, node)
+          );
+          return unwrap(pos.nodeAfter()) as N;
+        }
+      }
     }
+    throw new ModelError('Cannot match node that didnt come from initialState');
   }
 
   mapSelection(

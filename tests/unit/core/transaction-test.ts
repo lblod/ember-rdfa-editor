@@ -352,8 +352,11 @@ module('Unit | core | transaction-test', function () {
         false
       );
       const result = tr.apply().document;
-      assert.true(result.sameAs(expected));
-      assert.true(resultRange.sameAs(ModelRange.fromPaths(result, [1], [1])));
+      assert.true(result.sameAs(expected), QUnit.dump.parse(result));
+      assert.true(
+        resultRange.sameAs(ModelRange.fromPaths(result, [1], [1])),
+        resultRange.toString()
+      );
     });
 
     test('split simple uncollapsed range', function (assert) {
@@ -384,24 +387,23 @@ module('Unit | core | transaction-test', function () {
         </modelRoot>
       `;
 
+      ModelNode.assertModelElement(initial);
       const initialState = testState({ document: initial });
       const tr = initialState.createTransaction();
-      const range = ModelRange.fromInTextNode(
-        initial as ModelElement,
-        rangeStart,
-        1,
-        3
-      );
+      const range = ModelRange.fromInTextNode(initial, rangeStart, 1, 3);
       const resultRange = tr.splitRangeUntilElements(
         range,
-        initial as ModelElement,
-        initial as ModelElement,
+        initial,
+        initial,
         false
       );
       const result = tr.apply().document;
-      assert.true(result.sameAs(expected));
+      assert.true(result.sameAs(expected), QUnit.dump.parse(result));
 
-      assert.true(resultRange.sameAs(ModelRange.fromPaths(result, [1], [2])));
+      assert.true(
+        resultRange.sameAs(ModelRange.fromPaths(result, [1], [2])),
+        resultRange.toString()
+      );
     });
 
     test('split simple uncollapsed range in text (child of root)', function (assert) {
