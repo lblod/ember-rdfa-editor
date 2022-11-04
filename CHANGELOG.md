@@ -33,6 +33,29 @@
 
 
 
+
+## 0.63.7 (2022-11-04)
+
+#### :bug: Bug Fix
+* [#443](https://github.com/lblod/ember-rdfa-editor/pull/443) Refresh inline components after model read ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#444](https://github.com/lblod/ember-rdfa-editor/pull/444) Remove unnecessary read on mouseup ([@elpoelma](https://github.com/elpoelma))
+* [#442](https://github.com/lblod/ember-rdfa-editor/pull/442) build(deps-dev): bump @types/ember__polyfills from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#441](https://github.com/lblod/ember-rdfa-editor/pull/441) build(deps-dev): bump @types/ember__engine from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#440](https://github.com/lblod/ember-rdfa-editor/pull/440) build(deps-dev): bump @types/ember__test-helpers from 2.8.1 to 2.8.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#439](https://github.com/lblod/ember-rdfa-editor/pull/439) build(deps-dev): bump @types/ember__runloop from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#438](https://github.com/lblod/ember-rdfa-editor/pull/438) build(deps-dev): bump @types/ember__template from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#433](https://github.com/lblod/ember-rdfa-editor/pull/433) build(deps-dev): bump eslint-plugin-ember from 11.1.0 to 11.2.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#434](https://github.com/lblod/ember-rdfa-editor/pull/434) build(deps-dev): bump @types/ember__component from 4.0.10 to 4.0.11 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#435](https://github.com/lblod/ember-rdfa-editor/pull/435) build(deps-dev): bump @types/ember__application from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#436](https://github.com/lblod/ember-rdfa-editor/pull/436) build(deps-dev): bump @types/ember__routing from 4.0.11 to 4.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#437](https://github.com/lblod/ember-rdfa-editor/pull/437) build(deps-dev): bump @types/ember__controller from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 0.63.6 (2022-10-27)
 
 #### :house: Internal
