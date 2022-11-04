@@ -477,6 +477,9 @@ export default class Transaction {
 
   mapModelRange(range: ModelRange, config?: RangeMapConfig) {
     const latestState = this.apply();
+    if (range.root === latestState.document) {
+      return range;
+    }
     const simpleRange = modelRangeToSimpleRange(range);
     const stepResult =
       this.stepCache.find((result) => result.state.document === range.root)
@@ -509,7 +512,7 @@ export default class Transaction {
         );
       }
       const mapper = new SimpleRangeMapper();
-      for (let i = stateIndex; i < this.steps.length; i++) {
+      for (let i = stateIndex + 1; i < this.steps.length; i++) {
         mapper.appendMapper(this.stepCache[i].mapper);
       }
       return mapper;

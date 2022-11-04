@@ -546,7 +546,7 @@ module('Unit | core | transaction-test', function () {
         false
       );
       const result = tr.apply().document;
-      assert.true(result.sameAs(expected));
+      assert.true(result.sameAs(expected), QUnit.dump.parse(result));
       assert.true(resultRange.sameAs(ModelRange.fromPaths(result, [1], [2])));
     });
 
