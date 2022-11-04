@@ -478,7 +478,7 @@ function buildPositionMappingForInsert(
         result = newEnd;
       }
     } else {
-      result = newEnd;
+      result = position - (end - start) + insertSize;
     }
     return result;
   };
