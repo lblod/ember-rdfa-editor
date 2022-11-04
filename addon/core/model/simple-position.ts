@@ -21,7 +21,9 @@ export function simplePosToModelPos(
   let count = 0;
   while (cur) {
     const curSize = cur.size;
-    if (count + curSize < simplePos) {
+    if (count === simplePos) {
+      return ModelPosition.fromBeforeNode(root, cur);
+    } else if (count + curSize < simplePos) {
       count += curSize;
       cur = cur.getNextSibling(root);
     } else if (count + curSize === simplePos) {
