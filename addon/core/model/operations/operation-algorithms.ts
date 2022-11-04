@@ -473,7 +473,7 @@ function buildPositionMappingForInsert(
       result = position;
     } else if (position <= end) {
       if (bias === 'left') {
-        result = position;
+        result = start;
       } else {
         result = newEnd;
       }

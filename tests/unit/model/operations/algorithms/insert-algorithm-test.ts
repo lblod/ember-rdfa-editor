@@ -140,7 +140,7 @@ module(
         insertNode2
       );
 
-      const newEndPos = mapper.mapPosition(end);
+      const newEndPos = mapper.mapPosition(end, { bias: 'right' });
       const newStartPos = mapper.mapPosition(start, { bias: 'left' });
       const newStartPosRight = mapper.mapPosition(start, { bias: 'right' });
       const newTestPos1 = mapper.mapPosition(testpos1);
