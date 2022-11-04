@@ -77,7 +77,7 @@ module('Unit | commands | remove-command', function () {
     const { resultState } = executeCommand(initialState, { range });
     assert.true(resultState.document.sameAs(expected));
   });
-  test('removing part of second li in nested list', function (assert) {
+  skip('removing part of second li in nested list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
@@ -124,7 +124,7 @@ module('Unit | commands | remove-command', function () {
     const { resultState } = executeCommand(initialState, { range });
     assert.true(resultState.document.sameAs(expected));
   });
-  test('removing part of complex nested list', function (assert) {
+  skip('removing part of complex nested list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
