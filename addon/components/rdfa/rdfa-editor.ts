@@ -111,6 +111,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.editor.on('modelWritten', () => {
       this.inlineComponents = this.editor!.getComponentInstances();
     });
+    this.editor.on('modelRead', () => {
+      this.inlineComponents = this.editor!.getComponentInstances();
+    });
     this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
     this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
     this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
