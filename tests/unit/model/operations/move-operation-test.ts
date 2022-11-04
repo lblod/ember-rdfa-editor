@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
-import { OperationError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { testState } from 'dummy/tests/test-utils';
 
@@ -178,6 +178,6 @@ module('Unit | model | operations | move-operation-test', function () {
     assert.throws(() => {
       tr.moveToPosition(srcRange, targetPos);
       tr.apply();
-    }, new OperationError('Cannot move to target inside source range'));
+    }, new AssertionError('Cannot move range to position within that range'));
   });
 });
