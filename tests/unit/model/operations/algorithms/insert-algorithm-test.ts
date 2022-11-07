@@ -298,7 +298,7 @@ module(
         insertNode2
       );
 
-      const newEndPos = mapper.mapPosition(insertionRange.end);
+      const newEndPos = mapper.mapPosition(insertionRange.end, { bias: 'right'});
       const newStartPos = mapper.mapPosition(insertionRange.start);
       const newTestPos1 = mapper.mapPosition(testpos1);
       const newTestPos2 = mapper.mapPosition(testpos2);
@@ -308,7 +308,7 @@ module(
 
       assert.true(initial.sameAs(expected));
       assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 4]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 4]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 2]));
       assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 7, 4]));
       assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 8]));
       assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
@@ -331,9 +331,7 @@ module(
       //language=XML
       const { root: expected } = vdom`
         <modelRoot>
-          <text __id="text1">t</text>
-          <text>x</text>
-          <text>est</text>
+          <text __id="text1">txest</text>
         </modelRoot>
       `;
       ModelNode.assertModelElement(initial);
