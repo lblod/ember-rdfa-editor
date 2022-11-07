@@ -12,6 +12,7 @@ import {
 import ModelText from '@lblod/ember-rdfa-editor/core/model/nodes/model-text';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import {
+  modelRangeToSimpleRange,
   SimpleRange,
   simpleRangeToModelRange,
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
@@ -230,6 +231,7 @@ export default class OperationAlgorithms {
     const nodesToRemove = [];
 
     const confinedRanges = modelRange.getMinimumConfinedRanges();
+    const simpleConfinedRanges = confinedRanges.map(modelRangeToSimpleRange);
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({ range, descend: false });
@@ -248,11 +250,15 @@ export default class OperationAlgorithms {
     if (!modelRange.collapsed && newEndNode && !(newStartNode === newEndNode)) {
       newEndNode.remove(root);
     }
+    
 
     return {
       removedNodes: nodesToRemove,
       mapper: new SimpleRangeMapper([
-        buildPositionMappingForInsert(range.start, range.end, 0),
+        buildPositionMappingForRemove(
+          ...simpleConfinedRanges
+        ),
+        // buildPositionMappingForInsert(range.start, range.end, 0),
       ]),
     };
   }
@@ -312,7 +318,7 @@ export default class OperationAlgorithms {
         new SimpleRangeMapper([
           buildPositionMappingForInsert(
             rangeAfterRemove.start,
-            rangeAfterRemove.end,
+            rangeAfterRemove.start,
             insertSize
           ),
         ])
@@ -481,6 +487,26 @@ function buildPositionMappingForInsert(
       result = position - (end - start) + insertSize;
     }
     return result;
+  };
+}
+
+function buildPositionMappingForRemove(
+  ...ranges: SimpleRange[]
+): SimplePositionMapping {
+  return function (
+    position: SimplePosition,
+    _bias: LeftOrRight = 'left'
+  ): SimplePosition {
+    let size = 0;
+    for (const range of ranges) {
+      if (position < range.start) {
+        return position - size;
+      } else if (position <= range.end) {
+        return range.start - size;
+      }
+      size += range.end - range.start;
+    }
+    return position - size;
   };
 }
 
