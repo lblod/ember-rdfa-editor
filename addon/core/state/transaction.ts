@@ -409,12 +409,19 @@ export default class Transaction {
     this.addStep(splitStep);
     const stateAfterSplit = this.apply();
 
-    const nodesToMove = simpleRangeToModelRange(
-      range,
-      stateAfterSplit.document
-    ).contextNodes('rangeContains');
-
     const rangeAfterSplit = this.mapRange(range, { fromState: startState });
+
+    const modelRangeAfterSplit = simpleRangeToModelRange(
+      rangeAfterSplit,
+      stateAfterSplit.document
+    );
+    const nodesToMove: ModelNode[] = [];
+    let currentNode = modelRangeAfterSplit.start.nodeAfter();
+    while(currentNode){
+      nodesToMove.push(currentNode);
+      if(currentNode === modelRangeAfterSplit.end.nodeBefore()) break;
+      currentNode = currentNode.getNextSibling(stateAfterSplit.document);
+    }
 
     const deleteStep = new ReplaceStep({ range: rangeAfterSplit, nodes: [] });
     this.addStep(deleteStep);
