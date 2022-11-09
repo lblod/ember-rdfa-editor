@@ -16,6 +16,7 @@ export default class ListCleaner {
     }).nodes() as Generator<ModelElement>;
 
     for (const listNode of listNodes) {
+      //TODO: to investigate: it may be possible that some nodes of the listNodes generator are no longer connected as they have been cloned by previous merges.
       const next = listNode.getNextSibling(tr.currentDocument);
       if (
         next &&

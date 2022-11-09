@@ -248,7 +248,9 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
     cleaner.clean(range, tr);
 
     const resultState = tr.apply();
-
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 });
