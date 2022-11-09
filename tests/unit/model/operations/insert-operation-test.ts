@@ -235,7 +235,7 @@ module('Unit | model | operations | insert-operation-test', function () {
     const actual = step.getResult(initialState);
     assert.true(actual.state.document.sameAs(expected));
     const resultRange = actual.mapper.mapRange(range);
-    assert.strictEqual(
+    assert.deepEqual(
       resultRange,
       modelRangeToSimpleRange(
         ModelRange.fromPaths(actual.state.document, [0, 2], [1])
@@ -270,8 +270,7 @@ module('Unit | model | operations | insert-operation-test', function () {
     const { root: expected } = vdom`
       <modelRoot __dirty="content">
         <div __dirty="content">
-          <text __dirty="content">ab</text>
-          <text __dirty="node,content">ins0</text>
+          <text __dirty="content">abins0</text>
           <text __dirty="node,content">ins1</text>
         </div>
         <div __dirty="content">
@@ -300,9 +299,12 @@ module('Unit | model | operations | insert-operation-test', function () {
       nodes: [new ModelText('ins0'), new ModelText('ins1')],
     });
     const actual = step.getResult(initialState);
-    const resultRange = actual.mapper.mapRange(range);
-    assert.true(actual.state.document.sameAs(expected));
-    assert.strictEqual(
+    const resultRange = actual.mapper.mapRange(range, { startBias: 'left' });
+    assert.true(
+      actual.state.document.sameAs(expected),
+      QUnit.dump.parse(actual.state.document)
+    );
+    assert.deepEqual(
       resultRange,
       modelRangeToSimpleRange(
         ModelRange.fromPaths(actual.state.document, [0, 2], [1, 0, 0])

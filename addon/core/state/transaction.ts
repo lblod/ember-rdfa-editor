@@ -415,12 +415,19 @@ export default class Transaction {
       rangeAfterSplit,
       stateAfterSplit.document
     );
+    const confinedRanges = modelRangeAfterSplit.getMinimumConfinedRanges();
+
     const nodesToMove: ModelNode[] = [];
-    let currentNode = modelRangeAfterSplit.start.nodeAfter();
-    while(currentNode){
-      nodesToMove.push(currentNode);
-      if(currentNode === modelRangeAfterSplit.end.nodeBefore()) break;
-      currentNode = currentNode.getNextSibling(stateAfterSplit.document);
+    for (const range of confinedRanges) {
+      let currentNode = range.start.nodeAfter();
+      while (currentNode) {
+        nodesToMove.push(currentNode);
+        if (currentNode === range.end.nodeBefore()) {
+          currentNode = null;
+        } else {
+          currentNode = currentNode.getNextSibling(stateAfterSplit.document);
+        }
+      }
     }
 
     const deleteStep = new ReplaceStep({ range: rangeAfterSplit, nodes: [] });

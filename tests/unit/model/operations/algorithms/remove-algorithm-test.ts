@@ -129,12 +129,15 @@ module(
 
       assert.true(initial.sameAs(expected));
       assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 0, 0]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 0, 0]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0]));
       assert.strictEqual(newStartPosLeft, pathToSimplePos(initial, [1, 0]));
       assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 0, 1]));
       assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 1]));
       assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
-      assert.strictEqual(newTestPos4LeftBias, newStartPosLeft);
+      assert.strictEqual(
+        newTestPos4LeftBias,
+        pathToSimplePos(initial, [1, 0, 0, 0])
+      );
       assert.strictEqual(newTestPos4RightBias, newEndPos);
       assert.strictEqual(
         newTestPos5,

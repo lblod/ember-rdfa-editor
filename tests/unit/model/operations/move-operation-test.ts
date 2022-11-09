@@ -40,7 +40,8 @@ module('Unit | model | operations | move-operation-test', function () {
     const resultRange = tr.mapModelRange(srcRange);
     assert.true(actual.document.sameAs(expected));
     assert.true(
-      resultRange.sameAs(ModelRange.fromPaths(actual.document, [0, 0], [0, 4]))
+      resultRange.sameAs(ModelRange.fromPaths(actual.document, [1], [1])),
+      resultRange.toString()
     );
   });
 
@@ -79,7 +80,7 @@ module('Unit | model | operations | move-operation-test', function () {
 
     assert.true(actual.document.sameAs(expected));
     assert.true(
-      resultRange.sameAs(ModelRange.fromPaths(actual.document, [0, 0], [0, 2]))
+      resultRange.sameAs(ModelRange.fromPaths(actual.document, [2], [2]))
     );
   });
   test('move uneven range inside textnode', function (assert) {
@@ -113,16 +114,22 @@ module('Unit | model | operations | move-operation-test', function () {
         <div>
           <text>abgh</text>
           <span>
-            <text>ijkl</text>
-          </span>
+            <span>
+              <text>ijkl</text>
+            </span>
 
-          <text>mnop</text>
-          <text>qrcd</text>
+            <text>mnop</text>
+            <text>qr</text>
+          </span>
+          <text>cd</text>
         </div>
 
         <div>
           <span>
             <text>ef</text>
+
+          </span>
+          <span>
             <span>
               <text __id="rangeEnd">st</text>
             </span>
@@ -145,11 +152,11 @@ module('Unit | model | operations | move-operation-test', function () {
 
     assert.true(
       actual.document.sameAs(expected),
-      QUnit.dump.parse(initial.toXml())
+      QUnit.dump.parse(actual.document.toXml())
     );
     assert.true(
       resultRange.sameAs(
-        ModelRange.fromPaths(actual.document, [0, 2], [0, 11])
+        ModelRange.fromPaths(actual.document, [1, 1], [1, 1, 0])
       ),
       resultRange.toString()
     );

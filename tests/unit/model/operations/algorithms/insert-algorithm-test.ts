@@ -158,14 +158,14 @@ module(
       assert.true(initial.sameAs(expected));
       assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 2, 0, 0]));
       assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0]));
-      assert.strictEqual(
-        newStartPosRight,
-        pathToSimplePos(initial, [1, 2, 0, 0])
-      );
+      assert.strictEqual(newStartPosRight, pathToSimplePos(initial, [1, 2]));
       assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 2, 0, 1]));
       assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 2, 1]));
       assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
-      assert.strictEqual(newTestPos4LeftBias, newStartPos);
+      assert.strictEqual(
+        newTestPos4LeftBias,
+        pathToSimplePos(initial, [1, 2, 0, 0])
+      );
       assert.strictEqual(newTestPos4RightBias, newEndPos);
       assert.strictEqual(
         newTestPos5,
@@ -298,8 +298,11 @@ module(
         insertNode2
       );
 
-      const newEndPos = mapper.mapPosition(insertionRange.end, { bias: 'right'});
+      const newEndPos = mapper.mapPosition(insertionRange.end);
       const newStartPos = mapper.mapPosition(insertionRange.start);
+      const newStartPosLeft = mapper.mapPosition(insertionRange.start, {
+        bias: 'left',
+      });
       const newTestPos1 = mapper.mapPosition(testpos1);
       const newTestPos2 = mapper.mapPosition(testpos2);
       const newTestPos3 = mapper.mapPosition(testpos3);
@@ -308,7 +311,8 @@ module(
 
       assert.true(initial.sameAs(expected));
       assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 4]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 2]));
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 4]));
+      assert.strictEqual(newStartPosLeft, pathToSimplePos(initial, [1, 0, 2]));
       assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 7, 4]));
       assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 8]));
       assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));

@@ -250,14 +250,11 @@ export default class OperationAlgorithms {
     if (!modelRange.collapsed && newEndNode && !(newStartNode === newEndNode)) {
       newEndNode.remove(root);
     }
-    
 
     return {
       removedNodes: nodesToRemove,
       mapper: new SimpleRangeMapper([
-        buildPositionMappingForRemove(
-          ...simpleConfinedRanges
-        ),
+        buildPositionMappingForRemove(...simpleConfinedRanges),
         // buildPositionMappingForInsert(range.start, range.end, 0),
       ]),
     };
@@ -471,7 +468,7 @@ function buildPositionMappingForInsert(
 ): SimplePositionMapping {
   return function (
     position: SimplePosition,
-    bias: LeftOrRight = 'left'
+    bias: LeftOrRight = 'right'
   ): SimplePosition {
     let result;
     const newEnd = start + insertSize;
