@@ -97,6 +97,7 @@ export default class OperationAlgorithms {
     //would grab just the text node
     const confinedNodes: ModelNode[] = [];
     const confinedRanges = modelRange.getMinimumConfinedRanges();
+    const simpleConfinedRanges = confinedRanges.map(modelRangeToSimpleRange);
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = GenTreeWalker.fromRange({ range: range });
@@ -199,7 +200,7 @@ export default class OperationAlgorithms {
     return {
       removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
       mapper: new SimpleRangeMapper([
-        buildPositionMappingForInsert(range.start, range.end, 0),
+        buildPositionMappingForRemove(...simpleConfinedRanges),
       ]),
     };
   }
