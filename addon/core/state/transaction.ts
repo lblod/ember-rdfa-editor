@@ -585,6 +585,9 @@ export default class Transaction {
     endLimit: ModelElement,
     splitAtEnds = false
   ) {
+    this.logger(
+      'Mapping may not correspond to expected result as splits are not always executed/necessary'
+    );
     const clonedRange = this.cloneRange(range);
     this.splitUntilElement(clonedRange.end, endLimit, splitAtEnds);
     const startPos = this.mapModelPosition(clonedRange.start, {
@@ -592,8 +595,12 @@ export default class Transaction {
     });
     const newStartLimit = this.inWorkingCopy(startLimit);
     console.log(newStartLimit);
-    this.splitUntilElement(startPos, newStartLimit, splitAtEnds);
-    return this.mapModelRange(range);
+    const resultPos = this.splitUntilElement(
+      startPos,
+      newStartLimit,
+      splitAtEnds
+    );
+    return new ModelRange(resultPos, this.mapModelPosition(range.end));
   }
 
   splitUntilElement(
