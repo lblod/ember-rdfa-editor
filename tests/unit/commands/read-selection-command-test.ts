@@ -666,7 +666,10 @@ module('Unit | commands | read-selection-command-test', function () {
       initialState,
       {}
     );
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
 
     assert.expect(2 + readNodes.length);
 

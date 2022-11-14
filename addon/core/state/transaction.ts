@@ -558,6 +558,7 @@ export default class Transaction {
    * */
   rollback(): State {
     this._steps = [];
+    this.stepCache = [];
     return this.initialState;
   }
 
