@@ -8,15 +8,26 @@ import GenTreeWalker from './gen-tree-walker';
 
 export default class ListCleaner {
   clean(range: ModelRange, tr: Transaction) {
-    const clonedRange = tr.cloneRange(range);
+    let mappedRange = tr.mapModelRange(range);
     // SAFETY: listcontainers are always elements
-    const listNodes = GenTreeWalker.fromRange({
-      filter: toFilterSkipFalse((node) => ModelNodeUtils.isListContainer(node)),
-      range: clonedRange,
-    }).nodes() as Generator<ModelElement>;
+    let nodes = this.getNextMergeableListNodes(tr, mappedRange);
+    while (nodes) {
+      const { first, second } = nodes;
+      ListCleaner.mergeListNodes(first, second, tr);
+      mappedRange = tr.mapModelRange(mappedRange);
+      nodes = this.getNextMergeableListNodes(tr, mappedRange);
+    }
+  }
 
-    for (const listNode of listNodes) {
-      //TODO: to investigate: it may be possible that some nodes of the listNodes generator are no longer connected as they have been cloned by previous merges.
+  getNextMergeableListNodes(
+    tr: Transaction,
+    range: ModelRange
+  ): { first: ModelElement; second: ModelElement } | undefined {
+    const generator = GenTreeWalker.fromRange({
+      filter: toFilterSkipFalse((node) => ModelNodeUtils.isListContainer(node)),
+      range,
+    }).nodes() as Generator<ModelElement>;
+    for (const listNode of generator) {
       const next = listNode.getNextSibling(tr.currentDocument);
       if (
         next &&
@@ -26,9 +37,10 @@ export default class ListCleaner {
           next.attributeMap
         )
       ) {
-        ListCleaner.mergeListNodes(listNode, next, tr);
+        return { first: listNode, second: next };
       }
     }
+    return;
   }
 
   private static mergeListNodes(
