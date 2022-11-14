@@ -97,7 +97,9 @@ export default class RemoveListCommand
     for (const node of nodesInRange) {
       if (ModelNodeUtils.isListRelated(node)) {
         resultRange = transaction.unwrap(
-          modelPosToSimplePos(ModelPosition.fromBeforeNode(range.root, node)),
+          modelPosToSimplePos(
+            ModelPosition.fromBeforeNode(transaction.currentDocument, node)
+          ),
           true
         );
       } else if (ModelNode.isModelText(node)) {

@@ -36,7 +36,10 @@ module('Unit | commands | remove-list-command', function () {
 
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 
   test('removing a nested list', function (assert) {
