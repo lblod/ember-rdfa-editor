@@ -911,17 +911,15 @@ export default class Transaction {
     selection: ModelSelection,
     config?: RangeMapConfig
   ): ModelSelection {
-    const clone = this.cloneSelection(selection);
-    const simpleRanges = clone.ranges.map((range) =>
+    let simpleRanges = selection.ranges.map((range) =>
       modelRangeToSimpleRange(range)
     );
-    clone.ranges = simpleRanges.map((range) =>
-      simpleRangeToModelRange(
-        this.mapRange(range, config),
-        this.apply().document
-      )
+    simpleRanges = simpleRanges.map((range) => this.mapRange(range, config));
+    const modelRanges = simpleRanges.map((range) =>
+      simpleRangeToModelRange(range, this.apply().document)
     );
-    return clone;
+    return new ModelSelection(modelRanges);
+    // return clone;
   }
 
   mapInitialSelection(config?: RangeMapConfig): ModelSelection {
