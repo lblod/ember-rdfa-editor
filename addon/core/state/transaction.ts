@@ -590,18 +590,23 @@ export default class Transaction {
       'Mapping may not correspond to expected result as splits are not always executed/necessary'
     );
     const clonedRange = this.cloneRange(range);
-    this.splitUntilElement(clonedRange.end, endLimit, splitAtEnds);
+    const endPos = this.splitUntilElement(
+      clonedRange.end,
+      endLimit,
+      splitAtEnds
+    );
     const startPos = this.mapModelPosition(clonedRange.start, {
       bias: 'right',
     });
     const newStartLimit = this.inWorkingCopy(startLimit);
-    console.log(newStartLimit);
     const resultPos = this.splitUntilElement(
       startPos,
       newStartLimit,
       splitAtEnds
     );
-    return new ModelRange(resultPos, this.mapModelPosition(range.end));
+
+    // Currently we cant use the range-mapper for this result-range as they yield unexpected results
+    return new ModelRange(resultPos, this.mapModelPosition(endPos));
   }
 
   splitUntilElement(
