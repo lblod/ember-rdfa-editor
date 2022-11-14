@@ -21,6 +21,7 @@ import {
   SimplePosition,
   simplePosToModelPos,
 } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import ModelRange from '../model-range';
 
 export type OperationAlgorithmResponse<T> = { mapper: SimpleRangeMapper } & T;
 /**
@@ -97,7 +98,7 @@ export default class OperationAlgorithms {
     //would grab just the text node
     const confinedNodes: ModelNode[] = [];
     const confinedRanges = modelRange.getMinimumConfinedRanges();
-    const simpleConfinedRanges = confinedRanges.map(modelRangeToSimpleRange);
+    const simpleRemovedRanges = confinedRanges.map(modelRangeToSimpleRange);
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = GenTreeWalker.fromRange({ range: range });
@@ -132,6 +133,22 @@ export default class OperationAlgorithms {
         if (cantRemove) {
           cantRemoveOpeningTagNodes.push(opNode);
         } else {
+          const beforeOpTag = modelPosToSimplePos(
+            ModelPosition.fromBeforeNode(root, opNode)
+          );
+          const afterOpTag = modelPosToSimplePos(
+            ModelPosition.fromAfterNode(root, opNode)
+          );
+          simpleRemovedRanges.push(
+            {
+              start: beforeOpTag,
+              end: beforeOpTag + 1,
+            },
+            {
+              start: afterOpTag - 1,
+              end: afterOpTag,
+            }
+          );
           opNode.unwrap(root);
         }
       } else {
@@ -200,7 +217,9 @@ export default class OperationAlgorithms {
     return {
       removedNodes: [...confinedNodes, ...removedOpeningTagNodes],
       mapper: new SimpleRangeMapper([
-        buildPositionMappingForRemove(...simpleConfinedRanges),
+        buildPositionMappingForRemove(
+          ...simpleRemovedRanges.sort((r1, r2) => r1.start - r2.start)
+        ),
       ]),
     };
   }
