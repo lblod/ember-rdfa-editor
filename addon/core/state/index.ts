@@ -67,7 +67,6 @@ import {
   simpleRangeToModelRange,
 } from '@lblod/ember-rdfa-editor/core/model/simple-range';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import ModelNode from '../model/nodes/model-node';
 
 export interface StateArgs {
   document: ModelElement;
@@ -380,14 +379,7 @@ export function cloneDocumentInRange(
   document: ModelElement
 ): ModelElement {
   const resolvedRange = simpleRangeToModelRange(range, document);
-  let commonAncestor: ModelNode;
-  // TODO: is this assumption correct?
-  const nodeAfterStart = resolvedRange.start.nodeAfter();
-  if (nodeAfterStart && nodeAfterStart === resolvedRange.end.nodeBefore()) {
-    commonAncestor = nodeAfterStart;
-  } else {
-    commonAncestor = resolvedRange.getCommonAncestor();
-  }
+  const commonAncestor = resolvedRange.getCommonAncestor();
   return ModelNodeUtils.replaceNodeInTree(
     document,
     commonAncestor,
