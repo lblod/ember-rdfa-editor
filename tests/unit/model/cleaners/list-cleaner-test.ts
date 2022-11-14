@@ -55,6 +55,66 @@ module('Unit | model | cleaners | list-cleaner-test', function () {
     assert.true(resultState.document.sameAs(expected));
   });
 
+  test('should merge three adjacent lists', function (assert) {
+    // language=XML
+    const {
+      root: initial,
+      elements: { container },
+    } = vdom`
+      <div __id="container">
+        <ul>
+          <li>
+            <text>content1</text>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <text>content2</text>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <text>content3</text>
+          </li>
+        </ul>
+      </div>
+    `;
+
+    // language=XML
+    const { root: expected } = vdom`
+      <div>
+        <ul>
+          <li>
+            <text>content1</text>
+          </li>
+          <li>
+            <text>content2</text>
+          </li>
+          <li>
+            <text>content3</text>
+          </li>
+        </ul>
+      </div>
+    `;
+    const initialState = testState({ document: initial });
+    const tr = initialState.createTransaction();
+
+    const cleaner = new ListCleaner();
+    const range = ModelRange.fromInElement(
+      initial as ModelElement,
+      container,
+      0,
+      3
+    );
+    cleaner.clean(range, tr);
+    const resultState = tr.apply();
+
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
+  });
+
   test('does not merge lists on a different level', function (assert) {
     // language=XML
     const {
