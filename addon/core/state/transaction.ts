@@ -751,31 +751,31 @@ export default class Transaction {
     if (targetElement.isLeaf || !ModelNode.isModelElement(targetElement)) {
       throw new AssertionError('Cannot unwrap a leafnode');
     }
-    const srcRange = ModelRange.fromInElement(
-      this.currentDocument,
-      targetElement,
-      0,
-      targetElement.getMaxOffset()
-    );
-    const target = ModelPosition.fromBeforeNode(
-      this.currentDocument,
-      targetElement
-    );
-    // const targetRange = modelRangeToSimpleRange(
-    //   ModelRange.fromAroundNode(this.currentDocument, targetElement)
+    // const srcRange = ModelRange.fromInElement(
+    //   this.currentDocument,
+    //   targetElement,
+    //   0,
+    //   targetElement.getMaxOffset()
     // );
-    // const resultRange = simpleRangeToModelRange(
-    //   this.addAndCommitOperationStep(
-    //     new ReplaceStep({
-    //       range: targetRange,
-    //       nodes: targetElement.children,
-    //     })
-    //   ),
-    //   this.apply().document
+    // const target = ModelPosition.fromBeforeNode(
+    //   this.currentDocument,
+    //   targetElement
     // );
+    const targetRange = modelRangeToSimpleRange(
+      ModelRange.fromAroundNode(this.currentDocument, targetElement)
+    );
+    const resultRange = simpleRangeToModelRange(
+      this.addAndCommitOperationStep(
+        new ReplaceStep({
+          range: targetRange,
+          nodes: targetElement.children,
+        })
+      ),
+      this.apply().document
+    );
 
-    const resultRange = this.moveToPosition(srcRange, target);
-    this.deleteNode(resultRange.end.nodeAfter()!);
+    // const resultRange = this.moveToPosition(srcRange, target);
+    // this.deleteNode(resultRange.end.nodeAfter()!);
 
     if (ensureBlock) {
       const nodeBeforeStart = resultRange.start.nodeBefore();
