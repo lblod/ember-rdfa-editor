@@ -82,6 +82,10 @@ export function domStripped(
 }
 
 export function printModel(modelNode: ModelNode) {
-  const writer = new XmlWriter();
+  const writer = new XmlWriter({
+    showPositions: false,
+    showMarks: false,
+    showTextNodeLength: false,
+  });
   return writer.write(modelNode);
 }

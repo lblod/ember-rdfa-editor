@@ -7,7 +7,9 @@ import {
   NotImplementedError,
   OutsideRootError,
 } from '@lblod/ember-rdfa-editor/utils/errors';
-import XmlWriter from '@lblod/ember-rdfa-editor/core/model/writers/xml-writer';
+import XmlWriter, {
+  XmlWriterConfig,
+} from '@lblod/ember-rdfa-editor/core/model/writers/xml-writer';
 import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
@@ -340,9 +342,17 @@ export default abstract class ModelNode implements Walkable {
   /**
    * Convert this node and its subtree to their xml representation
    */
-  toXml(): Node {
-    const writer = new XmlWriter();
+  toXml(config?: XmlWriterConfig): Node {
+    const writer = new XmlWriter(config);
     return writer.write(this);
+  }
+
+  toXmlClean() {
+    return this.toXml({
+      showTextNodeLength: false,
+      showPositions: false,
+      showMarks: false,
+    });
   }
 
   /**
