@@ -34,6 +34,19 @@
 
 
 
+
+## 0.63.8 (2022-11-15)
+
+#### :house: Internal
+* [#454](https://github.com/lblod/ember-rdfa-editor/pull/454) fix(deps): use proper versions of the @types packages ([@abeforgit](https://github.com/abeforgit))
+* [#448](https://github.com/lblod/ember-rdfa-editor/pull/448) build(deps-dev): bump eslint-plugin-qunit from 7.3.1 to 7.3.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#450](https://github.com/lblod/ember-rdfa-editor/pull/450) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.8.2 to 1.9.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#447](https://github.com/lblod/ember-rdfa-editor/pull/447) build(deps): bump @codemirror/view from 6.4.0 to 6.4.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.63.7 (2022-11-04)
 
 #### :bug: Bug Fix

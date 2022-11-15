@@ -5,12 +5,14 @@ import ModelElement from '../model-element';
 import { ModelNodeType } from '../model-node';
 import { AttributeSpec, Serializable } from '../util/render-spec';
 
-export type Properties = Record<string, Serializable | undefined>;
-
-export type State = Record<string, Serializable | undefined>;
+export type Properties = Record<string, Serializable | undefined | null>;
 export abstract class InlineComponentSpec {
   name: string;
   tag: keyof HTMLElementTagNameMap;
+  abstract properties: Record<
+    string,
+    { serializable: boolean; defaultValue?: Serializable | null }
+  >;
 
   abstract matcher: DomNodeMatcher<AttributeSpec>;
   controller: Controller;
@@ -25,65 +27,58 @@ export abstract class InlineComponentSpec {
     this.controller = controller;
   }
 
-  abstract _renderStatic(props?: Properties, state?: State): string;
+  abstract _renderStatic(props?: Properties): string;
 }
 
-function render(
-  spec: InlineComponentSpec,
-  props?: Properties,
-  state?: State,
-  dynamic = true
-) {
+function render(spec: InlineComponentSpec, props?: Properties, dynamic = true) {
   const node = document.createElement(spec.tag);
+
   if (props) {
-    node.dataset['__props'] = JSON.stringify(props);
-  }
-  if (state) {
-    node.dataset['__state'] = JSON.stringify(state);
+    const serializedProps: Record<string, Serializable | null | undefined> = {};
+    for (const [propName, { serializable, defaultValue }] of Object.entries(
+      spec.properties
+    )) {
+      if (serializable) {
+        serializedProps[propName] = props[propName] ?? defaultValue;
+      }
+    }
+    node.dataset.props = JSON.stringify(serializedProps);
   }
   node.contentEditable = 'false';
-  node.classList.add('inline-component', spec.name);
+  node.classList.add('inline-component');
+  node.dataset.inlineComponent = spec.name;
   if (!dynamic) {
-    node.innerHTML = spec._renderStatic(props, state);
+    node.innerHTML = spec._renderStatic(props);
   }
   return node;
 }
 
-export class ModelInlineComponent<
-  A extends Properties = Properties,
-  S extends State = State
-> extends ModelElement {
+export class ModelInlineComponent extends ModelElement {
   modelNodeType: ModelNodeType = 'INLINE-COMPONENT';
   private _spec: InlineComponentSpec;
-  private _props: A;
 
   @tracked
-  private _state: S;
+  private _props: Properties;
 
-  constructor(spec: InlineComponentSpec, props: A, state: S) {
+  constructor(spec: InlineComponentSpec, props: Properties) {
     super(spec.tag);
     this._spec = spec;
-    this._props = props;
-    this._state = tracked(state);
+    this._props = tracked(props);
   }
 
   get props() {
     return this._props;
   }
 
-  get state() {
-    return this._state;
+  setProperty(property: string, value: Serializable) {
+    this._props = tracked({ ...this.props, [property]: value });
   }
 
-  setStateProperty(property: keyof S, value: Serializable) {
-    this._state = tracked({ ...this.state, [property]: value });
-  }
-
-  getStateProperty(property: keyof S) {
-    if (property in this.state) {
-      return this.state[property];
+  getProperty(property: string) {
+    if (property in this.props) {
+      return this.props[property];
     } else {
-      return null;
+      return this.spec.properties[property]?.defaultValue;
     }
   }
 
@@ -91,11 +86,11 @@ export class ModelInlineComponent<
     return this._spec;
   }
   write(dynamic = true): Node {
-    return render(this.spec, this.props, this.state, dynamic);
+    return render(this.spec, this.props, dynamic);
   }
 
-  clone(): ModelInlineComponent<A, S> {
-    const result = new ModelInlineComponent(this.spec, this.props, this.state);
+  clone(): ModelInlineComponent {
+    const result = new ModelInlineComponent(this.spec, this.props);
     return result;
   }
 
