@@ -1,15 +1,13 @@
 import Command, { CommandContext } from './command';
-import {
-  MisbehavedSelectionError,
-  SelectionError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelTreeWalker from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import { modelPosToSimplePos } from '@lblod/ember-rdfa-editor/core/model/simple-position';
+import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
+import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -86,43 +84,49 @@ export default class RemoveListCommand
 
     // We walk over all nodes here cause we also want to capture all textnodes that
     // were inside the split so we can set the resulting range properly.
-    const nodeWalker = new ModelTreeWalker({
+    const nodeWalker = GenTreeWalker.fromRange({
       range: newRange,
+      filter: toFilterSkipFalse<ModelElement>(ModelNodeUtils.isListRelated),
     });
 
     // Consuming here so we can modify without interfering with the walking.
-    const nodesInRange = [...nodeWalker];
+    const nodesInRange = [...nodeWalker.nodes()];
     const unwrappedNodes = [];
+    const positions = nodesInRange.map((node) =>
+      modelPosToSimplePos(
+        ModelPosition.fromBeforeNode(transaction.currentDocument, node)
+      )
+    );
     let resultRange;
-    for (const node of nodesInRange) {
-      if (ModelNodeUtils.isListRelated(node)) {
+    let prevState = transaction.workingCopy;
+    if (positions.length) {
+      const pos = positions[0];
+      resultRange = transaction.unwrap(pos, true);
+      for (let i = 1; i < positions.length; i++) {
         resultRange = transaction.unwrap(
-          modelPosToSimplePos(
-            ModelPosition.fromBeforeNode(transaction.currentDocument, node)
-          ),
+          modelPosToSimplePos(resultRange.start),
           true
         );
-      } else if (ModelNode.isModelText(node)) {
-        unwrappedNodes.push(node);
+        prevState = transaction.workingCopy;
       }
     }
 
-    // We can be confident that we need the first and last text node here,
-    // because the tree walker always walks in document order.
-    if (unwrappedNodes.length) {
-      const start = ModelPosition.fromBeforeNode(
-        transaction.currentDocument,
-        unwrappedNodes[0]
-      );
-      const end = ModelPosition.fromAfterNode(
-        transaction.currentDocument,
-        unwrappedNodes[unwrappedNodes.length - 1]
-      );
-      transaction.selectRange(new ModelRange(start, end));
-    } else if (resultRange) {
-      transaction.selectRange(resultRange);
-    } else {
-      throw new SelectionError('No sensible selection possible');
-    }
+    // // We can be confident that we need the first and last text node here,
+    // // because the tree walker always walks in document order.
+    // if (unwrappedNodes.length) {
+    //   const start = ModelPosition.fromBeforeNode(
+    //     transaction.currentDocument,
+    //     unwrappedNodes[0]
+    //   );
+    //   const end = ModelPosition.fromAfterNode(
+    //     transaction.currentDocument,
+    //     unwrappedNodes[unwrappedNodes.length - 1]
+    //   );
+    //   transaction.selectRange(new ModelRange(start, end));
+    // } else if (resultRange) {
+    //   transaction.selectRange(resultRange);
+    // } else {
+    //   throw new SelectionError('No sensible selection possible');
+    // }
   }
 }

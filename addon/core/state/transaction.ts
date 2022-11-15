@@ -761,19 +761,21 @@ export default class Transaction {
     //   this.currentDocument,
     //   targetElement
     // );
+    const beforeReplace = this.workingCopy;
     const targetRange = modelRangeToSimpleRange(
-      ModelRange.fromAroundNode(this.currentDocument, targetElement)
+      ModelRange.fromAroundNode(beforeReplace.document, targetElement)
+    );
+    this.addStep(
+      new ReplaceStep({ range: targetRange, nodes: targetElement.children })
     );
     const resultRange = simpleRangeToModelRange(
-      this.addAndCommitOperationStep(
-        new ReplaceStep({
-          range: targetRange,
-          nodes: targetElement.children,
-        })
-      ),
-      this.apply().document
+      this.mapRange(targetRange, {
+        fromState: beforeReplace,
+        startBias: 'left',
+        endBias: 'right',
+      }),
+      this.currentDocument
     );
-
     // const resultRange = this.moveToPosition(srcRange, target);
     // this.deleteNode(resultRange.end.nodeAfter()!);
 
@@ -804,7 +806,7 @@ export default class Transaction {
     }
 
     this.createSnapshot();
-    return resultRange;
+    return this.mapModelRange(resultRange);
   }
 
   replaceNode(oldNode: ModelNode, ...newNodes: ModelNode[]): void {
@@ -891,14 +893,11 @@ export default class Transaction {
     }
     for (const result of [{ state: this.initialState }, ...this.stepCache]) {
       if (node.isConnected(result.state.document)) {
-        if (
-          ModelNode.isModelElement(node) &&
-          node === this.initialState.document
-        ) {
+        if (ModelNode.isModelElement(node) && node === result.state.document) {
           return this.apply().document as unknown as N;
         } else {
           const pos = this.mapModelPosition(
-            ModelPosition.fromBeforeNode(this.initialState.document, node)
+            ModelPosition.fromBeforeNode(result.state.document, node)
           );
           return unwrap(pos.nodeAfter()) as N;
         }

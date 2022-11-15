@@ -5,6 +5,7 @@ import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 module('Unit | commands | remove-list-command', function () {
   const command = new RemoveListCommand();
@@ -212,15 +213,14 @@ module('Unit | commands | remove-list-command', function () {
       </modelRoot>
     `;
 
-    const range = ModelRange.fromInNode(
-      initial as ModelElement,
-      rangeStart,
-      0,
-      0
-    );
+    ModelNode.assertModelElement(initial);
+    const range = ModelRange.fromInNode(initial, rangeStart, 0, 0);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 
   test('removing list and a sublist using a selection', function (assert) {
