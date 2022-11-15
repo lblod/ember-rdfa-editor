@@ -2,7 +2,6 @@ import {
   InlineComponentSpec,
   ModelInlineComponent,
   Properties,
-  State,
 } from '../inline-components/model-inline-component';
 import { HtmlReaderContext } from './html-reader';
 import Reader from './reader';

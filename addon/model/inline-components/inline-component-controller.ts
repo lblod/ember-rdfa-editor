@@ -1,27 +1,17 @@
 import Controller from '../controller';
 import { Serializable } from '../util/render-spec';
-import {
-  ModelInlineComponent,
-  Properties,
-  State,
-} from './model-inline-component';
+import { ModelInlineComponent } from './model-inline-component';
 
-export interface InlineComponentArgs<
-  A extends Properties = Properties,
-  S extends State = State
-> {
-  componentController: InlineComponentController<A, S>;
+export interface InlineComponentArgs {
+  componentController: InlineComponentController;
   editorController: Controller;
 }
 
-export default class InlineComponentController<
-  A extends Properties = Properties,
-  S extends State = State
-> {
-  private _model: ModelInlineComponent<A, S>;
+export default class InlineComponentController {
+  private _model: ModelInlineComponent;
   private _node: HTMLElement;
 
-  constructor(model: ModelInlineComponent<A, S>, node: HTMLElement) {
+  constructor(model: ModelInlineComponent, node: HTMLElement) {
     this._model = model;
     this._node = node;
   }
@@ -29,20 +19,16 @@ export default class InlineComponentController<
     return this._model.props;
   }
 
-  get state() {
-    return this._model.state;
-  }
-
   get model() {
     return this._model;
   }
 
-  setStateProperty(property: keyof S, value: Serializable) {
-    this._model.setStateProperty(property, value);
-    this._node.dataset['__state'] = JSON.stringify(this._model.state);
+  setProperty(property: string, value: Serializable) {
+    this._model.setProperty(property, value);
+    // this._node.dataset['props'] = JSON.stringify(this._model.props);
   }
 
-  getStateProperty(property: keyof S) {
-    return this._model.getStateProperty(property);
+  getStateProperty(property: string) {
+    return this._model.getProperty(property);
   }
 }
