@@ -171,7 +171,6 @@ export class RawEditorController implements Controller {
 
   get htmlContent() {
     const htmlWriter = new HTMLExportWriter(this._rawEditor.model);
-    this._rawEditor.model.read();
     const output = htmlWriter.write(
       this._rawEditor.model.rootModelNode
     ) as HTMLElement;
