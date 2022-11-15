@@ -28,7 +28,7 @@ export default class InlineComponentController {
     // this._node.dataset['props'] = JSON.stringify(this._model.props);
   }
 
-  getStateProperty(property: string) {
+  getProperty(property: string) {
     return this._model.getProperty(property);
   }
 }
