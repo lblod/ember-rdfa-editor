@@ -103,13 +103,12 @@ export default class InsertNewLiCommand
       );
     }
     if (nodeAfter.length === 0) {
-      tr.insertNodes(
-        ModelRange.fromInElement(tr.currentDocument, nodeAfter),
-        new ModelText(INVISIBLE_SPACE)
+      const insertRange = ModelRange.fromInElement(
+        tr.currentDocument,
+        nodeAfter
       );
-      tr.selectRange(
-        ModelRange.fromInElement(tr.currentDocument, nodeAfter, 1, 1)
-      );
+      tr.insertNodes(insertRange, new ModelText(INVISIBLE_SPACE));
+      tr.selectRange(tr.mapModelRange(insertRange));
     } else {
       tr.selectRange(
         ModelRange.fromInElement(tr.currentDocument, nodeAfter, 0, 0)
