@@ -49,7 +49,10 @@ module('Unit | commands | indent-list-command-test', function () {
           </li>
         </ul>
       </div>`;
-    assert.true(resultState.document.sameAs(expected), QUnit.dump.parse(resultState.document));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
   todo('selection stays in indented list', function (assert) {
     // language=XML

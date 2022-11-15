@@ -2,12 +2,7 @@ import Command, {
   CommandContext,
 } from '@lblod/ember-rdfa-editor/commands/command';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
-import {
-  IllegalExecutionStateError,
-  MisbehavedSelectionError,
-  NoParentError,
-  TypeAssertionError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
+import { MisbehavedSelectionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
@@ -15,6 +10,7 @@ import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import State from '../core/state';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 
 declare module '@lblod/ember-rdfa-editor' {
   export interface Commands {
@@ -63,43 +59,34 @@ export default class IndentListCommand
       throw new MisbehavedSelectionError();
     }
     range = transaction.cloneRange(range);
+    // TODO rework this command
+    const initialRoot = transaction.currentDocument;
 
+    // find all <li> elements in the given range
     const treeWalker = ModelRangeUtils.findModelNodes(
       range,
       ModelNodeUtils.isListElement,
       true
     );
+    // a map of all <ul>s in the range onto their <li> children
     const setsToIndent = new Map<ModelElement, ModelElement[]>();
 
+    // build up the map
     for (const li of treeWalker) {
-      if (!ModelNode.isModelElement(li)) {
-        throw new TypeAssertionError('Current node is not an element.');
-      }
+      ModelNode.assertModelElement(li);
 
-      if (!li.getParent(transaction.currentDocument)) {
-        throw new NoParentError();
-      }
-
-      const parentInSet = setsToIndent.get(
-        unwrap(li.getParent(transaction.currentDocument))
-      );
-      if (parentInSet) {
-        parentInSet.push(li);
-      } else {
-        setsToIndent.set(unwrap(li.getParent(transaction.currentDocument)), [
-          li,
-        ]);
-      }
+      const parent = unwrap(li.getParent(transaction.currentDocument));
+      MapUtils.setOrPush(setsToIndent, parent, li);
     }
 
     for (const [parent, lis] of setsToIndent.entries()) {
       // First li of (nested) list can never be selected here, so previousSibling is always another li.
-      const newParent = lis[0].getPreviousSibling(transaction.currentDocument);
-      if (!newParent || !ModelNode.isModelElement(newParent)) {
-        throw new IllegalExecutionStateError(
-          "First selected li doesn't have previous sibling"
-        );
-      }
+      // this is because of the canExecute check
+      const newParent = unwrap(
+        lis[0].getPreviousSibling(transaction.currentDocument)
+      );
+      ModelNode.assertModelElement(newParent);
+
       const newParentClone = newParent.clone();
 
       //First check for already existing sublist on the new parent
@@ -114,7 +101,8 @@ export default class IndentListCommand
       }
       transaction.replaceNode(newParent, newParentClone);
       for (const li of lis) {
-        li.remove(transaction.currentDocument);
+        const liRange = ModelRange.fromAroundNode(initialRoot, li);
+        transaction.delete(transaction.mapModelRange(liRange));
       }
     }
     transaction.mapInitialSelectionAndSet({ startBias: 'left' });
