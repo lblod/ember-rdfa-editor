@@ -10,10 +10,7 @@ export default class CounterSpec extends InlineComponentSpec {
     tag: this.tag,
     attributeBuilder: (node: Node) => {
       if (isElement(node)) {
-        if (
-          node.classList.contains('inline-component') &&
-          node.classList.contains(this.name)
-        ) {
+        if (node.dataset.inlineComponent === this.name) {
           return {};
         }
       }

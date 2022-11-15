@@ -42,10 +42,11 @@ function render(spec: InlineComponentSpec, props?: Properties, dynamic = true) {
         serializedProps[propName] = props[propName] ?? defaultValue;
       }
     }
-    node.dataset['props'] = JSON.stringify(serializedProps);
+    node.dataset.props = JSON.stringify(serializedProps);
   }
   node.contentEditable = 'false';
-  node.classList.add('inline-component', spec.name);
+  node.classList.add('inline-component');
+  node.dataset.inlineComponent = spec.name;
   if (!dynamic) {
     node.innerHTML = spec._renderStatic(props);
   }
