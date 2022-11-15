@@ -1,7 +1,6 @@
 import {
   ModelInlineComponent,
   Properties,
-  State,
 } from '../model/inline-components/model-inline-component';
 import Model from '../model/model';
 import ModelElement from '../model/model-element';
@@ -25,7 +24,6 @@ export default class InsertComponentCommand extends Command {
   execute(
     componentName: string,
     props: Properties = {},
-    state: State = {},
     createSnapshot = true,
     range: ModelRange | null = this.model.selection.lastRange
   ): void {
@@ -35,7 +33,7 @@ export default class InsertComponentCommand extends Command {
     const componentSpec =
       this.model.inlineComponentsRegistry.lookUpComponent(componentName);
     if (componentSpec) {
-      const component = new ModelInlineComponent(componentSpec, props, state);
+      const component = new ModelInlineComponent(componentSpec, props);
       this.model.change(
         (mutator) => {
           const resultingRange = mutator.insertNodes(range, component);

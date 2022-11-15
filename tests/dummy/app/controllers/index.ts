@@ -5,7 +5,10 @@ import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: RdfaDocument;
-  @tracked plugins = [{ name: 'dummy', options: { testKey: 'hello' } }];
+  @tracked plugins = [
+    { name: 'dummy', options: { testKey: 'hello' } },
+    'inline-components',
+  ];
 
   @action
   rdfaEditorInit(rdfaEditor: RdfaDocument) {
