@@ -25,13 +25,6 @@ export default class PasteHandler extends InputHandler {
     return !!event.clipboardData;
   }
 
-  convertToPlain(rtf: string): string {
-    rtf = rtf.replace(/\\par[d]?/g, '');
-    return rtf
-      .replace(/\{\*?\\[^{}]+}|[{}]|\\\n?[A-Za-z]+\n?(?:-?\d+)?[ ]?/g, '')
-      .trim();
-  }
-
   // see https://www.w3.org/TR/clipboard-apis/#paste-action for more info
   handleEvent(
     event: ClipboardEvent,
@@ -39,7 +32,6 @@ export default class PasteHandler extends InputHandler {
     pasteExtendedHTML: boolean
   ): HandlerResponse {
     const clipboardData = event.clipboardData;
-    console.log('*****paste handler******', clipboardData);
 
     if (!clipboardData) {
       this.logger('No clipboardData object found, ignoring paste.');
@@ -57,35 +49,29 @@ export default class PasteHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-
     const pasteRange = ModelRangeUtils.getExtendedToPlaceholder(range);
     if (canPasteHTML) {
       try {
-        //******** Workaround to make the 'copy-paste of lists' from ms word(desktop version) work *************//
-
-        // const inputParser = pasteExtendedHTML
-        //   ? new HTMLInputParser({})
-        //   : new HTMLInputParser({ safeTags: LIMITED_SAFE_TAGS });
+        const inputParser = pasteExtendedHTML
+          ? new HTMLInputParser({})
+          : new HTMLInputParser({ safeTags: LIMITED_SAFE_TAGS });
 
         const htmlPaste = clipboardData.getData('text/html');
-        // const cleanHTML = inputParser.cleanupHTML(htmlPaste);
+        const rtfPaste = clipboardData.getData('text/rtf');
 
-        // const html = clipboardData.getData('text/html');
-        const rtf = clipboardData.getData('text/rtf');
-        const cleanHtml = cleanDocx(htmlPaste, rtf);
+        if (rtfPaste) {
+          const cleanHtmlFromRtf = cleanDocx(htmlPaste, rtfPaste);
 
-        // console.log('cleanHtml --->', cleanHTML);
-        // console.log('htmlPaste --->', clipboardData.getData('text/rtf'));
-        // console.log(
-        //   'RTF TO PLAIN *********',
-        //   this.convertToPlain(clipboardData.getData('text/rtf'))
-        // );
+          this.rawEditor.executeCommand(
+            'insert-html',
+            cleanHtmlFromRtf,
+            pasteRange
+          );
+        } else {
+          const cleanHTML = inputParser.cleanupHTML(htmlPaste);
 
-        this.rawEditor.executeCommand('insert-html', cleanHtml, pasteRange);
-
-        // this.rawEditor.executeCommand(
-        //   'insert-html',
-        //   '<ul><li><span style="font-size:14.0pt">release of Letraset</span></li><li><span style="font-size:14.0pt">release of Letraset</span></li><li><span style="font-size:14.0pt">release of Letraset</span></li><li><span style="font-size:14.0pt">release of Letraset</span></li><li><span style="font-size:14.0pt">release of Letraset</span></li></ul>', pasteRange);
+          this.rawEditor.executeCommand('insert-html', cleanHTML, pasteRange);
+        }
       } catch (error) {
         // Fall back to text pasting.
         console.warn(error); //eslint-disable-line no-console
