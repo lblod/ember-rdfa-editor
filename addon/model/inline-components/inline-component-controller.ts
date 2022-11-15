@@ -25,7 +25,16 @@ export default class InlineComponentController {
 
   setProperty(property: string, value: Serializable) {
     this._model.setProperty(property, value);
-    // this._node.dataset['props'] = JSON.stringify(this._model.props);
+    // We need to ensure that the properties of the model are not overwritten by a read, in the new TEDI API this is no longer necessary
+    const serializedProps: Record<string, Serializable | null | undefined> = {};
+    for (const [propName, { serializable, defaultValue }] of Object.entries(
+      this.model.spec.properties
+    )) {
+      if (serializable) {
+        serializedProps[propName] = this.model.props[propName] ?? defaultValue;
+      }
+    }
+    this._node.dataset['props'] = JSON.stringify(serializedProps);
   }
 
   getProperty(property: string) {
