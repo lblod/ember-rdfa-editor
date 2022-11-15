@@ -11,7 +11,10 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import { cleanDocx } from '@prezly/docx-cleaner';
+import {
+  convertGenericHtml,
+  convertMsWordHtml,
+} from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-func';
 
 export default class PasteHandler extends InputHandler {
   private logger: Logger;
@@ -32,6 +35,7 @@ export default class PasteHandler extends InputHandler {
     pasteExtendedHTML: boolean
   ): HandlerResponse {
     const clipboardData = event.clipboardData;
+    console.log('pasteExtendedHTML', pasteExtendedHTML);
 
     if (!clipboardData) {
       this.logger('No clipboardData object found, ignoring paste.');
@@ -58,20 +62,15 @@ export default class PasteHandler extends InputHandler {
 
         const htmlPaste = clipboardData.getData('text/html');
         const rtfPaste = clipboardData.getData('text/rtf');
+        let cleanHTML;
 
         if (rtfPaste) {
-          const cleanHtmlFromRtf = cleanDocx(htmlPaste, rtfPaste);
-
-          this.rawEditor.executeCommand(
-            'insert-html',
-            cleanHtmlFromRtf,
-            pasteRange
-          );
+          cleanHTML = convertMsWordHtml(rtfPaste, htmlPaste, inputParser);
         } else {
-          const cleanHTML = inputParser.cleanupHTML(htmlPaste);
-
-          this.rawEditor.executeCommand('insert-html', cleanHTML, pasteRange);
+          cleanHTML = convertGenericHtml(htmlPaste, inputParser);
         }
+
+        this.rawEditor.executeCommand('insert-html', cleanHTML, pasteRange);
       } catch (error) {
         // Fall back to text pasting.
         console.warn(error); //eslint-disable-line no-console

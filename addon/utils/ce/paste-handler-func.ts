@@ -1,12 +1,20 @@
 import { cleanDocx } from '@prezly/docx-cleaner';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
 
-export default function pasteHandler(
+function convertMsWordHtml(
   rtfPaste: string,
-  htmlPaste: string
+  htmlPaste: string,
+  inputParser: HTMLInputParser
 ): string {
-  if (!rtfPaste && !htmlPaste) return 'No content found!';
-
-  if (rtfPaste) return cleanDocx(htmlPaste, rtfPaste);
-
-  return htmlPaste;
+  const cleanHtmlFromRTF = cleanDocx(htmlPaste, rtfPaste);
+  return inputParser.cleanupHTML(cleanHtmlFromRTF);
 }
+
+function convertGenericHtml(
+  htmlPaste: string,
+  inputParser: HTMLInputParser
+): string {
+  return inputParser.cleanupHTML(htmlPaste);
+}
+
+export { convertMsWordHtml, convertGenericHtml };
