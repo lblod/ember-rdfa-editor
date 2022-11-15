@@ -35,6 +35,21 @@
 
 
 
+
+## 0.64.0 (2022-11-15)
+
+#### :boom: Breaking Change
+* [#455](https://github.com/lblod/ember-rdfa-editor/pull/455) Inline components: serializable properties ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#455](https://github.com/lblod/ember-rdfa-editor/pull/455) Inline components: serializable properties ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#456](https://github.com/lblod/ember-rdfa-editor/pull/456) Remove unnecessary read in htmlContent method ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 0.63.8 (2022-11-15)
 
 #### :house: Internal
