@@ -55,6 +55,8 @@ function render(spec: InlineComponentSpec, props?: Properties, dynamic = true) {
 export class ModelInlineComponent extends ModelElement {
   modelNodeType: ModelNodeType = 'INLINE-COMPONENT';
   private _spec: InlineComponentSpec;
+
+  @tracked
   private _props: Properties;
 
   constructor(spec: InlineComponentSpec, props: Properties) {
