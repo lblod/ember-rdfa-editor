@@ -82,6 +82,7 @@ export default class RemoveListCommand
       endLimit
     );
 
+    transaction.printDebugInfo();
     // We walk over all nodes here cause we also want to capture all textnodes that
     // were inside the split so we can set the resulting range properly.
     const nodeWalker = GenTreeWalker.fromRange({

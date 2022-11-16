@@ -92,6 +92,7 @@ export default class Transaction {
   logger = createLogger('transaction');
   private _commandCache?: CommandExecutor;
   private willCreateSnapshot = false;
+  private timestamp: Date;
 
   constructor(state: State) {
     this.initialState = state;
@@ -106,6 +107,7 @@ export default class Transaction {
     this.stepCache = [];
     this.stepCount = 0;
     this.mapper = new SimpleRangeMapper();
+    this.timestamp = new Date();
   }
 
   get currentDocument() {
@@ -936,5 +938,33 @@ export default class Transaction {
    */
   focus() {
     this._shouldFocus = true;
+  }
+
+  debugInfo() {
+    const preciseTimestring = (date: Date) =>
+      `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
+    const stages = this.stepCache.map((result: StepResult, index: number) => ({
+      step: `${index} - ${this.steps[index].type}`,
+      doc: result.state.document.toXml(),
+      timestamp: preciseTimestring(result.timestamp),
+    }));
+    return [
+      {
+        step: 'initial',
+        timestamp: preciseTimestring(this.timestamp),
+        doc: this.initialState.document.toXml(),
+      },
+      ...stages,
+    ];
+  }
+
+  printDebugInfo() {
+    const info = this.debugInfo();
+    console.log('=====TRANSACTION created at', this.timestamp, '=====');
+    for (const stage of info) {
+      console.log(stage.step, 'at', stage.timestamp);
+      console.log(stage.doc);
+    }
+    console.log('=====END======');
   }
 }

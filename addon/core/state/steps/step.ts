@@ -90,4 +90,5 @@ export function isPluginStep(step: Step): step is SelectionStep {
 export type StepResult = {
   state: State;
   mapper: SimpleRangeMapper;
+  timestamp: Date;
 };

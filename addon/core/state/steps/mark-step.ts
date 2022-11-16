@@ -80,6 +80,7 @@ export default class MarkStep implements OperationStep {
         defaultRange: modelRangeToSimpleRange(newRange),
         mapper,
         state: resultState,
+        timestamp: new Date(),
       };
     } else {
       OperationAlgorithms.splitText(root, range.start);
@@ -105,6 +106,7 @@ export default class MarkStep implements OperationStep {
         defaultRange: range,
         mapper: new SimpleRangeMapper(),
         state: resultState,
+        timestamp: new Date(),
       };
     }
   }

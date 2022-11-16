@@ -28,7 +28,11 @@ export default class StateStep implements BaseStep {
 
   getResult(initialState: State): StepResult {
     const result = this.manip(initialState);
-    return { state: result, mapper: EMPTY_MAPPER };
+    return {
+      state: result,
+      mapper: EMPTY_MAPPER,
+      timestamp: new Date(),
+    };
   }
 
   mapPosition(position: SimplePosition, bias?: LeftOrRight): SimplePosition {

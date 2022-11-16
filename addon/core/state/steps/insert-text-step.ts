@@ -44,6 +44,7 @@ export default class InsertTextStep implements OperationStep {
       state: resultState,
       defaultRange: modelRangeToSimpleRange(defaultRange),
       mapper: EMPTY_MAPPER,
+      timestamp: new Date(),
     };
   }
 }

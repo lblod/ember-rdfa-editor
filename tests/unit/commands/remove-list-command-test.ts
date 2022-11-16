@@ -270,19 +270,19 @@ module('Unit | commands | remove-list-command', function () {
       </modelRoot>
     `;
 
-    const startPosition = ModelPosition.fromInTextNode(
-      initial as ModelElement,
-      rangeStart,
-      3
-    );
+    ModelNode.assertModelElement(initial);
+    const startPosition = ModelPosition.fromInTextNode(initial, rangeStart, 3);
     const endPosition = ModelPosition.fromInTextNode(
-      initial as ModelElement,
+      initial,
       rangeEnd,
       rangeEnd.length
     );
     const range = new ModelRange(startPosition, endPosition);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, {});
-    assert.true(resultState.document.sameAs(expected));
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 });

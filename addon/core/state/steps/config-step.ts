@@ -35,6 +35,10 @@ export default class ConfigStep implements BaseStep {
       ...initialState,
       config: newConfig,
     });
-    return { state, mapper: EMPTY_MAPPER };
+    return {
+      state,
+      mapper: EMPTY_MAPPER,
+      timestamp: new Date(),
+    };
   }
 }

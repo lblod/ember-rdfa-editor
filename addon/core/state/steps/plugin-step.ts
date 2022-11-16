@@ -4,7 +4,7 @@ import { ResolvedPluginConfig } from '@lblod/ember-rdfa-editor/components/rdfa/r
 import { View } from '../../view';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
 import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
-import {EMPTY_MAPPER} from "@lblod/ember-rdfa-editor/core/model/range-mapper";
+import { EMPTY_MAPPER } from '@lblod/ember-rdfa-editor/core/model/range-mapper';
 
 export default class PluginStep implements BaseStep {
   private readonly _type: StepType = 'plugin-step';
@@ -37,6 +37,6 @@ export default class PluginStep implements BaseStep {
       plugins,
       widgetMap: new Map(),
     });
-    return { state: resultState ,mapper: EMPTY_MAPPER };
+    return { state: resultState, mapper: EMPTY_MAPPER, timestamp: new Date() };
   }
 }

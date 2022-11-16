@@ -76,6 +76,7 @@ export default class AttributeStep implements BaseStep {
     return {
       state: createState({ ...initialState, document: newRoot }),
       mapper: EMPTY_MAPPER,
+      timestamp: new Date(),
     };
   }
 

@@ -34,6 +34,7 @@ export default class RemoveStep implements OperationStep {
       state: resultState,
       defaultRange: mapper.mapRange(range),
       mapper,
+      timestamp: new Date(),
     };
   }
 }

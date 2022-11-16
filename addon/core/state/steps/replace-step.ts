@@ -51,6 +51,7 @@ export default class ReplaceStep implements OperationStep {
       state: resultState,
       defaultRange: mapper.mapRange(this.range),
       mapper,
+      timestamp: new Date(),
     };
   }
 
