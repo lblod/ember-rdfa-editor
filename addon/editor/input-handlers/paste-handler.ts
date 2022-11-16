@@ -35,7 +35,6 @@ export default class PasteHandler extends InputHandler {
     pasteExtendedHTML: boolean
   ): HandlerResponse {
     const clipboardData = event.clipboardData;
-    console.log('pasteExtendedHTML', pasteExtendedHTML);
 
     if (!clipboardData) {
       this.logger('No clipboardData object found, ignoring paste.');
@@ -65,7 +64,7 @@ export default class PasteHandler extends InputHandler {
         let cleanHTML;
 
         if (rtfPaste) {
-          cleanHTML = convertMsWordHtml(rtfPaste, htmlPaste, inputParser);
+          cleanHTML = convertMsWordHtml('', htmlPaste, inputParser);
         } else {
           cleanHTML = convertGenericHtml(htmlPaste, inputParser);
         }
