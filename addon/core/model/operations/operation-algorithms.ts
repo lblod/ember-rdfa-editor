@@ -158,6 +158,7 @@ export default class OperationAlgorithms {
 
     //remove nodes that are fully confined in the selection
     confinedNodes.forEach((node) => {
+      node.invalidateParentCache(root);
       if (node.getParent(root)) {
         node.remove(root);
       }

@@ -105,15 +105,19 @@ export default abstract class ModelNode implements Walkable {
     this._attributeMap = value;
   }
 
-  setParentCache(_root: ModelElement, _parent: ModelElement) {
-    // this.parentCache.set(root, parent);
+  setParentCache(root: ModelElement, parent: ModelElement) {
+    this.parentCache.set(root, parent);
+  }
+
+  invalidateParentCache(root: ModelElement){
+    this.parentCache.delete(root);
   }
 
   getParent(root: ModelElement): ModelElement | null {
-    // const parent = this.parentCache.get(root);
-    // if (parent) {
-    //   return parent;
-    // }
+    const parent = this.parentCache.get(root);
+    if (parent) {
+      return parent;
+    }
     const stack: ModelElement[] = [root];
     while (stack.length > 0) {
       const node = unwrap(stack.shift());
