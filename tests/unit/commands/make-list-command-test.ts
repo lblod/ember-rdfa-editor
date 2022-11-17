@@ -5,6 +5,10 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
 import { makeTestExecute, stateWithRange } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
+import {
+  modelRangeToSimpleRange,
+  SimpleRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
 
 module('Unit | commands | make-list-command', function () {
   const command = new MakeListCommand();
@@ -26,11 +30,15 @@ module('Unit | commands | make-list-command', function () {
         </ul>
       </modelRoot>
     `;
-
+    const expectedSelectionRange: SimpleRange = { start: 3, end: 3 };
     const range = ModelRange.fromInNode(initial as ModelElement, initial, 0, 0);
     const initialState = stateWithRange(initial, range);
     const { resultState } = executeCommand(initialState, { listType: 'ul' });
     assert.true(resultState.document.sameAs(expected));
+    assert.deepEqual(
+      modelRangeToSimpleRange(resultState.selection.ranges[0]),
+      expectedSelectionRange
+    );
   });
 
   test('adds list in a document with only a new line', function (assert) {
