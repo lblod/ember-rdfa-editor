@@ -7,6 +7,9 @@ import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { makeTestExecute, testState } from 'dummy/tests/test-utils';
 import { module, test } from 'qunit';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
+import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
+import { Mark } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 
 module('Unit | commands | insert-text-command-test', function () {
   const logger = createLogger('test:insert-text-command-test');
@@ -218,5 +221,33 @@ module('Unit | commands | insert-text-command-test', function () {
       range,
     });
     assert.true(resultState.document.sameAs(expected));
+  });
+
+  test('inserting text starting from a selection with marks applied', function (assert) {
+    const { root: initial } = vdom`
+      <modelRoot/>
+    `;
+    const { root: expected } = vdom`
+      <modelRoot>
+        <text __marks="bold">a</text>
+      </modelRoot>
+    `;
+    const range = ModelRange.fromInElement(
+      initial as ModelElement,
+      initial as ModelElement,
+      0,
+      0
+    );
+    const selection = new ModelSelection([range])
+    selection.activeMarks.add(new Mark(boldMarkSpec, {}));
+    const initialState = testState({ document: initial, selection });
+    const { resultState } = executeCommand(initialState, {
+      text: 'a',
+      range: selection.lastRange,
+    });
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
   });
 });
