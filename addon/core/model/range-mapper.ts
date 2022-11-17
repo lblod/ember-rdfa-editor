@@ -2,7 +2,12 @@ import ModelPosition from '@lblod/ember-rdfa-editor/core/model/model-position';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { SimplePosition } from '@lblod/ember-rdfa-editor/core/model/simple-position';
-import { SimpleRange } from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import {
+  modelRangeToSimpleRange,
+  SimpleRange,
+  simpleRangeToModelRange,
+} from '@lblod/ember-rdfa-editor/core/model/simple-range';
+import ModelElement from './nodes/model-element';
 
 export type LeftOrRight = 'left' | 'right';
 export type PositionMapping = (
@@ -94,6 +99,17 @@ export class SimpleRangeMapper {
     const newStart = this.mapPosition(range.start, { bias: startBias });
     const newEnd = this.mapPosition(range.end, { bias: endBias });
     return { start: newStart, end: newEnd };
+  }
+
+  mapSelection(
+    modelSelection: ModelSelection,
+    newRoot: ModelElement
+  ): ModelSelection {
+    const mappedSelectionRanges = modelSelection.ranges
+      .map((modelRange) => modelRangeToSimpleRange(modelRange))
+      .map((simpleRange) => this.mapRange(simpleRange))
+      .map((simpleRange) => simpleRangeToModelRange(simpleRange, newRoot));
+    return new ModelSelection(mappedSelectionRanges);
   }
 
   appendMapper(mapper: SimpleRangeMapper): this {

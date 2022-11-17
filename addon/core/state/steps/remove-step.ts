@@ -30,6 +30,10 @@ export default class RemoveStep implements OperationStep {
       resultState.document,
       range
     );
+    resultState.selection = mapper.mapSelection(
+      initialState.selection,
+      resultState.document
+    );
     return {
       state: resultState,
       defaultRange: mapper.mapRange(range),

@@ -47,6 +47,10 @@ export default class ReplaceStep implements OperationStep {
         ...this.nodes
       ).mapper;
     }
+    resultState.selection = mapper.mapSelection(
+      initialState.selection,
+      resultState.document
+    );
     return {
       state: resultState,
       defaultRange: mapper.mapRange(this.range),
@@ -63,4 +67,3 @@ export default class ReplaceStep implements OperationStep {
     return range;
   }
 }
-

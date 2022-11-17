@@ -76,6 +76,11 @@ export default class MarkStep implements OperationStep {
 
       //put the cursor inside that node
       const newRange = ModelRange.fromInNode(root, node, 1, 1);
+
+      resultState.selection = mapper.mapSelection(
+        initialState.selection,
+        resultState.document
+      );
       return {
         defaultRange: modelRangeToSimpleRange(newRange),
         mapper,

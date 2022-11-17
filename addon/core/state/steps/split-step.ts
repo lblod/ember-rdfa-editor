@@ -38,6 +38,10 @@ export default class SplitStep implements OperationStep {
 
     if (isCollapsed(range)) {
       const { position, mapper } = this.doSplit(root, range.start);
+      resultState.selection = mapper.mapSelection(
+        initialState.selection,
+        resultState.document
+      );
       return {
         state: resultState,
         defaultRange: { start: position, end: position },
@@ -54,6 +58,10 @@ export default class SplitStep implements OperationStep {
         endMapper.mapPosition(range.start)
       );
       const mapper = endMapper.appendMapper(startMapper);
+      resultState.selection = mapper.mapSelection(
+        initialState.selection,
+        resultState.document
+      );
       return {
         state: resultState,
         defaultRange: { start: start, end: startMapper.mapPosition(end) },
