@@ -41,6 +41,7 @@ export default abstract class ModelNode implements Walkable {
   private _attributeMap: Map<string, string>;
   private _debugInfo: unknown;
   private parentCache: WeakMap<ModelNode, ModelElement> = new WeakMap();
+  private sizeCache?: number;
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
@@ -109,7 +110,7 @@ export default abstract class ModelNode implements Walkable {
     this.parentCache.set(root, parent);
   }
 
-  invalidateParentCache(root: ModelElement){
+  invalidateParentCache(root: ModelElement) {
     this.parentCache.delete(root);
   }
 
@@ -186,18 +187,32 @@ export default abstract class ModelNode implements Walkable {
     return 1;
   }
 
-  get size(): number {
+  setSizeCache(size: number) {
+    this.sizeCache = size;
+  }
+
+  getSize(useCache = true): number {
+    if (useCache && this.sizeCache !== undefined) {
+      return this.sizeCache;
+    }
+    let size;
     if (ModelNode.isModelText(this)) {
-      return this.content.length;
+      size = this.content.length;
     } else if (this.isLeaf) {
-      return 1;
+      size = 1;
     } else if (ModelNode.isModelInlineComponent(this)) {
-      return 1;
+      size = 1;
     } else if (ModelNode.isModelElement(this)) {
-      return this.children.reduce((prev, node) => prev + node.size, 0) + 2;
+      size =
+        this.children.reduce((prev, node) => prev + node.getSize(useCache), 0) +
+        2;
     } else {
       throw new NotImplementedError();
     }
+    if (useCache) {
+      this.setSizeCache(size);
+    }
+    return size;
   }
 
   isConnected(root: ModelElement): boolean {

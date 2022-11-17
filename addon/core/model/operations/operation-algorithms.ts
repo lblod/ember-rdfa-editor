@@ -21,7 +21,6 @@ import {
   SimplePosition,
   simplePosToModelPos,
 } from '@lblod/ember-rdfa-editor/core/model/simple-position';
-import ModelRange from '../model-range';
 
 export type OperationAlgorithmResponse<T> = { mapper: SimpleRangeMapper } & T;
 /**
@@ -55,7 +54,7 @@ export default class OperationAlgorithms {
     range: SimpleRange
   ): OperationAlgorithmResponse<{ removedNodes: ModelNode[] }> {
     //start algorithm
-    const modelRange = simpleRangeToModelRange(range, root);
+    const modelRange = simpleRangeToModelRange(range, root, false);
     if (modelRange.collapsed) {
       return {
         removedNodes: [],
@@ -98,7 +97,9 @@ export default class OperationAlgorithms {
     //would grab just the text node
     const confinedNodes: ModelNode[] = [];
     const confinedRanges = modelRange.getMinimumConfinedRanges();
-    const simpleRemovedRanges = confinedRanges.map(modelRangeToSimpleRange);
+    const simpleRemovedRanges = confinedRanges.map((range) =>
+      modelRangeToSimpleRange(range, false)
+    );
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = GenTreeWalker.fromRange({ range: range });
@@ -134,10 +135,12 @@ export default class OperationAlgorithms {
           cantRemoveOpeningTagNodes.push(opNode);
         } else {
           const beforeOpTag = modelPosToSimplePos(
-            ModelPosition.fromBeforeNode(root, opNode)
+            ModelPosition.fromBeforeNode(root, opNode),
+            false
           );
           const afterOpTag = modelPosToSimplePos(
-            ModelPosition.fromAfterNode(root, opNode)
+            ModelPosition.fromAfterNode(root, opNode),
+            false
           );
           simpleRemovedRanges.push(
             {
@@ -233,7 +236,7 @@ export default class OperationAlgorithms {
     let newEndNode: ModelNode | null = null;
     let splitStart = false;
     let splitEnd = false;
-    const modelRange = simpleRangeToModelRange(range, root);
+    const modelRange = simpleRangeToModelRange(range, root, false);
     if (modelRange.start.isInsideText()) {
       modelRange.start.split();
       splitStart = true;
@@ -252,7 +255,9 @@ export default class OperationAlgorithms {
     const nodesToRemove = [];
 
     const confinedRanges = modelRange.getMinimumConfinedRanges();
-    const simpleConfinedRanges = confinedRanges.map(modelRangeToSimpleRange);
+    const simpleConfinedRanges = confinedRanges.map((range) =>
+      modelRangeToSimpleRange(range, false)
+    );
     for (const range of confinedRanges) {
       if (!range.collapsed) {
         const walker = new ModelTreeWalker({ range, descend: false });
@@ -291,9 +296,12 @@ export default class OperationAlgorithms {
   }> {
     let overwrittenNodes: ModelNode[] = [];
     let mapper: SimpleRangeMapper;
-    const modelRange = simpleRangeToModelRange(range, root);
+    const modelRange = simpleRangeToModelRange(range, root, false);
     const _markCheckNodes: ModelNode[] = [...nodes];
-    const insertSize = nodes.reduce((prev, current) => current.size + prev, 0);
+    const insertSize = nodes.reduce(
+      (prev, current) => current.getSize(false) + prev,
+      0
+    );
     if (modelRange.collapsed) {
       if (modelRange.start.path.length === 0) {
         modelRange.root.appendChildren(...nodes);
@@ -324,7 +332,8 @@ export default class OperationAlgorithms {
       const rangeAfterRemove = removeMapper.mapRange(range);
       const modelRangeAfterRemove = simpleRangeToModelRange(
         rangeAfterRemove,
-        root
+        root,
+        false
       );
 
       modelRangeAfterRemove.start.parent.insertChildrenAtOffset(
@@ -414,7 +423,7 @@ export default class OperationAlgorithms {
     position: SimplePosition,
     keepright = false
   ): OperationAlgorithmResponse<{ position: SimplePosition }> {
-    const modelPosition = simplePosToModelPos(position, root);
+    const modelPosition = simplePosToModelPos(position, root, false);
     modelPosition.split(keepright);
     return { position, mapper: new SimpleRangeMapper() };
   }
@@ -425,7 +434,7 @@ export default class OperationAlgorithms {
     keepright = false
   ): OperationAlgorithmResponse<{ position: SimplePosition }> {
     OperationAlgorithms.splitText(root, position, keepright);
-    const modelPosition = simplePosToModelPos(position, root);
+    const modelPosition = simplePosToModelPos(position, root, false);
     const parent = modelPosition.parent;
     if (parent === modelPosition.root) {
       return { position, mapper: new SimpleRangeMapper() };
@@ -447,7 +456,10 @@ export default class OperationAlgorithms {
       }
       grandParent.addChild(left, parent.getIndex(root)!);
       return {
-        position: modelPosToSimplePos(ModelPosition.fromAfterNode(root, left)),
+        position: modelPosToSimplePos(
+          ModelPosition.fromAfterNode(root, left),
+          false
+        ),
         mapper: new SimpleRangeMapper([buildSplitMapping(position)]),
       };
     } else {
@@ -460,7 +472,8 @@ export default class OperationAlgorithms {
       grandParent.addChild(right, parent.getIndex(root)! + 1);
       return {
         position: modelPosToSimplePos(
-          ModelPosition.fromBeforeNode(root, right)
+          ModelPosition.fromBeforeNode(root, right),
+          false
         ),
         mapper: new SimpleRangeMapper([buildSplitMapping(position)]),
       };

@@ -162,8 +162,12 @@ export function vdomToDom(vdom: ModelNode): Node {
   return view.domRoot;
 }
 
-export function pathToSimplePos(root: ModelElement, path: number[]) {
-  return modelPosToSimplePos(ModelPosition.fromPath(root, path));
+export function pathToSimplePos(
+  root: ModelElement,
+  path: number[],
+  useSizeCache = true
+) {
+  return modelPosToSimplePos(ModelPosition.fromPath(root, path), useSizeCache);
 }
 
 export function pathsToSimpleRange(

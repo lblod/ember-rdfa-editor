@@ -59,7 +59,7 @@ export default class MarkStep implements OperationStep {
     const resultState = cloneStateInRange(range, initialState);
     const root = resultState.document;
 
-    const modelRange = simpleRangeToModelRange(range, root);
+    const modelRange = simpleRangeToModelRange(range, root, false);
 
     if (modelRange.collapsed) {
       OperationAlgorithms.splitText(root, range.start);

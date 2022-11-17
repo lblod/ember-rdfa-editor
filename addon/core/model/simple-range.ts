@@ -13,18 +13,22 @@ export interface SimpleRange {
 
 export function simpleRangeToModelRange(
   simpleRange: SimpleRange,
-  root: ModelElement
+  root: ModelElement,
+  useSizeCache = true
 ): ModelRange {
   return new ModelRange(
-    simplePosToModelPos(simpleRange.start, root),
-    simplePosToModelPos(simpleRange.end, root)
+    simplePosToModelPos(simpleRange.start, root, useSizeCache),
+    simplePosToModelPos(simpleRange.end, root, useSizeCache)
   );
 }
 
-export function modelRangeToSimpleRange(modelRange: ModelRange): SimpleRange {
+export function modelRangeToSimpleRange(
+  modelRange: ModelRange,
+  useSizeCache = true
+): SimpleRange {
   return {
-    start: modelPosToSimplePos(modelRange.start),
-    end: modelPosToSimplePos(modelRange.end),
+    start: modelPosToSimplePos(modelRange.start, useSizeCache),
+    end: modelPosToSimplePos(modelRange.end, useSizeCache),
   };
 }
 

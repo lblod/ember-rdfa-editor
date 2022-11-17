@@ -52,11 +52,17 @@ module(
       });
       const newTestPos2 = mapper.mapPosition(testPos2);
       assert.true(initial.sameAs(expected));
-      assert.deepEqual(newSplitPos, pathToSimplePos(initial, [1]));
-      assert.deepEqual(newSplitPosLeft, pathToSimplePos(initial, [0, 2]));
-      assert.deepEqual(newTestPos1, pathToSimplePos(initial, [1, 1]));
-      assert.deepEqual(newTestPos1Left, pathToSimplePos(initial, [1, 1]));
-      assert.deepEqual(newTestPos2, pathToSimplePos(initial, [2]));
+      assert.deepEqual(newSplitPos, pathToSimplePos(initial, [1], false));
+      assert.deepEqual(
+        newSplitPosLeft,
+        pathToSimplePos(initial, [0, 2], false)
+      );
+      assert.deepEqual(newTestPos1, pathToSimplePos(initial, [1, 1], false));
+      assert.deepEqual(
+        newTestPos1Left,
+        pathToSimplePos(initial, [1, 1], false)
+      );
+      assert.deepEqual(newTestPos2, pathToSimplePos(initial, [2], false));
     });
     test('rangeMapping is correct after split at end', function (assert) {
       const {
@@ -99,11 +105,17 @@ module(
       });
       const newTestPos2 = mapper.mapPosition(testPos2);
       assert.true(initial.sameAs(expected));
-      assert.strictEqual(newSplitPos, pathToSimplePos(initial, [1]));
-      assert.strictEqual(newSplitPosLeft, pathToSimplePos(initial, [0, 4]));
-      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [0, 3]));
-      assert.strictEqual(newTestPos1Left, pathToSimplePos(initial, [0, 3]));
-      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [2]));
+      assert.strictEqual(newSplitPos, pathToSimplePos(initial, [1], false));
+      assert.strictEqual(
+        newSplitPosLeft,
+        pathToSimplePos(initial, [0, 4], false)
+      );
+      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [0, 3], false));
+      assert.strictEqual(
+        newTestPos1Left,
+        pathToSimplePos(initial, [0, 3], false)
+      );
+      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [2], false));
     });
   }
 );

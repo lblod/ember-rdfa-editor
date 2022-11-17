@@ -276,28 +276,28 @@ module(
       const end1 = ModelPosition.fromInTextNode(initial, text1, 3);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start1, end1))
+        modelRangeToSimpleRange(new ModelRange(start1, end1), false)
       );
 
       const start2 = ModelPosition.fromInTextNode(initial, text2, 4);
       const end2 = ModelPosition.fromInTextNode(initial, text2, 5);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start2, end2))
+        modelRangeToSimpleRange(new ModelRange(start2, end2), false)
       );
 
       const start4 = ModelPosition.fromInTextNode(initial, text4, 0);
       const end4 = ModelPosition.fromAfterNode(initial, text5);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start4, end4))
+        modelRangeToSimpleRange(new ModelRange(start4, end4), false)
       );
 
       const start5 = ModelPosition.fromInTextNode(initial, text6, 4);
       const end5 = ModelPosition.fromInTextNode(initial, text7, 1);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start5, end5))
+        modelRangeToSimpleRange(new ModelRange(start5, end5), false)
       );
 
       assert.expect(1);
@@ -335,28 +335,28 @@ module(
       const end = ModelPosition.fromInTextNode(initial, text2, 2);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start, end))
+        modelRangeToSimpleRange(new ModelRange(start, end), false)
       );
 
       const start1 = ModelPosition.fromInTextNode(initial, text3, 2);
       const end1 = ModelPosition.fromInTextNode(initial, text4, 2);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start1, end1))
+        modelRangeToSimpleRange(new ModelRange(start1, end1), false)
       );
 
       const start2 = ModelPosition.fromInTextNode(initial, text4, 0);
       const end2 = ModelPosition.fromInTextNode(initial, text4, 1);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start2, end2))
+        modelRangeToSimpleRange(new ModelRange(start2, end2), false)
       );
 
       const start3 = ModelPosition.fromInTextNode(initial, text1, 1);
       const end3 = ModelPosition.fromInTextNode(initial, text4, 1);
       OperationAlgorithms.removeNew(
         initial,
-        modelRangeToSimpleRange(new ModelRange(start3, end3))
+        modelRangeToSimpleRange(new ModelRange(start3, end3), false)
       );
 
       assert.expect(1);
