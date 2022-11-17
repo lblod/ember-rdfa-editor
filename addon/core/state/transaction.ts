@@ -61,6 +61,7 @@ import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
 import ModelText from '../model/nodes/model-text';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
+import WrapStep from '@lblod/ember-rdfa-editor/core/state/steps/wrap-step';
 
 interface TextInsertion {
   range: ModelRange;
@@ -753,29 +754,17 @@ export default class Transaction {
     if (targetElement.isLeaf || !ModelNode.isModelElement(targetElement)) {
       throw new AssertionError('Cannot unwrap a leafnode');
     }
-    // const srcRange = ModelRange.fromInElement(
-    //   this.currentDocument,
-    //   targetElement,
-    //   0,
-    //   targetElement.getMaxOffset()
-    // );
-    // const target = ModelPosition.fromBeforeNode(
-    //   this.currentDocument,
-    //   targetElement
-    // );
-    const beforeReplace = this.workingCopy;
-    const targetRange = modelRangeToSimpleRange(
-      ModelRange.fromAroundNode(beforeReplace.document, targetElement)
-    );
-    this.addStep(
-      new ReplaceStep({ range: targetRange, nodes: targetElement.children })
+
+    const end = nodePos + targetElement.getSize(true);
+
+    const defaultRange = this.addAndCommitOperationStep(
+      new WrapStep({
+        replaceRange: { start: nodePos, end },
+        preserveRange: { start: nodePos + 1, end: end - 1 },
+      })
     );
     const resultRange = simpleRangeToModelRange(
-      this.mapRange(targetRange, {
-        fromState: beforeReplace,
-        startBias: 'left',
-        endBias: 'right',
-      }),
+      defaultRange,
       this.currentDocument
     );
     // const resultRange = this.moveToPosition(srcRange, target);

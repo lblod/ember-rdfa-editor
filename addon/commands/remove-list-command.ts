@@ -92,42 +92,24 @@ export default class RemoveListCommand
 
     // Consuming here so we can modify without interfering with the walking.
     const nodesInRange = [...nodeWalker.nodes()];
-    const unwrappedNodes = [];
     const positions = nodesInRange.map((node) =>
       modelPosToSimplePos(
         ModelPosition.fromBeforeNode(transaction.currentDocument, node)
       )
     );
-    let resultRange;
-    let prevState = transaction.workingCopy;
+    const beforeUnwrapState = transaction.workingCopy;
     if (positions.length) {
-      const pos = positions[0];
-      resultRange = transaction.unwrap(pos, true);
-      for (let i = 1; i < positions.length; i++) {
-        resultRange = transaction.unwrap(
-          modelPosToSimplePos(resultRange.start),
-          true
-        );
-        prevState = transaction.workingCopy;
+      transaction.printDebugInfo();
+      for (let i = 0; i < positions.length; i++) {
+        const pos = positions[i];
+        const mappedPos = transaction.mapPosition(pos, {
+          fromState: beforeUnwrapState,
+        });
+        transaction.unwrap(mappedPos, true);
+        transaction.printDebugInfo();
       }
     }
-
-    // // We can be confident that we need the first and last text node here,
-    // // because the tree walker always walks in document order.
-    // if (unwrappedNodes.length) {
-    //   const start = ModelPosition.fromBeforeNode(
-    //     transaction.currentDocument,
-    //     unwrappedNodes[0]
-    //   );
-    //   const end = ModelPosition.fromAfterNode(
-    //     transaction.currentDocument,
-    //     unwrappedNodes[unwrappedNodes.length - 1]
-    //   );
-    //   transaction.selectRange(new ModelRange(start, end));
-    // } else if (resultRange) {
-    //   transaction.selectRange(resultRange);
-    // } else {
-    //   throw new SelectionError('No sensible selection possible');
-    // }
+    const finalRange = transaction.mapModelRange(range);
+    transaction.selectRange(finalRange);
   }
 }

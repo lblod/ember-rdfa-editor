@@ -36,6 +36,38 @@ export function simpleRangesEqual(range1: SimpleRange, range2: SimpleRange) {
   return range1.start === range2.start && range1.end === range2.end;
 }
 
+export function rangeContains(
+  range1: SimpleRange,
+  range2: SimpleRange,
+  {
+    strictStart = false,
+    strictEnd = false,
+  }: { strictStart?: boolean; strictEnd?: boolean } = {}
+) {
+  const start2AfterStart1 = strictStart
+    ? range2.start > range1.start
+    : range2.start >= range1.start;
+  const end2BeforeEnd1 = strictEnd
+    ? range2.end < range1.end
+    : range2.end <= range1.end;
+  return start2AfterStart1 && end2BeforeEnd1;
+}
+
+export function positionInRange(
+  position: SimplePosition,
+  range: SimpleRange,
+  {
+    strictStart = false,
+    strictEnd = false,
+  }: { strictStart?: boolean; strictEnd?: boolean } = {}
+) {
+  const afterStart = strictStart
+    ? position > range.start
+    : position >= range.start;
+  const beforeEnd = strictEnd ? position < range.end : position <= range.end;
+  return afterStart && beforeEnd;
+}
+
 export function isCollapsed(range: SimpleRange) {
   return range.start === range.end;
 }

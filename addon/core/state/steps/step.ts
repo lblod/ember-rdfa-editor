@@ -11,12 +11,14 @@ import RemoveStep from '@lblod/ember-rdfa-editor/core/state/steps/remove-step';
 import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
+import WrapStep from '@lblod/ember-rdfa-editor/core/state/steps/wrap-step';
 
 const OPERATION_STEP_TYPES = new Set<StepType>([
   'replace-step',
   'remove-step',
   'mark-step',
   'split-step',
+  'wrap-step',
 ]);
 
 const DOCUMENT_STEP_TYPES = new Set<StepType>([
@@ -49,7 +51,8 @@ export type StepType =
   | 'insert-text-step'
   | 'move-step'
   | 'split-step'
-  | 'plugin-step';
+  | 'plugin-step'
+  | 'wrap-step';
 
 export type Step =
   | SelectionStep
@@ -59,6 +62,7 @@ export type Step =
   | MarkStep
   | StateStep
   | AttributeStep
+  | WrapStep
   | SplitStep
   | RemoveStep
   | InsertTextStep;
