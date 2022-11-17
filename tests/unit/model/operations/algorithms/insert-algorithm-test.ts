@@ -156,12 +156,24 @@ module(
       const newDeepPos = mapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 2, 0, 0]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0]));
-      assert.strictEqual(newStartPosRight, pathToSimplePos(initial, [1, 2]));
-      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 2, 0, 1]));
-      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 2, 1]));
-      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(
+        newEndPos,
+        pathToSimplePos(initial, [1, 2, 0, 0], false)
+      );
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0], false));
+      assert.strictEqual(
+        newStartPosRight,
+        pathToSimplePos(initial, [1, 2], false)
+      );
+      assert.strictEqual(
+        newTestPos1,
+        pathToSimplePos(initial, [1, 2, 0, 1], false)
+      );
+      assert.strictEqual(
+        newTestPos2,
+        pathToSimplePos(initial, [1, 2, 1], false)
+      );
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4], false));
       assert.strictEqual(
         newTestPos4LeftBias,
         pathToSimplePos(initial, [1, 2, 0, 0])
@@ -169,9 +181,12 @@ module(
       assert.strictEqual(newTestPos4RightBias, newEndPos);
       assert.strictEqual(
         newTestPos5,
-        pathToSimplePos(initial, [1, 2, 0, 8, 2])
+        pathToSimplePos(initial, [1, 2, 0, 8, 2], false)
       );
-      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
+      assert.strictEqual(
+        newDeepPos,
+        pathToSimplePos(initial, [7, 0, 0, 0, 2], false)
+      );
     });
     test('collapsed insertion', function (assert) {
       //language=XML
@@ -310,17 +325,32 @@ module(
       const newDeepPos = mapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 4]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0, 4]));
-      assert.strictEqual(newStartPosLeft, pathToSimplePos(initial, [1, 0, 2]));
-      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 7, 4]));
-      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 8]));
-      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 4], false));
+      assert.strictEqual(
+        newStartPos,
+        pathToSimplePos(initial, [1, 0, 4], false)
+      );
+      assert.strictEqual(
+        newStartPosLeft,
+        pathToSimplePos(initial, [1, 0, 2], false)
+      );
+      assert.strictEqual(
+        newTestPos1,
+        pathToSimplePos(initial, [1, 0, 7, 4], false)
+      );
+      assert.strictEqual(
+        newTestPos2,
+        pathToSimplePos(initial, [1, 0, 8], false)
+      );
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4], false));
       assert.strictEqual(
         newTestPos5,
-        pathToSimplePos(initial, [1, 0, 7, 11, 2])
+        pathToSimplePos(initial, [1, 0, 7, 11, 2], false)
       );
-      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
+      assert.strictEqual(
+        newDeepPos,
+        pathToSimplePos(initial, [7, 0, 0, 0, 2], false)
+      );
     });
     test('insert single char', function (assert) {
       //language=XML
@@ -343,20 +373,20 @@ module(
       const insertionRange = ModelRange.fromInTextNode(initial, text1, 1, 1);
       const { mapper } = OperationAlgorithms.insert(
         initial,
-        modelRangeToSimpleRange(insertionRange),
+        modelRangeToSimpleRange(insertionRange, false),
         insertNode
       );
-      const cursorPosition = modelPosToSimplePos(insertionRange.end);
+      const cursorPosition = modelPosToSimplePos(insertionRange.end, false);
       assert.true(initial.sameAs(expected));
       assert.strictEqual(
         mapper.mapPosition(cursorPosition, { bias: 'left' }),
-        pathToSimplePos(initial, [1])
+        pathToSimplePos(initial, [1], false)
       );
       assert.strictEqual(
         mapper.mapPosition(cursorPosition, {
           bias: 'right',
         }),
-        pathToSimplePos(initial, [2])
+        pathToSimplePos(initial, [2], false)
       );
     });
   }

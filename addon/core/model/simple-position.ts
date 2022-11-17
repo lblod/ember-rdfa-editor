@@ -9,7 +9,8 @@ export type SimplePosition = number;
 
 export function simplePosToModelPos(
   simplePos: SimplePosition,
-  root: ModelElement
+  root: ModelElement,
+  useSizeCache = true
 ): ModelPosition {
   if (simplePos < 0) {
     throw new SimplePositionOutOfRangeError(simplePos);
@@ -20,7 +21,7 @@ export function simplePosToModelPos(
   let cur: ModelNode | null = root.firstChild;
   let count = 0;
   while (cur) {
-    const curSize = cur.size;
+    const curSize = cur.getSize(useSizeCache);
     if (count === simplePos) {
       return ModelPosition.fromBeforeNode(root, cur);
     } else if (count + curSize < simplePos) {
@@ -49,7 +50,10 @@ export function simplePosToModelPos(
   throw new SimplePositionOutOfRangeError(simplePos);
 }
 
-export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
+export function modelPosToSimplePos(
+  modelPos: ModelPosition,
+  useSizeCache = true
+): SimplePosition {
   const { root, path } = modelPos;
   if (path.length === 0) {
     return 0;
@@ -61,7 +65,7 @@ export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
       cur = cur.childAtOffset(offset, true);
       counter += 1;
       if (cur) {
-        counter += countPreviousSiblings(root, cur);
+        counter += countPreviousSiblings(root, cur, useSizeCache);
       }
     }
   }
@@ -70,10 +74,10 @@ export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
     const last = cur.childAtOffset(lastOffset, true);
     counter += 1;
     if (last) {
-      counter += countPreviousSiblings(root, last);
+      counter += countPreviousSiblings(root, last, useSizeCache);
       if (ModelNode.isModelElement(last)) {
         if (lastOffset === cur.getMaxOffset()) {
-          counter += last.size;
+          counter += last.getSize(useSizeCache);
         }
       } else {
         counter += lastOffset - last.getOffset(root);
@@ -83,11 +87,15 @@ export function modelPosToSimplePos(modelPos: ModelPosition): SimplePosition {
   return counter;
 }
 
-function countPreviousSiblings(root: ModelElement, node: ModelNode): number {
+function countPreviousSiblings(
+  root: ModelElement,
+  node: ModelNode,
+  useSizeCache: boolean
+): number {
   let counter = 0;
   let sib = node.getPreviousSibling(root);
   while (sib) {
-    counter += sib.size;
+    counter += sib.getSize(useSizeCache);
     sib = sib.getPreviousSibling(root);
   }
   return counter;

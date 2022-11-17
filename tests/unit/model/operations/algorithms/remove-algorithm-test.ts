@@ -128,22 +128,37 @@ module(
       const newDeepPos = removeMapper.mapPosition(deepPos);
 
       assert.true(initial.sameAs(expected));
-      assert.strictEqual(newEndPos, pathToSimplePos(initial, [1, 0, 0, 0]));
-      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0]));
-      assert.strictEqual(newStartPosLeft, pathToSimplePos(initial, [1, 0]));
-      assert.strictEqual(newTestPos1, pathToSimplePos(initial, [1, 0, 0, 1]));
-      assert.strictEqual(newTestPos2, pathToSimplePos(initial, [1, 0, 1]));
-      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4]));
+      assert.strictEqual(
+        newEndPos,
+        pathToSimplePos(initial, [1, 0, 0, 0], false)
+      );
+      assert.strictEqual(newStartPos, pathToSimplePos(initial, [1, 0], false));
+      assert.strictEqual(
+        newStartPosLeft,
+        pathToSimplePos(initial, [1, 0], false)
+      );
+      assert.strictEqual(
+        newTestPos1,
+        pathToSimplePos(initial, [1, 0, 0, 1], false)
+      );
+      assert.strictEqual(
+        newTestPos2,
+        pathToSimplePos(initial, [1, 0, 1], false)
+      );
+      assert.strictEqual(newTestPos3, pathToSimplePos(initial, [4], false));
       assert.strictEqual(
         newTestPos4LeftBias,
-        pathToSimplePos(initial, [1, 0, 0, 0])
+        pathToSimplePos(initial, [1, 0, 0, 0], false)
       );
       assert.strictEqual(newTestPos4RightBias, newEndPos);
       assert.strictEqual(
         newTestPos5,
-        pathToSimplePos(initial, [1, 0, 0, 8, 2])
+        pathToSimplePos(initial, [1, 0, 0, 8, 2], false)
       );
-      assert.strictEqual(newDeepPos, pathToSimplePos(initial, [7, 0, 0, 0, 2]));
+      assert.strictEqual(
+        newDeepPos,
+        pathToSimplePos(initial, [7, 0, 0, 0, 2], false)
+      );
     });
   }
 );
