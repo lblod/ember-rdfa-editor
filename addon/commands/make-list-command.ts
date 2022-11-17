@@ -60,6 +60,7 @@ export default class MakeListCommand
     }
 
     const range = selection.lastRange.clone();
+    const wasCollapsed = range.collapsed;
     const blocks = this.getBlocksFromRange(range, transaction.currentDocument);
 
     const list = new ModelElement(listType);
@@ -83,6 +84,34 @@ export default class MakeListCommand
     );
     const cleaner = new ListCleaner();
     cleaner.clean(fullRange, transaction);
+
+    let resultRange;
+    if (wasCollapsed) {
+      const firstChild = list.firstChild as ModelElement;
+      resultRange = ModelRange.fromInElement(
+        transaction.currentDocument,
+        firstChild,
+        0,
+        firstChild.getMaxOffset()
+      );
+      resultRange.collapse();
+    } else {
+      const firstChild = list.firstChild as ModelElement;
+      const lastChild = list.lastChild as ModelElement;
+      const start = ModelPosition.fromInElement(
+        transaction.currentDocument,
+        firstChild,
+        0
+      );
+      const end = ModelPosition.fromInElement(
+        transaction.currentDocument,
+        lastChild,
+        lastChild.getMaxOffset()
+      );
+      resultRange = new ModelRange(start, end);
+    }
+
+    transaction.selectRange(resultRange);
   }
 
   private getBlocksFromRange(
