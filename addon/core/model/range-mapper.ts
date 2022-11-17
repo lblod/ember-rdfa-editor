@@ -109,7 +109,9 @@ export class SimpleRangeMapper {
       .map((modelRange) => modelRangeToSimpleRange(modelRange))
       .map((simpleRange) => this.mapRange(simpleRange))
       .map((simpleRange) => simpleRangeToModelRange(simpleRange, newRoot));
-    return new ModelSelection(mappedSelectionRanges);
+    const mappedSelection = modelSelection.clone();
+    mappedSelection.ranges = mappedSelectionRanges;
+    return mappedSelection;
   }
 
   appendMapper(mapper: SimpleRangeMapper): this {
