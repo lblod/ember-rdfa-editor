@@ -94,7 +94,7 @@
     "@types/ember__debug": "^3.16.7",
     "@types/ember__engine": "^3.16.4",
     "@types/ember__error": "^3.16.2",
-    "@types/ember__object": "^3.12.8",
+    "@types/ember__object": "^4.0.4",
     "@types/ember__polyfills": "^3.12.2",
     "@types/ember__routing": "^3.16.17",
     "@types/ember__runloop": "^3.16.4",
