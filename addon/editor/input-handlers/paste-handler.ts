@@ -64,7 +64,7 @@ export default class PasteHandler extends InputHandler {
         let cleanHTML;
 
         if (rtfPaste) {
-          cleanHTML = convertMsWordHtml('', htmlPaste, inputParser);
+          cleanHTML = convertMsWordHtml(htmlPaste, inputParser);
         } else {
           cleanHTML = convertGenericHtml(htmlPaste, inputParser);
         }

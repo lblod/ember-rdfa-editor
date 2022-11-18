@@ -46,7 +46,6 @@
     "@glimmer/tracking": "^1.0.4",
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "^0.8.0-beta.2",
-    "@prezly/docx-cleaner": "^0.5.1",
     "@types/diff-match-patch": "^1.0.32",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
