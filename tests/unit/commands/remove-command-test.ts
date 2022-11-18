@@ -11,7 +11,7 @@ module('Unit | commands | remove-command', function () {
   const command = new RemoveCommand();
   const executeCommand = makeTestExecute(command);
 
-  skip('removing part of first li in list', function (assert) {
+  test('removing part of first li in list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
@@ -41,7 +41,7 @@ module('Unit | commands | remove-command', function () {
     const { resultState } = executeCommand(initialState, { range });
     assert.true(resultState.document.sameAs(expected));
   });
-  skip('removing part of first li in nested list', function (assert) {
+  test('removing part of first li in nested list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
@@ -77,7 +77,7 @@ module('Unit | commands | remove-command', function () {
     const { resultState } = executeCommand(initialState, { range });
     assert.true(resultState.document.sameAs(expected));
   });
-  skip('removing part of second li in nested list', function (assert) {
+  test('removing part of second li in nested list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
@@ -124,7 +124,7 @@ module('Unit | commands | remove-command', function () {
     const { resultState } = executeCommand(initialState, { range });
     assert.true(resultState.document.sameAs(expected));
   });
-  skip('removing part of complex nested list', function (assert) {
+  test('removing part of complex nested list', function (assert) {
     const {
       root: initial,
       textNodes: { text1, text2 },
