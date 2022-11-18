@@ -64,7 +64,11 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       ) {
         // If we did split inside a nested list, the rightside will
         // now have nested list as the first element, which is not allowed, so we flatten it
-        flattenList(range.root, transaction, rightSideOfSplit);
+        flattenList(
+          range.root,
+          transaction,
+          transaction.inWorkingCopy(rightSideOfSplit)
+        );
       }
       rangeAfterDelete = cleanupRangeAfterDelete(
         range.root,
