@@ -32,7 +32,12 @@ import {
   commandMapToCommandExecutor,
 } from '../../commands/command-manager';
 import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
-import { isOperationStep, OperationStepResult, Step, StepResult } from './steps/step';
+import {
+  isOperationStep,
+  OperationStepResult,
+  Step,
+  StepResult,
+} from './steps/step';
 import SelectionStep from './steps/selection-step';
 import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
@@ -408,34 +413,9 @@ export default class Transaction {
     }
     const range = modelRangeToSimpleRange(rangeToMove);
     const position = modelPosToSimplePos(targetPosition);
-    const splitStep = new SplitStep({ range });
-    this.addStep(splitStep);
 
-    const stateAfterSplit = this.apply();
-
-    const rangeAfterSplit = this.mapRange(range, { fromState: startState });
-
-    const modelRangeAfterSplit = simpleRangeToModelRange(
-      rangeAfterSplit,
-      stateAfterSplit.document
-    );
-    const confinedRanges = modelRangeAfterSplit.getMinimumConfinedRanges();
-
-    const nodesToMove: ModelNode[] = [];
-    for (const range of confinedRanges) {
-      let currentNode = range.start.nodeAfter();
-      while (currentNode) {
-        nodesToMove.push(currentNode);
-        if (currentNode === range.end.nodeBefore()) {
-          currentNode = null;
-        } else {
-          currentNode = currentNode.getNextSibling(stateAfterSplit.document);
-        }
-      }
-    }
-
-    const deleteStep = new ReplaceStep({ range: rangeAfterSplit, nodes: [] });
-    this.addStep(deleteStep);
+    const deleteStep = new ReplaceStep({ range, nodes: [] });
+    const deleteStepResult = this.addAndCommitOperationStep(deleteStep);
 
     const positionAfterDelete = this.mapPosition(position, {
       fromState: startState,
@@ -444,7 +424,7 @@ export default class Transaction {
     this.addStep(
       new ReplaceStep({
         range: { start: positionAfterDelete, end: positionAfterDelete },
-        nodes: [...nodesToMove],
+        nodes: [...deleteStepResult.removedNodes],
       })
     );
     return simpleRangeToModelRange(

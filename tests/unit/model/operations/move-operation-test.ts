@@ -114,22 +114,14 @@ module('Unit | model | operations | move-operation-test', function () {
         <div>
           <text>abgh</text>
           <span>
-            <span>
-              <text>ijkl</text>
-            </span>
-
-            <text>mnop</text>
-            <text>qr</text>
+            <text>ijkl</text>
           </span>
-          <text>cd</text>
+          <text>mnop</text>
+          <text>qrcd</text>
         </div>
-
         <div>
           <span>
             <text>ef</text>
-
-          </span>
-          <span>
             <span>
               <text __id="rangeEnd">st</text>
             </span>
@@ -156,7 +148,7 @@ module('Unit | model | operations | move-operation-test', function () {
     );
     assert.true(
       resultRange.sameAs(
-        ModelRange.fromPaths(actual.document, [1, 1], [1, 1, 0])
+        ModelRange.fromPaths(actual.document, [1, 0, 2], [1, 0, 2, 0])
       ),
       resultRange.toString()
     );
