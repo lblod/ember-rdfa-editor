@@ -1,0 +1,11 @@
+<button
+  type='button'
+  class='say-toolbar__button {{if this.isSuperscript " is-active"}}'
+  {{on 'click' this.toggle}}
+  title={{t 'ember-rdfa-editor.superscript'}}
+>
+  <AuIcon @icon='question-circle' @ariaHidden={{true}} @size='large'/> {{!-- TODO: Replace icon with 'superscript' icon when added to ember-appuniversum --}}
+  <span class='au-u-hidden-visually'>
+    {{t 'ember-rdfa-editor.superscript'}}
+  </span>
+</button>

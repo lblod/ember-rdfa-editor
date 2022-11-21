@@ -17,6 +17,7 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
+import ExtendedStyles from '@lblod/ember-rdfa-editor/plugins/extended-styles/extended-styles';
 import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
 import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
 import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
@@ -131,6 +132,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       { instance: new BasicStyles(), options: null },
       { instance: new LumpNodePlugin(), options: null },
       { instance: new ShowActiveRdfaPlugin(), options: null },
+      { instance: new ExtendedStyles(), options: null },
     ];
     for (const config of pluginConfigs) {
       let name;
