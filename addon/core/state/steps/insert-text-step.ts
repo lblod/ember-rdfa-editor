@@ -39,12 +39,13 @@ export default class InsertTextStep implements OperationStep {
       text,
       marks
     );
-    const { defaultRange } = op.execute();
+    const { defaultRange, overwrittenNodes: removedNodes } = op.execute();
     return {
       state: resultState,
       defaultRange: modelRangeToSimpleRange(defaultRange),
       mapper: EMPTY_MAPPER,
       timestamp: new Date(),
+      removedNodes,
     };
   }
 }

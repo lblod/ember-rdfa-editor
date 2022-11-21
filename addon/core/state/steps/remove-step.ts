@@ -26,7 +26,7 @@ export default class RemoveStep implements OperationStep {
   getResult(initialState: State): OperationStepResult {
     const { range } = this.args;
     const resultState = cloneStateInRange(range, initialState);
-    const { mapper } = OperationAlgorithms.removeNew(
+    const { mapper, removedNodes } = OperationAlgorithms.removeNew(
       resultState.document,
       range
     );
@@ -39,6 +39,7 @@ export default class RemoveStep implements OperationStep {
       defaultRange: mapper.mapRange(range),
       mapper,
       timestamp: new Date(),
+      removedNodes,
     };
   }
 }

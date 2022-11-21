@@ -47,6 +47,7 @@ export default class SplitStep implements OperationStep {
         defaultRange: { start: position, end: position },
         mapper,
         timestamp: new Date(),
+        removedNodes: [],
       };
     } else {
       const { position: end, mapper: endMapper } = this.doSplit(
@@ -67,6 +68,7 @@ export default class SplitStep implements OperationStep {
         defaultRange: { start: start, end: startMapper.mapPosition(end) },
         mapper,
         timestamp: new Date(),
+        removedNodes: [],
       };
     }
   }

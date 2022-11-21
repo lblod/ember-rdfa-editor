@@ -35,17 +35,22 @@ export default class ReplaceStep implements OperationStep {
   getResult(initialState: State): OperationStepResult {
     const resultState = cloneStateInRange(this.range, initialState);
     let mapper: SimpleRangeMapper;
+    let removedNodes: ModelNode[];
     if (!this.nodes.length) {
-      mapper = OperationAlgorithms.remove(
+      const result = OperationAlgorithms.remove(
         resultState.document,
         this.range
-      ).mapper;
+      );
+      mapper = result.mapper;
+      removedNodes = result.removedNodes;
     } else {
-      mapper = OperationAlgorithms.insert(
+      const result = OperationAlgorithms.insert(
         resultState.document,
         this.range,
         ...this.nodes
-      ).mapper;
+      );
+      mapper = result.mapper;
+      removedNodes = result.overwrittenNodes;
     }
     resultState.selection = mapper.mapSelection(
       initialState.selection,
@@ -56,6 +61,7 @@ export default class ReplaceStep implements OperationStep {
       defaultRange: mapper.mapRange(this.range),
       mapper,
       timestamp: new Date(),
+      removedNodes,
     };
   }
 
