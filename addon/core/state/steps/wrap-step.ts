@@ -64,17 +64,15 @@ export default class WrapStep implements OperationStep {
       insertPosition = 0,
     } = this.args;
     const resultState = cloneStateInRange(replaceRange, initialState);
-    const { removedNodes: preservedNodes, mapper: deleteMapper  } = OperationAlgorithms.remove(
-      resultState.document,
-      preserveRange
-    );
+    const { removedNodes: preservedNodes, mapper: deleteMapper } =
+      OperationAlgorithms.remove(resultState.document, preserveRange);
     if (wrappingElement) {
       OperationAlgorithms.insert(
         wrappingElement,
         { start: insertPosition, end: insertPosition },
         ...preservedNodes
       );
-      OperationAlgorithms.insert(
+      const result = OperationAlgorithms.insert(
         resultState.document,
         deleteMapper.mapRange(replaceRange),
         wrappingElement
@@ -93,9 +91,10 @@ export default class WrapStep implements OperationStep {
         timestamp: new Date(),
         mapper,
         defaultRange: mapper.mapRange(replaceRange),
+        removedNodes: result.overwrittenNodes,
       };
     } else {
-      OperationAlgorithms.insert(
+      const result = OperationAlgorithms.insert(
         resultState.document,
         deleteMapper.mapRange(replaceRange),
         ...preservedNodes
@@ -108,6 +107,7 @@ export default class WrapStep implements OperationStep {
         timestamp: new Date(),
         mapper: mapper,
         defaultRange: mapper.mapRange(replaceRange),
+        removedNodes: result.overwrittenNodes,
       };
     }
   }

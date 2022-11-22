@@ -12,6 +12,7 @@ import SplitStep from '@lblod/ember-rdfa-editor/core/state/steps/split-step';
 import StateStep from '@lblod/ember-rdfa-editor/core/state/steps/state-step';
 import AttributeStep from '@lblod/ember-rdfa-editor/core/state/steps/attribute-step';
 import WrapStep from '@lblod/ember-rdfa-editor/core/state/steps/wrap-step';
+import ModelNode from '../../model/nodes/model-node';
 
 const OPERATION_STEP_TYPES = new Set<StepType>([
   'replace-step',
@@ -34,6 +35,7 @@ export interface BaseStep {
 
 export interface OperationStepResult extends StepResult {
   defaultRange: SimpleRange;
+  removedNodes: ModelNode[];
 }
 
 export interface OperationStep extends BaseStep {

@@ -32,7 +32,12 @@ import {
   commandMapToCommandExecutor,
 } from '../../commands/command-manager';
 import { CommandName, Commands } from '@lblod/ember-rdfa-editor';
-import { isOperationStep, Step, StepResult } from './steps/step';
+import {
+  isOperationStep,
+  OperationStepResult,
+  Step,
+  StepResult,
+} from './steps/step';
 import SelectionStep from './steps/selection-step';
 import ConfigStep from './steps/config-step';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
@@ -212,7 +217,7 @@ export default class Transaction {
         attributes,
         action: 'add',
       })
-    );
+    ).defaultRange;
     this.createSnapshot();
     return simpleRangeToModelRange(defaultRange, this.apply().document);
   }
@@ -323,7 +328,7 @@ export default class Transaction {
         range: modelRangeToSimpleRange(range),
         nodes: nodes,
       })
-    );
+    ).defaultRange;
     this.createSnapshot();
     return simpleRangeToModelRange(defaultRange, this.apply().document);
   }
@@ -357,7 +362,7 @@ export default class Transaction {
       new RemoveStep({
         range: modelRangeToSimpleRange(range),
       })
-    );
+    ).defaultRange;
     this.createSnapshot();
     return simpleRangeToModelRange(defaultRange, this.apply().document);
   }
@@ -366,14 +371,15 @@ export default class Transaction {
     this.steps.push(step);
   }
 
-  private addAndCommitOperationStep(step: Step): SimpleRange {
+  private addAndCommitOperationStep(step: Step): OperationStepResult {
     if (!isOperationStep(step)) {
       throw new IllegalArgumentError();
     }
     const lastState = this.apply();
     this.addStep(step);
-    const { defaultRange } = step.getResult(lastState);
-    return defaultRange;
+    const stepResult = step.getResult(lastState);
+    this.stepCache.push(stepResult);
+    return stepResult;
   }
 
   selectRange(range: ModelRange): void {
@@ -408,33 +414,8 @@ export default class Transaction {
     const range = modelRangeToSimpleRange(rangeToMove);
     const position = modelPosToSimplePos(targetPosition);
 
-    const splitStep = new SplitStep({ range });
-    this.addStep(splitStep);
-    const stateAfterSplit = this.apply();
-
-    const rangeAfterSplit = this.mapRange(range, { fromState: startState });
-
-    const modelRangeAfterSplit = simpleRangeToModelRange(
-      rangeAfterSplit,
-      stateAfterSplit.document
-    );
-    const confinedRanges = modelRangeAfterSplit.getMinimumConfinedRanges();
-
-    const nodesToMove: ModelNode[] = [];
-    for (const range of confinedRanges) {
-      let currentNode = range.start.nodeAfter();
-      while (currentNode) {
-        nodesToMove.push(currentNode);
-        if (currentNode === range.end.nodeBefore()) {
-          currentNode = null;
-        } else {
-          currentNode = currentNode.getNextSibling(stateAfterSplit.document);
-        }
-      }
-    }
-
-    const deleteStep = new ReplaceStep({ range: rangeAfterSplit, nodes: [] });
-    this.addStep(deleteStep);
+    const deleteStep = new ReplaceStep({ range, nodes: [] });
+    const deleteStepResult = this.addAndCommitOperationStep(deleteStep);
 
     const positionAfterDelete = this.mapPosition(position, {
       fromState: startState,
@@ -443,7 +424,7 @@ export default class Transaction {
     this.addStep(
       new ReplaceStep({
         range: { start: positionAfterDelete, end: positionAfterDelete },
-        nodes: [...nodesToMove],
+        nodes: [...deleteStepResult.removedNodes],
       })
     );
     return simpleRangeToModelRange(
@@ -693,7 +674,7 @@ export default class Transaction {
       new ReplaceStep({
         range: modelRangeToSimpleRange(range),
       })
-    );
+    ).defaultRange;
     this.createSnapshot();
     return simpleRangeToModelRange(defaultRange, this.apply().document);
   }
@@ -762,7 +743,7 @@ export default class Transaction {
         replaceRange: { start: nodePos, end },
         preserveRange: { start: nodePos + 1, end: end - 1 },
       })
-    );
+    ).defaultRange;
     const resultRange = simpleRangeToModelRange(
       defaultRange,
       this.currentDocument
@@ -815,7 +796,7 @@ export default class Transaction {
         attributes,
         action: 'remove',
       })
-    );
+    ).defaultRange;
     this.createSnapshot();
     return simpleRangeToModelRange(defaultRange, this.apply().document);
   }

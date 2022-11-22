@@ -64,17 +64,9 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       ) {
         // If we did split inside a nested list, the rightside will
         // now have nested list as the first element, which is not allowed, so we flatten it
-        flattenList(
-          range.root,
-          transaction,
-          transaction.inWorkingCopy(rightSideOfSplit)
-        );
+        flattenList(transaction, rightSideOfSplit);
       }
-      rangeAfterDelete = cleanupRangeAfterDelete(
-        range.root,
-        transaction,
-        rangeAfterDelete
-      );
+      rangeAfterDelete = cleanupRangeAfterDelete(transaction, rangeAfterDelete);
     } else {
       rangeAfterDelete = transaction.removeNodes(clonedRange);
     }
@@ -87,7 +79,7 @@ export default class RemoveCommand implements Command<RemoveCommandArgs, void> {
       });
       transaction.selectRange(finalRange);
     } else {
-      transaction.selectRange(rangeAfterDelete);
+      transaction.selectRange(transaction.mapModelRange(rangeAfterDelete));
     }
     // this.model.emitSelectionChanged();
   }
@@ -133,21 +125,21 @@ function isolateLowestLi(
 }
 
 function cleanupRangeAfterDelete(
-  root: ModelElement,
   tr: Transaction,
   range: ModelRange
 ): ModelRange {
-  const nodeAfter = range.start.nodeAfter();
+  const clonedRange = tr.cloneRange(range);
+  const nodeAfter = clonedRange.start.nodeAfter();
 
   if (ModelNodeUtils.isListContainer(nodeAfter)) {
-    const rangeAfterCleaning = cleanupListWithoutLis(root, tr, nodeAfter);
+    const rangeAfterCleaning = cleanupListWithoutLis(tr, nodeAfter);
     if (rangeAfterCleaning) {
       return rangeAfterCleaning;
     }
   }
   // SAFETY: filter guarantees modelelement
   const highestUl = (
-    range.start.parent.findSelfOrAncestors(
+    clonedRange.start.parent.findSelfOrAncestors(
       tr.currentDocument,
       ModelNodeUtils.isListContainer
     ) as Generator<ModelElement, void, void>
@@ -163,10 +155,11 @@ function cleanupRangeAfterDelete(
           highestUl.getMaxOffset()
         )
       );
-      flattenList(root, tr, highestUl);
+      cleanupListWithoutLis(tr, nextSibling);
+      flattenList(tr, highestUl);
     }
   }
-  return range;
+  return clonedRange;
 }
 
 function findNestedListFromPos(
@@ -186,8 +179,9 @@ function findNestedListFromPos(
 /**
  * Completely flatten a nested list up to the level of the given li container
  */
-function flattenList(root: ModelElement, tr: Transaction, list: ModelElement) {
-  let firstLi = list.children.find(ModelNodeUtils.isListElement);
+function flattenList(tr: Transaction, list: ModelElement) {
+  const listInLatestState = tr.inWorkingCopy(list);
+  let firstLi = listInLatestState.children.find(ModelNodeUtils.isListElement);
   if (firstLi) {
     // SAFETY: the filter guarantees nodes are elements
     const nestedLists = [
@@ -203,27 +197,33 @@ function flattenList(root: ModelElement, tr: Transaction, list: ModelElement) {
 
     for (const nestedList of nestedLists) {
       const moveRange = tr.unwrap(
-        modelPosToSimplePos(ModelPosition.fromBeforeNode(root, nestedList))
+        modelPosToSimplePos(
+          ModelPosition.fromBeforeNode(tr.currentDocument, nestedList)
+        )
       );
       const remainingLi = moveRange.start.parent;
       tr.moveToPosition(moveRange, targetPos);
       if (!remainingLi.children.length) {
         tr.deleteNode(remainingLi);
       }
-      firstLi = unwrap(list.children.find(ModelNodeUtils.isListElement));
+      firstLi = unwrap(
+        listInLatestState.children.find(ModelNodeUtils.isListElement)
+      );
       targetPos = ModelPosition.fromAfterNode(tr.currentDocument, firstLi);
     }
   }
 }
 
 function cleanupListWithoutLis(
-  root: ModelElement,
   tr: Transaction,
   list: ModelElement
 ): ModelRange | null {
-  if (list.children.filter(ModelNodeUtils.isListElement).length === 0) {
+  const listMapped = tr.inWorkingCopy(list);
+  if (listMapped.children.filter(ModelNodeUtils.isListElement).length === 0) {
     return tr.unwrap(
-      modelPosToSimplePos(ModelPosition.fromBeforeNode(root, list))
+      modelPosToSimplePos(
+        ModelPosition.fromBeforeNode(tr.currentDocument, listMapped)
+      )
     );
   }
   return null;

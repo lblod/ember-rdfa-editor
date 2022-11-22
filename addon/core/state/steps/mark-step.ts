@@ -72,7 +72,8 @@ export default class MarkStep implements OperationStep {
       }
       //insert new textNode with property set
       this.markAction(node, spec, attributes, action);
-      const { mapper } = OperationAlgorithms.insert(root, range, node);
+      const { mapper, overwrittenNodes: removedNodes } =
+        OperationAlgorithms.insert(root, range, node);
 
       //put the cursor inside that node
       const newRange = ModelRange.fromInNode(root, node, 1, 1);
@@ -86,6 +87,7 @@ export default class MarkStep implements OperationStep {
         mapper,
         state: resultState,
         timestamp: new Date(),
+        removedNodes,
       };
     } else {
       OperationAlgorithms.splitText(root, range.start);
@@ -112,6 +114,7 @@ export default class MarkStep implements OperationStep {
         mapper: new SimpleRangeMapper(),
         state: resultState,
         timestamp: new Date(),
+        removedNodes: [],
       };
     }
   }

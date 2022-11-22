@@ -11,6 +11,37 @@ module('Unit | commands | remove-command', function () {
   const command = new RemoveCommand();
   const executeCommand = makeTestExecute(command);
 
+  test('removing last character of first li in list', function (assert) {
+    const {
+      root: initial,
+      textNodes: { text2 },
+    } = vdom`
+      <modelRoot>
+        <ul>
+          <li><text __id="text2">abc</text></li>
+          <li><text>abc</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const initialState = testState({ document: initial });
+    const { root: expected } = vdom`
+      <modelRoot>
+        <ul>
+          <li><text>ab</text></li>
+          <li><text>abc</text></li>
+        </ul>
+      </modelRoot>`;
+
+    const start = ModelPosition.fromInNode(initial as ModelElement, text2, 2);
+    const end = ModelPosition.fromInNode(initial as ModelElement, text2, 3);
+    const range = new ModelRange(start, end);
+    const { resultState } = executeCommand(initialState, { range });
+    assert.true(
+      resultState.document.sameAs(expected),
+      QUnit.dump.parse(resultState.document)
+    );
+  });
+
   test('removing part of first li in list', function (assert) {
     const {
       root: initial,
