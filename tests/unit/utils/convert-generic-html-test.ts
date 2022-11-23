@@ -22,7 +22,7 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list as HTML', function (assert) {
@@ -55,7 +55,7 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted table as HTML', function (assert) {
@@ -276,7 +276,7 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display bold text', function (assert) {
@@ -308,7 +308,7 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display italic text', function (assert) {
@@ -340,7 +340,7 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display underlined text', function (assert) {
@@ -372,6 +372,6 @@ module('Utils | CS | paste-handler | convertGenericHtml', function () {
     `;
 
     const actualHtml = convertGenericHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 });

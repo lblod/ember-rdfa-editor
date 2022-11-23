@@ -25,7 +25,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     const inputParser = new HTMLInputParser({});
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
 
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list as HTML', function (assert) {
@@ -64,7 +64,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display nested list correctly as HTML', function (assert) {
@@ -564,7 +564,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted table as HTML', function (assert) {
@@ -785,7 +785,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display bold text', function (assert) {
@@ -817,7 +817,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml.trim(), actualHtml.trim());
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display italic text', function (assert) {
@@ -849,7 +849,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display underlined text', function (assert) {
@@ -881,7 +881,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list in a table', function (assert) {
@@ -1076,7 +1076,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display table in a list', function (assert) {
@@ -1235,6 +1235,6 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(expectedHtml, actualHtml);
+    assert.strictEqual(actualHtml, expectedHtml);
   });
 });
