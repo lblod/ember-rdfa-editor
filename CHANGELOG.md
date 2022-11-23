@@ -36,6 +36,23 @@
 
 
 
+
+## 0.65.0 (2022-11-23)
+
+#### :boom: Breaking Change
+* [#468](https://github.com/lblod/ember-rdfa-editor/pull/468) Update ember-appuniversum to v2 ([@Windvis](https://github.com/Windvis))
+
+#### :house: Internal
+* [#480](https://github.com/lblod/ember-rdfa-editor/pull/480) build(deps): bump engine.io from 6.2.0 to 6.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#475](https://github.com/lblod/ember-rdfa-editor/pull/475) build(deps-dev): bump eslint from 8.27.0 to 8.28.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#469](https://github.com/lblod/ember-rdfa-editor/pull/469) build(deps): bump @codemirror/lang-html from 6.1.4 to 6.2.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#466](https://github.com/lblod/ember-rdfa-editor/pull/466) build(deps): bump @codemirror/view from 6.5.0 to 6.5.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#464](https://github.com/lblod/ember-rdfa-editor/pull/464) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.9.0 to 1.10.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#457](https://github.com/lblod/ember-rdfa-editor/pull/457) build(deps-dev): bump typescript from 4.8.4 to 4.9.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
+
 ## 0.64.0 (2022-11-15)
 
 #### :boom: Breaking Change
