@@ -48,7 +48,7 @@
 
   <div class='say-container__main'>
     {{#if this.editorLoading}}
-      <AuLoader />
+      <AuLoader/>
     {{/if}}
 
     <div
@@ -59,14 +59,10 @@
         {{if this.showRdfaBlocks "show-rdfa-blocks"}}
         {{if this.editorLoading "au-u-hidden-visually"}}'
     >
-      <div class='say-editor__paper'>
-        <div
-          {{did-insert this.handleRawEditorInit}}
-          {{will-destroy this.teardown}}
-          class="say-editor__inner say-content"
-          ...attributes
-        >
-        </div>
+      <div class='say-editor__paper'
+        {{did-insert this.handleRawEditorInit}}
+        {{will-destroy this.teardown}}
+      >
       </div>
 
     </div>

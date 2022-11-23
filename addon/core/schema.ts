@@ -1,11 +1,6 @@
-import {
-  DOMOutputSpec,
-  MarkSpec,
-  Node as PNode,
-  NodeSpec,
-  Schema,
-} from 'prosemirror-model';
+import { MarkSpec, Node as PNode, NodeSpec, Schema } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { bulletList, listItem, orderedList } from 'prosemirror-schema-list';
 
 const rdfaAttrs = {
   vocab: { default: undefined },
@@ -60,11 +55,6 @@ function getRdfaAttrs(node: Element) {
   return false;
 }
 
-const pDOM: DOMOutputSpec = ['p', 0],
-  blockquoteDOM: DOMOutputSpec = ['blockquote', 0],
-  hrDOM: DOMOutputSpec = ['hr'],
-  preDOM: DOMOutputSpec = ['pre', ['code', 0]],
-  brDOM: DOMOutputSpec = ['br'];
 const counter: NodeSpec = {
   inline: true,
   content: 'block*',
@@ -81,171 +71,185 @@ const counter: NodeSpec = {
     },
   ],
 };
+const doc: NodeSpec = {
+  content: 'block+',
+};
+const paragraph: NodeSpec = {
+  content: 'inline*',
+  group: 'block',
+  parseDOM: [{ tag: 'p' }],
+  toDOM() {
+    return ['p', 0];
+  },
+};
+const ordered_list: NodeSpec = {
+  ...orderedList,
+  content: 'list_item+',
+  group: 'block',
+};
+const bullet_list: NodeSpec = {
+  ...bulletList,
+  content: 'list_item+',
+  group: 'block',
+};
+const list_item: NodeSpec = {
+  ...listItem,
+  content: 'paragraph block*',
+};
+const inline_rdfa: NodeSpec = {
+  inline: true,
+  content: 'inline*',
+  defining: true,
+  group: 'inline',
+  attrs: {
+    ...rdfaAttrs,
+    __tag: { default: 'span' },
+  },
+  parseDOM: [
+    {
+      tag: 'span, a',
+      getAttrs(node: HTMLElement) {
+        return getRdfaAttrs(node);
+      },
+    },
+  ],
+  toDOM(node: PNode) {
+    return [node.attrs.__tag, node.attrs, 0];
+  },
+};
+const block_rdfa: NodeSpec = {
+  content: 'block*',
+  group: 'block',
+  attrs: {
+    ...rdfaAttrs,
+    __tag: { default: 'div' },
+  },
+  parseDOM: [
+    {
+      tag: 'div, h1, h2, h3, h4, h5, h6',
+      getAttrs(node: HTMLElement) {
+        return getRdfaAttrs(node);
+      },
+    },
+  ],
+  toDOM(node: PNode) {
+    return [node.attrs.__tag, node.attrs, 0];
+  },
+};
+const blockquote: NodeSpec = {
+  content: 'block+',
+  group: 'block',
+  defining: true,
+  parseDOM: [{ tag: 'blockquote' }],
+  toDOM() {
+    return ['blockquote', 0];
+  },
+};
+const horizontal_rule: NodeSpec = {
+  group: 'block',
+  parseDOM: [{ tag: 'hr' }],
+  toDOM() {
+    return ['hr'];
+  },
+};
+const heading: NodeSpec = {
+  attrs: { level: { default: 1 } },
+  content: 'inline*',
+  group: 'block',
+  defining: true,
+  parseDOM: [
+    { tag: 'h1', attrs: { level: 1 } },
+    { tag: 'h2', attrs: { level: 2 } },
+    { tag: 'h3', attrs: { level: 3 } },
+    { tag: 'h4', attrs: { level: 4 } },
+    { tag: 'h5', attrs: { level: 5 } },
+    { tag: 'h6', attrs: { level: 6 } },
+  ],
+  toDOM(node: PNode) {
+    return [`h${node.attrs.level}`, 0];
+  },
+};
+const code_block: NodeSpec = {
+  content: 'text*',
+  marks: '',
+  group: 'block',
+  code: true,
+  defining: true,
+  parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
+  toDOM() {
+    return ['pre', ['code', 0]];
+  },
+};
+const text: NodeSpec = {
+  group: 'inline',
+};
+const image: NodeSpec = {
+  inline: true,
+  attrs: {
+    src: {},
+    alt: { default: null },
+    title: { default: null },
+  },
+  group: 'inline',
+  draggable: true,
+  parseDOM: [
+    {
+      tag: 'img[src]',
+      getAttrs(dom: HTMLElement) {
+        return {
+          src: dom.getAttribute('src'),
+          title: dom.getAttribute('title'),
+          alt: dom.getAttribute('alt'),
+        };
+      },
+    },
+  ],
+  toDOM(node: PNode) {
+    const { src, alt, title } = node.attrs;
+    return ['img', { src, alt, title }];
+  },
+};
+const hard_break: NodeSpec = {
+  inline: true,
+  group: 'inline',
+  selectable: false,
+  parseDOM: [{ tag: 'br' }],
+  toDOM() {
+    return ['br'];
+  },
+};
 // Mix the nodes from prosemirror-schema-list into the basic schema to
 // create a schema with list support.
 export const nodes = {
-  /// NodeSpec The top level document node.
-  doc: {
-    content: 'block+',
-  } as NodeSpec,
-  counter,
-
-  /// A plain paragraph textblock. Represented in the DOM
-  /// as a `<p>` element.
-  paragraph: {
-    content: 'inline*',
-    group: 'block',
-    parseDOM: [{ tag: 'p' }],
-    toDOM() {
-      return pDOM;
-    },
-  } as NodeSpec,
-  rdfaInline: {
-    inline: true,
-    content: 'inline*',
-    group: 'inline',
-    attrs: {
-      ...rdfaAttrs,
-      __tag: { default: 'span' },
-    },
-    parseDOM: [
-      {
-        tag: 'span, a',
-        getAttrs(node: HTMLElement) {
-          return getRdfaAttrs(node);
-        },
-      },
-    ],
-    toDOM(node: PNode) {
-      return [node.attrs.__tag, node.attrs, 0];
-    },
-  } as NodeSpec,
-  rdfaBlock: {
-    content: 'block*',
-    group: 'block',
-    attrs: {
-      ...rdfaAttrs,
-      __tag: { default: 'div' },
-    },
-    parseDOM: [
-      {
-        tag: 'div, h1, h2, h3, h4, h5, h6',
-        getAttrs(node: HTMLElement) {
-          return getRdfaAttrs(node);
-        },
-      },
-    ],
-    toDOM(node: PNode) {
-      return [node.attrs.__tag, node.attrs, 0];
-    },
-  } as NodeSpec,
-
+  doc,
+  paragraph,
+  list_item,
+  ordered_list,
+  bullet_list,
+  inline_rdfa,
+  block_rdfa,
   /// A blockquote (`<blockquote>`) wrapping one or more blocks.
-  blockquote: {
-    content: 'block+',
-    group: 'block',
-    defining: true,
-    parseDOM: [{ tag: 'blockquote' }],
-    toDOM() {
-      return blockquoteDOM;
-    },
-  } as NodeSpec,
+  blockquote,
 
   /// A horizontal rule (`<hr>`).
-  horizontal_rule: {
-    group: 'block',
-    parseDOM: [{ tag: 'hr' }],
-    toDOM() {
-      return hrDOM;
-    },
-  } as NodeSpec,
-
-  // /// A heading textblock, with a `level` attribute that
-  // /// should hold the number 1 to 6. Parsed and serialized as `<h1>` to
-  // /// `<h6>` elements.
-  // heading: {
-  //   attrs: { level: { default: 1 } },
-  //   content: 'inline*',
-  //   group: 'block',
-  //   defining: true,
-  //   parseDOM: [
-  //     { tag: 'h1', attrs: { level: 1 } },
-  //     { tag: 'h2', attrs: { level: 2 } },
-  //     { tag: 'h3', attrs: { level: 3 } },
-  //     { tag: 'h4', attrs: { level: 4 } },
-  //     { tag: 'h5', attrs: { level: 5 } },
-  //     { tag: 'h6', attrs: { level: 6 } },
-  //   ],
-  //   toDOM(node: Node) {
-  //     return [`h${node.attrs.level}`, 0];
-  //   },
-  // } as NodeSpec,
+  horizontal_rule,
 
   /// A code listing. Disallows marks or non-text inline
   /// nodes by default. Represented as a `<pre>` element with a
   /// `<code>` element inside of it.
-  code_block: {
-    content: 'text*',
-    marks: '',
-    group: 'block',
-    code: true,
-    defining: true,
-    parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
-    toDOM() {
-      return preDOM;
-    },
-  } as NodeSpec,
+  code_block,
 
   /// The text node.
-  text: {
-    group: 'inline',
-  } as NodeSpec,
+  text,
 
   /// An inline image (`<img>`) node. Supports `src`,
   /// `alt`, and `href` attributes. The latter two default to the empty
   /// string.
-  image: {
-    inline: true,
-    attrs: {
-      src: {},
-      alt: { default: null },
-      title: { default: null },
-    },
-    group: 'inline',
-    draggable: true,
-    parseDOM: [
-      {
-        tag: 'img[src]',
-        getAttrs(dom: HTMLElement) {
-          return {
-            src: dom.getAttribute('src'),
-            title: dom.getAttribute('title'),
-            alt: dom.getAttribute('alt'),
-          };
-        },
-      },
-    ],
-    toDOM(node) {
-      const { src, alt, title } = node.attrs;
-      return ['img', { src, alt, title }];
-    },
-  } as NodeSpec,
+  image,
 
   /// A hard line break, represented in the DOM as `<br>`.
-  hard_break: {
-    inline: true,
-    group: 'inline',
-    selectable: false,
-    parseDOM: [{ tag: 'br' }],
-    toDOM() {
-      return brDOM;
-    },
-  } as NodeSpec,
+  hard_break,
 };
-
-const emDOM: DOMOutputSpec = ['em', 0],
-  strongDOM: DOMOutputSpec = ['strong', 0],
-  codeDOM: DOMOutputSpec = ['code', 0];
 
 /// [Specs](#model.MarkSpec) for the marks in the schema.
 export const marks = {
@@ -280,7 +284,7 @@ export const marks = {
   em: {
     parseDOM: [{ tag: 'i' }, { tag: 'em' }, { style: 'font-style=italic' }],
     toDOM() {
-      return emDOM;
+      return ['em', 0];
     },
   } as MarkSpec,
 
@@ -304,7 +308,7 @@ export const marks = {
       },
     ],
     toDOM() {
-      return strongDOM;
+      return ['strong', 0];
     },
   } as MarkSpec,
 
@@ -312,7 +316,7 @@ export const marks = {
   code: {
     parseDOM: [{ tag: 'code' }],
     toDOM() {
-      return codeDOM;
+      return ['code', 0];
     },
   } as MarkSpec,
 };

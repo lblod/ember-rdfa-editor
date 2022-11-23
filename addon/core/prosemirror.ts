@@ -1,7 +1,7 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 import { DOMParser as ProseParser, Node as PNode } from 'prosemirror-model';
-import { selectAll, toggleMark } from 'prosemirror-commands';
+import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
 import Datastore, {
   EditorStore,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
@@ -13,6 +13,9 @@ import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
 import { emDash, InputRule, inputRules } from 'prosemirror-inputrules';
+import { gapCursor } from 'prosemirror-gapcursor';
+import { keymap } from 'prosemirror-keymap';
+import { history, redo, undo } from 'prosemirror-history';
 
 export interface EmberInlineComponent extends Component {
   appendTo(selector: string | Element): this;
@@ -23,7 +26,10 @@ class CounterView implements NodeView {
   template: string = ``;
 
   constructor(node: PNode, view: EditorView, getPos: () => number) {
-    this.dom = emberComponent('inline-components-plugin-counter');
+    this.dom = emberComponent(
+      'inline-components-plugin-counter',
+      '<div></div>'
+    );
   }
 
   stopEvent() {
@@ -75,16 +81,17 @@ export default class Prosemirror {
               }),
             ],
           }),
+          gapCursor(),
+          keymap({ ...baseKeymap, 'Ctrl-z': undo, 'Ctrl-Shift-z': redo }),
+          history(),
         ],
       }),
-      attributes: {
-        class: 'say-editor__inner say-content',
-      },
-      nodeViews: {
-        counter(node, view, getPos) {
-          return new CounterView(node, view, getPos);
-        },
-      },
+      attributes: { class: 'say-editor__inner say-content' },
+      // nodeViews: {
+      //   counter(node, view, getPos) {
+      //     return new CounterView(node, view, getPos);
+      //   },
+      // },
       dispatchTransaction: this.dispatch,
     });
     this.pathFromRoot = getPathFromRoot(this.root, false);

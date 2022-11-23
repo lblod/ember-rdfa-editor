@@ -41,7 +41,6 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
 .say-content {
   // Set base font size for elements
   &,
-  p,
   ul,
   ol,
   div {
@@ -113,7 +112,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   // Setup some margin rules
-  p + *,
+  //p + *,
   div + *,
   span + *,
   ul + *,
