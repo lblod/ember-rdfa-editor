@@ -259,7 +259,7 @@ export class RdfaParser {
     const activeTag: IActiveTag = {
       collectChildTags: parentTag.collectChildTags,
       incompleteTriples: [],
-      inlist: 'inlist' in attributes,
+      inlist: !!attributes.inlist,
       listMapping: {},
       listMappingLocal: parentTag.listMapping,
       localBaseIRI: parentTag.localBaseIRI,
@@ -298,13 +298,13 @@ export class RdfaParser {
     let allowTermsInRevPredicates = true;
     if (this.features.onlyAllowUriRelRevIfProperty) {
       // Ignore illegal rel/rev values when property is present
-      if ('property' in attributes && 'rel' in attributes) {
+      if (attributes.property && attributes.rel) {
         allowTermsInRelPredicates = false;
         if (attributes.rel.indexOf(':') < 0) {
           delete attributes.rel;
         }
       }
-      if ('property' in attributes && 'rev' in attributes) {
+      if (attributes.property && attributes.rev) {
         allowTermsInRevPredicates = false;
         if (attributes.rev.indexOf(':') < 0) {
           delete attributes.revany;
@@ -392,7 +392,7 @@ export class RdfaParser {
 
     // 2: handle vocab attribute to set active vocabulary
     // Vocab sets the active vocabulary
-    if ('vocab' in attributes) {
+    if (attributes.vocab) {
       if (attributes.vocab) {
         activeTag.vocab = attributes.vocab;
         this.emitTriple(
@@ -455,8 +455,8 @@ export class RdfaParser {
     // 4: handle language
     // Save language attribute value in active tag
     if (
-      'xml:lang' in attributes ||
-      (this.features.langAttribute && 'lang' in attributes)
+      attributes['xml:lang'] ||
+      (this.features.langAttribute && attributes.lang)
     ) {
       activeTag.language = attributes['xml:lang'] || attributes.lang;
     } else {
@@ -464,16 +464,12 @@ export class RdfaParser {
     }
 
     const isRootTag: boolean = this.activeTagStack.length === 2;
-    if (!('rel' in attributes) && !('rev' in attributes)) {
+    if (!attributes.rel && !attributes.rev) {
       // 5: Determine the new subject when rel and rev are not present
-      if (
-        'property' in attributes &&
-        !('content' in attributes) &&
-        !('datatype' in attributes)
-      ) {
+      if (attributes.property && !attributes.content && !attributes.datatype) {
         // 5.1: property is present, but not content and datatype
         // Determine new subject
-        if ('about' in attributes) {
+        if (attributes.about) {
           newSubject = this.util.createIri(
             attributes.about,
             activeTag,
@@ -489,8 +485,8 @@ export class RdfaParser {
         }
 
         // Determine type
-        if ('typeof' in attributes) {
-          if ('about' in attributes) {
+        if (attributes.typeof) {
+          if (attributes.about) {
             typedResource = this.util.createIri(
               attributes.about,
               activeTag,
@@ -502,7 +498,7 @@ export class RdfaParser {
           if (!typedResource && isRootTag) {
             typedResource = true;
           }
-          if (!typedResource && 'resource' in attributes) {
+          if (!typedResource && attributes.resource) {
             typedResource = this.util.createIri(
               attributes.resource,
               activeTag,
@@ -511,7 +507,7 @@ export class RdfaParser {
               true
             );
           }
-          if (!typedResource && ('href' in attributes || 'src' in attributes)) {
+          if (!typedResource && (attributes.href || attributes.src)) {
             typedResource = this.util.createIri(
               attributes.href || attributes.src,
               activeTag,
@@ -531,7 +527,7 @@ export class RdfaParser {
         }
       } else {
         // 5.2
-        if ('about' in attributes || 'resource' in attributes) {
+        if (attributes.about || attributes.resource) {
           newSubject = this.util.createIri(
             attributes.about || attributes.resource,
             activeTag,
@@ -541,7 +537,7 @@ export class RdfaParser {
           );
           activeTag.explicitNewSubject = !!newSubject;
         }
-        if (!newSubject && ('href' in attributes || 'src' in attributes)) {
+        if (!newSubject && (attributes.href || attributes.src)) {
           newSubject = this.util.createIri(
             attributes.href || attributes.src,
             activeTag,
@@ -556,19 +552,19 @@ export class RdfaParser {
             newSubject = true;
           } else if (this.isInheritSubjectInHeadBody(name)) {
             newSubject = parentTag.object || null;
-          } else if ('typeof' in attributes) {
+          } else if (attributes.typeof) {
             newSubject = this.util.createBlankNode(node);
             activeTag.explicitNewSubject = true;
           } else if (parentTag.object) {
             newSubject = parentTag.object;
-            if (!('property' in attributes)) {
+            if (!attributes.property) {
               activeTag.skipElement = true;
             }
           }
         }
 
         // Determine type
-        if ('typeof' in attributes) {
+        if (attributes.typeof) {
           typedResource = newSubject;
         }
       }
@@ -577,7 +573,7 @@ export class RdfaParser {
       // 6: Determine the new subject when rel or rev are present
 
       // Define new subject
-      if ('about' in attributes) {
+      if (attributes.about) {
         newSubject = this.util.createIri(
           attributes.about,
           activeTag,
@@ -586,7 +582,7 @@ export class RdfaParser {
           true
         );
         activeTag.explicitNewSubject = !!newSubject;
-        if ('typeof' in attributes) {
+        if (attributes.typeof) {
           typedResource = newSubject;
         }
       } else if (isRootTag) {
@@ -596,7 +592,7 @@ export class RdfaParser {
       }
 
       // Define object
-      if ('resource' in attributes) {
+      if (attributes.resource) {
         currentObjectResource = this.util.createIri(
           attributes.resource,
           activeTag,
@@ -606,7 +602,7 @@ export class RdfaParser {
         );
       }
       if (!currentObjectResource) {
-        if ('href' in attributes || 'src' in attributes) {
+        if (attributes.href || attributes.src) {
           currentObjectResource = this.util.createIri(
             attributes.href || attributes.src,
             activeTag,
@@ -615,8 +611,8 @@ export class RdfaParser {
             true
           );
         } else if (
-          'typeof' in attributes &&
-          !('about' in attributes) &&
+          attributes.typeof &&
+          !attributes.about &&
           !this.isInheritSubjectInHeadBody(name)
         ) {
           currentObjectResource = this.util.createBlankNode(node);
@@ -624,7 +620,7 @@ export class RdfaParser {
       }
 
       // Set typed resource
-      if ('typeof' in attributes && !('about' in attributes)) {
+      if (attributes.typeof && !attributes.about) {
         if (this.isInheritSubjectInHeadBody(name)) {
           typedResource = newSubject;
         } else {
@@ -660,7 +656,7 @@ export class RdfaParser {
         throw new NullOrUndefinedError();
       }
       // Handle list mapping
-      if ('rel' in attributes && 'inlist' in attributes) {
+      if (attributes.rel && attributes.inlist) {
         for (const predicate of this.util.createVocabIris(
           attributes.rel,
           activeTag,
@@ -677,8 +673,8 @@ export class RdfaParser {
       }
 
       // Determine predicates using rel or rev (unless rel and inlist are present)
-      if (!('rel' in attributes && 'inlist' in attributes)) {
-        if ('rel' in attributes) {
+      if (!(attributes.rel && attributes.inlist)) {
+        if (attributes.rel) {
           for (const predicate of this.util.createVocabIris(
             attributes.rel,
             activeTag,
@@ -692,7 +688,7 @@ export class RdfaParser {
             );
           }
         }
-        if ('rev' in attributes) {
+        if (attributes.rev) {
           for (const predicate of this.util.createVocabIris(
             attributes.rev,
             activeTag,
@@ -711,8 +707,8 @@ export class RdfaParser {
 
     // 10: Store incomplete triples if we don't have an object, but we do have predicates
     if (!currentObjectResource) {
-      if ('rel' in attributes) {
-        if ('inlist' in attributes) {
+      if (attributes.rel) {
+        if (attributes.inlist) {
           for (const predicate of this.util.createVocabIris(
             attributes.rel,
             activeTag,
@@ -740,7 +736,7 @@ export class RdfaParser {
           }
         }
       }
-      if ('rev' in attributes) {
+      if (attributes.rev) {
         for (const predicate of this.util.createVocabIris(
           attributes.rev,
           activeTag,
@@ -758,7 +754,7 @@ export class RdfaParser {
     }
 
     // 11: Determine current property value
-    if ('property' in attributes) {
+    if (attributes.property) {
       // Create predicates
       activeTag.predicates = this.util.createVocabIris(
         attributes.property,
@@ -770,7 +766,7 @@ export class RdfaParser {
       // Save datatype attribute value in active tag
       let localObjectResource: RDF.Term | boolean | null = null;
 
-      if ('datatype' in attributes) {
+      if (attributes.datatype) {
         activeTag.datatype = this.util.createIri(
           attributes.datatype,
           activeTag,
@@ -788,12 +784,8 @@ export class RdfaParser {
         }
       } else {
         // Try to determine resource
-        if (
-          !('rev' in attributes) &&
-          !('rel' in attributes) &&
-          !('content' in attributes)
-        ) {
-          if ('resource' in attributes) {
+        if (!attributes.rev && !attributes.rel && !attributes.content) {
+          if (attributes.resource) {
             localObjectResource = this.util.createIri(
               attributes.resource,
               activeTag,
@@ -802,7 +794,7 @@ export class RdfaParser {
               true
             );
           }
-          if (!localObjectResource && 'href' in attributes) {
+          if (!localObjectResource && attributes.href) {
             localObjectResource = this.util.createIri(
               attributes.href,
               activeTag,
@@ -811,7 +803,7 @@ export class RdfaParser {
               true
             );
           }
-          if (!localObjectResource && 'src' in attributes) {
+          if (!localObjectResource && attributes.src) {
             localObjectResource = this.util.createIri(
               attributes.src,
               activeTag,
@@ -821,7 +813,7 @@ export class RdfaParser {
             );
           }
         }
-        if ('typeof' in attributes && !('about' in attributes)) {
+        if (attributes.typeof && !attributes.about) {
           localObjectResource = typedResource;
         }
       }
@@ -829,13 +821,13 @@ export class RdfaParser {
         throw new NullOrUndefinedError();
       }
 
-      if ('content' in attributes) {
+      if (attributes.content) {
         if (!newSubject) {
           throw new NullOrUndefinedError();
         }
         // Emit triples based on content attribute has preference over text content
         const object = this.util.createLiteral(attributes.content, activeTag);
-        if ('inlist' in attributes) {
+        if (attributes.inlist) {
           for (const predicate of activeTag.predicates) {
             this.addListMapping(activeTag, newSubject, predicate, object);
           }
@@ -848,11 +840,11 @@ export class RdfaParser {
 
         // Unset predicate to avoid text contents to produce new triples
         activeTag.predicates = null;
-      } else if (this.features.datetimeAttribute && 'datetime' in attributes) {
+      } else if (this.features.datetimeAttribute && attributes.datetime) {
         activeTag.interpretObjectAsTime = true;
         // Datetime attribute on time tag has preference over text content
         const object = this.util.createLiteral(attributes.datetime, activeTag);
-        if ('inlist' in attributes) {
+        if (attributes.inlist) {
           for (const predicate of activeTag.predicates) {
             this.addListMapping(activeTag, newSubject, predicate, object);
           }
@@ -871,7 +863,7 @@ export class RdfaParser {
           localObjectResource,
           activeTag
         );
-        if ('inlist' in attributes) {
+        if (attributes.inlist) {
           for (const predicate of activeTag.predicates) {
             this.addListMapping(activeTag, newSubject, predicate, object);
           }

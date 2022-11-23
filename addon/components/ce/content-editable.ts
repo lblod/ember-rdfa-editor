@@ -59,7 +59,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   async insertedEditorElement(element: HTMLElement) {
-    new Prosemirror(element);
+    new Prosemirror(element, window.document.baseURI);
   }
 
   @action

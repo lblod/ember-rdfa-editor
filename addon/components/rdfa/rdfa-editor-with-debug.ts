@@ -1,20 +1,20 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import xmlFormat from 'xml-formatter';
 import { basicSetup, EditorView } from 'codemirror';
 import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../../config/sample-data';
 import { EditorState } from '@codemirror/state';
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 interface RdfaEditorDebugArgs {
-  rdfaEditorInit: (rdfaDocument: RdfaDocument) => void;
+  rdfaEditorInit: (rdfaDocument: ProseController) => void;
 }
 
 export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugArgs> {
-  @tracked rdfaEditor?: RdfaDocument;
+  @tracked rdfaEditor?: ProseController;
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
   @tracked debuggerContent = '';
@@ -84,7 +84,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   }
 
   @action
-  rdfaEditorInitFromArg(rdfaEditor: RdfaDocument) {
+  rdfaEditorInitFromArg(rdfaEditor: ProseController) {
     this.args.rdfaEditorInit(rdfaEditor);
     this.rdfaEditor = rdfaEditor;
   }

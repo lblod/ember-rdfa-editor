@@ -12,7 +12,6 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
@@ -48,7 +47,7 @@ interface RdfaEditorArgs {
    * @default 'default'
    * @public
    */
-  rdfaEditorInit(editor: RdfaDocument): void;
+  rdfaEditorInit(editor: ProseController): void;
 
   plugins: PluginConfig[];
   stealFocus?: boolean;
@@ -135,13 +134,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // const rdfaDocument = new RdfaDocumentController('host', view);
     // window.__EDITOR = new RdfaDocumentController('debug', view);
     // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
-    // if (this.args.rdfaEditorInit) {
-    //   this.args.rdfaEditorInit(rdfaDocument);
-    // }
     // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
-    this.prosemirror = new Prosemirror(target);
+    this.prosemirror = new Prosemirror(target, window.document.baseURI);
     this.toolbarController = new ProseController(this.prosemirror);
     this.editorLoading = false;
+    if (this.args.rdfaEditorInit) {
+      this.args.rdfaEditorInit(new ProseController(this.prosemirror));
+    }
   }
 
   getPlugins(): ResolvedPluginConfig[] {
