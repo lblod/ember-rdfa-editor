@@ -2,11 +2,11 @@ import * as RDF from '@rdfjs/types';
 import ModelRange, {
   RangeContextStrategy,
 } from '@lblod/ember-rdfa-editor/core/model/model-range';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
+  ParserNode,
   quadHash,
   QuadNodes,
   RdfaParseConfig,
@@ -33,10 +33,10 @@ import {
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { GraphyDataset } from './graphy-dataset';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {NotImplementedError} from "@lblod/ember-rdfa-editor/utils/errors";
 
 interface TermNodesResponse {
-  nodes: Set<ModelNode>;
+  nodes: Set<ParserNode>;
 }
 
 interface SubjectNodesResponse extends TermNodesResponse {
@@ -185,30 +185,30 @@ export default interface Datastore {
 }
 
 interface DatastoreConfig {
-  documentRoot: ModelElement;
+  documentRoot: ParserNode;
   dataset: RDF.Dataset;
-  subjectToNodes: Map<string, ModelNode[]>;
-  nodeToSubject: Map<ModelNode, ModelQuadSubject>;
+  subjectToNodes: Map<string, ParserNode[]>;
+  nodeToSubject: Map<ParserNode, ModelQuadSubject>;
 
-  predicateToNodes: Map<string, ModelNode[]>;
-  nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
+  predicateToNodes: Map<string, ParserNode[]>;
+  nodeToPredicates: Map<ParserNode, Set<ModelQuadPredicate>>;
 
-  objectToNodes: Map<string, ModelNode[]>;
-  nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
+  objectToNodes: Map<string, ParserNode[]>;
+  nodeToObjects: Map<ParserNode, Set<ModelQuadObject>>;
   quadToNodes: Map<string, QuadNodes>;
   prefixMapping: Map<string, string>;
 }
 
 export class EditorStore implements Datastore {
-  private _documentRoot: ModelElement;
+  private _documentRoot: ParserNode;
   private _dataset: RDF.Dataset;
-  private _subjectToNodes: Map<string, ModelNode[]>;
-  private _nodeToSubject: Map<ModelNode, ModelQuadSubject>;
+  private _subjectToNodes: Map<string, ParserNode[]>;
+  private _nodeToSubject: Map<ParserNode, ModelQuadSubject>;
   private _prefixMapping: Map<string, string>;
-  private _nodeToPredicates: Map<ModelNode, Set<ModelQuadPredicate>>;
-  private _predicateToNodes: Map<string, ModelNode[]>;
-  private _nodeToObjects: Map<ModelNode, Set<ModelQuadObject>>;
-  private _objectToNodes: Map<string, ModelNode[]>;
+  private _nodeToPredicates: Map<ParserNode, Set<ModelQuadPredicate>>;
+  private _predicateToNodes: Map<string, ParserNode[]>;
+  private _nodeToObjects: Map<ParserNode, Set<ModelQuadObject>>;
+  private _objectToNodes: Map<string, ParserNode[]>;
   private _quadToNodes: Map<string, QuadNodes>;
 
   constructor({
@@ -235,14 +235,14 @@ export class EditorStore implements Datastore {
     this._quadToNodes = quadToNodes;
   }
 
-  static empty(documentRoot: ModelElement): Datastore {
-    const subjectToNodes = new Map<string, ModelNode[]>();
-    const nodeToSubject = new Map<ModelNode, ModelQuadSubject>();
+  static empty(documentRoot: ParserNode): Datastore {
+    const subjectToNodes = new Map<string, ParserNode[]>();
+    const nodeToSubject = new Map<ParserNode, ModelQuadSubject>();
     const prefixMapping = new Map<string, string>();
-    const nodeToPredicates = new Map<ModelNode, Set<ModelQuadPredicate>>();
-    const predicateToNodes = new Map<string, ModelNode[]>();
-    const nodeToObjects = new Map<ModelNode, Set<ModelQuadObject>>();
-    const objectToNodes = new Map<string, ModelNode[]>();
+    const nodeToPredicates = new Map<ParserNode, Set<ModelQuadPredicate>>();
+    const predicateToNodes = new Map<string, ParserNode[]>();
+    const nodeToObjects = new Map<ParserNode, Set<ModelQuadObject>>();
+    const objectToNodes = new Map<string, ParserNode[]>();
     const quadToNodes = new Map<string, QuadNodes>();
     return new EditorStore({
       documentRoot,
@@ -359,9 +359,9 @@ export class EditorStore implements Datastore {
     );
   }
 
-  private subjectNodeGenerator(): Map<RDF.Quad_Subject, ModelNode[]> {
+  private subjectNodeGenerator(): Map<RDF.Quad_Subject, ParserNode[]> {
     const seenSubjects = new Set<string>();
-    const rslt = new Map<RDF.Quad_Subject, ModelNode[]>();
+    const rslt = new Map<RDF.Quad_Subject, ParserNode[]>();
     for (const quad of this.dataset) {
       if (!seenSubjects.has(quad.subject.value)) {
         const nodes = this._subjectToNodes.get(quad.subject.value);
@@ -381,10 +381,10 @@ export class EditorStore implements Datastore {
     );
   }
 
-  private predicateNodeGenerator(): Map<RDF.Quad_Predicate, ModelNode[]> {
+  private predicateNodeGenerator(): Map<RDF.Quad_Predicate, ParserNode[]> {
     const seenPredicates = new Map<string, RDF.Quad_Predicate>();
     const seenSubjects = new Set<string>();
-    const rslt = new Map<RDF.Quad_Predicate, ModelNode[]>();
+    const rslt = new Map<RDF.Quad_Predicate, ParserNode[]>();
 
     // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
@@ -416,12 +416,12 @@ export class EditorStore implements Datastore {
     );
   }
 
-  private objectNodeGenerator(): Map<RDF.Quad_Object, ModelNode[]> {
+  private objectNodeGenerator(): Map<RDF.Quad_Object, ParserNode[]> {
     const seenSubjects = new Set<string>();
     const seenPredicates = new Map<string, RDF.Quad_Predicate>();
     const seenObjects = new Set<RDF.Quad_Object>();
 
-    const rslt = new Map<RDF.Quad_Object, ModelNode[]>();
+    const rslt = new Map<RDF.Quad_Object, ParserNode[]>();
 
     // collect all unique predicates and subjects in the current dataset
     for (const quad of this.dataset) {
@@ -471,7 +471,7 @@ export class EditorStore implements Datastore {
       if (!seenSubjects.has(quad.subject.value)) {
         const nodes = this._subjectToNodes.get(quad.subject.value);
         if (nodes) {
-          yield { subject: quad.subject, nodes: new Set<ModelNode>(nodes) };
+          yield { subject: quad.subject, nodes: new Set<ParserNode>(nodes) };
         }
         seenSubjects.add(quad.subject.value);
       }
@@ -491,7 +491,7 @@ export class EditorStore implements Datastore {
     for (const pred of seenPredicates.keys()) {
       const allNodes = this._predicateToNodes.get(pred);
       if (allNodes) {
-        const nodes = new Set<ModelNode>();
+        const nodes = new Set<ParserNode>();
         // we have to filter out nodes that belong to a subject which is not in the dataset
         for (const node of allNodes) {
           const nodeSubject = this.getSubjectForNode(node);
@@ -527,31 +527,32 @@ export class EditorStore implements Datastore {
   }
 
   searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[] {
-    const results = [];
-    let mapping: TermMapping<RDF.Term>;
-    if (whichTerm === 'subject') {
-      mapping = this.asSubjectNodeMapping();
-    } else if (whichTerm === 'predicate') {
-      mapping = this.asPredicateNodeMapping();
-    } else {
-      mapping = this.asObjectNodeMapping();
-    }
-    for (const node of mapping.nodes()) {
-      let searchRange;
-      // we test if the node is root, which will be the case when the
-      // rdfa knowledge is defined above the document root.
-      if (node.getParent(this._documentRoot)) {
-        searchRange = ModelRange.fromAroundNode(this._documentRoot, node);
-      } else {
-        searchRange = ModelRange.fromInNode(this._documentRoot, node);
-      }
-      results.push(...matchText(searchRange, regex));
-    }
-    return results;
+    throw new NotImplementedError()
+    // const results = [];
+    // let mapping: TermMapping<RDF.Term>;
+    // if (whichTerm === 'subject') {
+    //   mapping = this.asSubjectNodeMapping();
+    // } else if (whichTerm === 'predicate') {
+    //   mapping = this.asPredicateNodeMapping();
+    // } else {
+    //   mapping = this.asObjectNodeMapping();
+    // }
+    // for (const node of mapping.nodes()) {
+    //   let searchRange;
+    //   // we test if the node is root, which will be the case when the
+    //   // rdfa knowledge is defined above the document root.
+    //   if (node.getParent(this._documentRoot)) {
+    //     searchRange = ModelRange.fromAroundNode(this._documentRoot, node);
+    //   } else {
+    //     searchRange = ModelRange.fromInNode(this._documentRoot, node);
+    //   }
+    //   results.push(...matchText(searchRange, regex));
+    // }
+    // return results;
   }
 
   private fromDataset(
-    documentRoot: ModelElement,
+    documentRoot: ParserNode,
     dataset: RDF.Dataset
   ): Datastore {
     return new EditorStore({
@@ -582,8 +583,8 @@ export class EditorStore implements Datastore {
     return subjects;
   }
 
-  private getSubjectForNode(node: ModelNode) {
-    let current: ModelNode | null = node;
+  private getSubjectForNode(node: ParserNode) {
+    let current: ParserNode | null = node;
     let subject;
     while (current && !subject) {
       subject = this._nodeToSubject.get(current);
@@ -592,8 +593,8 @@ export class EditorStore implements Datastore {
     return subject;
   }
 
-  private getPredicatesForNode(node: ModelNode) {
-    let current: ModelNode | null = node;
+  private getPredicatesForNode(node: ParserNode) {
+    let current: ParserNode | null = node;
     let predicates;
     while (current && !predicates) {
       predicates = this._nodeToPredicates.get(current);

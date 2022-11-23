@@ -12,32 +12,52 @@ import { IRdfaPattern } from './rdfa-pattern';
 import { IRdfaFeatures, RDFA_FEATURES, RdfaProfile } from './rdfa-profile';
 import { Util } from './util';
 import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import GenTreeWalker, {
+  Walkable,
+} from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import {
   isElement,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/datastore/graphy-dataset';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 
 export type ModelTerm = ModelQuadObject | ModelQuadPredicate | ModelQuadSubject;
 export type ModelQuadSubject = ModelNamedNode | ModelBlankNode;
 export type ModelQuadPredicate = ModelNamedNode;
 export type ModelQuadObject = ModelNamedNode | ModelBlankNode | ModelLiteral;
 
+export interface ParserNode extends Walkable {
+  type: string;
+  content: string;
+  attributeMap: Iterable<readonly [PropertyKey, string]>;
+
+  isText(): boolean;
+
+  isElement(): boolean;
+
+  getParent(root: unknown): ParserNode | null;
+
+  getNextSibling(root: unknown): ParserNode | null;
+
+  getPreviousSibling(root: unknown): ParserNode | null;
+
+  getLastChild(): ParserNode | null;
+
+  getFirstChild(): ParserNode | null;
+}
+
 export interface ModelNamedNode<I extends string = string>
   extends RDF.NamedNode<I> {
-  node?: ModelNode;
+  node?: ParserNode;
 }
 
 export interface ModelBlankNode extends RDF.BlankNode {
-  node?: ModelNode;
+  node?: ParserNode;
 }
 
 export interface ModelLiteral extends RDF.Literal {
-  node?: ModelNode;
+  node?: ParserNode;
 }
 
 export interface ModelQuad extends RDF.Quad {
@@ -47,28 +67,28 @@ export interface ModelQuad extends RDF.Quad {
 }
 
 export interface RdfaParseConfig {
-  modelRoot: ModelElement;
+  modelRoot: ParserNode;
   baseIRI: string;
   pathFromDomRoot?: Node[];
 }
 
 export interface QuadNodes {
-  subjectNodes: ModelNode[];
-  predicateNodes: ModelNode[];
-  objectNodes: ModelNode[];
+  subjectNodes: ParserNode[];
+  predicateNodes: ParserNode[];
+  objectNodes: ParserNode[];
 }
 
 export interface RdfaParseResponse {
   dataset: RDF.Dataset;
 
-  subjectToNodesMapping: Map<string, ModelNode[]>;
-  nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
+  subjectToNodesMapping: Map<string, ParserNode[]>;
+  nodeToSubjectMapping: Map<ParserNode, ModelQuadSubject>;
 
-  nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
-  objectToNodesMapping: Map<string, ModelNode[]>;
+  nodeToObjectsMapping: Map<ParserNode, Set<ModelQuadObject>>;
+  objectToNodesMapping: Map<string, ParserNode[]>;
 
-  nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
-  predicateToNodesMapping: Map<string, ModelNode[]>;
+  nodeToPredicatesMapping: Map<ParserNode, Set<ModelQuadPredicate>>;
+  predicateToNodesMapping: Map<string, ParserNode[]>;
 
   quadToNodesMapping: Map<string, QuadNodes>;
   seenPrefixes: Map<string, string>;
@@ -85,20 +105,20 @@ export class RdfaParser {
   private resultSet: RDF.Dataset;
 
   private readonly activeTagStack: IActiveTag[] = [];
-  private nodeToSubjectMapping: Map<ModelNode, ModelQuadSubject>;
-  private subjectToNodesMapping: Map<string, ModelNode[]>;
+  private nodeToSubjectMapping: Map<ParserNode, ModelQuadSubject>;
+  private subjectToNodesMapping: Map<string, ParserNode[]>;
 
-  private nodeToObjectsMapping: Map<ModelNode, Set<ModelQuadObject>>;
-  private objectToNodesMapping: Map<string, ModelNode[]>;
+  private nodeToObjectsMapping: Map<ParserNode, Set<ModelQuadObject>>;
+  private objectToNodesMapping: Map<string, ParserNode[]>;
 
   // nodes can define multiple predicates
-  private nodeToPredicatesMapping: Map<ModelNode, Set<ModelQuadPredicate>>;
-  private predicateToNodesMapping: Map<string, ModelNode[]>;
+  private nodeToPredicatesMapping: Map<ParserNode, Set<ModelQuadPredicate>>;
+  private predicateToNodesMapping: Map<string, ParserNode[]>;
 
   private quadToNodesMapping: Map<string, QuadNodes>;
 
-  private rootModelNode?: ModelNode;
-  private seenNodes: Map<RDF.Term, ModelNode>;
+  private rootModelNode?: ParserNode;
+  private seenNodes: Map<RDF.Term, ParserNode>;
   private globallySeenPrefixes: Map<string, string>;
 
   constructor(options: IRdfaParserOptions) {
@@ -118,18 +138,18 @@ export class RdfaParser {
     this.resultSet = new GraphyDataset();
     this.globallySeenPrefixes = new Map<string, string>();
 
-    this.nodeToSubjectMapping = new Map<ModelNode, ModelQuadSubject>();
-    this.subjectToNodesMapping = new Map<string, ModelNode[]>();
+    this.nodeToSubjectMapping = new Map<ParserNode, ModelQuadSubject>();
+    this.subjectToNodesMapping = new Map<string, ParserNode[]>();
 
-    this.predicateToNodesMapping = new Map<string, ModelNode[]>();
+    this.predicateToNodesMapping = new Map<string, ParserNode[]>();
     this.nodeToPredicatesMapping = new Map<
-      ModelNode,
+      ParserNode,
       Set<ModelQuadPredicate>
     >();
 
-    this.nodeToObjectsMapping = new Map<ModelNode, Set<ModelQuadObject>>();
-    this.objectToNodesMapping = new Map<string, ModelNode[]>();
-    this.seenNodes = new Map<RDF.Term, ModelNode>();
+    this.nodeToObjectsMapping = new Map<ParserNode, Set<ModelQuadObject>>();
+    this.objectToNodesMapping = new Map<string, ParserNode[]>();
+    this.seenNodes = new Map<RDF.Term, ParserNode>();
 
     this.quadToNodesMapping = new Map<string, QuadNodes>();
 
@@ -195,18 +215,18 @@ export class RdfaParser {
     };
   }
 
-  protected onEnterNode = (node: ModelNode) => {
-    if (ModelNode.isModelText(node)) {
+  protected onEnterNode = (node: ParserNode) => {
+    if (node.isText()) {
       this.onText(node.content);
-    } else if (ModelNode.isModelElement(node)) {
+    } else if (node.isElement()) {
       const name = node.type;
       const attributes = Object.fromEntries(node.attributeMap);
       this.onTagOpen(name, attributes, node);
     }
   };
 
-  protected onLeaveNode = (node: ModelNode) => {
-    if (ModelNode.isModelElement(node)) {
+  protected onLeaveNode = (node: ParserNode) => {
+    if (node.isElement()) {
       this.onTagClose();
     }
   };
@@ -214,7 +234,7 @@ export class RdfaParser {
   protected onTagOpen(
     name: string,
     attributes: Record<string, string>,
-    node?: ModelNode
+    node?: ParserNode
   ) {
     // Determine the parent tag (ignore skipped tags)
     let parentTagI: number = this.activeTagStack.length - 1;
@@ -1256,7 +1276,7 @@ export class RdfaParser {
     parentTag: IActiveTag,
     pattern: IRdfaPattern,
     rootPatternId: string,
-    node?: ModelNode
+    node?: ParserNode
   ) {
     this.activeTagStack.push(parentTag);
     pattern.referenced = true;
@@ -1302,7 +1322,7 @@ export class RdfaParser {
     pattern: IRdfaPattern,
     root: boolean,
     rootPatternId: string,
-    node?: ModelNode
+    node?: ParserNode
   ) {
     // Stop on detection of cyclic patterns
     if (
@@ -1365,7 +1385,7 @@ export interface IRdfaParserOptions {
    */
   htmlParseListener?: IHtmlParseListener;
 
-  rootModelNode: ModelNode;
+  rootModelNode: ParserNode;
 }
 
 /**

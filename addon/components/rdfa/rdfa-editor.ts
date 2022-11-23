@@ -16,19 +16,19 @@ import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-documen
 
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
-import { default as RdfaDocumentController } from '../../core/controllers/rdfa-document';
 import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
 import PlaceHolderPlugin from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
 import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
 import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
 import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
-import { View } from '@lblod/ember-rdfa-editor/core/view';
 import LiveMarkSetPlugin from '@lblod/ember-rdfa-editor/plugins/live-mark-set/live-mark-set';
 import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
-import { ViewController } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
+import Prosemirror, {
+  ProseController,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 export type PluginConfig =
   | string
@@ -81,12 +81,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked toolbarRightWidgets: InternalWidgetSpec[] = [];
   @tracked sidebarWidgets: InternalWidgetSpec[] = [];
   @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
-  @tracked toolbarController: Controller | null = null;
+  @tracked toolbarController: ProseController | null = null;
   @tracked inlineComponentController: Controller | null = null;
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
   private logger: Logger;
+  private prosemirror: Prosemirror | null = null;
 
   get plugins(): PluginConfig[] {
     return this.args.plugins || [];
@@ -123,21 +124,23 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(view: View) {
-    this.controller = new ViewController('rdfaEditorComponent', view);
-    this.updateWidgets();
-    this.toolbarController = new ViewController('toolbar', view);
-    this.inlineComponentController = new ViewController(
-      'inline-component-manager',
-      view
-    );
-    const rdfaDocument = new RdfaDocumentController('host', view);
-    window.__EDITOR = new RdfaDocumentController('debug', view);
-    this.updateConfig('pasteBehaviour', this.pasteBehaviour);
-    if (this.args.rdfaEditorInit) {
-      this.args.rdfaEditorInit(rdfaDocument);
-    }
-    this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
+  handleRawEditorInit(target: Element) {
+    // this.controller = new ViewController('rdfaEditorComponent', view);
+    // this.updateWidgets();
+    // this.toolbarController = new ViewController('toolbar', view);
+    // this.inlineComponentController = new ViewController(
+    //   'inline-component-manager',
+    //   view
+    // );
+    // const rdfaDocument = new RdfaDocumentController('host', view);
+    // window.__EDITOR = new RdfaDocumentController('debug', view);
+    // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
+    // if (this.args.rdfaEditorInit) {
+    //   this.args.rdfaEditorInit(rdfaDocument);
+    // }
+    // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
+    this.prosemirror = new Prosemirror(target);
+    this.toolbarController = new ProseController(this.prosemirror);
     this.editorLoading = false;
   }
 
@@ -178,15 +181,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked showRdfaBlocks = false;
 
   @action
-  toggleRdfaBlocks() {
-    if (!this.toolbarController!.getConfig('showRdfaBlocks')) {
-      this.showRdfaBlocks = true;
-      this.toolbarController!.setConfig('showRdfaBlocks', 'true');
-    } else {
-      this.showRdfaBlocks = false;
-      this.toolbarController!.setConfig('showRdfaBlocks', null);
-    }
-  }
+  toggleRdfaBlocks() {}
 
   @action
   updateConfig(key: string, value: Serializable) {

@@ -1,12 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { ResolvedPluginConfig } from '../rdfa/rdfa-editor';
-import {
-  createEditorView,
-  Dispatch,
-  View,
-} from '@lblod/ember-rdfa-editor/core/view';
-import { createNewStateFromHtmlElement } from '@lblod/ember-rdfa-editor/core/state';
+import { Dispatch, View } from '@lblod/ember-rdfa-editor/core/view';
+import Prosemirror from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 // interface FeatureService {
 //   isEnabled(key: string): boolean;
@@ -63,16 +59,7 @@ export default class ContentEditable extends Component<ContentEditableArgs> {
    */
   @action
   async insertedEditorElement(element: HTMLElement) {
-    const initialState = createNewStateFromHtmlElement(element);
-    this.editorView = await createEditorView({
-      domRoot: element,
-      plugins: this.args.plugins,
-      initialState,
-    });
-    this.args.editorInit(this.editorView);
-    if (this.stealFocus) {
-      element.focus();
-    }
+    new Prosemirror(element);
   }
 
   @action

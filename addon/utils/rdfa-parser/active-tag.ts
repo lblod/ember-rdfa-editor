@@ -9,7 +9,7 @@ import {
   ModelBlankNode,
   ModelNamedNode,
   ModelQuadPredicate,
-  ModelTerm,
+  ModelTerm, ParserNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 
 /**
@@ -40,5 +40,5 @@ export interface IActiveTag {
   listMappingLocal: Record<string, (ModelTerm | boolean)[]>;
   skipElement: boolean;
   localBaseIRI?: ModelNamedNode;
-  node?: ModelNode;
+  node?: ParserNode;
 }

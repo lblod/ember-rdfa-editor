@@ -12,7 +12,7 @@ import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
-import { Walkable } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
+import { ParserNode } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 
 export type ModelNodeType =
   | 'TEXT'
@@ -34,11 +34,19 @@ export interface NodeCompareOpts {
 /**
  * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
  */
-export default abstract class ModelNode implements Walkable {
+export default abstract class ModelNode implements ParserNode {
   abstract modelNodeType: ModelNodeType;
   private _attributeMap: Map<string, string>;
   private _debugInfo: unknown;
   private parentCache: WeakMap<ModelNode, ModelElement> = new WeakMap();
+
+  get type() {
+    return '';
+  }
+
+  get content() {
+    return '';
+  }
 
   protected constructor(config?: NodeConfig) {
     this._attributeMap = new Map<string, string>();
@@ -95,6 +103,14 @@ export default abstract class ModelNode implements Walkable {
     }
   }
 
+  isText(): boolean {
+    return ModelNode.isModelText(this);
+  }
+
+  isElement(): boolean {
+    return ModelNode.isModelElement(this);
+  }
+
   get attributeMap(): Map<string, string> {
     return this._attributeMap;
   }
@@ -149,11 +165,11 @@ export default abstract class ModelNode implements Walkable {
     return null;
   }
 
-  getLastChild(): Walkable | null {
+  getLastChild(): ParserNode | null {
     return this.lastChild;
   }
 
-  getFirstChild(): Walkable | null {
+  getFirstChild(): ParserNode | null {
     return this.firstChild;
   }
 

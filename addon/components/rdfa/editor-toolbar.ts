@@ -7,15 +7,15 @@ import {
   Step,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 interface Args {
   showTextStyleButtons: boolean;
   showListButtons: boolean;
   showIndentButtons: boolean;
-  controller: Controller;
+  controller: ProseController;
 }
 
 /**
@@ -37,17 +37,6 @@ export default class EditorToolbar extends Component<Args> {
   @tracked tableAddRows = 2;
   @tracked tableAddColumns = 2;
   selection: ModelSelection | null = null;
-
-  @action
-  didInsert() {
-    this.args.controller.addTransactionDispatchListener(this.update);
-  }
-
-  @action
-  willDestroy(): void {
-    this.args.controller.removeTransactionDispatchListener(this.update);
-    super.willDestroy();
-  }
 
   get controller() {
     return this.args.controller;
@@ -81,28 +70,16 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  insertIndent() {
-    if (this.isInList) {
-      this.args.controller.perform((tr) => tr.commands.indentList({}));
-    }
-  }
+  insertIndent() {}
 
   @action
-  insertUnindent() {
-    if (this.isInList) {
-      this.args.controller.perform((tr) => tr.commands.unindentList({}));
-    }
-  }
+  insertUnindent() {}
 
   @action
-  insertNewLine() {
-    this.controller.perform((tr) => tr.commands.insertNewLine({}));
-  }
+  insertNewLine() {}
 
   @action
-  insertNewLi() {
-    this.controller.perform((tr) => tr.commands.insertNewLi({}));
-  }
+  insertNewLi() {}
 
   @action
   toggleItalic() {
@@ -110,26 +87,14 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  toggleUnorderedList() {
-    if (this.isInList) {
-      this.controller.perform((tr) => tr.commands.removeList({}));
-    } else {
-      this.controller.perform((tr) => tr.commands.makeList({ listType: 'ul' }));
-    }
-  }
+  toggleUnorderedList() {}
 
   @action
-  toggleOrderedList() {
-    if (this.isInList) {
-      this.controller.perform((tr) => tr.commands.removeList({}));
-    } else {
-      this.controller.perform((tr) => tr.commands.makeList({ listType: 'ol' }));
-    }
-  }
+  toggleOrderedList() {}
 
   @action
   toggleBold() {
-    this.setMark(!this.isBold, 'bold');
+    this.controller.toggleMark('strong');
   }
 
   @action
@@ -145,78 +110,35 @@ export default class EditorToolbar extends Component<Args> {
   @action
   setMark(value: boolean, markName: string, attributes = {}) {
     if (value) {
-      this.controller.perform((tr: Transaction) => {
-        tr.commands.addMarkToSelection({
-          markName,
-          markAttributes: attributes,
-        });
-        tr.focus();
-      });
     } else {
-      this.controller.perform((tr: Transaction) => {
-        tr.commands.removeMarkFromSelection({
-          markName,
-          markAttributes: attributes,
-        });
-        tr.focus();
-      });
     }
   }
 
   @action
-  undo() {
-    this.controller.perform((tr) => tr.commands.undo(undefined));
-  }
+  undo() {}
 
   // Table commands
   @action
-  insertTable() {
-    this.tableAddRows = isNaN(this.tableAddRows) ? 2 : this.tableAddRows;
-    this.tableAddColumns = isNaN(this.tableAddColumns)
-      ? 2
-      : this.tableAddColumns;
-    this.tableAddRows = this.tableAddRows < 1 ? 1 : this.tableAddRows;
-    this.tableAddColumns = this.tableAddColumns < 1 ? 1 : this.tableAddColumns;
-    this.controller.perform((tr) =>
-      tr.commands.insertTable({
-        rows: this.tableAddRows,
-        columns: this.tableAddColumns,
-      })
-    );
-  }
+  insertTable() {}
 
   @action
-  insertRowBelow() {
-    this.controller.perform((tr) => tr.commands.insertTableRowBelow({}));
-  }
+  insertRowBelow() {}
 
   @action
-  insertRowAbove() {
-    this.controller.perform((tr) => tr.commands.insertTableRowAbove({}));
-  }
+  insertRowAbove() {}
 
   @action
-  insertColumnAfter() {
-    this.controller.perform((tr) => tr.commands.insertTableColumnAfter({}));
-  }
+  insertColumnAfter() {}
 
   @action
-  insertColumnBefore() {
-    this.controller.perform((tr) => tr.commands.insertTableColumnBefore({}));
-  }
+  insertColumnBefore() {}
 
   @action
-  removeTableRow() {
-    this.controller.perform((tr) => tr.commands.removeTableRow({}));
-  }
+  removeTableRow() {}
 
   @action
-  removeTableColumn() {
-    this.controller.perform((tr) => tr.commands.removeTableColumn({}));
-  }
+  removeTableColumn() {}
 
   @action
-  removeTable() {
-    this.controller.perform((tr) => tr.commands.removeTable({}));
-  }
+  removeTable() {}
 }

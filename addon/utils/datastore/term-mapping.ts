@@ -1,12 +1,12 @@
 import * as RDF from '@rdfjs/types';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import {
   conciseToRdfjs,
   PrefixMapping,
 } from '@lblod/ember-rdfa-editor/utils/concise-term-string';
-import { first, isEmpty, flatMap, map, filter, execPipe } from 'iter-tools';
+import { execPipe, filter, first, flatMap, isEmpty, map } from 'iter-tools';
 import { TermSpec } from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
 import { single } from '../iterator-utils';
+import { ParserNode } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 
 /**
  * Utility class to represent a collection of terms with their
@@ -20,13 +20,13 @@ export class TermMapping<T extends RDF.Term>
   implements
     Iterable<{
       term: T;
-      nodes: ModelNode[];
+      nodes: ParserNode[];
     }>
 {
-  private termMap: Map<T, ModelNode[]>;
+  private termMap: Map<T, ParserNode[]>;
   private getPrefix: PrefixMapping;
 
-  constructor(map: Map<T, ModelNode[]>, getPrefix: PrefixMapping) {
+  constructor(map: Map<T, ParserNode[]>, getPrefix: PrefixMapping) {
     this.termMap = map;
     this.getPrefix = getPrefix;
   }
@@ -39,7 +39,7 @@ export class TermMapping<T extends RDF.Term>
    * when you know for sure there can only be one answer,
    * e.g. you matched on a subject and are requesting subjectNodes
    */
-  single(): { term: T; nodes: ModelNode[] } | null {
+  single(): { term: T; nodes: ParserNode[] } | null {
     return (
       single(
         map(
@@ -67,7 +67,7 @@ export class TermMapping<T extends RDF.Term>
    * Request the mapping for a specific term.
    * @param term
    */
-  get(term: TermSpec): ModelNode[] | null {
+  get(term: TermSpec): ParserNode[] | null {
     const convertedTerm = (
       typeof term === 'string' ? conciseToRdfjs(term, this.getPrefix) : term
     ) as T;
@@ -87,7 +87,7 @@ export class TermMapping<T extends RDF.Term>
    * @param mappingFunc
    */
   map<R>(
-    mappingFunc: (entry: { term: T; nodes: ModelNode[] }) => R
+    mappingFunc: (entry: { term: T; nodes: ParserNode[] }) => R
   ): Iterable<R> {
     return execPipe(
       this.termMap.entries(),
@@ -96,7 +96,7 @@ export class TermMapping<T extends RDF.Term>
     );
   }
 
-  nodes(): Iterable<ModelNode> {
+  nodes(): Iterable<ParserNode> {
     return flatMap((entry) => entry[1], this.termMap.entries());
   }
 

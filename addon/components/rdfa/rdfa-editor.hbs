@@ -60,13 +60,13 @@
         {{if this.editorLoading "au-u-hidden-visually"}}'
     >
       <div class='say-editor__paper'>
-        <Ce::ContentEditable
-          @class='say-editor__inner say-content'
-          @editorInit={{this.handleRawEditorInit}}
-          @plugins={{this.editorPlugins}}
-          @baseIRI={{@baseIRI}}
-          @stealFocus={{@stealFocus}}
-        />
+        <div
+          {{did-insert this.handleRawEditorInit}}
+          {{will-destroy this.teardown}}
+          class="say-editor__inner say-content"
+          ...attributes
+        >
+        </div>
       </div>
 
     </div>

@@ -18,8 +18,8 @@ import {
   ModelQuadPredicate,
   ModelQuadSubject,
   ModelTerm,
+  ParserNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 
 export class ModelDataFactory extends DataFactory {
   quad(
@@ -34,14 +34,14 @@ export class ModelDataFactory extends DataFactory {
 
   namedNode<I extends string = string>(
     iri: I,
-    node?: ModelNode
+    node?: ParserNode
   ): ModelNamedNode<I> {
     const namedNode: ModelNamedNode<I> = super.namedNode<I>(iri);
     namedNode.node = node;
     return namedNode;
   }
 
-  blankNode(value?: string, node?: ModelNode): ModelBlankNode {
+  blankNode(value?: string, node?: ParserNode): ModelBlankNode {
     const blankNode: ModelBlankNode = super.blankNode(value);
     blankNode.node = node;
     return blankNode;
@@ -50,7 +50,7 @@ export class ModelDataFactory extends DataFactory {
   literal(
     value: string,
     languageOrDataType?: string | ModelNamedNode,
-    node?: ModelNode
+    node?: ParserNode
   ): ModelLiteral {
     const literal: ModelLiteral = super.literal(value, languageOrDataType);
     literal.node = node;
@@ -93,11 +93,12 @@ export class Util {
 
   public readonly dataFactory: ModelDataFactory;
   public baseIRI: ModelNamedNode;
-  public blankNodeFactory: ((node?: ModelNode) => ModelBlankNode) | null = null;
+  public blankNodeFactory: ((node?: ParserNode) => ModelBlankNode) | null =
+    null;
   private readonly baseIRIDocument: ModelNamedNode;
 
   constructor(
-    rootModelNode: ModelNode,
+    rootModelNode: ParserNode,
     dataFactory?: ModelDataFactory,
     baseIRI?: string
   ) {
@@ -228,7 +229,7 @@ export class Util {
    * @param node
    * @return A base IRI named node.
    */
-  public getBaseIRI(baseIriValue: string, node?: ModelNode): ModelNamedNode {
+  public getBaseIRI(baseIriValue: string, node?: ParserNode): ModelNamedNode {
     let href: string = baseIriValue;
     const fragmentIndex = href.indexOf('#');
     if (fragmentIndex >= 0) {
@@ -319,7 +320,7 @@ export class Util {
    * Create a blank node.
    * @returns {BlankNode} A new blank node.
    */
-  public createBlankNode(node?: ModelNode): ModelBlankNode {
+  public createBlankNode(node?: ParserNode): ModelBlankNode {
     if (this.blankNodeFactory) {
       return this.blankNodeFactory(node);
     }
