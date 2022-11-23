@@ -1,15 +1,23 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import {
-  isOperationStep,
-  isSelectionStep,
-  Step,
-} from '@lblod/ember-rdfa-editor/core/state/steps/step';
-import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
-import { PropertyState } from '@lblod/ember-rdfa-editor/utils/types';
 import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import {
+  liftListItem,
+  sinkListItem,
+  wrapInList,
+} from 'prosemirror-schema-list';
+import { undo } from 'prosemirror-history';
+import {
+  addColumnAfter,
+  addColumnBefore,
+  addRowAfter,
+  addRowBefore,
+  deleteColumn,
+  deleteRow,
+  deleteTable,
+} from 'prosemirror-tables';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -25,55 +33,72 @@ interface Args {
  * @extends Component
  */
 export default class EditorToolbar extends Component<Args> {
-  @tracked isBold = false;
-  @tracked isItalic = false;
-  @tracked isStrikethrough = false;
-  @tracked isUnderline = false;
-  @tracked isInList = false;
   @tracked canInsertList = true;
-  @tracked isInTable = false;
-  @tracked canIndent = false;
-  @tracked canUnindent = false;
   @tracked tableAddRows = 2;
   @tracked tableAddColumns = 2;
   selection: ModelSelection | null = null;
+
+  get isBold() {
+    return this.controller.isMarkActive(this.controller.schema.marks.strong);
+  }
+
+  get isItalic() {
+    return this.controller.isMarkActive(this.controller.schema.marks.em);
+  }
+
+  get isUnderline() {
+    return this.controller.isMarkActive(this.controller.schema.marks.underline);
+  }
+
+  get isStrikethrough() {
+    return this.controller.isMarkActive(
+      this.controller.schema.marks.strikethrough
+    );
+  }
 
   get controller() {
     return this.args.controller;
   }
 
-  modifiesSelection(steps: Step[]) {
-    return steps.some((step) => isSelectionStep(step) || isOperationStep(step));
+  get isInList() {
+    return (
+      !this.controller.checkCommand(
+        wrapInList(this.controller.schema.nodes.bullet_list)
+      ) || this.canIndent
+    );
   }
 
-  update = (transaction: Transaction) => {
-    if (this.modifiesSelection(transaction.steps)) {
-      this.updateProperties(transaction);
-    }
-  };
+  get canIndent() {
+    return this.controller.checkCommand(
+      sinkListItem(this.controller.schema.nodes.list_item)
+    );
+  }
 
-  updateProperties(transaction: Transaction) {
-    const {
-      currentSelection: selection,
-      commands: { makeList, indentList, unindentList },
-    } = transaction;
-    this.isBold = selection.bold === PropertyState.enabled;
-    this.isItalic = selection.italic === PropertyState.enabled;
-    this.isUnderline = selection.underline === PropertyState.enabled;
-    this.isStrikethrough = selection.strikethrough === PropertyState.enabled;
-    this.isInList = selection.inListState === PropertyState.enabled;
-    this.canInsertList = makeList.canExecute({});
-    this.isInTable = selection.inTableState === PropertyState.enabled;
-    this.canIndent = this.isInList && indentList.canExecute({});
-    this.canUnindent = this.isInList && unindentList.canExecute({});
-    this.selection = selection;
+  get canUnindent() {
+    return this.controller.checkCommand(
+      liftListItem(this.controller.schema.nodes.list_item)
+    );
+  }
+
+  get isInTable() {
+    return this.controller.checkCommand(deleteTable);
   }
 
   @action
-  insertIndent() {}
+  insertIndent() {
+    this.controller.focus();
+    this.controller.doCommand(
+      sinkListItem(this.controller.schema.nodes.list_item)
+    );
+  }
 
   @action
-  insertUnindent() {}
+  insertUnindent() {
+    this.controller.focus();
+    this.controller.doCommand(
+      liftListItem(this.controller.schema.nodes.list_item)
+    );
+  }
 
   @action
   insertNewLine() {}
@@ -87,10 +112,26 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  toggleUnorderedList() {}
+  toggleUnorderedList() {
+    this.controller.focus();
+    if (this.isInList) {
+      while (this.canUnindent) {
+        this.insertUnindent();
+      }
+    } else {
+      this.controller.checkAndDoCommand(
+        wrapInList(this.controller.schema.nodes.bullet_list)
+      );
+    }
+  }
 
   @action
-  toggleOrderedList() {}
+  toggleOrderedList() {
+    this.controller.focus();
+    this.controller.checkAndDoCommand(
+      wrapInList(this.controller.schema.nodes.ordered_list)
+    );
+  }
 
   @action
   toggleBold() {
@@ -108,30 +149,72 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  undo() {}
+  undo() {
+    this.controller.focus();
+    this.controller.doCommand(undo);
+  }
 
   // Table commands
   @action
-  insertTable() {}
+  insertTable() {
+    const { schema } = this.controller;
+    this.controller.withTransaction((tr) => {
+      return tr
+        .replaceSelectionWith(
+          this.controller.schema.node('table', null, [
+            schema.node('table_row', null, [
+              schema.node('table_cell', null, [schema.text('test')]),
+              schema.node('table_cell', null, [schema.text('test')]),
+            ]),
+            schema.node('table_row', null, [
+              schema.node('table_cell', null, [schema.text('test')]),
+              schema.node('table_cell', null, [schema.text('test')]),
+            ]),
+          ])
+        )
+        .scrollIntoView();
+    });
+  }
 
   @action
-  insertRowBelow() {}
+  insertRowBelow() {
+    this.controller.focus();
+    this.controller.doCommand(addRowAfter);
+  }
 
   @action
-  insertRowAbove() {}
+  insertRowAbove() {
+    this.controller.focus();
+    this.controller.doCommand(addRowBefore);
+  }
 
   @action
-  insertColumnAfter() {}
+  insertColumnAfter() {
+    this.controller.focus();
+    this.controller.doCommand(addColumnAfter);
+  }
 
   @action
-  insertColumnBefore() {}
+  insertColumnBefore() {
+    this.controller.focus();
+    this.controller.doCommand(addColumnBefore);
+  }
 
   @action
-  removeTableRow() {}
+  removeTableRow() {
+    this.controller.focus();
+    this.controller.doCommand(deleteRow);
+  }
 
   @action
-  removeTableColumn() {}
+  removeTableColumn() {
+    this.controller.focus();
+    this.controller.doCommand(deleteColumn);
+  }
 
   @action
-  removeTable() {}
+  removeTable() {
+    this.controller.focus();
+    this.controller.doCommand(deleteTable);
+  }
 }

@@ -1,6 +1,11 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
-import { DOMParser as ProseParser, Node as PNode } from 'prosemirror-model';
+import {
+  DOMParser as ProseParser,
+  MarkType,
+  Node as PNode,
+  Schema,
+} from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
 import Datastore, {
   EditorStore,
@@ -15,7 +20,10 @@ import Component from '@ember/component';
 import { emDash, InputRule, inputRules } from 'prosemirror-inputrules';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
-import { history, redo, undo } from 'prosemirror-history';
+import { history } from 'prosemirror-history';
+import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
+import tracked from 'tracked-built-ins/-private/decorator';
+import { tableEditing } from 'prosemirror-tables';
 
 export interface EmberInlineComponent extends Component {
   appendTo(selector: string | Element): this;
@@ -60,6 +68,7 @@ function emberComponent(name: string, template: string): Element {
 
 export default class Prosemirror {
   view: EditorView;
+  @tracked _state;
   datastore: Datastore;
   root: Element;
   baseIRI: string;
@@ -82,8 +91,10 @@ export default class Prosemirror {
             ],
           }),
           gapCursor(),
-          keymap({ ...baseKeymap, 'Ctrl-z': undo, 'Ctrl-Shift-z': redo }),
+          keymap(defaultKeymap(rdfaSchema)),
+          keymap(baseKeymap),
           history(),
+          tableEditing({ allowTableNodeSelection: false }),
         ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
@@ -94,6 +105,7 @@ export default class Prosemirror {
       // },
       dispatchTransaction: this.dispatch,
     });
+    this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.datastore = EditorStore.fromParse({
       modelRoot: intoParsableDoc(
@@ -108,7 +120,7 @@ export default class Prosemirror {
   }
 
   get state() {
-    return this.view.state;
+    return this._state;
   }
 
   focus() {
@@ -128,6 +140,7 @@ export default class Prosemirror {
     }
 
     this.view.updateState(newState);
+    this._state = newState;
   };
 }
 
@@ -238,8 +251,44 @@ export class ProseController {
     this.pm.dispatch(tr);
   }
 
-  doCommand(command: Command) {
-    command(this.pm.state, this.pm.view.dispatch, this.pm.view);
+  doCommand(command: Command): boolean {
+    return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
+  }
+
+  checkCommand(command: Command): boolean {
+    return command(this.pm.state);
+  }
+
+  checkAndDoCommand(command: Command): boolean {
+    if (command(this.pm.state)) {
+      return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
+    }
+    return false;
+  }
+
+  isMarkActive(markType: MarkType) {
+    const { from, $from, to, empty } = this.state.selection;
+    if (empty) {
+      return !!markType.isInSet(this.state.storedMarks || $from.marks());
+    } else {
+      return this.state.doc.rangeHasMark(from, to, markType);
+    }
+  }
+
+  withTransaction(callback: (tr: Transaction) => Transaction | null) {
+    const tr = this.state.tr;
+    const result = callback(tr);
+    if (result) {
+      this.pm.view.dispatch(result);
+    }
+  }
+
+  get schema(): Schema {
+    return this.pm.state.schema;
+  }
+
+  get state(): EditorState {
+    return this.pm.state;
   }
 
   get xmlContent(): string {

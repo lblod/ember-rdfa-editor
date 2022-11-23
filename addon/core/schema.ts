@@ -1,6 +1,7 @@
 import { MarkSpec, Node as PNode, NodeSpec, Schema } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { bulletList, listItem, orderedList } from 'prosemirror-schema-list';
+import { tableNodes } from './table-nodes';
 
 const rdfaAttrs = {
   vocab: { default: undefined },
@@ -224,6 +225,11 @@ export const nodes = {
   doc,
   paragraph,
   list_item,
+  ...tableNodes({
+    tableGroup: 'block',
+    cellContent: 'inline+',
+    cellAttributes: {},
+  }),
   ordered_list,
   bullet_list,
   inline_rdfa,
