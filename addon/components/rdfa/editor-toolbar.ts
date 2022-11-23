@@ -83,7 +83,7 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleItalic() {
-    this.setMark(!this.isItalic, 'italic');
+    this.controller.toggleMark('em');
   }
 
   @action
@@ -99,19 +99,12 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleUnderline() {
-    this.setMark(!this.isUnderline, 'underline');
+    this.controller.toggleMark('underline');
   }
 
   @action
   toggleStrikethrough() {
-    this.setMark(!this.isStrikethrough, 'strikethrough');
-  }
-
-  @action
-  setMark(value: boolean, markName: string, attributes = {}) {
-    if (value) {
-    } else {
-    }
+    this.controller.toggleMark('strikethrough');
   }
 
   @action

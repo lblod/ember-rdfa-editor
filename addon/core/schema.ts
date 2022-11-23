@@ -319,6 +319,18 @@ export const marks = {
       return ['code', 0];
     },
   } as MarkSpec,
+  underline: {
+    parseDOM: [{ tag: 'u' }],
+    toDOM() {
+      return ['u', 0];
+    },
+  } as MarkSpec,
+  strikethrough: {
+    parseDOM: [{ tag: 's' }, { tag: 'del' }],
+    toDOM() {
+      return ['del', 0];
+    },
+  } as MarkSpec,
 };
 
 /// This schema roughly corresponds to the document schema used by
