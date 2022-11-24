@@ -24,6 +24,8 @@ import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import tracked from 'tracked-built-ins/-private/decorator';
 import { tableEditing } from 'prosemirror-tables';
+import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
+import {dropCursor} from "prosemirror-dropcursor";
 
 export interface EmberInlineComponent extends Component {
   appendTo(selector: string | Element): this;
@@ -69,7 +71,7 @@ function emberComponent(name: string, template: string): Element {
 export default class Prosemirror {
   view: EditorView;
   @tracked _state;
-  datastore: Datastore;
+  @tracked datastore: Datastore;
   root: Element;
   baseIRI: string;
   pathFromRoot: Node[];
@@ -81,6 +83,7 @@ export default class Prosemirror {
       state: EditorState.create({
         doc: ProseParser.fromSchema(rdfaSchema).parse(target),
         plugins: [
+          placeholder(),
           inputRules({
             rules: [
               emDash,
@@ -90,6 +93,7 @@ export default class Prosemirror {
               }),
             ],
           }),
+          dropCursor(),
           gapCursor(),
           keymap(defaultKeymap(rdfaSchema)),
           keymap(baseKeymap),

@@ -1,73 +1,69 @@
-import { deleteTargetRange } from '@lblod/ember-rdfa-editor/input/utils';
-import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
-import ModelNodeUtils from '@lblod/ember-rdfa-editor/utils/model-node-utils';
-import ModelRangeUtils from '@lblod/ember-rdfa-editor/utils/model-range-utils';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
-import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
+import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
-export default class PlaceHolderPlugin implements EditorPlugin {
-  controller!: Controller;
-
-  get name() {
-    return 'placeholder';
-  }
-
-  initialize(
-    _transaction: Transaction,
-    _controller: Controller,
-    _options: unknown
-  ): Promise<void> {
-    this.controller = _controller;
-    return Promise.resolve();
-  }
-
-  handleEvent(event: InputEvent) {
-    switch (event.inputType) {
-      case 'deleteContentBackward':
-        return this.handleDelete(event, -1);
-      case 'deleteContentForward':
-        return this.handleDelete(event, 1);
-      case 'insertText':
-        return this.handleInsertText(event);
-      default:
-        return { handled: false };
-    }
-  }
-
-  handleDelete(event: InputEvent, direction: number) {
-    const range = deleteTargetRange(this.controller.currentState, direction);
-    if (
-      ModelNodeUtils.isPlaceHolder(range.start.parent) ||
-      ModelNodeUtils.isPlaceHolder(range.end.parent)
-    ) {
-      event.preventDefault();
-      const extendedRange = ModelRangeUtils.getExtendedToPlaceholder(range);
-      this.controller.perform((tr) => {
-        tr.commands.insertText({ range: extendedRange, text: INVISIBLE_SPACE });
-      });
-      event.preventDefault();
-      return { handled: true };
-    }
-    return { handled: false };
-  }
-
-  handleInsertText(event: InputEvent) {
-    const originalRange = this.controller.selection.lastRange!;
-    const text = event.data;
-
-    if (
-      text &&
-      (ModelNodeUtils.isPlaceHolder(originalRange.start.parent) ||
-        ModelNodeUtils.isPlaceHolder(originalRange.end.parent))
-    ) {
-      const range = ModelRangeUtils.getExtendedToPlaceholder(originalRange);
-      event.preventDefault();
-      this.controller.perform((tr) => {
-        tr.commands.insertText({ text, range });
-      });
-      return { handled: true };
-    }
-    return { handled: false };
-  }
+export default function placeholder(): Plugin {
+  const placeholder: Plugin<DecorationSet> = new Plugin<DecorationSet>({
+    state: {
+      init(_, state: EditorState) {
+        const { doc } = state;
+        const speckles = [];
+        for (let pos = 1; pos < doc.content.size; pos += 4) {
+          speckles.push(
+            Decoration.inline(pos - 1, pos, { style: 'background: yellow' })
+          );
+        }
+        return DecorationSet.create(doc, speckles);
+      },
+      apply(tr: Transaction, set: DecorationSet) {
+        let newSet = set;
+        const newDecs: Decoration[] = [];
+        tr.mapping.maps.forEach((map) =>
+          map.forEach((oldStart, oldEnd, newStart, newEnd) => {
+            const oldDecs = set.find(oldStart, oldEnd);
+            newSet = newSet.remove(oldDecs);
+            for (let pos = newStart; pos < newEnd; pos += 4) {
+              if (pos % 4 === 0) {
+                newDecs.push(
+                  Decoration.inline(pos - 1, pos, {
+                    style: 'background: yellow',
+                  })
+                );
+              }
+            }
+          })
+        );
+        newSet = newSet.add(tr.doc, newDecs);
+        return newSet.map(tr.mapping, tr.doc);
+      },
+    },
+    props: {
+      decorations(state: EditorState) {
+        return placeholder.getState(state);
+      },
+    },
+  });
+  // props: {
+  //   decorations: (state) => {
+  //     const decorations: Decoration[] = [];
+  //
+  //     const decorate = (node: PNode, pos: number) => {
+  //       if (
+  //         node.type.isBlock &&
+  //         node.childCount === 0 &&
+  //         state.selection.$anchor.parent !== node
+  //       ) {
+  //         decorations.push(
+  //           Decoration.node(pos, pos + node.nodeSize, {
+  //             class: 'empty-node',
+  //           })
+  //         );
+  //       }
+  //     };
+  //
+  //     state.doc.descendants(decorate);
+  //
+  //     return DecorationSet.create(state.doc, decorations);
+  //   },
+  // },
+  return placeholder;
 }
