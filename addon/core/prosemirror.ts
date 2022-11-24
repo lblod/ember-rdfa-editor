@@ -24,8 +24,8 @@ import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import tracked from 'tracked-built-ins/-private/decorator';
 import { tableEditing } from 'prosemirror-tables';
+import { dropCursor } from 'prosemirror-dropcursor';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
-import {dropCursor} from "prosemirror-dropcursor";
 
 export interface EmberInlineComponent extends Component {
   appendTo(selector: string | Element): this;
@@ -83,7 +83,6 @@ export default class Prosemirror {
       state: EditorState.create({
         doc: ProseParser.fromSchema(rdfaSchema).parse(target),
         plugins: [
-          placeholder(),
           inputRules({
             rules: [
               emDash,
@@ -93,6 +92,7 @@ export default class Prosemirror {
               }),
             ],
           }),
+          placeholder(),
           dropCursor(),
           gapCursor(),
           keymap(defaultKeymap(rdfaSchema)),
@@ -102,11 +102,11 @@ export default class Prosemirror {
         ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
-      // nodeViews: {
-      //   counter(node, view, getPos) {
-      //     return new CounterView(node, view, getPos);
-      //   },
-      // },
+      nodeViews: {
+        // counter(node, view, getPos) {
+        //   return new CounterView(node, view, getPos);
+        // },
+      },
       dispatchTransaction: this.dispatch,
     });
     this._state = this.view.state;
@@ -121,6 +121,10 @@ export default class Prosemirror {
       pathFromDomRoot: this.pathFromRoot,
       baseIRI,
     });
+  }
+
+  get editable() {
+    return this.view.editable;
   }
 
   get state() {

@@ -1,69 +1,80 @@
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
+import { EditorState, Plugin } from 'prosemirror-state';
+import { Node as PNode } from 'prosemirror-model';
+import { Decoration, DecorationSet, NodeView } from 'prosemirror-view';
+import { PLACEHOLDER_CLASS } from '@lblod/ember-rdfa-editor/utils/constants';
+
+class PlaceholderView implements NodeView {
+  dom: HTMLElement;
+  contentDOM: HTMLElement;
+  clean = true;
+
+  constructor(node: PNode) {
+    this.dom = document.createElement('span');
+    if (node.content.size === 0) {
+      this.dom.classList.add(PLACEHOLDER_CLASS);
+    }
+
+    this.contentDOM = this.dom;
+  }
+
+  update(node: PNode): boolean {
+    if (node.type.name !== 'placeholder') {
+      return false;
+    }
+
+    if (node.content.size === 0) {
+      this.dom.classList.add(PLACEHOLDER_CLASS);
+    } else {
+      this.dom.classList.remove(PLACEHOLDER_CLASS);
+    }
+    return true;
+  }
+}
 
 export default function placeholder(): Plugin {
   const placeholder: Plugin<DecorationSet> = new Plugin<DecorationSet>({
-    state: {
-      init(_, state: EditorState) {
-        const { doc } = state;
-        const speckles = [];
-        for (let pos = 1; pos < doc.content.size; pos += 4) {
-          speckles.push(
-            Decoration.inline(pos - 1, pos, { style: 'background: yellow' })
-          );
-        }
-        return DecorationSet.create(doc, speckles);
-      },
-      apply(tr: Transaction, set: DecorationSet) {
-        let newSet = set;
-        const newDecs: Decoration[] = [];
-        tr.mapping.maps.forEach((map) =>
-          map.forEach((oldStart, oldEnd, newStart, newEnd) => {
-            const oldDecs = set.find(oldStart, oldEnd);
-            newSet = newSet.remove(oldDecs);
-            for (let pos = newStart; pos < newEnd; pos += 4) {
-              if (pos % 4 === 0) {
-                newDecs.push(
-                  Decoration.inline(pos - 1, pos, {
-                    style: 'background: yellow',
-                  })
-                );
-              }
-            }
-          })
-        );
-        newSet = newSet.add(tr.doc, newDecs);
-        return newSet.map(tr.mapping, tr.doc);
-      },
-    },
     props: {
-      decorations(state: EditorState) {
-        return placeholder.getState(state);
+      nodeViews: {
+        placeholder(node: PNode) {
+          return new PlaceholderView(node);
+        },
+      },
+      decorations: ({ doc }: EditorState) => {
+        const active = true;
+        const decorations: Decoration[] = [];
+
+        if (!active) {
+          return null;
+        }
+
+        // only calculate isEmpty once due to its performance impacts (see issue #3360)
+        // const emptyDocInstance = doc.type.createAndFill();
+
+        doc.descendants((node, pos) => {
+          if (node.type.name !== 'placeholder') {
+            return true;
+          }
+          const isEmpty = node.childCount === 0;
+
+          if (isEmpty) {
+            const decoration = Decoration.widget(
+              pos + 1,
+              () => {
+                return new Text(node.attrs.placeholderText);
+              },
+              { side: -1 }
+            );
+
+            decorations.push(decoration);
+          }
+
+          return false;
+        });
+
+        return DecorationSet.create(doc, decorations);
       },
     },
   });
-  // props: {
-  //   decorations: (state) => {
-  //     const decorations: Decoration[] = [];
-  //
-  //     const decorate = (node: PNode, pos: number) => {
-  //       if (
-  //         node.type.isBlock &&
-  //         node.childCount === 0 &&
-  //         state.selection.$anchor.parent !== node
-  //       ) {
-  //         decorations.push(
-  //           Decoration.node(pos, pos + node.nodeSize, {
-  //             class: 'empty-node',
-  //           })
-  //         );
-  //       }
-  //     };
-  //
-  //     state.doc.descendants(decorate);
-  //
-  //     return DecorationSet.create(state.doc, decorations);
-  //   },
-  // },
+
   return placeholder;
 }
