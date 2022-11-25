@@ -1,5 +1,10 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
-import { EditorView, NodeView } from 'prosemirror-view';
+import {
+  Decoration,
+  DecorationSource,
+  EditorView,
+  NodeView,
+} from 'prosemirror-view';
 import {
   DOMParser as ProseParser,
   DOMSerializer,
@@ -29,18 +34,33 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 
-export interface EmberInlineComponent extends Component {
+export interface EmberInlineComponent
+  extends Component,
+  EmberInlineComponentArgs {
   appendTo(selector: string | Element): this;
+}
+
+export interface EmberInlineComponentArgs {
+  getPos: () => number;
+  node: PNode;
+  updateAttribute: (attr: string, value: unknown) => void;
 }
 
 class DropdownView implements NodeView {
   dom: Element;
   emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Dropdown/>`;
+  template: TemplateFactory = hbs`<InlineComponentsPlugin::Dropdown @getPos={{this.getPos}}/>`;
 
-  constructor(_node: PNode, _view: EditorView, _getPos: () => number) {
-    const { node, component } = emberComponent('dropdown', this.template);
-    node.dataset.inlineComponent = 'dropdown';
+  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
+    const { node, component } = emberComponent('dropdown', this.template, {
+      getPos,
+      node: pNode,
+      updateAttribute: (attr, value) => {
+        const transaction = view.state.tr;
+        transaction.setNodeAttribute(getPos(), attr, value);
+        view.dispatch(transaction);
+      },
+    });
     this.dom = node;
     this.emberComponent = component;
   }
@@ -54,9 +74,48 @@ class DropdownView implements NodeView {
   }
 }
 
+class CounterView implements NodeView {
+  node: PNode;
+  dom: Element;
+  emberComponent: EmberInlineComponent;
+  template: TemplateFactory = hbs`<InlineComponentsPlugin::Counter @getPos={{this.getPos}} @node={{this.node}} @updateAttribute={{this.updateAttribute}}/>`;
+
+  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
+    this.node = pNode;
+    const { node, component } = emberComponent('counter', this.template, {
+      getPos,
+      node: pNode,
+      updateAttribute: (attr, value) => {
+        const transaction = view.state.tr;
+        transaction.setNodeAttribute(getPos(), attr, value);
+        view.dispatch(transaction);
+      },
+    });
+    this.dom = node;
+    this.emberComponent = component;
+  }
+
+  update(node: PNode) {
+    console.log('UPDATE: ', node.attrs.count);
+    if (node.type !== this.node.type) return false;
+    this.node = node;
+    this.emberComponent.set('node', node);
+    return true;
+  }
+
+  destroy() {
+    this.emberComponent.destroy();
+  }
+
+  stopEvent() {
+    return true;
+  }
+}
+
 function emberComponent(
   name: string,
-  template: TemplateFactory
+  template: TemplateFactory,
+  props: EmberInlineComponentArgs
 ): { node: HTMLElement; component: EmberInlineComponent } {
   const instance = window.__APPLICATION;
   const componentName = `${name}-${uuidv4()}`;
@@ -66,13 +125,12 @@ function emberComponent(
     Component.extend({
       layout: template,
       tagName: '',
+      ...props,
     })
   );
   const component = instance?.lookup(
     `component:${componentName}`
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  // component.set('componentController', new InlineComponentController(this));
-  // component.set('editorController', this.spec.controller);
   const node = document.createElement('span');
   component.appendTo(node);
   return { node, component };
@@ -115,6 +173,9 @@ export default class Prosemirror {
       nodeViews: {
         dropdown(node, view, getPos) {
           return new DropdownView(node, view, getPos);
+        },
+        counter(node, view, getPos) {
+          return new CounterView(node, view, getPos);
         },
       },
       dispatchTransaction: this.dispatch,
@@ -244,7 +305,7 @@ function intoParsableDoc(
 }
 
 export class ProseController {
-  constructor(private pm: Prosemirror) {}
+  constructor(private pm: Prosemirror) { }
 
   toggleMark(name: string) {
     this.focus();
@@ -330,5 +391,5 @@ export class ProseController {
     return div.innerHTML;
   }
 
-  set xmlContent(content: string) {}
+  set xmlContent(content: string) { }
 }

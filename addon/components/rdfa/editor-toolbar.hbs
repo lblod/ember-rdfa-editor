@@ -60,16 +60,6 @@
             Strikethrough
           </span>
         </button>
-        <button
-          type='button'
-          class='say-toolbar__button'
-          {{on 'click' this.insertDropdown}}
-          title={{t 'ember-rdfa-editor.strikethrough'}}
-        >
-          <span>
-            Insert dropdown
-          </span>
-        </button>
       {{/if}}
     </div>
     {{#if
@@ -269,6 +259,26 @@
           </span>
         </button>
       {{/if}}
+      <button
+          type='button'
+          class='say-toolbar__button'
+          {{on 'click' this.insertDropdown}}
+          title={{t 'ember-rdfa-editor.strikethrough'}}
+        >
+          <span>
+            ID
+          </span>
+        </button>
+        <button
+          type='button'
+          class='say-toolbar__button'
+          {{on 'click' this.insertCounter}}
+          title={{t 'ember-rdfa-editor.strikethrough'}}
+        >
+          <span>
+            IC
+          </span>
+        </button>
     </div>
     <div class='say-toolbar__group'>
       {{yield to='middle'}}

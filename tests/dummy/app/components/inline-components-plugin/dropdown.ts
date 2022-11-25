@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
+import { EmberInlineComponentArgs } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
-export default class InlineComponentsPluginDropdown extends Component {
+export default class InlineComponentsPluginDropdown extends Component<EmberInlineComponentArgs> {
   get title() {
     return 'Example Dropdown';
   }
