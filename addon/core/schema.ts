@@ -1,16 +1,14 @@
 import {
+  Fragment,
   MarkSpec,
   Node as PNode,
   NodeSpec,
   Schema,
-  DOMParser as ProseParser,
-  Fragment,
 } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { bulletList, listItem, orderedList } from 'prosemirror-schema-list';
 import { tableNodes } from './table-nodes';
-import { INLINE_COMPONENT_CHILDREN_SELECTOR } from '../utils/constants';
-import unwrap from '../utils/unwrap';
+import { PLACEHOLDER_CLASS } from '@lblod/ember-rdfa-editor/utils/constants';
 
 const rdfaAttrs = {
   vocab: { default: undefined },
@@ -151,6 +149,7 @@ const list_item: NodeSpec = {
 const inline_rdfa: NodeSpec = {
   inline: true,
   content: 'inline*',
+  draggable: true,
   defining: true,
   group: 'inline',
   attrs: {
@@ -176,6 +175,7 @@ const block_rdfa: NodeSpec = {
     ...rdfaAttrs,
     __tag: { default: 'div' },
   },
+  defining: true,
   parseDOM: [
     {
       tag: 'div, h1, h2, h3, h4, h5, h6',
@@ -261,6 +261,39 @@ const image: NodeSpec = {
     return ['img', { src, alt, title }];
   },
 };
+
+const placeholder: NodeSpec = {
+  inline: true,
+  content: 'inline*',
+  group: 'inline',
+  attrs: {
+    placeholderText: { default: 'placeholder' },
+  },
+  selectable: false,
+
+  parseDOM: [
+    {
+      tag: 'span',
+
+      getContent(node: Node, schema: Schema) {
+        return Fragment.empty;
+      },
+      getAttrs(node: HTMLElement) {
+        if (node.classList.contains(PLACEHOLDER_CLASS)) {
+          return { placeholderText: node.innerText };
+        }
+        return false;
+      },
+    },
+  ],
+  toDOM(node: PNode) {
+    if (node.childCount > 0) {
+      return ['span', {}, 0];
+    } else {
+      return ['span', { class: PLACEHOLDER_CLASS }, 0];
+    }
+  },
+};
 const hard_break: NodeSpec = {
   inline: true,
   group: 'inline',
@@ -274,6 +307,7 @@ const hard_break: NodeSpec = {
 // create a schema with list support.
 export const nodes = {
   doc,
+  placeholder,
   paragraph,
   list_item,
   ...tableNodes({
