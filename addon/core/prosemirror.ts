@@ -304,7 +304,16 @@ export class ProseController {
   }
 
   get htmlContent(): string {
-    return this.pm.view.dom.outerHTML;
+    const fragment = DOMSerializer.fromSchema(rdfaSchema).serializeFragment(
+      this.pm.state.doc.content,
+      {
+        document,
+      }
+    );
+    console.log('FRAGMENT: ', fragment);
+    const div = document.createElement('div');
+    div.appendChild(fragment);
+    return div.innerHTML;
   }
 
   set xmlContent(content: string) {}
