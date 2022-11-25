@@ -232,7 +232,6 @@ export default class ModelNodeUtils {
       return newNode;
     }
     const path = ModelNodeUtils.pathFromRoot(root, nodeToReplace);
-    console.log('PATH', path);
     const clonedPath = ModelNodeUtils.shallowCloneNodePath(path);
     if (path.length !== clonedPath.length) {
       throw new AssertionError(

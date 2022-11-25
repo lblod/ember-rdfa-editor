@@ -181,7 +181,6 @@ export default class Prosemirror {
     });
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
-    console.log(this.pathFromRoot);
     this.datastore = EditorStore.fromParse<PNode>({
       root: this._state.doc,
       textContent,
@@ -224,7 +223,6 @@ export default class Prosemirror {
         pathFromDomRoot: this.pathFromRoot,
         baseIRI: this.baseIRI,
       });
-      console.log([...this.datastore.asQuads()]);
     }
 
     this.view.updateState(newState);
