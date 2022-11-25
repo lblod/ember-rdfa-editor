@@ -1,7 +1,16 @@
-import { MarkSpec, Node as PNode, NodeSpec, Schema } from 'prosemirror-model';
+import {
+  MarkSpec,
+  Node as PNode,
+  NodeSpec,
+  Schema,
+  DOMParser as ProseParser,
+  Fragment,
+} from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { bulletList, listItem, orderedList } from 'prosemirror-schema-list';
 import { tableNodes } from './table-nodes';
+import { INLINE_COMPONENT_CHILDREN_SELECTOR } from '../utils/constants';
+import unwrap from '../utils/unwrap';
 
 const rdfaAttrs = {
   vocab: { default: undefined },
@@ -56,22 +65,63 @@ function getRdfaAttrs(node: Element) {
   return false;
 }
 
-const counter: NodeSpec = {
+const dropdown: NodeSpec = {
   inline: true,
-  content: 'block*',
+  atom: true,
   group: 'inline',
-  parseDom: [
+  selectable: true,
+  parseDOM: [
     {
       tag: 'span',
       getAttrs(node: HTMLElement) {
-        if (node.classList.contains('inline-component')) {
+        if (node.dataset.inlineComponent === 'dropdown') {
           return {};
         }
         return false;
       },
     },
   ],
+  toDOM() {
+    return ['span', { 'data-inline-component': 'dropdown' }];
+  },
 };
+
+// const emberComponentSpec: (inline: boolean, atomic: boolean) => NodeSpec = (
+//   inline,
+//   atomic
+// ) => {
+//   return {
+//     inline,
+//     group: inline ? 'inline' : 'block',
+//     atom: atomic,
+//     parseDom: [
+//       {
+//         tag: inline ? 'span' : 'div',
+//         getAttrs(node: HTMLElement) {
+//           if (
+//             node.dataset.inlineComponent &&
+//             !node.querySelector(INLINE_COMPONENT_CHILDREN_SELECTOR) === atomic
+//           ) {
+//             return {};
+//           }
+//           return false;
+//         },
+//         ...(atomic && {
+//           getContent(node: HTMLElement, schema: Schema) {
+//             const childrenWrapper = unwrap(
+//               node.querySelector(INLINE_COMPONENT_CHILDREN_SELECTOR)
+//             );
+//             const parsedChildNodes = [...childrenWrapper.childNodes].map(
+//               (childNode) => ProseParser.fromSchema(schema).parse(childNode)
+//             );
+//             return Fragment.fromArray(parsedChildNodes);
+//           },
+//         }),
+//       },
+//     ],
+//   };
+// };
+
 const doc: NodeSpec = {
   content: 'block+',
 };
@@ -83,6 +133,7 @@ const paragraph: NodeSpec = {
     return ['p', 0];
   },
 };
+
 const ordered_list: NodeSpec = {
   ...orderedList,
   content: 'list_item+',
@@ -255,6 +306,7 @@ export const nodes = {
 
   /// A hard line break, represented in the DOM as `<br>`.
   hard_break,
+  dropdown,
 };
 
 /// [Specs](#model.MarkSpec) for the marks in the schema.

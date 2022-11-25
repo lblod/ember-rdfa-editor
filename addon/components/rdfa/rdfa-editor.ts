@@ -27,6 +27,7 @@ import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Prosemirror, {
   ProseController,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { getOwner } from '@ember/application';
 
 export type PluginConfig =
   | string
@@ -134,6 +135,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // window.__EDITOR = new RdfaDocumentController('debug', view);
     // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
     // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
+    window.__APPLICATION = getOwner(this)!;
     this.prosemirror = new Prosemirror(target, window.document.baseURI);
     this.toolbarController = new ProseController(this.prosemirror);
     this.editorLoading = false;

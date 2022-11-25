@@ -2,6 +2,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 import {
   DOMParser as ProseParser,
+  DOMSerializer,
   MarkType,
   Node as PNode,
   Schema,
@@ -25,21 +26,27 @@ import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import tracked from 'tracked-built-ins/-private/decorator';
 import { tableEditing } from 'prosemirror-tables';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
-import {dropCursor} from "prosemirror-dropcursor";
+import { dropCursor } from 'prosemirror-dropcursor';
+import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 
 export interface EmberInlineComponent extends Component {
   appendTo(selector: string | Element): this;
 }
 
-class CounterView implements NodeView {
+class DropdownView implements NodeView {
   dom: Element;
-  template: string = ``;
+  emberComponent: EmberInlineComponent;
+  template: TemplateFactory = hbs`<InlineComponentsPlugin::Dropdown/>`;
 
-  constructor(node: PNode, view: EditorView, getPos: () => number) {
-    this.dom = emberComponent(
-      'inline-components-plugin-counter',
-      '<div></div>'
-    );
+  constructor(_node: PNode, _view: EditorView, _getPos: () => number) {
+    const { node, component } = emberComponent('dropdown', this.template);
+    node.dataset.inlineComponent = 'dropdown';
+    this.dom = node;
+    this.emberComponent = component;
+  }
+
+  destroy() {
+    this.emberComponent.destroy();
   }
 
   stopEvent() {
@@ -47,7 +54,10 @@ class CounterView implements NodeView {
   }
 }
 
-function emberComponent(name: string, template: string): Element {
+function emberComponent(
+  name: string,
+  template: TemplateFactory
+): { node: HTMLElement; component: EmberInlineComponent } {
   const instance = window.__APPLICATION;
   const componentName = `${name}-${uuidv4()}`;
   instance?.register(
@@ -63,9 +73,9 @@ function emberComponent(name: string, template: string): Element {
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   // component.set('componentController', new InlineComponentController(this));
   // component.set('editorController', this.spec.controller);
-  const node = document.createElement('div');
+  const node = document.createElement('span');
   component.appendTo(node);
-  return node;
+  return { node, component };
 }
 
 export default class Prosemirror {
@@ -102,11 +112,11 @@ export default class Prosemirror {
         ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
-      // nodeViews: {
-      //   counter(node, view, getPos) {
-      //     return new CounterView(node, view, getPos);
-      //   },
-      // },
+      nodeViews: {
+        dropdown(node, view, getPos) {
+          return new DropdownView(node, view, getPos);
+        },
+      },
       dispatchTransaction: this.dispatch,
     });
     this._state = this.view.state;

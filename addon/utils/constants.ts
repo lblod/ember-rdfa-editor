@@ -125,3 +125,4 @@ export const compatTextAttributeMap: Map<TextAttribute, SpecAttributes> =
     ['strikethrough', { spec: strikethroughMarkSpec, attributes: {} }],
     ['highlighted', { spec: highlightMarkSpec, attributes: {} }],
   ]);
+export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';

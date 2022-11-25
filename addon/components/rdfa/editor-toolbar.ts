@@ -177,6 +177,14 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
+  insertDropdown() {
+    const { schema } = this.controller;
+    this.controller.withTransaction((tr) => {
+      return tr.replaceSelectionWith(schema.node('dropdown')).scrollIntoView();
+    });
+  }
+
+  @action
   insertRowBelow() {
     this.controller.focus();
     this.controller.doCommand(addRowAfter);
