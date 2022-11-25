@@ -23,6 +23,7 @@ export function buildList(element: Element): Result {
 
     if (nextListLevel < listLevel) {
       // Lower level found. Current list is done.
+      listHtml += `</li>`;
       break;
     }
 
@@ -30,14 +31,14 @@ export function buildList(element: Element): Result {
       const nestedList = buildList(nextSibling);
 
       if (nestedList.list) {
-        listHtml += nestedList.list.innerHTML;
+        listHtml += nestedList.list.outerHTML;
       }
 
       nextSibling = nestedList.nextSibling;
       continue;
     }
 
-    listHtml += `<li>${getListContentHtml(nextSibling)}</li>`;
+    listHtml += `<li>${getListContentHtml(nextSibling)}`;
     const currentElement = nextSibling;
     nextSibling = currentElement.nextElementSibling;
     currentElement.remove();
