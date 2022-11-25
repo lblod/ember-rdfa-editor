@@ -1,6 +1,6 @@
 import { module, test, todo } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
-import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { legacyDatastore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
@@ -30,8 +30,8 @@ module('Unit | model | utils | datastore-test', function () {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://example.com/',
     });
     const matched = datastore.match(null, 'a', 'schema:TechArticle');
@@ -75,8 +75,8 @@ module('Unit | model | utils | datastore-test', function () {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://example.com/',
     });
 
@@ -125,8 +125,8 @@ module('Unit | model | utils | datastore-test', function () {
         </div>
       </div>
     `;
-    const dataStore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const dataStore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
       pathFromDomRoot: [],
     });
@@ -155,8 +155,8 @@ module('Unit | model | utils | datastore-test', function () {
         </div>
       </div>
     `;
-    const dataStore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const dataStore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
       pathFromDomRoot: [],
     });
@@ -183,8 +183,8 @@ module('Unit | model | utils | datastore-test', function () {
         </div>
       </div>
     `;
-    const dataStore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const dataStore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
       pathFromDomRoot: [],
     });
@@ -227,8 +227,8 @@ module('Unit | model | utils | datastore-test', function () {
         </div>
       </div>
     `;
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
     });
     const result = datastore
@@ -289,8 +289,8 @@ module('Unit | model | utils | datastore-test', function () {
         </div>
       </div>
     `;
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
     });
     const range = ModelRange.fromAroundNode(root as ModelElement, selected);
@@ -323,8 +323,8 @@ module('Unit | model | utils | legacy-datastore-test', function () {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://example.com/',
     });
     const matched = datastore.match(null, 'a', 'schema:TechArticle');
@@ -369,8 +369,8 @@ module('Unit | model | utils | legacy-datastore-test', function () {
       </div>
     `;
 
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://example.com/',
     });
 
@@ -419,8 +419,8 @@ module('Unit | model | utils | legacy-datastore-test', function () {
         </div>
       </div>
     `;
-    const dataStore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const dataStore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
       pathFromDomRoot: [],
     });
@@ -468,8 +468,8 @@ module('Unit | model | utils | legacy-datastore-test', function () {
         </div>
       </div>
     `;
-    const datastore = EditorStore.fromParse({
-      modelRoot: root as ModelElement,
+    const datastore = legacyDatastore({
+      root: root as ModelElement,
       baseIRI: 'http://test.org',
     });
     const range = ModelRange.fromAroundNode(root as ModelElement, selected);

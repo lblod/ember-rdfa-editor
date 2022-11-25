@@ -17,7 +17,7 @@ import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-elemen
 import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
-import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { legacyDatastore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { Difference } from '@lblod/ember-rdfa-editor/utils/tree-differ';
 import EventBus from '@lblod/ember-rdfa-editor/utils/event-bus';
 import hbs from 'htmlbars-inline-precompile';
@@ -101,7 +101,7 @@ export function testState({
     baseIRI,
     transactionDispatchListeners: new Set(),
     config: new Map(),
-    datastore: EditorStore.fromParse({ baseIRI, modelRoot: document }),
+    datastore: legacyDatastore({ baseIRI, root: document }),
     eventBus: new EventBus(),
     pathFromDomRoot: [],
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),

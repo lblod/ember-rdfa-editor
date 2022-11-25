@@ -4,7 +4,7 @@ import ModelElement, {
 } from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
 import { RangeFactory } from '@lblod/ember-rdfa-editor/core/model/model-range';
 import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
-import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { LegacyStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { TreeWalkerFactory } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import {
@@ -51,7 +51,7 @@ export default interface Controller {
 
   get treeWalkerFactory(): TreeWalkerFactory;
 
-  get datastore(): Datastore;
+  get datastore(): LegacyStore;
 
   get util(): EditorUtils;
 

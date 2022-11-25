@@ -1,7 +1,5 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import {
-  Decoration,
-  DecorationSource,
   EditorView,
   NodeView,
 } from 'prosemirror-view';
@@ -13,10 +11,10 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import Datastore, {
+import {
   EditorStore,
+  ProseStore,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
-import { ParserNode } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
 import { v4 as uuidv4 } from 'uuid';
@@ -49,7 +47,8 @@ export interface EmberInlineComponentArgs {
 class DropdownView implements NodeView {
   dom: Element;
   emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Dropdown @getPos={{this.getPos}}/>`;
+  template: TemplateFactory = hbs`
+      <InlineComponentsPlugin::Dropdown @getPos={{this.getPos}}/>`;
 
   constructor(pNode: PNode, view: EditorView, getPos: () => number) {
     const { node, component } = emberComponent('dropdown', this.template, {
@@ -139,7 +138,7 @@ function emberComponent(
 export default class Prosemirror {
   view: EditorView;
   @tracked _state;
-  @tracked datastore: Datastore;
+  @tracked datastore: ProseStore;
   root: Element;
   baseIRI: string;
   pathFromRoot: Node[];
@@ -182,13 +181,16 @@ export default class Prosemirror {
     });
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
-    this.datastore = EditorStore.fromParse({
-      modelRoot: intoParsableDoc(
-        this.view.state.doc,
-        this.view.state.doc,
-        -1,
-        new Map()
-      ),
+    console.log(this.pathFromRoot);
+    this.datastore = EditorStore.fromParse<PNode>({
+      root: this._state.doc,
+      textContent,
+      tag,
+      children,
+      attributes,
+      isText,
+      getParent,
+
       pathFromDomRoot: this.pathFromRoot,
       baseIRI,
     });
@@ -211,9 +213,16 @@ export default class Prosemirror {
 
     if (tr.docChanged) {
       this.datastore = EditorStore.fromParse({
-        modelRoot: intoParsableDoc(newState.doc, newState.doc, -1, new Map()),
-        baseIRI: this.baseIRI,
+        textContent,
+        tag,
+        children,
+        attributes,
+        isText,
+        getParent,
+
+        root: newState.doc,
         pathFromDomRoot: this.pathFromRoot,
+        baseIRI: this.baseIRI,
       });
       console.log([...this.datastore.asQuads()]);
     }
@@ -221,87 +230,6 @@ export default class Prosemirror {
     this.view.updateState(newState);
     this._state = newState;
   };
-}
-
-function intoParsableDoc(
-  root: PNode,
-  doc: PNode,
-  pos: number,
-  memo: Map<PNode, ParserNode & { original: PNode }>
-): ParserNode & { original: PNode } {
-  const stored = memo.get(doc);
-  if (stored) {
-    return stored;
-  }
-  const result = {
-    original: doc,
-    isText(): boolean {
-      return doc.isText;
-    },
-    isElement(): boolean {
-      return !doc.isLeaf;
-    },
-    attributeMap: new Map(Object.entries(doc.attrs)),
-    content: doc.text || '',
-    type: doc.type.name,
-    getFirstChild(): ParserNode | null {
-      const firstChild = doc.firstChild;
-      if (firstChild) {
-        const rpos = root.resolve(pos + 1);
-        return intoParsableDoc(root, firstChild, rpos.posAtIndex(0), memo);
-      }
-      return null;
-    },
-    getLastChild(): ParserNode | null {
-      const lastChild = doc.lastChild;
-      if (lastChild) {
-        const rpos = root.resolve(pos + 1);
-        return intoParsableDoc(root, lastChild, rpos.posAtIndex(0), memo);
-      }
-      return null;
-    },
-    getNextSibling(): ParserNode | null {
-      if (pos === -1) {
-        return null;
-      }
-      const rPos = root.resolve(pos);
-      const nextSib = rPos.nodeAfter;
-      if (nextSib) {
-        const nextSibPos = rPos.posAtIndex(rPos.index() + 1);
-        return intoParsableDoc(root, nextSib, nextSibPos, memo);
-      }
-      return null;
-    },
-    getPreviousSibling(): ParserNode | null {
-      if (pos === -1) {
-        return null;
-      }
-      const rPos = root.resolve(pos);
-
-      const prevSib = rPos.nodeBefore;
-      if (prevSib) {
-        const prevSibPos = rPos.posAtIndex(rPos.index() - 1);
-        return intoParsableDoc(root, prevSib, prevSibPos, memo);
-      }
-      return null;
-    },
-    getParent(): ParserNode | null {
-      if (pos === -1) {
-        return null;
-      }
-      const rpos = root.resolve(pos);
-      const parent = rpos.parent;
-
-      return intoParsableDoc(
-        root,
-        parent,
-        rpos.depth === 0 ? -1 : rpos.before(),
-        memo
-      );
-    },
-  };
-  memo.set(doc, result);
-  return result;
 }
 
 export class ProseController {
@@ -392,4 +320,40 @@ export class ProseController {
   }
 
   set xmlContent(content: string) { }
+}
+
+function textContent(node: PNode) {
+  return node.textContent;
+}
+
+function isText(node: PNode) {
+  return node.isText;
+}
+
+function children(node: PNode): Iterable<PNode> {
+  const rslt: PNode[] = [];
+  node.forEach((child) => rslt.push(child));
+  return rslt;
+}
+
+function tag(node: PNode) {
+  return node.type.name;
+}
+
+function attributes(node: PNode) {
+  return node.attrs;
+}
+
+function getParent(node: PNode, root: PNode): PNode | null {
+  if (node === root) {
+    return null;
+  }
+  let found = false;
+  root.descendants((descendant: PNode, pos, parent: PNode | null) => {
+    if (descendant === node) {
+      found = true;
+    }
+    return !found;
+  });
+  return null;
 }

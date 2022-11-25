@@ -7,7 +7,7 @@ import {
   Step,
 } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import Datastore, {LegacyStore} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { ModelError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import { AttributeSpec } from '@lblod/ember-rdfa-editor/utils/render-spec';
@@ -21,7 +21,7 @@ export type LiveMarkSpec =
     };
 
 export type LiveMarkRule = {
-  matcher: (datastore: Datastore) => TextMatch[];
+  matcher: (datastore: LegacyStore) => TextMatch[];
   liveSpecs: LiveMarkSpec[];
 };
 

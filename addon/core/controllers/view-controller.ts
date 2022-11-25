@@ -8,7 +8,7 @@ import {
 import GenTreeWalker, {
   TreeWalkerFactory,
 } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
-import Datastore from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { LegacyStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import ModelElement, {
   ElementType,
 } from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
@@ -59,7 +59,7 @@ export class ViewController implements Controller {
     return GenTreeWalker;
   }
 
-  get datastore(): Datastore {
+  get datastore(): LegacyStore {
     return this.currentState.datastore;
   }
 

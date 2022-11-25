@@ -40,7 +40,11 @@ import { InternalWidgetSpec, WidgetLocation } from '../controllers/controller';
 import InlineComponentsRegistry from '../model/inline-components/inline-components-registry';
 import { highlightMarkSpec } from '../model/marks/mark';
 import MarksRegistry from '../model/marks/marks-registry';
-import Datastore, { EditorStore } from '../../utils/datastore/datastore';
+import {
+  emptyLegacyDatastore,
+  legacyDatastore,
+  LegacyStore,
+} from '../../utils/datastore/datastore';
 import { boldMarkSpec } from '../../plugins/basic-styles/marks/bold';
 import { italicMarkSpec } from '../../plugins/basic-styles/marks/italic';
 import { strikethroughMarkSpec } from '../../plugins/basic-styles/marks/strikethrough';
@@ -79,7 +83,7 @@ export interface StateArgs {
   marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState?: State | null;
-  datastore: Datastore;
+  datastore: LegacyStore;
   eventBus: EventBus;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
   pathFromDomRoot: Node[];
@@ -112,7 +116,7 @@ export default interface State {
   inlineComponentsRegistry: InlineComponentsRegistry;
   previousState: State | null;
   widgetMap: Map<WidgetLocation, InternalWidgetSpec[]>;
-  datastore: Datastore;
+  datastore: LegacyStore;
   pathFromDomRoot: Node[];
   baseIRI: string;
   keymap: KeyMap;
@@ -132,7 +136,7 @@ export class SayState implements State {
   selection: ModelSelection;
   plugins: InitializedPlugin[];
   commands: Partial<Commands>;
-  datastore: Datastore;
+  datastore: LegacyStore;
   marksRegistry: MarksRegistry;
   marksManager: MarksManager;
   inlineComponentsRegistry: InlineComponentsRegistry;
@@ -263,7 +267,7 @@ export function emptyState(eventBus = new EventBus()): State {
     marksManager: new MarksManager(),
     inlineComponentsRegistry: new InlineComponentsRegistry(),
     widgetMap: new Map<WidgetLocation, InternalWidgetSpec[]>(),
-    datastore: EditorStore.empty(document),
+    datastore: emptyLegacyDatastore(document),
     pathFromDomRoot: [],
     baseIRI: 'http://example.org',
     eventBus,
@@ -333,10 +337,10 @@ export function createState({
     inlineComponentsRegistry,
     widgetMap,
     eventBus,
-    datastore: EditorStore.fromParse({
+    datastore: legacyDatastore({
       pathFromDomRoot,
       baseIRI,
-      modelRoot: document,
+      root: document,
     }),
     pathFromDomRoot,
     baseIRI,

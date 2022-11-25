@@ -21,7 +21,7 @@ import {
 import { View } from '../view';
 import ModelElement from '../model/nodes/model-element';
 import ModelPosition from '../model/model-position';
-import { EditorStore } from '../../utils/datastore/datastore';
+import { legacyDatastore } from '../../utils/datastore/datastore';
 import { AttributeSpec } from '../../utils/render-spec';
 import {
   CommandExecutor,
@@ -264,8 +264,8 @@ export default class Transaction {
     ) {
       if (this.rdfInvalid) {
         this.logger('Recalculating datastore');
-        cur.datastore = EditorStore.fromParse({
-          modelRoot: cur.document,
+        cur.datastore = legacyDatastore({
+          root: cur.document,
           baseIRI: cur.baseIRI,
           pathFromDomRoot: cur.pathFromDomRoot,
         });

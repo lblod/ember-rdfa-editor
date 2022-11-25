@@ -4,6 +4,14 @@ import { RdfaParser } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-pars
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { conciseToRdfjs } from '@lblod/ember-rdfa-editor/utils/concise-term-string';
 import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import {
+  attributes,
+  children,
+  getParent,
+  isText,
+  tag,
+  textContent,
+} from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 
 module('Unit | utils | rdfa-parser-test', function () {
   test('parses simple dom correctly', function (assert) {
@@ -27,8 +35,14 @@ module('Unit | utils | rdfa-parser-test', function () {
 
     const { dataset, nodeToSubjectMapping, subjectToNodesMapping } =
       RdfaParser.parse({
-        modelRoot: root as ModelElement,
+        root: root as ModelElement,
         baseIRI: 'http://example.com',
+        tag,
+        children,
+        textContent,
+        isText,
+        attributes,
+        getParent,
       });
     assert.strictEqual(dataset.size, 5);
     assert.strictEqual(subjectToNodesMapping.size, 1);
@@ -61,8 +75,14 @@ module('Unit | utils | rdfa-parser-test', function () {
 
     const { dataset, predicateToNodesMapping, nodeToPredicatesMapping } =
       RdfaParser.parse({
-        modelRoot: root as ModelElement,
+        root: root as ModelElement,
         baseIRI: 'http://example.com',
+        tag,
+        children,
+        textContent,
+        isText,
+        attributes,
+        getParent,
       });
 
     assert.strictEqual(dataset.size, 6);

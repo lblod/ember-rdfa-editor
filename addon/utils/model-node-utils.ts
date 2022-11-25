@@ -334,3 +334,24 @@ export default class ModelNodeUtils {
     return result.reverse();
   }
 }
+export function tag(node: ModelNode): string {
+  return node.type;
+}
+export function children(node: ModelNode): Iterable<ModelNode> {
+  ModelNode.assertModelElement(node);
+  return node.children;
+}
+export function textContent(node: ModelNode): string {
+  ModelNode.assertModelText(node);
+  return node.content;
+}
+export function isText(node: ModelNode): boolean {
+  return ModelNode.isModelText(node);
+}
+export function attributes(node: ModelNode): Record<string, string> {
+  return Object.fromEntries(node.attributeMap.entries());
+}
+export function getParent(node: ModelNode, root: ModelNode): ModelNode | null {
+  ModelNode.assertModelElement(root);
+  return node.getParent(root);
+}

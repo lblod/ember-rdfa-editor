@@ -12,7 +12,7 @@ import { Predicate } from '@lblod/ember-rdfa-editor/utils/predicate-utils';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 import { ModelInlineComponent } from '../inline-components/model-inline-component';
 import unwrap from '@lblod/ember-rdfa-editor/utils/unwrap';
-import { ParserNode } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
+import { Walkable } from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
 
 export type ModelNodeType =
   | 'TEXT'
@@ -34,7 +34,7 @@ export interface NodeCompareOpts {
 /**
  * Basic building block of the model. Cannot be instantiated, any node will always have a more specific type
  */
-export default abstract class ModelNode implements ParserNode {
+export default abstract class ModelNode implements Walkable {
   abstract modelNodeType: ModelNodeType;
   private _attributeMap: Map<string, string>;
   private _debugInfo: unknown;
@@ -163,14 +163,6 @@ export default abstract class ModelNode implements ParserNode {
       if (childIndex - 1 >= 0) return parent.children[childIndex - 1];
     }
     return null;
-  }
-
-  getLastChild(): ParserNode | null {
-    return this.lastChild;
-  }
-
-  getFirstChild(): ParserNode | null {
-    return this.firstChild;
   }
 
   abstract get length(): number;
@@ -382,4 +374,20 @@ export default abstract class ModelNode implements ParserNode {
   abstract get firstChild(): ModelNode | null;
 
   abstract get lastChild(): ModelNode | null;
+
+  getFirstChild(): Walkable | null {
+    if (ModelNode.isModelElement(this)) {
+      return this.firstChild;
+    } else {
+      return null;
+    }
+  }
+
+  getLastChild(): Walkable | null {
+    if (ModelNode.isModelElement(this)) {
+      return this.lastChild;
+    } else {
+      return null;
+    }
+  }
 }
