@@ -28,14 +28,8 @@ import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
-import { INLINE_COMPONENT_CHILDREN_SELECTOR } from '../utils/constants';
-import { ResolvedPluginConfig } from '../components/rdfa/rdfa-editor';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
-import {
-  InternalWidgetSpec,
-  WidgetLocation,
-  WidgetSpec,
-} from './controllers/controller';
+import { InternalWidgetSpec, WidgetLocation } from './controllers/controller';
 import MapUtils from '../utils/map-utils';
 
 export interface EmberInlineComponent
@@ -51,119 +45,7 @@ export interface EmberInlineComponentArgs {
   contentDOM?: HTMLElement;
 }
 
-class DropdownView implements NodeView {
-  dom: Element;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`
-      <InlineComponentsPlugin::Dropdown @getPos={{this.getPos}}/>`;
-
-  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
-    const { node, component } = emberComponent('dropdown', this.template, {
-      getPos,
-      node: pNode,
-      updateAttribute: (attr, value) => {
-        const transaction = view.state.tr;
-        transaction.setNodeAttribute(getPos(), attr, value);
-        view.dispatch(transaction);
-      },
-    });
-    this.dom = node;
-    this.emberComponent = component;
-  }
-
-  destroy() {
-    this.emberComponent.destroy();
-  }
-
-  stopEvent() {
-    return true;
-  }
-}
-
-class CounterView implements NodeView {
-  node: PNode;
-  dom: Element;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Counter @getPos={{this.getPos}} @node={{this.node}} @updateAttribute={{this.updateAttribute}}/>`;
-
-  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
-    this.node = pNode;
-    const { node, component } = emberComponent('counter', this.template, {
-      getPos,
-      node: pNode,
-      updateAttribute: (attr, value) => {
-        const transaction = view.state.tr;
-        transaction.setNodeAttribute(getPos(), attr, value);
-        view.dispatch(transaction);
-      },
-    });
-    this.dom = node;
-    this.emberComponent = component;
-  }
-
-  update(node: PNode) {
-    console.log('UPDATE: ', node.attrs.count);
-    if (node.type !== this.node.type) return false;
-    this.node = node;
-    this.emberComponent.set('node', node);
-    return true;
-  }
-
-  destroy() {
-    this.emberComponent.destroy();
-  }
-
-  stopEvent() {
-    return true;
-  }
-}
-
-class CardView implements NodeView {
-  node: PNode;
-  dom: Element;
-  contentDOM: HTMLElement;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Card 
-                                    @getPos={{this.getPos}} 
-                                    @node={{this.node}} 
-                                    @updateAttribute={{this.updateAttribute}}>
-                                    <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
-                                  </InlineComponentsPlugin::Card>`;
-
-  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
-    this.node = pNode;
-    this.contentDOM = document.createElement('div');
-    const { node, component } = emberComponent('card', this.template, {
-      getPos,
-      node: pNode,
-      updateAttribute: (attr, value) => {
-        const transaction = view.state.tr;
-        transaction.setNodeAttribute(getPos(), attr, value);
-        view.dispatch(transaction);
-      },
-      contentDOM: this.contentDOM,
-    });
-    this.dom = node;
-    this.emberComponent = component;
-  }
-
-  update(node: PNode) {
-    if (node.type !== this.node.type) return false;
-    this.node = node;
-    this.emberComponent.set('node', node);
-    return true;
-  }
-
-  destroy() {
-    this.emberComponent.destroy();
-  }
-
-  stopEvent() {
-    return true;
-  }
-}
-
-function emberComponent(
+export function emberComponent(
   name: string,
   template: TemplateFactory,
   props: EmberInlineComponentArgs
@@ -231,18 +113,7 @@ function initializeSchema(rdfaEditorPlugins: RdfaEditorPlugin[]) {
 }
 
 function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
-  const nodeViewConstructors: { [node: string]: NodeViewConstructor } = {
-    // ember components
-    dropdown(node, view, getPos) {
-      return new DropdownView(node, view, getPos);
-    },
-    counter(node, view, getPos) {
-      return new CounterView(node, view, getPos);
-    },
-    card(node, view, getPos) {
-      return new CardView(node, view, getPos);
-    },
-  };
+  const nodeViewConstructors: { [node: string]: NodeViewConstructor } = {};
 
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
@@ -361,7 +232,7 @@ export class ProseController {
     const domParser = new DOMParser();
     tr.deleteSelection().insert(
       0,
-      ProseParser.fromSchema(rdfaSchema).parse(
+      ProseParser.fromSchema(this.schema).parse(
         domParser.parseFromString(content, 'text/html')
       )
     );
@@ -422,7 +293,7 @@ export class ProseController {
 
   get htmlContent(): string {
     console.log('DOCUMENT: ', this.pm.state.doc);
-    const fragment = DOMSerializer.fromSchema(rdfaSchema).serializeFragment(
+    const fragment = DOMSerializer.fromSchema(this.schema).serializeFragment(
       this.pm.state.doc.content,
       {
         document,

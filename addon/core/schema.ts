@@ -63,79 +63,6 @@ function getRdfaAttrs(node: Element) {
   return false;
 }
 
-const dropdown: NodeSpec = {
-  inline: true,
-  atom: true,
-  group: 'inline',
-  selectable: true,
-  parseDOM: [
-    {
-      tag: 'span',
-      getAttrs(node: HTMLElement) {
-        if (node.dataset.inlineComponent === 'dropdown') {
-          return {};
-        }
-        return false;
-      },
-    },
-  ],
-  toDOM() {
-    return ['span', { 'data-inline-component': 'dropdown' }];
-  },
-};
-
-const counter: NodeSpec = {
-  inline: true,
-  atom: true,
-  group: 'inline',
-  attrs: {
-    count: { default: 0 },
-  },
-  parseDOM: [
-    {
-      tag: 'span',
-      getAttrs(node: HTMLElement) {
-        if (node.dataset.inlineComponent === 'counter') {
-          return {
-            count: parseInt(node.attributes.getNamedItem('count')!.value),
-          };
-        }
-        return false;
-      },
-    },
-  ],
-  toDOM(node: PNode) {
-    return ['span', { 'data-inline-component': 'counter', ...node.attrs }];
-  },
-};
-
-const card: NodeSpec = {
-  content: 'inline*',
-  inline: false,
-  atom: false,
-  group: 'block',
-  parseDOM: [
-    {
-      tag: 'div',
-      getAttrs(node: HTMLElement) {
-        if (node.dataset.inlineComponent === 'card') {
-          return {};
-        }
-        return false;
-      },
-      contentElement(node: HTMLElement) {
-        return node.querySelector('[data-slot]')!;
-      },
-    },
-  ],
-  toDOM() {
-    return [
-      'div',
-      { 'data-inline-component': 'card' },
-      ['div', { 'data-slot': 'true' }, 0],
-    ];
-  },
-};
 
 // const emberComponentSpec: (inline: boolean, atomic: boolean) => NodeSpec = (
 //   inline,
@@ -393,11 +320,6 @@ export const nodes = {
 
   /// A hard line break, represented in the DOM as `<br>`.
   hard_break,
-
-  // ember components
-  dropdown,
-  counter,
-  card,
 };
 
 /// [Specs](#model.MarkSpec) for the marks in the schema.
