@@ -279,6 +279,16 @@
             IC
           </span>
         </button>
+        <button
+          type='button'
+          class='say-toolbar__button'
+          {{on 'click' this.insertCard}}
+          title={{t 'ember-rdfa-editor.strikethrough'}}
+        >
+          <span>
+            Card
+          </span>
+        </button>
     </div>
     <div class='say-toolbar__group'>
       {{yield to='middle'}}

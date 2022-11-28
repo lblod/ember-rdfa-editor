@@ -96,7 +96,9 @@ const counter: NodeSpec = {
       tag: 'span',
       getAttrs(node: HTMLElement) {
         if (node.dataset.inlineComponent === 'counter') {
-          return { count: node.attributes.getNamedItem('count')?.value };
+          return {
+            count: parseInt(node.attributes.getNamedItem('count')!.value),
+          };
         }
         return false;
       },
@@ -104,6 +106,34 @@ const counter: NodeSpec = {
   ],
   toDOM(node: PNode) {
     return ['span', { 'data-inline-component': 'counter', ...node.attrs }];
+  },
+};
+
+const card: NodeSpec = {
+  content: 'inline*',
+  inline: false,
+  atom: false,
+  group: 'block',
+  parseDOM: [
+    {
+      tag: 'div',
+      getAttrs(node: HTMLElement) {
+        if (node.dataset.inlineComponent === 'card') {
+          return {};
+        }
+        return false;
+      },
+      contentElement(node: HTMLElement) {
+        return node.querySelector('[data-slot]')!;
+      },
+    },
+  ],
+  toDOM() {
+    return [
+      'div',
+      { 'data-inline-component': 'card' },
+      ['div', { 'data-slot': 'true' }, 0],
+    ];
   },
 };
 
@@ -363,8 +393,11 @@ export const nodes = {
 
   /// A hard line break, represented in the DOM as `<br>`.
   hard_break,
+
+  // ember components
   dropdown,
   counter,
+  card,
 };
 
 /// [Specs](#model.MarkSpec) for the marks in the schema.

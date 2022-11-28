@@ -1,0 +1,13 @@
+<AuCard @flex={{true}} as |c|>
+  <c.header>
+    <AuHeading @level="2" @skin="4">
+      Title
+    </AuHeading>
+    <p>
+      Subtitle
+    </p>
+  </c.header>
+  <c.content>
+    {{yield}}
+  </c.content>
+</AuCard>

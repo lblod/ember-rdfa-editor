@@ -193,6 +193,14 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
+  insertCard() {
+    const { schema } = this.controller;
+    this.controller.withTransaction((tr) => {
+      return tr.replaceSelectionWith(schema.node('card')).scrollIntoView();
+    });
+  }
+
+  @action
   insertRowBelow() {
     this.controller.focus();
     this.controller.doCommand(addRowAfter);

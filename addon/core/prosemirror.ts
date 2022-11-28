@@ -1,8 +1,5 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
-import {
-  EditorView,
-  NodeView,
-} from 'prosemirror-view';
+import { EditorView, NodeView } from 'prosemirror-view';
 import {
   DOMParser as ProseParser,
   DOMSerializer,
@@ -31,10 +28,11 @@ import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
+import { INLINE_COMPONENT_CHILDREN_SELECTOR } from '../utils/constants';
 
 export interface EmberInlineComponent
   extends Component,
-  EmberInlineComponentArgs {
+    EmberInlineComponentArgs {
   appendTo(selector: string | Element): this;
 }
 
@@ -42,6 +40,7 @@ export interface EmberInlineComponentArgs {
   getPos: () => number;
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
+  contentDOM?: HTMLElement;
 }
 
 class DropdownView implements NodeView {
@@ -111,6 +110,51 @@ class CounterView implements NodeView {
   }
 }
 
+class CardView implements NodeView {
+  node: PNode;
+  dom: Element;
+  contentDOM: HTMLElement;
+  emberComponent: EmberInlineComponent;
+  template: TemplateFactory = hbs`<InlineComponentsPlugin::Card 
+                                    @getPos={{this.getPos}} 
+                                    @node={{this.node}} 
+                                    @updateAttribute={{this.updateAttribute}}>
+                                    <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
+                                  </InlineComponentsPlugin::Card>`;
+
+  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
+    this.node = pNode;
+    this.contentDOM = document.createElement('div');
+    const { node, component } = emberComponent('card', this.template, {
+      getPos,
+      node: pNode,
+      updateAttribute: (attr, value) => {
+        const transaction = view.state.tr;
+        transaction.setNodeAttribute(getPos(), attr, value);
+        view.dispatch(transaction);
+      },
+      contentDOM: this.contentDOM,
+    });
+    this.dom = node;
+    this.emberComponent = component;
+  }
+
+  update(node: PNode) {
+    if (node.type !== this.node.type) return false;
+    this.node = node;
+    this.emberComponent.set('node', node);
+    return true;
+  }
+
+  destroy() {
+    this.emberComponent.destroy();
+  }
+
+  stopEvent() {
+    return true;
+  }
+}
+
 function emberComponent(
   name: string,
   template: TemplateFactory,
@@ -118,7 +162,7 @@ function emberComponent(
 ): { node: HTMLElement; component: EmberInlineComponent } {
   const instance = window.__APPLICATION;
   const componentName = `${name}-${uuidv4()}`;
-  instance?.register(
+  instance.register(
     `component:${componentName}`,
     // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
     Component.extend({
@@ -127,10 +171,10 @@ function emberComponent(
       ...props,
     })
   );
-  const component = instance?.lookup(
+  const component = instance.lookup(
     `component:${componentName}`
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const node = document.createElement('span');
+  const node = document.createElement('div');
   component.appendTo(node);
   return { node, component };
 }
@@ -170,11 +214,15 @@ export default class Prosemirror {
       }),
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: {
+        // ember components
         dropdown(node, view, getPos) {
           return new DropdownView(node, view, getPos);
         },
         counter(node, view, getPos) {
           return new CounterView(node, view, getPos);
+        },
+        card(node, view, getPos) {
+          return new CardView(node, view, getPos);
         },
       },
       dispatchTransaction: this.dispatch,
@@ -231,7 +279,7 @@ export default class Prosemirror {
 }
 
 export class ProseController {
-  constructor(private pm: Prosemirror) { }
+  constructor(private pm: Prosemirror) {}
 
   toggleMark(name: string) {
     this.focus();
@@ -305,6 +353,7 @@ export class ProseController {
   }
 
   get htmlContent(): string {
+    console.log('DOCUMENT: ', this.pm.state.doc);
     const fragment = DOMSerializer.fromSchema(rdfaSchema).serializeFragment(
       this.pm.state.doc.content,
       {
@@ -317,7 +366,7 @@ export class ProseController {
     return div.innerHTML;
   }
 
-  set xmlContent(content: string) { }
+  set xmlContent(content: string) {}
 }
 
 function textContent(node: PNode) {
