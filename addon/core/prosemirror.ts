@@ -100,10 +100,10 @@ function initializeSchema(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   let marks = schema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
+      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
-      marks = marks.addToEnd(markConfig.name, markConfig.spec);
+      marks = marks.addToStart(markConfig.name, markConfig.spec);
     });
   });
   return new Schema({
