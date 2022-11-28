@@ -224,6 +224,7 @@ export default class Prosemirror {
         baseIRI: this.baseIRI,
       });
     }
+    console.log("Parsed triples", this.datastore.size);
 
     this.view.updateState(newState);
     this._state = newState;
