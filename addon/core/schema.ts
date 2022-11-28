@@ -343,7 +343,7 @@ const placeholder: NodeSpec = {
     if (node.childCount > 0) {
       return ['span', {}, 0];
     } else {
-      return ['span', { class: PLACEHOLDER_CLASS }, 0];
+      return ['span', { class: PLACEHOLDER_CLASS }, node.attrs.placeholderText];
     }
   },
 };
