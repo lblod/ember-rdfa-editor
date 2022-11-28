@@ -205,6 +205,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   get toolbarMiddleWidgets() {
+    console.log(
+      'TOOLBAR MIDDLE: ',
+      this.controller?.widgets.get('toolbarMiddle')
+    );
     return this.controller?.widgets.get('toolbarMiddle') || [];
   }
 

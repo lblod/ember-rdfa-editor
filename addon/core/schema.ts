@@ -462,12 +462,6 @@ export const marks = {
   } as MarkSpec,
 
   /// Code font mark. Represented as a `<code>` element.
-  code: {
-    parseDOM: [{ tag: 'code' }],
-    toDOM() {
-      return ['code', 0];
-    },
-  } as MarkSpec,
   underline: {
     parseDOM: [{ tag: 'u' }],
     toDOM() {

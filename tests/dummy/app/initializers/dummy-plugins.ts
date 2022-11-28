@@ -1,10 +1,8 @@
 import Application from '@ember/application';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
+import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import CodeMarkPlugin from '../dummy-plugins/code-mark-plugin/code-plugin';
-import HighlightPlugin from '../dummy-plugins/highlight-plugin/highlight-plugin';
-import InlineComponentsPlugin from '../dummy-plugins/inline-components-plugin/inline-components-plugin';
 
-function pluginFactory(plugin: new () => EditorPlugin) {
+function pluginFactory(plugin: new () => RdfaEditorPlugin) {
   return {
     create: (initializers: unknown) => {
       const pluginInstance = new plugin();
@@ -25,9 +23,9 @@ export function initialize(application: Application) {
   //     singleton: false,
   //   }
   // );
-  // application.register('plugin:code-mark', pluginFactory(CodeMarkPlugin), {
-  //   singleton: false,
-  // });
+  application.register('plugin:code-mark', pluginFactory(CodeMarkPlugin), {
+    singleton: false,
+  });
 }
 
 export default {

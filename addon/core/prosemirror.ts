@@ -36,6 +36,7 @@ import {
   WidgetLocation,
   WidgetSpec,
 } from './controllers/controller';
+import MapUtils from '../utils/map-utils';
 
 export interface EmberInlineComponent
   extends Component,
@@ -213,15 +214,20 @@ function initalizeProsePlugins(rdfaEditorPlugins: RdfaEditorPlugin[]) {
 
 function initializeSchema(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   const schema = rdfaSchema;
+  let nodes = schema.spec.nodes;
+  let marks = schema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
-      schema.spec.nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
+      nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
-      schema.spec.marks.addToEnd(markConfig.name, markConfig.spec);
+      marks = marks.addToEnd(markConfig.name, markConfig.spec);
     });
   });
-  return schema;
+  return new Schema({
+    nodes,
+    marks,
+  });
 }
 
 function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
@@ -253,7 +259,7 @@ export default class Prosemirror {
   view: EditorView;
   @tracked _state;
   @tracked datastore: ProseStore;
-  @tracked widgets: Map<WidgetLocation, InternalWidgetSpec> = new Map();
+  @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
   root: Element;
   baseIRI: string;
   pathFromRoot: Node[];
@@ -288,10 +294,10 @@ export default class Prosemirror {
   }
 
   initializeEditorWidgets(rdfaEditorPlugins: RdfaEditorPlugin[]) {
-    const widgetMap: Map<WidgetLocation, InternalWidgetSpec> = new Map();
+    const widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
     rdfaEditorPlugins.forEach((plugin) => {
       plugin.widgets().forEach((widgetSpec) => {
-        widgetMap.set(widgetSpec.desiredLocation, {
+        MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
           ...widgetSpec,
           controller: new ProseController(this),
         });
@@ -341,7 +347,7 @@ export class ProseController {
 
   toggleMark(name: string) {
     this.focus();
-    this.doCommand(toggleMark(rdfaSchema.marks[name]));
+    this.doCommand(toggleMark(this.schema.marks[name]));
   }
 
   focus() {

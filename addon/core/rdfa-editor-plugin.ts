@@ -17,19 +17,23 @@ export interface MarkConfig {
 export default abstract class RdfaEditorPlugin {
   options: unknown;
 
-  constructor(options: unknown) {
-    this.options = options;
-  }
-
   initialize(options?: unknown): Promise<void> | void {
     this.options = options;
   }
 
-  abstract nodes?(): NodeConfig[];
+  nodes(): NodeConfig[] {
+    return [];
+  }
 
-  abstract marks?(): MarkConfig[];
+  marks(): MarkConfig[] {
+    return [];
+  }
 
-  abstract widgets?(): WidgetSpec[];
+  widgets(): WidgetSpec[] {
+    return [];
+  }
 
-  abstract proseMirrorPlugins?(): ProsePlugin[];
+  proseMirrorPlugins(): ProsePlugin[] {
+    return [];
+  }
 }
