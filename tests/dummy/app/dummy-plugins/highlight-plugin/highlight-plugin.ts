@@ -1,68 +1,104 @@
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
-import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import GenTreeWalker from '@lblod/ember-rdfa-editor/utils/gen-tree-walker';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
-import { toFilterSkipFalse } from '@lblod/ember-rdfa-editor/utils/model-tree-walker';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import {
-  isOperationStep,
-  Step,
-} from '@lblod/ember-rdfa-editor/core/state/steps/step';
-
+import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
+import { InputRule, inputRules } from 'prosemirror-inputrules';
+import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 export interface HighlightPluginOptions {
   testKey: string;
 }
 
-export default class HighlightPlugin implements EditorPlugin {
-  controller!: Controller;
+function placeholder(): Plugin {
+  const placeholder: Plugin<DecorationSet> = new Plugin<DecorationSet>({
+    state: {
+      init(_, state: EditorState) {
+        const { doc } = state;
+        const ranges: { start: number; end: number }[] = [];
+        doc.descendants((node, pos) => {
+          if (node.isText && node.text) {
+            const regexp = /test/g;
+            let match: RegExpExecArray | null;
+            while ((match = regexp.exec(node.text)) !== null) {
+              ranges.push({
+                start: pos + match.index,
+                end: pos + match.index + 4,
+              });
+            }
+          }
+        });
+
+        const decorations = ranges.map(({ start, end }) =>
+          Decoration.inline(start, end, { style: 'background: yellow' })
+        );
+        return DecorationSet.create(doc, decorations);
+      },
+      apply(
+        tr: Transaction,
+        set: DecorationSet,
+        oldState: EditorState,
+        newState: EditorState
+      ) {
+        const { doc } = newState;
+        const ranges: { start: number; end: number }[] = [];
+        doc.descendants((node, pos) => {
+          if (node.isText && node.text) {
+            for (const match of node.text.matchAll(/test/g)) {
+              ranges.push({
+                start: pos + match.index!,
+                end: pos + match.index! + 4,
+              });
+            }
+          }
+        });
+
+        const decorations = ranges.map(({ start, end }) =>
+          Decoration.inline(start, end, { style: 'background: yellow' })
+        );
+        return DecorationSet.create(doc, decorations);
+      },
+    },
+    props: {
+      decorations(state: EditorState) {
+        return placeholder.getState(state);
+      },
+    },
+  });
+  // props: {
+  //   decorations: (state) => {
+  //     const decorations: Decoration[] = [];
+  //
+  //     const decorate = (node: PNode, pos: number) => {
+  //       if (
+  //         node.type.isBlock &&
+  //         node.childCount === 0 &&
+  //         state.selection.$anchor.parent !== node
+  //       ) {
+  //         decorations.push(
+  //           Decoration.node(pos, pos + node.nodeSize, {
+  //             class: 'empty-node',
+  //           })
+  //         );
+  //       }
+  //     };
+  //
+  //     state.doc.descendants(decorate);
+  //
+  //     return DecorationSet.create(state.doc, decorations);
+  //   },
+  // },
+  return placeholder;
+}
+
+export default class HighlightPlugin extends RdfaEditorPlugin {
   private logger: Logger = createLogger(this.constructor.name);
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async initialize(
-    transaction: Transaction,
-    controller: Controller,
-    options: HighlightPluginOptions
-  ): Promise<void> {
+  initialize(options?: HighlightPluginOptions): void {
     this.logger('received options: ', options);
-    this.controller = controller;
-    transaction.addTransactionStepListener(this.onTransactionStep);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async willDestroy(transaction: Transaction): Promise<void> {
-    transaction.removeTransactionStepListener(this.onTransactionStep);
-  }
-
-  onTransactionStep = (transaction: Transaction, steps: Step[]) => {
-    if (!steps.some(isOperationStep)) return;
-    for (const { mark, node } of transaction
-      .getMarksManager()
-      .getMarksByOwner(this.name)) {
-      transaction.commands.removeMarkFromNode({ mark, node });
-    }
-
-    const walker = GenTreeWalker.fromSubTree({
-      documentRoot: transaction.currentDocument,
-      root: transaction.currentDocument,
-      filter: toFilterSkipFalse(
-        (node) =>
-          ModelNode.isModelText(node) && node.content.search('test') > -1
-      ),
-    });
-    for (const node of walker.nodes()) {
-      transaction.commands.addMarkToRange({
-        range: transaction.rangeFactory.fromAroundNode(node),
-        markName: 'highlighted',
-        markAttributes: { setBy: this.name },
-      });
-    }
-  };
-
-  get name(): string {
-    return 'highlight';
+  proseMirrorPlugins(): Plugin[] {
+    return [placeholder()];
   }
 }
