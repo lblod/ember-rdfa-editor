@@ -15,19 +15,19 @@ function pluginFactory(plugin: new () => EditorPlugin) {
 }
 
 export function initialize(application: Application) {
-  application.register('plugin:highlight', pluginFactory(HighlightPlugin), {
-    singleton: false,
-  });
-  application.register(
-    'plugin:inline-components',
-    pluginFactory(InlineComponentsPlugin),
-    {
-      singleton: false,
-    }
-  );
-  application.register('plugin:code-mark', pluginFactory(CodeMarkPlugin), {
-    singleton: false,
-  });
+  // application.register('plugin:highlight', pluginFactory(HighlightPlugin), {
+  //   singleton: false,
+  // });
+  // application.register(
+  //   'plugin:inline-components',
+  //   pluginFactory(InlineComponentsPlugin),
+  //   {
+  //     singleton: false,
+  //   }
+  // );
+  // application.register('plugin:code-mark', pluginFactory(CodeMarkPlugin), {
+  //   singleton: false,
+  // });
 }
 
 export default {

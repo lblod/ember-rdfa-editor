@@ -21,6 +21,7 @@ import { View } from '../view';
 import ModelNode from '../model/nodes/model-node';
 import { EditorUtils } from '@lblod/ember-rdfa-editor/core/controllers/view-controller';
 import { MarkInstanceEntry } from '../model/marks/marks-manager';
+import { ProseController } from '../prosemirror';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -39,7 +40,7 @@ export interface WidgetSpec {
 }
 
 export type InternalWidgetSpec = WidgetSpec & {
-  controller: Controller;
+  controller: ProseController;
 };
 
 export default interface Controller {

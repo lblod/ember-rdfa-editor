@@ -5,9 +5,6 @@ import Component from '@glimmer/component';
 import Controller, {
   InternalWidgetSpec,
 } from '@lblod/ember-rdfa-editor/core/controllers/controller';
-import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
-import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/core/model/editor-plugin';
 import {
   createLogger,
   Logger,
@@ -15,19 +12,13 @@ import {
 
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
-import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
-import { AnchorPlugin } from '@lblod/ember-rdfa-editor/plugins/anchor/anchor';
-import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
-import ListPlugin from '@lblod/ember-rdfa-editor/plugins/list/list';
-import RdfaConfirmationPlugin from '@lblod/ember-rdfa-editor/plugins/rdfa-confirmation/rdfa-confirmation';
-import LiveMarkSetPlugin from '@lblod/ember-rdfa-editor/plugins/live-mark-set/live-mark-set';
 import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
-import Transaction from '@lblod/ember-rdfa-editor/core/state/transaction';
-import { isPluginStep } from '@lblod/ember-rdfa-editor/core/state/steps/step';
 import Prosemirror, {
   ProseController,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { getOwner } from '@ember/application';
+import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 
 export type PluginConfig =
   | string
@@ -37,7 +28,7 @@ export type PluginConfig =
     };
 
 export interface ResolvedPluginConfig {
-  instance: EditorPlugin;
+  instance: RdfaEditorPlugin;
   options: unknown;
 }
 
@@ -76,10 +67,7 @@ interface RdfaEditorArgs {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
 
-  @tracked toolbarMiddleWidgets: InternalWidgetSpec[] = [];
-  @tracked toolbarRightWidgets: InternalWidgetSpec[] = [];
-  @tracked sidebarWidgets: InternalWidgetSpec[] = [];
-  @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
+  @tracked controller: ProseController | null = null;
   @tracked toolbarController: ProseController | null = null;
   @tracked inlineComponentController: Controller | null = null;
 
@@ -92,18 +80,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.args.plugins || [];
   }
 
-  get editorPlugins(): ResolvedPluginConfig[] {
-    return this.getPlugins();
-  }
-
   get pasteBehaviour() {
     return this.args.pasteBehaviour ?? 'standard-html';
   }
-
-  /**
-   * editor view
-   */
-  @tracked controller?: Controller;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -123,7 +102,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    * @private
    */
   @action
-  handleRawEditorInit(target: Element) {
+  async handleRawEditorInit(target: Element) {
     // this.controller = new ViewController('rdfaEditorComponent', view);
     // this.updateWidgets();
     // this.toolbarController = new ViewController('toolbar', view);
@@ -136,26 +115,23 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
     // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
     window.__APPLICATION = getOwner(this)!;
-    this.prosemirror = new Prosemirror(target, window.document.baseURI);
+    const initializedPlugins = await this.getPlugins();
+    this.prosemirror = new Prosemirror(
+      target,
+      window.document.baseURI,
+      initializedPlugins
+    );
     this.toolbarController = new ProseController(this.prosemirror);
+    this.controller = new ProseController(this.prosemirror);
     this.editorLoading = false;
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(new ProseController(this.prosemirror));
     }
   }
 
-  getPlugins(): ResolvedPluginConfig[] {
+  async getPlugins(): Promise<RdfaEditorPlugin[]> {
     const pluginConfigs = this.plugins;
-    const plugins: ResolvedPluginConfig[] = [
-      { instance: new BasicStyles(), options: null },
-      { instance: new LumpNodePlugin(), options: null },
-      { instance: new ShowActiveRdfaPlugin(), options: null },
-      { instance: new AnchorPlugin(), options: null },
-      { instance: new TablePlugin(), options: null },
-      { instance: new ListPlugin(), options: null },
-      { instance: new RdfaConfirmationPlugin(), options: null },
-      { instance: new LiveMarkSetPlugin(), options: null },
-    ];
+    const plugins: RdfaEditorPlugin[] = [];
     for (const config of pluginConfigs) {
       let name;
       let options: unknown = null;
@@ -166,9 +142,12 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
         options = config.options;
       }
 
-      const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
+      const plugin = this.owner.lookup(
+        `plugin:${name}`
+      ) as RdfaEditorPlugin | null;
       if (plugin) {
-        plugins.push({ instance: plugin, options });
+        await plugin.initialize(options);
+        plugins.push(plugin);
       } else {
         this.logger(`plugin ${name} not found! Skipping...`);
       }
@@ -176,37 +155,68 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return plugins;
   }
 
+  // getPlugins(): ResolvedPluginConfig[] {
+  //   const pluginConfigs = this.plugins;
+  //   const plugins: ResolvedPluginConfig[] = [
+  //     { instance: new BasicStyles(), options: null },
+  //     { instance: new LumpNodePlugin(), options: null },
+  //     { instance: new ShowActiveRdfaPlugin(), options: null },
+  //     { instance: new AnchorPlugin(), options: null },
+  //     { instance: new TablePlugin(), options: null },
+  //     { instance: new ListPlugin(), options: null },
+  //     { instance: new RdfaConfirmationPlugin(), options: null },
+  //     { instance: new LiveMarkSetPlugin(), options: null },
+  //   ];
+  //   for (const config of pluginConfigs) {
+  //     let name;
+  //     let options: unknown = null;
+  //     if (typeof config === 'string') {
+  //       name = config;
+  //     } else {
+  //       name = config.name;
+  //       options = config.options;
+  //     }
+
+  //     const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
+  //     if (plugin) {
+  //       plugins.push({ instance: plugin, options });
+  //     } else {
+  //       this.logger(`plugin ${name} not found! Skipping...`);
+  //     }
+  //   }
+  //   return plugins;
+  // }
+
   // Toggle RDFA blocks
   @tracked showRdfaBlocks = false;
 
   @action
-  toggleRdfaBlocks() {}
+  toggleRdfaBlocks() {
+    throw new NotImplementedError();
+  }
 
   @action
   updateConfig(key: string, value: Serializable) {
-    if (this.controller) {
-      this.controller.perform((tr) => {
-        tr.setConfig(key, value.toString());
-      });
-    }
+    // if (this.controller) {
+    //   this.controller.perform((tr) => {
+    //     tr.setConfig(key, value.toString());
+    //   });
+    // }
   }
 
-  onTransactionDispatch = (transaction: Transaction) => {
-    if (transaction.steps.some((step) => isPluginStep(step))) {
-      this.updateWidgets();
-    }
-  };
+  get toolbarMiddleWidgets() {
+    return this.controller?.widgets.get('toolbarMiddle') || [];
+  }
 
-  updateWidgets() {
-    if (this.controller) {
-      this.toolbarMiddleWidgets =
-        this.controller.currentState.widgetMap.get('toolbarMiddle') || [];
-      this.toolbarRightWidgets =
-        this.controller.currentState.widgetMap.get('toolbarRight') || [];
-      this.sidebarWidgets =
-        this.controller.currentState.widgetMap.get('sidebar') || [];
-      this.insertSidebarWidgets =
-        this.controller.currentState.widgetMap.get('insertSidebar') || [];
-    }
+  get toolbarRightWidgets() {
+    return this.controller?.widgets.get('toolbarRight') || [];
+  }
+
+  get sidebarWidgets() {
+    return this.controller?.widgets.get('sidebar') || [];
+  }
+
+  get insertSidebarWidgets() {
+    return this.controller?.widgets.get('insertSidebar') || [];
   }
 }
