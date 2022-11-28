@@ -1,8 +1,43 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { Node as PNode } from 'prosemirror-model';
+import { Fragment, Node as PNode, NodeSpec } from 'prosemirror-model';
 import { Decoration, DecorationSet, NodeView } from 'prosemirror-view';
 import { PLACEHOLDER_CLASS } from '@lblod/ember-rdfa-editor/utils/constants';
+import RdfaEditorPlugin, {
+  NodeConfig,
+} from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 
+const placeholderSpec: NodeSpec = {
+  inline: true,
+  content: 'inline*',
+  group: 'inline',
+  attrs: {
+    placeholderText: { default: 'placeholder' },
+  },
+  selectable: false,
+
+  parseDOM: [
+    {
+      tag: 'span',
+
+      getContent() {
+        return Fragment.empty;
+      },
+      getAttrs(node: HTMLElement) {
+        if (node.classList.contains(PLACEHOLDER_CLASS)) {
+          return { placeholderText: node.innerText };
+        }
+        return false;
+      },
+    },
+  ],
+  toDOM(node: PNode) {
+    if (node.childCount > 0) {
+      return ['span', {}, 0];
+    } else {
+      return ['span', { class: PLACEHOLDER_CLASS }, node.attrs.placeholderText];
+    }
+  },
+};
 class PlaceholderView implements NodeView {
   dom: HTMLElement;
   contentDOM: HTMLElement;
@@ -31,7 +66,7 @@ class PlaceholderView implements NodeView {
   }
 }
 
-export default function placeholder(): Plugin {
+function placeholder(): Plugin {
   const placeholder: Plugin<DecorationSet> = new Plugin<DecorationSet>({
     props: {
       nodeViews: {
@@ -77,4 +112,20 @@ export default function placeholder(): Plugin {
   });
 
   return placeholder;
+}
+
+export class PlaceHolderPlugin extends RdfaEditorPlugin {
+  nodes(): NodeConfig[] {
+    return [
+      {
+        name: 'placeholder',
+        spec: placeholderSpec,
+        view: (node) => new PlaceholderView(node),
+      },
+    ];
+  }
+
+  proseMirrorPlugins(): Plugin[] {
+    return [placeholder()];
+  }
 }

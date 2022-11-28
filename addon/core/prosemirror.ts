@@ -26,8 +26,7 @@ import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import tracked from 'tracked-built-ins/-private/decorator';
 import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
-import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
-import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
+import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import { InternalWidgetSpec, WidgetLocation } from './controllers/controller';
 import MapUtils from '../utils/map-utils';
@@ -80,7 +79,6 @@ function initalizeProsePlugins(rdfaEditorPlugins: RdfaEditorPlugin[]) {
         }),
       ],
     }),
-    placeholder(),
     dropCursor(),
     gapCursor(),
     keymap(defaultKeymap(rdfaSchema)),
@@ -100,10 +98,10 @@ function initializeSchema(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   let marks = schema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
+      nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
-      marks = marks.addToStart(markConfig.name, markConfig.spec);
+      marks = marks.addToEnd(markConfig.name, markConfig.spec);
     });
   });
   return new Schema({

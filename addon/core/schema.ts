@@ -241,39 +241,6 @@ const image: NodeSpec = {
     return ['img', { src, alt, title }];
   },
 };
-
-const placeholder: NodeSpec = {
-  inline: true,
-  content: 'inline*',
-  group: 'inline',
-  attrs: {
-    placeholderText: { default: 'placeholder' },
-  },
-  selectable: false,
-
-  parseDOM: [
-    {
-      tag: 'span',
-
-      getContent(node: Node, schema: Schema) {
-        return Fragment.empty;
-      },
-      getAttrs(node: HTMLElement) {
-        if (node.classList.contains(PLACEHOLDER_CLASS)) {
-          return { placeholderText: node.innerText };
-        }
-        return false;
-      },
-    },
-  ],
-  toDOM(node: PNode) {
-    if (node.childCount > 0) {
-      return ['span', {}, 0];
-    } else {
-      return ['span', { class: PLACEHOLDER_CLASS }, node.attrs.placeholderText];
-    }
-  },
-};
 const hard_break: NodeSpec = {
   inline: true,
   group: 'inline',
@@ -287,7 +254,6 @@ const hard_break: NodeSpec = {
 // create a schema with list support.
 export const nodes = {
   doc,
-  placeholder,
   paragraph,
   list_item,
   ...tableNodes({

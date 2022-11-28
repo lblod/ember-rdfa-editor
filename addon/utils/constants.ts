@@ -1,9 +1,5 @@
 import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
 import { SpecAttributes } from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
-import { boldMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/bold';
-import { italicMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/italic';
-import { underlineMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/underline';
-import { strikethroughMarkSpec } from '@lblod/ember-rdfa-editor/plugins/basic-styles/marks/strikethrough';
 import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
 
 // based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
@@ -118,11 +114,5 @@ export const LUMP_NODE_PROPERTY =
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
 export const compatTextAttributeMap: Map<TextAttribute, SpecAttributes> =
-  new Map([
-    ['bold', { spec: boldMarkSpec, attributes: {} }],
-    ['italic', { spec: italicMarkSpec, attributes: {} }],
-    ['underline', { spec: underlineMarkSpec, attributes: {} }],
-    ['strikethrough', { spec: strikethroughMarkSpec, attributes: {} }],
-    ['highlighted', { spec: highlightMarkSpec, attributes: {} }],
-  ]);
+  new Map([['highlighted', { spec: highlightMarkSpec, attributes: {} }]]);
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';
