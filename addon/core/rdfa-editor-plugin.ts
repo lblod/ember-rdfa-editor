@@ -21,15 +21,15 @@ export default abstract class RdfaEditorPlugin {
     this.options = options;
   }
 
-  initialize(options: unknown): Promise<void> | void {
+  initialize(options?: unknown): Promise<void> | void {
     this.options = options;
   }
 
-  abstract nodes(): NodeConfig[];
+  abstract nodes?(): NodeConfig[];
 
-  abstract marks(): MarkConfig[];
+  abstract marks?(): MarkConfig[];
 
-  abstract widgets(): WidgetSpec[];
+  abstract widgets?(): WidgetSpec[];
 
-  abstract proseMirrorPlugins(): ProsePlugin[];
+  abstract proseMirrorPlugins?(): ProsePlugin[];
 }
