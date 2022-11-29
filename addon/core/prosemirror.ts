@@ -110,10 +110,12 @@ function initalizeProsePlugins(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   return proseMirrorPlugins;
 }
 
-function initializeSchema(rdfaEditorPlugins: RdfaEditorPlugin[]) {
-  const schema = rdfaSchema;
-  let nodes = schema.spec.nodes;
-  let marks = schema.spec.marks;
+function extendSchema(
+  baseSchema: Schema,
+  rdfaEditorPlugins: RdfaEditorPlugin[]
+) {
+  let nodes = baseSchema.spec.nodes;
+  let marks = baseSchema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
       nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
@@ -167,10 +169,10 @@ export default class Prosemirror {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
-    this.schema = schema;
+    this.schema = extendSchema(schema, plugins);
     this.view = new EditorView(target, {
       state: EditorState.create({
-        doc: ProseParser.fromSchema(initializeSchema(plugins)).parse(target),
+        doc: ProseParser.fromSchema(this.schema).parse(target),
         plugins: initalizeProsePlugins(plugins),
       }),
       attributes: { class: 'say-editor__inner say-content' },
