@@ -11,15 +11,10 @@ export interface HighlightPluginOptions {
 }
 
 function calculateDecorations(doc: PNode) {
-  const ranges: { start: number; end: number }[] = [];
   const decorations: Decoration[] = [];
   doc.descendants((node, pos) => {
     if (node.isText && node.text) {
       for (const match of node.text.matchAll(/test/g)) {
-        ranges.push({
-          start: pos + match.index!,
-          end: pos + match.index! + 4,
-        });
         decorations.push(
           Decoration.inline(pos + match.index!, pos + match.index! + 4, {
             style: 'background: yellow',
