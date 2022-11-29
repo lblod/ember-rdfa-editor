@@ -28,6 +28,7 @@ import Prosemirror, {
   ProseController,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { getOwner } from '@ember/application';
+import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
 
 export type PluginConfig =
   | string
@@ -136,7 +137,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
     // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
     window.__APPLICATION = getOwner(this)!;
-    this.prosemirror = new Prosemirror(target, window.document.baseURI);
+    this.prosemirror = new Prosemirror(
+      target,
+      rdfaSchema,
+      window.document.baseURI
+    );
+    window.__PM = this.prosemirror;
+    window.__PC = new ProseController(this.prosemirror);
     this.toolbarController = new ProseController(this.prosemirror);
     this.editorLoading = false;
     if (this.args.rdfaEditorInit) {

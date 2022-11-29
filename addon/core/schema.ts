@@ -1,4 +1,5 @@
 import {
+  DOMOutputSpec,
   Fragment,
   MarkSpec,
   Node as PNode,
@@ -6,11 +7,15 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { bulletList, listItem, orderedList } from 'prosemirror-schema-list';
 import { tableNodes } from './table-nodes';
 import { PLACEHOLDER_CLASS } from '@lblod/ember-rdfa-editor/utils/constants';
+import {
+  bullet_list,
+  list_item,
+  ordered_list,
+} from '@lblod/ember-rdfa-editor/core/list-nodes';
 
-const rdfaAttrs = {
+export const rdfaAttrs = {
   vocab: { default: undefined },
   typeof: { default: undefined },
   prefix: { default: undefined },
@@ -21,9 +26,17 @@ const rdfaAttrs = {
   about: { default: undefined },
   resource: { default: undefined },
   content: { default: undefined },
+  datatype: { default: undefined },
+  lang: { default: undefined },
+  xmlns: { default: undefined },
+  src: { default: undefined },
+  id: { default: undefined },
+  role: { default: undefined },
+  inlist: { default: undefined },
+  datetime: { default: undefined },
 };
 
-function getRdfaAttrs(node: Element) {
+export function getRdfaAttrs(node: Element) {
   const vocab = node.attributes.getNamedItem('vocab')?.value;
   const type = node.attributes.getNamedItem('typeof')?.value;
   const prefix = node.attributes.getNamedItem('prefix')?.value;
@@ -34,6 +47,14 @@ function getRdfaAttrs(node: Element) {
   const about = node.attributes.getNamedItem('about')?.value;
   const resource = node.attributes.getNamedItem('resource')?.value;
   const content = node.attributes.getNamedItem('content')?.value;
+  const datatype = node.attributes.getNamedItem('datatype')?.value;
+  const lang = node.attributes.getNamedItem('lang')?.value;
+  const xmlns = node.attributes.getNamedItem('xmlns')?.value;
+  const src = node.attributes.getNamedItem('src')?.value;
+  const id = node.attributes.getNamedItem('id')?.value;
+  const role = node.attributes.getNamedItem('role')?.value;
+  const inlist = node.attributes.getNamedItem('inlist')?.value;
+  const datetime = node.attributes.getNamedItem('datetime')?.value;
   if (
     vocab ||
     type ||
@@ -44,7 +65,15 @@ function getRdfaAttrs(node: Element) {
     href ||
     about ||
     resource ||
-    content
+    content ||
+    datatype ||
+    lang ||
+    xmlns ||
+    src ||
+    id ||
+    role ||
+    inlist ||
+    datetime
   ) {
     return {
       vocab,
@@ -57,6 +86,15 @@ function getRdfaAttrs(node: Element) {
       about,
       resource,
       content,
+      datatype,
+      lang,
+      xmlns,
+      src,
+      id,
+      role,
+      inlist,
+      datetime,
+
       __tag: tagName(node),
     };
   }
@@ -149,26 +187,52 @@ const doc: NodeSpec = {
 const paragraph: NodeSpec = {
   content: 'inline*',
   group: 'block',
-  parseDOM: [{ tag: 'p' }],
+  attrs: { ...rdfaAttrs },
+  // defining: true,
+  parseDOM: [
+    {
+      tag: 'p',
+      getAttrs(node: HTMLElement) {
+        // console.log('parsing', node);
+        const myAttrs = getRdfaAttrs(node);
+        if (myAttrs) {
+          console.log(myAttrs);
+          return myAttrs;
+        }
+        return null;
+      },
+      context: 'block/',
+    },
+  ],
   toDOM() {
+    // console.log("writing", node.attrs);
     return ['p', 0];
   },
 };
+const repaired_block: NodeSpec = {
+  inline: true,
+  content: 'inline*',
+  group: 'inline',
+  attrs: { ...rdfaAttrs },
+  // defining: true,
+  parseDOM: [
+    {
+      tag: 'p, div, h1, h2, h3, h4, h5, h6, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section',
+      getAttrs(node: HTMLElement) {
+        const myAttrs = getRdfaAttrs(node);
+        if (myAttrs) {
+          return myAttrs;
+        }
+        return null;
+      },
+      context: 'inline/',
+    },
+  ],
+  toDOM(node: PNode): DOMOutputSpec {
+    return ['span', { ...node.attrs }, 0];
+  },
+};
 
-const ordered_list: NodeSpec = {
-  ...orderedList,
-  content: 'list_item+',
-  group: 'block',
-};
-const bullet_list: NodeSpec = {
-  ...bulletList,
-  content: 'list_item+',
-  group: 'block',
-};
-const list_item: NodeSpec = {
-  ...listItem,
-  content: 'paragraph block*',
-};
 const inline_rdfa: NodeSpec = {
   inline: true,
   content: 'inline*',
@@ -181,9 +245,13 @@ const inline_rdfa: NodeSpec = {
   },
   parseDOM: [
     {
-      tag: 'span, a',
+      tag: 'span, a, link',
       getAttrs(node: HTMLElement) {
-        return getRdfaAttrs(node);
+        const attrs = getRdfaAttrs(node);
+        if (attrs) {
+          return attrs;
+        }
+        return false;
       },
     },
   ],
@@ -201,7 +269,7 @@ const block_rdfa: NodeSpec = {
   defining: true,
   parseDOM: [
     {
-      tag: 'div, h1, h2, h3, h4, h5, h6',
+      tag: `div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
       getAttrs(node: HTMLElement) {
         return getRdfaAttrs(node);
       },
@@ -228,20 +296,54 @@ const horizontal_rule: NodeSpec = {
   },
 };
 const heading: NodeSpec = {
-  attrs: { level: { default: 1 } },
+  attrs: { level: { default: 1 }, ...rdfaAttrs },
   content: 'inline*',
   group: 'block',
   defining: true,
   parseDOM: [
-    { tag: 'h1', attrs: { level: 1 } },
-    { tag: 'h2', attrs: { level: 2 } },
-    { tag: 'h3', attrs: { level: 3 } },
-    { tag: 'h4', attrs: { level: 4 } },
-    { tag: 'h5', attrs: { level: 5 } },
-    { tag: 'h6', attrs: { level: 6 } },
+    {
+      tag: 'h1',
+      getAttrs(node: HTMLElement) {
+        return { level: 1, ...getRdfaAttrs(node) };
+      },
+    },
+    {
+      tag: 'h2',
+      getAttrs(node: HTMLElement) {
+        return { level: 2, ...getRdfaAttrs(node) };
+      },
+    },
+    {
+      tag: 'h3',
+      getAttrs(node: HTMLElement) {
+        return { level: 3, ...getRdfaAttrs(node) };
+      },
+    },
+    {
+      tag: 'h4',
+      getAttrs(node: HTMLElement) {
+        return { level: 4, ...getRdfaAttrs(node) };
+      },
+    },
+    {
+      tag: 'h5',
+      getAttrs(node: HTMLElement) {
+        return { level: 5, ...getRdfaAttrs(node) };
+      },
+    },
+    {
+      tag: 'h6',
+      getAttrs(node: HTMLElement) {
+        return { level: 6, ...getRdfaAttrs(node) };
+      },
+    },
   ],
   toDOM(node: PNode) {
-    return [`h${node.attrs.level}`, 0];
+    return [
+      `h${(node.attrs.level as number).toString()}`,
+      { ...node.attrs },
+      0,
+    ];
   },
 };
 const code_block: NodeSpec = {
@@ -280,8 +382,7 @@ const image: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    const { src, alt, title } = node.attrs;
-    return ['img', { src, alt, title }];
+    return ['img', node.attrs];
   },
 };
 
@@ -290,6 +391,7 @@ const placeholder: NodeSpec = {
   content: 'inline*',
   group: 'inline',
   attrs: {
+    ...rdfaAttrs,
     placeholderText: { default: 'placeholder' },
   },
   selectable: false,
@@ -298,12 +400,12 @@ const placeholder: NodeSpec = {
     {
       tag: 'span',
 
-      getContent(node: Node, schema: Schema) {
+      getContent() {
         return Fragment.empty;
       },
       getAttrs(node: HTMLElement) {
         if (node.classList.contains(PLACEHOLDER_CLASS)) {
-          return { placeholderText: node.innerText };
+          return { placeholderText: node.innerText, ...getRdfaAttrs(node) };
         }
         return false;
       },
@@ -311,9 +413,13 @@ const placeholder: NodeSpec = {
   ],
   toDOM(node: PNode) {
     if (node.childCount > 0) {
-      return ['span', {}, 0];
+      return ['span', { ...node.attrs }, 0];
     } else {
-      return ['span', { class: PLACEHOLDER_CLASS }, node.attrs.placeholderText];
+      return [
+        'span',
+        { class: PLACEHOLDER_CLASS, ...node.attrs },
+        node.attrs.placeholderText,
+      ];
     }
   },
 };
@@ -330,8 +436,12 @@ const hard_break: NodeSpec = {
 // create a schema with list support.
 export const nodes = {
   doc,
-  placeholder,
   paragraph,
+  placeholder,
+
+  repaired_block,
+
+  inline_rdfa,
   list_item,
   ...tableNodes({
     tableGroup: 'block',
@@ -340,9 +450,9 @@ export const nodes = {
   }),
   ordered_list,
   bullet_list,
-  inline_rdfa,
-  block_rdfa,
   /// A blockquote (`<blockquote>`) wrapping one or more blocks.
+  heading,
+  block_rdfa,
   blockquote,
 
   /// A horizontal rule (`<hr>`).
@@ -369,13 +479,12 @@ export const nodes = {
 
 /// [Specs](#model.MarkSpec) for the marks in the schema.
 export const marks = {
-  /// A link. Has `href` and `title` attributes. `title`
-  /// defaults to the empty string. Rendered and parsed as an `<a>`
-  /// element.
+  // /// A link. Has `href` and `title` attributes. `title`
+  // /// defaults to the empty string. Rendered and parsed as an `<a>`
+  // /// element.
   link: {
     attrs: {
-      href: {},
-      title: { default: null },
+      ...rdfaAttrs,
     },
     inclusive: false,
     parseDOM: [
@@ -383,15 +492,13 @@ export const marks = {
         tag: 'a[href]',
         getAttrs(dom: HTMLElement) {
           return {
-            href: dom.getAttribute('href'),
-            title: dom.getAttribute('title'),
+            ...getRdfaAttrs(dom),
           };
         },
       },
     ],
     toDOM(node) {
-      const { href, title } = node.attrs;
-      return ['a', { href, title }, 0];
+      return ['a', { ...node.attrs }, 0];
     },
   } as MarkSpec,
 
@@ -449,13 +556,6 @@ export const marks = {
   } as MarkSpec,
 };
 
-/// This schema roughly corresponds to the document schema used by
-/// [CommonMark](http://commonmark.org/), minus the list elements,
-/// which are defined in the [`prosemirror-schema-list`](#schema-list)
-/// module.
-///
-/// To reuse elements from this schema, extend or read from its
-/// `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
 export const rdfaSchema = new Schema({
   nodes,
   marks,

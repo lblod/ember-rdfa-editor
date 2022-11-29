@@ -1,17 +1,16 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { EditorView, NodeView } from 'prosemirror-view';
 import {
-  EditorView,
-  NodeView,
-} from 'prosemirror-view';
-import {
+  Attrs,
   DOMParser as ProseParser,
   DOMSerializer,
+  Mark,
   MarkType,
   Node as PNode,
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import {
+import Datastore, {
   EditorStore,
   ProseStore,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
@@ -31,10 +30,11 @@ import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import placeholder from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
+import { createLogger, Logger } from '../utils/logging-utils';
 
 export interface EmberInlineComponent
   extends Component,
-  EmberInlineComponentArgs {
+    EmberInlineComponentArgs {
   appendTo(selector: string | Element): this;
 }
 
@@ -77,7 +77,9 @@ class CounterView implements NodeView {
   node: PNode;
   dom: Element;
   emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Counter @getPos={{this.getPos}} @node={{this.node}} @updateAttribute={{this.updateAttribute}}/>`;
+  template: TemplateFactory = hbs`
+      <InlineComponentsPlugin::Counter @getPos={{this.getPos}} @node={{this.node}}
+                                       @updateAttribute={{this.updateAttribute}}/>`;
 
   constructor(pNode: PNode, view: EditorView, getPos: () => number) {
     this.node = pNode;
@@ -95,7 +97,6 @@ class CounterView implements NodeView {
   }
 
   update(node: PNode) {
-    console.log('UPDATE: ', node.attrs.count);
     if (node.type !== this.node.type) return false;
     this.node = node;
     this.emberComponent.set('node', node);
@@ -142,13 +143,21 @@ export default class Prosemirror {
   root: Element;
   baseIRI: string;
   pathFromRoot: Node[];
+  schema: Schema;
+  private readonly tag: (node: PNode) => string;
+  private readonly children: (node: PNode) => Iterable<PNode>;
+  private readonly attributes: (node: PNode) => Attrs;
+  private readonly isText: (node: PNode) => boolean;
+  private logger: Logger;
 
-  constructor(target: Element, baseIRI: string) {
+  constructor(target: Element, schema: Schema, baseIRI: string) {
+    this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
+    this.schema = schema;
     this.view = new EditorView(target, {
       state: EditorState.create({
-        doc: ProseParser.fromSchema(rdfaSchema).parse(target),
+        doc: ProseParser.fromSchema(schema).parse(target),
         plugins: [
           inputRules({
             rules: [
@@ -162,7 +171,7 @@ export default class Prosemirror {
           placeholder(),
           dropCursor(),
           gapCursor(),
-          keymap(defaultKeymap(rdfaSchema)),
+          keymap(defaultKeymap(schema)),
           keymap(baseKeymap),
           history(),
           tableEditing({ allowTableNodeSelection: false }),
@@ -181,13 +190,17 @@ export default class Prosemirror {
     });
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
+    this.tag = tag(this.schema);
+    this.children = children(this.schema);
+    this.attributes = attributes(this.schema);
+    this.isText = isText(this.schema);
     this.datastore = EditorStore.fromParse<PNode>({
       root: this._state.doc,
       textContent,
-      tag,
-      children,
-      attributes,
-      isText,
+      tag: this.tag,
+      children: this.children,
+      attributes: this.attributes,
+      isText: this.isText,
       getParent,
 
       pathFromDomRoot: this.pathFromRoot,
@@ -210,29 +223,28 @@ export default class Prosemirror {
   dispatch = (tr: Transaction) => {
     const newState = this.state.apply(tr);
 
+    this.view.updateState(newState);
     if (tr.docChanged) {
       this.datastore = EditorStore.fromParse({
         textContent,
-        tag,
-        children,
-        attributes,
-        isText,
+        tag: this.tag,
+        children: this.children,
+        attributes: this.attributes,
+        isText: this.isText,
         getParent,
-
         root: newState.doc,
         pathFromDomRoot: this.pathFromRoot,
         baseIRI: this.baseIRI,
       });
+      this.logger(`Parsed ${this.datastore.size} triples`);
     }
-    console.log("Parsed triples", this.datastore.size);
 
-    this.view.updateState(newState);
     this._state = newState;
   };
 }
 
 export class ProseController {
-  constructor(private pm: Prosemirror) { }
+  constructor(private pm: Prosemirror) {}
 
   toggleMark(name: string) {
     this.focus();
@@ -258,6 +270,7 @@ export class ProseController {
   }
 
   doCommand(command: Command): boolean {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
   }
 
@@ -267,12 +280,14 @@ export class ProseController {
 
   checkAndDoCommand(command: Command): boolean {
     if (command(this.pm.state)) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
     }
     return false;
   }
 
   isMarkActive(markType: MarkType) {
+    return false;
     const { from, $from, to, empty } = this.state.selection;
     if (empty) {
       return !!markType.isInSet(this.state.storedMarks || $from.marks());
@@ -289,6 +304,10 @@ export class ProseController {
     }
   }
 
+  get datastore(): Datastore<PNode> {
+    return this.pm.datastore;
+  }
+
   get schema(): Schema {
     return this.pm.state.schema;
   }
@@ -301,6 +320,8 @@ export class ProseController {
     return '';
   }
 
+  set xmlContent(content: string) {}
+
   get xmlContentPrettified(): string {
     return '';
   }
@@ -312,35 +333,67 @@ export class ProseController {
         document,
       }
     );
-    console.log('FRAGMENT: ', fragment);
     const div = document.createElement('div');
     div.appendChild(fragment);
     return div.innerHTML;
   }
-
-  set xmlContent(content: string) { }
 }
 
 function textContent(node: PNode) {
   return node.textContent;
 }
 
-function isText(node: PNode) {
-  return node.isText;
+function isText(schema: Schema) {
+  return function (node: PNode) {
+    if (getLinkMark(schema, node)) {
+      return false;
+    }
+    return node.isText;
+  };
 }
 
-function children(node: PNode): Iterable<PNode> {
-  const rslt: PNode[] = [];
-  node.forEach((child) => rslt.push(child));
-  return rslt;
+function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
+  if (!schema.marks.link) {
+    return undefined;
+  }
+  const isText = node.isText;
+  if (isText) {
+    return schema.marks.link.isInSet(node.marks);
+  }
+  return undefined;
 }
 
-function tag(node: PNode) {
-  return node.type.name;
+function children(schema: Schema) {
+  return function (node: PNode): Iterable<PNode> {
+    if (node.isText) {
+      const linkMark = getLinkMark(schema, node);
+      if (linkMark) {
+        return [node.mark(linkMark.removeFromSet(node.marks))];
+      }
+    }
+    const rslt: PNode[] = [];
+    node.forEach((child) => rslt.push(child));
+    return rslt;
+  };
 }
 
-function attributes(node: PNode) {
-  return node.attrs;
+function tag(schema: Schema) {
+  return function (node: PNode) {
+    if (getLinkMark(schema, node)) {
+      return 'a';
+    }
+    return node.type.name;
+  };
+}
+
+function attributes(schema: Schema) {
+  return function (node: PNode) {
+    const linkMark = getLinkMark(schema, node);
+    if (linkMark) {
+      return linkMark.attrs;
+    }
+    return node.attrs;
+  };
 }
 
 function getParent(node: PNode, root: PNode): PNode | null {
@@ -348,7 +401,7 @@ function getParent(node: PNode, root: PNode): PNode | null {
     return null;
   }
   let found = false;
-  root.descendants((descendant: PNode, pos, parent: PNode | null) => {
+  root.descendants((descendant: PNode) => {
     if (descendant === node) {
       found = true;
     }
