@@ -20,6 +20,7 @@ import { getOwner } from '@ember/application';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { PlaceHolderPlugin } from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
+import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
 
 export type PluginConfig =
   | string
@@ -119,9 +120,12 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     const initializedPlugins = await this.getPlugins();
     this.prosemirror = new Prosemirror(
       target,
+      rdfaSchema,
       window.document.baseURI,
       initializedPlugins
     );
+    window.__PM = this.prosemirror;
+    window.__PC = new ProseController(this.prosemirror);
     this.toolbarController = new ProseController(this.prosemirror);
     this.controller = new ProseController(this.prosemirror);
     this.editorLoading = false;

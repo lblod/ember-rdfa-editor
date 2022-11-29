@@ -1,6 +1,7 @@
 // Helper for creating a schema that supports tables.
 
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 interface ExtraAttribute {
   default: unknown;
@@ -38,7 +39,7 @@ function getCellAttrs(
       result[key] = value;
     }
   }
-  return result;
+  return { ...getRdfaAttrs(dom), ...result };
 }
 
 function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
@@ -58,39 +59,12 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
       setter(node.attrs[key], attrs);
     }
   }
+  for (const key of Object.keys(rdfaAttrs)) {
+    attrs[key] = node.attrs[key];
+  }
   return attrs;
 }
 
-// :: (Object) → Object
-//
-// This function creates a set of [node
-// specs](http://prosemirror.net/docs/ref/#model.SchemaSpec.nodes) for
-// `table`, `table_row`, and `table_cell` nodes types as used by this
-// module. The result can then be added to the set of nodes when
-// creating a a schema.
-//
-//   options::- The following options are understood:
-//
-//     tableGroup:: ?string
-//     A group name (something like `"block"`) to add to the table
-//     node type.
-//
-//     cellContent:: string
-//     The content expression for table cells.
-//
-//     cellAttributes:: ?Object
-//     Additional attributes to add to cells. Maps attribute names to
-//     objects with the following properties:
-//
-//       default:: any
-//       The attribute's default value.
-//
-//       getFromDOM:: ?(dom.Node) → any
-//       A function to read the attribute's value from a DOM node.
-//
-//       setDOMAttr:: ?(value: any, attrs: Object)
-//       A function to add the attribute's value to an attribute
-//       object that's used to render the cell's DOM.
 interface TableNodeOptions {
   tableGroup?: string;
   cellContent: string;
@@ -120,24 +94,49 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
-      attrs: { class: { default: 'say-table' } },
+      attrs: { ...rdfaAttrs, class: { default: 'say-table' } },
       group: options.tableGroup,
-      parseDOM: [{ tag: 'table' }],
-      toDOM() {
-        return ['table', { class: 'say-table' }, ['tbody', 0]];
+      parseDOM: [
+        {
+          tag: 'table',
+          getAttrs(node: HTMLElement) {
+            const rdfaAttrs = getRdfaAttrs(node);
+            if (rdfaAttrs) {
+              return rdfaAttrs;
+            } else {
+              return null;
+            }
+          },
+        },
+      ],
+      toDOM(node: PNode) {
+        return ['table', { ...node.attrs, class: 'say-table' }, ['tbody', 0]];
       },
     },
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
-      parseDOM: [{ tag: 'tr' }],
-      toDOM() {
-        return ['tr', 0];
+      attrs: { ...rdfaAttrs },
+      parseDOM: [
+        {
+          tag: 'tr',
+          getAttrs(node: HTMLElement) {
+            const rdfaAttrs = getRdfaAttrs(node);
+            if (rdfaAttrs) {
+              return rdfaAttrs;
+            } else {
+              return null;
+            }
+          },
+        },
+      ],
+      toDOM(node: PNode) {
+        return ['tr', node.attrs, 0];
       },
     },
     table_cell: {
       content: options.cellContent,
-      attrs: cellAttrs,
+      attrs: { ...rdfaAttrs, ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
       parseDOM: [
@@ -152,7 +151,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_header: {
       content: options.cellContent,
-      attrs: cellAttrs,
+      attrs: { ...rdfaAttrs, ...cellAttrs },
       tableRole: 'header_cell',
       isolating: true,
       parseDOM: [

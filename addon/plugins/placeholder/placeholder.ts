@@ -5,12 +5,14 @@ import { PLACEHOLDER_CLASS } from '@lblod/ember-rdfa-editor/utils/constants';
 import RdfaEditorPlugin, {
   NodeConfig,
 } from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
+import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 const placeholderSpec: NodeSpec = {
   inline: true,
   content: 'inline*',
   group: 'inline',
   attrs: {
+    ...rdfaAttrs,
     placeholderText: { default: 'placeholder' },
   },
   selectable: false,
@@ -24,7 +26,7 @@ const placeholderSpec: NodeSpec = {
       },
       getAttrs(node: HTMLElement) {
         if (node.classList.contains(PLACEHOLDER_CLASS)) {
-          return { placeholderText: node.innerText };
+          return { placeholderText: node.innerText, ...getRdfaAttrs(node) };
         }
         return false;
       },
@@ -32,9 +34,13 @@ const placeholderSpec: NodeSpec = {
   ],
   toDOM(node: PNode) {
     if (node.childCount > 0) {
-      return ['span', {}, 0];
+      return ['span', { ...node.attrs }, 0];
     } else {
-      return ['span', { class: PLACEHOLDER_CLASS }, node.attrs.placeholderText];
+      return [
+        'span',
+        { class: PLACEHOLDER_CLASS, ...node.attrs },
+        node.attrs.placeholderText,
+      ];
     }
   },
 };

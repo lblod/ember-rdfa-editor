@@ -1,5 +1,6 @@
-import State from '@lblod/ember-rdfa-editor/core/state';
-import Controller from '@lblod/ember-rdfa-editor/core/controllers/controller';
+import Prosemirror, {
+  ProseController,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 type Owner = {
   register(
@@ -13,10 +14,9 @@ type Owner = {
 
 declare global {
   interface Window {
-    __STATE: State;
-    __EDITOR: Controller;
+    __PM: Prosemirror;
+    __PC: ProseController;
     __APPLICATION: Owner;
-    __executeCommand: (commandName: string, ...args: unknown[]) => void;
     setLogFilter: (filter: string) => void;
     clipboardData: DataTransfer;
   }
