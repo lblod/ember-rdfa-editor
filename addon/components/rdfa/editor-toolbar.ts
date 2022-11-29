@@ -1,7 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import ModelSelection from '@lblod/ember-rdfa-editor/core/model/model-selection';
 import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import {
   liftListItem,
@@ -36,7 +35,6 @@ export default class EditorToolbar extends Component<Args> {
   @tracked canInsertList = true;
   @tracked tableAddRows = 2;
   @tracked tableAddColumns = 2;
-  selection: ModelSelection | null = null;
 
   get isBold() {
     return this.controller.isMarkActive(this.controller.schema.marks.strong);

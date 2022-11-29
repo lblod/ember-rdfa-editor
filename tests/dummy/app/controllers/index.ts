@@ -1,8 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
-import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import { tracked, TrackedSet } from 'tracked-built-ins';
-import {ProseController} from "@lblod/ember-rdfa-editor/core/prosemirror";
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;

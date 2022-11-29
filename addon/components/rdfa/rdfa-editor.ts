@@ -2,9 +2,6 @@ import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import Controller, {
-  InternalWidgetSpec,
-} from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import {
   createLogger,
   Logger,
@@ -12,7 +9,6 @@ import {
 
 import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
-import { Serializable } from '@lblod/ember-rdfa-editor/utils/render-spec';
 import Prosemirror, {
   ProseController,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
@@ -71,7 +67,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @tracked controller: ProseController | null = null;
   @tracked toolbarController: ProseController | null = null;
-  @tracked inlineComponentController: Controller | null = null;
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
@@ -201,7 +196,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   @action
-  updateConfig(key: string, value: Serializable) {
+  updateConfig(key: string, value: string) {
     // if (this.controller) {
     //   this.controller.perform((tr) => {
     //     tr.setConfig(key, value.toString());

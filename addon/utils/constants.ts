@@ -1,7 +1,3 @@
-import { highlightMarkSpec } from '@lblod/ember-rdfa-editor/core/model/marks/mark';
-import { SpecAttributes } from '@lblod/ember-rdfa-editor/core/model/marks/marks-registry';
-import { TextAttribute } from '@lblod/ember-rdfa-editor/commands/text-properties/set-text-property-command';
-
 // based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
 // we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
 // we've removed br from the list to be inline with editor behaviour, which treats it as a block
@@ -113,6 +109,4 @@ export const LUMP_NODE_PROPERTY =
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
-export const compatTextAttributeMap: Map<TextAttribute, SpecAttributes> =
-  new Map([['highlighted', { spec: highlightMarkSpec, attributes: {} }]]);
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';

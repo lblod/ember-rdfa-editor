@@ -1,5 +1,5 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
-import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
+import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 import {
   Attrs,
   DOMParser as ProseParser,
@@ -30,9 +30,24 @@ import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
-import { InternalWidgetSpec, WidgetLocation } from './controllers/controller';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
+
+export type WidgetLocation =
+  | 'toolbarMiddle'
+  | 'toolbarRight'
+  | 'sidebar'
+  | 'insertSidebar';
+
+export interface WidgetSpec {
+  componentName: string;
+  desiredLocation: WidgetLocation;
+  widgetArgs?: unknown;
+}
+
+export type InternalWidgetSpec = WidgetSpec & {
+  controller: ProseController;
+};
 
 export interface EmberInlineComponent
   extends Component,
@@ -142,7 +157,13 @@ export default class Prosemirror {
   private readonly isText: (node: PNode) => boolean;
 
   private logger: Logger;
-  constructor(target: Element, schema: Schema, baseIRI: string, plugins: RdfaEditorPlugin[]) {
+
+  constructor(
+    target: Element,
+    schema: Schema,
+    baseIRI: string,
+    plugins: RdfaEditorPlugin[]
+  ) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
@@ -205,7 +226,6 @@ export default class Prosemirror {
   dispatch = (tr: Transaction) => {
     const newState = this.state.apply(tr);
 
-    this.view.updateState(newState);
     if (tr.docChanged) {
       this.datastore = EditorStore.fromParse({
         textContent,
@@ -221,6 +241,7 @@ export default class Prosemirror {
       this.logger(`Parsed ${this.datastore.size} triples`);
     }
 
+    this.view.updateState(newState);
     this._state = newState;
   };
 }

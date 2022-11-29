@@ -1,10 +1,11 @@
+//@ts-nocheck
+/* eslint-disable */
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, triggerKeyEvent } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import RdfaDocument from '@lblod/ember-rdfa-editor/core/controllers/rdfa-document';
 import { getWindowSelection } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { getEditorElement, delayMs } from 'dummy/tests/test-utils';
+import { delayMs, getEditorElement } from 'dummy/tests/test-utils';
 
 module.skip('Integration | InputHandler | delete-handler', function (hooks) {
   setupRenderingTest(hooks);
@@ -13,13 +14,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('capybaras');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
 
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
@@ -39,13 +42,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('capybaras');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
@@ -63,13 +68,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('bar a beer');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
@@ -90,13 +97,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('bar a');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     editor.appendChild(document.createTextNode(' beer'));
@@ -118,13 +127,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('a beer');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     editor.prepend(document.createTextNode('bar '));
@@ -146,13 +157,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('a beer');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     editor.append(document.createTextNode('bar'));
@@ -173,13 +186,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('a beer');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     editor.append(document.createTextNode(''));
@@ -202,13 +217,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer<span></span>bar');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
@@ -230,13 +247,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer<div></div>bar');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
@@ -258,13 +277,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     editor.insertAdjacentHTML('beforeend', '<!--comment-->bar');
     assert.strictEqual(editor.innerHTML, 'beer<!--comment-->bar'); //make sure the comment is included
@@ -287,13 +308,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer<br>bar');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0];
     const selection = getWindowSelection();
@@ -318,13 +341,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer<div><span></span></div>bar');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     assert.strictEqual(editor.innerHTML, 'beer<div><span></span></div>bar'); //make sure this is not removed somehow
     const wordNode = editor.childNodes[0];
@@ -349,13 +374,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('beer<span></span>bar');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const spanNode = editor.childNodes[1];
     const selection = getWindowSelection();
@@ -375,13 +402,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
     this.set('rdfaEditorInit', (editor: RdfaDocument) => {
       editor.setHtmlContent('<div resource="zitting"></div>');
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const divNode = editor.childNodes[0] as Element;
     divNode.appendChild(document.createTextNode('   '));
@@ -406,13 +435,15 @@ module.skip('Integration | InputHandler | delete-handler', function (hooks) {
         '<span property="persoon:gebruikteVoornaam"> Piet </span> Pluk'
       );
     });
-    await render(hbs`<Rdfa::RdfaEditor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
-      @profile="default"
-      class="rdfa-playground"
-      @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true" showRdfaHighlight="true" showRdfaHover="true"}}
-      @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
-    />`);
+    await render(hbs`
+        <Rdfa::RdfaEditor
+                @rdfaEditorInit={{this.rdfaEditorInit}}
+                @profile="default"
+                class="rdfa-playground"
+                @editorOptions={{hash showToggleRdfaAnnotations="true" showInsertButton=null showRdfa="true"
+                                      showRdfaHighlight="true" showRdfaHover="true"}}
+                @toolbarOptions={{hash showTextStyleButtons="true" showListButtons="true" showIndentButtons="true"}}
+        />`);
     const editor = getEditorElement();
     const wordNode = editor.childNodes[0].childNodes[0];
     const selection = getWindowSelection();

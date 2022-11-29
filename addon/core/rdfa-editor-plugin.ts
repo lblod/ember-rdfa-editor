@@ -1,7 +1,7 @@
 import { MarkSpec, NodeSpec } from 'prosemirror-model';
 import { Plugin as ProsePlugin } from 'prosemirror-state';
 import { NodeViewConstructor } from 'prosemirror-view';
-import { WidgetSpec } from './controllers/controller';
+import {WidgetSpec} from "@lblod/ember-rdfa-editor/core/prosemirror";
 
 export interface NodeConfig {
   name: string;

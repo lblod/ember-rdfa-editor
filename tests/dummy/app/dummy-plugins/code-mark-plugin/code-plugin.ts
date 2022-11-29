@@ -1,7 +1,7 @@
-import { WidgetSpec } from '@lblod/ember-rdfa-editor/core/controllers/controller';
 import RdfaEditorPlugin, {
   MarkConfig,
 } from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
+import {WidgetSpec} from "@lblod/ember-rdfa-editor/core/prosemirror";
 
 export default class CodeMarkPlugin extends RdfaEditorPlugin {
   widgets(): WidgetSpec[] {

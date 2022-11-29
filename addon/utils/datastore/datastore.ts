@@ -1,12 +1,8 @@
 import * as RDF from '@rdfjs/types';
-import ModelRange, {
-  RangeContextStrategy,
-} from '@lblod/ember-rdfa-editor/core/model/model-range';
 import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
-  quadHash,
   QuadNodes,
   RdfaParseConfig,
   RdfaParser,
@@ -25,24 +21,9 @@ import {
   PredicateSpec,
   SubjectSpec,
 } from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
-import { TextMatch } from '@lblod/ember-rdfa-editor/utils/match-text';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
-import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { GraphyDataset } from './graphy-dataset';
-import {
-  ModelError,
-  NotImplementedError,
-} from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelNode from '@lblod/ember-rdfa-editor/core/model/nodes/model-node';
 import { Node as PNode } from 'prosemirror-model';
-import {
-  attributes,
-  children,
-  getParent,
-  isText,
-  tag,
-  textContent,
-} from '@lblod/ember-rdfa-editor/utils/model-node-utils';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -179,20 +160,6 @@ export default interface Datastore<N> {
    * Returns a generator of current relevant quads
    */
   asQuads(): Generator<RDF.Quad>;
-
-  searchTextIn(whichTerm: WhichTerm, regex: RegExp): TextMatch[];
-}
-
-export interface LegacyStore extends Datastore<ModelNode> {
-  /**
-   * Transformer method.
-   * Filters out any triples of which their subject does not have a node within the given range's context nodes
-   * The definition of a range's context nodes depends on the strategy.
-   * More info at {@link ModelRange.contextNodes}
-   * @param range
-   * @param strategy
-   */
-  limitToRange(range: ModelRange, strategy?: RangeContextStrategy): LegacyStore;
 }
 
 export interface ProseStore extends Datastore<PNode> {}
@@ -530,31 +497,6 @@ export class EditorStore<N> implements Datastore<N> {
     );
   }
 
-  searchTextIn(_whichTerm: WhichTerm, _regex: RegExp): TextMatch[] {
-    throw new NotImplementedError();
-    // const results = [];
-    // let mapping: TermMapping<RDF.Term>;
-    // if (whichTerm === 'subject') {
-    //   mapping = this.asSubjectNodeMapping();
-    // } else if (whichTerm === 'predicate') {
-    //   mapping = this.asPredicateNodeMapping();
-    // } else {
-    //   mapping = this.asObjectNodeMapping();
-    // }
-    // for (const node of mapping.nodes()) {
-    //   let searchRange;
-    //   // we test if the node is root, which will be the case when the
-    //   // rdfa knowledge is defined above the document root.
-    //   if (node.getParent(this._documentRoot)) {
-    //     searchRange = ModelRange.fromAroundNode(this._documentRoot, node);
-    //   } else {
-    //     searchRange = ModelRange.fromInNode(this._documentRoot, node);
-    //   }
-    //   results.push(...matchText(searchRange, regex));
-    // }
-    // return results;
-  }
-
   protected fromDataset(documentRoot: N, dataset: RDF.Dataset): Datastore<N> {
     return new EditorStore<N>({
       documentRoot,
@@ -594,152 +536,4 @@ export class EditorStore<N> implements Datastore<N> {
   private getPrefix = (prefix: string): string | null => {
     return this._prefixMapping.get(prefix) || null;
   };
-}
-
-export class LegacyEditorStore
-  extends EditorStore<ModelNode>
-  implements LegacyStore
-{
-  constructor(config: DatastoreConfig<ModelNode>) {
-    const root = config.documentRoot;
-    if (!ModelNode.isModelElement(root)) {
-      throw new ModelError('root must be an element');
-    }
-    super({
-      ...config,
-      getParent: (node: ModelNode) => node.getParent(root),
-    });
-  }
-
-  protected fromDataset(
-    documentRoot: ModelNode,
-    dataset: RDF.Dataset
-  ): LegacyEditorStore {
-    return new LegacyEditorStore({
-      documentRoot,
-      dataset,
-      nodeToSubject: this._nodeToSubject,
-      subjectToNodes: this._subjectToNodes,
-      predicateToNodes: this._predicateToNodes,
-      nodeToPredicates: this._nodeToPredicates,
-      nodeToObjects: this._nodeToObjects,
-      objectToNodes: this._objectToNodes,
-      prefixMapping: this._prefixMapping,
-      quadToNodes: this._quadToNodes,
-    });
-  }
-
-  transformDataset(
-    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
-  ): LegacyStore {
-    return this.fromDataset(
-      this._documentRoot,
-      action(this.dataset, this.termConverter)
-    );
-  }
-
-  limitToRange(range: ModelRange, strategy: RangeContextStrategy): LegacyStore {
-    const contextNodes = new Set(range.contextNodes(strategy));
-    return this.transformDataset((dataset) => {
-      return dataset.filter((quad) => {
-        const quadNodes = this._quadToNodes.get(quadHash(quad));
-        if (quadNodes) {
-          const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
-          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
-          const hasPredicateNode = SetUtils.hasAny(
-            contextNodes,
-            ...predicateNodes
-          );
-          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
-          return hasSubjectNode && hasPredicateNode && hasObjectNode;
-        } else {
-          return false;
-        }
-      });
-    });
-  }
-
-  private subjectsForRange(
-    range: ModelRange,
-    strategy: RangeContextStrategy
-  ): Set<string> {
-    const subjects = new Set<string>();
-    for (const node of range.contextNodes(strategy)) {
-      const subject = this._nodeToSubject.get(node);
-      if (subject) {
-        subjects.add(subject.value);
-      }
-    }
-    return subjects;
-  }
-}
-
-export function emptyLegacyDatastore(documentRoot: ModelNode): LegacyStore {
-  const subjectToNodes = new Map<string, ModelNode[]>();
-  const nodeToSubject = new Map<ModelNode, ModelQuadSubject<ModelNode>>();
-  const prefixMapping = new Map<string, string>();
-  const nodeToPredicates = new Map<
-    ModelNode,
-    Set<ModelQuadPredicate<ModelNode>>
-  >();
-  const predicateToNodes = new Map<string, ModelNode[]>();
-  const nodeToObjects = new Map<ModelNode, Set<ModelQuadObject<ModelNode>>>();
-  const objectToNodes = new Map<string, ModelNode[]>();
-  const quadToNodes = new Map<string, QuadNodes<ModelNode>>();
-  return new LegacyEditorStore({
-    documentRoot,
-    dataset: new GraphyDataset(),
-    subjectToNodes,
-    nodeToObjects,
-    prefixMapping,
-    nodeToPredicates,
-    nodeToSubject,
-    quadToNodes,
-    objectToNodes,
-    predicateToNodes,
-  });
-}
-
-export function legacyDatastore(
-  config: Omit<
-    RdfaParseConfig<ModelNode>,
-    'children' | 'tag' | 'attributes' | 'textContent' | 'isText' | 'getParent'
-  >
-) {
-  const {
-    dataset,
-    subjectToNodesMapping,
-    nodeToSubjectMapping,
-    objectToNodesMapping,
-    nodeToObjectsMapping,
-    predicateToNodesMapping,
-    nodeToPredicatesMapping,
-    quadToNodesMapping,
-    seenPrefixes,
-  } = RdfaParser.parse<ModelNode>({
-    ...config,
-    tag,
-    children,
-    textContent,
-    isText,
-    attributes,
-    getParent,
-  });
-  const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
-  for (const [key, value] of seenPrefixes.entries()) {
-    prefixMap.set(key, value);
-  }
-
-  return new LegacyEditorStore({
-    documentRoot: config.root,
-    dataset,
-    subjectToNodes: subjectToNodesMapping,
-    nodeToSubject: nodeToSubjectMapping,
-    prefixMapping: prefixMap,
-    objectToNodes: objectToNodesMapping,
-    nodeToObjects: nodeToObjectsMapping,
-    predicateToNodes: predicateToNodesMapping,
-    nodeToPredicates: nodeToPredicatesMapping,
-    quadToNodes: quadToNodesMapping,
-  });
 }

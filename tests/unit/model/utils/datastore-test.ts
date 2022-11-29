@@ -1,9 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
+//TODO
+/* eslint-disable */
 import { module, test, todo } from 'qunit';
 import { vdom } from '@lblod/ember-rdfa-editor/utils/xml-utils';
-import { legacyDatastore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
-import ModelRange from '@lblod/ember-rdfa-editor/core/model/model-range';
 import { AssertionError } from '@lblod/ember-rdfa-editor/utils/errors';
-import ModelElement from '@lblod/ember-rdfa-editor/core/model/nodes/model-element';
+import { EditorStore } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
+import { Node as PNode } from 'prosemirror-model';
 
 module('Unit | model | utils | datastore-test', function () {
   test('simple match gives correct nodes', function (assert) {
@@ -30,8 +33,8 @@ module('Unit | model | utils | datastore-test', function () {
       </div>
     `;
 
-    const datastore = legacyDatastore({
-      root: root as ModelElement,
+    const datastore = EditorStore.fromParse<PNode>({
+      root,
       baseIRI: 'http://example.com/',
     });
     const matched = datastore.match(null, 'a', 'schema:TechArticle');
