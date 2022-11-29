@@ -3,6 +3,7 @@ import {
   ModelQuadObject,
   ModelQuadPredicate,
   ModelQuadSubject,
+  quadHash,
   QuadNodes,
   RdfaParseConfig,
   RdfaParser,
@@ -24,6 +25,8 @@ import {
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from './graphy-dataset';
 import { Node as PNode } from 'prosemirror-model';
+import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
+import { EditorState } from 'prosemirror-state';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -82,7 +85,7 @@ export default interface Datastore<N> {
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
     object?: ObjectSpec
-  ): Datastore<N>;
+  ): this;
 
   /**
    * Transformer method.
@@ -94,7 +97,7 @@ export default interface Datastore<N> {
    */
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
-  ): Datastore<N>;
+  ): this;
 
   /** Transformer method.
    * Allows specifying of custom prefixes for use in the {@link match} method
@@ -161,8 +164,6 @@ export default interface Datastore<N> {
    */
   asQuads(): Generator<RDF.Quad>;
 }
-
-export interface ProseStore extends Datastore<PNode> {}
 
 interface DatastoreConfig<N> {
   documentRoot: N;
@@ -295,7 +296,7 @@ export class EditorStore<N> implements Datastore<N> {
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
     object?: ObjectSpec
-  ): Datastore<N> {
+  ): this {
     const convertedSubject =
       typeof subject === 'string'
         ? conciseToRdfjs(subject, this.getPrefix)
@@ -490,15 +491,18 @@ export class EditorStore<N> implements Datastore<N> {
 
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
-  ): Datastore<N> {
+  ): this {
     return this.fromDataset(
       this._documentRoot,
       action(this.dataset, this.termConverter)
     );
   }
 
-  protected fromDataset(documentRoot: N, dataset: RDF.Dataset): Datastore<N> {
-    return new EditorStore<N>({
+  protected fromDataset(documentRoot: N, dataset: RDF.Dataset): this {
+    const Clazz = this.constructor as new (
+      config: GenericDatastoreConfig<N>
+    ) => this;
+    return new Clazz({
       documentRoot,
       dataset,
       nodeToSubject: this._nodeToSubject,
@@ -536,4 +540,67 @@ export class EditorStore<N> implements Datastore<N> {
   private getPrefix = (prefix: string): string | null => {
     return this._prefixMapping.get(prefix) || null;
   };
+}
+
+export interface ProseDatastore extends Datastore<PNode> {
+  limitToRange(state: EditorState, start: number, end: number): ProseStore;
+}
+
+export class ProseStore extends EditorStore<PNode> implements ProseDatastore {
+  limitToRange(state: EditorState, start: number, end: number): ProseStore {
+    const contextNodes = new Set();
+    state.doc.nodesBetween(start, end, (node) => {
+      contextNodes.add(node);
+    });
+
+    return this.transformDataset((dataset) => {
+      return dataset.filter((quad) => {
+        const quadNodes = this._quadToNodes.get(quadHash(quad));
+        if (quadNodes) {
+          const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
+          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
+          const hasPredicateNode = SetUtils.hasAny(
+            contextNodes,
+            ...predicateNodes
+          );
+          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
+          return hasSubjectNode && hasPredicateNode && hasObjectNode;
+        } else {
+          return false;
+        }
+      });
+    });
+  }
+}
+
+export function proseStoreFromParse(config: RdfaParseConfig<PNode>) {
+  const {
+    dataset,
+    subjectToNodesMapping,
+    nodeToSubjectMapping,
+    objectToNodesMapping,
+    nodeToObjectsMapping,
+    predicateToNodesMapping,
+    nodeToPredicatesMapping,
+    quadToNodesMapping,
+    seenPrefixes,
+  } = RdfaParser.parse(config);
+  const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
+  for (const [key, value] of seenPrefixes.entries()) {
+    prefixMap.set(key, value);
+  }
+
+  return new ProseStore({
+    documentRoot: config.root,
+    dataset,
+    subjectToNodes: subjectToNodesMapping,
+    nodeToSubject: nodeToSubjectMapping,
+    prefixMapping: prefixMap,
+    objectToNodes: objectToNodesMapping,
+    nodeToObjects: nodeToObjectsMapping,
+    predicateToNodes: predicateToNodesMapping,
+    nodeToPredicates: nodeToPredicatesMapping,
+    quadToNodes: quadToNodesMapping,
+    getParent: config.getParent,
+  });
 }

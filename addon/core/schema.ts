@@ -199,7 +199,7 @@ const inline_rdfa: NodeSpec = {
   },
   parseDOM: [
     {
-      tag: 'span, a, link',
+      tag: 'span, link',
       getAttrs(node: HTMLElement) {
         const attrs = getRdfaAttrs(node);
         if (attrs) {
@@ -400,6 +400,8 @@ export const marks = {
     attrs: {
       ...rdfaAttrs,
     },
+    excludes: 'linkmarks',
+    group: 'linkmarks',
     inclusive: false,
     parseDOM: [
       {

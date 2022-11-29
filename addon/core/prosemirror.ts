@@ -10,9 +10,9 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import Datastore, {
-  EditorStore,
+import {
   ProseStore,
+  proseStoreFromParse,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
@@ -32,6 +32,7 @@ import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
+import { filter, objectValues } from 'iter-tools';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -121,7 +122,7 @@ function extendSchema(
       nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
-      marks = marks.addToEnd(markConfig.name, markConfig.spec);
+      marks = marks.addToStart(markConfig.name, markConfig.spec);
     });
   });
   return new Schema({
@@ -146,7 +147,7 @@ function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
 
 export default class Prosemirror {
   view: EditorView;
-  @tracked _state;
+  @tracked _state: EditorState;
   @tracked datastore: ProseStore;
   @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
   root: Element;
@@ -185,7 +186,7 @@ export default class Prosemirror {
     this.children = children(this.schema);
     this.attributes = attributes(this.schema);
     this.isText = isText(this.schema);
-    this.datastore = EditorStore.fromParse<PNode>({
+    this.datastore = proseStoreFromParse({
       root: this._state.doc,
       textContent,
       tag: this.tag,
@@ -229,7 +230,7 @@ export default class Prosemirror {
     const newState = this.state.apply(tr);
 
     if (tr.docChanged) {
-      this.datastore = EditorStore.fromParse({
+      this.datastore = proseStoreFromParse({
         textContent,
         tag: this.tag,
         children: this.children,
@@ -309,7 +310,7 @@ export class ProseController {
     }
   }
 
-  get datastore(): Datastore<PNode> {
+  get datastore(): ProseStore {
     return this.pm.datastore;
   }
 
@@ -323,6 +324,10 @@ export class ProseController {
 
   get state(): EditorState {
     return this.pm.state;
+  }
+
+  get view(): EditorView {
+    return this.pm.view;
   }
 
   get xmlContent(): string {
@@ -366,9 +371,18 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
   if (!schema.marks.link) {
     return undefined;
   }
+  const linkMarks = filter(
+    (markType: MarkType) => markType.spec.group === 'linkmarks',
+    objectValues(schema.marks)
+  );
   const isText = node.isText;
   if (isText) {
-    return schema.marks.link.isInSet(node.marks);
+    for (const type of linkMarks) {
+      const mark = type.isInSet(node.marks);
+      if (mark) {
+        return mark;
+      }
+    }
   }
   return undefined;
 }
