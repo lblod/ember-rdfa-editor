@@ -8,7 +8,7 @@
         data-test-button-id='undo-button'
         title={{t 'ember-rdfa-editor.undo'}}
       >
-        <AuIcon @icon='undo' @ariaHidden={{true}} @size='large' />
+        <AuIcon @icon='undo' @ariaHidden={{true}} @size='large'/>
         <span class='au-u-hidden-visually'>
           Undo
         </span>
@@ -16,50 +16,27 @@
     </div>
     <div class='say-toolbar__group'>
       {{#if @showTextStyleButtons}}
-        <button
-          type='button'
-          class='say-toolbar__button {{if this.isBold "is-active"}}'
-          {{on 'click' this.toggleBold}}
-          title={{t 'ember-rdfa-editor.bold'}}
-        >
-          <AuIcon @icon='bold' @ariaHidden={{true}} @size='large' />
-          <span class='au-u-hidden-visually'>
-            Bold
-          </span>
-        </button>
-        <button
-          type='button'
-          class='say-toolbar__button {{if this.isItalic " is-active"}}'
-          {{on 'click' this.toggleItalic}}
-          title={{t 'ember-rdfa-editor.italic'}}
-        >
-          <AuIcon @icon='italic' @ariaHidden={{true}} @size='large' />
-          <span class='au-u-hidden-visually'>
-            Italic
-          </span>
-        </button>
-        <button
-          type='button'
-          class='say-toolbar__button {{if this.isUnderline "is-active"}}'
-          {{on 'click' this.toggleUnderline}}
-          title={{t 'ember-rdfa-editor.underline'}}
-        >
-          <AuIcon @icon='underlined' @ariaHidden={{true}} @size='large' />
-          <span class='au-u-hidden-visually'>
-            Underline
-          </span>
-        </button>
-        <button
-          type='button'
-          class='say-toolbar__button {{if this.isStrikethrough "is-active"}}'
-          {{on 'click' this.toggleStrikethrough}}
-          title={{t 'ember-rdfa-editor.strikethrough'}}
-        >
-          <AuIcon @icon='strikethrough' @ariaHidden={{true}} @size='large' />
-          <span class='au-u-hidden-visually'>
-            Strikethrough
-          </span>
-        </button>
+
+        <Rdfa::ToolbarIcon
+          @active={{this.isBold}}
+          @title={{t 'ember-rdfa-editor.bold'}}
+          @icon="bold"
+          {{on 'click' this.toggleBold}}/>
+        <Rdfa::ToolbarIcon
+          @active={{this.isItalic}}
+          @title={{t 'ember-rdfa-editor.italic'}}
+          @icon="italic"
+          {{on 'click' this.toggleItalic}}/>
+        <Rdfa::ToolbarIcon
+          @active={{this.isUnderline}}
+          @title={{t 'ember-rdfa-editor.underline'}}
+          @icon="underlined"
+          {{on 'click' this.toggleUnderline}}/>
+        <Rdfa::ToolbarIcon
+          @active={{this.isStrikethrough}}
+          @title={{t 'ember-rdfa-editor.strikethrough'}}
+          @icon="strikethrough"
+          {{on 'click' this.toggleStrikethrough}}/>
       {{/if}}
     </div>
     {{#if
@@ -69,59 +46,34 @@
     }}
       <div class='say-toolbar__group'>
         {{#if (and @showListButtons this.canInsertList)}}
-          <button
-            type='button'
-            class='say-toolbar__button {{if this.isInList "is-active"}}'
-            {{on 'click' this.toggleUnorderedList}}
-            data-test-button-id='unordered-list'
-            title={{t 'ember-rdfa-editor.unordered-list'}}
-          >
-            <AuIcon @icon='unordered-list' @ariaHidden={{true}} @size='large' />
-            <span class='au-u-hidden-visually'>
-              Unordered list
-            </span>
-          </button>
-          {{!--
-    <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
-       <AuIcon @icon="ordered-list" @ariaHidden={{true}} @size="large" />
-      <span class="au-u-hidden-visually">
-        Ordered list
-      </span>
-    </button>
+
+          <Rdfa::ToolbarIcon
+            @active={{this.isInList}}
+            @title={{t 'ember-rdfa-editor.unordered-list'}}
+            @icon="unordered-list"
+            {{on 'click' this.toggleUnorderedList}}/>
+        {{!--
+  <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
+     <AuIcon @icon="ordered-list" @ariaHidden={{true}} @size="large" />
+    <span class="au-u-hidden-visually">
+      Ordered list
+    </span>
+  </button>
 --}}
         {{/if}}
         {{#if @showIndentButtons}}
           {{#if this.canUnindent}}
-            <button
-              type='button'
-              class='say-toolbar__button'
-              {{on 'click' this.insertUnindent}}
-              data-test-button-id='insert-unindent'
-              title={{t 'ember-rdfa-editor.unindent-list'}}
-            >
-              <AuIcon
-                @icon='reverse-indent'
-                @ariaHidden={{true}}
-                @size='large'
-              />
-              <span class='au-u-hidden-visually'>
-                Reverse indent
-              </span>
-            </button>
+
+            <Rdfa::ToolbarIcon
+              @title={{t 'ember-rdfa-editor.unindent-list'}}
+              @icon="reverse-indent"
+              {{on 'click' this.insertUnindent}}/>
           {{/if}}
           {{#if this.canIndent}}
-            <button
-              type='button'
-              class='say-toolbar__button'
-              data-test-button-id='insert-indent'
-              {{on 'click' this.insertIndent}}
-              title={{t 'ember-rdfa-editor.indent-list'}}
-            >
-              <AuIcon @icon='indent' @ariaHidden={{true}} @size='large' />
-              <span class='au-u-hidden-visually'>
-                Indent
-              </span>
-            </button>
+            <Rdfa::ToolbarIcon
+              @title={{t 'ember-rdfa-editor.indent-list'}}
+              @icon="indent"
+              {{on 'click' this.insertIndent}}/>
           {{/if}}
         {{/if}}
       </div>
@@ -202,8 +154,8 @@
             <div role='menuitem' class='say-dropdown__menu-with-inputs'>
               {{t 'ember-rdfa-editor.rows'}}
               <AuLabel for='editor-table-rows' class='au-u-hidden-visually'>{{t
-                  'ember-rdfa-editor.rows'
-                }}</AuLabel>
+                'ember-rdfa-editor.rows'
+              }}</AuLabel>
               <Input
                 id='editor-table-rows'
                 class='say-input say-input--small'
@@ -214,10 +166,10 @@
           </div>
           <Menu.Item
             @menuAction={{fn
-              this.insertTable
-              this.tableAddRows
-              this.tableAddColumns
-            }}
+            this.insertTable
+            this.tableAddRows
+            this.tableAddColumns
+          }}
             title={{t 'ember-rdfa-editor.insert-table'}}
           >
             <AuIcon @icon='table-insert' @ariaHidden={{true}} />

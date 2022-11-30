@@ -1,11 +1,6 @@
-<button
-  type='button'
-  class='say-toolbar__button {{if this.isCode "is-active"}}'
+<Rdfa::ToolbarIcon
+  @active={{this.isCode}}
+  @title="Toggle code mark"
+  @icon="html"
   {{on 'click' this.toggleCode}}
-  title='Toggle code mark'
->
-  <AuIcon @icon='html' @ariaHidden={{true}} @size='large' />
-  <span class='au-u-hidden-visually'>
-    Code
-  </span>
-</button>
+/>

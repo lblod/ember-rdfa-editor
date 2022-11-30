@@ -1,0 +1,11 @@
+<button
+  type='button'
+  class='say-toolbar__button {{if @active "is-active"}}'
+  title={{@title}}
+  ...attributes
+>
+  <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
+  <span class='au-u-hidden-visually'>
+    {{@title}}
+  </span>
+</button>
