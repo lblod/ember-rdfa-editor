@@ -29,6 +29,20 @@
 
 
 
+
+## 1.0.0-alpha.4 (2022-11-30)
+
+#### :rocket: Enhancement
+* [#410](https://github.com/lblod/ember-rdfa-editor/pull/410) feature/simple positions ([@abeforgit](https://github.com/abeforgit))
+
+#### :memo: Documentation
+* [#400](https://github.com/lblod/ember-rdfa-editor/pull/400) Correct the description for the text-only paste behaviour. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 1.0.0-alpha.3 (2022-10-06)
 
 #### :boom: Breaking Change
