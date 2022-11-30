@@ -87,7 +87,10 @@ export function emberComponent(
   return { node, component };
 }
 
-function initalizeProsePlugins(rdfaEditorPlugins: RdfaEditorPlugin[]) {
+function initalizeProsePlugins(
+  schema: Schema,
+  rdfaEditorPlugins: RdfaEditorPlugin[]
+) {
   const proseMirrorPlugins = [
     inputRules({
       rules: [
@@ -100,7 +103,7 @@ function initalizeProsePlugins(rdfaEditorPlugins: RdfaEditorPlugin[]) {
     }),
     dropCursor(),
     gapCursor(),
-    keymap(defaultKeymap(rdfaSchema)),
+    keymap(defaultKeymap(schema)),
     keymap(baseKeymap),
     history(),
     tableEditing({ allowTableNodeSelection: false }),
@@ -174,7 +177,7 @@ export default class Prosemirror {
     this.view = new EditorView(target, {
       state: EditorState.create({
         doc: ProseParser.fromSchema(this.schema).parse(target),
-        plugins: initalizeProsePlugins(plugins),
+        plugins: initalizeProsePlugins(this.schema, plugins),
       }),
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: initializeNodeViewConstructors(plugins),
