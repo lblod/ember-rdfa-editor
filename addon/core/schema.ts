@@ -6,7 +6,6 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { tableNodes } from './table-nodes';
 import {
   bullet_list,
   list_item,
@@ -359,11 +358,6 @@ export const nodes = {
 
   inline_rdfa,
   list_item,
-  ...tableNodes({
-    tableGroup: 'block',
-    cellContent: 'inline+',
-    cellAttributes: {},
-  }),
   ordered_list,
   bullet_list,
   /// A blockquote (`<blockquote>`) wrapping one or more blocks.

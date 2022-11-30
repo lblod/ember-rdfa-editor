@@ -25,13 +25,12 @@ import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
-import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
-import { filter, objectValues } from 'iter-tools';
+import { execPipe, filter, flatMap, map, objectValues } from 'iter-tools';
 import applyDevTools from "prosemirror-dev-tools";
 
 export type WidgetLocation =
@@ -103,10 +102,15 @@ function initalizeProsePlugins(
     }),
     dropCursor(),
     gapCursor(),
+    ...execPipe(
+      rdfaEditorPlugins,
+      flatMap((plugin) => plugin.keymaps()),
+      map((pluginMap) => keymap(pluginMap(schema)))
+    ),
+
     keymap(defaultKeymap(schema)),
     keymap(baseKeymap),
     history(),
-    tableEditing({ allowTableNodeSelection: false }),
   ];
   rdfaEditorPlugins.forEach((plugin) => {
     proseMirrorPlugins.push(...plugin.proseMirrorPlugins());
@@ -122,7 +126,7 @@ function extendSchema(
   let marks = baseSchema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
+      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
       marks = marks.addToStart(markConfig.name, markConfig.spec);

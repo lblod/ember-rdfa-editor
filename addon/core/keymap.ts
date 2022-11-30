@@ -1,8 +1,9 @@
-import { baseKeymap } from 'prosemirror-commands';
 import { redo, undo } from 'prosemirror-history';
 import { splitListItem } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
+
+export type Keymap = (schema: Schema) => Record<string, Command>;
 
 export function defaultKeymap(schema: Schema): Record<string, Command> {
   return {

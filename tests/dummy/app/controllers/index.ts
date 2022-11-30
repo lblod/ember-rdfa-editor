@@ -8,6 +8,7 @@ export default class IndexController extends Controller {
   @tracked plugins = new TrackedSet([
     'code-mark',
     'inline-components',
+    'table',
     {
       name: 'highlight',
       options: {

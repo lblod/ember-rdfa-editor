@@ -17,6 +17,7 @@ import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { PlaceHolderPlugin } from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
 import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
+import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
 
 export type PluginConfig =
   | string
@@ -133,7 +134,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   async getPlugins(): Promise<RdfaEditorPlugin[]> {
     const pluginConfigs = this.plugins;
-    const plugins: RdfaEditorPlugin[] = [new PlaceHolderPlugin()];
+    const plugins: RdfaEditorPlugin[] = [
+      new PlaceHolderPlugin(),
+      new TablePlugin(),
+    ];
     for (const config of pluginConfigs) {
       let name;
       let options: unknown = null;

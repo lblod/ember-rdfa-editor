@@ -2,6 +2,7 @@ import { MarkSpec, NodeSpec } from 'prosemirror-model';
 import { Plugin as ProsePlugin } from 'prosemirror-state';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { WidgetSpec } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { Keymap } from '@lblod/ember-rdfa-editor/core/keymap';
 
 export interface NodeConfig {
   name: string;
@@ -30,6 +31,10 @@ export default abstract class RdfaEditorPlugin {
   }
 
   widgets(): WidgetSpec[] {
+    return [];
+  }
+
+  keymaps(): Keymap[] {
     return [];
   }
 
