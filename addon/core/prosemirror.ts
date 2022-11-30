@@ -15,7 +15,6 @@ import {
   proseStoreFromParse,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
 import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line ember/no-classic-components
@@ -25,7 +24,7 @@ import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
-import tracked from 'tracked-built-ins/-private/decorator';
+import { tracked } from '@glimmer/tracking';
 import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { TemplateFactory } from 'ember-cli-htmlbars';
@@ -253,7 +252,12 @@ export default class Prosemirror {
 }
 
 export class ProseController {
-  constructor(private pm: Prosemirror) {}
+  @tracked
+  private pm: Prosemirror;
+
+  constructor(pm: Prosemirror) {
+    this.pm = pm;
+  }
 
   toggleMark(name: string) {
     this.focus();
@@ -296,7 +300,6 @@ export class ProseController {
   }
 
   isMarkActive(markType: MarkType) {
-    return false;
     const { from, $from, to, empty } = this.state.selection;
     if (empty) {
       return !!markType.isInSet(this.state.storedMarks || $from.marks());
