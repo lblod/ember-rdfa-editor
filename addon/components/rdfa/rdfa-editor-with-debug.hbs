@@ -55,7 +55,11 @@
           class='rdfa-playground'
           @rdfaEditorInit={{this.rdfaEditorInitFromArg}}
           @plugins={{@plugins}}
-          @profile='default'
+          @schema={{@schema}}
+          @widgets={{@widgets}}
+          @nodeViews={{@nodeViews}}
+          @baseIRI={{@baseIRI}}
+          @initializers={{@initializers}}
           @editorOptions={{@editorOptions}}
           @toolbarOptions={{@toolbarOptions}}
           @pasteBehaviour={{this.pasteBehaviour}}

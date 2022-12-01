@@ -1,4 +1,4 @@
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 import {
   Attrs,
@@ -19,7 +19,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
-import { emDash, InputRule, inputRules } from 'prosemirror-inputrules';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
@@ -30,7 +29,7 @@ import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
-import { execPipe, filter, flatMap, map, objectValues } from 'iter-tools';
+import { filter, objectValues } from 'iter-tools';
 import applyDevTools from "prosemirror-dev-tools";
 
 export type WidgetLocation =
@@ -91,22 +90,8 @@ function initalizeProsePlugins(
   rdfaEditorPlugins: RdfaEditorPlugin[]
 ) {
   const proseMirrorPlugins = [
-    inputRules({
-      rules: [
-        emDash,
-        new InputRule(/yeet/g, () => {
-          console.log('found matching input');
-          return null;
-        }),
-      ],
-    }),
     dropCursor(),
     gapCursor(),
-    ...execPipe(
-      rdfaEditorPlugins,
-      flatMap((plugin) => plugin.keymaps()),
-      map((pluginMap) => keymap(pluginMap(schema)))
-    ),
 
     keymap(defaultKeymap(schema)),
     keymap(baseKeymap),
@@ -152,6 +137,16 @@ function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   return nodeViewConstructors;
 }
 
+interface ProsemirrorArgs {
+  target: Element;
+  schema: Schema;
+  baseIRI: string;
+  plugins?: Plugin[];
+  widgets?: WidgetSpec[];
+  nodeViews?: Record<string, NodeViewConstructor>;
+  devtools?: boolean;
+}
+
 export default class Prosemirror {
   view: EditorView;
   @tracked _state: EditorState;
@@ -168,24 +163,35 @@ export default class Prosemirror {
 
   private logger: Logger;
 
-  constructor(
-    target: Element,
-    schema: Schema,
-    baseIRI: string,
-    plugins: RdfaEditorPlugin[],
-    devtools = false
-  ) {
+  constructor({
+    target,
+    schema,
+    baseIRI,
+    plugins = [],
+    widgets = [],
+    nodeViews = {},
+    devtools = false,
+  }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
-    this.schema = extendSchema(schema, plugins);
+    this.schema = schema;
     this.view = new EditorView(target, {
       state: EditorState.create({
         doc: ProseParser.fromSchema(this.schema).parse(target),
-        plugins: initalizeProsePlugins(this.schema, plugins),
+        plugins: [
+          ...plugins,
+
+          dropCursor(),
+          gapCursor(),
+
+          keymap(defaultKeymap(schema)),
+          keymap(baseKeymap),
+          history(),
+        ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
-      nodeViews: initializeNodeViewConstructors(plugins),
+      nodeViews,
       dispatchTransaction: this.dispatch,
     });
     if (devtools) {
@@ -223,17 +229,15 @@ export default class Prosemirror {
       pathFromDomRoot: this.pathFromRoot,
       baseIRI,
     });
-    this.initializeEditorWidgets(plugins);
+    this.initializeEditorWidgets(widgets);
   }
 
-  initializeEditorWidgets(rdfaEditorPlugins: RdfaEditorPlugin[]) {
+  initializeEditorWidgets(widgets: WidgetSpec[]) {
     const widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
-    rdfaEditorPlugins.forEach((plugin) => {
-      plugin.widgets().forEach((widgetSpec) => {
-        MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
-          ...widgetSpec,
-          controller: new ProseController(this),
-        });
+    widgets.forEach((widgetSpec) => {
+      MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
+        ...widgetSpec,
+        controller: new ProseController(this),
       });
     });
     this.widgets = widgetMap;

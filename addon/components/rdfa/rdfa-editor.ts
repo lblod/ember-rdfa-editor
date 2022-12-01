@@ -11,13 +11,14 @@ import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import Prosemirror, {
   ProseController,
+  WidgetSpec,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { getOwner } from '@ember/application';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { PlaceHolderPlugin } from '@lblod/ember-rdfa-editor/plugins/placeholder/placeholder';
-import { rdfaSchema } from '@lblod/ember-rdfa-editor/core/schema';
-import TablePlugin from '@lblod/ember-rdfa-editor/plugins/table/table';
+import { NodeViewConstructor } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { Plugin } from 'prosemirror-state';
 
 export type PluginConfig =
   | string
@@ -39,9 +40,14 @@ interface RdfaEditorArgs {
    */
   rdfaEditorInit(editor: ProseController): void;
 
-  plugins: PluginConfig[];
+  initializers?: Array<() => Promise<void>>;
+  schema: Schema;
+  baseIRI?: string;
+  plugins?: Plugin[];
   stealFocus?: boolean;
   pasteBehaviour?: string;
+  widgets?: WidgetSpec[];
+  nodeViews?: { [node: string]: NodeViewConstructor };
   devtools?: boolean;
 }
 
@@ -75,20 +81,22 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   private logger: Logger;
   private prosemirror: Prosemirror | null = null;
 
-  get plugins(): PluginConfig[] {
-    return this.args.plugins || [];
-  }
-
-  get pasteBehaviour() {
-    return this.args.pasteBehaviour ?? 'standard-html';
-  }
-
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
     this.owner = owner;
     const userLocale = navigator.language || navigator.languages[0];
     this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
+  }
+  get pasteBehaviour() {
+    return this.args.pasteBehaviour ?? 'standard-html';
+  }
+  get initializers() {
+    return this.args.initializers || [];
+  }
+
+  get baseIRI() {
+    return this.args.baseIRI || window.document.baseURI;
   }
 
   /**
@@ -114,14 +122,16 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
     // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
     window.__APPLICATION = getOwner(this)!;
-    const initializedPlugins = await this.getPlugins();
-    this.prosemirror = new Prosemirror(
+    await Promise.all(this.initializers);
+    this.prosemirror = new Prosemirror({
       target,
-      rdfaSchema,
-      window.document.baseURI,
-      initializedPlugins,
-      this.args.devtools
-    );
+      schema: this.args.schema,
+      baseIRI: this.baseIRI,
+      plugins: this.args.plugins,
+      nodeViews: this.args.nodeViews,
+      widgets: this.args.widgets,
+      devtools: this.args.devtools,
+    });
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);
     this.toolbarController = new ProseController(this.prosemirror);
@@ -131,67 +141,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.args.rdfaEditorInit(new ProseController(this.prosemirror));
     }
   }
-
-  async getPlugins(): Promise<RdfaEditorPlugin[]> {
-    const pluginConfigs = this.plugins;
-    const plugins: RdfaEditorPlugin[] = [
-      new PlaceHolderPlugin(),
-      new TablePlugin(),
-    ];
-    for (const config of pluginConfigs) {
-      let name;
-      let options: unknown = null;
-      if (typeof config === 'string') {
-        name = config;
-      } else {
-        name = config.name;
-        options = config.options;
-      }
-
-      const plugin = this.owner.lookup(
-        `plugin:${name}`
-      ) as RdfaEditorPlugin | null;
-      if (plugin) {
-        await plugin.initialize(options);
-        plugins.push(plugin);
-      } else {
-        this.logger(`plugin ${name} not found! Skipping...`);
-      }
-    }
-    return plugins;
-  }
-
-  // getPlugins(): ResolvedPluginConfig[] {
-  //   const pluginConfigs = this.plugins;
-  //   const plugins: ResolvedPluginConfig[] = [
-  //     { instance: new BasicStyles(), options: null },
-  //     { instance: new LumpNodePlugin(), options: null },
-  //     { instance: new ShowActiveRdfaPlugin(), options: null },
-  //     { instance: new AnchorPlugin(), options: null },
-  //     { instance: new TablePlugin(), options: null },
-  //     { instance: new ListPlugin(), options: null },
-  //     { instance: new RdfaConfirmationPlugin(), options: null },
-  //     { instance: new LiveMarkSetPlugin(), options: null },
-  //   ];
-  //   for (const config of pluginConfigs) {
-  //     let name;
-  //     let options: unknown = null;
-  //     if (typeof config === 'string') {
-  //       name = config;
-  //     } else {
-  //       name = config.name;
-  //       options = config.options;
-  //     }
-
-  //     const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
-  //     if (plugin) {
-  //       plugins.push({ instance: plugin, options });
-  //     } else {
-  //       this.logger(`plugin ${name} not found! Skipping...`);
-  //     }
-  //   }
-  //   return plugins;
-  // }
 
   // Toggle RDFA blocks
   @tracked showRdfaBlocks = false;
