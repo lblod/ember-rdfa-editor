@@ -11,6 +11,7 @@ import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: ProseController) => void;
+  devtools?: boolean;
 }
 
 export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugArgs> {
@@ -44,6 +45,10 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action
   initDebug(info: unknown) {
     this.debug = info;
+  }
+
+  get devtools() {
+    return this.args.devtools ?? true;
   }
 
   @action

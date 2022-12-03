@@ -41,6 +41,7 @@ interface RdfaEditorArgs {
   plugins: PluginConfig[];
   stealFocus?: boolean;
   pasteBehaviour?: string;
+  devtools?: boolean;
 }
 
 /**
@@ -117,7 +118,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       target,
       rdfaSchema,
       window.document.baseURI,
-      initializedPlugins
+      initializedPlugins,
+      this.args.devtools
     );
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);

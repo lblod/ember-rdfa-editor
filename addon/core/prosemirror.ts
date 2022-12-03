@@ -32,6 +32,7 @@ import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
+import applyDevTools from "prosemirror-dev-tools";
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -167,7 +168,8 @@ export default class Prosemirror {
     target: Element,
     schema: Schema,
     baseIRI: string,
-    plugins: RdfaEditorPlugin[]
+    plugins: RdfaEditorPlugin[],
+    devtools = false
   ) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
@@ -182,6 +184,23 @@ export default class Prosemirror {
       nodeViews: initializeNodeViewConstructors(plugins),
       dispatchTransaction: this.dispatch,
     });
+    if (devtools) {
+      applyDevTools(this.view);
+    }
+
+    // see https://github.com/ef4/ember-auto-import/issues/551
+    // if (devtools) {
+    //   import('prosemirror-dev-tools').then(
+    //     ({ default: applyDevTools }) => {
+    //       applyDevTools(this.view);
+    //     },
+    //     () => {
+    //       this.logger(
+    //         'optional dependency prosemirror-dev-tools is not installed'
+    //       );
+    //     }
+    //   );
+    // }
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
