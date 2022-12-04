@@ -10,10 +10,6 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import {
-  ProseStore,
-  proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +26,11 @@ import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
-import applyDevTools from "prosemirror-dev-tools";
+import applyDevTools from 'prosemirror-dev-tools';
+import {
+  ProseStore,
+  proseStoreFromParse,
+} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
