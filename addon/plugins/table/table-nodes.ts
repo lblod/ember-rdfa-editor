@@ -68,7 +68,7 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
 interface TableNodeOptions {
   tableGroup?: string;
   cellContent: string;
-  cellAttributes: Record<string, ExtraAttribute>;
+  cellAttributes?: Record<string, ExtraAttribute>;
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
