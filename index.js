@@ -8,6 +8,7 @@ module.exports = {
   options: {
     babel: {
       sourceMaps: 'inline',
+      plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
     autoImport: {
       webpack: {
