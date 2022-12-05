@@ -1,20 +1,22 @@
+import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import {
-  EmberInlineComponent,
+  EditorView,
   emberComponent,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { NodeConfig } from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
-import { TemplateFactory, hbs } from 'ember-cli-htmlbars';
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { NodeView, EditorView } from 'prosemirror-view';
+  EmberInlineComponent,
+  NodeSpec,
+  NodeView,
+  NodeViewConstructor,
+  PNode,
+} from '@lblod/ember-rdfa-editor';
 
 class CardView implements NodeView {
   node: PNode;
   dom: Element;
   contentDOM: HTMLElement;
   emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Card 
-                                    @getPos={{this.getPos}} 
-                                    @node={{this.node}} 
+  template: TemplateFactory = hbs`<InlineComponentsPlugin::Card
+                                    @getPos={{this.getPos}}
+                                    @node={{this.node}}
                                     @updateAttribute={{this.updateAttribute}}>
                                     <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
                                   </InlineComponentsPlugin::Card>`;
@@ -52,7 +54,7 @@ class CardView implements NodeView {
   }
 }
 
-const card: NodeSpec = {
+export const card: NodeSpec = {
   content: 'inline*',
   inline: false,
   atom: false,
@@ -80,10 +82,5 @@ const card: NodeSpec = {
   },
 };
 
-const cardConfig: NodeConfig = {
-  name: 'card',
-  spec: card,
-  view: (node, view, getPos) => new CardView(node, view, getPos),
-};
-
-export default cardConfig;
+export const cardView: NodeViewConstructor = (node, view, getPos) =>
+  new CardView(node, view, getPos);

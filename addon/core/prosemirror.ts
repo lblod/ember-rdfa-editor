@@ -21,7 +21,6 @@ import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
@@ -31,6 +30,7 @@ import {
   ProseStore,
   proseStoreFromParse,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'

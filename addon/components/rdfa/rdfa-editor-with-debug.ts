@@ -7,11 +7,22 @@ import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../../config/sample-data';
 import { EditorState } from '@codemirror/state';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import {
+  ProseController,
+  WidgetSpec,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { NodeViewConstructor } from 'prosemirror-view';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor';
+import { Schema } from 'prosemirror-model';
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: ProseController) => void;
   devtools?: boolean;
+  nodeViews?: Record<string, NodeViewConstructor>;
+  plugins?: ProsePlugin[];
+  schema: Schema;
+  widgets?: WidgetSpec[];
+  baseIRI: string;
 }
 
 export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugArgs> {

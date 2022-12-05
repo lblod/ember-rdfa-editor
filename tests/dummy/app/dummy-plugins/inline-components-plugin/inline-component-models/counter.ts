@@ -2,10 +2,9 @@ import {
   emberComponent,
   EmberInlineComponent,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { NodeConfig } from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { EditorView, NodeView } from 'prosemirror-view';
+import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
 
 class CounterView implements NodeView {
   node: PNode;
@@ -44,7 +43,7 @@ class CounterView implements NodeView {
   }
 }
 
-const counter: NodeSpec = {
+export const counter: NodeSpec = {
   inline: true,
   atom: true,
   group: 'inline',
@@ -69,10 +68,6 @@ const counter: NodeSpec = {
   },
 };
 
-const counterConfig: NodeConfig = {
-  name: 'counter',
-  spec: counter,
-  view: (node, view, getPos) => new CounterView(node, view, getPos),
-};
+export const counterView: NodeViewConstructor = (node, view, getPos) =>
+  new CounterView(node, view, getPos);
 
-export default counterConfig;

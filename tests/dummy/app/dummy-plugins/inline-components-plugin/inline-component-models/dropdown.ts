@@ -1,11 +1,13 @@
+import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import {
+  EditorView,
   emberComponent,
   EmberInlineComponent,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { NodeConfig } from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
-import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { EditorView, NodeView } from 'prosemirror-view';
+  NodeSpec,
+  NodeView,
+  NodeViewConstructor,
+  PNode,
+} from '@lblod/ember-rdfa-editor';
 
 class DropdownView implements NodeView {
   dom: Element;
@@ -36,7 +38,7 @@ class DropdownView implements NodeView {
   }
 }
 
-const dropdown: NodeSpec = {
+export const dropdown: NodeSpec = {
   inline: true,
   atom: true,
   group: 'inline',
@@ -57,10 +59,5 @@ const dropdown: NodeSpec = {
   },
 };
 
-const dropdownConfig: NodeConfig = {
-  name: 'dropdown',
-  spec: dropdown,
-  view: (node, view, getPos) => new DropdownView(node, view, getPos),
-};
-
-export default dropdownConfig;
+export const dropdownView: NodeViewConstructor = (node, view, getPos) =>
+  new DropdownView(node, view, getPos);

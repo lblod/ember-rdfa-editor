@@ -36,6 +36,23 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
+import { code, codeMarkButton } from 'dummy/dummy-plugins/code-mark-plugin';
+import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
+import {
+  card,
+  cardView,
+  counter,
+  counterView,
+  dropdown,
+  dropdownView,
+  insertDummyComponentsWidget,
+} from 'dummy/dummy-plugins/inline-components-plugin';
+import { NodeViewConstructor } from 'prosemirror-view';
+import {
+  placeholder,
+  placeholderEditing,
+  placeholderView,
+} from '@lblod/ember-rdfa-editor/plugins/placeholder';
 
 const nodes = {
   doc,
@@ -46,6 +63,7 @@ const nodes = {
   list_item,
   ordered_list,
   bullet_list,
+  placeholder,
   ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
   heading,
   blockquote,
@@ -60,33 +78,38 @@ const nodes = {
   hard_break,
   inline_rdfa,
   block_rdfa,
+  card,
+  counter,
+  dropdown,
 };
 const marks = {
+  code,
   link,
   em,
   strong,
   underline,
   strikethrough,
 };
-console.log(nodes);
-console.log(marks);
 const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  // @tracked plugins = new TrackedSet([
-  //   'code-mark',
-  //   'inline-components',
-  //   // 'table',
-  //   {
-  //     name: 'highlight',
-  //     options: {
-  //       testKey: 'test',
-  //     },
-  //   },
-  // ]);
-  @tracked plugins: Plugin[] = [tablePlugin];
-  @tracked widgets: WidgetSpec[] = [tableMenu];
+  @tracked nodeViews: Record<string, NodeViewConstructor> = {
+    card: cardView,
+    counter: counterView,
+    dropdown: dropdownView,
+    placeholder: placeholderView,
+  };
+  @tracked plugins: Plugin[] = [
+    placeholderEditing(),
+    highlight({ testKey: 'yeet' }),
+    tablePlugin,
+  ];
+  @tracked widgets: WidgetSpec[] = [
+    insertDummyComponentsWidget,
+    codeMarkButton,
+    tableMenu,
+  ];
   schema: Schema = dummySchema;
 
   @action
