@@ -27,6 +27,12 @@ import { GraphyDataset } from './graphy-dataset';
 import { Node as PNode } from 'prosemirror-model';
 import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { EditorState } from 'prosemirror-state';
+import { ResolvedPos } from 'prosemirror-model';
+
+export type ResolvedPNode = {
+  node: PNode;
+  pos?: ResolvedPos;
+};
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -542,11 +548,14 @@ export class EditorStore<N> implements Datastore<N> {
   };
 }
 
-export interface ProseDatastore extends Datastore<PNode> {
+export interface ProseDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): ProseStore;
 }
 
-export class ProseStore extends EditorStore<PNode> implements ProseDatastore {
+export class ProseStore
+  extends EditorStore<ResolvedPNode>
+  implements ProseDatastore
+{
   limitToRange(state: EditorState, start: number, end: number): ProseStore {
     const contextNodes = new Set();
     state.doc.nodesBetween(start, end, (node) => {
@@ -573,7 +582,7 @@ export class ProseStore extends EditorStore<PNode> implements ProseDatastore {
   }
 }
 
-export function proseStoreFromParse(config: RdfaParseConfig<PNode>) {
+export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
   const {
     dataset,
     subjectToNodesMapping,
