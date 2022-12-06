@@ -30,6 +30,21 @@
 
 
 
+
+## 1.0.0-alpha.6 (2022-12-06)
+
+#### :boom: Breaking Change
+* [#494](https://github.com/lblod/ember-rdfa-editor/pull/494) restructure plugins ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#492](https://github.com/lblod/ember-rdfa-editor/pull/492) feature(dev): add devtools ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#494](https://github.com/lblod/ember-rdfa-editor/pull/494) restructure plugins ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
 ## 1.0.0-alpha.5 (2022-11-30)
 * fix mark active state on buttons
 * fix enter handling in lists
