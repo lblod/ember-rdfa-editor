@@ -160,7 +160,6 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     toDOM:
       toDOM ??
       ((node: PNode) => {
-        console.log('TO DOM');
         const serializedAttributes: Record<string, string> = {
           'data-ember-node': name,
         };
