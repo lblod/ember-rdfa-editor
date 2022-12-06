@@ -557,22 +557,30 @@ export class ProseStore
   implements ProseDatastore
 {
   limitToRange(state: EditorState, start: number, end: number): ProseStore {
-    const contextNodes = new Set();
+    const contextNodes: Set<PNode> = new Set();
     state.doc.nodesBetween(start, end, (node) => {
       contextNodes.add(node);
     });
+    console.log('CONTEXT NODES: ', contextNodes);
 
     return this.transformDataset((dataset) => {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
           const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
-          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
+          const hasSubjectNode = SetUtils.hasAny(
+            contextNodes,
+            ...subjectNodes.map((resolvedNode) => resolvedNode.node)
+          );
           const hasPredicateNode = SetUtils.hasAny(
             contextNodes,
-            ...predicateNodes
+            ...predicateNodes.map((resolvedNode) => resolvedNode.node)
           );
-          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
+          const hasObjectNode = SetUtils.hasAny(
+            contextNodes,
+            ...objectNodes.map((resolvedNode) => resolvedNode.node)
+          );
+
           return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;

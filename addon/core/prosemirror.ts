@@ -417,9 +417,6 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
 function children(schema: Schema) {
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
     const { node, pos: resolvedPos } = resolvedNode;
-    const root = resolvedPos ? resolvedPos.doc : node;
-
-    const pos = resolvedPos?.pos ?? 0;
     if (node.isText) {
       const linkMark = getLinkMark(schema, node);
       if (linkMark) {
@@ -431,11 +428,15 @@ function children(schema: Schema) {
         ];
       }
     }
+    const root = resolvedPos ? resolvedPos.doc : node;
     const rslt: ResolvedPNode[] = [];
-    node.descendants((child, childPos) => {
+    node.descendants((child, relativePos) => {
+      const absolutePos = resolvedPos
+        ? resolvedPos.pos + 1 + relativePos
+        : relativePos;
       rslt.push({
         node: child,
-        pos: root.resolve(pos + childPos),
+        pos: root.resolve(absolutePos),
       });
       return false;
     });
