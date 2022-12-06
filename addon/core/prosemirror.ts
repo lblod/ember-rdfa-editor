@@ -11,7 +11,6 @@ import {
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
@@ -47,43 +46,6 @@ export interface WidgetSpec {
 export type InternalWidgetSpec = WidgetSpec & {
   controller: ProseController;
 };
-
-export interface EmberInlineComponent
-  extends Component,
-    EmberInlineComponentArgs {
-  appendTo(selector: string | Element): this;
-}
-
-export interface EmberInlineComponentArgs {
-  getPos: () => number;
-  node: PNode;
-  updateAttribute: (attr: string, value: unknown) => void;
-  contentDOM?: HTMLElement;
-}
-
-export function emberComponent(
-  name: string,
-  template: TemplateFactory,
-  props: EmberInlineComponentArgs
-): { node: HTMLElement; component: EmberInlineComponent } {
-  const instance = window.__APPLICATION;
-  const componentName = `${name}-${uuidv4()}`;
-  instance.register(
-    `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
-    Component.extend({
-      layout: template,
-      tagName: '',
-      ...props,
-    })
-  );
-  const component = instance.lookup(
-    `component:${componentName}`
-  ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const node = document.createElement('div');
-  component.appendTo(node);
-  return { node, component };
-}
 
 function initalizeProsePlugins(
   schema: Schema,
