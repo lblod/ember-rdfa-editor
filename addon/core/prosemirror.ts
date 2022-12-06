@@ -29,7 +29,6 @@ import {
   ProseStore,
   proseStoreFromParse,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'

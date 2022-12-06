@@ -125,7 +125,15 @@ export type EmberNodeConfig = {
   };
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
-};
+} & (
+  | {
+      atom: true;
+    }
+  | {
+      atom: false;
+      content: string;
+    }
+);
 
 export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
   const { name, inline, group, content, atom, attrs, parseDOM, toDOM } = config;
