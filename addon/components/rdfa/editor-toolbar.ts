@@ -8,15 +8,7 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list';
 import { undo } from 'prosemirror-history';
-import {
-  addColumnAfter,
-  addColumnBefore,
-  addRowAfter,
-  addRowBefore,
-  deleteColumn,
-  deleteRow,
-  deleteTable,
-} from 'prosemirror-tables';
+import { deleteTable } from 'prosemirror-tables';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -150,69 +142,5 @@ export default class EditorToolbar extends Component<Args> {
   undo() {
     this.controller.focus();
     this.controller.doCommand(undo);
-  }
-
-  // Table commands
-  @action
-  insertTable() {
-    const { schema } = this.controller;
-    this.controller.withTransaction((tr) => {
-      return tr
-        .replaceSelectionWith(
-          this.controller.schema.node('table', null, [
-            schema.node('table_row', null, [
-              schema.node('table_cell', null, [schema.text('test')]),
-              schema.node('table_cell', null, [schema.text('test')]),
-            ]),
-            schema.node('table_row', null, [
-              schema.node('table_cell', null, [schema.text('test')]),
-              schema.node('table_cell', null, [schema.text('test')]),
-            ]),
-          ])
-        )
-        .scrollIntoView();
-    });
-  }
-
-  @action
-  insertRowBelow() {
-    this.controller.focus();
-    this.controller.doCommand(addRowAfter);
-  }
-
-  @action
-  insertRowAbove() {
-    this.controller.focus();
-    this.controller.doCommand(addRowBefore);
-  }
-
-  @action
-  insertColumnAfter() {
-    this.controller.focus();
-    this.controller.doCommand(addColumnAfter);
-  }
-
-  @action
-  insertColumnBefore() {
-    this.controller.focus();
-    this.controller.doCommand(addColumnBefore);
-  }
-
-  @action
-  removeTableRow() {
-    this.controller.focus();
-    this.controller.doCommand(deleteRow);
-  }
-
-  @action
-  removeTableColumn() {
-    this.controller.focus();
-    this.controller.doCommand(deleteColumn);
-  }
-
-  @action
-  removeTable() {
-    this.controller.focus();
-    this.controller.doCommand(deleteTable);
   }
 }

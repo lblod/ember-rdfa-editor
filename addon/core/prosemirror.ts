@@ -1,4 +1,4 @@
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 import {
   Attrs,
@@ -10,29 +10,27 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import {
-  ProseStore,
-  proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
-import { emDash, InputRule, inputRules } from 'prosemirror-inputrules';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
-import { tableEditing } from 'prosemirror-tables';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
-import applyDevTools from "prosemirror-dev-tools";
+import applyDevTools from 'prosemirror-dev-tools';
+import {
+  ProseStore,
+  proseStoreFromParse,
+} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -92,21 +90,12 @@ function initalizeProsePlugins(
   rdfaEditorPlugins: RdfaEditorPlugin[]
 ) {
   const proseMirrorPlugins = [
-    inputRules({
-      rules: [
-        emDash,
-        new InputRule(/yeet/g, () => {
-          console.log('found matching input');
-          return null;
-        }),
-      ],
-    }),
     dropCursor(),
     gapCursor(),
+
     keymap(defaultKeymap(schema)),
     keymap(baseKeymap),
     history(),
-    tableEditing({ allowTableNodeSelection: false }),
   ];
   rdfaEditorPlugins.forEach((plugin) => {
     proseMirrorPlugins.push(...plugin.proseMirrorPlugins());
@@ -122,7 +111,7 @@ function extendSchema(
   let marks = baseSchema.spec.marks;
   rdfaEditorPlugins.forEach((plugin) => {
     plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToEnd(nodeConfig.name, nodeConfig.spec);
+      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
     });
     plugin.marks().forEach((markConfig) => {
       marks = marks.addToStart(markConfig.name, markConfig.spec);
@@ -148,6 +137,16 @@ function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
   return nodeViewConstructors;
 }
 
+interface ProsemirrorArgs {
+  target: Element;
+  schema: Schema;
+  baseIRI: string;
+  plugins?: Plugin[];
+  widgets?: WidgetSpec[];
+  nodeViews?: Record<string, NodeViewConstructor>;
+  devtools?: boolean;
+}
+
 export default class Prosemirror {
   view: EditorView;
   @tracked _state: EditorState;
@@ -164,24 +163,35 @@ export default class Prosemirror {
 
   private logger: Logger;
 
-  constructor(
-    target: Element,
-    schema: Schema,
-    baseIRI: string,
-    plugins: RdfaEditorPlugin[],
-    devtools = false
-  ) {
+  constructor({
+    target,
+    schema,
+    baseIRI,
+    plugins = [],
+    widgets = [],
+    nodeViews = {},
+    devtools = false,
+  }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
-    this.schema = extendSchema(schema, plugins);
+    this.schema = schema;
     this.view = new EditorView(target, {
       state: EditorState.create({
         doc: ProseParser.fromSchema(this.schema).parse(target),
-        plugins: initalizeProsePlugins(this.schema, plugins),
+        plugins: [
+          ...plugins,
+
+          dropCursor(),
+          gapCursor(),
+
+          keymap(defaultKeymap(schema)),
+          keymap(baseKeymap),
+          history(),
+        ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
-      nodeViews: initializeNodeViewConstructors(plugins),
+      nodeViews,
       dispatchTransaction: this.dispatch,
     });
     if (devtools) {
@@ -219,17 +229,15 @@ export default class Prosemirror {
       pathFromDomRoot: this.pathFromRoot,
       baseIRI,
     });
-    this.initializeEditorWidgets(plugins);
+    this.initializeEditorWidgets(widgets);
   }
 
-  initializeEditorWidgets(rdfaEditorPlugins: RdfaEditorPlugin[]) {
+  initializeEditorWidgets(widgets: WidgetSpec[]) {
     const widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
-    rdfaEditorPlugins.forEach((plugin) => {
-      plugin.widgets().forEach((widgetSpec) => {
-        MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
-          ...widgetSpec,
-          controller: new ProseController(this),
-        });
+    widgets.forEach((widgetSpec) => {
+      MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
+        ...widgetSpec,
+        controller: new ProseController(this),
       });
     });
     this.widgets = widgetMap;
