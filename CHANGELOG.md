@@ -36,6 +36,16 @@
 
 
 
+
+## 0.64.1 (2022-12-07)
+
+#### :bug: Bug Fix
+* [#500](https://github.com/lblod/ember-rdfa-editor/pull/500) fix(initialization): emit a selectionchanged after init ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 0.64.0 (2022-11-15)
 
 #### :boom: Breaking Change
