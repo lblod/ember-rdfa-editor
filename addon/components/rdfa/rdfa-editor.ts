@@ -140,6 +140,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     throw new NotImplementedError();
   }
 
+  @action
+  updateConfig(_key: string, _value: unknown) {
+    throw new NotImplementedError();
+  }
+
   get toolbarMiddleWidgets() {
     console.log(
       'TOOLBAR MIDDLE: ',
