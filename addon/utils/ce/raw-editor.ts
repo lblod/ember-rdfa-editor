@@ -123,11 +123,13 @@ export default class RawEditor {
     this.eventBus.on(
       'contentChanged',
       () => {
+        this.logger('recalculating datastore');
         this._datastore = EditorStore.fromParse({
           modelRoot: this.model.rootModelNode,
           pathFromDomRoot: getPathFromRoot(this.model.rootNode, false),
           baseIRI: (properties?.baseIRI as string | null) || document.baseURI,
         });
+        this.logger(`Parsed ${this._datastore.size} triples`);
       },
       { priority: 'highest' }
     );
@@ -228,6 +230,7 @@ export default class RawEditor {
     this.rangeFactory = new ModelRangeFactory(this.rootModelNode);
     this.modelSelectionTracker = new ModelSelectionTracker(this._model);
     this.modelSelectionTracker.startTracking();
+    this.model.emitSelectionChanged();
   }
 
   /**
