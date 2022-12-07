@@ -14,6 +14,7 @@ import {
 import { NodeViewConstructor } from 'prosemirror-view';
 import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import { Schema } from 'prosemirror-model';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: ProseController) => void;
@@ -56,10 +57,6 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action
   initDebug(info: unknown) {
     this.debug = info;
-  }
-
-  get devtools() {
-    return this.args.devtools ?? true;
   }
 
   @action
@@ -137,7 +134,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
       this.debuggerContent = 'Coming soon!';
       this.xmlDebuggerOpen = false;
     } else {
-      this.debuggerContent = this.htmlEditor!.state.sliceDoc();
+      this.debuggerContent = unwrap(this.htmlEditor).state.sliceDoc();
       this.htmlDebuggerOpen = false;
     }
     if (save) {

@@ -19,6 +19,7 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 export type PluginConfig =
   | string
@@ -105,13 +106,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    *
    * @method handleRawEditorInit
    *
-   * @param {RawEditor} view, the editor interface
+   * @param {Element} target the html element the editor will render into
    *
    * @private
    */
   @action
   async handleRawEditorInit(target: Element) {
-    window.__APPLICATION = getOwner(this)!;
+    window.__APPLICATION = unwrap(getOwner(this));
     await Promise.all(this.initializers);
     this.prosemirror = new Prosemirror({
       target,

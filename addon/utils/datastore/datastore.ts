@@ -23,6 +23,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from './graphy-dataset';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -371,7 +372,7 @@ export class EditorStore<N> implements Datastore<N> {
             nodes.push(node);
           }
         }
-        rslt.set(seenPredicates.get(pred)!, nodes);
+        rslt.set(unwrap(seenPredicates.get(pred)), nodes);
       }
     }
     return rslt;
@@ -467,7 +468,7 @@ export class EditorStore<N> implements Datastore<N> {
             nodes.add(node);
           }
         }
-        yield { predicate: seenPredicates.get(pred)!, nodes };
+        yield { predicate: unwrap(seenPredicates.get(pred)), nodes };
       }
     }
   }

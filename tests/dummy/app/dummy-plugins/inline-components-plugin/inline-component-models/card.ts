@@ -8,6 +8,7 @@ import {
   NodeViewConstructor,
   PNode,
 } from '@lblod/ember-rdfa-editor';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 class CardView implements NodeView {
   node: PNode;
@@ -69,7 +70,7 @@ export const card: NodeSpec = {
         return false;
       },
       contentElement(node: HTMLElement) {
-        return node.querySelector('[data-slot]')!;
+        return unwrap(node.querySelector<HTMLElement>('[data-slot]'));
       },
     },
   ],

@@ -6,14 +6,16 @@ import {
   ProsePlugin,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 function calculateDecorations(doc: PNode, testKey: string) {
   const decorations: Decoration[] = [];
   doc.descendants((node, pos) => {
     if (node.isText && node.text) {
       for (const match of node.text.matchAll(new RegExp(`${testKey}`, 'g'))) {
+        const index = unwrap(match.index);
         decorations.push(
-          Decoration.inline(pos + match.index!, pos + match.index! + 4, {
+          Decoration.inline(pos + index, pos + index + 4, {
             style: 'background: yellow',
           })
         );
