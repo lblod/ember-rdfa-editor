@@ -10,11 +10,6 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import {
-  ProseStore,
-  proseStoreFromParse,
-  ResolvedPNode,
-} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +25,12 @@ import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
-import applyDevTools from 'prosemirror-dev-tools';
+import {
+  ProseStore,
+  proseStoreFromParse,
+  ResolvedPNode,
+} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -194,23 +194,6 @@ export default class Prosemirror {
       nodeViews,
       dispatchTransaction: this.dispatch,
     });
-    if (devtools) {
-      applyDevTools(this.view);
-    }
-
-    // see https://github.com/ef4/ember-auto-import/issues/551
-    // if (devtools) {
-    //   import('prosemirror-dev-tools').then(
-    //     ({ default: applyDevTools }) => {
-    //       applyDevTools(this.view);
-    //     },
-    //     () => {
-    //       this.logger(
-    //         'optional dependency prosemirror-dev-tools is not installed'
-    //       );
-    //     }
-    //   );
-    // }
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
