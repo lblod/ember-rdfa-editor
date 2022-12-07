@@ -27,6 +27,12 @@ import { GraphyDataset } from './graphy-dataset';
 import { Node as PNode } from 'prosemirror-model';
 import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import { EditorState } from 'prosemirror-state';
+import { ResolvedPos } from 'prosemirror-model';
+
+export type ResolvedPNode = {
+  node: PNode;
+  pos?: ResolvedPos;
+};
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -542,28 +548,39 @@ export class EditorStore<N> implements Datastore<N> {
   };
 }
 
-export interface ProseDatastore extends Datastore<PNode> {
+export interface ProseDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): ProseStore;
 }
 
-export class ProseStore extends EditorStore<PNode> implements ProseDatastore {
+export class ProseStore
+  extends EditorStore<ResolvedPNode>
+  implements ProseDatastore
+{
   limitToRange(state: EditorState, start: number, end: number): ProseStore {
-    const contextNodes = new Set();
+    const contextNodes: Set<PNode> = new Set();
     state.doc.nodesBetween(start, end, (node) => {
       contextNodes.add(node);
     });
+    console.log('CONTEXT NODES: ', contextNodes);
 
     return this.transformDataset((dataset) => {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
           const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
-          const hasSubjectNode = SetUtils.hasAny(contextNodes, ...subjectNodes);
+          const hasSubjectNode = SetUtils.hasAny(
+            contextNodes,
+            ...subjectNodes.map((resolvedNode) => resolvedNode.node)
+          );
           const hasPredicateNode = SetUtils.hasAny(
             contextNodes,
-            ...predicateNodes
+            ...predicateNodes.map((resolvedNode) => resolvedNode.node)
           );
-          const hasObjectNode = SetUtils.hasAny(contextNodes, ...objectNodes);
+          const hasObjectNode = SetUtils.hasAny(
+            contextNodes,
+            ...objectNodes.map((resolvedNode) => resolvedNode.node)
+          );
+
           return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;
@@ -573,7 +590,7 @@ export class ProseStore extends EditorStore<PNode> implements ProseDatastore {
   }
 }
 
-export function proseStoreFromParse(config: RdfaParseConfig<PNode>) {
+export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
   const {
     dataset,
     subjectToNodesMapping,
