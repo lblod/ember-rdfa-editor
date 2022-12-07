@@ -10,6 +10,11 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
+import {
+  ProseStore,
+  proseStoreFromParse,
+  ResolvedPNode,
+} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,11 +31,6 @@ import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
 import applyDevTools from 'prosemirror-dev-tools';
-import {
-  ProseStore,
-  proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -156,10 +156,10 @@ export default class Prosemirror {
   baseIRI: string;
   pathFromRoot: Node[];
   schema: Schema;
-  private readonly tag: (node: PNode) => string;
-  private readonly children: (node: PNode) => Iterable<PNode>;
-  private readonly attributes: (node: PNode) => Attrs;
-  private readonly isText: (node: PNode) => boolean;
+  private readonly tag: (node: ResolvedPNode) => string;
+  private readonly children: (node: ResolvedPNode) => Iterable<ResolvedPNode>;
+  private readonly attributes: (node: ResolvedPNode) => Attrs;
+  private readonly isText: (node: ResolvedPNode) => boolean;
 
   private logger: Logger;
 
@@ -218,7 +218,7 @@ export default class Prosemirror {
     this.attributes = attributes(this.schema);
     this.isText = isText(this.schema);
     this.datastore = proseStoreFromParse({
-      root: this._state.doc,
+      root: { node: this._state.doc },
       textContent,
       tag: this.tag,
       children: this.children,
@@ -266,7 +266,7 @@ export default class Prosemirror {
         attributes: this.attributes,
         isText: this.isText,
         getParent,
-        root: newState.doc,
+        root: { node: newState.doc },
         pathFromDomRoot: this.pathFromRoot,
         baseIRI: this.baseIRI,
       });
@@ -387,12 +387,13 @@ export class ProseController {
   }
 }
 
-function textContent(node: PNode) {
-  return node.textContent;
+function textContent(resolvedNode: ResolvedPNode) {
+  return resolvedNode.node.textContent;
 }
 
 function isText(schema: Schema) {
-  return function (node: PNode) {
+  return function (resolvedNode: ResolvedPNode) {
+    const { node } = resolvedNode;
     if (getLinkMark(schema, node)) {
       return false;
     }
@@ -421,21 +422,38 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
 }
 
 function children(schema: Schema) {
-  return function (node: PNode): Iterable<PNode> {
+  return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
+    const { node, pos: resolvedPos } = resolvedNode;
     if (node.isText) {
       const linkMark = getLinkMark(schema, node);
       if (linkMark) {
-        return [node.mark(linkMark.removeFromSet(node.marks))];
+        return [
+          {
+            node: node.mark(linkMark.removeFromSet(node.marks)),
+            pos: resolvedPos,
+          },
+        ];
       }
     }
-    const rslt: PNode[] = [];
-    node.forEach((child) => rslt.push(child));
+    const root = resolvedPos ? resolvedPos.doc : node;
+    const rslt: ResolvedPNode[] = [];
+    node.descendants((child, relativePos) => {
+      const absolutePos = resolvedPos
+        ? resolvedPos.pos + 1 + relativePos
+        : relativePos;
+      rslt.push({
+        node: child,
+        pos: root.resolve(absolutePos),
+      });
+      return false;
+    });
     return rslt;
   };
 }
 
 function tag(schema: Schema) {
-  return function (node: PNode) {
+  return function (resolvedNode: ResolvedPNode) {
+    const { node } = resolvedNode;
     if (getLinkMark(schema, node)) {
       return 'a';
     }
@@ -444,7 +462,8 @@ function tag(schema: Schema) {
 }
 
 function attributes(schema: Schema) {
-  return function (node: PNode) {
+  return function (resolvedNode: ResolvedPNode) {
+    const { node } = resolvedNode;
     const linkMark = getLinkMark(schema, node);
     if (linkMark) {
       return linkMark.attrs;
@@ -453,16 +472,20 @@ function attributes(schema: Schema) {
   };
 }
 
-function getParent(node: PNode, root: PNode): PNode | null {
-  if (node === root) {
+function getParent(
+  resolvedNode: ResolvedPNode,
+  resolvedRoot: ResolvedPNode
+): ResolvedPNode | null {
+  const { pos } = resolvedNode;
+  if (!pos) {
     return null;
   }
-  let found = false;
-  root.descendants((descendant: PNode) => {
-    if (descendant === node) {
-      found = true;
-    }
-    return !found;
-  });
-  return null;
+
+  if (pos.depth === 0) {
+    return { node: resolvedRoot.node };
+  }
+  return {
+    node: pos.parent,
+    pos: resolvedRoot.node.resolve(pos.before(pos.depth)),
+  };
 }
