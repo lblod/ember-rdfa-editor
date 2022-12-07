@@ -104,7 +104,9 @@ interface ProsemirrorArgs {
   baseIRI: string;
   plugins?: Plugin[];
   widgets?: WidgetSpec[];
-  nodeViews?: Record<string, NodeViewConstructor>;
+  nodeViews?: (
+    controller: ProseController
+  ) => Record<string, NodeViewConstructor>;
   devtools?: boolean;
 }
 
@@ -130,7 +132,9 @@ export default class Prosemirror {
     baseIRI,
     plugins = [],
     widgets = [],
-    nodeViews = {},
+    nodeViews = () => {
+      return {};
+    },
     devtools = false,
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
@@ -152,7 +156,7 @@ export default class Prosemirror {
         ],
       }),
       attributes: { class: 'say-editor__inner say-content' },
-      nodeViews,
+      nodeViews: nodeViews(new ProseController(this)),
       dispatchTransaction: this.dispatch,
     });
     if (devtools) {
@@ -245,6 +249,10 @@ export class ProseController {
 
   constructor(pm: Prosemirror) {
     this.pm = pm;
+  }
+
+  clone() {
+    return new ProseController(this.pm);
   }
 
   toggleMark(name: string) {

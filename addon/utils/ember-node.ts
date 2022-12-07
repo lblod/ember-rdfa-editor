@@ -10,6 +10,7 @@ import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
+import { ProseController } from '../core/prosemirror';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -19,6 +20,7 @@ export interface EmberNodeArgs {
   getPos: () => number;
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
+  controller: ProseController;
 }
 
 export function emberComponent(
@@ -58,6 +60,7 @@ class EmberNodeView implements NodeView {
   template: TemplateFactory;
 
   constructor(
+    controller: ProseController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
     view: EditorView,
@@ -68,6 +71,7 @@ class EmberNodeView implements NodeView {
                           getPos=this.getPos
                           node=this.node
                           updateAttribute=this.updateAttribute
+                          controller=this.controller
                         }}
                           {{#unless this.atom}}
                           <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
@@ -86,6 +90,7 @@ class EmberNodeView implements NodeView {
         transaction.setNodeAttribute(getPos(), attr, value);
         view.dispatch(transaction);
       },
+      controller,
       contentDOM: this.contentDOM,
       componentPath,
       atom,
@@ -190,10 +195,10 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
   };
 }
 
-export function createEmberNodeView(
-  config: EmberNodeConfig
-): NodeViewConstructor {
-  return function (node, view, getPos) {
-    return new EmberNodeView(config, node, view, getPos);
+export function createEmberNodeView(config: EmberNodeConfig) {
+  return function (controller: ProseController): NodeViewConstructor {
+    return function (node, view, getPos) {
+      return new EmberNodeView(controller, config, node, view, getPos);
+    };
   };
 }
