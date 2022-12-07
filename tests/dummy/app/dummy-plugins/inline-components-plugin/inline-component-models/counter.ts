@@ -5,6 +5,7 @@ import {
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
 
 class CounterView implements NodeView {
   node: PNode;
@@ -55,8 +56,13 @@ export const counter: NodeSpec = {
       tag: 'span',
       getAttrs(node: HTMLElement) {
         if (node.dataset.inlineComponent === 'counter') {
+          const count = optionMapOr(
+            0,
+            parseInt,
+            node.attributes.getNamedItem('count')?.value
+          );
           return {
-            count: parseInt(node.attributes.getNamedItem('count')!.value),
+            count,
           };
         }
         return false;
@@ -70,4 +76,3 @@ export const counter: NodeSpec = {
 
 export const counterView: NodeViewConstructor = (node, view, getPos) =>
   new CounterView(node, view, getPos);
-

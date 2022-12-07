@@ -91,12 +91,6 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   @action
-  insertNewLine() {}
-
-  @action
-  insertNewLi() {}
-
-  @action
   toggleItalic() {
     this.controller.toggleMark('em');
   }

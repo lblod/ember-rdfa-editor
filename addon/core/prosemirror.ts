@@ -21,7 +21,6 @@ import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
-import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
@@ -85,58 +84,6 @@ export function emberComponent(
   return { node, component };
 }
 
-function initalizeProsePlugins(
-  schema: Schema,
-  rdfaEditorPlugins: RdfaEditorPlugin[]
-) {
-  const proseMirrorPlugins = [
-    dropCursor(),
-    gapCursor(),
-
-    keymap(defaultKeymap(schema)),
-    keymap(baseKeymap),
-    history(),
-  ];
-  rdfaEditorPlugins.forEach((plugin) => {
-    proseMirrorPlugins.push(...plugin.proseMirrorPlugins());
-  });
-  return proseMirrorPlugins;
-}
-
-function extendSchema(
-  baseSchema: Schema,
-  rdfaEditorPlugins: RdfaEditorPlugin[]
-) {
-  let nodes = baseSchema.spec.nodes;
-  let marks = baseSchema.spec.marks;
-  rdfaEditorPlugins.forEach((plugin) => {
-    plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
-    });
-    plugin.marks().forEach((markConfig) => {
-      marks = marks.addToStart(markConfig.name, markConfig.spec);
-    });
-  });
-  return new Schema({
-    nodes,
-    marks,
-  });
-}
-
-function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
-  const nodeViewConstructors: { [node: string]: NodeViewConstructor } = {};
-
-  rdfaEditorPlugins.forEach((plugin) => {
-    plugin.nodes().forEach((nodeConfig) => {
-      if (nodeConfig.view) {
-        nodeViewConstructors[nodeConfig.name] = nodeConfig.view;
-      }
-    });
-  });
-
-  return nodeViewConstructors;
-}
-
 interface ProsemirrorArgs {
   target: Element;
   schema: Schema;
@@ -170,7 +117,6 @@ export default class Prosemirror {
     plugins = [],
     widgets = [],
     nodeViews = {},
-    devtools = false,
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
@@ -344,16 +290,6 @@ export class ProseController {
 
   get view(): EditorView {
     return this.pm.view;
-  }
-
-  get xmlContent(): string {
-    return '';
-  }
-
-  set xmlContent(content: string) {}
-
-  get xmlContentPrettified(): string {
-    return '';
   }
 
   get htmlContent(): string {
