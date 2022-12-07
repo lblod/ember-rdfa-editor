@@ -70,4 +70,3 @@ export const counter: NodeSpec = {
 
 export const counterView: NodeViewConstructor = (node, view, getPos) =>
   new CounterView(node, view, getPos);
-

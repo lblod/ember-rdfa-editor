@@ -116,9 +116,6 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
       if (type === 'html') {
         this.rdfaEditor.setHtmlContent(content);
         this.saveEditorContentToLocalStorage();
-      } else {
-        this.rdfaEditor.xmlContent = content;
-        this.saveEditorContentToLocalStorage();
       }
     }
   }
@@ -126,7 +123,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action openContentDebugger(type: 'xml' | 'html') {
     if (this.rdfaEditor) {
       if (type === 'xml') {
-        this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
+        this.debuggerContent = 'Coming soon!';
         this.xmlDebuggerOpen = true;
       } else {
         this.debuggerContent = this.rdfaEditor.htmlContent;
@@ -137,7 +134,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
 
   @action closeContentDebugger(type: 'xml' | 'html', save: boolean) {
     if (type === 'xml') {
-      this.debuggerContent = this.xmlEditor!.state.sliceDoc();
+      this.debuggerContent = 'Coming soon!';
       this.xmlDebuggerOpen = false;
     } else {
       this.debuggerContent = this.htmlEditor!.state.sliceDoc();

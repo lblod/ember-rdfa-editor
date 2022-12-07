@@ -52,4 +52,3 @@ export function highlight(options: HighlightOptions): ProsePlugin {
   });
   return highlight;
 }
-
