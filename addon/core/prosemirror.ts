@@ -450,12 +450,12 @@ function getParent(
   if (!pos) {
     return null;
   }
-  resolvedRoot.node.resolve(0);
+
   if (pos.depth === 0) {
     return { node: resolvedRoot.node };
   }
   return {
     node: pos.parent,
-    pos: resolvedRoot.node.resolve(pos.start(pos.depth)),
+    pos: resolvedRoot.node.resolve(pos.before(pos.depth)),
   };
 }
