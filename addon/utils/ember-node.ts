@@ -48,6 +48,7 @@ export function emberComponent(
     `component:${componentName}`
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const node = document.createElement(inline ? 'span' : 'div');
+  node.classList.add('ember-node');
   component.appendTo(node);
   return { node, component };
 }
