@@ -3,6 +3,7 @@ import {
   createEmberNodeView,
   EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'counter',
@@ -17,7 +18,7 @@ const emberNodeConfig: EmberNodeConfig = {
         return (node.attrs.count as number).toString();
       },
       parse: (element) => {
-        return parseInt(element.attributes.getNamedItem('count')!.value);
+        return optionMapOr(0, parseInt, element.getAttribute('count'));
       },
     },
   },

@@ -12,8 +12,6 @@ import {
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-// eslint-disable-next-line ember/no-classic-components
-import Component from '@ember/component';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
@@ -28,7 +26,6 @@ import {
   proseStoreFromParse,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'

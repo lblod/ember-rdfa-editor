@@ -1,7 +1,8 @@
 export {
-  EmberInlineComponent,
-  emberComponent,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
+  EmberNodeConfig,
+  createEmberNodeSpec,
+  createEmberNodeView,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
 
 export { WidgetSpec } from '@lblod/ember-rdfa-editor/core/prosemirror';
 export { Node as PNode, NodeSpec, MarkSpec } from 'prosemirror-model';
