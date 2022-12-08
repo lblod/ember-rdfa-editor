@@ -85,25 +85,25 @@ export default class Prosemirror {
     this.root = target;
     this.baseIRI = baseIRI;
     this.schema = schema;
+    this._state = EditorState.create({
+      doc: ProseParser.fromSchema(this.schema).parse(target),
+      plugins: [
+        ...plugins,
+
+        dropCursor(),
+        gapCursor(),
+
+        keymap(defaultKeymap(schema)),
+        keymap(baseKeymap),
+        history(),
+      ],
+    });
     this.view = new EditorView(target, {
-      state: EditorState.create({
-        doc: ProseParser.fromSchema(this.schema).parse(target),
-        plugins: [
-          ...plugins,
-
-          dropCursor(),
-          gapCursor(),
-
-          keymap(defaultKeymap(schema)),
-          keymap(baseKeymap),
-          history(),
-        ],
-      }),
+      state: this._state,
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: nodeViews(new ProseController(this)),
       dispatchTransaction: this.dispatch,
     });
-    this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
     this.children = children(this.schema);
