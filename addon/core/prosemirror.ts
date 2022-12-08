@@ -10,11 +10,6 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import {
-  ProseStore,
-  proseStoreFromParse,
-  ResolvedPNode,
-} from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 // eslint-disable-next-line ember/no-classic-components
@@ -25,11 +20,15 @@ import { history } from 'prosemirror-history';
 import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
-import RdfaEditorPlugin from './rdfa-editor-plugin';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { filter, objectValues } from 'iter-tools';
-import applyDevTools from 'prosemirror-dev-tools';
+import {
+  ProseStore,
+  proseStoreFromParse,
+  ResolvedPNode,
+} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -46,58 +45,6 @@ export interface WidgetSpec {
 export type InternalWidgetSpec = WidgetSpec & {
   controller: ProseController;
 };
-
-function initalizeProsePlugins(
-  schema: Schema,
-  rdfaEditorPlugins: RdfaEditorPlugin[]
-) {
-  const proseMirrorPlugins = [
-    dropCursor(),
-    gapCursor(),
-
-    keymap(defaultKeymap(schema)),
-    keymap(baseKeymap),
-    history(),
-  ];
-  rdfaEditorPlugins.forEach((plugin) => {
-    proseMirrorPlugins.push(...plugin.proseMirrorPlugins());
-  });
-  return proseMirrorPlugins;
-}
-
-function extendSchema(
-  baseSchema: Schema,
-  rdfaEditorPlugins: RdfaEditorPlugin[]
-) {
-  let nodes = baseSchema.spec.nodes;
-  let marks = baseSchema.spec.marks;
-  rdfaEditorPlugins.forEach((plugin) => {
-    plugin.nodes().forEach((nodeConfig) => {
-      nodes = nodes.addToStart(nodeConfig.name, nodeConfig.spec);
-    });
-    plugin.marks().forEach((markConfig) => {
-      marks = marks.addToStart(markConfig.name, markConfig.spec);
-    });
-  });
-  return new Schema({
-    nodes,
-    marks,
-  });
-}
-
-function initializeNodeViewConstructors(rdfaEditorPlugins: RdfaEditorPlugin[]) {
-  const nodeViewConstructors: { [node: string]: NodeViewConstructor } = {};
-
-  rdfaEditorPlugins.forEach((plugin) => {
-    plugin.nodes().forEach((nodeConfig) => {
-      if (nodeConfig.view) {
-        nodeViewConstructors[nodeConfig.name] = nodeConfig.view;
-      }
-    });
-  });
-
-  return nodeViewConstructors;
-}
 
 interface ProsemirrorArgs {
   target: Element;
@@ -136,7 +83,6 @@ export default class Prosemirror {
     nodeViews = () => {
       return {};
     },
-    devtools = false,
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
@@ -160,23 +106,6 @@ export default class Prosemirror {
       nodeViews: nodeViews(new ProseController(this)),
       dispatchTransaction: this.dispatch,
     });
-    if (devtools) {
-      applyDevTools(this.view);
-    }
-
-    // see https://github.com/ef4/ember-auto-import/issues/551
-    // if (devtools) {
-    //   import('prosemirror-dev-tools').then(
-    //     ({ default: applyDevTools }) => {
-    //       applyDevTools(this.view);
-    //     },
-    //     () => {
-    //       this.logger(
-    //         'optional dependency prosemirror-dev-tools is not installed'
-    //       );
-    //     }
-    //   );
-    // }
     this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
@@ -331,16 +260,6 @@ export class ProseController {
 
   get view(): EditorView {
     return this.pm.view;
-  }
-
-  get xmlContent(): string {
-    return '';
-  }
-
-  set xmlContent(content: string) {}
-
-  get xmlContentPrettified(): string {
-    return '';
   }
 
   get htmlContent(): string {

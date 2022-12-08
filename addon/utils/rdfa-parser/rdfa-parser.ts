@@ -18,6 +18,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/datastore/graphy-dataset';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -1250,6 +1251,7 @@ export class RdfaParser<N> {
    * @param {IActiveTag} parentTag The parent tag to instantiate in.
    * @param {IRdfaPattern} pattern The pattern to instantiate.
    * @param {string} rootPatternId The pattern id.
+   * @param node the extra metadata that will be stored along with the triple
    */
   protected emitPatternCopy(
     parentTag: IActiveTag<N>,
@@ -1266,15 +1268,14 @@ export class RdfaParser<N> {
       pattern.constructedBlankNodes = [];
       this.util.blankNodeFactory = () => {
         const bNode = this.util.dataFactory.blankNode(undefined, node);
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        pattern.constructedBlankNodes!.push(bNode);
+        unwrap(pattern.constructedBlankNodes).push(bNode);
         return bNode;
       };
     } else {
       let blankNodeIndex = 0;
       this.util.blankNodeFactory = () => {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        const bNode = pattern.constructedBlankNodes![blankNodeIndex];
+        const bNode = unwrap(pattern.constructedBlankNodes)[blankNodeIndex];
         blankNodeIndex++;
         return bNode;
       };
@@ -1296,6 +1297,7 @@ export class RdfaParser<N> {
    * @param {IRdfaPattern} pattern The pattern to instantiate.
    * @param {boolean} root If this is the root call for the given pattern.
    * @param {string} rootPatternId The pattern id.
+   * @param node the extra metadata that will be stored along with the triple
    */
   protected emitPatternCopyAbsolute(
     pattern: IRdfaPattern<N>,

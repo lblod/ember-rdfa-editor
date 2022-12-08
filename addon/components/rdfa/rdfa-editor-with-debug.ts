@@ -14,6 +14,7 @@ import {
 import { NodeViewConstructor } from 'prosemirror-view';
 import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import { Schema } from 'prosemirror-model';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: ProseController) => void;
@@ -56,10 +57,6 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action
   initDebug(info: unknown) {
     this.debug = info;
-  }
-
-  get devtools() {
-    return this.args.devtools ?? true;
   }
 
   @action
@@ -116,9 +113,6 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
       if (type === 'html') {
         this.rdfaEditor.setHtmlContent(content);
         this.saveEditorContentToLocalStorage();
-      } else {
-        this.rdfaEditor.xmlContent = content;
-        this.saveEditorContentToLocalStorage();
       }
     }
   }
@@ -126,7 +120,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action openContentDebugger(type: 'xml' | 'html') {
     if (this.rdfaEditor) {
       if (type === 'xml') {
-        this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
+        this.debuggerContent = 'Coming soon!';
         this.xmlDebuggerOpen = true;
       } else {
         this.debuggerContent = this.rdfaEditor.htmlContent;
@@ -137,10 +131,10 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
 
   @action closeContentDebugger(type: 'xml' | 'html', save: boolean) {
     if (type === 'xml') {
-      this.debuggerContent = this.xmlEditor!.state.sliceDoc();
+      this.debuggerContent = 'Coming soon!';
       this.xmlDebuggerOpen = false;
     } else {
-      this.debuggerContent = this.htmlEditor!.state.sliceDoc();
+      this.debuggerContent = unwrap(this.htmlEditor).state.sliceDoc();
       this.htmlDebuggerOpen = false;
     }
     if (save) {

@@ -1,6 +1,10 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
 
+type OrderedListAttrs = typeof rdfaAttrs & {
+  order: number;
+};
 export const ordered_list: NodeSpec = {
   attrs: { order: { default: 1 }, ...rdfaAttrs },
   content: 'list_item+',
@@ -9,17 +13,20 @@ export const ordered_list: NodeSpec = {
     {
       tag: 'ol',
       getAttrs(dom: HTMLElement) {
+        const start = dom.getAttribute('start');
         return {
-          order: dom.hasAttribute('start') ? +dom.getAttribute('start')! : 1,
+          order: optionMapOr(1, (val) => Number(val), start),
           ...getRdfaAttrs(dom),
         };
       },
     },
   ],
   toDOM(node) {
-    return node.attrs.order == 1
-      ? ['ol', { ...node.attrs }, 0]
-      : ['ol', { start: node.attrs.order, ...node.attrs }, 0];
+    const attrs = node.attrs as OrderedListAttrs;
+
+    return attrs.order == 1
+      ? ['ol', attrs, 0]
+      : ['ol', { start: attrs.order, ...attrs }, 0];
   },
 };
 export const bullet_list: NodeSpec = {

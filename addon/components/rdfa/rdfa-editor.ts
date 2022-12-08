@@ -19,6 +19,7 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 export type PluginConfig =
   | string
@@ -50,7 +51,6 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
-  devtools?: boolean;
 }
 
 /**
@@ -90,9 +90,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
   }
+
   get pasteBehaviour() {
     return this.args.pasteBehaviour ?? 'standard-html';
   }
+
   get initializers() {
     return this.args.initializers || [];
   }
@@ -106,24 +108,13 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    *
    * @method handleRawEditorInit
    *
-   * @param {RawEditor} view, the editor interface
+   * @param {Element} target the html element the editor will render into
    *
    * @private
    */
   @action
   async handleRawEditorInit(target: Element) {
-    // this.controller = new ViewController('rdfaEditorComponent', view);
-    // this.updateWidgets();
-    // this.toolbarController = new ViewController('toolbar', view);
-    // this.inlineComponentController = new ViewController(
-    //   'inline-component-manager',
-    //   view
-    // );
-    // const rdfaDocument = new RdfaDocumentController('host', view);
-    // window.__EDITOR = new RdfaDocumentController('debug', view);
-    // this.updateConfig('pasteBehaviour', this.pasteBehaviour);
-    // this.controller.addTransactionDispatchListener(this.onTransactionDispatch);
-    window.__APPLICATION = getOwner(this)!;
+    window.__APPLICATION = unwrap(getOwner(this));
     await Promise.all(this.initializers);
     this.prosemirror = new Prosemirror({
       target,
@@ -132,7 +123,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
       widgets: this.args.widgets,
-      devtools: this.args.devtools,
     });
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);
@@ -153,12 +143,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   }
 
   @action
-  updateConfig(key: string, value: string) {
-    // if (this.controller) {
-    //   this.controller.perform((tr) => {
-    //     tr.setConfig(key, value.toString());
-    //   });
-    // }
+  updateConfig(_key: string, _value: unknown) {
+    throw new NotImplementedError();
   }
 
   get toolbarMiddleWidgets() {

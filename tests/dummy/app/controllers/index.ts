@@ -53,6 +53,7 @@ import {
   placeholderEditing,
   placeholderView,
 } from '@lblod/ember-rdfa-editor/plugins/placeholder';
+import applyDevTools from 'prosemirror-dev-tools';
 
 const nodes = {
   doc,
@@ -121,6 +122,7 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
+    applyDevTools(rdfaEditor.view);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
