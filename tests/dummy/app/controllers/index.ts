@@ -48,12 +48,8 @@ import {
   insertDummyComponentsWidget,
 } from 'dummy/dummy-plugins/inline-components-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
-import {
-  placeholder,
-  placeholderEditing,
-  placeholderView,
-} from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import applyDevTools from 'prosemirror-dev-tools';
+import { placeholder } from '@lblod/ember-rdfa-editor/nodes/placeholder';
 
 const nodes = {
   doc,
@@ -99,10 +95,10 @@ export default class IndexController extends Controller {
     card: cardView,
     counter: counterView,
     dropdown: dropdownView,
-    placeholder: placeholderView,
+    // placeholder: placeholderView,
   };
   @tracked plugins: Plugin[] = [
-    placeholderEditing(),
+    // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
   ];
