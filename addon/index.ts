@@ -1,5 +1,11 @@
 import { Decoration } from 'prosemirror-view';
 
+export {
+  WidgetSpec,
+  ProseController,
+  default as ProseMirror,
+  WidgetLocation,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
 export * from 'prosemirror-model';
 export { Node as PNode } from 'prosemirror-model';
 
