@@ -1,8 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { EmberInlineComponentArgs } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 
-export default class InlineComponentsPluginCounter extends Component<EmberInlineComponentArgs> {
+export default class InlineComponentsPluginCounter extends Component<EmberNodeArgs> {
   @action
   click() {
     this.args.updateAttribute('count', this.count + 1);

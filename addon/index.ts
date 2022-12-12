@@ -3,10 +3,7 @@ import { Decoration } from 'prosemirror-view';
 export {
   WidgetSpec,
   ProseController,
-  EmberInlineComponent,
-  emberComponent,
   default as ProseMirror,
-  EmberInlineComponentArgs,
   WidgetLocation,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 export * from 'prosemirror-model';

@@ -11,10 +11,7 @@ import {
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { v4 as uuidv4 } from 'uuid';
 
-// eslint-disable-next-line ember/no-classic-components
-import Component from '@ember/component';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
@@ -29,7 +26,6 @@ import {
   proseStoreFromParse,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import { TemplateFactory } from 'ember-cli-htmlbars';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -47,50 +43,15 @@ export type InternalWidgetSpec = WidgetSpec & {
   controller: ProseController;
 };
 
-export interface EmberInlineComponent
-  extends Component,
-    EmberInlineComponentArgs {
-  appendTo(selector: string | Element): this;
-}
-
-export interface EmberInlineComponentArgs {
-  getPos: () => number;
-  node: PNode;
-  updateAttribute: (attr: string, value: unknown) => void;
-  contentDOM?: HTMLElement;
-}
-
-export function emberComponent(
-  name: string,
-  template: TemplateFactory,
-  props: EmberInlineComponentArgs
-): { node: HTMLElement; component: EmberInlineComponent } {
-  const instance = window.__APPLICATION;
-  const componentName = `${name}-${uuidv4()}`;
-  instance.register(
-    `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
-    Component.extend({
-      layout: template,
-      tagName: '',
-      ...props,
-    })
-  );
-  const component = instance.lookup(
-    `component:${componentName}`
-  ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const node = document.createElement('div');
-  component.appendTo(node);
-  return { node, component };
-}
-
 interface ProsemirrorArgs {
   target: Element;
   schema: Schema;
   baseIRI: string;
   plugins?: Plugin[];
   widgets?: WidgetSpec[];
-  nodeViews?: Record<string, NodeViewConstructor>;
+  nodeViews?: (
+    controller: ProseController
+  ) => Record<string, NodeViewConstructor>;
   devtools?: boolean;
 }
 
@@ -116,31 +77,33 @@ export default class Prosemirror {
     baseIRI,
     plugins = [],
     widgets = [],
-    nodeViews = {},
+    nodeViews = () => {
+      return {};
+    },
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.baseIRI = baseIRI;
     this.schema = schema;
+    this._state = EditorState.create({
+      doc: ProseParser.fromSchema(this.schema).parse(target),
+      plugins: [
+        ...plugins,
+
+        dropCursor(),
+        gapCursor(),
+
+        keymap(defaultKeymap(schema)),
+        keymap(baseKeymap),
+        history(),
+      ],
+    });
     this.view = new EditorView(target, {
-      state: EditorState.create({
-        doc: ProseParser.fromSchema(this.schema).parse(target),
-        plugins: [
-          ...plugins,
-
-          dropCursor(),
-          gapCursor(),
-
-          keymap(defaultKeymap(schema)),
-          keymap(baseKeymap),
-          history(),
-        ],
-      }),
+      state: this._state,
       attributes: { class: 'say-editor__inner say-content' },
-      nodeViews,
+      nodeViews: nodeViews(new ProseController(this)),
       dispatchTransaction: this.dispatch,
     });
-    this._state = this.view.state;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
     this.children = children(this.schema);
@@ -213,6 +176,10 @@ export class ProseController {
 
   constructor(pm: Prosemirror) {
     this.pm = pm;
+  }
+
+  clone() {
+    return new ProseController(this.pm);
   }
 
   toggleMark(name: string) {

@@ -95,11 +95,15 @@ const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  @tracked nodeViews: Record<string, NodeViewConstructor> = {
-    card: cardView,
-    counter: counterView,
-    dropdown: dropdownView,
-    placeholder: placeholderView,
+  @tracked nodeViews: (
+    proseController: ProseController
+  ) => Record<string, NodeViewConstructor> = (proseController) => {
+    return {
+      card: cardView(proseController),
+      counter: counterView(proseController),
+      dropdown: dropdownView(proseController),
+      placeholder: placeholderView,
+    };
   };
   @tracked plugins: Plugin[] = [
     placeholderEditing(),

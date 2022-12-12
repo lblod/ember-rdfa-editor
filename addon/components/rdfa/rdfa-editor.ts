@@ -48,7 +48,9 @@ interface RdfaEditorArgs {
   stealFocus?: boolean;
   pasteBehaviour?: string;
   widgets?: WidgetSpec[];
-  nodeViews?: { [node: string]: NodeViewConstructor };
+  nodeViews?: (controller: ProseController) => {
+    [node: string]: NodeViewConstructor;
+  };
 }
 
 /**
