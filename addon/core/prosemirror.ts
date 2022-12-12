@@ -26,6 +26,7 @@ import {
   proseStoreFromParse,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -65,11 +66,14 @@ export default class Prosemirror {
   pathFromRoot: Node[];
   schema: Schema;
   private readonly tag: (node: ResolvedPNode) => string;
-  private readonly children: (node: ResolvedPNode) => Iterable<ResolvedPNode>;
   private readonly attributes: (node: ResolvedPNode) => Attrs;
   private readonly isText: (node: ResolvedPNode) => boolean;
 
   private logger: Logger;
+  private children: (
+    schema: Schema,
+    refman: ProseReferenceManager
+  ) => (resolvedNode: ResolvedPNode) => Iterable<ResolvedPNode>;
 
   constructor({
     target,
@@ -106,17 +110,18 @@ export default class Prosemirror {
     });
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.tag = tag(this.schema);
-    this.children = children(this.schema);
+    this.children = children;
     this.attributes = attributes(this.schema);
     this.isText = isText(this.schema);
+    const refman = new ProseReferenceManager();
     this.datastore = proseStoreFromParse({
-      root: { node: this._state.doc },
+      root: refman.get({ node: this._state.doc }),
       textContent,
       tag: this.tag,
-      children: this.children,
+      children: this.children(this.schema, refman),
       attributes: this.attributes,
       isText: this.isText,
-      getParent,
+      getParent: getParent(refman),
 
       pathFromDomRoot: this.pathFromRoot,
       baseIRI,
@@ -151,14 +156,15 @@ export default class Prosemirror {
     const newState = this.state.apply(tr);
 
     if (tr.docChanged) {
+      const refman = new ProseReferenceManager();
       this.datastore = proseStoreFromParse({
         textContent,
         tag: this.tag,
-        children: this.children,
+        children: this.children(this.schema, refman),
         attributes: this.attributes,
         isText: this.isText,
-        getParent,
-        root: { node: newState.doc },
+        getParent: getParent(refman),
+        root: refman.get({ node: newState.doc }),
         pathFromDomRoot: this.pathFromRoot,
         baseIRI: this.baseIRI,
       });
@@ -273,12 +279,26 @@ export class ProseController {
   }
 }
 
-function textContent(resolvedNode: ResolvedPNode) {
+class ProseReferenceManager extends ReferenceManager<
+  ResolvedPNode,
+  ResolvedPNode
+> {
+  constructor() {
+    super(
+      (node: ResolvedPNode) => node,
+      (node: ResolvedPNode) => {
+        return `${node.pos?.pos ?? 'root'} - ${node.node.toString()} `;
+      }
+    );
+  }
+}
+
+function textContent(resolvedNode: ResolvedPNode): string {
   return resolvedNode.node.textContent;
 }
 
 function isText(schema: Schema) {
-  return function (resolvedNode: ResolvedPNode) {
+  return function (resolvedNode: ResolvedPNode): boolean {
     const { node } = resolvedNode;
     if (getLinkMark(schema, node)) {
       return false;
@@ -307,38 +327,45 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
   return undefined;
 }
 
-function children(schema: Schema) {
+function children(schema: Schema, refman: ProseReferenceManager) {
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
+    let result: Iterable<ResolvedPNode>;
     const { node, pos: resolvedPos } = resolvedNode;
     if (node.isText) {
       const linkMark = getLinkMark(schema, node);
       if (linkMark) {
-        return [
-          {
+        result = [
+          refman.get({
             node: node.mark(linkMark.removeFromSet(node.marks)),
             pos: resolvedPos,
-          },
+          }),
         ];
+      } else {
+        result = [];
       }
-    }
-    const root = resolvedPos ? resolvedPos.doc : node;
-    const rslt: ResolvedPNode[] = [];
-    node.descendants((child, relativePos) => {
-      const absolutePos = resolvedPos
-        ? resolvedPos.pos + 1 + relativePos
-        : relativePos;
-      rslt.push({
-        node: child,
-        pos: root.resolve(absolutePos),
+    } else {
+      const root = resolvedPos ? resolvedPos.doc : node;
+      const rslt: ResolvedPNode[] = [];
+      node.descendants((child, relativePos) => {
+        const absolutePos = resolvedPos
+          ? resolvedPos.pos + 1 + relativePos
+          : relativePos;
+        rslt.push(
+          refman.get({
+            node: child,
+            pos: root.resolve(absolutePos),
+          })
+        );
+        return false;
       });
-      return false;
-    });
-    return rslt;
+      result = rslt;
+    }
+    return result;
   };
 }
 
 function tag(schema: Schema) {
-  return function (resolvedNode: ResolvedPNode) {
+  return function (resolvedNode: ResolvedPNode): string {
     const { node } = resolvedNode;
     if (getLinkMark(schema, node)) {
       return 'a';
@@ -348,7 +375,7 @@ function tag(schema: Schema) {
 }
 
 function attributes(schema: Schema) {
-  return function (resolvedNode: ResolvedPNode) {
+  return function (resolvedNode: ResolvedPNode): Record<string, string> {
     const { node } = resolvedNode;
     const linkMark = getLinkMark(schema, node);
     if (linkMark) {
@@ -358,20 +385,23 @@ function attributes(schema: Schema) {
   };
 }
 
-function getParent(
-  resolvedNode: ResolvedPNode,
-  resolvedRoot: ResolvedPNode
-): ResolvedPNode | null {
-  const { pos } = resolvedNode;
-  if (!pos) {
-    return null;
-  }
-
-  if (pos.depth === 0) {
-    return { node: resolvedRoot.node };
-  }
-  return {
-    node: pos.parent,
-    pos: resolvedRoot.node.resolve(pos.before(pos.depth)),
+function getParent(refman: ProseReferenceManager) {
+  return function (
+    resolvedNode: ResolvedPNode,
+    resolvedRoot: ResolvedPNode
+  ): ResolvedPNode | null {
+    let result: ResolvedPNode | null;
+    const { pos } = resolvedNode;
+    if (!pos) {
+      result = null;
+    } else if (pos.depth === 0) {
+      result = refman.get({ node: resolvedRoot.node });
+    } else {
+      result = refman.get({
+        node: pos.parent,
+        pos: resolvedRoot.node.resolve(pos.before(pos.depth)),
+      });
+    }
+    return result;
   };
 }
