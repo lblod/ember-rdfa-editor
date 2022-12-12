@@ -1,5 +1,4 @@
-import { isEmpty, map } from 'iter-tools';
-import { Iterable } from 'iter-tools';
+import { first, isEmpty, Iterable, map } from 'iter-tools';
 import { single } from '../iterator-utils';
 
 export class ResultSet<I> implements Iterable<I> {
@@ -7,6 +6,10 @@ export class ResultSet<I> implements Iterable<I> {
 
   constructor(iterable: Iterable<I>) {
     this.engine = iterable;
+  }
+
+  first(): I | undefined {
+    return first(this.engine);
   }
 
   single(): I | undefined {

@@ -480,7 +480,7 @@ export class EditorStore<N> implements Datastore<N> {
     }
   }
 
-  *asQuads(): Generator<RDF.Quad> {
+  *asQuads(): Generator<RDF.Quad, void, null> {
     for (const quad of this.dataset) {
       yield quad;
     }
