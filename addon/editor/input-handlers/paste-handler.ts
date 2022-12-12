@@ -11,6 +11,10 @@ import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {
+  convertGenericHtml,
+  convertMsWordHtml,
+} from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-func';
 
 export default class PasteHandler extends InputHandler {
   private logger: Logger;
@@ -48,7 +52,6 @@ export default class PasteHandler extends InputHandler {
     if (!range) {
       throw new MisbehavedSelectionError();
     }
-
     const pasteRange = ModelRangeUtils.getExtendedToPlaceholder(range);
     if (canPasteHTML) {
       try {
@@ -57,7 +60,14 @@ export default class PasteHandler extends InputHandler {
           : new HTMLInputParser({ safeTags: LIMITED_SAFE_TAGS });
 
         const htmlPaste = clipboardData.getData('text/html');
-        const cleanHTML = inputParser.cleanupHTML(htmlPaste);
+        const rtfPaste = clipboardData.getData('text/rtf');
+        let cleanHTML;
+
+        if (rtfPaste) {
+          cleanHTML = convertMsWordHtml(htmlPaste, inputParser);
+        } else {
+          cleanHTML = convertGenericHtml(htmlPaste, inputParser);
+        }
 
         this.rawEditor.executeCommand('insert-html', cleanHTML, pasteRange);
       } catch (error) {

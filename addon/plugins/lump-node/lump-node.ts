@@ -24,7 +24,6 @@ export default class LumpNodePlugin implements EditorPlugin {
 
   selectionChanged() {
     const selection = this.controller?.selection;
-    console.log(selection);
     if (selection?.isCollapsed) {
       const lumpNode = lumpNodeBeforeCursor(selection);
       const newPosition = selection.lastRange?.start;
