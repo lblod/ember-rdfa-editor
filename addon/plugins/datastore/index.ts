@@ -174,12 +174,10 @@ function getParent(refman: ProseReferenceManager) {
   ): ResolvedPNode | null {
     let result: ResolvedPNode | null;
     const { pos } = resolvedNode;
-    const resolvedPos = resolvedRoot.node.resolve(pos);
-    if (!pos) {
+    if (pos === -1) {
       result = null;
-    } else if (resolvedPos.depth === 0) {
-      result = refman.get({ node: resolvedRoot.node, pos: -1 });
     } else {
+      const resolvedPos = resolvedRoot.node.resolve(pos);
       result = refman.get({
         node: resolvedPos.parent,
         pos: resolvedPos.before(),
