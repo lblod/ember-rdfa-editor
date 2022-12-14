@@ -32,6 +32,19 @@
 
 
 
+
+## 1.0.0-alpha.8 (2022-12-14)
+
+#### :boom: Breaking Change
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 1.0.0-alpha.7 (2022-12-14)
 
 #### :boom: Breaking Change
