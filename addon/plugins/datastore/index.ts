@@ -178,10 +178,17 @@ function getParent(refman: ProseReferenceManager) {
       result = null;
     } else {
       const resolvedPos = resolvedRoot.node.resolve(pos);
-      result = refman.get({
-        node: resolvedPos.parent,
-        pos: resolvedPos.before(),
-      });
+      if (resolvedPos.depth === 0) {
+        result = refman.get({
+          node: resolvedPos.parent,
+          pos: -1,
+        });
+      } else {
+        result = refman.get({
+          node: resolvedPos.parent,
+          pos: resolvedPos.before(),
+        });
+      }
     }
     return result;
   };
