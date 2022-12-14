@@ -20,7 +20,7 @@ export function* children(
   resolvedNode: { node: PNode; pos: number },
   reverse = true,
   recursive = true,
-  filter: (node: PNode) => boolean = () => true,
+  filter: ({ node, pos }: { node: PNode; pos: number }) => boolean = () => true,
   startIndex = reverse ? resolvedNode.node.childCount - 1 : 0
 ): Generator<{ node: PNode; pos: number }, void> {
   const { node, pos } = resolvedNode;
@@ -32,7 +32,7 @@ export function* children(
       if (recursive) {
         yield* children(resolvedChild, reverse, recursive, filter);
       }
-      if (filter(node.child(i))) {
+      if (filter(resolvedChild)) {
         yield resolvedChild;
       }
     }
@@ -41,7 +41,7 @@ export function* children(
     for (let i = 0; i < node.childCount; i++) {
       if (i >= startIndex) {
         const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
-        if (filter(resolvedChild.node)) {
+        if (filter(resolvedChild)) {
           yield { node: node.child(i), pos: pos + 1 + offset };
         }
         if (recursive) {
@@ -57,7 +57,7 @@ export function* nodesBetween(
   from: ResolvedPos,
   visitParentUpwards = false,
   reverse = false,
-  filter: (node: PNode) => boolean = () => true
+  filter: ({ node, pos }: { node: PNode; pos: number }) => boolean = () => true
 ): Generator<{ node: PNode; pos: number }, undefined> {
   let startIndex: number;
   const index = from.index();
