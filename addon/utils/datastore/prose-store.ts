@@ -3,7 +3,7 @@ import {
   RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
-import { Node as PNode, ResolvedPos } from 'prosemirror-model';
+import { Node as PNode } from 'prosemirror-model';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
 import { EditorState } from 'prosemirror-state';
 import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
@@ -13,7 +13,7 @@ import Datastore, {
 
 export type ResolvedPNode = {
   node: PNode;
-  pos?: ResolvedPos;
+  pos: number;
 };
 
 export interface ProseDatastore extends Datastore<ResolvedPNode> {
