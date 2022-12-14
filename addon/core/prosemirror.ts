@@ -246,7 +246,7 @@ export class ProseReferenceManager extends ReferenceManager<
     super(
       (node: ResolvedPNode) => node,
       (node: ResolvedPNode) => {
-        return `${node.pos?.pos ?? 'root'} - ${node.node.toString()} `;
+        return `${node.pos} - ${node.node.toString()} `;
       }
     );
   }
