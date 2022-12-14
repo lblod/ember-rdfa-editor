@@ -73,7 +73,9 @@ export function* nodesBetween(
   };
   yield* children(resolvedParent, reverse, true, filter, startIndex);
   if (visitParentUpwards && from.depth !== 0) {
-    yield resolvedParent;
+    if (filter(resolvedParent)) {
+      yield resolvedParent;
+    }
     const resolvedPos = from.doc.resolve(
       reverse ? from.before() : from.after()
     );
