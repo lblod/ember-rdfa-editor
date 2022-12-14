@@ -33,7 +33,7 @@ export function datastore({
       init(config: EditorStateConfig, state: EditorState) {
         const refman = new ProseReferenceManager();
         const store = proseStoreFromParse({
-          root: { node: state.doc },
+          root: { node: state.doc, pos: -1 },
           textContent,
           tag: tag(state.schema),
           children: children(state.schema, refman),
@@ -57,7 +57,7 @@ export function datastore({
         const refman = new ProseReferenceManager();
         if (tr.docChanged) {
           const newStore = proseStoreFromParse({
-            root: { node: newState.doc },
+            root: { node: newState.doc, pos: -1 },
             textContent,
             tag: tag(newState.schema),
             children: children(newState.schema, refman),
@@ -115,30 +115,27 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
 function children(schema: Schema, refman: ProseReferenceManager) {
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
     let result: Iterable<ResolvedPNode>;
-    const { node, pos: resolvedPos } = resolvedNode;
+    const { node, pos } = resolvedNode;
     if (node.isText) {
       const linkMark = getLinkMark(schema, node);
       if (linkMark) {
         result = [
           refman.get({
             node: node.mark(linkMark.removeFromSet(node.marks)),
-            pos: resolvedPos,
+            pos,
           }),
         ];
       } else {
         result = [];
       }
     } else {
-      const root = resolvedPos ? resolvedPos.doc : node;
       const rslt: ResolvedPNode[] = [];
       node.descendants((child, relativePos) => {
-        const absolutePos = resolvedPos
-          ? resolvedPos.pos + 1 + relativePos
-          : relativePos;
+        const absolutePos = pos + 1 + relativePos;
         rslt.push(
           refman.get({
             node: child,
-            pos: root.resolve(absolutePos),
+            pos: absolutePos,
           })
         );
         return false;
@@ -177,15 +174,21 @@ function getParent(refman: ProseReferenceManager) {
   ): ResolvedPNode | null {
     let result: ResolvedPNode | null;
     const { pos } = resolvedNode;
-    if (!pos) {
+    if (pos === -1) {
       result = null;
-    } else if (pos.depth === 0) {
-      result = refman.get({ node: resolvedRoot.node });
     } else {
-      result = refman.get({
-        node: pos.parent,
-        pos: resolvedRoot.node.resolve(pos.before(pos.depth)),
-      });
+      const resolvedPos = resolvedRoot.node.resolve(pos);
+      if (resolvedPos.depth === 0) {
+        result = refman.get({
+          node: resolvedPos.parent,
+          pos: -1,
+        });
+      } else {
+        result = refman.get({
+          node: resolvedPos.parent,
+          pos: resolvedPos.before(),
+        });
+      }
     }
     return result;
   };
