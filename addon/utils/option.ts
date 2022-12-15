@@ -14,7 +14,7 @@ export function unwrap<A>(thing: Option<A>): A {
   return expect('Unwrapped a null or undefined value!', thing);
 }
 
-export function unwrapOr<A>(thing: Option<A>, defaultValue: A): A {
+export function unwrapOr<A>(defaultValue: A, thing: Option<A>): A {
   if (isSome(thing)) {
     return thing;
   }

@@ -7,7 +7,11 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
-import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {
+  getPathFromRoot,
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
@@ -17,14 +21,13 @@ import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
-import {
-  ProseStore,
-  ResolvedPNode,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
 import {
   datastore,
   datastoreKey,
+  isElementPNode,
+  ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
@@ -245,8 +248,24 @@ export class ProseReferenceManager extends ReferenceManager<
   constructor() {
     super(
       (node: ResolvedPNode) => node,
-      (node: ResolvedPNode) => {
-        return `${node.pos} - ${node.node.toString()} `;
+      (bundle: ResolvedPNode) => {
+        if (isElementPNode(bundle)) {
+          const { from, to, node } = bundle;
+          const name = node?.type.name || '';
+          const attrs = JSON.stringify(node?.attrs);
+          return `${from} - ${to} - ${name} - ${attrs}`;
+        } else {
+          const { from, to, domNode } = bundle;
+          let domNodeTag = '';
+          let domNodeAttrs = '';
+          if (domNode) {
+            domNodeTag = tagName(domNode);
+            domNodeAttrs = isElement(domNode)
+              ? JSON.stringify(domNode.attributes)
+              : '';
+          }
+          return `${from} - ${to} - ${domNodeTag} - ${domNodeAttrs}`;
+        }
       }
     );
   }

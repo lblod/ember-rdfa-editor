@@ -5,8 +5,8 @@ export const link: MarkSpec = {
   attrs: {
     ...rdfaAttrs,
   },
-  excludes: 'linkmarks',
-  group: 'linkmarks',
+  excludes: '',
+  group: 'rdfa linkmarks',
   inclusive: false,
   parseDOM: [
     {
@@ -18,7 +18,9 @@ export const link: MarkSpec = {
       },
     },
   ],
-  toDOM(node) {
-    return ['a', { ...node.attrs }, 0];
+  toDOM(mark) {
+    return ['a', mark.attrs, 0];
   },
+  hasRdfa: true,
+  parseTag: 'a',
 };

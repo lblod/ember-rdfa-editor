@@ -54,6 +54,7 @@ import {
   placeholderView,
 } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import applyDevTools from 'prosemirror-dev-tools';
+import {rdfaLink} from "@lblod/ember-rdfa-editor/nodes/inline-rdfa";
 
 const nodes = {
   doc,
@@ -77,13 +78,14 @@ const nodes = {
   image,
 
   hard_break,
-  inline_rdfa,
   block_rdfa,
   card,
   counter,
   dropdown,
 };
 const marks = {
+  inline_rdfa,
+  rdfaLink,
   code,
   link,
   em,

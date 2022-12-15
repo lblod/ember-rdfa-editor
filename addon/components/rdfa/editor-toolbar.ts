@@ -24,7 +24,6 @@ interface Args {
  * @extends Component
  */
 export default class EditorToolbar extends Component<Args> {
-  @tracked canInsertList = true;
   @tracked tableAddRows = 2;
   @tracked tableAddColumns = 2;
 
@@ -51,10 +50,14 @@ export default class EditorToolbar extends Component<Args> {
   }
 
   get isInList() {
+    return this.canUnindent;
+  }
+
+  get canInsertList() {
     return (
-      !this.controller.checkCommand(
+      this.controller.checkCommand(
         wrapInList(this.controller.schema.nodes.bullet_list)
-      ) || this.canIndent
+      ) || this.isInList
     );
   }
 

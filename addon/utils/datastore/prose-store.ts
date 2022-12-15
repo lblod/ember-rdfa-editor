@@ -10,11 +10,7 @@ import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import Datastore, {
   EditorStore,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
-
-export type ResolvedPNode = {
-  node: PNode;
-  pos: number;
-};
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore';
 
 export interface ProseDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): ProseStore;
