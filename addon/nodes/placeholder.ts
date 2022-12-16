@@ -7,7 +7,7 @@ export const placeholder: NodeSpec = {
   inline: true,
   group: 'inline',
   selectable: true,
-  defining: true,
+  defining: false,
   toDOM(node) {
     return [
       'span',
