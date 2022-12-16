@@ -30,6 +30,7 @@ import {
   paragraph,
   repaired_block,
   text,
+  placeholder,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
   tableMenu,
@@ -49,7 +50,6 @@ import {
 } from 'dummy/dummy-plugins/inline-components-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
-import { placeholder } from '@lblod/ember-rdfa-editor/nodes/placeholder';
 
 const nodes = {
   doc,
