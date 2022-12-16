@@ -31,6 +31,42 @@
 
 
 
+
+
+## 1.0.0-alpha.8 (2022-12-14)
+
+#### :boom: Breaking Change
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 1.0.0-alpha.7 (2022-12-14)
+
+#### :boom: Breaking Change
+* [#498](https://github.com/lblod/ember-rdfa-editor/pull/498) Utility functions to create ember-node-views and ember-node-specs ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#509](https://github.com/lblod/ember-rdfa-editor/pull/509) feature(datastore): implement ds as a plugin ([@abeforgit](https://github.com/abeforgit))
+* [#498](https://github.com/lblod/ember-rdfa-editor/pull/498) Utility functions to create ember-node-views and ember-node-specs ([@elpoelma](https://github.com/elpoelma))
+* [#495](https://github.com/lblod/ember-rdfa-editor/pull/495) Add resolved-positions to prose-store ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#508](https://github.com/lblod/ember-rdfa-editor/pull/508) bug(datastore): guarantee reference stability for datastore data ([@abeforgit](https://github.com/abeforgit))
+* [#501](https://github.com/lblod/ember-rdfa-editor/pull/501) fix(npm): fix infinite loop by moving devtools to devdeps ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#502](https://github.com/lblod/ember-rdfa-editor/pull/502) Cleanup unused code, tighten linting, fix linting ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 1.0.0-alpha.6 (2022-12-06)
 
 #### :boom: Breaking Change

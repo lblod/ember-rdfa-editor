@@ -9,13 +9,23 @@ import {
   proseStoreFromParse,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import { PNode, ProsePlugin } from '@lblod/ember-rdfa-editor';
-import { Mark, MarkType, Schema } from 'prosemirror-model';
+import {
+  Mark,
+  MarkType,
+  PNode,
+  ProsePlugin,
+  Schema,
+} from '@lblod/ember-rdfa-editor';
 import { filter, objectValues } from 'iter-tools';
 import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
 export const datastoreKey = new PluginKey<ProseStore>('datastore');
+
+export {
+  ProseStore,
+  ResolvedPNode,
+} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 
 export interface DatastorePluginArgs {
   pathFromRoot: Node[];
