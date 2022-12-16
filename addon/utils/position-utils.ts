@@ -26,14 +26,16 @@ export function* children(
   const { node, pos } = resolvedNode;
   if (reverse) {
     let offset = node.content.size;
-    for (let i = startIndex; i >= 0; i--) {
+    for (let i = node.childCount - 1; i >= 0; i--) {
       offset -= node.child(i).nodeSize;
-      const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
-      if (recursive) {
-        yield* children(resolvedChild, reverse, recursive, filter);
-      }
-      if (filter(resolvedChild)) {
-        yield resolvedChild;
+      if (i <= startIndex) {
+        const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
+        if (recursive) {
+          yield* children(resolvedChild, reverse, recursive, filter);
+        }
+        if (filter(resolvedChild)) {
+          yield resolvedChild;
+        }
       }
     }
   } else {
