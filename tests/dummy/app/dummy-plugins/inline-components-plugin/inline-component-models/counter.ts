@@ -1,78 +1,28 @@
 import {
-  emberComponent,
-  EmberInlineComponent,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
+  createEmberNodeSpec,
+  createEmberNodeView,
+  EmberNodeConfig,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
 
-class CounterView implements NodeView {
-  node: PNode;
-  dom: Element;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory = hbs`<InlineComponentsPlugin::Counter @getPos={{this.getPos}} @node={{this.node}} @updateAttribute={{this.updateAttribute}}/>`;
-
-  constructor(pNode: PNode, view: EditorView, getPos: () => number) {
-    this.node = pNode;
-    const { node, component } = emberComponent('counter', this.template, {
-      getPos,
-      node: pNode,
-      updateAttribute: (attr, value) => {
-        const transaction = view.state.tr;
-        transaction.setNodeAttribute(getPos(), attr, value);
-        view.dispatch(transaction);
-      },
-    });
-    this.dom = node;
-    this.emberComponent = component;
-  }
-
-  update(node: PNode) {
-    if (node.type !== this.node.type) return false;
-    this.node = node;
-    this.emberComponent.set('node', node);
-    return true;
-  }
-
-  destroy() {
-    this.emberComponent.destroy();
-  }
-
-  stopEvent() {
-    return true;
-  }
-}
-
-export const counter: NodeSpec = {
+const emberNodeConfig: EmberNodeConfig = {
+  name: 'counter',
+  componentPath: 'inline-components-plugin/counter',
   inline: true,
-  atom: true,
   group: 'inline',
+  atom: true,
   attrs: {
-    count: { default: 0 },
-  },
-  parseDOM: [
-    {
-      tag: 'span',
-      getAttrs(node: HTMLElement) {
-        if (node.dataset.inlineComponent === 'counter') {
-          const count = optionMapOr(
-            0,
-            parseInt,
-            node.attributes.getNamedItem('count')?.value
-          );
-          return {
-            count,
-          };
-        }
-        return false;
+    count: {
+      default: 0,
+      serialize: (node) => {
+        return (node.attrs.count as number).toString();
+      },
+      parse: (element) => {
+        return optionMapOr(0, parseInt, element.getAttribute('count'));
       },
     },
-  ],
-  toDOM(node: PNode) {
-    return ['span', { 'data-inline-component': 'counter', ...node.attrs }];
   },
 };
 
-export const counterView: NodeViewConstructor = (node, view, getPos) =>
-  new CounterView(node, view, getPos);
+export const counter = createEmberNodeSpec(emberNodeConfig);
+export const counterView = createEmberNodeView(emberNodeConfig);
