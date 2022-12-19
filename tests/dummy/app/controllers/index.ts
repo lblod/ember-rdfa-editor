@@ -50,7 +50,7 @@ import {
 } from 'dummy/dummy-plugins/inline-components-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
-import {rdfaLink} from "@lblod/ember-rdfa-editor/nodes/inline-rdfa";
+import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 const nodes = {
   doc,
@@ -74,6 +74,7 @@ const nodes = {
   image,
 
   hard_break,
+  invisible_rdfa,
   block_rdfa,
   card,
   counter,
@@ -81,7 +82,6 @@ const nodes = {
 };
 const marks = {
   inline_rdfa,
-  rdfaLink,
   code,
   link,
   em,

@@ -46,3 +46,8 @@
 
 // SHAME
 @import 'ember-rdfa-editor/shame';
+.u-hidden {
+  visibility: visible;
+  display: inline-block;
+  background: yellow;
+}
