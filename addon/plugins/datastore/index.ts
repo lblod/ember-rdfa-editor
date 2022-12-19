@@ -140,7 +140,10 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
         } else {
           if (textBuffer.length) {
             rslt.push(
-              ...map((child: TextPNode) => child.parent = resolvedNode, serializeTextBlob(refman, serializer, schema, resolvedNode, textBuffer))
+              ...map((pChild: TextPNode) => {
+                pChild.parent = resolvedNode;
+                return pChild
+              }, serializeTextBlob(refman, serializer, schema, textBuffer))
             );
           }
           textBuffer = [];
@@ -156,7 +159,10 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
         return false;
       });
       if (textBuffer.length) {
-        rslt.push(...map((child: TextPNode) => child.parent = resolvedNode, serializeTextBlob(refman, serializer, schema, resolvedNode, textBuffer)))
+        rslt.push(...map((pChild: TextPNode) => {
+          pChild.parent = resolvedNode;
+          return pChild
+        }, serializeTextBlob(refman, serializer, schema, textBuffer)))
       }
       return rslt;
     } else {
@@ -169,7 +175,6 @@ function serializeTextBlob(
   refman: ProseReferenceManager,
   serializer: DOMSerializer,
   schema: Schema,
-  parent: ResolvedPNode,
   buffer: [PNode, number][]
 ): Iterable<ResolvedPNode> {
   let currentMark: Mark | null = null;
