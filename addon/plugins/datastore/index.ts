@@ -1,10 +1,10 @@
 import {EditorState, EditorStateConfig, PluginKey, Transaction,} from 'prosemirror-state';
 import {ProseStore, proseStoreFromParse,} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import {Mark, MarkType, PNode, ProsePlugin, Schema,} from '@lblod/ember-rdfa-editor';
-import {filter, map, objectFrom, objectValues} from 'iter-tools';
+import {Mark, PNode, ProsePlugin, Schema,} from '@lblod/ember-rdfa-editor';
+import {map, objectFrom} from 'iter-tools';
 import {ProseReferenceManager} from '@lblod/ember-rdfa-editor/core/prosemirror';
 import {createLogger} from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import {DOMSerializer} from 'prosemirror-model';
+import {DOMSerializer, MarkType} from 'prosemirror-model';
 import {isElement, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import {Option, unwrap} from '@lblod/ember-rdfa-editor/utils/option';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
@@ -108,11 +108,7 @@ function isText(schema: Schema) {
   };
 }
 
-function getRdfaMarks(schema: Schema, node: PNode): Mark | undefined {
-  const rdfaMarks = filter(
-    (markType: MarkType) => markType.spec.hasRdfa as boolean,
-    objectValues(schema.marks)
-  );
+function getRdfaMarks(rdfaMarks: MarkType[], node: PNode): Mark | undefined {
   const isText = node.isText;
   if (isText) {
     for (const type of rdfaMarks) {
@@ -127,6 +123,12 @@ function getRdfaMarks(schema: Schema, node: PNode): Mark | undefined {
 
 function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
   const serializer = DOMSerializer.fromSchema(schema);
+  const rdfaMarks: MarkType[] = [];
+  for (const markType of Object.values(schema.marks)) {
+    if (markType.spec.hasRdfa as boolean) {
+      rdfaMarks.push(markType);
+    }
+  }
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
     if (isElementPNode(resolvedNode)) {
       const {from, node} = resolvedNode;
@@ -143,7 +145,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
               ...map((pChild: TextPNode) => {
                 pChild.parent = resolvedNode;
                 return pChild
-              }, serializeTextBlob(refman, serializer, schema, textBuffer))
+              }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer))
             );
           }
           textBuffer = [];
@@ -162,7 +164,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
         rslt.push(...map((pChild: TextPNode) => {
           pChild.parent = resolvedNode;
           return pChild
-        }, serializeTextBlob(refman, serializer, schema, textBuffer)))
+        }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer)))
       }
       return rslt;
     } else {
@@ -173,6 +175,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
 
 function serializeTextBlob(
   refman: ProseReferenceManager,
+  rdfaMarks: MarkType[],
   serializer: DOMSerializer,
   schema: Schema,
   buffer: [PNode, number][]
@@ -181,7 +184,7 @@ function serializeTextBlob(
   let newBuffer: [PNode, number][] = [];
   const children: ResolvedPNode[] = [];
   for (const [node, pos] of buffer) {
-    const rdfaMark = getRdfaMarks(schema, node) ?? null;
+    const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
     if (rdfaMark === currentMark) {
       if (rdfaMark) {
         newBuffer.push([node.mark(rdfaMark.removeFromSet(node.marks)), pos]);
@@ -193,6 +196,7 @@ function serializeTextBlob(
         children.push(
           ...serializeTextBlobRec(
             refman,
+            rdfaMarks,
             serializer,
             schema,
             newBuffer,
@@ -212,6 +216,7 @@ function serializeTextBlob(
     children.push(
       ...serializeTextBlobRec(
         refman,
+        rdfaMarks,
         serializer,
         schema,
         newBuffer,
@@ -224,6 +229,7 @@ function serializeTextBlob(
 
 function serializeTextBlobRec(
   refman: ProseReferenceManager,
+  rdfaMarks: MarkType[],
   serializer: DOMSerializer,
   schema: Schema,
   buffer: [PNode, number][],
@@ -248,7 +254,7 @@ function serializeTextBlobRec(
     let newBuffer: [PNode, number][] = [];
     const children: ResolvedPNode[] = [];
     for (const [node, pos] of buffer) {
-      const rdfaMark = getRdfaMarks(schema, node) ?? null;
+      const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
       if (rdfaMark === currentMark) {
         if (rdfaMark) {
           newBuffer.push([node.mark(rdfaMark.removeFromSet(node.marks)), pos]);
@@ -260,6 +266,7 @@ function serializeTextBlobRec(
           children.push(
             ...serializeTextBlobRec(
               refman,
+              rdfaMarks,
               serializer,
               schema,
               newBuffer,
@@ -280,6 +287,7 @@ function serializeTextBlobRec(
       children.push(
         ...serializeTextBlobRec(
           refman,
+          rdfaMarks,
           serializer,
           schema,
           newBuffer,
