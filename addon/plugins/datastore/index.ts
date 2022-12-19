@@ -1,40 +1,27 @@
-import {
-  EditorState,
-  EditorStateConfig,
-  PluginKey,
-  Transaction,
-} from 'prosemirror-state';
-import {
-  ProseStore,
-  proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import {
-  Mark,
-  MarkType,
-  PNode,
-  ProsePlugin,
-  Schema,
-} from '@lblod/ember-rdfa-editor';
-import { filter, map, objectFrom, objectValues } from 'iter-tools';
-import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import { DOMSerializer } from 'prosemirror-model';
-import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import {EditorState, EditorStateConfig, PluginKey, Transaction,} from 'prosemirror-state';
+import {ProseStore, proseStoreFromParse,} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import {Mark, MarkType, PNode, ProsePlugin, Schema,} from '@lblod/ember-rdfa-editor';
+import {filter, map, objectFrom, objectValues} from 'iter-tools';
+import {ProseReferenceManager} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import {createLogger} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {DOMSerializer} from 'prosemirror-model';
+import {isElement, tagName} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import {Option, unwrap} from '@lblod/ember-rdfa-editor/utils/option';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
 export const datastoreKey = new PluginKey<ProseStore>('datastore');
 
-export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+export {ProseStore} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 
-interface TextPNode {
+export interface TextPNode {
   children: ResolvedPNode[];
+  parent?: ResolvedPNode;
   domNode: Node;
   from: number;
   to: number;
 }
 
-interface ElementPNode {
+export interface ElementPNode {
   node: PNode;
   from: number;
   to: number;
@@ -52,9 +39,9 @@ export interface DatastorePluginArgs {
 }
 
 export function datastore({
-  pathFromRoot,
-  baseIRI,
-}: DatastorePluginArgs): ProsePlugin<ProseStore> {
+                            pathFromRoot,
+                            baseIRI,
+                          }: DatastorePluginArgs): ProsePlugin<ProseStore> {
   const logger = createLogger('datastore');
   return new ProsePlugin({
     key: datastoreKey,
@@ -62,7 +49,7 @@ export function datastore({
       init(config: EditorStateConfig, state: EditorState) {
         const refman = new ProseReferenceManager();
         const store = proseStoreFromParse({
-          root: { node: state.doc, from: 0, to: state.doc.nodeSize },
+          root: {node: state.doc, from: -1, to: state.doc.nodeSize},
           textContent,
           tag: tag(state.schema),
           children: children(state.schema, refman, state.doc),
@@ -86,7 +73,7 @@ export function datastore({
         const refman = new ProseReferenceManager();
         if (tr.docChanged) {
           const newStore = proseStoreFromParse({
-            root: { node: newState.doc, from: 0, to: newState.doc.nodeSize },
+            root: {node: newState.doc, from: 0, to: newState.doc.nodeSize},
             textContent,
             tag: tag(newState.schema),
             children: children(newState.schema, refman, newState.doc),
@@ -142,7 +129,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
   const serializer = DOMSerializer.fromSchema(schema);
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
     if (isElementPNode(resolvedNode)) {
-      const { from, node } = resolvedNode;
+      const {from, node} = resolvedNode;
       const rslt: ResolvedPNode[] = [];
       let textBuffer: [PNode, number][] = [];
 
@@ -153,7 +140,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
         } else {
           if (textBuffer.length) {
             rslt.push(
-              ...serializeTextBlob(refman, serializer, schema, textBuffer)
+              ...map((child: TextPNode) => child.parent = resolvedNode, serializeTextBlob(refman, serializer, schema, resolvedNode, textBuffer))
             );
           }
           textBuffer = [];
@@ -169,7 +156,7 @@ function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
         return false;
       });
       if (textBuffer.length) {
-        rslt.push(...serializeTextBlob(refman, serializer, schema, textBuffer));
+        rslt.push(...map((child: TextPNode) => child.parent = resolvedNode, serializeTextBlob(refman, serializer, schema, resolvedNode, textBuffer)))
       }
       return rslt;
     } else {
@@ -182,6 +169,7 @@ function serializeTextBlob(
   refman: ProseReferenceManager,
   serializer: DOMSerializer,
   schema: Schema,
+  parent: ResolvedPNode,
   buffer: [PNode, number][]
 ): Iterable<ResolvedPNode> {
   let currentMark: Mark | null = null;
@@ -250,7 +238,7 @@ function serializeTextBlobRec(
     const to = lastNode[1] + lastNode[0].nodeSize;
     const markSerializer = serializer.marks[mark.type.name];
     const outputSpec = markSerializer(mark, true);
-    const { dom } = DOMSerializer.renderSpec(document, outputSpec);
+    const {dom} = DOMSerializer.renderSpec(document, outputSpec);
     let currentMark: Mark | null = null;
     let newBuffer: [PNode, number][] = [];
     const children: ResolvedPNode[] = [];
@@ -294,13 +282,15 @@ function serializeTextBlobRec(
         )
       );
     }
+    const result = refman.get({
+      from,
+      to,
+      domNode: dom,
+      children
+    }) as TextPNode;
+    result.children.forEach((child: TextPNode) => child.parent = result);
     return [
-      refman.get({
-        from,
-        to,
-        domNode: dom,
-        children,
-      }),
+      result
     ];
   }
 }
@@ -320,7 +310,7 @@ function attributes(schema: Schema) {
     if (isElementPNode(resolvedNode)) {
       return resolvedNode.node.attrs;
     } else {
-      const { domNode } = resolvedNode;
+      const {domNode} = resolvedNode;
 
       return isElement(domNode)
         ? objectFrom(map((attr) => [attr.name, attr.value], domNode.attributes))
@@ -332,26 +322,33 @@ function attributes(schema: Schema) {
 function getParent(refman: ProseReferenceManager) {
   return function (
     resolvedNode: ResolvedPNode,
-    resolvedRoot: ResolvedPNode
+    resolvedRoot: ElementPNode
   ): ResolvedPNode | null {
-    let result: ResolvedPNode | null;
-    const { pos } = resolvedNode;
-    if (pos === -1) {
-      result = null;
-    } else {
-      const resolvedPos = resolvedRoot.node.resolve(pos);
-      if (resolvedPos.depth === 0) {
-        result = refman.get({
-          node: resolvedPos.parent,
-          pos: -1,
-        });
+    if (isElementPNode(resolvedNode)) {
+      const {from} = resolvedNode
+      if (from === -1) {
+        return null;
       } else {
-        result = refman.get({
-          node: resolvedPos.parent,
-          pos: resolvedPos.before(),
-        });
+        let result: ResolvedPNode | null;
+        const resolvedPos = resolvedRoot.node.resolve(from);
+        if (resolvedPos.depth === 0) {
+          result = refman.get({
+            node: resolvedPos.parent,
+            from: -1,
+            to: resolvedPos.parent.nodeSize
+
+          });
+        } else {
+          result = refman.get({
+            node: resolvedPos.parent,
+            from: resolvedPos.before(),
+            to: resolvedNode.node.nodeSize
+          });
+        }
+        return result;
       }
+    } else {
+      return resolvedNode.parent ?? null;
     }
-    return result;
-  };
+  }
 }
