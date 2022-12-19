@@ -1,5 +1,32 @@
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
+import { Schema } from 'prosemirror-model';
+import {
+  em,
+  link,
+  strikethrough,
+  strong,
+  underline,
+} from '@lblod/ember-rdfa-editor/marks';
+import {
+  block_rdfa,
+  blockquote,
+  bullet_list,
+  code_block,
+  doc,
+  hard_break,
+  heading,
+  horizontal_rule,
+  image,
+  inline_rdfa,
+  list_item,
+  ordered_list,
+  paragraph,
+  repaired_block,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
+import { code } from 'dummy/dummy-plugins/code-mark-plugin';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -37,3 +64,39 @@ export async function renderEditor() {
       />`);
   return getEditorElement();
 }
+
+const nodes = {
+  doc,
+  paragraph,
+
+  repaired_block,
+
+  list_item,
+  ordered_list,
+  bullet_list,
+  ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
+  heading,
+  blockquote,
+
+  horizontal_rule,
+  code_block,
+
+  text,
+
+  image,
+
+  hard_break,
+  inline_rdfa,
+  block_rdfa,
+};
+const marks = {
+  code,
+  link,
+  em,
+  strong,
+  underline,
+  strikethrough,
+};
+
+const TEST_SCHEMA = new Schema({ nodes, marks });
+export default TEST_SCHEMA;

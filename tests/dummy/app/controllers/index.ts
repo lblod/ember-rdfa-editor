@@ -30,6 +30,7 @@ import {
   paragraph,
   repaired_block,
   text,
+  placeholder,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
   tableMenu,
@@ -48,11 +49,6 @@ import {
   insertDummyComponentsWidget,
 } from 'dummy/dummy-plugins/inline-components-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
-import {
-  placeholder,
-  placeholderEditing,
-  placeholderView,
-} from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import applyDevTools from 'prosemirror-dev-tools';
 import {rdfaLink} from "@lblod/ember-rdfa-editor/nodes/inline-rdfa";
 
@@ -104,11 +100,10 @@ export default class IndexController extends Controller {
       card: cardView(proseController),
       counter: counterView(proseController),
       dropdown: dropdownView(proseController),
-      placeholder: placeholderView,
     };
   };
   @tracked plugins: Plugin[] = [
-    placeholderEditing(),
+    // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
   ];
