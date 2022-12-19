@@ -96,18 +96,6 @@ function nodeParser(node: Node) {
 
 QUnit.dump.setParser('node', nodeParser);
 
-QUnit.dump.parse = function (
-  this: unknown,
-  data: unknown,
-  objType: unknown,
-  stack: unknown
-): string {
-  if (data instanceof ModelNode) {
-    return defaultParse.call(this, data.toXml(), objType, stack) as string;
-  } else {
-    return defaultParse.call(this, data, objType, stack) as string;
-  }
-};
 QUnit.hooks.afterEach(() => {
   QUnit.dump.maxDepth = defaultDumpDepth;
 });
