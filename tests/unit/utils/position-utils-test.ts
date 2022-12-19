@@ -75,7 +75,12 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(0);
-    const iterator = nodesBetween(start, true, false, (node) => node.isText);
+    const iterator = nodesBetween(
+      start,
+      true,
+      false,
+      ({ node }) => node.isText
+    );
 
     const values = [...iterator];
     assert.strictEqual(values.length, 3);
@@ -99,7 +104,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(doc.content.size);
-    const iterator = nodesBetween(start, true, true, (node) => node.isText);
+    const iterator = nodesBetween(start, true, true, ({ node }) => node.isText);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 3);
@@ -137,7 +142,6 @@ module('Unit | utils | position-utils | nodes-between', function () {
 
     assert.strictEqual(values[3].node.text, 'ghi');
     assert.strictEqual(values[3].pos, 9);
-
   });
   test('Simple document with start inside text node - reverse', function (assert) {
     const schema = TEST_SCHEMA;
