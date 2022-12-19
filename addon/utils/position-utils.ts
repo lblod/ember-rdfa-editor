@@ -1,4 +1,4 @@
-import {Node as PNode, ResolvedPos} from 'prosemirror-model';
+import { Node as PNode, ResolvedPos } from 'prosemirror-model';
 
 export function findAncestors(
   pos: ResolvedPos,
@@ -9,7 +9,7 @@ export function findAncestors(
   while (depth >= 0) {
     const parent = pos.node(depth);
     if (predicate(parent)) {
-      result.push({node: parent, pos: pos.before(depth)});
+      result.push({ node: parent, pos: pos.before(depth) });
     }
     depth -= 1;
   }
@@ -21,22 +21,25 @@ export function* findChildren(
   pos: number,
   reverse = true,
   recursive = true,
-  filter: ({from, to}: { from: number; to: number }) => boolean = () => true,
+  filter: ({ from, to }: { from: number; to: number }) => boolean = () => true,
   startIndex?: number
-): Generator<{ from: number, to: number }, void> {
+): Generator<{ from: number; to: number }, void> {
   const node = pos === -1 ? doc : doc.nodeAt(pos);
   if (!node) {
     throw new Error('No node found at provided position');
   }
   if (startIndex === undefined || startIndex === null) {
-    startIndex = reverse ? node.childCount - 1 : 0
+    startIndex = reverse ? node.childCount - 1 : 0;
   }
   if (reverse) {
     let offset = node.content.size;
     for (let i = node.childCount - 1; i >= 0; i--) {
       offset -= node.child(i).nodeSize;
       if (i <= startIndex) {
-        const childRange = {from: pos + 1 + offset, to: pos + 1 + offset + node.child(i).nodeSize}
+        const childRange = {
+          from: pos + 1 + offset,
+          to: pos + 1 + offset + node.child(i).nodeSize,
+        };
         if (recursive) {
           yield* findChildren(doc, childRange.from, reverse, recursive, filter);
         }
@@ -49,8 +52,11 @@ export function* findChildren(
     let offset = 0;
     for (let i = 0; i < node.childCount; i++) {
       if (i >= startIndex) {
-        const childRange = {from: pos + 1 + offset, to: pos + 1 + offset + node.child(i).nodeSize}
-        const resolvedChild = {node: node.child(i), pos: pos + 1 + offset};
+        const childRange = {
+          from: pos + 1 + offset,
+          to: pos + 1 + offset + node.child(i).nodeSize,
+        };
+        const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
         if (filter(childRange)) {
           yield childRange;
         }
@@ -68,8 +74,8 @@ export function* findNodes(
   from: number,
   visitParentUpwards = false,
   reverse = false,
-  filter: ({from, to}: { from: number; to: number }) => boolean = () => true
-): Generator<{ from: number, to: number }, undefined> {
+  filter: ({ from, to }: { from: number; to: number }) => boolean = () => true
+): Generator<{ from: number; to: number }, undefined> {
   if (from === -1) {
     throw new Error('Starting position may not lay before root node');
   }
@@ -84,14 +90,20 @@ export function* findNodes(
   }
   const parentRange = {
     from: fromResolved.depth > 0 ? fromResolved.before() : -1,
-    to: fromResolved.depth > 0 ? fromResolved.after() : doc.nodeSize
-  }
+    to: fromResolved.depth > 0 ? fromResolved.after() : doc.nodeSize,
+  };
   yield* findChildren(doc, parentRange.from, reverse, true, filter, startIndex);
   if (visitParentUpwards && fromResolved.depth !== 0) {
     if (filter(parentRange)) {
       yield parentRange;
     }
-    yield* findNodes(doc, reverse ? parentRange.from : parentRange.to, visitParentUpwards, reverse, filter);
+    yield* findNodes(
+      doc,
+      reverse ? parentRange.from : parentRange.to,
+      visitParentUpwards,
+      reverse,
+      filter
+    );
   }
   return;
 }
