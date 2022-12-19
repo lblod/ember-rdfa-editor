@@ -1,4 +1,5 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { PNode } from '..';
 
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
@@ -48,4 +49,10 @@ export function parsePrefixString(prefixString: string) {
     prefixes.set(key, parts[i + 1]);
   }
   return prefixes;
+}
+
+// Function which returns attrs of rdfa-mark of node if it has one, else it returns the attrs of the node itself
+export function getRdfaAttributes(node: PNode) {
+  const rdfaMark = node.marks.find((mark) => mark.type.name === 'inline_rdfa');
+  return rdfaMark?.attrs ?? node.attrs;
 }
