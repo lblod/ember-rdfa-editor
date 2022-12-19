@@ -124,6 +124,16 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     &:focus-within {
       opacity: 0.75;
     }
+    &::selection {
+      background-color: var(--au-blue-200);
+    }
+    user-select: none;
+  }
+
+  span.mark-highlight-manual.ProseMirror-selectednode {
+    background-color: var(--au-blue-200);
+    outline: 2px solid var(--au-blue-500);
+    color: var(--au-black);
   }
 
   [typeof='ext:Mapping'] + [typeof='ext:Mapping'] {
