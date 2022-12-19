@@ -16,7 +16,7 @@ export function findAncestors(
   return result;
 }
 
-export function* children(
+export function* findChildren(
   resolvedNode: { node: PNode; pos: number },
   reverse = true,
   recursive = true,
@@ -31,7 +31,7 @@ export function* children(
       if (i <= startIndex) {
         const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
         if (recursive) {
-          yield* children(resolvedChild, reverse, recursive, filter);
+          yield* findChildren(resolvedChild, reverse, recursive, filter);
         }
         if (filter(resolvedChild)) {
           yield resolvedChild;
@@ -47,7 +47,7 @@ export function* children(
           yield { node: node.child(i), pos: pos + 1 + offset };
         }
         if (recursive) {
-          yield* children(resolvedChild, reverse, recursive, filter);
+          yield* findChildren(resolvedChild, reverse, recursive, filter);
         }
       }
       offset += node.child(i).nodeSize;
@@ -55,7 +55,7 @@ export function* children(
   }
 }
 
-export function* nodesBetween(
+export function* findNodes(
   from: ResolvedPos,
   visitParentUpwards = false,
   reverse = false,
@@ -73,7 +73,7 @@ export function* nodesBetween(
     node: from.parent,
     pos: from.depth > 0 ? from.before() : -1,
   };
-  yield* children(resolvedParent, reverse, true, filter, startIndex);
+  yield* findChildren(resolvedParent, reverse, true, filter, startIndex);
   if (visitParentUpwards && from.depth !== 0) {
     if (filter(resolvedParent)) {
       yield resolvedParent;
@@ -81,7 +81,7 @@ export function* nodesBetween(
     const resolvedPos = from.doc.resolve(
       reverse ? from.before() : from.after()
     );
-    yield* nodesBetween(resolvedPos, visitParentUpwards, reverse, filter);
+    yield* findNodes(resolvedPos, visitParentUpwards, reverse, filter);
   }
   return;
 }

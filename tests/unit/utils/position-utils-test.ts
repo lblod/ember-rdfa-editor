@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import TEST_SCHEMA from 'dummy/tests/test-utils';
-import { nodesBetween } from '@lblod/ember-rdfa-editor/utils/position-utils';
+import { findNodes } from '@lblod/ember-rdfa-editor/utils/position-utils';
 
 module('Unit | utils | position-utils | nodes-between', function () {
   // Replace this with your real tests.
@@ -14,7 +14,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(0);
-    const iterator = nodesBetween(start);
+    const iterator = findNodes(start);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 5);
@@ -44,7 +44,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(doc.content.size);
-    const iterator = nodesBetween(start, true, true);
+    const iterator = findNodes(start, true, true);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 5);
@@ -75,12 +75,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(0);
-    const iterator = nodesBetween(
-      start,
-      true,
-      false,
-      ({ node }) => node.isText
-    );
+    const iterator = findNodes(start, true, false, ({ node }) => node.isText);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 3);
@@ -104,7 +99,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(doc.content.size);
-    const iterator = nodesBetween(start, true, true, ({ node }) => node.isText);
+    const iterator = findNodes(start, true, true, ({ node }) => node.isText);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 3);
@@ -127,7 +122,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(2);
-    const iterator = nodesBetween(start);
+    const iterator = findNodes(start);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 4);
@@ -153,7 +148,7 @@ module('Unit | utils | position-utils | nodes-between', function () {
       ]),
     ]);
     const start = doc.resolve(10);
-    const iterator = nodesBetween(start, true, true);
+    const iterator = findNodes(start, true, true);
 
     const values = [...iterator];
     assert.strictEqual(values.length, 5);
