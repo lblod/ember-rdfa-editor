@@ -3,10 +3,8 @@ import {
   RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
-import { Node as PNode } from 'prosemirror-model';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
 import { EditorState } from 'prosemirror-state';
-import SetUtils from '@lblod/ember-rdfa-editor/utils/set-utils';
 import Datastore, {
   EditorStore,
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
@@ -21,30 +19,20 @@ export class ProseStore
   implements ProseDatastore
 {
   limitToRange(state: EditorState, start: number, end: number): ProseStore {
-    const contextNodes: Set<PNode> = new Set();
-    state.doc.nodesBetween(start, end, (node) => {
-      contextNodes.add(node);
-    });
-    console.log('CONTEXT NODES: ', contextNodes);
-
     return this.transformDataset((dataset) => {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
           const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
-          const hasSubjectNode = SetUtils.hasAny(
-            contextNodes,
-            ...subjectNodes.map((resolvedNode) => resolvedNode.node)
+          const hasSubjectNode = subjectNodes.some(
+            (range) => range.from < start && range.to > end
           );
-          const hasPredicateNode = SetUtils.hasAny(
-            contextNodes,
-            ...predicateNodes.map((resolvedNode) => resolvedNode.node)
+          const hasPredicateNode = predicateNodes.some(
+            (range) => range.from < start && range.to > end
           );
-          const hasObjectNode = SetUtils.hasAny(
-            contextNodes,
-            ...objectNodes.map((resolvedNode) => resolvedNode.node)
+          const hasObjectNode = objectNodes.some(
+            (range) => range.from < start && range.to > end
           );
-
           return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;
