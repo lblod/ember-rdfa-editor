@@ -115,7 +115,9 @@ export class RdfaParser<N> {
   private quadToNodesMapping: Map<string, QuadNodes<N>>;
 
   private rootModelNode?: N;
-  private seenNodes: Map<RDF.Term, N>;
+  private seenSubjectNodes: Map<RDF.Term, N>;
+  private seenPredicateNodes: Map<RDF.Term, N>;
+  private seenObjectNodes: Map<RDF.Term, N>;
   private globallySeenPrefixes: Map<string, string>;
 
   constructor(options: IRdfaParserOptions<N>) {
@@ -143,7 +145,9 @@ export class RdfaParser<N> {
 
     this.nodeToObjectsMapping = new Map<N, Set<ModelQuadObject<N>>>();
     this.objectToNodesMapping = new Map<string, N[]>();
-    this.seenNodes = new Map<RDF.Term, N>();
+    this.seenSubjectNodes = new Map<RDF.Term, N>();
+    this.seenPredicateNodes = new Map<RDF.Term, N>();
+    this.seenObjectNodes = new Map<RDF.Term, N>();
 
     this.quadToNodesMapping = new Map<string, QuadNodes<N>>();
 
@@ -1204,8 +1208,8 @@ export class RdfaParser<N> {
     ) {
       return;
     }
-    if (subject.node && !this.seenNodes.has(subject)) {
-      this.seenNodes.set(subject, subject.node);
+    if (subject.node && !this.seenSubjectNodes.has(subject)) {
+      this.seenSubjectNodes.set(subject, subject.node);
       this.nodeToSubjectMapping.set(subject.node, subject);
       MapUtils.setOrPush(
         this.subjectToNodesMapping,
@@ -1213,8 +1217,8 @@ export class RdfaParser<N> {
         subject.node
       );
     }
-    if (predicate.node && !this.seenNodes.has(predicate)) {
-      this.seenNodes.set(predicate, predicate.node);
+    if (predicate.node && !this.seenPredicateNodes.has(predicate)) {
+      this.seenPredicateNodes.set(predicate, predicate.node);
       MapUtils.setOrAdd(
         this.nodeToPredicatesMapping,
         predicate.node,
@@ -1226,8 +1230,8 @@ export class RdfaParser<N> {
         predicate.node
       );
     }
-    if (object.node && !this.seenNodes.has(object)) {
-      this.seenNodes.set(object, object.node);
+    if (object.node && !this.seenObjectNodes.has(object)) {
+      this.seenObjectNodes.set(object, object.node);
       MapUtils.setOrAdd(this.nodeToObjectsMapping, object.node, object);
       MapUtils.setOrPush(this.objectToNodesMapping, object.value, object.node);
     }

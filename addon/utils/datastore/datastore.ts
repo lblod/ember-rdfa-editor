@@ -23,7 +23,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { GraphyDataset } from './graphy-dataset';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -179,6 +179,7 @@ interface DatastoreConfig<N> {
 
 interface GenericDatastoreConfig<N> extends DatastoreConfig<N> {
   getParent: (node: N, root: N) => N | null;
+  attributes: (node: N) => Record<string, string>;
 }
 
 export class EditorStore<N> implements Datastore<N> {
@@ -193,6 +194,7 @@ export class EditorStore<N> implements Datastore<N> {
   protected _objectToNodes: Map<string, N[]>;
   protected _quadToNodes: Map<string, QuadNodes<N>>;
   protected _getParent: (node: N, root: N) => N | null;
+  protected _attributes: (node: N) => Record<string, string>;
 
   constructor({
     documentRoot,
@@ -206,6 +208,7 @@ export class EditorStore<N> implements Datastore<N> {
     objectToNodes,
     quadToNodes,
     getParent,
+    attributes,
   }: GenericDatastoreConfig<N>) {
     this._documentRoot = documentRoot;
     this._dataset = dataset;
@@ -218,11 +221,13 @@ export class EditorStore<N> implements Datastore<N> {
     this._objectToNodes = objectToNodes;
     this._quadToNodes = quadToNodes;
     this._getParent = getParent;
+    this._attributes = attributes;
   }
 
   static empty<N>(
     documentRoot: N,
-    getParent: (node: N) => N | null
+    getParent: (node: N) => N | null,
+    attributes: (node: N) => Record<string, string>
   ): Datastore<N> {
     const subjectToNodes = new Map<string, N[]>();
     const nodeToSubject = new Map<N, ModelQuadSubject<N>>();
@@ -244,6 +249,7 @@ export class EditorStore<N> implements Datastore<N> {
       objectToNodes,
       predicateToNodes,
       getParent,
+      attributes,
     });
   }
 
@@ -276,6 +282,7 @@ export class EditorStore<N> implements Datastore<N> {
       nodeToPredicates: nodeToPredicatesMapping,
       quadToNodes: quadToNodesMapping,
       getParent: config.getParent,
+      attributes: config.attributes,
     });
   }
 
@@ -367,7 +374,7 @@ export class EditorStore<N> implements Datastore<N> {
         const nodes = [];
         // we have to filter out nodes that belong to a subject which is not in the dataset
         for (const node of allNodes) {
-          const nodeSubject = this.getSubjectForNode(node);
+          const nodeSubject = this.getSubjectForPredicateNode(node);
           if (nodeSubject && seenSubjects.has(nodeSubject.value)) {
             nodes.push(node);
           }
@@ -404,7 +411,7 @@ export class EditorStore<N> implements Datastore<N> {
         const nodes = [];
 
         for (const node of allNodes) {
-          const nodeSubject = this.getSubjectForNode(node);
+          const nodeSubject = this.getSubjectForObjectNode(node);
           const nodePredicates = this.getPredicatesForNode(node);
           if (
             nodeSubject &&
@@ -511,6 +518,7 @@ export class EditorStore<N> implements Datastore<N> {
       prefixMapping: this._prefixMapping,
       quadToNodes: this._quadToNodes,
       getParent: this._getParent,
+      attributes: this._attributes,
     });
   }
 
@@ -522,6 +530,30 @@ export class EditorStore<N> implements Datastore<N> {
       current = this._getParent(current, this._documentRoot);
     }
     return subject;
+  }
+
+  private getSubjectForPredicateNode(node: N): ModelQuadSubject<N> | void {
+    const subject = this._nodeToSubject.get(node);
+    if (subject) {
+      if (isSome(this._attributes(node).content)) {
+        return subject;
+      }
+    }
+    const parent = this._getParent(node, this._documentRoot);
+    if (parent) {
+      return this.getSubjectForNode(parent);
+    }
+  }
+
+  private getSubjectForObjectNode(node: N): ModelQuadSubject<N> | void {
+    if (this._nodeToPredicates.has(node)) {
+      return this.getSubjectForPredicateNode(node);
+    } else {
+      const parent = this._getParent(node, this._documentRoot);
+      if (parent) {
+        return this.getSubjectForNode(parent);
+      }
+    }
   }
 
   private getPredicatesForNode(node: N) {

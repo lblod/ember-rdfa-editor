@@ -79,5 +79,6 @@ export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
     nodeToPredicates: nodeToPredicatesMapping,
     quadToNodes: quadToNodesMapping,
     getParent: config.getParent,
+    attributes: config.attributes,
   });
 }
