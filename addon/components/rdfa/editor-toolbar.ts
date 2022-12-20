@@ -8,7 +8,6 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list';
 import { undo } from 'prosemirror-history';
-import { deleteTable } from 'prosemirror-tables';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -71,10 +70,6 @@ export default class EditorToolbar extends Component<Args> {
     return this.controller.checkCommand(
       liftListItem(this.controller.schema.nodes.list_item)
     );
-  }
-
-  get isInTable() {
-    return this.controller.checkCommand(deleteTable);
   }
 
   @action

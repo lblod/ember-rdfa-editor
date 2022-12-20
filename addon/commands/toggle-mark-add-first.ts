@@ -1,11 +1,7 @@
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { Attrs, MarkType } from 'prosemirror-model';
-import {
-  Command,
-  EditorState,
-  SelectionRange,
-  TextSelection,
-} from 'prosemirror-state';
+import { Command, SelectionRange, TextSelection } from 'prosemirror-state';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 export function rangeHasMarkEverywhere(
   root: PNode,
@@ -36,7 +32,7 @@ function markApplies(
   type: MarkType
 ) {
   for (let i = 0; i < ranges.length; i++) {
-    let { $from, $to } = ranges[i];
+    const { $from, $to } = ranges[i];
     let can =
       $from.depth == 0
         ? doc.inlineContent && doc.type.allowsMarkType(type)
@@ -72,7 +68,7 @@ export function toggleMarkAddFirst(
   attrs: Attrs | null = null
 ): Command {
   return function (state, dispatch) {
-    let { empty, $cursor, ranges } = state.selection as TextSelection;
+    const { empty, $cursor, ranges } = state.selection as TextSelection;
     if ((empty && !$cursor) || !markApplies(state.doc, ranges, markType)) {
       return false;
     }
@@ -85,24 +81,28 @@ export function toggleMarkAddFirst(
         }
       } else {
         let has = false;
-        let tr = state.tr;
+        const tr = state.tr;
         for (let i = 0; !has && i < ranges.length; i++) {
-          let { $from, $to } = ranges[i];
+          const { $from, $to } = ranges[i];
           has = rangeHasMarkEverywhere(state.doc, $from.pos, $to.pos, markType);
         }
         for (let i = 0; i < ranges.length; i++) {
-          let { $from, $to } = ranges[i];
+          const { $from, $to } = ranges[i];
           if (has) {
             tr.removeMark($from.pos, $to.pos, markType);
           } else {
             let from = $from.pos;
             let to = $to.pos;
-            let start = $from.nodeAfter;
-            let end = $to.nodeBefore;
-            let spaceStart =
-              start && start.isText ? /^\s*/.exec(start.text!)![0].length : 0;
-            let spaceEnd =
-              end && end.isText ? /\s*$/.exec(end.text!)![0].length : 0;
+            const start = $from.nodeAfter;
+            const end = $to.nodeBefore;
+            const spaceStart =
+              start && start.isText
+                ? unwrap(/^\s*/.exec(unwrap(start.text)))[0].length
+                : 0;
+            const spaceEnd =
+              end && end.isText
+                ? unwrap(/\s*$/.exec(unwrap(end.text)))[0].length
+                : 0;
             if (from + spaceStart < to) {
               from += spaceStart;
               to -= spaceEnd;

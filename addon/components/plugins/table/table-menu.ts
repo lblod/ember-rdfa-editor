@@ -26,6 +26,10 @@ export default class TableMenu extends Component<Args> {
     return this.args.controller;
   }
 
+  get isInTable() {
+    return this.controller.checkCommand(deleteTable);
+  }
+
   @action
   insertTable(rows: number, columns: number) {
     const { schema } = this.controller;
