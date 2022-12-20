@@ -1,3 +1,4 @@
+export * from 'prosemirror-keymap';
 import { Decoration } from 'prosemirror-view';
 
 export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';

@@ -7,6 +7,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
+import { keymap } from '@lblod/ember-rdfa-editor';
 import {
   em,
   link,
@@ -28,11 +29,12 @@ import {
   list_item,
   ordered_list,
   paragraph,
+  placeholder,
   repaired_block,
   text,
-  placeholder,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
+  tableKeyMap,
   tableMenu,
   tableNodes,
   tablePlugin,
@@ -106,6 +108,7 @@ export default class IndexController extends Controller {
     // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
+    keymap(tableKeyMap()),
   ];
   @tracked widgets: WidgetSpec[] = [
     insertDummyComponentsWidget,
