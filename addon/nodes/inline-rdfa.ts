@@ -1,11 +1,12 @@
 import { Mark, MarkSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
-  PNode,
   NodeSpec,
+  PNode,
   rdfaAttrs,
 } from '@lblod/ember-rdfa-editor';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+
 export const invisible_rdfa: NodeSpec = {
   inline: true,
   group: 'inline',
@@ -53,9 +54,11 @@ export const inline_rdfa: MarkSpec = {
     {
       tag: 'span',
       getAttrs(node: HTMLElement) {
-        const attrs = getRdfaAttrs(node);
-        if (attrs) {
-          return attrs;
+        if (node.hasChildNodes()) {
+          const attrs = getRdfaAttrs(node);
+          if (attrs) {
+            return attrs;
+          }
         }
         return false;
       },

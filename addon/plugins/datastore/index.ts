@@ -104,8 +104,6 @@ export function datastore({
 
 function textContent(resolvedNode: ResolvedPNode): string {
   if (isElementPNode(resolvedNode)) {
-    console.log('NODE', resolvedNode);
-    console.log('content', resolvedNode.node.textContent);
     return resolvedNode.node.textContent;
   } else {
     return resolvedNode.domNode.textContent ?? '';
@@ -115,6 +113,7 @@ function textContent(resolvedNode: ResolvedPNode): string {
 function isText(resolvedNode: ResolvedPNode): boolean {
   return (
     isElementPNode(resolvedNode) &&
+    resolvedNode.node.type.name !== 'invisible_rdfa' &&
     (resolvedNode.node.isText || resolvedNode.node.isLeaf)
   );
 }
@@ -331,14 +330,11 @@ function tag(schema: Schema) {
 
 function attributes(schema: Schema) {
   return function (resolvedNode: ResolvedPNode): Record<string, string> {
-    console.log('attrs from', resolvedNode);
     if (isElementPNode(resolvedNode)) {
-      console.log('pnode attrs', resolvedNode.node.attrs);
       return resolvedNode.node.attrs;
     } else {
       const { domNode } = resolvedNode;
 
-      console.log('domNode', domNode);
       return isElement(domNode)
         ? objectFrom(map((attr) => [attr.name, attr.value], domNode.attributes))
         : {};

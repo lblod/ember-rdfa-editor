@@ -214,7 +214,6 @@ export class ProseController {
   }
 
   get htmlContent(): string {
-    console.log('DOCUMENT: ', this.pm.state.doc);
     const fragment = DOMSerializer.fromSchema(this.schema).serializeFragment(
       this.pm.state.doc.content,
       {
