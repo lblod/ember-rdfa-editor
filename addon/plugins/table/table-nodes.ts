@@ -96,6 +96,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       isolating: true,
       attrs: { ...rdfaAttrs, class: { default: 'say-table' } },
       group: options.tableGroup,
+      allowGapCursor: false,
       parseDOM: [
         {
           tag: 'table',
@@ -117,6 +118,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
       attrs: { ...rdfaAttrs },
+      allowGapCursor: false,
       parseDOM: [
         {
           tag: 'tr',
@@ -139,6 +141,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       attrs: { ...rdfaAttrs, ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
+      allowGapCursor: false,
       parseDOM: [
         {
           tag: 'td',

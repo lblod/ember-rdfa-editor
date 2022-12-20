@@ -28,11 +28,12 @@ import {
   list_item,
   ordered_list,
   paragraph,
+  placeholder,
   repaired_block,
   text,
-  placeholder,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
+  tableKeymap,
   tableMenu,
   tableNodes,
   tablePlugin,
@@ -106,6 +107,7 @@ export default class IndexController extends Controller {
     // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
+    tableKeymap,
   ];
   @tracked widgets: WidgetSpec[] = [
     insertDummyComponentsWidget,
