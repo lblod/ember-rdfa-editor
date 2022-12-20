@@ -1,5 +1,5 @@
 import { NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, PNode, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 
 export const paragraph: NodeSpec = {
   content: 'inline*',
@@ -21,8 +21,8 @@ export const paragraph: NodeSpec = {
       context: 'block/',
     },
   ],
-  toDOM() {
+  toDOM(node: PNode) {
     // console.log("writing", node.attrs);
-    return ['p', 0];
+    return ['p', node.attrs, 0];
   },
 };

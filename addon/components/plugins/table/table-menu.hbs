@@ -57,10 +57,9 @@
     <div role='group'>
       <div role='menuitem' class='say-dropdown__menu-with-inputs'>
         {{t 'ember-rdfa-editor.columns'}}
-        <AuLabel
-          for='editor-table-columns'
-          class='au-u-hidden-visually'
-        >{{t 'ember-rdfa-editor.columns'}}</AuLabel>
+        <AuLabel for='editor-table-columns' class='au-u-hidden-visually'>{{t
+            'ember-rdfa-editor.columns'
+          }}</AuLabel>
         <Input
           id='editor-table-columns'
           class='say-input say-input--small'
@@ -73,8 +72,8 @@
       <div role='menuitem' class='say-dropdown__menu-with-inputs'>
         {{t 'ember-rdfa-editor.rows'}}
         <AuLabel for='editor-table-rows' class='au-u-hidden-visually'>{{t
-          'ember-rdfa-editor.rows'
-        }}</AuLabel>
+            'ember-rdfa-editor.rows'
+          }}</AuLabel>
         <Input
           id='editor-table-rows'
           class='say-input say-input--small'
@@ -84,11 +83,7 @@
       </div>
     </div>
     <Menu.Item
-      @menuAction={{fn
-      this.insertTable
-      this.tableAddRows
-      this.tableAddColumns
-    }}
+      @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}}
       title={{t 'ember-rdfa-editor.insert-table'}}
     >
       <AuIcon @icon='table-insert' @ariaHidden={{true}} />
@@ -100,12 +95,12 @@
 
   <Rdfa::ToolbarIcon
     @title={{t 'ember-rdfa-editor.add-column-after'}}
-    @icon="table-column-end-add"
+    @icon='table-column-end-add'
     {{on 'click' this.insertColumnAfter}}
   />
   <Rdfa::ToolbarIcon
     @title={{t 'ember-rdfa-editor.add-row-below'}}
-    @icon="table-row-end-add"
+    @icon='table-row-end-add'
     {{on 'click' this.insertRowBelow}}
   />
 {{/if}}

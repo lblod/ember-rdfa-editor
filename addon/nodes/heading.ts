@@ -45,10 +45,6 @@ export const heading: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [
-      `h${(node.attrs.level as number).toString()}`,
-      { ...node.attrs },
-      0,
-    ];
+    return [`h${(node.attrs.level as number).toString()}`, node.attrs, 0];
   },
 };

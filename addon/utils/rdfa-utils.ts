@@ -1,5 +1,26 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { PNode } from '..';
 
+export type RdfaAttr =
+  | 'vocab'
+  | 'typeof'
+  | 'prefix'
+  | 'property'
+  | 'rel'
+  | 'rev'
+  | 'href'
+  | 'about'
+  | 'resource'
+  | 'content'
+  | 'datatype'
+  | 'lang'
+  | 'xmlns'
+  | 'src'
+  | 'id'
+  | 'role'
+  | 'inlist'
+  | 'datetime'
+  | '__rdfaId';
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
  * NOTE: it adds the active vocab as a prefix with an empty string as key, which makes it a bit easier to pass down
@@ -48,4 +69,20 @@ export function parsePrefixString(prefixString: string) {
     prefixes.set(key, parts[i + 1]);
   }
   return prefixes;
+}
+
+export function getRdfaAttribute(node: PNode, attr: RdfaAttr): string[] {
+  const result: string[] = [];
+  if (!node.marks) {
+    return [];
+  }
+  node.marks.forEach((mark) => {
+    if (mark.attrs[attr]) {
+      result.push(mark.attrs[attr]);
+    }
+  });
+  if (node.attrs[attr]) {
+    result.push(node.attrs[attr]);
+  }
+  return result;
 }

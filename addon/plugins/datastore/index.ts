@@ -7,25 +7,39 @@ import {
 import {
   ProseStore,
   proseStoreFromParse,
-  ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import {
-  Mark,
-  MarkType,
-  PNode,
-  ProsePlugin,
-  Schema,
-} from '@lblod/ember-rdfa-editor';
-import { filter, objectValues } from 'iter-tools';
+import { Mark, PNode, ProsePlugin, Schema } from '@lblod/ember-rdfa-editor';
+import { map, objectFrom } from 'iter-tools';
 import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import { DOMSerializer, MarkType } from 'prosemirror-model';
+import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
 export const datastoreKey = new PluginKey<ProseStore>('datastore');
 
-export {
-  ProseStore,
-  ResolvedPNode,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+
+export interface TextPNode {
+  children: ResolvedPNode[];
+  parent?: ResolvedPNode;
+  domNode: Node;
+  from: number;
+  to: number;
+}
+
+export interface ElementPNode {
+  node: PNode;
+  from: number;
+  to: number;
+}
+
+export function isElementPNode(pnode: ResolvedPNode): pnode is ElementPNode {
+  return 'node' in pnode;
+}
+
+export type ResolvedPNode = ElementPNode | TextPNode;
 
 export interface DatastorePluginArgs {
   pathFromRoot: Node[];
@@ -43,12 +57,12 @@ export function datastore({
       init(config: EditorStateConfig, state: EditorState) {
         const refman = new ProseReferenceManager();
         const store = proseStoreFromParse({
-          root: { node: state.doc, pos: -1 },
+          root: { node: state.doc, from: -1, to: state.doc.nodeSize },
           textContent,
           tag: tag(state.schema),
           children: children(state.schema, refman),
           attributes: attributes(state.schema),
-          isText: isText(state.schema),
+          isText,
           getParent: getParent(refman),
 
           pathFromDomRoot: pathFromRoot,
@@ -67,12 +81,12 @@ export function datastore({
         const refman = new ProseReferenceManager();
         if (tr.docChanged) {
           const newStore = proseStoreFromParse({
-            root: { node: newState.doc, pos: -1 },
+            root: { node: newState.doc, from: -1, to: newState.doc.nodeSize },
             textContent,
             tag: tag(newState.schema),
             children: children(newState.schema, refman),
             attributes: attributes(newState.schema),
-            isText: isText(newState.schema),
+            isText: isText,
             getParent: getParent(refman),
 
             pathFromDomRoot: pathFromRoot,
@@ -89,30 +103,25 @@ export function datastore({
 }
 
 function textContent(resolvedNode: ResolvedPNode): string {
-  return resolvedNode.node.textContent;
-}
-
-function isText(schema: Schema) {
-  return function (resolvedNode: ResolvedPNode): boolean {
-    const { node } = resolvedNode;
-    if (getLinkMark(schema, node)) {
-      return false;
-    }
-    return node.isText;
-  };
-}
-
-function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
-  if (!schema.marks.link) {
-    return undefined;
+  if (isElementPNode(resolvedNode)) {
+    return resolvedNode.node.textContent;
+  } else {
+    return resolvedNode.domNode.textContent ?? '';
   }
-  const linkMarks = filter(
-    (markType: MarkType) => markType.spec.group === 'linkmarks',
-    objectValues(schema.marks)
+}
+
+function isText(resolvedNode: ResolvedPNode): boolean {
+  return (
+    isElementPNode(resolvedNode) &&
+    resolvedNode.node.type.name !== 'invisible_rdfa' &&
+    (resolvedNode.node.isText || resolvedNode.node.isLeaf)
   );
-  const isText = node.isText;
+}
+
+function getRdfaMarks(rdfaMarks: MarkType[], node: PNode): Mark | undefined {
+  const isText = node.isText || node.isAtom || node.isLeaf;
   if (isText) {
-    for (const type of linkMarks) {
+    for (const type of rdfaMarks) {
       const mark = type.isInSet(node.marks);
       if (mark) {
         return mark;
@@ -123,83 +132,245 @@ function getLinkMark(schema: Schema, node: PNode): Mark | undefined {
 }
 
 function children(schema: Schema, refman: ProseReferenceManager) {
+  const serializer = DOMSerializer.fromSchema(schema);
+  const rdfaMarks: MarkType[] = [];
+  for (const markType of Object.values(schema.marks)) {
+    if (markType.spec.hasRdfa as boolean) {
+      rdfaMarks.push(markType);
+    }
+  }
   return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
-    let result: Iterable<ResolvedPNode>;
-    const { node, pos } = resolvedNode;
-    if (node.isText) {
-      const linkMark = getLinkMark(schema, node);
-      if (linkMark) {
-        result = [
-          refman.get({
-            node: node.mark(linkMark.removeFromSet(node.marks)),
-            pos,
-          }),
-        ];
-      } else {
-        result = [];
-      }
-    } else {
+    if (isElementPNode(resolvedNode)) {
+      const { from, node } = resolvedNode;
       const rslt: ResolvedPNode[] = [];
+      let textBuffer: [PNode, number][] = [];
+
       node.descendants((child, relativePos) => {
-        const absolutePos = pos + 1 + relativePos;
-        rslt.push(
-          refman.get({
-            node: child,
-            pos: absolutePos,
-          })
-        );
+        const absolutePos = from + 1 + relativePos;
+        if (child.isText || child.isLeaf || child.isAtom) {
+          textBuffer.push([child, absolutePos]);
+        } else {
+          if (textBuffer.length) {
+            rslt.push(
+              ...map((pChild: TextPNode) => {
+                pChild.parent = resolvedNode;
+                return pChild;
+              }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer))
+            );
+          }
+          textBuffer = [];
+          rslt.push(
+            refman.get({
+              node: child,
+              from: absolutePos,
+              to: absolutePos + child.nodeSize,
+            })
+          );
+        }
+
         return false;
       });
-      result = rslt;
+      if (textBuffer.length) {
+        rslt.push(
+          ...map((pChild: TextPNode) => {
+            pChild.parent = resolvedNode;
+            return pChild;
+          }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer))
+        );
+      }
+      return rslt;
+    } else {
+      return resolvedNode.children;
     }
-    return result;
   };
+}
+
+function serializeTextBlob(
+  refman: ProseReferenceManager,
+  rdfaMarks: MarkType[],
+  serializer: DOMSerializer,
+  schema: Schema,
+  buffer: [PNode, number][]
+): Iterable<ResolvedPNode> {
+  let currentMark: Mark | null = null;
+  let newBuffer: [PNode, number][] = [];
+  const children: ResolvedPNode[] = [];
+  for (const [node, pos] of buffer) {
+    const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
+    if (rdfaMark === currentMark) {
+      if (rdfaMark) {
+        newBuffer.push([node.mark(rdfaMark.removeFromSet(node.marks)), pos]);
+      } else {
+        newBuffer.push([node, pos]);
+      }
+    } else {
+      if (newBuffer.length) {
+        children.push(
+          ...serializeTextBlobRec(
+            refman,
+            rdfaMarks,
+            serializer,
+            schema,
+            newBuffer,
+            currentMark
+          )
+        );
+      }
+      if (rdfaMark) {
+        newBuffer = [[node.mark(rdfaMark.removeFromSet(node.marks)), pos]];
+      } else {
+        newBuffer = [[node, pos]];
+      }
+      currentMark = rdfaMark;
+    }
+  }
+  if (newBuffer.length) {
+    children.push(
+      ...serializeTextBlobRec(
+        refman,
+        rdfaMarks,
+        serializer,
+        schema,
+        newBuffer,
+        currentMark
+      )
+    );
+  }
+  return children;
+}
+
+function serializeTextBlobRec(
+  refman: ProseReferenceManager,
+  rdfaMarks: MarkType[],
+  serializer: DOMSerializer,
+  schema: Schema,
+  buffer: [PNode, number][],
+  mark: Option<Mark>
+): Iterable<ResolvedPNode> {
+  if (!mark) {
+    return buffer.map(([node, pos]) =>
+      refman.get({
+        from: pos,
+        to: pos + node.nodeSize,
+        node,
+      })
+    );
+  } else {
+    const from = buffer[0][1];
+    const lastNode = unwrap(ArrayUtils.lastItem(buffer));
+    const to = lastNode[1] + lastNode[0].nodeSize;
+    const markSerializer = serializer.marks[mark.type.name];
+    const outputSpec = markSerializer(mark, true);
+    const { dom } = DOMSerializer.renderSpec(document, outputSpec);
+    let currentMark: Mark | null = null;
+    let newBuffer: [PNode, number][] = [];
+    const children: ResolvedPNode[] = [];
+    for (const [node, pos] of buffer) {
+      const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
+      if (rdfaMark === currentMark) {
+        if (rdfaMark) {
+          newBuffer.push([node.mark(rdfaMark.removeFromSet(node.marks)), pos]);
+        } else {
+          newBuffer.push([node, pos]);
+        }
+      } else {
+        if (newBuffer.length) {
+          children.push(
+            ...serializeTextBlobRec(
+              refman,
+              rdfaMarks,
+              serializer,
+              schema,
+              newBuffer,
+              currentMark
+            )
+          );
+        }
+        if (rdfaMark) {
+          newBuffer = [[node.mark(rdfaMark?.removeFromSet(node.marks)), pos]];
+        } else {
+          newBuffer = [[node, pos]];
+        }
+        currentMark = rdfaMark;
+      }
+    }
+
+    if (newBuffer.length) {
+      children.push(
+        ...serializeTextBlobRec(
+          refman,
+          rdfaMarks,
+          serializer,
+          schema,
+          newBuffer,
+          currentMark
+        )
+      );
+    }
+    const result = refman.get({
+      from,
+      to,
+      domNode: dom,
+      children,
+    }) as TextPNode;
+    result.children.forEach((child: TextPNode) => (child.parent = result));
+    return [result];
+  }
 }
 
 function tag(schema: Schema) {
   return function (resolvedNode: ResolvedPNode): string {
-    const { node } = resolvedNode;
-    if (getLinkMark(schema, node)) {
-      return 'a';
+    if (isElementPNode(resolvedNode)) {
+      return resolvedNode.node.type.name;
+    } else {
+      return tagName(resolvedNode.domNode);
     }
-    return node.type.name;
   };
 }
 
 function attributes(schema: Schema) {
   return function (resolvedNode: ResolvedPNode): Record<string, string> {
-    const { node } = resolvedNode;
-    const linkMark = getLinkMark(schema, node);
-    if (linkMark) {
-      return linkMark.attrs;
+    if (isElementPNode(resolvedNode)) {
+      return resolvedNode.node.attrs;
+    } else {
+      const { domNode } = resolvedNode;
+
+      return isElement(domNode)
+        ? objectFrom(map((attr) => [attr.name, attr.value], domNode.attributes))
+        : {};
     }
-    return node.attrs;
   };
 }
 
 function getParent(refman: ProseReferenceManager) {
   return function (
     resolvedNode: ResolvedPNode,
-    resolvedRoot: ResolvedPNode
+    resolvedRoot: ElementPNode
   ): ResolvedPNode | null {
-    let result: ResolvedPNode | null;
-    const { pos } = resolvedNode;
-    if (pos === -1) {
-      result = null;
-    } else {
-      const resolvedPos = resolvedRoot.node.resolve(pos);
-      if (resolvedPos.depth === 0) {
-        result = refman.get({
-          node: resolvedPos.parent,
-          pos: -1,
-        });
+    if (isElementPNode(resolvedNode)) {
+      const { from } = resolvedNode;
+      if (from === -1) {
+        return null;
       } else {
-        result = refman.get({
-          node: resolvedPos.parent,
-          pos: resolvedPos.before(),
-        });
+        let result: ResolvedPNode | null;
+        const resolvedPos = resolvedRoot.node.resolve(from);
+        if (resolvedPos.depth === 0) {
+          result = refman.get({
+            node: resolvedPos.parent,
+            from: -1,
+            to: resolvedPos.parent.nodeSize,
+          });
+        } else {
+          result = refman.get({
+            node: resolvedPos.parent,
+            from: resolvedPos.before(),
+            to: resolvedNode.node.nodeSize,
+          });
+        }
+        return result;
       }
+    } else {
+      return resolvedNode.parent ?? null;
     }
-    return result;
   };
 }
