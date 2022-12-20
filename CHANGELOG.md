@@ -33,6 +33,20 @@
 
 
 
+
+## 1.0.0-alpha.9 (2022-12-20)
+
+#### :boom: Breaking Change
+* [#515](https://github.com/lblod/ember-rdfa-editor/pull/515) fix/list behavior - rdfa as marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#507](https://github.com/lblod/ember-rdfa-editor/pull/507) Rework placeholders ([@elpoelma](https://github.com/elpoelma))
+* [#513](https://github.com/lblod/ember-rdfa-editor/pull/513) Addition of utility functions which allow for searching nodes in a specific range or with a specific condition ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-alpha.8 (2022-12-14)
 
 #### :boom: Breaking Change
