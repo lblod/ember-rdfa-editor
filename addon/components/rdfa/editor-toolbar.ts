@@ -73,9 +73,6 @@ export default class EditorToolbar extends Component<Args> {
     );
   }
 
-  get isInTable() {
-    return this.controller.checkCommand(deleteTable);
-  }
 
   @action
   insertIndent() {
