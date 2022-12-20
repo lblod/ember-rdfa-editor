@@ -14,25 +14,33 @@ export interface ProseDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): ProseStore;
 }
 
+export type LimitToRangeStrategy = 'rangeIsInside' | 'rangeContains';
+
 export class ProseStore
   extends EditorStore<ResolvedPNode>
   implements ProseDatastore
 {
-  limitToRange(state: EditorState, start: number, end: number): ProseStore {
+  limitToRange(
+    state: EditorState,
+    start: number,
+    end: number,
+    strategy: LimitToRangeStrategy = 'rangeIsInside'
+  ): ProseStore {
+    const comparisonFunction = (range: { from: number; to: number }) => {
+      if (strategy === 'rangeIsInside') {
+        return range.from <= start && range.to >= end;
+      } else {
+        return range.from >= start && range.to <= end;
+      }
+    };
     return this.transformDataset((dataset) => {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {
           const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
-          const hasSubjectNode = subjectNodes.some(
-            (range) => range.from <= start && range.to >= end
-          );
-          const hasPredicateNode = predicateNodes.some(
-            (range) => range.from <= start && range.to >= end
-          );
-          const hasObjectNode = objectNodes.some(
-            (range) => range.from <= start && range.to >= end
-          );
+          const hasSubjectNode = subjectNodes.some(comparisonFunction);
+          const hasPredicateNode = predicateNodes.some(comparisonFunction);
+          const hasObjectNode = objectNodes.some(comparisonFunction);
           return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
           return false;
