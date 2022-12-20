@@ -11,6 +11,7 @@ import {
   deleteRow,
   deleteTable,
 } from 'prosemirror-tables';
+import { PNode } from '@lblod/ember-rdfa-editor';
 
 interface Args {
   controller: ProseController;
@@ -26,21 +27,20 @@ export default class TableMenu extends Component<Args> {
   }
 
   @action
-  insertTable() {
+  insertTable(rows: number, columns: number) {
     const { schema } = this.controller;
+    const tableContent: PNode[] = [];
+    for (let r = 0; r < rows; r++) {
+      const cells = [];
+      for (let c = 0; c < columns; c++) {
+        cells.push(schema.node('table_cell', null, []));
+      }
+      tableContent.push(schema.node('table_row', null, cells));
+    }
     this.controller.withTransaction((tr) => {
       return tr
         .replaceSelectionWith(
-          this.controller.schema.node('table', null, [
-            schema.node('table_row', null, [
-              schema.node('table_cell', null, [schema.text('test')]),
-              schema.node('table_cell', null, [schema.text('test')]),
-            ]),
-            schema.node('table_row', null, [
-              schema.node('table_cell', null, [schema.text('test')]),
-              schema.node('table_cell', null, [schema.text('test')]),
-            ]),
-          ])
+          this.controller.schema.node('table', null, tableContent)
         )
         .scrollIntoView();
     });
