@@ -6,7 +6,7 @@ import {
   MarkType,
   Schema,
 } from 'prosemirror-model';
-import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
+import { baseKeymap, selectAll } from 'prosemirror-commands';
 import {
   getPathFromRoot,
   isElement,
@@ -30,6 +30,10 @@ import {
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import {
+  rangeHasMarkEverywhere,
+  toggleMarkAddFirst,
+} from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -152,7 +156,7 @@ export class ProseController {
 
   toggleMark(name: string) {
     this.focus();
-    this.doCommand(toggleMark(this.schema.marks[name]));
+    this.doCommand(toggleMarkAddFirst(this.schema.marks[name]));
   }
 
   focus() {
@@ -195,7 +199,7 @@ export class ProseController {
     if (empty) {
       return !!markType.isInSet(this.state.storedMarks || $from.marks());
     } else {
-      return this.state.doc.rangeHasMark(from, to, markType);
+      return rangeHasMarkEverywhere(this.state.doc, from, to, markType);
     }
   }
 
