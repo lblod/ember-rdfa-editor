@@ -8,7 +8,6 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list';
 import { undo } from 'prosemirror-history';
-import { deleteTable } from 'prosemirror-tables';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -72,7 +71,6 @@ export default class EditorToolbar extends Component<Args> {
       liftListItem(this.controller.schema.nodes.list_item)
     );
   }
-
 
   @action
   insertIndent() {
