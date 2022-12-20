@@ -27,6 +27,7 @@ import {
 } from '@lblod/ember-rdfa-editor/nodes';
 import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
 import { code } from 'dummy/dummy-plugins/code-mark-plugin';
+import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -86,10 +87,11 @@ const nodes = {
   image,
 
   hard_break,
-  inline_rdfa,
+  invisible_rdfa,
   block_rdfa,
 };
 const marks = {
+  inline_rdfa,
   code,
   link,
   em,
