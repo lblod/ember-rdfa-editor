@@ -34,6 +34,16 @@
 
 
 
+
+## 1.0.0-alpha.11 (2022-12-20)
+
+#### :rocket: Enhancement
+* [#516](https://github.com/lblod/ember-rdfa-editor/pull/516) Fix table insertion menu and keymapping ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
 ## 1.0.0-alpha.10 (2022-12-20)
 fix test import
 
