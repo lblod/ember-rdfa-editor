@@ -368,7 +368,7 @@ function getParent(refman: ProseReferenceManager) {
           result = refman.get({
             node: resolvedPos.parent,
             from: resolvedPos.before(),
-            to: resolvedNode.node.nodeSize,
+            to: resolvedPos.after(),
           });
         }
         return result;
