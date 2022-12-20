@@ -18,4 +18,3 @@ export const tableKeymap = keymap({
   Tab: goToNextCell(1),
   'Shift-Tab': goToNextCell(-1),
 });
-
