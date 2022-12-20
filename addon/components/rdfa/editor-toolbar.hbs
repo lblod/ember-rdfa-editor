@@ -3,31 +3,36 @@
     <div class='say-toolbar__group'>
       <Rdfa::ToolbarIcon
         @title={{t 'ember-rdfa-editor.undo'}}
-        @icon="undo"
-        {{on 'click' this.undo}}/>
+        @icon='undo'
+        {{on 'click' this.undo}}
+      />
     </div>
     <div class='say-toolbar__group'>
       {{#if @showTextStyleButtons}}
         <Rdfa::ToolbarIcon
           @active={{this.isBold}}
           @title={{t 'ember-rdfa-editor.bold'}}
-          @icon="bold"
-          {{on 'click' this.toggleBold}}/>
+          @icon='bold'
+          {{on 'click' this.toggleBold}}
+        />
         <Rdfa::ToolbarIcon
           @active={{this.isItalic}}
           @title={{t 'ember-rdfa-editor.italic'}}
-          @icon="italic"
-          {{on 'click' this.toggleItalic}}/>
+          @icon='italic'
+          {{on 'click' this.toggleItalic}}
+        />
         <Rdfa::ToolbarIcon
           @active={{this.isUnderline}}
           @title={{t 'ember-rdfa-editor.underline'}}
-          @icon="underlined"
-          {{on 'click' this.toggleUnderline}}/>
+          @icon='underlined'
+          {{on 'click' this.toggleUnderline}}
+        />
         <Rdfa::ToolbarIcon
           @active={{this.isStrikethrough}}
           @title={{t 'ember-rdfa-editor.strikethrough'}}
-          @icon="strikethrough"
-          {{on 'click' this.toggleStrikethrough}}/>
+          @icon='strikethrough'
+          {{on 'click' this.toggleStrikethrough}}
+        />
       {{/if}}
     </div>
     {{#if
@@ -41,9 +46,10 @@
           <Rdfa::ToolbarIcon
             @active={{this.isInList}}
             @title={{t 'ember-rdfa-editor.unordered-list'}}
-            @icon="unordered-list"
-            {{on 'click' this.toggleUnorderedList}}/>
-        {{!--
+            @icon='unordered-list'
+            {{on 'click' this.toggleUnorderedList}}
+          />
+          {{!--
   <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
      <AuIcon @icon="ordered-list" @ariaHidden={{true}} @size="large" />
     <span class="au-u-hidden-visually">
@@ -57,14 +63,16 @@
 
             <Rdfa::ToolbarIcon
               @title={{t 'ember-rdfa-editor.unindent-list'}}
-              @icon="reverse-indent"
-              {{on 'click' this.insertUnindent}}/>
+              @icon='reverse-indent'
+              {{on 'click' this.insertUnindent}}
+            />
           {{/if}}
           {{#if this.canIndent}}
             <Rdfa::ToolbarIcon
               @title={{t 'ember-rdfa-editor.indent-list'}}
-              @icon="indent"
-              {{on 'click' this.insertIndent}}/>
+              @icon='indent'
+              {{on 'click' this.insertIndent}}
+            />
           {{/if}}
         {{/if}}
       </div>

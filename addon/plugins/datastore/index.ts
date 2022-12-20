@@ -60,7 +60,7 @@ export function datastore({
           root: { node: state.doc, from: -1, to: state.doc.nodeSize },
           textContent,
           tag: tag(state.schema),
-          children: children(state.schema, refman, state.doc),
+          children: children(state.schema, refman),
           attributes: attributes(state.schema),
           isText,
           getParent: getParent(refman),
@@ -84,7 +84,7 @@ export function datastore({
             root: { node: newState.doc, from: -1, to: newState.doc.nodeSize },
             textContent,
             tag: tag(newState.schema),
-            children: children(newState.schema, refman, newState.doc),
+            children: children(newState.schema, refman),
             attributes: attributes(newState.schema),
             isText: isText,
             getParent: getParent(refman),
@@ -131,7 +131,7 @@ function getRdfaMarks(rdfaMarks: MarkType[], node: PNode): Mark | undefined {
   return undefined;
 }
 
-function children(schema: Schema, refman: ProseReferenceManager, doc: PNode) {
+function children(schema: Schema, refman: ProseReferenceManager) {
   const serializer = DOMSerializer.fromSchema(schema);
   const rdfaMarks: MarkType[] = [];
   for (const markType of Object.values(schema.marks)) {

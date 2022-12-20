@@ -73,8 +73,8 @@ export function parsePrefixString(prefixString: string) {
 
 export function getRdfaAttribute(node: PNode, attr: RdfaAttr): string[] {
   const result: string[] = [];
-  if(!node.marks) {
-    return []
+  if (!node.marks) {
+    return [];
   }
   node.marks.forEach((mark) => {
     if (mark.attrs[attr]) {

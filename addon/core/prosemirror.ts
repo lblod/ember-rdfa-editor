@@ -1,21 +1,35 @@
-import {Command, EditorState, Plugin, Transaction} from 'prosemirror-state';
-import {EditorView, NodeViewConstructor} from 'prosemirror-view';
-import {DOMParser as ProseParser, DOMSerializer, MarkType, Schema,} from 'prosemirror-model';
-import {baseKeymap, selectAll, toggleMark} from 'prosemirror-commands';
-import {getPathFromRoot, isElement, tagName,} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorView, NodeViewConstructor } from 'prosemirror-view';
+import {
+  DOMParser as ProseParser,
+  DOMSerializer,
+  MarkType,
+  Schema,
+} from 'prosemirror-model';
+import { baseKeymap, selectAll, toggleMark } from 'prosemirror-commands';
+import {
+  getPathFromRoot,
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-import {gapCursor} from 'prosemirror-gapcursor';
-import {keymap} from 'prosemirror-keymap';
-import {history} from 'prosemirror-history';
-import {defaultKeymap} from '@lblod/ember-rdfa-editor/core/keymap';
-import {tracked} from '@glimmer/tracking';
-import {dropCursor} from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
+import { keymap } from 'prosemirror-keymap';
+import { history } from 'prosemirror-history';
+import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
+import { tracked } from '@glimmer/tracking';
+import { dropCursor } from 'prosemirror-dropcursor';
 import MapUtils from '../utils/map-utils';
-import {createLogger, Logger} from '../utils/logging-utils';
-import {ProseStore} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
-import {ReferenceManager} from '@lblod/ember-rdfa-editor/utils/reference-manager';
-import {datastore, datastoreKey, isElementPNode, ResolvedPNode,} from '@lblod/ember-rdfa-editor/plugins/datastore';
-import {unwrap} from '@lblod/ember-rdfa-editor/utils/option';
+import { createLogger, Logger } from '../utils/logging-utils';
+import { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
+import {
+  datastore,
+  datastoreKey,
+  isElementPNode,
+  ResolvedPNode,
+} from '@lblod/ember-rdfa-editor/plugins/datastore';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -57,15 +71,15 @@ export default class Prosemirror {
   private logger: Logger;
 
   constructor({
-                target,
-                schema,
-                baseIRI,
-                plugins = [],
-                widgets = [],
-                nodeViews = () => {
-                  return {};
-                },
-              }: ProsemirrorArgs) {
+    target,
+    schema,
+    baseIRI,
+    plugins = [],
+    widgets = [],
+    nodeViews = () => {
+      return {};
+    },
+  }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.root = target;
     this.pathFromRoot = getPathFromRoot(this.root, false);
@@ -74,7 +88,7 @@ export default class Prosemirror {
     this._state = EditorState.create({
       doc: ProseParser.fromSchema(this.schema).parse(target),
       plugins: [
-        datastore({pathFromRoot: this.pathFromRoot, baseIRI}),
+        datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
         ...plugins,
 
         dropCursor(),
@@ -87,7 +101,7 @@ export default class Prosemirror {
     });
     this.view = new EditorView(target, {
       state: this._state,
-      attributes: {class: 'say-editor__inner say-content'},
+      attributes: { class: 'say-editor__inner say-content' },
       nodeViews: nodeViews(new ProseController(this)),
       dispatchTransaction: this.dispatch,
     });
@@ -177,7 +191,7 @@ export class ProseController {
   }
 
   isMarkActive(markType: MarkType) {
-    const {from, $from, to, empty} = this.state.selection;
+    const { from, $from, to, empty } = this.state.selection;
     if (empty) {
       return !!markType.isInSet(this.state.storedMarks || $from.marks());
     } else {
