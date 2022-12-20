@@ -25,13 +25,13 @@ export class ProseStore
         if (quadNodes) {
           const { subjectNodes, predicateNodes, objectNodes } = quadNodes;
           const hasSubjectNode = subjectNodes.some(
-            (range) => range.from < start && range.to > end
+            (range) => range.from <= start && range.to >= end
           );
           const hasPredicateNode = predicateNodes.some(
-            (range) => range.from < start && range.to > end
+            (range) => range.from <= start && range.to >= end
           );
           const hasObjectNode = objectNodes.some(
-            (range) => range.from < start && range.to > end
+            (range) => range.from <= start && range.to >= end
           );
           return hasSubjectNode && hasPredicateNode && hasObjectNode;
         } else {
