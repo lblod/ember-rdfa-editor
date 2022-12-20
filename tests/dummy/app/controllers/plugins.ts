@@ -38,7 +38,18 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { code } from 'dummy/dummy-plugins/code-mark-plugin';
+import { code, codeMarkButton } from 'dummy/dummy-plugins/code-mark-plugin';
+import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
+import {
+  card,
+  cardView,
+  counter,
+  counterView,
+  dropdown,
+  dropdownView,
+  insertDummyComponentsWidget,
+} from 'dummy/dummy-plugins/inline-components-plugin';
+import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
@@ -66,6 +77,9 @@ const nodes = {
   hard_break,
   invisible_rdfa,
   block_rdfa,
+  card,
+  counter,
+  dropdown,
 };
 const marks = {
   inline_rdfa,
@@ -80,8 +94,26 @@ const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
-  @tracked widgets: WidgetSpec[] = [tableMenu];
+  @tracked nodeViews: (
+    proseController: ProseController
+  ) => Record<string, NodeViewConstructor> = (proseController) => {
+    return {
+      card: cardView(proseController),
+      counter: counterView(proseController),
+      dropdown: dropdownView(proseController),
+    };
+  };
+  @tracked plugins: Plugin[] = [
+    // placeholderEditing(),
+    highlight({ testKey: 'yeet' }),
+    tablePlugin,
+    tableKeymap,
+  ];
+  @tracked widgets: WidgetSpec[] = [
+    insertDummyComponentsWidget,
+    codeMarkButton,
+    tableMenu,
+  ];
   schema: Schema = dummySchema;
 
   @action
