@@ -1,5 +1,6 @@
 import { WidgetSpec } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { Command, Plugin } from 'prosemirror-state';
+import { keymap } from 'prosemirror-keymap';
+import { Plugin } from 'prosemirror-state';
 
 import { goToNextCell, tableEditing } from 'prosemirror-tables';
 
@@ -13,9 +14,8 @@ export const tablePlugin: Plugin = tableEditing({
   allowTableNodeSelection: false,
 });
 
-export function tableKeyMap(): Record<string, Command> {
-  return {
-    Tab: goToNextCell(1),
-    'Shift-Tab': goToNextCell(-1),
-  };
-}
+export const tableKeymap = keymap({
+  Tab: goToNextCell(1),
+  'Shift-Tab': goToNextCell(-1),
+});
+
