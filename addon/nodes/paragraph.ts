@@ -10,10 +10,8 @@ export const paragraph: NodeSpec = {
     {
       tag: 'p',
       getAttrs(node: HTMLElement) {
-        // console.log('parsing', node);
         const myAttrs = getRdfaAttrs(node);
         if (myAttrs) {
-          console.log(myAttrs);
           return myAttrs;
         }
         return null;
@@ -22,7 +20,6 @@ export const paragraph: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    // console.log("writing", node.attrs);
     return ['p', node.attrs, 0];
   },
 };

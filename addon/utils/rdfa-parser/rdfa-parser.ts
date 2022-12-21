@@ -63,8 +63,6 @@ export interface RdfaParseConfig<N> {
 
   attributes(this: void, node: N): Record<string, string>;
 
-  getParent(this: void, node: N, root: N): N | null;
-
   baseIRI: string;
   pathFromDomRoot?: Node[];
 }
@@ -79,12 +77,12 @@ export interface RdfaParseResponse<N> {
   dataset: RDF.Dataset;
 
   subjectToNodesMapping: Map<string, N[]>;
-  nodeToSubjectMapping: Map<N, ModelQuadSubject<N>>;
+  nodeToSubjectMapping: Map<N, ModelQuad<N>>;
 
-  nodeToObjectsMapping: Map<N, Set<ModelQuadObject<N>>>;
+  nodeToObjectsMapping: Map<N, Set<ModelQuad<N>>>;
   objectToNodesMapping: Map<string, N[]>;
 
-  nodeToPredicatesMapping: Map<N, Set<ModelQuadPredicate<N>>>;
+  nodeToPredicatesMapping: Map<N, Set<ModelQuad<N>>>;
   predicateToNodesMapping: Map<string, N[]>;
 
   quadToNodesMapping: Map<string, QuadNodes<N>>;
@@ -102,14 +100,14 @@ export class RdfaParser<N> {
   private resultSet: RDF.Dataset;
 
   private readonly activeTagStack: IActiveTag<N>[] = [];
-  private nodeToSubjectMapping: Map<N, ModelQuadSubject<N>>;
+  private nodeToSubjectMapping: Map<N, ModelQuad<N>>;
   private subjectToNodesMapping: Map<string, N[]>;
 
-  private nodeToObjectsMapping: Map<N, Set<ModelQuadObject<N>>>;
+  private nodeToObjectsMapping: Map<N, Set<ModelQuad<N>>>;
   private objectToNodesMapping: Map<string, N[]>;
 
   // nodes can define multiple predicates
-  private nodeToPredicatesMapping: Map<N, Set<ModelQuadPredicate<N>>>;
+  private nodeToPredicatesMapping: Map<N, Set<ModelQuad<N>>>;
   private predicateToNodesMapping: Map<string, N[]>;
 
   private quadToNodesMapping: Map<string, QuadNodes<N>>;
@@ -137,13 +135,13 @@ export class RdfaParser<N> {
     this.resultSet = new GraphyDataset();
     this.globallySeenPrefixes = new Map<string, string>();
 
-    this.nodeToSubjectMapping = new Map<N, ModelQuadSubject<N>>();
+    this.nodeToSubjectMapping = new Map();
     this.subjectToNodesMapping = new Map<string, N[]>();
 
     this.predicateToNodesMapping = new Map<string, N[]>();
-    this.nodeToPredicatesMapping = new Map<N, Set<ModelQuadPredicate<N>>>();
+    this.nodeToPredicatesMapping = new Map();
 
-    this.nodeToObjectsMapping = new Map<N, Set<ModelQuadObject<N>>>();
+    this.nodeToObjectsMapping = new Map();
     this.objectToNodesMapping = new Map<string, N[]>();
     this.seenSubjectNodes = new Map<RDF.Term, N>();
     this.seenPredicateNodes = new Map<RDF.Term, N>();
@@ -1208,9 +1206,15 @@ export class RdfaParser<N> {
     ) {
       return;
     }
+    const quad = this.util.dataFactory.quad(
+      subject,
+      predicate,
+      object,
+      this.defaultGraph
+    );
     if (subject.node && !this.seenSubjectNodes.has(subject)) {
       this.seenSubjectNodes.set(subject, subject.node);
-      this.nodeToSubjectMapping.set(subject.node, subject);
+      this.nodeToSubjectMapping.set(subject.node, quad);
       MapUtils.setOrPush(
         this.subjectToNodesMapping,
         subject.value,
@@ -1219,11 +1223,7 @@ export class RdfaParser<N> {
     }
     if (predicate.node && !this.seenPredicateNodes.has(predicate)) {
       this.seenPredicateNodes.set(predicate, predicate.node);
-      MapUtils.setOrAdd(
-        this.nodeToPredicatesMapping,
-        predicate.node,
-        predicate
-      );
+      MapUtils.setOrAdd(this.nodeToPredicatesMapping, predicate.node, quad);
       MapUtils.setOrPush(
         this.predicateToNodesMapping,
         predicate.value,
@@ -1232,22 +1232,16 @@ export class RdfaParser<N> {
     }
     if (object.node && !this.seenObjectNodes.has(object)) {
       this.seenObjectNodes.set(object, object.node);
-      MapUtils.setOrAdd(this.nodeToObjectsMapping, object.node, object);
+      MapUtils.setOrAdd(this.nodeToObjectsMapping, object.node, quad);
       MapUtils.setOrPush(this.objectToNodesMapping, object.value, object.node);
     }
-    const resultQuad = this.util.dataFactory.quad(
-      subject,
-      predicate,
-      object,
-      this.defaultGraph
-    );
-    this.quadToNodesMapping.set(quadHash(resultQuad), {
+    this.quadToNodesMapping.set(quadHash(quad), {
       subjectNodes: this.subjectToNodesMapping.get(subject.value) ?? [],
       predicateNodes: this.predicateToNodesMapping.get(predicate.value) ?? [],
       objectNodes: this.objectToNodesMapping.get(object.value) ?? [],
     });
 
-    this.resultSet.add(resultQuad);
+    this.resultSet.add(quad);
   }
 
   /**

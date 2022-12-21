@@ -137,8 +137,8 @@ export default class Prosemirror {
 
   dispatch = (tr: Transaction) => {
     const newState = this.state.apply(tr);
-    this.view.updateState(newState);
     this._state = newState;
+    this.view.updateState(newState);
   };
 }
 
