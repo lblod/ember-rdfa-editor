@@ -23,6 +23,7 @@ export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store
 
 export interface TextPNode {
   children: ResolvedPNode[];
+  mark?: Mark;
   parent?: ResolvedPNode;
   domNode: Node;
   from: number;
@@ -37,6 +38,19 @@ export interface ElementPNode {
 
 export function isElementPNode(pnode: ResolvedPNode): pnode is ElementPNode {
   return 'node' in pnode;
+}
+
+export function getAppliedMarks(pnode: ResolvedPNode): Mark[] {
+  const marks = [];
+  let currentNode: ResolvedPNode | undefined = pnode;
+  while (currentNode && !isElementPNode(currentNode)) {
+    if (currentNode.mark) {
+      marks.unshift(currentNode.mark);
+    }
+    currentNode = currentNode.parent;
+    console.log('CURRENT NODE: ', currentNode);
+  }
+  return marks;
 }
 
 export type ResolvedPNode = ElementPNode | TextPNode;
@@ -262,11 +276,11 @@ function serializeTextBlobRec(
     const markSerializer = serializer.marks[mark.type.name];
     const outputSpec = markSerializer(mark, true);
     const { dom } = DOMSerializer.renderSpec(document, outputSpec);
-    let currentMark: Mark | null = null;
+    let currentMark: Mark | undefined;
     let newBuffer: [PNode, number][] = [];
     const children: ResolvedPNode[] = [];
     for (const [node, pos] of buffer) {
-      const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
+      const rdfaMark = getRdfaMarks(rdfaMarks, node);
       if (rdfaMark === currentMark) {
         if (rdfaMark) {
           newBuffer.push([node.mark(rdfaMark.removeFromSet(node.marks)), pos]);
@@ -308,6 +322,7 @@ function serializeTextBlobRec(
       );
     }
     const result = refman.get({
+      mark: mark,
       from,
       to,
       domNode: dom,

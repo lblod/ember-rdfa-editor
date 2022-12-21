@@ -1,11 +1,13 @@
 import { Command } from 'prosemirror-state';
 import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { DOMParser as ProseParser } from 'prosemirror-model';
+import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
 import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
+import { PNode } from '..';
 export function insertHtml(
   html: Node | string,
   from: number,
   to: number,
+  marks?: Mark[],
   preserveWhitespace = false
 ): Command {
   return function (state, dispatch) {
@@ -20,13 +22,16 @@ export function insertHtml(
       if (!preserveWhitespace) {
         cleanUpNode(htmlNode);
       }
-      const fragment = ProseParser.fromSchema(state.schema).parseSlice(
-        htmlNode,
-        {
-          preserveWhitespace,
-        }
-      ).content;
-
+      let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {
+        preserveWhitespace,
+      }).content;
+      if (marks?.length) {
+        const nodesWithMarks: PNode[] = [];
+        fragment.forEach((node) => {
+          nodesWithMarks.push(node.mark([...marks, ...node.marks]));
+        });
+        fragment = Fragment.from(nodesWithMarks);
+      }
       const tr = state.tr;
       tr.replaceWith(from, to, fragment);
       dispatch(tr);
