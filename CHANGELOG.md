@@ -35,6 +35,10 @@
 
 
 
+## 1.0.0-alpha.12 (2022-12-22)
+- Datastore: fix issue with node mappings
+
+
 ## 1.0.0-alpha.11 (2022-12-20)
 
 #### :rocket: Enhancement
