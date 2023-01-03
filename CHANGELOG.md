@@ -35,6 +35,15 @@
 
 
 
+
+## 1.0.0-alpha.13 (2023-01-03)
+
+#### :house: Internal
+* [#521](https://github.com/lblod/ember-rdfa-editor/pull/521) Ensure placeholders are non-draggable and use placeholder-text as leafText ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-alpha.12 (2022-12-22)
 - Datastore: fix issue with node mappings
 
