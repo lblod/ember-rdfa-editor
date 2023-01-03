@@ -6,6 +6,7 @@ export const placeholder: NodeSpec = {
   inline: true,
   group: 'inline',
   selectable: true,
+  draggable: false,
   atom: true,
   defining: false,
   toDOM(node) {
@@ -15,8 +16,8 @@ export const placeholder: NodeSpec = {
       node.attrs.placeholderText,
     ];
   },
-  leafText() {
-    return 'empty';
+  leafText(node) {
+    return node.attrs.placeholderText as string;
   },
   parseDOM: [
     {

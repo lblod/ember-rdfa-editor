@@ -56,7 +56,6 @@ export function* findChildren(
           from: pos + 1 + offset,
           to: pos + 1 + offset + node.child(i).nodeSize,
         };
-        const resolvedChild = { node: node.child(i), pos: pos + 1 + offset };
         if (filter(childRange)) {
           yield childRange;
         }
