@@ -40,7 +40,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { code } from 'dummy/dummy-plugins/code-mark-plugin';
 import applyDevTools from 'prosemirror-dev-tools';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 const nodes = {
   doc,
@@ -64,11 +63,10 @@ const nodes = {
   image,
 
   hard_break,
-  invisible_rdfa,
+  inline_rdfa,
   block_rdfa,
 };
 const marks = {
-  inline_rdfa,
   code,
   link,
   em,

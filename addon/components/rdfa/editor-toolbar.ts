@@ -6,7 +6,7 @@ import {
   liftListItem,
   sinkListItem,
   wrapInList,
-} from 'prosemirror-schema-list';
+} from '../../commands/list-commands';
 import { undo } from 'prosemirror-history';
 
 interface Args {
