@@ -60,7 +60,6 @@ export function wrapInList(
       doJoin = true;
     }
     const wrap = findWrapping(outerRange, listType, attrs, range);
-    console.log('Wrapping found:', wrap);
     if (!wrap) {
       return false;
     }

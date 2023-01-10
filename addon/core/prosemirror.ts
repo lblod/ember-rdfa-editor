@@ -7,11 +7,7 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { baseKeymap, selectAll } from 'prosemirror-commands';
-import {
-  getPathFromRoot,
-  isElement,
-  tagName,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
@@ -26,7 +22,6 @@ import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manag
 import {
   datastore,
   datastoreKey,
-  isElementPNode,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
@@ -252,23 +247,10 @@ export class ProseReferenceManager extends ReferenceManager<
     super(
       (node: ResolvedPNode) => node,
       (bundle: ResolvedPNode) => {
-        if (isElementPNode(bundle)) {
-          const { from, to, node } = bundle;
-          const name = node?.type.name || '';
-          const attrs = JSON.stringify(node?.attrs);
-          return `${from} - ${to} - ${name} - ${attrs}`;
-        } else {
-          const { from, to, domNode } = bundle;
-          let domNodeTag = '';
-          let domNodeAttrs = '';
-          if (domNode) {
-            domNodeTag = tagName(domNode);
-            domNodeAttrs = isElement(domNode)
-              ? JSON.stringify(domNode.attributes)
-              : '';
-          }
-          return `${from} - ${to} - ${domNodeTag} - ${domNodeAttrs}`;
-        }
+        const { from, to, node } = bundle;
+        const name = node?.type.name || '';
+        const attrs = JSON.stringify(node?.attrs);
+        return `${from} - ${to} - ${name} - ${attrs}`;
       }
     );
   }
