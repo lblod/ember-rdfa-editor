@@ -6,13 +6,12 @@ import {
   MarkType,
   Schema,
 } from 'prosemirror-model';
-import { baseKeymap, selectAll } from 'prosemirror-commands';
+import { selectAll } from 'prosemirror-commands';
 import { getPathFromRoot } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import { defaultKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
 import MapUtils from '../utils/map-utils';
@@ -29,6 +28,7 @@ import {
   rangeHasMarkEverywhere,
   toggleMarkAddFirst,
 } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { baseKeymap } from './keymap';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -93,8 +93,7 @@ export default class Prosemirror {
         dropCursor(),
         gapCursor(),
 
-        keymap(defaultKeymap(schema)),
-        keymap(baseKeymap),
+        keymap(baseKeymap(schema)),
         history(),
       ],
     });
