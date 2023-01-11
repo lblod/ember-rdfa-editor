@@ -12,6 +12,7 @@ import {
   deleteTable,
 } from 'prosemirror-tables';
 import { PNode } from '@lblod/ember-rdfa-editor';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface Args {
   controller: ProseController;
@@ -37,7 +38,7 @@ export default class TableMenu extends Component<Args> {
     for (let r = 0; r < rows; r++) {
       const cells = [];
       for (let c = 0; c < columns; c++) {
-        cells.push(schema.node('table_cell', null, []));
+        cells.push(unwrap(schema.nodes.table_cell.createAndFill()));
       }
       tableContent.push(schema.node('table_row', null, cells));
     }

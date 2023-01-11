@@ -52,7 +52,7 @@ const nodes = {
   ordered_list,
   bullet_list,
   placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
+  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
   heading,
   blockquote,
 
