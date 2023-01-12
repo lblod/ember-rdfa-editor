@@ -212,7 +212,7 @@ export class ProseController {
   }
 
   get datastore(): ProseStore {
-    return unwrap(datastoreKey.getState(this.pm.state));
+    return unwrap(datastoreKey.getState(this.pm.state))();
   }
 
   get widgets() {

@@ -11,13 +11,16 @@ import {
 import { Mark, PNode, ProsePlugin, Schema } from '@lblod/ember-rdfa-editor';
 import { map, objectFrom } from 'iter-tools';
 import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { createLogger } from '@lblod/ember-rdfa-editor/utils/logging-utils';
+import {
+  createLogger,
+  Logger,
+} from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
 import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
-export const datastoreKey = new PluginKey<ProseStore>('datastore');
+export const datastoreKey = new PluginKey<() => ProseStore>('datastore');
 
 export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 
@@ -62,55 +65,55 @@ export interface DatastorePluginArgs {
 export function datastore({
   pathFromRoot,
   baseIRI,
-}: DatastorePluginArgs): ProsePlugin<ProseStore> {
+}: DatastorePluginArgs): ProsePlugin<() => ProseStore> {
   const logger = createLogger('datastore');
-  return new ProsePlugin({
+  return new ProsePlugin<() => ProseStore>({
     key: datastoreKey,
     state: {
-      init(config: EditorStateConfig, state: EditorState) {
-        const refman = new ProseReferenceManager();
-        const store = proseStoreFromParse({
-          root: { node: state.doc, from: -1, to: state.doc.nodeSize },
-          textContent,
-          tag,
-          children: children(state.schema, refman),
-          attributes,
-          isText,
-
-          pathFromDomRoot: pathFromRoot,
-          baseIRI,
-        });
-
-        logger(`parsed ${store.size} triples`);
-        return store;
+      init(config: EditorStateConfig, state: EditorState): () => ProseStore {
+        return createDataStoreGetter(state, pathFromRoot, baseIRI, logger);
       },
       apply(
         tr: Transaction,
-        oldStore: ProseStore,
+        oldStore: () => ProseStore,
         oldState: EditorState,
         newState: EditorState
       ) {
-        const refman = new ProseReferenceManager();
-        if (tr.docChanged) {
-          const newStore = proseStoreFromParse({
-            root: { node: newState.doc, from: -1, to: newState.doc.nodeSize },
-            textContent,
-            tag,
-            children: children(newState.schema, refman),
-            attributes,
-            isText: isText,
-
-            pathFromDomRoot: pathFromRoot,
-            baseIRI,
-          });
-          logger(`parsed ${newStore.size} triples`);
-          return newStore;
-        } else {
-          return oldStore;
-        }
+        return createDataStoreGetter(newState, pathFromRoot, baseIRI, logger);
       },
     },
   });
+}
+
+let stateCache: { state: EditorState; store: ProseStore };
+
+function createDataStoreGetter(
+  state: EditorState,
+  pathFromRoot: Node[],
+  baseIRI: string,
+  logger: Logger
+) {
+  const refman = new ProseReferenceManager();
+  return function () {
+    if (stateCache && stateCache.state === state) {
+      return stateCache.store;
+    } else {
+      const store = proseStoreFromParse({
+        root: { node: state.doc, from: -1, to: state.doc.nodeSize },
+        textContent,
+        tag,
+        children: children(state.schema, refman),
+        attributes,
+        isText,
+
+        pathFromDomRoot: pathFromRoot,
+        baseIRI,
+      });
+      logger(`parsed ${store.size} triples`);
+      stateCache = { state, store };
+      return store;
+    }
+  };
 }
 
 function textContent(resolvedNode: ResolvedPNode): string {
