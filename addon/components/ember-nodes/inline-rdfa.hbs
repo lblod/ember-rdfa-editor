@@ -1,0 +1,16 @@
+{{#if (eq this.tag "link")}}
+  <link typeof={{this.nodeAttrs.typeof}}/>
+{{else}}
+  <span typeof={{this.nodeAttrs.typeof}}>
+
+    <AuPill @skin="warning">
+    {{this.nodeAttrs.typeof}}
+      {{this.nodeAttrs.property}}
+
+    </AuPill>
+
+    <AuPill>
+      {{yield}}
+    </AuPill>
+  </span>
+{{/if}}

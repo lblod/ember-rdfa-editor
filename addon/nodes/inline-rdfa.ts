@@ -1,23 +1,32 @@
+import { getRdfaAttrs, PNode, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import {
-  getRdfaAttrs,
-  NodeSpec,
-  PNode,
-  rdfaAttrs,
-} from '@lblod/ember-rdfa-editor';
+  createEmberNodeSpec,
+  createEmberNodeView,
+  EmberNodeConfig,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
-export const inline_rdfa: NodeSpec = {
+export const emberNodeConfig: EmberNodeConfig = {
+  name: 'inline-rdfa',
+  componentPath: 'ember-nodes/inline-rdfa',
+  inline: true,
+  content: 'inline*',
+  group: 'inline',
+  atom: false,
+  isolating: true,
   attrs: {
     ...rdfaAttrs,
     __tag: { default: 'span' },
   },
-  content: 'inline*',
-  inline: true,
-  group: 'inline',
   parseDOM: [
     {
       tag: 'span, link',
-      getAttrs(node: HTMLElement) {
-        return getRdfaAttrs(node);
+      getAttrs(element: HTMLElement) {
+        const rdfaAttrs = getRdfaAttrs(element);
+        if (rdfaAttrs) {
+          return { __tag: tagName(element), ...rdfaAttrs };
+        }
+        return false;
       },
     },
   ],
@@ -25,3 +34,5 @@ export const inline_rdfa: NodeSpec = {
     return [node.attrs.__tag, node.attrs, 0];
   },
 };
+export const inline_rdfa = createEmberNodeSpec(emberNodeConfig);
+export const inlineRdfaView = createEmberNodeView(emberNodeConfig);

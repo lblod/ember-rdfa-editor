@@ -1,1 +1,5 @@
-<div data-slot contenteditable='true' {{did-insert this.didInsert}}></div>
+{{#if @inline}}
+  <span data-slot contenteditable='true' {{did-insert this.didInsert}}></span>
+{{else}}
+  <div data-slot contenteditable='true' {{did-insert this.didInsert}}></div>
+{{/if}}

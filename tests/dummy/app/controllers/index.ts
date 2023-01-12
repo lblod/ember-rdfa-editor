@@ -40,6 +40,8 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { code } from 'dummy/dummy-plugins/code-mark-plugin';
 import applyDevTools from 'prosemirror-dev-tools';
+import { NodeViewConstructor } from '@lblod/ember-rdfa-editor';
+import { inlineRdfaView } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 const nodes = {
   doc,
@@ -80,6 +82,14 @@ export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
   @tracked widgets: WidgetSpec[] = [tableMenu];
+
+  @tracked nodeViews: (
+    proseController: ProseController
+  ) => Record<string, NodeViewConstructor> = (proseController) => {
+    return {
+      inline_rdfa: inlineRdfaView(proseController),
+    };
+  };
   schema: Schema = dummySchema;
 
   @action

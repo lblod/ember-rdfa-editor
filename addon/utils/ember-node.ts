@@ -49,6 +49,7 @@ export function emberComponent(
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const node = document.createElement(inline ? 'span' : 'div');
   node.classList.add('ember-node');
+  node.setAttribute('contenteditable', 'false');
   component.appendTo(node);
   return { node, component };
 }
@@ -68,17 +69,18 @@ class EmberNodeView implements NodeView {
     getPos: () => number
   ) {
     const { name, componentPath, atom, inline } = emberNodeConfig;
-    this.template = hbs`{{#component this.componentPath
-                          getPos=this.getPos
-                          node=this.node
-                          updateAttribute=this.updateAttribute
-                          controller=this.controller
-                        }}
-                          {{#unless this.atom}}
-                          <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
-                          {{/unless}}
-                        {{/component}}`;
     this.node = pNode;
+    //language=hbs
+    this.template = hbs`{{#component this.componentPath
+                                     getPos=this.getPos
+                                     node=this.node
+                                     updateAttribute=this.updateAttribute
+                                     controller=this.controller
+    }}
+        {{#unless this.atom}}
+            <EditorComponents::Slot @inline={{this.node.type.spec.inline}} @contentDOM={{this.contentDOM}}/>
+        {{/unless}}
+    {{/component}}`;
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div')
       : undefined;
@@ -123,6 +125,7 @@ export type EmberNodeConfig = {
   group: string;
   content?: string;
   atom: boolean;
+  isolating?: boolean;
   attrs?: {
     [name: string]: AttributeSpec & {
       serialize?: (node: PNode) => string;
@@ -142,12 +145,23 @@ export type EmberNodeConfig = {
 );
 
 export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
-  const { name, inline, group, content, atom, attrs, parseDOM, toDOM } = config;
+  const {
+    name,
+    inline,
+    group,
+    isolating,
+    content,
+    atom,
+    attrs,
+    parseDOM,
+    toDOM,
+  } = config;
   return {
     inline,
     atom,
     group,
     content,
+    isolating,
     attrs,
     parseDOM: parseDOM ?? [
       {
