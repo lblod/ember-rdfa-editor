@@ -19,7 +19,7 @@ export const invisible_rdfa: NodeSpec = {
   },
   parseDOM: [
     {
-      tag: '*',
+      tag: 'span, link',
       getAttrs(node: HTMLElement) {
         if (!node.hasChildNodes()) {
           const attrs = getRdfaAttrs(node);
@@ -53,33 +53,8 @@ export const inline_rdfa: MarkSpec = {
   parseDOM: [
     {
       tag: 'span',
-      getAttrs(node: HTMLElement) {
-        if (node.hasChildNodes()) {
-          const attrs = getRdfaAttrs(node);
-          if (attrs) {
-            return attrs;
-          }
-        }
-        return false;
-      },
-    },
-  ],
-  toDOM(mark: Mark) {
-    return ['span', mark.attrs, 0];
-  },
-  hasRdfa: true,
-  parseTag: 'span',
-};
-export const rdfaLink: MarkSpec = {
-  attrs: {
-    ...rdfaAttrs,
-    __tag: { default: 'span' },
-  },
-  group: 'rdfa',
-  excludes: '',
-  parseDOM: [
-    {
-      tag: 'link',
+      // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
+      priority: 10,
       getAttrs(node: HTMLElement) {
         const attrs = getRdfaAttrs(node);
         if (attrs) {
@@ -90,8 +65,8 @@ export const rdfaLink: MarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
-    return ['link', mark.attrs, 0];
+    return ['span', mark.attrs, 0];
   },
   hasRdfa: true,
-  parseTag: 'link',
+  parseTag: 'span',
 };
