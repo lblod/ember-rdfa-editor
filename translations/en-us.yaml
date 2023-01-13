@@ -19,3 +19,6 @@ ember-rdfa-editor:
   delete-table: Delete table
   columns: Columns
   rows: Rows
+  normalText: Normal text
+  heading: Heading
+  insert-heading: Insert heading
