@@ -19,3 +19,5 @@ ember-rdfa-editor:
   delete-table: Delete table
   columns: Columns
   rows: Rows
+  show-annotations: Show annotations
+  insert: Insert

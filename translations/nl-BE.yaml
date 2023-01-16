@@ -19,3 +19,5 @@ ember-rdfa-editor:
   delete-table: Tabel verwijderen
   columns: Kolommen
   rows: Rijen
+  show-annotations: Toon annotaties
+  insert: Invoegen
