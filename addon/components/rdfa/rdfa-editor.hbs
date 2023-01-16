@@ -28,12 +28,10 @@
       </:middle>
       <:right>
         {{#if @editorOptions.showToggleRdfaAnnotations}}
-          {{!--
         <AuToggleSwitch
           {{on 'click' this.toggleRdfaBlocks}}
           @label='Toon annotaties'
         />
-      --}}
         {{/if}}
         {{#each this.toolbarRightWidgets as |widget|}}
           {{component
