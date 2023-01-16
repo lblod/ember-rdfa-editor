@@ -1,10 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import {
-  NodeType,
-  ProseController,
-  setBlockType,
-} from '@lblod/ember-rdfa-editor';
+import { NodeType, ProseController } from '@lblod/ember-rdfa-editor';
+import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type';
 
 type Args = {
   controller: ProseController;
@@ -32,7 +29,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   @action
   enable(nodeType: NodeType, attrs?: Record<string, unknown>) {
-    this.controller.doCommand(setBlockType(nodeType, attrs));
+    this.controller.doCommand(setBlockType(nodeType, attrs, true));
   }
 
   get canEnableText() {
@@ -46,7 +43,7 @@ export default class HeadingsMenu extends Component<Args> {
   canEnable = (nodeType: NodeType, attrs?: Record<string, unknown>) => {
     return (
       !this.isActive(nodeType, attrs) &&
-      this.controller.checkCommand(setBlockType(nodeType, attrs))
+      this.controller.checkCommand(setBlockType(nodeType, attrs, true))
     );
   };
 
