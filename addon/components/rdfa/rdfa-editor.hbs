@@ -69,7 +69,7 @@
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
         {{#if this.insertSidebarWidgets.length}}
-          <Rdfa::PluginWrapper @title='Invoegen'>
+          <Rdfa::PluginWrapper @title={{t "ember-rdfa-editor.insert"}}>
             {{#each this.insertSidebarWidgets as |widget|}}
               {{component
                 widget.componentName
