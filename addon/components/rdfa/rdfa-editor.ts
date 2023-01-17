@@ -20,6 +20,7 @@ import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { Owner } from 'window';
 
 export type PluginConfig =
   | string
@@ -114,7 +115,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async handleRawEditorInit(target: Element) {
-    window.__APPLICATION = unwrap(getOwner(this));
+    window.__APPLICATION = unwrap(getOwner(this)) as Owner;
     await Promise.all(this.initializers);
     this.prosemirror = new Prosemirror({
       target,
