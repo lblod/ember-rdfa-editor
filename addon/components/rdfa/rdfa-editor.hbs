@@ -28,12 +28,10 @@
       </:middle>
       <:right>
         {{#if @editorOptions.showToggleRdfaAnnotations}}
-          {{!--
         <AuToggleSwitch
           {{on 'click' this.toggleRdfaBlocks}}
-          @label='Toon annotaties'
+          @label={{ t 'ember-rdfa-editor.show-annotations'}}
         />
-      --}}
         {{/if}}
         {{#each this.toolbarRightWidgets as |widget|}}
           {{component

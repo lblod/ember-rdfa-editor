@@ -139,7 +139,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   toggleRdfaBlocks() {
-    throw new NotImplementedError();
+    this.showRdfaBlocks = !this.showRdfaBlocks;
   }
 
   @action
