@@ -30,7 +30,7 @@ $say-smaller-font-size: 1.4rem !default;
   text-align: center;
   color: var(--au-gray-600);
   height: $say-toolbar-height;
-  width: $say-toolbar-height;
+  min-width: $say-toolbar-height;
   background-color: transparent;
   transition: color var(--au-transition);
   padding: $au-unit-tiny;

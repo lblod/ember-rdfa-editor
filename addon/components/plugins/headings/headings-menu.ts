@@ -1,12 +1,15 @@
 import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { NodeType, ProseController } from '@lblod/ember-rdfa-editor';
 import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type';
+import IntlService from 'ember-intl/services/intl';
 
 type Args = {
   controller: ProseController;
 };
 export default class HeadingsMenu extends Component<Args> {
+  @service declare intl: IntlService;
   levels = [1, 2, 3, 4, 5, 6];
 
   get controller() {
@@ -19,6 +22,15 @@ export default class HeadingsMenu extends Component<Args> {
 
   get enabled() {
     return this.canEnableText || this.levels.some(this.canEnableHeading);
+  }
+
+  get currentStyle() {
+    const currentLevel = this.levels.find(this.headingIsActive);
+    if (currentLevel) {
+      return `${this.intl.t('ember-rdfa-editor.heading')} ${currentLevel}`;
+    } else {
+      return this.intl.t('ember-rdfa-editor.normalText');
+    }
   }
 
   @action

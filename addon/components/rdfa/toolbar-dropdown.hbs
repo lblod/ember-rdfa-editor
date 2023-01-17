@@ -7,10 +7,10 @@
     {{on 'click' this.openDropdown}}
     title={{@label}}
   >
-    {{#if @icon}}
-    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
-    {{/if}}
     <span class={{if @hideLabel 'au-u-hidden-visually' ''}}>{{@label}}</span>
+    {{#if @icon}}
+    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size={{this.iconSize}} />
+    {{/if}}
   </button>
   {{#if this.dropdownOpen}}
     <div

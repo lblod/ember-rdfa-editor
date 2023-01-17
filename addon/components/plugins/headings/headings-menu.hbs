@@ -1,8 +1,8 @@
 {{#if this.enabled}}
 <Rdfa::ToolbarDropdown
-  @label={{t 'ember-rdfa-editor.insert-heading'}}
-  @icon="draft"
-  @hideLabel={{true}}
+  @label={{this.currentStyle}}
+  @icon="nav-down"
+  @iconSize="small"
   @controller={{@controller}}
   as |Menu|
 >

@@ -7,9 +7,13 @@ import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 interface Args {
   controller: ProseController;
+  iconSize?: string;
 }
 
 export default class AuDropdown extends Component<Args> {
+  get iconSize() {
+    return this.args.iconSize ?? 'large';
+  }
   // Create a dropdown ID
   dropdownId = 'dropdown-' + guidFor(this);
 
