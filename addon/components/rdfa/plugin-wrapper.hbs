@@ -1,7 +1,8 @@
 <div class='say-editor-hints__insert'>
   <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
-    <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}>
-      <AuToolbarGroup>
+    <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}as |Group|
+    >
+      <Group>
         <div>
           <AuButton
             @skin='tertiary'
@@ -12,8 +13,8 @@
             {{@title}}
           </AuButton>
         </div>
-      </AuToolbarGroup>
-      <AuToolbarGroup>
+      </Group>
+      <Group>
         {{#if this.expanded}}
           <AuIcon
             @icon='remove'
@@ -35,7 +36,7 @@
             Sluit accordion
           </span>
         {{/if}}
-      </AuToolbarGroup>
+      </Group>
     </AuToolbar>
     <div class={{if this.expanded 'au-c-accordion__content' 'au-u-hidden'}}>
       <AuList @divider={{true}}>
