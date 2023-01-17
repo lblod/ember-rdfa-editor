@@ -37,6 +37,140 @@
 
 
 
+
+## 1.0.0-beta.1 (2023-01-17)
+
+#### :boom: Breaking Change
+* [#538](https://github.com/lblod/ember-rdfa-editor/pull/538) Prosemirror ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#538](https://github.com/lblod/ember-rdfa-editor/pull/538) Prosemirror ([@abeforgit](https://github.com/abeforgit))
+* [#451](https://github.com/lblod/ember-rdfa-editor/pull/451) GN-3716 - Improve copy/paste from word ([@usrtim](https://github.com/usrtim))
+
+#### :bug: Bug Fix
+* [#499](https://github.com/lblod/ember-rdfa-editor/pull/499) fix(initialization): emit a selectionchanged after init ([@abeforgit](https://github.com/abeforgit))
+* [#481](https://github.com/lblod/ember-rdfa-editor/pull/481) fix(paste): preserve list indentation when copying from word ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#536](https://github.com/lblod/ember-rdfa-editor/pull/536) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.43.0 to 5.48.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#533](https://github.com/lblod/ember-rdfa-editor/pull/533) build(deps-dev): bump prettier from 2.7.1 to 2.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#539](https://github.com/lblod/ember-rdfa-editor/pull/539) build(deps): bump loader-utils from 1.0.4 to 2.0.4 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#525](https://github.com/lblod/ember-rdfa-editor/pull/525) build(deps-dev): bump @appuniversum/ember-appuniversum from 2.0.0 to 2.2.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#505](https://github.com/lblod/ember-rdfa-editor/pull/505) build(deps): bump decode-uri-component from 0.2.0 to 0.2.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#491](https://github.com/lblod/ember-rdfa-editor/pull/491) build(deps-dev): bump eslint-plugin-qunit from 7.3.2 to 7.3.4 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- [@usrtim](https://github.com/usrtim)
+
+
+## v0.65.0 (2022-11-23)
+
+#### :boom: Breaking Change
+* [#468](https://github.com/lblod/ember-rdfa-editor/pull/468) Update ember-appuniversum to v2 ([@Windvis](https://github.com/Windvis))
+
+#### :house: Internal
+* [#480](https://github.com/lblod/ember-rdfa-editor/pull/480) build(deps): bump engine.io from 6.2.0 to 6.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#475](https://github.com/lblod/ember-rdfa-editor/pull/475) build(deps-dev): bump eslint from 8.27.0 to 8.28.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#469](https://github.com/lblod/ember-rdfa-editor/pull/469) build(deps): bump @codemirror/lang-html from 6.1.4 to 6.2.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#466](https://github.com/lblod/ember-rdfa-editor/pull/466) build(deps): bump @codemirror/view from 6.5.0 to 6.5.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#464](https://github.com/lblod/ember-rdfa-editor/pull/464) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.9.0 to 1.10.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#457](https://github.com/lblod/ember-rdfa-editor/pull/457) build(deps-dev): bump typescript from 4.8.4 to 4.9.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
+
+
+## v0.64.0 (2022-11-15)
+
+#### :boom: Breaking Change
+* [#455](https://github.com/lblod/ember-rdfa-editor/pull/455) Inline components: serializable properties ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#455](https://github.com/lblod/ember-rdfa-editor/pull/455) Inline components: serializable properties ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#456](https://github.com/lblod/ember-rdfa-editor/pull/456) Remove unnecessary read in htmlContent method ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## v0.63.8 (2022-11-15)
+
+#### :house: Internal
+* [#454](https://github.com/lblod/ember-rdfa-editor/pull/454) fix(deps): use proper versions of the @types packages ([@abeforgit](https://github.com/abeforgit))
+* [#448](https://github.com/lblod/ember-rdfa-editor/pull/448) build(deps-dev): bump eslint-plugin-qunit from 7.3.1 to 7.3.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#450](https://github.com/lblod/ember-rdfa-editor/pull/450) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.8.2 to 1.9.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#447](https://github.com/lblod/ember-rdfa-editor/pull/447) build(deps): bump @codemirror/view from 6.4.0 to 6.4.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## v0.63.7 (2022-11-04)
+
+#### :bug: Bug Fix
+* [#443](https://github.com/lblod/ember-rdfa-editor/pull/443) Refresh inline components after model read ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#444](https://github.com/lblod/ember-rdfa-editor/pull/444) Remove unnecessary read on mouseup ([@elpoelma](https://github.com/elpoelma))
+* [#442](https://github.com/lblod/ember-rdfa-editor/pull/442) build(deps-dev): bump @types/ember__polyfills from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#441](https://github.com/lblod/ember-rdfa-editor/pull/441) build(deps-dev): bump @types/ember__engine from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#440](https://github.com/lblod/ember-rdfa-editor/pull/440) build(deps-dev): bump @types/ember__test-helpers from 2.8.1 to 2.8.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#439](https://github.com/lblod/ember-rdfa-editor/pull/439) build(deps-dev): bump @types/ember__runloop from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#438](https://github.com/lblod/ember-rdfa-editor/pull/438) build(deps-dev): bump @types/ember__template from 4.0.0 to 4.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#433](https://github.com/lblod/ember-rdfa-editor/pull/433) build(deps-dev): bump eslint-plugin-ember from 11.1.0 to 11.2.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#434](https://github.com/lblod/ember-rdfa-editor/pull/434) build(deps-dev): bump @types/ember__component from 4.0.10 to 4.0.11 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#435](https://github.com/lblod/ember-rdfa-editor/pull/435) build(deps-dev): bump @types/ember__application from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#436](https://github.com/lblod/ember-rdfa-editor/pull/436) build(deps-dev): bump @types/ember__routing from 4.0.11 to 4.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#437](https://github.com/lblod/ember-rdfa-editor/pull/437) build(deps-dev): bump @types/ember__controller from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## v0.63.6 (2022-10-27)
+
+#### :house: Internal
+* [#429](https://github.com/lblod/ember-rdfa-editor/pull/429) build(deps-dev): bump @types/ember__utils from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#428](https://github.com/lblod/ember-rdfa-editor/pull/428) build(deps-dev): bump @types/ember__array from 4.0.2 to 4.0.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#427](https://github.com/lblod/ember-rdfa-editor/pull/427) build(deps-dev): bump @typescript-eslint/parser from 5.40.1 to 5.41.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#426](https://github.com/lblod/ember-rdfa-editor/pull/426) build(deps-dev): bump @types/ember-resolver from 5.0.11 to 5.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#432](https://github.com/lblod/ember-rdfa-editor/pull/432) build(deps): bump ember-cli-typescript from 5.1.1 to 5.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+
+## v0.63.5 (2022-10-26)
+
+#### :house: Internal
+* [#425](https://github.com/lblod/ember-rdfa-editor/pull/425) build(deps): bump @codemirror/lang-html from 6.1.2 to 6.1.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#424](https://github.com/lblod/ember-rdfa-editor/pull/424) build(deps): bump @codemirror/lang-xml from 6.0.0 to 6.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#423](https://github.com/lblod/ember-rdfa-editor/pull/423) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.40.1 to 5.41.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#422](https://github.com/lblod/ember-rdfa-editor/pull/422) build(deps-dev): bump qunit from 2.19.2 to 2.19.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#421](https://github.com/lblod/ember-rdfa-editor/pull/421) build(deps-dev): bump eslint from 8.25.0 to 8.26.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#420](https://github.com/lblod/ember-rdfa-editor/pull/420) build(deps-dev): bump @types/ember__controller from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#419](https://github.com/lblod/ember-rdfa-editor/pull/419) build(deps): bump @codemirror/view from 6.3.1 to 6.4.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#418](https://github.com/lblod/ember-rdfa-editor/pull/418) build(deps-dev): bump eslint-plugin-ember from 11.0.6 to 11.1.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#417](https://github.com/lblod/ember-rdfa-editor/pull/417) build(deps-dev): bump ember-template-lint from 4.15.0 to 4.16.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#416](https://github.com/lblod/ember-rdfa-editor/pull/416) fix deprecations ([@usrtim](https://github.com/usrtim))
+* [#413](https://github.com/lblod/ember-rdfa-editor/pull/413) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.8.1 to 1.8.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#412](https://github.com/lblod/ember-rdfa-editor/pull/412) build(deps-dev): bump @typescript-eslint/parser from 5.40.0 to 5.40.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#411](https://github.com/lblod/ember-rdfa-editor/pull/411) build(deps): bump ember-auto-import from 2.4.2 to 2.4.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#414](https://github.com/lblod/ember-rdfa-editor/pull/414) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.40.0 to 5.40.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#415](https://github.com/lblod/ember-rdfa-editor/pull/415) build(deps-dev): bump qunit from 2.19.1 to 2.19.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#408](https://github.com/lblod/ember-rdfa-editor/pull/408) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.39.0 to 5.40.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#409](https://github.com/lblod/ember-rdfa-editor/pull/409) build(deps): bump @xmldom/xmldom from 0.8.2 to 0.8.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#407](https://github.com/lblod/ember-rdfa-editor/pull/407) build(deps-dev): bump ember-template-lint from 4.14.0 to 4.15.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#406](https://github.com/lblod/ember-rdfa-editor/pull/406) build(deps): bump @codemirror/view from 6.3.0 to 6.3.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#405](https://github.com/lblod/ember-rdfa-editor/pull/405) build(deps-dev): bump @typescript-eslint/parser from 5.39.0 to 5.40.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#403](https://github.com/lblod/ember-rdfa-editor/pull/403) build(deps-dev): bump eslint from 8.24.0 to 8.25.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#402](https://github.com/lblod/ember-rdfa-editor/pull/402) build(deps-dev): bump ember-qunit from 5.1.5 to 6.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#401](https://github.com/lblod/ember-rdfa-editor/pull/401) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.8.0 to 1.8.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 1
+- [@usrtim](https://github.com/usrtim)
+
+
 ## 1.0.0-alpha.14 (2023-01-17)
 
 #### :rocket: Enhancement
