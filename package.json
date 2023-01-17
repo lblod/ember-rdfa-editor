@@ -91,7 +91,7 @@
     "xml-formatter": "^2.6.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^1.5.0",
+    "@appuniversum/ember-appuniversum": "^2.2.0",
     "@ember/test-helpers": "^2.6.0",
     "@embroider/test-setup": "^1.5.0",
     "@glimmer/component": "^1.0.4",
@@ -173,7 +173,7 @@
     "webpack": "^5.70.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^1.5.0"
+    "@appuniversum/ember-appuniversum": "^2.2.0"
   },
   "engines": {
     "node": "14.* || >= 16"
