@@ -2,14 +2,18 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/editor/utils';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 interface Args {
-  editor: RawEditor;
+  controller: ProseController;
+  iconSize?: string;
 }
 
-export default class ToolbarDropdown extends Component<Args> {
+export default class AuDropdown extends Component<Args> {
+  get iconSize() {
+    return this.args.iconSize ?? 'large';
+  }
   // Create a dropdown ID
   dropdownId = 'dropdown-' + guidFor(this);
 
@@ -31,11 +35,7 @@ export default class ToolbarDropdown extends Component<Args> {
     // some kind of focus event always seems to happen at the wrong time
     // so this is a bit of hack, but it works well.
     await paintCycleHappened();
-    const { lastRange } = this.args.editor.selection;
-    if (lastRange) {
-      this.args.editor.rootNode.focus();
-    }
-    this.args.editor.model.writeSelection();
+    this.args.controller.focus();
     return true;
   }
 }

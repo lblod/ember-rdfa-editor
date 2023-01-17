@@ -4,7 +4,6 @@
  * Copyright © 2019 Ruben Taelman
  */
 import { IRdfaPattern } from './rdfa-pattern';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 import {
   ModelBlankNode,
   ModelNamedNode,
@@ -15,30 +14,30 @@ import {
 /**
  * Data holder for the RDFa state in XML tags.
  */
-export interface IActiveTag {
+export interface IActiveTag<N> {
   name: string;
   prefixesAll: Record<string, string>;
   prefixesCustom: Record<string, string>;
-  subject?: ModelNamedNode | ModelBlankNode | boolean;
+  subject?: ModelNamedNode<N> | ModelBlankNode<N> | boolean;
   explicitNewSubject?: boolean;
-  predicates?: ModelNamedNode[] | null;
-  object?: ModelNamedNode | ModelBlankNode | boolean | null;
+  predicates?: ModelNamedNode<N>[] | null;
+  object?: ModelNamedNode<N> | ModelBlankNode<N> | boolean | null;
   text?: string[] | null;
   vocab?: string;
   language?: string;
-  datatype?: ModelNamedNode;
+  datatype?: ModelNamedNode<N>;
   collectChildTags?: boolean;
-  collectedPatternTag?: IRdfaPattern;
+  collectedPatternTag?: IRdfaPattern<N>;
   interpretObjectAsTime?: boolean;
   incompleteTriples: {
-    predicate: ModelQuadPredicate;
+    predicate: ModelQuadPredicate<N>;
     reverse: boolean;
     list?: boolean;
   }[];
   inlist: boolean;
-  listMapping: Record<string, (ModelTerm | boolean)[]>;
-  listMappingLocal: Record<string, (ModelTerm | boolean)[]>;
+  listMapping: Record<string, (ModelTerm<N> | boolean)[]>;
+  listMappingLocal: Record<string, (ModelTerm<N> | boolean)[]>;
   skipElement: boolean;
-  localBaseIRI?: ModelNamedNode;
-  node?: ModelNode;
+  localBaseIRI?: ModelNamedNode<N>;
+  node?: N;
 }

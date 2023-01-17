@@ -1,5 +1,4 @@
 import config from 'ember-get-config';
-import ModelRange from '@lblod/ember-rdfa-editor/model/model-range';
 import { debug } from 'debug';
 
 /**
@@ -109,20 +108,3 @@ export function logMethod(
     };
   };
 }
-
-export const logExecute = logMethod(
-  (_methodName: string, ...args) => {
-    const mappedArgs = args.map((arg) => {
-      if (arg instanceof ModelRange) {
-        return arg.toString();
-      }
-      if (typeof arg === 'string') {
-        return `string<"${arg}", ${arg.length}>`;
-      } else {
-        return arg;
-      }
-    });
-    return ['Executing with args:', ...mappedArgs];
-  },
-  { scopePrefix: 'command' }
-);

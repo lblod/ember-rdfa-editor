@@ -1,34 +1,28 @@
-import Controller from '@lblod/ember-rdfa-editor/model/controller';
 import {
-  InlineComponentSpec,
-  Properties,
-} from '@lblod/ember-rdfa-editor/model/inline-components/model-inline-component';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+  createEmberNodeSpec,
+  createEmberNodeView,
+  EmberNodeConfig,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
 
-export default class CounterSpec extends InlineComponentSpec {
-  matcher = {
-    tag: this.tag,
-    attributeBuilder: (node: Node) => {
-      if (isElement(node)) {
-        if (node.dataset.inlineComponent === this.name) {
-          return {};
-        }
-      }
-      return null;
+const emberNodeConfig: EmberNodeConfig = {
+  name: 'counter',
+  componentPath: 'inline-components-plugin/counter',
+  inline: true,
+  group: 'inline',
+  atom: true,
+  attrs: {
+    count: {
+      default: 0,
+      serialize: (node) => {
+        return (node.attrs.count as number).toString();
+      },
+      parse: (element) => {
+        return optionMapOr(0, parseInt, element.getAttribute('count'));
+      },
     },
-  };
+  },
+};
 
-  properties = {
-    count: { serializable: true, defaultValue: 0 },
-  };
-
-  _renderStatic(props: Properties) {
-    const count = props.count?.toString() || this.properties.count.defaultValue;
-    return `
-      <p>${count}</p>
-    `;
-  }
-  constructor(controller: Controller) {
-    super('inline-components-plugin/counter', 'span', controller);
-  }
-}
+export const counter = createEmberNodeSpec(emberNodeConfig);
+export const counterView = createEmberNodeView(emberNodeConfig);

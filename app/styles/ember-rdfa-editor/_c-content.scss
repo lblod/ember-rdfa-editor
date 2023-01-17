@@ -41,7 +41,6 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
 .say-content {
   // Set base font size for elements
   &,
-  p,
   ul,
   ol,
   div {
@@ -113,7 +112,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   // Setup some margin rules
-  p + *,
+  //p + *,
   div + *,
   span + *,
   ul + *,
@@ -315,6 +314,16 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     display: inline-block;
   }
 
+  sub {
+    vertical-align: sub;
+    font-size: smaller;
+  }
+
+  sup {
+    vertical-align: super;
+    font-size: smaller;
+  }
+
   // Table styling
   table th {
     white-space: initial;
@@ -440,3 +449,4 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     font-weight: var(--au-medium);
   }
 }
+

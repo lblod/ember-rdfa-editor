@@ -1,43 +1,49 @@
-import Model from '@lblod/ember-rdfa-editor/model/model';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
-import Command from '@lblod/ember-rdfa-editor/commands/command';
-import HtmlReader from '@lblod/ember-rdfa-editor/model/readers/html-reader';
-import ModelRange from '../model/model-range';
-import { logExecute } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-
-export default class InsertHtmlCommand extends Command {
-  name = 'insert-html';
-
-  constructor(model: Model) {
-    super(model);
-  }
-
-  @logExecute
-  execute(
-    htmlString: string,
-    range: ModelRange | null = this.model.selection.lastRange
-  ) {
-    if (!range) {
-      return;
+import { Command } from 'prosemirror-state';
+import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
+import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
+import { PNode } from '..';
+export function insertHtml(
+  html: Node | string,
+  from: number,
+  to: number,
+  marks?: Mark[],
+  preserveWhitespace = false
+): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      let htmlNode: Node;
+      if (typeof html === 'string') {
+        const domParser = new DOMParser();
+        htmlNode = domParser.parseFromString(html, 'text/html');
+      } else {
+        htmlNode = html;
+      }
+      if (!preserveWhitespace) {
+        cleanUpNode(htmlNode);
+      }
+      let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {
+        preserveWhitespace,
+      }).content;
+      if (marks?.length) {
+        const nodesWithMarks: PNode[] = [];
+        fragment.forEach((node) => {
+          nodesWithMarks.push(node.mark([...marks, ...node.marks]));
+        });
+        fragment = Fragment.from(nodesWithMarks);
+      }
+      const tr = state.tr;
+      tr.replaceWith(from, to, fragment);
+      dispatch(tr);
     }
+    return true;
+  };
+}
 
-    const parser = new DOMParser();
-    const html = parser.parseFromString(htmlString, 'text/html');
-    const bodyContent = html.body.childNodes;
-    const reader = new HtmlReader(this.model);
-
-    this.model.change((mutator) => {
-      // dom NodeList doesn't have a map method
-      const modelNodes: ModelNode[] = [];
-      bodyContent.forEach((node) => {
-        const parsed = reader.read(node, true);
-        if (parsed) {
-          modelNodes.push(...parsed);
-        }
-      });
-
-      const newRange = mutator.insertNodes(range, ...modelNodes);
-      this.model.selectRange(newRange);
-    });
+function cleanUpNode(node: Node) {
+  if (isTextNode(node)) {
+    node.textContent = normalToPreWrapWhiteSpace(node);
+  } else if ('childNodes' in node) {
+    node.childNodes.forEach(cleanUpNode);
   }
 }

@@ -4,30 +4,48 @@
     {{if @editorOptions.showPaper "say-container--paper"}}
     {{if @editorOptions.showSidebar "say-container--sidebar-right"}}
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
-  {{did-update this.updateProfile @profile}}
+  {{did-update
+    (fn this.updateConfig 'pasteBehaviour' this.pasteBehaviour)
+    @pasteBehaviour
+  }}
 >
   {{#if this.toolbarController}}
     <Rdfa::EditorToolbar
-      @editor={{this.editor}}
       @showTextStyleButtons='{{if @toolbarOptions.showTextStyleButtons "true"}}'
       @showListButtons='{{if @toolbarOptions.showListButtons "true"}}'
       @showIndentButtons='{{if @toolbarOptions.showIndentButtons "true"}}'
       @controller={{this.toolbarController}}
     >
-      {{#if @editorOptions.showToggleRdfaAnnotations}}
+      <:middle>
+        {{#each this.toolbarMiddleWidgets as |widget|}}
+        <div class='say-toolbar__group'>
+          {{component
+            widget.componentName
+            controller=widget.controller
+            plugin=widget.plugin
+            widgetArgs=widget.widgetArgs
+          }}
+        </div>
+        {{/each}}
+        
+      </:middle>
+      <:right>
+        {{#if @editorOptions.showToggleRdfaAnnotations}}
         <AuToggleSwitch
           {{on 'click' this.toggleRdfaBlocks}}
-          @label='Toon annotaties'
+          @label={{ t 'ember-rdfa-editor.show-annotations'}}
         />
-      {{/if}}
-      {{#each this.toolbarWidgets as |widget|}}
-        {{component
-          widget.componentName
-          controller=widget.controller
-          plugin=widget.plugin
-          widgetArgs=widget.widgetArgs
-        }}
-      {{/each}}
+        {{/if}}
+        {{#each this.toolbarRightWidgets as |widget|}}
+          {{component
+            widget.componentName
+            controller=widget.controller
+            plugin=widget.plugin
+            widgetArgs=widget.widgetArgs
+          }}
+        {{/each}}
+      </:right>
+
     </Rdfa::EditorToolbar>
   {{/if}}
 
@@ -44,14 +62,7 @@
         {{if this.showRdfaBlocks "show-rdfa-blocks"}}
         {{if this.editorLoading "au-u-hidden-visually"}}'
     >
-      <div class='say-editor__paper'>
-        <Ce::ContentEditable
-          @class='say-editor__inner say-content'
-          @rawEditorInit={{this.handleRawEditorInit}}
-          @plugins={{this.editorPlugins}}
-          @baseIRI={{@baseIRI}}
-          @stealFocus={{@stealFocus}}
-        />
+      <div class='say-editor__paper' {{did-insert this.handleRawEditorInit}}>
       </div>
 
     </div>
@@ -59,7 +70,7 @@
     <div class='say-container__aside'>
       <div class='say-editor-hints'>
         {{#if this.insertSidebarWidgets.length}}
-          <Rdfa::PluginWrapper @title='Invoegen'>
+          <Rdfa::PluginWrapper @title={{t "ember-rdfa-editor.insert"}}>
             {{#each this.insertSidebarWidgets as |widget|}}
               {{component
                 widget.componentName
@@ -86,13 +97,4 @@
       {{yield}}
     </div>
   </div>
-  {{#each this.inlineComponents as |compEntry|}}
-    {{#in-element compEntry.node }}
-      {{component
-        compEntry.emberComponentName
-        componentController=compEntry.componentController
-        editorController=compEntry.editorController
-      }}
-    {{/in-element}}
-  {{/each}}
 </div>

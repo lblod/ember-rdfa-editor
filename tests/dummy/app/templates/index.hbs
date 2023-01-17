@@ -1,21 +1,24 @@
 <RdfaEditorWithDebug
   @rdfaEditorInit={{this.rdfaEditorInit}}
   @editorOptions={{hash
-  showToggleRdfaAnnotations="true"
+  showToggleRdfaAnnotations='true'
   showInsertButton=null
-  showRdfa="true"
-  showRdfaHighlight="true"
-  showRdfaHover="true"
-  showPaper="true"
-  showSidebar="true"
+  showRdfa='true'
+  showRdfaHighlight='true'
+  showRdfaHover='true'
+  showPaper='true'
+  showSidebar='true'
   showToolbarBottom=null
 }}
   @toolbarOptions={{hash
-    showTextStyleButtons="true"
-    showListButtons="true"
-    showIndentButtons="true"
-  }}
+  showTextStyleButtons='true'
+  showListButtons='true'
+  showIndentButtons='true'
+}}
   @plugins={{this.plugins}}
+  @widgets={{this.widgets}}
+  @schema={{this.schema}}
 >
-  App version: {{app-version versionOnly=true showExtended=true}}
+  App version:
+  {{app-version versionOnly=true showExtended=true}}
 </RdfaEditorWithDebug>

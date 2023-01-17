@@ -1,0 +1,18 @@
+import {
+  createEmberNodeSpec,
+  createEmberNodeView,
+  EmberNodeConfig,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
+
+const emberNodeConfig: EmberNodeConfig = {
+  name: 'card',
+  componentPath: 'inline-components-plugin/card',
+  inline: false,
+  group: 'block',
+  content: 'inline*',
+  atom: false,
+};
+
+export const card = createEmberNodeSpec(emberNodeConfig);
+
+export const cardView = createEmberNodeView(emberNodeConfig);

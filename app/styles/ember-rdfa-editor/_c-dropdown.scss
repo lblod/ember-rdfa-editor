@@ -17,8 +17,7 @@ $say-smaller-font-size: 1.4rem !default;
   display: inline-block;
 }
 
-.say-toolbar__button {
-}
+.say-toolbar__button {}
 
 .say-dropdown__button {
   @include au-font-size($au-base, 1);
@@ -31,13 +30,13 @@ $say-smaller-font-size: 1.4rem !default;
   text-align: center;
   color: var(--au-gray-600);
   height: $say-toolbar-height;
-  width: $say-toolbar-height;
+  min-width: $say-toolbar-height;
   background-color: transparent;
   transition: color var(--au-transition);
   padding: $au-unit-tiny;
   margin: 0;
 
-  & + & {
+  &+& {
     border-left: 0.1rem solid var(--au-gray-200);
   }
 
@@ -147,18 +146,23 @@ $say-smaller-font-size: 1.4rem !default;
     border-bottom-left-radius: 0.3rem;
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: var(--au-gray-800);
     background-color: var(--au-gray-100);
   }
 
-  &:focus {
+  &:focus:not(:disabled) {
     outline: var(--au-outline);
     outline-offset: -0.2rem;
   }
+
+  &:disabled {
+    border: 40;
+    color: var(--au-gray-500);
+  }
 }
 
-.say-dropdown__menu [role='menuitem'] + [role='menuitem'] {
+.say-dropdown__menu [role='menuitem']+[role='menuitem'] {
   border-top: 1px dotted var(--au-gray-300);
 }
 

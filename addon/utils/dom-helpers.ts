@@ -1,4 +1,4 @@
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/model/util/constants';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
 
 /**
  * Fake class to list helper functions.
@@ -113,6 +113,10 @@ export function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
+export function isLeaf(node: Node): boolean {
+  return node.childNodes.length === 0;
+}
+
 /**
  * Determine whether the provided node is an li.
  *
@@ -164,6 +168,14 @@ export function isDisplayedAsBlock(domNode: Node): boolean {
 
   const displayStyle = window.getComputedStyle(domNode)['display'];
   return displayStyle === 'block' || displayStyle === 'list-item';
+}
+
+export function isContentEditable(node: Node) {
+  if (isElement(node)) {
+    return node.isContentEditable;
+  } else {
+    return node.parentElement?.isContentEditable;
+  }
 }
 
 /**
@@ -526,4 +538,27 @@ export function getPathFromRoot(to: Node, inclusive: boolean): Node[] {
     path.push(to);
   }
   return path;
+}
+
+export function getLeafCount(node: Node) {
+  if (node.childNodes.length) {
+    let count = 0;
+    node.childNodes.forEach((node) => {
+      count += getLeafCount(node);
+    });
+    return count;
+  } else {
+    return 1;
+  }
+}
+
+export function getLeafChildren(node: Node) {
+  if (node.childNodes.length) {
+    const leafs: Node[] = [...node.childNodes].flatMap((node) =>
+      getLeafChildren(node)
+    );
+    return leafs;
+  } else {
+    return [node];
+  }
 }

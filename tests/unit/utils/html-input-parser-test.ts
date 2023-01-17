@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 import {
   NON_BREAKING_SPACE,
   INVISIBLE_SPACE,
-} from '@lblod/ember-rdfa-editor/model/util/constants';
+} from '@lblod/ember-rdfa-editor/utils/constants';
 
 module('Unit | Utility | html-input-parser', function () {
   // Replace this with your real tests.

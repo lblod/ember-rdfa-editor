@@ -1,30 +1,37 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { inject as service } from '@ember/service';
-import RdfaDocument from '@lblod/ember-rdfa-editor/utils/rdfa/rdfa-document';
 import xmlFormat from 'xml-formatter';
 import { basicSetup, EditorView } from 'codemirror';
 import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../../config/sample-data';
 import { EditorState } from '@codemirror/state';
-
-interface FeaturesService {
-  disable: (feature: string) => void;
-  enable: (feature: string) => void;
-}
+import {
+  ProseController,
+  WidgetSpec,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { NodeViewConstructor } from 'prosemirror-view';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor';
+import { Schema } from 'prosemirror-model';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface RdfaEditorDebugArgs {
-  rdfaEditorInit: (rdfaDocument: RdfaDocument) => void;
+  rdfaEditorInit: (rdfaDocument: ProseController) => void;
+  devtools?: boolean;
+  nodeViews?: Record<string, NodeViewConstructor>;
+  plugins?: ProsePlugin[];
+  schema: Schema;
+  widgets?: WidgetSpec[];
+  baseIRI: string;
 }
 
 export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugArgs> {
-  @tracked rdfaEditor?: RdfaDocument;
+  @tracked rdfaEditor?: ProseController;
   @tracked debug: unknown;
   @tracked xmlDebuggerOpen = false;
   @tracked debuggerContent = '';
-  @service features!: FeaturesService;
+  @tracked pasteBehaviour = 'full-html';
   @tracked htmlDebuggerOpen = false;
   @tracked sampleData = sampleData;
   @tracked exportContent = '';
@@ -90,7 +97,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   }
 
   @action
-  rdfaEditorInitFromArg(rdfaEditor: RdfaDocument) {
+  rdfaEditorInitFromArg(rdfaEditor: ProseController) {
     this.args.rdfaEditorInit(rdfaEditor);
     this.rdfaEditor = rdfaEditor;
   }
@@ -106,9 +113,6 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
       if (type === 'html') {
         this.rdfaEditor.setHtmlContent(content);
         this.saveEditorContentToLocalStorage();
-      } else {
-        this.rdfaEditor.xmlContent = content;
-        this.saveEditorContentToLocalStorage();
       }
     }
   }
@@ -116,7 +120,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action openContentDebugger(type: 'xml' | 'html') {
     if (this.rdfaEditor) {
       if (type === 'xml') {
-        this.debuggerContent = this.rdfaEditor.xmlContentPrettified;
+        this.debuggerContent = 'Coming soon!';
         this.xmlDebuggerOpen = true;
       } else {
         this.debuggerContent = this.rdfaEditor.htmlContent;
@@ -127,10 +131,10 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
 
   @action closeContentDebugger(type: 'xml' | 'html', save: boolean) {
     if (type === 'xml') {
-      this.debuggerContent = this.xmlEditor!.state.sliceDoc();
+      this.debuggerContent = 'Coming soon!';
       this.xmlDebuggerOpen = false;
     } else {
-      this.debuggerContent = this.htmlEditor!.state.sliceDoc();
+      this.debuggerContent = unwrap(this.htmlEditor).state.sliceDoc();
       this.htmlDebuggerOpen = false;
     }
     if (save) {
@@ -147,16 +151,7 @@ export default class RdfaRdfaEditorWithDebug extends Component<RdfaEditorDebugAr
   @action
   setPasteBehaviour(event: InputEvent) {
     const val = (event.target as HTMLSelectElement).value;
-    if (val === 'textonly') {
-      this.features.disable('editor-extended-html-paste');
-      this.features.disable('editor-html-paste');
-    } else if (val === 'limited') {
-      this.features.disable('editor-extended-html-paste');
-      this.features.enable('editor-html-paste');
-    } else if (val === 'full') {
-      this.features.enable('editor-extended-html-paste');
-      this.features.enable('editor-html-paste');
-    }
+    this.pasteBehaviour = val;
   }
 
   @action

@@ -37,6 +37,210 @@
 
 
 
+## 1.0.0-alpha.14 (2023-01-17)
+
+#### :rocket: Enhancement
+* [#532](https://github.com/lblod/ember-rdfa-editor/pull/532) Addition of a menu which allows to insert headings ([@elpoelma](https://github.com/elpoelma))
+* [#531](https://github.com/lblod/ember-rdfa-editor/pull/531) Support for subscript and superscript marks ([@elpoelma](https://github.com/elpoelma))
+* [#530](https://github.com/lblod/ember-rdfa-editor/pull/530) feat(datastore): make datastore lazy ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#537](https://github.com/lblod/ember-rdfa-editor/pull/537) Remove context from parsing rule paragraph ([@elpoelma](https://github.com/elpoelma))
+* [#535](https://github.com/lblod/ember-rdfa-editor/pull/535) Add translation for 'insert' and 'show annotations' buttons. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+## 1.0.0-alpha.13 (2023-01-03)
+
+#### :house: Internal
+* [#521](https://github.com/lblod/ember-rdfa-editor/pull/521) Ensure placeholders are non-draggable and use placeholder-text as leafText ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+## 1.0.0-alpha.12 (2022-12-22)
+- Datastore: fix issue with node mappings
+
+
+## 1.0.0-alpha.11 (2022-12-20)
+
+#### :rocket: Enhancement
+* [#516](https://github.com/lblod/ember-rdfa-editor/pull/516) Fix table insertion menu and keymapping ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+
+## 1.0.0-alpha.10 (2022-12-20)
+fix test import
+
+
+## 1.0.0-alpha.9 (2022-12-20)
+
+#### :boom: Breaking Change
+* [#515](https://github.com/lblod/ember-rdfa-editor/pull/515) fix/list behavior - rdfa as marks ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#507](https://github.com/lblod/ember-rdfa-editor/pull/507) Rework placeholders ([@elpoelma](https://github.com/elpoelma))
+* [#513](https://github.com/lblod/ember-rdfa-editor/pull/513) Addition of utility functions which allow for searching nodes in a specific range or with a specific condition ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+## 1.0.0-alpha.8 (2022-12-14)
+
+#### :boom: Breaking Change
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#511](https://github.com/lblod/ember-rdfa-editor/pull/511) Return pos instead of resolved pos from datastore ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 1.0.0-alpha.7 (2022-12-14)
+
+#### :boom: Breaking Change
+* [#498](https://github.com/lblod/ember-rdfa-editor/pull/498) Utility functions to create ember-node-views and ember-node-specs ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#509](https://github.com/lblod/ember-rdfa-editor/pull/509) feature(datastore): implement ds as a plugin ([@abeforgit](https://github.com/abeforgit))
+* [#498](https://github.com/lblod/ember-rdfa-editor/pull/498) Utility functions to create ember-node-views and ember-node-specs ([@elpoelma](https://github.com/elpoelma))
+* [#495](https://github.com/lblod/ember-rdfa-editor/pull/495) Add resolved-positions to prose-store ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#508](https://github.com/lblod/ember-rdfa-editor/pull/508) bug(datastore): guarantee reference stability for datastore data ([@abeforgit](https://github.com/abeforgit))
+* [#501](https://github.com/lblod/ember-rdfa-editor/pull/501) fix(npm): fix infinite loop by moving devtools to devdeps ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#502](https://github.com/lblod/ember-rdfa-editor/pull/502) Cleanup unused code, tighten linting, fix linting ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 1.0.0-alpha.6 (2022-12-06)
+
+#### :boom: Breaking Change
+* [#494](https://github.com/lblod/ember-rdfa-editor/pull/494) restructure plugins ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#492](https://github.com/lblod/ember-rdfa-editor/pull/492) feature(dev): add devtools ([@abeforgit](https://github.com/abeforgit))
+
+#### :house: Internal
+* [#494](https://github.com/lblod/ember-rdfa-editor/pull/494) restructure plugins ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
+## 1.0.0-alpha.5 (2022-11-30)
+* fix mark active state on buttons
+* fix enter handling in lists
+
+
+## 1.0.0-alpha.4 (2022-11-30)
+
+#### :rocket: Enhancement
+* [#410](https://github.com/lblod/ember-rdfa-editor/pull/410) feature/simple positions ([@abeforgit](https://github.com/abeforgit))
+
+#### :memo: Documentation
+* [#400](https://github.com/lblod/ember-rdfa-editor/pull/400) Correct the description for the text-only paste behaviour. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+## 1.0.0-alpha.3 (2022-10-06)
+
+#### :boom: Breaking Change
+* [#397](https://github.com/lblod/ember-rdfa-editor/pull/397) TEDI: live mark set rework ([@elpoelma](https://github.com/elpoelma))
+* [#390](https://github.com/lblod/ember-rdfa-editor/pull/390) Feature: allow for plugins to reload dynamically ([@elpoelma](https://github.com/elpoelma))
+* [#389](https://github.com/lblod/ember-rdfa-editor/pull/389) Enable html pasting by passing a property to the editor component ([@elpoelma](https://github.com/elpoelma))
+
+#### :rocket: Enhancement
+* [#390](https://github.com/lblod/ember-rdfa-editor/pull/390) Feature: allow for plugins to reload dynamically ([@elpoelma](https://github.com/elpoelma))
+* [#358](https://github.com/lblod/ember-rdfa-editor/pull/358) Introduction of a MarksManager ([@elpoelma](https://github.com/elpoelma))
+
+#### :bug: Bug Fix
+* [#398](https://github.com/lblod/ember-rdfa-editor/pull/398) Bugfix: inline component reload ([@elpoelma](https://github.com/elpoelma))
+* [#396](https://github.com/lblod/ember-rdfa-editor/pull/396) Fix issue with computing differences on transaction dispatch  ([@elpoelma](https://github.com/elpoelma))
+* [#389](https://github.com/lblod/ember-rdfa-editor/pull/389) Enable html pasting by passing a property to the editor component ([@elpoelma](https://github.com/elpoelma))
+* [#386](https://github.com/lblod/ember-rdfa-editor/pull/386) Fix: inline component selection issues ([@elpoelma](https://github.com/elpoelma))
+* [#385](https://github.com/lblod/ember-rdfa-editor/pull/385) Ensure dom nodes are correctly converted to model nodes ([@elpoelma](https://github.com/elpoelma))
+* [#373](https://github.com/lblod/ember-rdfa-editor/pull/373) Fix: view to model behaviour ([@elpoelma](https://github.com/elpoelma))
+* [#365](https://github.com/lblod/ember-rdfa-editor/pull/365) Fix issue with inline components not being persisted correctly across reloads ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#399](https://github.com/lblod/ember-rdfa-editor/pull/399) build(typescript): enable strict type-checking ([@abeforgit](https://github.com/abeforgit))
+* [#397](https://github.com/lblod/ember-rdfa-editor/pull/397) TEDI: live mark set rework ([@elpoelma](https://github.com/elpoelma))
+* [#395](https://github.com/lblod/ember-rdfa-editor/pull/395) build(deps-dev): bump ember-cli from 3.28.5 to 3.28.6 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#394](https://github.com/lblod/ember-rdfa-editor/pull/394) build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.38.1 to 5.39.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#393](https://github.com/lblod/ember-rdfa-editor/pull/393) build(deps-dev): bump release-it from 15.4.2 to 15.5.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#392](https://github.com/lblod/ember-rdfa-editor/pull/392) build(deps-dev): bump sinon from 14.0.0 to 14.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#391](https://github.com/lblod/ember-rdfa-editor/pull/391) build(deps-dev): bump @typescript-eslint/parser from 5.38.1 to 5.39.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#384](https://github.com/lblod/ember-rdfa-editor/pull/384) Chore/cleanup feature flags ([@nvdk](https://github.com/nvdk))
+* [#387](https://github.com/lblod/ember-rdfa-editor/pull/387) build(deps-dev): bump @appuniversum/ember-appuniversum from 1.7.0 to 1.8.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#382](https://github.com/lblod/ember-rdfa-editor/pull/382) build(deps-dev): bump @types/ember__routing from 4.0.10 to 4.0.11 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#383](https://github.com/lblod/ember-rdfa-editor/pull/383) build(deps-dev): bump @types/ember__application from 4.0.1 to 4.0.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#381](https://github.com/lblod/ember-rdfa-editor/pull/381) build(deps): bump @codemirror/lang-html from 6.1.1 to 6.1.2 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#347](https://github.com/lblod/ember-rdfa-editor/pull/347) build(deps-dev): bump ember-template-lint from 3.16.0 to 4.14.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### Committers: 3
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+- Niels V ([@nvdk](https://github.com/nvdk))
+
+
+## vv1.0.0-alpha.1 (2022-09-12)
+
+#### :boom: Breaking Change
+* [#310](https://github.com/lblod/ember-rdfa-editor/pull/310) Transactional Edits ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#301](https://github.com/lblod/ember-rdfa-editor/pull/301) Internal/tree diffing ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#306](https://github.com/lblod/ember-rdfa-editor/pull/306) Merge latest dev, Remove non-TEDI code, cleanup types&tests, rework commands ([@abeforgit](https://github.com/abeforgit))
+* [#307](https://github.com/lblod/ember-rdfa-editor/pull/307) Feature/transactional api steps ([@elpoelma](https://github.com/elpoelma))
+* [#302](https://github.com/lblod/ember-rdfa-editor/pull/302) Improve selection handler ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+## 1.0.0-alpha.2 (2022-09-12)
+
+## v1.0.0-alpha.1 (2022-09-12)
+
+#### :boom: Breaking Change
+* [#310](https://github.com/lblod/ember-rdfa-editor/pull/310) Transactional Edits ([@abeforgit](https://github.com/abeforgit))
+
+#### :rocket: Enhancement
+* [#301](https://github.com/lblod/ember-rdfa-editor/pull/301) Internal/tree diffing ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#344](https://github.com/lblod/ember-rdfa-editor/pull/344) build(deps-dev): bump ember-cli-sass from 10.0.1 to 11.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#306](https://github.com/lblod/ember-rdfa-editor/pull/306) Merge latest dev, Remove non-TEDI code, cleanup types&tests, rework commands ([@abeforgit](https://github.com/abeforgit))
+* [#307](https://github.com/lblod/ember-rdfa-editor/pull/307) Feature/transactional api steps ([@elpoelma](https://github.com/elpoelma))
+* [#302](https://github.com/lblod/ember-rdfa-editor/pull/302) Improve selection handler ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
+
+
+
+
+
+
 ## 0.65.0 (2022-11-23)
 
 #### :boom: Breaking Change
@@ -205,7 +409,6 @@
 * [#350](https://github.com/lblod/ember-rdfa-editor/pull/350) build(deps): bump @codemirror/view from ddac2d27f42839dc3d84f46ef8bc65d1a99c3140 to 6.2.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#349](https://github.com/lblod/ember-rdfa-editor/pull/349) build(deps): bump ember-cli-htmlbars from 6.1.0 to 6.1.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#344](https://github.com/lblod/ember-rdfa-editor/pull/344) build(deps-dev): bump ember-cli-sass from 10.0.1 to 11.0.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
-
 
 ## 0.63.1 (2022-09-07)
 

@@ -1,0 +1,32 @@
+{{#if this.enabled}}
+<Rdfa::ToolbarDropdown
+  @label={{this.currentStyle}}
+  @icon="nav-down"
+  @iconSize="small"
+  @controller={{@controller}}
+  as |Menu|
+>
+  <Menu.Item
+    @menuAction={{this.enableText}}
+    title='{{t 'ember-rdfa-editor.normalText'}}'
+    disabled={{not this.canEnableText}}
+  >
+    {{#if this.textIsActive}}
+      <AuIcon @icon='check' @ariaHidden={{true}} />
+    {{/if}}
+    {{t 'ember-rdfa-editor.normalText'}}
+  </Menu.Item>
+  {{#each this.levels as |level|}}
+    <Menu.Item
+      @menuAction={{(fn this.enableHeading level)}}
+      title='{{t 'ember-rdfa-editor.heading'}} {{level}}'
+      disabled={{not (this.canEnableHeading level)}}
+    >
+      {{#if (this.headingIsActive level)}}
+        <AuIcon @icon='check' @ariaHidden={{true}} />
+      {{/if}}
+      {{t 'ember-rdfa-editor.heading'}} {{level}}
+    </Menu.Item>
+  {{/each}}
+</Rdfa::ToolbarDropdown>
+{{/if}}

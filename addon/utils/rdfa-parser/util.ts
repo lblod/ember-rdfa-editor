@@ -19,40 +19,39 @@ import {
   ModelQuadSubject,
   ModelTerm,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
-export class ModelDataFactory extends DataFactory {
+export class ModelDataFactory<N> extends DataFactory {
   quad(
-    subject: ModelQuadSubject,
-    predicate: ModelQuadPredicate,
-    object: ModelQuadObject,
+    subject: ModelQuadSubject<N>,
+    predicate: ModelQuadPredicate<N>,
+    object: ModelQuadObject<N>,
     graph: RDF.Quad_Graph
-  ): ModelQuad {
+  ): ModelQuad<N> {
     const quad = super.quad(subject, predicate, object, graph);
     return { ...quad, subject, predicate, object, graph };
   }
 
-  namedNode<I extends string = string>(
+  namedNode<N, I extends string = string>(
     iri: I,
-    node?: ModelNode
-  ): ModelNamedNode<I> {
-    const namedNode: ModelNamedNode<I> = super.namedNode<I>(iri);
+    node?: N
+  ): ModelNamedNode<N, I> {
+    const namedNode: ModelNamedNode<N, I> = super.namedNode<I>(iri);
     namedNode.node = node;
     return namedNode;
   }
 
-  blankNode(value?: string, node?: ModelNode): ModelBlankNode {
-    const blankNode: ModelBlankNode = super.blankNode(value);
+  blankNode(value?: string, node?: N): ModelBlankNode<N> {
+    const blankNode: ModelBlankNode<N> = super.blankNode(value);
     blankNode.node = node;
     return blankNode;
   }
 
   literal(
     value: string,
-    languageOrDataType?: string | ModelNamedNode,
-    node?: ModelNode
-  ): ModelLiteral {
-    const literal: ModelLiteral = super.literal(value, languageOrDataType);
+    languageOrDataType?: string | ModelNamedNode<N>,
+    node?: N
+  ): ModelLiteral<N> {
+    const literal: ModelLiteral<N> = super.literal(value, languageOrDataType);
     literal.node = node;
     return literal;
   }
@@ -61,7 +60,7 @@ export class ModelDataFactory extends DataFactory {
 /**
  * A collection of utility functions.
  */
-export class Util {
+export class Util<N> {
   public static readonly RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
   public static readonly XSD = 'http://www.w3.org/2001/XMLSchema#';
   public static readonly RDFA = 'http://www.w3.org/ns/rdfa#';
@@ -91,17 +90,17 @@ export class Util {
   private static readonly IRI_REGEX: RegExp =
     /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\[\]`]*$/;
 
-  public readonly dataFactory: ModelDataFactory;
-  public baseIRI: ModelNamedNode;
-  public blankNodeFactory: ((node?: ModelNode) => ModelBlankNode) | null = null;
-  private readonly baseIRIDocument: ModelNamedNode;
+  public readonly dataFactory: ModelDataFactory<N>;
+  public baseIRI: ModelNamedNode<N>;
+  public blankNodeFactory: ((node?: N) => ModelBlankNode<N>) | null = null;
+  private readonly baseIRIDocument: ModelNamedNode<N>;
 
   constructor(
-    rootModelNode: ModelNode,
-    dataFactory?: ModelDataFactory,
+    rootModelNode: N,
+    dataFactory?: ModelDataFactory<N>,
     baseIRI?: string
   ) {
-    this.dataFactory = dataFactory || new ModelDataFactory();
+    this.dataFactory = dataFactory || new ModelDataFactory<N>();
     this.baseIRI = this.dataFactory.namedNode(baseIRI || '', rootModelNode);
     this.baseIRIDocument = this.baseIRI;
   }
@@ -166,9 +165,9 @@ export class Util {
    * @param {{[p: string]: string}[]} prefixes The available prefixes.
    * @return {string} An expanded URL, or the term as-is.
    */
-  public static expandPrefixedTerm(
+  public static expandPrefixedTerm<N>(
     term: string,
-    activeTag: IActiveTag
+    activeTag: IActiveTag<N>
   ): string {
     // Check if the term is prefixed
     const colonIndex: number = term.indexOf(':');
@@ -228,7 +227,7 @@ export class Util {
    * @param node
    * @return A base IRI named node.
    */
-  public getBaseIRI(baseIriValue: string, node?: ModelNode): ModelNamedNode {
+  public getBaseIRI(baseIriValue: string, node?: N): ModelNamedNode<N> {
     let href: string = baseIriValue;
     const fragmentIndex = href.indexOf('#');
     if (fragmentIndex >= 0) {
@@ -244,12 +243,12 @@ export class Util {
    * @returns {Term} A term.
    */
   public getResourceOrBaseIri(
-    term: ModelTerm | boolean,
-    activeTag: IActiveTag
-  ): ModelNamedNode {
+    term: ModelTerm<N> | boolean,
+    activeTag: IActiveTag<N>
+  ): ModelNamedNode<N> {
     return term === true
       ? this.getBaseIriTerm(activeTag)
-      : (term as ModelNamedNode);
+      : (term as ModelNamedNode<N>);
   }
 
   /**
@@ -257,7 +256,7 @@ export class Util {
    * @param {IActiveTag} activeTag The active tag.
    * @return {NamedNode} The base IRI term.
    */
-  public getBaseIriTerm(activeTag: IActiveTag): ModelNamedNode {
+  public getBaseIriTerm(activeTag: IActiveTag<N>): ModelNamedNode<N> {
     return activeTag.localBaseIRI || this.baseIRI;
   }
 
@@ -271,13 +270,13 @@ export class Util {
    */
   public createVocabIris<B extends boolean>(
     terms: string,
-    activeTag: IActiveTag,
+    activeTag: IActiveTag<N>,
     allowTerms: boolean,
     allowBlankNode: B
   ): B extends true ? (RDF.BlankNode | RDF.NamedNode)[] : RDF.NamedNode[];
   public createVocabIris(
     terms: string,
-    activeTag: IActiveTag,
+    activeTag: IActiveTag<N>,
     allowTerms: boolean,
     allowBlankNode: boolean
   ): (RDF.NamedNode | RDF.BlankNode)[] {
@@ -296,7 +295,7 @@ export class Util {
    * @param {IActiveTag} activeTag The current active tag.
    * @return {Literal} A new literal node.
    */
-  public createLiteral(literal: string, activeTag: IActiveTag): RDF.Literal {
+  public createLiteral(literal: string, activeTag: IActiveTag<N>): RDF.Literal {
     if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
       for (const entry of Util.TIME_REGEXES) {
         if (entry.regex.exec(literal)) {
@@ -319,7 +318,7 @@ export class Util {
    * Create a blank node.
    * @returns {BlankNode} A new blank node.
    */
-  public createBlankNode(node?: ModelNode): ModelBlankNode {
+  public createBlankNode(node?: N): ModelBlankNode<N> {
     if (this.blankNodeFactory) {
       return this.blankNodeFactory(node);
     }
@@ -341,18 +340,18 @@ export class Util {
    */
   public createIri<B extends boolean>(
     term: string,
-    activeTag: IActiveTag,
+    activeTag: IActiveTag<N>,
     vocab: boolean,
     allowSafeCurie: boolean,
     allowBlankNode: B
-  ): B extends true ? ModelNamedNode | ModelBlankNode : ModelNamedNode;
+  ): B extends true ? ModelNamedNode<N> | ModelBlankNode<N> : ModelNamedNode<N>;
   public createIri<B extends boolean>(
     term: string,
-    activeTag: IActiveTag,
+    activeTag: IActiveTag<N>,
     vocab: boolean,
     allowSafeCurie: boolean,
     allowBlankNode: B
-  ): ModelNamedNode | ModelBlankNode | null {
+  ): ModelNamedNode<N> | ModelBlankNode<N> | null {
     term = term || '';
 
     if (!allowSafeCurie) {

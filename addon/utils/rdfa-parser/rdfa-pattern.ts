@@ -10,13 +10,13 @@ import { IActiveTag } from './active-tag';
 /**
  * A datastructure for storing an rdfa:Pattern.
  */
-export interface IRdfaPattern {
+export interface IRdfaPattern<N> {
   rootPattern: boolean;
   name: string;
   attributes: Record<string, string>;
   text: string[];
-  children: IRdfaPattern[];
+  children: IRdfaPattern<N>[];
   referenced: boolean;
-  parentTag?: IActiveTag;
+  parentTag?: IActiveTag<N>;
   constructedBlankNodes?: RDF.BlankNode[];
 }

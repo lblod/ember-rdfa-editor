@@ -1,25 +1,26 @@
+import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { tracked } from 'tracked-built-ins';
-import RdfaDocument from '../../utils/rdfa/rdfa-document';
-import RdfaDocumentController from '../../utils/rdfa/rdfa-document';
-import type IntlService from 'ember-intl/services/intl';
-import RawEditor from '@lblod/ember-rdfa-editor/utils/ce/raw-editor';
-import { EditorPlugin } from '@lblod/ember-rdfa-editor/utils/editor-plugin';
-import ApplicationInstance from '@ember/application/instance';
-import Controller, {
-  InternalWidgetSpec,
-  RawEditorController,
-} from '@lblod/ember-rdfa-editor/model/controller';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-import BasicStyles from '@lblod/ember-rdfa-editor/plugins/basic-styles/basic-styles';
-import LumpNodePlugin from '@lblod/ember-rdfa-editor/plugins/lump-node/lump-node';
-import { ActiveComponentEntry } from '@lblod/ember-rdfa-editor/model/inline-components/inline-components-registry';
-import ShowActiveRdfaPlugin from '@lblod/ember-rdfa-editor/plugins/show-active-rdfa/show-active-rdfa';
+
+import type IntlService from 'ember-intl/services/intl';
+import { tracked } from 'tracked-built-ins';
+import Prosemirror, {
+  ProseController,
+  WidgetSpec,
+} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { getOwner } from '@ember/application';
+import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { NodeViewConstructor } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { Plugin } from 'prosemirror-state';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { Owner } from 'window';
 
 export type PluginConfig =
   | string
@@ -29,19 +30,28 @@ export type PluginConfig =
     };
 
 export interface ResolvedPluginConfig {
-  instance: EditorPlugin;
+  instance: RdfaEditorPlugin;
   options: unknown;
 }
+
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
    * @default 'default'
    * @public
    */
-  rdfaEditorInit(editor: RdfaDocument): void;
+  rdfaEditorInit(editor: ProseController): void;
 
-  plugins: PluginConfig[];
+  initializers?: Array<() => Promise<void>>;
+  schema: Schema;
+  baseIRI?: string;
+  plugins?: Plugin[];
   stealFocus?: boolean;
+  pasteBehaviour?: string;
+  widgets?: WidgetSpec[];
+  nodeViews?: (controller: ProseController) => {
+    [node: string]: NodeViewConstructor;
+  };
 }
 
 /**
@@ -66,27 +76,13 @@ interface RdfaEditorArgs {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @service declare intl: IntlService;
 
-  @tracked toolbarWidgets: InternalWidgetSpec[] = [];
-  @tracked sidebarWidgets: InternalWidgetSpec[] = [];
-  @tracked insertSidebarWidgets: InternalWidgetSpec[] = [];
-  @tracked toolbarController: Controller | null = null;
-  @tracked inlineComponents: ActiveComponentEntry[] = [];
+  @tracked controller: ProseController | null = null;
+  @tracked toolbarController: ProseController | null = null;
 
   @tracked editorLoading = true;
   private owner: ApplicationInstance;
   private logger: Logger;
-
-  get plugins(): PluginConfig[] {
-    return this.args.plugins || [];
-  }
-  get editorPlugins(): ResolvedPluginConfig[] {
-    return this.getPlugins();
-  }
-
-  /**
-   * editor controller
-   */
-  @tracked editor?: RawEditor;
+  private prosemirror: Prosemirror | null = null;
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
@@ -96,60 +92,47 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     this.logger = createLogger(this.constructor.name);
   }
 
+  get pasteBehaviour() {
+    return this.args.pasteBehaviour ?? 'standard-html';
+  }
+
+  get initializers() {
+    return this.args.initializers || [];
+  }
+
+  get baseIRI() {
+    return this.args.baseIRI || window.document.baseURI;
+  }
+
   /**
    * Handle init of rawEditor
    *
    * @method handleRawEditorInit
    *
-   * @param {RawEditor} editor, the editor interface
+   * @param {Element} target the html element the editor will render into
    *
    * @private
    */
   @action
-  handleRawEditorInit(editor: RawEditor) {
-    this.editor = editor;
-    this.editor.on('modelWritten', () => {
-      this.inlineComponents = this.editor!.getComponentInstances();
+  async handleRawEditorInit(target: Element) {
+    window.__APPLICATION = unwrap(getOwner(this)) as Owner;
+    await Promise.all(this.initializers);
+    this.prosemirror = new Prosemirror({
+      target,
+      schema: this.args.schema,
+      baseIRI: this.baseIRI,
+      plugins: this.args.plugins,
+      nodeViews: this.args.nodeViews,
+      widgets: this.args.widgets,
     });
-    this.editor.on('modelRead', () => {
-      this.inlineComponents = this.editor!.getComponentInstances();
-    });
-    this.toolbarWidgets = editor.widgetMap.get('toolbar') || [];
-    this.sidebarWidgets = editor.widgetMap.get('sidebar') || [];
-    this.insertSidebarWidgets = editor.widgetMap.get('insertSidebar') || [];
-    this.toolbarController = new RawEditorController('toolbar', editor);
-    const rdfaDocument = new RdfaDocumentController('host-controller', editor);
-    if (this.args.rdfaEditorInit) {
-      this.args.rdfaEditorInit(rdfaDocument);
-    }
+    window.__PM = this.prosemirror;
+    window.__PC = new ProseController(this.prosemirror);
+    this.toolbarController = new ProseController(this.prosemirror);
+    this.controller = new ProseController(this.prosemirror);
     this.editorLoading = false;
-  }
-
-  getPlugins(): ResolvedPluginConfig[] {
-    const pluginConfigs = this.plugins;
-    const plugins: ResolvedPluginConfig[] = [
-      { instance: new BasicStyles(), options: null },
-      { instance: new LumpNodePlugin(), options: null },
-      { instance: new ShowActiveRdfaPlugin(), options: null },
-    ];
-    for (const config of pluginConfigs) {
-      let name;
-      let options: unknown = null;
-      if (typeof config === 'string') {
-        name = config;
-      } else {
-        name = config.name;
-        options = config.options;
-      }
-
-      const plugin = this.owner.lookup(`plugin:${name}`) as EditorPlugin | null;
-      if (plugin) {
-        plugins.push({ instance: plugin, options });
-      } else {
-        this.logger(`plugin ${name} not found! Skipping...`);
-      }
+    if (this.args.rdfaEditorInit) {
+      this.args.rdfaEditorInit(new ProseController(this.prosemirror));
     }
-    return plugins;
   }
 
   // Toggle RDFA blocks
@@ -157,12 +140,27 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   toggleRdfaBlocks() {
-    if (!this.toolbarController!.getConfig('showRdfaBlocks')) {
-      this.showRdfaBlocks = true;
-      this.toolbarController!.setConfig('showRdfaBlocks', 'true');
-    } else {
-      this.showRdfaBlocks = false;
-      this.toolbarController!.setConfig('showRdfaBlocks', null);
-    }
+    this.showRdfaBlocks = !this.showRdfaBlocks;
+  }
+
+  @action
+  updateConfig(_key: string, _value: unknown) {
+    throw new NotImplementedError();
+  }
+
+  get toolbarMiddleWidgets() {
+    return this.controller?.widgets.get('toolbarMiddle') || [];
+  }
+
+  get toolbarRightWidgets() {
+    return this.controller?.widgets.get('toolbarRight') || [];
+  }
+
+  get sidebarWidgets() {
+    return this.controller?.widgets.get('sidebar') || [];
+  }
+
+  get insertSidebarWidgets() {
+    return this.controller?.widgets.get('insertSidebar') || [];
   }
 }

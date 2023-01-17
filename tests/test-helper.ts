@@ -7,7 +7,6 @@ import config from 'dummy/config/environment';
 import { setApplication } from '@ember/test-helpers';
 import { start } from 'ember-qunit';
 import { setup } from 'qunit-dom';
-import ModelNode from '@lblod/ember-rdfa-editor/model/model-node';
 
 setup(QUnit.assert);
 const defaultDumpDepth = QUnit.dump.maxDepth;
@@ -97,18 +96,6 @@ function nodeParser(node: Node) {
 
 QUnit.dump.setParser('node', nodeParser);
 
-QUnit.dump.parse = function (
-  this: unknown,
-  data: unknown,
-  objType: unknown,
-  stack: unknown
-): string {
-  if (data instanceof ModelNode) {
-    return defaultParse.call(this, data.toXml(), objType, stack) as string;
-  } else {
-    return defaultParse.call(this, data, objType, stack) as string;
-  }
-};
 QUnit.hooks.afterEach(() => {
   QUnit.dump.maxDepth = defaultDumpDepth;
 });
