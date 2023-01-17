@@ -16,7 +16,6 @@ export const paragraph: NodeSpec = {
         }
         return null;
       },
-      context: 'block/',
     },
   ],
   toDOM(node: PNode) {
