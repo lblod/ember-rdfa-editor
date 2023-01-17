@@ -4,6 +4,8 @@ ember-rdfa-editor:
   italic: Italic
   underline: Underline
   strikethrough: Strikethrough
+  subscript: Subscript
+  superscript: Superscript
   unordered-list: Unordered list
   ordered-list: Ordered list
   unindent-list: List level higher
