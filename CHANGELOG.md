@@ -38,6 +38,15 @@
 
 
 
+
+## 1.0.0-beta.2 (2023-01-17)
+
+#### :house: Internal
+* [#540](https://github.com/lblod/ember-rdfa-editor/pull/540) update prosemirror packages to latest versions ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-beta.1 (2023-01-17)
 
 #### :boom: Breaking Change
