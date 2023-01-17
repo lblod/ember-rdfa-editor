@@ -5,10 +5,12 @@
     aria-expanded='{{if this.dropdownOpen "true" "false"}}'
     type='button'
     {{on 'click' this.openDropdown}}
-    title={{t 'ember-rdfa-editor.table-options'}}
+    title={{@label}}
   >
-    <AuIcon @icon='table' @ariaHidden={{true}} @size='large' />
-    <span class='au-u-hidden-visually'>{{@dropdownButtonLabel}}</span>
+    <span class={{if @hideLabel 'au-u-hidden-visually' ''}}>{{@label}}</span>
+    {{#if @icon}}
+    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size={{this.iconSize}} />
+    {{/if}}
   </button>
   {{#if this.dropdownOpen}}
     <div

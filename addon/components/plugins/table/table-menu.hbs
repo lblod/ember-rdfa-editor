@@ -1,6 +1,8 @@
 <Rdfa::ToolbarDropdown
-  @dropdownButtonLabel='Table'
   @controller={{@controller}}
+  @icon="table"
+  @label={{t 'ember-rdfa-editor.table-options'}}
+  @hideLabel={{true}}
   as |Menu|
 >
   {{#if this.isInTable}}

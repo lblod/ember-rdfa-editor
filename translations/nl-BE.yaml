@@ -21,5 +21,9 @@ ember-rdfa-editor:
   delete-table: Tabel verwijderen
   columns: Kolommen
   rows: Rijen
+  normalText: Gewone tekst
+  heading: Koptitel
+  insert-heading: Voeg koptitel toe
+
   show-annotations: Toon annotaties
   insert: Invoegen

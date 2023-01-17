@@ -18,13 +18,16 @@
     >
       <:middle>
         {{#each this.toolbarMiddleWidgets as |widget|}}
+        <div class='say-toolbar__group'>
           {{component
             widget.componentName
             controller=widget.controller
             plugin=widget.plugin
             widgetArgs=widget.widgetArgs
           }}
+        </div>
         {{/each}}
+        
       </:middle>
       <:right>
         {{#if @editorOptions.showToggleRdfaAnnotations}}
