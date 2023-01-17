@@ -36,6 +36,22 @@
 
 
 
+
+## 1.0.0-alpha.14 (2023-01-17)
+
+#### :rocket: Enhancement
+* [#532](https://github.com/lblod/ember-rdfa-editor/pull/532) Addition of a menu which allows to insert headings ([@elpoelma](https://github.com/elpoelma))
+* [#531](https://github.com/lblod/ember-rdfa-editor/pull/531) Support for subscript and superscript marks ([@elpoelma](https://github.com/elpoelma))
+* [#530](https://github.com/lblod/ember-rdfa-editor/pull/530) feat(datastore): make datastore lazy ([@abeforgit](https://github.com/abeforgit))
+
+#### :bug: Bug Fix
+* [#537](https://github.com/lblod/ember-rdfa-editor/pull/537) Remove context from parsing rule paragraph ([@elpoelma](https://github.com/elpoelma))
+* [#535](https://github.com/lblod/ember-rdfa-editor/pull/535) Add translation for 'insert' and 'show annotations' buttons. ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 2
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-alpha.13 (2023-01-03)
 
 #### :house: Internal
