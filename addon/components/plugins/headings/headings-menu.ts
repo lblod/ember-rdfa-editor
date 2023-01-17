@@ -17,6 +17,10 @@ export default class HeadingsMenu extends Component<Args> {
     return this.controller.schema;
   }
 
+  get enabled() {
+    return this.canEnableText || this.levels.some(this.canEnableHeading);
+  }
+
   @action
   enableText() {
     this.enable(this.schema.nodes.paragraph);
