@@ -1,7 +1,7 @@
 /**
  *
  * Modified from https://github.com/ProseMirror/prosemirror-transform and https://github.com/ProseMirror/prosemirror-commands
- *
+ * This modified version of the setBlockType command allows for the option to preserve the existing attributes of the nodes
  * 
  * Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
 
@@ -90,6 +90,7 @@ function _setBlockType(
       !node.hasMarkup(type, attrs) &&
       canChangeType(tr.doc, tr.mapping.slice(mapFrom).map(pos), type)
     ) {
+      // Modified compared to the ProseMirror implementation: we determine whether we need to keep the old attrs of the node or not.
       const newAttrs = keepAttrs ? { ...node.attrs, ...attrs } : attrs;
       // Ensure all markup that isn't allowed in the new node type is cleared
       tr.clearIncompatible(tr.mapping.slice(mapFrom).map(pos, 1), type);
