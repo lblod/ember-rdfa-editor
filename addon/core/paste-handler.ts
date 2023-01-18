@@ -10,7 +10,6 @@ export function pasteHandler(): ProsePlugin {
           event.preventDefault();
           const cleanedHTML = cleanDocx(clipboardData.getData('text/html'));
           const domParser = new DOMParser();
-
           const { state } = view;
           const slice = ProseParser.fromSchema(state.schema).parseSlice(
             domParser.parseFromString(cleanedHTML, 'text/html')
