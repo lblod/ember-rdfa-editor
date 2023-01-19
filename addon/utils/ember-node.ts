@@ -21,6 +21,7 @@ export interface EmberNodeArgs {
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
   controller: ProseController;
+  view: EditorView;
 }
 
 export function emberComponent(
@@ -73,6 +74,7 @@ class EmberNodeView implements NodeView {
                           node=this.node
                           updateAttribute=this.updateAttribute
                           controller=this.controller
+                          view=this.view
                         }}
                           {{#unless this.atom}}
                           <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
@@ -95,6 +97,7 @@ class EmberNodeView implements NodeView {
       contentDOM: this.contentDOM,
       componentPath,
       atom,
+      view,
     });
     this.dom = node;
     this.emberComponent = component;
