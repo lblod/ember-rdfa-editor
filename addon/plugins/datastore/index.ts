@@ -20,7 +20,7 @@ import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
-export const datastoreKey = new PluginKey<() => ProseStore>('datastore');
+export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
 export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 
@@ -62,24 +62,63 @@ export interface DatastorePluginArgs {
   baseIRI: string;
 }
 
+export interface DatastorePluginState {
+  datastore: () => ProseStore;
+  contextStore: ProseStore;
+}
+
 export function datastore({
   pathFromRoot,
   baseIRI,
-}: DatastorePluginArgs): ProsePlugin<() => ProseStore> {
+}: DatastorePluginArgs): ProsePlugin<DatastorePluginState> {
   const logger = createLogger('datastore');
-  return new ProsePlugin<() => ProseStore>({
+  return new ProsePlugin<DatastorePluginState>({
     key: datastoreKey,
     state: {
-      init(config: EditorStateConfig, state: EditorState): () => ProseStore {
-        return createDataStoreGetter(state, pathFromRoot, baseIRI, logger);
+      init(
+        config: EditorStateConfig,
+        state: EditorState
+      ): DatastorePluginState {
+        const datastore = createDataStoreGetter(
+          state,
+          pathFromRoot,
+          baseIRI,
+          logger
+        );
+
+        const refman = new ProseReferenceManager();
+        const contextStore = proseStoreFromParse({
+          root: { node: state.doc, from: -1, to: state.doc.nodeSize },
+          parseRoot: false,
+          textContent,
+          tag,
+          children: children(state.schema, refman),
+          attributes,
+          isText,
+
+          pathFromDomRoot: pathFromRoot,
+          baseIRI,
+        });
+        return {
+          datastore,
+          contextStore,
+        };
       },
       apply(
         tr: Transaction,
-        oldStore: () => ProseStore,
+        oldStore: DatastorePluginState,
         oldState: EditorState,
         newState: EditorState
       ) {
-        return createDataStoreGetter(newState, pathFromRoot, baseIRI, logger);
+        return {
+          datastore: createDataStoreGetter(
+            newState,
+            pathFromRoot,
+            baseIRI,
+            logger
+          ),
+          contextStore: oldStore.contextStore,
+        };
       },
     },
   });
