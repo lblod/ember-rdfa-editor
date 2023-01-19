@@ -34,6 +34,7 @@ import {
   rangeHasMarkEverywhere,
   toggleMarkAddFirst,
 } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { pasteHandler } from './paste-handler';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -94,7 +95,7 @@ export default class Prosemirror {
       plugins: [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
         ...plugins,
-
+        pasteHandler(),
         dropCursor(),
         gapCursor(),
         keymap(baseKeymap(schema)),
