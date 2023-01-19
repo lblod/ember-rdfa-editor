@@ -53,6 +53,8 @@ export interface ModelQuad<N> extends RDF.Quad {
 export interface RdfaParseConfig<N> {
   root: N;
 
+  parseRoot?: boolean;
+
   textContent(this: void, node: N): string;
 
   isText(this: void, node: N): boolean;
@@ -112,7 +114,7 @@ export class RdfaParser<N> {
 
   private quadToNodesMapping: Map<string, QuadNodes<N>>;
 
-  private rootModelNode?: N;
+  private rootModelNode: N;
   private seenSubjectNodes: Map<RDF.Term, N>;
   private seenPredicateNodes: Map<RDF.Term, N>;
   private seenObjectNodes: Map<RDF.Term, N>;
@@ -170,7 +172,7 @@ export class RdfaParser<N> {
   }
 
   static parse<N>(config: RdfaParseConfig<N>): RdfaParseResponse<N> {
-    const { pathFromDomRoot = [], root, baseIRI } = config;
+    const { pathFromDomRoot = [], root, baseIRI, parseRoot = true } = config;
     const parser = new RdfaParser<N>({ rootModelNode: root, baseIRI });
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
@@ -183,7 +185,9 @@ export class RdfaParser<N> {
         parser.onText(domNode.textContent || '');
       }
     }
-    this.parseRec(root, parser, config);
+    if (parseRoot) {
+      this.parseRec(root, parser, config);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const _ of pathFromDomRoot) {
       parser.onTagClose();

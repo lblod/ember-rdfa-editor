@@ -149,6 +149,10 @@ export class ProseController {
     this.pm = pm;
   }
 
+  get externalContextStore(): ProseStore {
+    return unwrap(datastoreKey.getState(this.pm.state)).contextStore;
+  }
+
   clone() {
     return new ProseController(this.pm);
   }
@@ -211,7 +215,7 @@ export class ProseController {
   }
 
   get datastore(): ProseStore {
-    return unwrap(datastoreKey.getState(this.pm.state))();
+    return unwrap(datastoreKey.getState(this.pm.state)).datastore();
   }
 
   get widgets() {
