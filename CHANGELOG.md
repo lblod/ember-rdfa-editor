@@ -39,6 +39,16 @@
 
 
 
+
+## 1.0.0-beta.3 (2023-01-19)
+
+#### :bug: Bug Fix
+* [#546](https://github.com/lblod/ember-rdfa-editor/pull/546) Set word-wrap as break-word on editor ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
+
 ## 1.0.0-beta.2 (2023-01-17)
 
 #### :house: Internal
