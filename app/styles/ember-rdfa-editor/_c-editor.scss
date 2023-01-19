@@ -71,6 +71,7 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
   position: relative;
   min-height: $say-paper-min-height;
   white-space: pre-wrap;
+  word-wrap: break-word;
 
   // Remove start styles
   &:focus {
