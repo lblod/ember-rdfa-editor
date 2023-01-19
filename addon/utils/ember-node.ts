@@ -21,6 +21,8 @@ export interface EmberNodeArgs {
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
   controller: ProseController;
+  view: EditorView;
+  selected: boolean;
 }
 
 export function emberComponent(
@@ -73,6 +75,8 @@ class EmberNodeView implements NodeView {
                           node=this.node
                           updateAttribute=this.updateAttribute
                           controller=this.controller
+                          view=this.view
+                          selected=this.selected
                         }}
                           {{#unless this.atom}}
                           <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
@@ -95,6 +99,8 @@ class EmberNodeView implements NodeView {
       contentDOM: this.contentDOM,
       componentPath,
       atom,
+      view,
+      selected: false,
     });
     this.dom = node;
     this.emberComponent = component;
@@ -105,6 +111,16 @@ class EmberNodeView implements NodeView {
     this.node = node;
     this.emberComponent.set('node', node);
     return true;
+  }
+
+  selectNode() {
+    this.dom.classList.add('ProseMirror-selectednode');
+    this.emberComponent.set('selected', true);
+  }
+
+  deselectNode() {
+    this.dom.classList.remove('ProseMirror-selectednode');
+    this.emberComponent.set('selected', false);
   }
 
   destroy() {
@@ -123,6 +139,7 @@ export type EmberNodeConfig = {
   group: string;
   content?: string;
   atom: boolean;
+  draggable?: boolean;
   attrs?: {
     [name: string]: AttributeSpec & {
       serialize?: (node: PNode) => string;
@@ -142,13 +159,24 @@ export type EmberNodeConfig = {
 );
 
 export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
-  const { name, inline, group, content, atom, attrs, parseDOM, toDOM } = config;
+  const {
+    name,
+    inline,
+    group,
+    content,
+    atom,
+    draggable,
+    attrs,
+    parseDOM,
+    toDOM,
+  } = config;
   return {
     inline,
     atom,
     group,
     content,
     attrs,
+    draggable,
     parseDOM: parseDOM ?? [
       {
         tag: inline ? 'span' : 'div',
