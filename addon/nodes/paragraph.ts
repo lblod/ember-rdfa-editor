@@ -5,7 +5,6 @@ export const paragraph: NodeSpec = {
   content: 'inline*',
   group: 'block',
   // defining: true,
-  consuming: false,
   parseDOM: [
     {
       tag: 'p',
