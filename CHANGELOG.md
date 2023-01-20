@@ -41,6 +41,15 @@
 
 
 
+
+## 1.0.0-beta.5 (2023-01-20)
+
+#### :rocket: Enhancement
+* [#553](https://github.com/lblod/ember-rdfa-editor/pull/553) Add functionality to support an embedded view and allow widgets to perform actions on either the outer or inner view ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-beta.4 (2023-01-20)
 
 #### :rocket: Enhancement
