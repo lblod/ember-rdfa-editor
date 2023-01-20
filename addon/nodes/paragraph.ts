@@ -16,6 +16,7 @@ export const paragraph: NodeSpec = {
         }
         return null;
       },
+      consuming: false,
     },
   ],
   toDOM(node: PNode) {

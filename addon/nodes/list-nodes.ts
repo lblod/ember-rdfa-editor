@@ -19,6 +19,7 @@ export const ordered_list: NodeSpec = {
           ...getRdfaAttrs(dom),
         };
       },
+      consuming: false,
     },
   ],
   toDOM(node) {
@@ -41,6 +42,7 @@ export const bullet_list: NodeSpec = {
           ...getRdfaAttrs(node),
         };
       },
+      consuming: false,
     },
   ],
   toDOM(node: PNode) {
