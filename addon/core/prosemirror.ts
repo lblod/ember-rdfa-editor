@@ -226,7 +226,6 @@ export class ProseController {
   }
 
   toggleMark(name: string, includeEmbeddedView = false) {
-    console.log('Embedded view: ', this.pm.embeddedView);
     this.focus(includeEmbeddedView);
     this.doCommand(
       toggleMarkAddFirst(this.schema.marks[name]),
