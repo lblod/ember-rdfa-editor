@@ -27,20 +27,27 @@ export default class EditorToolbar extends Component<Args> {
   @tracked tableAddColumns = 2;
 
   get isBold() {
-    return this.controller.isMarkActive(this.controller.schema.marks.strong);
+    return this.controller.isMarkActive(
+      this.controller.schema.marks.strong,
+      true
+    );
   }
 
   get isItalic() {
-    return this.controller.isMarkActive(this.controller.schema.marks.em);
+    return this.controller.isMarkActive(this.controller.schema.marks.em, true);
   }
 
   get isUnderline() {
-    return this.controller.isMarkActive(this.controller.schema.marks.underline);
+    return this.controller.isMarkActive(
+      this.controller.schema.marks.underline,
+      true
+    );
   }
 
   get isStrikethrough() {
     return this.controller.isMarkActive(
-      this.controller.schema.marks.strikethrough
+      this.controller.schema.marks.strikethrough,
+      true
     );
   }
 
@@ -55,20 +62,23 @@ export default class EditorToolbar extends Component<Args> {
   get canInsertList() {
     return (
       this.controller.checkCommand(
-        wrapInList(this.controller.schema.nodes.bullet_list)
+        wrapInList(this.controller.schema.nodes.bullet_list),
+        true
       ) || this.isInList
     );
   }
 
   get canIndent() {
     return this.controller.checkCommand(
-      sinkListItem(this.controller.schema.nodes.list_item)
+      sinkListItem(this.controller.schema.nodes.list_item),
+      true
     );
   }
 
   get canUnindent() {
     return this.controller.checkCommand(
-      liftListItem(this.controller.schema.nodes.list_item)
+      liftListItem(this.controller.schema.nodes.list_item),
+      true
     );
   }
 
@@ -76,7 +86,8 @@ export default class EditorToolbar extends Component<Args> {
   insertIndent() {
     this.controller.focus();
     this.controller.doCommand(
-      sinkListItem(this.controller.schema.nodes.list_item)
+      sinkListItem(this.controller.schema.nodes.list_item),
+      true
     );
   }
 
@@ -84,13 +95,14 @@ export default class EditorToolbar extends Component<Args> {
   insertUnindent() {
     this.controller.focus();
     this.controller.doCommand(
-      liftListItem(this.controller.schema.nodes.list_item)
+      liftListItem(this.controller.schema.nodes.list_item),
+      true
     );
   }
 
   @action
   toggleItalic() {
-    this.controller.toggleMark('em');
+    this.controller.toggleMark('em', true);
   }
 
   @action
@@ -102,7 +114,8 @@ export default class EditorToolbar extends Component<Args> {
       }
     } else {
       this.controller.checkAndDoCommand(
-        wrapInList(this.controller.schema.nodes.bullet_list)
+        wrapInList(this.controller.schema.nodes.bullet_list),
+        true
       );
     }
   }
@@ -111,23 +124,24 @@ export default class EditorToolbar extends Component<Args> {
   toggleOrderedList() {
     this.controller.focus();
     this.controller.checkAndDoCommand(
-      wrapInList(this.controller.schema.nodes.ordered_list)
+      wrapInList(this.controller.schema.nodes.ordered_list),
+      true
     );
   }
 
   @action
   toggleBold() {
-    this.controller.toggleMark('strong');
+    this.controller.toggleMark('strong', true);
   }
 
   @action
   toggleUnderline() {
-    this.controller.toggleMark('underline');
+    this.controller.toggleMark('underline', true);
   }
 
   @action
   toggleStrikethrough() {
-    this.controller.toggleMark('strikethrough');
+    this.controller.toggleMark('strikethrough', true);
   }
 
   @action

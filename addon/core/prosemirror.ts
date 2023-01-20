@@ -1,5 +1,9 @@
 import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
-import { EditorView, NodeViewConstructor } from 'prosemirror-view';
+import {
+  DirectEditorProps,
+  EditorView,
+  NodeViewConstructor,
+} from 'prosemirror-view';
 import {
   DOMParser as ProseParser,
   DOMSerializer,
@@ -17,7 +21,6 @@ import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
-import { tracked } from '@glimmer/tracking';
 import { dropCursor } from 'prosemirror-dropcursor';
 import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
@@ -35,6 +38,7 @@ import {
   toggleMarkAddFirst,
 } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import { pasteHandler } from './paste-handler';
+import { tracked } from 'tracked-built-ins';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -64,9 +68,39 @@ interface ProsemirrorArgs {
   devtools?: boolean;
 }
 
+export class RdfaEditorView extends EditorView {
+  @tracked trackedState: EditorState;
+
+  constructor(
+    place:
+      | Node
+      | ((editor: HTMLElement) => void)
+      | {
+          mount: HTMLElement;
+        }
+      | null,
+    props: DirectEditorProps
+  ) {
+    super(place, {
+      ...props,
+      dispatchTransaction: (tr) => {
+        if (props.dispatchTransaction) {
+          props.dispatchTransaction(tr);
+          this.trackedState = this.state;
+        } else {
+          const newState = this.state.apply(tr);
+          this.trackedState = newState;
+          this.updateState(newState);
+        }
+      },
+    });
+    this.trackedState = this.state;
+  }
+}
+
 export default class Prosemirror {
-  view: EditorView;
-  @tracked _state: EditorState;
+  @tracked view: RdfaEditorView;
+  @tracked embeddedView?: RdfaEditorView | null;
   @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
   root: Element;
   baseIRI: string;
@@ -90,7 +124,7 @@ export default class Prosemirror {
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.baseIRI = baseIRI;
     this.schema = schema;
-    this._state = EditorState.create({
+    const state = EditorState.create({
       doc: ProseParser.fromSchema(this.schema).parse(target),
       plugins: [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
@@ -102,11 +136,19 @@ export default class Prosemirror {
         history(),
       ],
     });
-    this.view = new EditorView(target, {
-      state: this._state,
+    this.view = new RdfaEditorView(target, {
+      state,
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: nodeViews(new ProseController(this)),
-      dispatchTransaction: this.dispatch,
+      dispatchTransaction: (tr) => {
+        const newState = this.state.apply(tr);
+        this.view.updateState(newState);
+      },
+      handleDOMEvents: {
+        focus: () => {
+          this.clearEmbeddedView();
+        },
+      },
     });
     this.initializeEditorWidgets(widgets);
   }
@@ -122,23 +164,49 @@ export default class Prosemirror {
     this.widgets = widgetMap;
   }
 
+  setEmbeddedView(view?: RdfaEditorView) {
+    this.embeddedView = view;
+  }
+
+  clearEmbeddedView() {
+    this.embeddedView = null;
+  }
+
   get editable() {
     return this.view.editable;
   }
 
+  get embeddedState() {
+    return this.embeddedView?.trackedState;
+  }
+
   get state() {
-    return this._state;
+    return this.view.trackedState;
   }
 
-  focus() {
-    this.view.focus();
+  getState(includeEmbeddedView = false) {
+    return includeEmbeddedView && this.embeddedState
+      ? this.embeddedState
+      : this.state;
   }
 
-  dispatch = (tr: Transaction) => {
-    const newState = this.state.apply(tr);
-    this._state = newState;
-    this.view.updateState(newState);
-  };
+  getView(includeEmbeddedView = false) {
+    return includeEmbeddedView && this.embeddedView
+      ? this.embeddedView
+      : this.view;
+  }
+
+  focus(includeEmbeddedView = false) {
+    includeEmbeddedView && this.embeddedView
+      ? this.embeddedView.focus()
+      : this.view.focus();
+  }
+
+  // dispatch = (tr: Transaction) => {
+  //   const newState = this.state.apply(tr);
+  //   this._state = newState;
+  //   this.view.updateState(newState);
+  // };
 }
 
 export class ProseController {
@@ -157,13 +225,25 @@ export class ProseController {
     return new ProseController(this.pm);
   }
 
-  toggleMark(name: string) {
-    this.focus();
-    this.doCommand(toggleMarkAddFirst(this.schema.marks[name]));
+  toggleMark(name: string, includeEmbeddedView = false) {
+    console.log('Embedded view: ', this.pm.embeddedView);
+    this.focus(includeEmbeddedView);
+    this.doCommand(
+      toggleMarkAddFirst(this.schema.marks[name]),
+      includeEmbeddedView
+    );
   }
 
-  focus() {
-    this.pm.focus();
+  focus(includeEmbeddedView = false) {
+    this.pm.focus(includeEmbeddedView);
+  }
+
+  setEmbeddedView(view?: RdfaEditorView) {
+    this.pm.setEmbeddedView(view);
+  }
+
+  clearEmbeddedView() {
+    this.pm.clearEmbeddedView();
   }
 
   setHtmlContent(content: string) {
@@ -177,40 +257,49 @@ export class ProseController {
         domParser.parseFromString(content, 'text/html')
       )
     );
-    this.pm.dispatch(tr);
+    this.pm.view.dispatch(tr);
+    // this.pm.dispatch(tr);
   }
 
-  doCommand(command: Command): boolean {
+  doCommand(command: Command, includeEmbeddedView = false): boolean {
+    const view = this.pm.getView(includeEmbeddedView);
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
+    return command(view.state, view.dispatch, view);
   }
 
-  checkCommand(command: Command): boolean {
-    return command(this.pm.state);
+  checkCommand(command: Command, includeEmbeddedView = false): boolean {
+    const state = this.pm.getState(includeEmbeddedView);
+    return command(state);
   }
 
-  checkAndDoCommand(command: Command): boolean {
-    if (command(this.pm.state)) {
+  checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
+    const view = this.pm.getView(includeEmbeddedView);
+    if (command(view.state)) {
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      return command(this.pm.state, this.pm.view.dispatch, this.pm.view);
+      return command(view.state, view.dispatch, view);
     }
     return false;
   }
 
-  isMarkActive(markType: MarkType) {
-    const { from, $from, to, empty } = this.state.selection;
+  isMarkActive(markType: MarkType, includeEmbeddedView = false) {
+    const state = this.pm.getState(includeEmbeddedView);
+    const { from, $from, to, empty } = state.selection;
     if (empty) {
-      return !!markType.isInSet(this.state.storedMarks || $from.marks());
+      return !!markType.isInSet(state.storedMarks || $from.marks());
     } else {
-      return rangeHasMarkEverywhere(this.state.doc, from, to, markType);
+      return rangeHasMarkEverywhere(state.doc, from, to, markType);
     }
   }
 
-  withTransaction(callback: (tr: Transaction) => Transaction | null) {
-    const tr = this.state.tr;
+  withTransaction(
+    callback: (tr: Transaction) => Transaction | null,
+    includeEmbeddedView = false
+  ) {
+    const view = this.pm.getView(includeEmbeddedView);
+    const tr = view.state.tr;
     const result = callback(tr);
     if (result) {
-      this.pm.view.dispatch(result);
+      view.dispatch(result);
     }
   }
 
@@ -244,6 +333,10 @@ export class ProseController {
     const div = document.createElement('div');
     div.appendChild(fragment);
     return div.innerHTML;
+  }
+
+  get inEmbeddedView(): boolean {
+    return !!this.pm.embeddedView;
   }
 }
 

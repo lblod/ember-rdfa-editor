@@ -10,11 +10,14 @@ export default class SubscriptButton extends Component<Args> {
     return this.args.controller;
   }
   get isActive() {
-    return this.controller.isMarkActive(this.controller.schema.marks.subscript);
+    return this.controller.isMarkActive(
+      this.controller.schema.marks.subscript,
+      true
+    );
   }
 
   @action
   toggle() {
-    this.controller.toggleMark('subscript');
+    this.controller.toggleMark('subscript', true);
   }
 }
