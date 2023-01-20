@@ -323,6 +323,14 @@ export class ProseController {
     return this.pm.view;
   }
 
+  getState(includeEmbeddedView = false) {
+    return this.pm.getState(includeEmbeddedView);
+  }
+
+  getView(includeEmbeddedView = false) {
+    return this.pm.getView(includeEmbeddedView);
+  }
+
   get htmlContent(): string {
     const fragment = DOMSerializer.fromSchema(this.schema).serializeFragment(
       this.pm.state.doc.content,
