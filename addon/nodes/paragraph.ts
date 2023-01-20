@@ -1,24 +1,24 @@
 import { NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, PNode, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 
 export const paragraph: NodeSpec = {
   content: 'inline*',
   group: 'block',
-  attrs: { ...rdfaAttrs },
   // defining: true,
+  consuming: false,
   parseDOM: [
     {
       tag: 'p',
       getAttrs(node: HTMLElement) {
         const myAttrs = getRdfaAttrs(node);
         if (myAttrs) {
-          return myAttrs;
+          return false;
         }
         return null;
       },
     },
   ],
-  toDOM(node: PNode) {
-    return ['p', node.attrs, 0];
+  toDOM() {
+    return ['p', {}, 0];
   },
 };
