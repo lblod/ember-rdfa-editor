@@ -2,7 +2,7 @@ import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 
 export const block_rdfa: NodeSpec = {
-  content: 'block*',
+  content: 'block+',
   group: 'block',
   attrs: {
     ...rdfaAttrs,
@@ -11,7 +11,7 @@ export const block_rdfa: NodeSpec = {
   defining: true,
   parseDOM: [
     {
-      tag: `div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
+      tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
       getAttrs(node: HTMLElement) {
         return getRdfaAttrs(node);
       },
