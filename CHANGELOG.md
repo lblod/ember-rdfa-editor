@@ -40,6 +40,15 @@
 
 
 
+
+## 1.0.0-beta.4 (2023-01-20)
+
+#### :rocket: Enhancement
+* [#552](https://github.com/lblod/ember-rdfa-editor/pull/552) Make paragraphs not parse when they contain rdfa ([@abeforgit](https://github.com/abeforgit))
+
+#### Committers: 1
+- Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
+
 ## 1.0.0-beta.3 (2023-01-19)
 
 #### :bug: Bug Fix
