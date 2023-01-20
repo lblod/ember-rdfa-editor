@@ -1,3 +1,4 @@
+{{#unless @controller.inEmbeddedView}}
 <Rdfa::ToolbarDropdown
   @controller={{@controller}}
   @icon="table"
@@ -106,3 +107,4 @@
     {{on 'click' this.insertRowBelow}}
   />
 {{/if}}
+{{/unless}}

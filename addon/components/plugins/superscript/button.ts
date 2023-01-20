@@ -11,12 +11,13 @@ export default class SuperscriptButton extends Component<Args> {
   }
   get isActive() {
     return this.controller.isMarkActive(
-      this.controller.schema.marks.superscript
+      this.controller.schema.marks.superscript,
+      true
     );
   }
 
   @action
   toggle() {
-    this.controller.toggleMark('superscript');
+    this.controller.toggleMark('superscript', true);
   }
 }

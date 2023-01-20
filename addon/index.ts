@@ -27,3 +27,5 @@ export * from 'prosemirror-history';
 export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
+
+export { RdfaEditorView } from '@lblod/ember-rdfa-editor/core/prosemirror';
