@@ -1,4 +1,10 @@
-import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
+import {
+  Command,
+  EditorState,
+  Plugin,
+  Selection,
+  Transaction,
+} from 'prosemirror-state';
 import {
   DirectEditorProps,
   EditorView,
@@ -201,12 +207,6 @@ export default class Prosemirror {
       ? this.embeddedView.focus()
       : this.view.focus();
   }
-
-  // dispatch = (tr: Transaction) => {
-  //   const newState = this.state.apply(tr);
-  //   this._state = newState;
-  //   this.view.updateState(newState);
-  // };
 }
 
 export class ProseController {
@@ -250,14 +250,15 @@ export class ProseController {
     this.doCommand(selectAll);
     const tr = this.pm.state.tr;
     const domParser = new DOMParser();
-    tr.deleteSelection().insert(
+    tr.replaceWith(
       0,
+      tr.doc.nodeSize - 2,
       ProseParser.fromSchema(this.schema).parse(
         domParser.parseFromString(content, 'text/html')
       )
     );
+    tr.setSelection(Selection.atStart(tr.doc));
     this.pm.view.dispatch(tr);
-    // this.pm.dispatch(tr);
   }
 
   doCommand(command: Command, includeEmbeddedView = false): boolean {
