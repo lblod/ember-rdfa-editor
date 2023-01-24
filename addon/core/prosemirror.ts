@@ -257,7 +257,7 @@ export class ProseController {
         domParser.parseFromString(content, 'text/html')
       )
     );
-    tr.setSelection(Selection.atStart(tr.doc));
+    tr.setSelection(Selection.atEnd(tr.doc));
     this.pm.view.dispatch(tr);
   }
 
