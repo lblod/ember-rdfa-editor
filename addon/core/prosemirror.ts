@@ -16,7 +16,6 @@ import {
   MarkType,
   Schema,
 } from 'prosemirror-model';
-import { selectAll } from 'prosemirror-commands';
 import {
   getPathFromRoot,
   isElement,
@@ -247,7 +246,6 @@ export class ProseController {
 
   setHtmlContent(content: string) {
     this.focus();
-    this.doCommand(selectAll);
     const tr = this.pm.state.tr;
     const domParser = new DOMParser();
     tr.replaceWith(
