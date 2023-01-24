@@ -140,6 +140,8 @@ export type EmberNodeConfig = {
   content?: string;
   atom: boolean;
   draggable?: boolean;
+  recreateUri: boolean;
+  uriAttributes: string[];
   attrs?: {
     [name: string]: AttributeSpec & {
       serialize?: (node: PNode) => string;
@@ -166,6 +168,8 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     content,
     atom,
     draggable,
+    recreateUri,
+    uriAttributes,
     attrs,
     parseDOM,
     toDOM,
@@ -175,6 +179,8 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     atom,
     group,
     content,
+    recreateUri,
+    uriAttributes,
     attrs,
     draggable,
     parseDOM: parseDOM ?? [
