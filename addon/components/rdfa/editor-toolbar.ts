@@ -7,7 +7,7 @@ import {
   sinkListItem,
   wrapInList,
 } from 'prosemirror-schema-list';
-import { undo } from 'prosemirror-history';
+import { redo, undo } from 'prosemirror-history';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -148,5 +148,11 @@ export default class EditorToolbar extends Component<Args> {
   undo() {
     this.controller.focus();
     this.controller.doCommand(undo);
+  }
+
+  @action
+  redo() {
+    this.controller.focus();
+    this.controller.doCommand(redo);
   }
 }

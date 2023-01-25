@@ -1,5 +1,6 @@
 ember-rdfa-editor:
   undo: Undo
+  redo: Redo
   bold: Bold
   italic: Italic
   underline: Underline

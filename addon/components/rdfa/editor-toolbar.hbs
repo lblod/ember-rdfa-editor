@@ -6,6 +6,11 @@
         @icon='undo'
         {{on 'click' this.undo}}
       />
+      <Rdfa::ToolbarIcon
+        @title={{t 'ember-rdfa-editor.redo'}}
+        @icon='redo'
+        {{on 'click' this.redo}}
+      />
     </div>
     <div class='say-toolbar__group'>
       {{#if @showTextStyleButtons}}
