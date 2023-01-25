@@ -42,6 +42,11 @@
 
 
 
+## 1.0.0-beta.7 (2023-01-25)
+
+fix(commands): focus and scrollintoview on insert-html
+
+
 ## 1.0.0-beta.6 (2023-01-24)
 
 improve insert-html logic so it doesn't insert unnecessary paragraphs
