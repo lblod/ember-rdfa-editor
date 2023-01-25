@@ -10,7 +10,7 @@ export function insertHtml(
   marks?: Mark[],
   preserveWhitespace = false
 ): Command {
-  return function (state, dispatch) {
+  return function (state, dispatch, view) {
     if (dispatch) {
       let htmlNode: Node;
       if (typeof html === 'string') {
@@ -34,7 +34,9 @@ export function insertHtml(
       }
       const tr = state.tr;
       tr.replaceWith(from, to, fragment);
+      tr.scrollIntoView();
       dispatch(tr);
+      view?.focus();
     }
     return true;
   };
