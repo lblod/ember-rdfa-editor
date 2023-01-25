@@ -140,8 +140,8 @@ export type EmberNodeConfig = {
   content?: string;
   atom: boolean;
   draggable?: boolean;
-  recreateUri: boolean;
-  uriAttributes: string[];
+  recreateUri?: boolean;
+  uriAttributes?: string[];
   attrs?: {
     [name: string]: AttributeSpec & {
       serialize?: (node: PNode) => string;
