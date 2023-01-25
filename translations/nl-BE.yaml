@@ -1,5 +1,6 @@
 ember-rdfa-editor:
   undo: Ongedaan maken
+  redo: Herstellen
   bold: Vetgedrukt
   italic: Schuingedrukt
   underline: Onderstreept
