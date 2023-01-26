@@ -65,7 +65,6 @@ class EmberNodeView implements NodeView {
   template: TemplateFactory;
 
   constructor(
-    owner: Owner,
     controller: ProseController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
@@ -91,7 +90,7 @@ class EmberNodeView implements NodeView {
       : undefined;
 
     const { node, component } = emberComponent(
-      owner,
+      controller.owner,
       name,
       inline,
       this.template,
@@ -234,12 +233,9 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
 }
 
 export function createEmberNodeView(config: EmberNodeConfig) {
-  return function (
-    owner: Owner,
-    controller: ProseController
-  ): NodeViewConstructor {
+  return function (controller: ProseController): NodeViewConstructor {
     return function (node, view, getPos) {
-      return new EmberNodeView(owner, controller, config, node, view, getPos);
+      return new EmberNodeView(controller, config, node, view, getPos);
     };
   };
 }
