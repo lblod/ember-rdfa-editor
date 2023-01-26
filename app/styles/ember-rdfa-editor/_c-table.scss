@@ -46,4 +46,11 @@
   td:focus {
     outline: none;
   }
+
+}
+
+table.ProseMirror-selectednode {
+  background-color: var(--au-blue-200);
+  outline: 2px solid var(--au-blue-500);
+  color: var(--au-black);
 }
