@@ -44,6 +44,7 @@ import {
 } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
+import Owner from '@ember/owner';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -62,6 +63,7 @@ export type InternalWidgetSpec = WidgetSpec & {
 };
 
 interface ProsemirrorArgs {
+  owner: Owner;
   target: Element;
   schema: Schema;
   baseIRI: string;
@@ -107,6 +109,7 @@ export default class Prosemirror {
   @tracked view: RdfaEditorView;
   @tracked embeddedView?: RdfaEditorView | null;
   @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
+  owner: Owner;
   root: Element;
   baseIRI: string;
   pathFromRoot: Node[];
@@ -115,6 +118,7 @@ export default class Prosemirror {
   private logger: Logger;
 
   constructor({
+    owner,
     target,
     schema,
     baseIRI,
@@ -125,6 +129,7 @@ export default class Prosemirror {
     },
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
+    this.owner = owner;
     this.root = target;
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.baseIRI = baseIRI;
@@ -319,6 +324,10 @@ export class ProseController {
 
   get view(): EditorView {
     return this.pm.view;
+  }
+
+  get owner(): Owner {
+    return this.pm.owner;
   }
 
   getState(includeEmbeddedView = false) {
