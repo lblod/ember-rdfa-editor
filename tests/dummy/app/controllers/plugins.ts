@@ -52,6 +52,8 @@ import {
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { getOwner } from '@ember/application';
+import Owner from '@ember/owner';
 
 const nodes = {
   doc,
@@ -98,9 +100,9 @@ export default class IndexController extends Controller {
     proseController: ProseController
   ) => Record<string, NodeViewConstructor> = (proseController) => {
     return {
-      card: cardView(proseController),
-      counter: counterView(proseController),
-      dropdown: dropdownView(proseController),
+      card: cardView(getOwner(this) as Owner, proseController),
+      counter: counterView(getOwner(this) as Owner, proseController),
+      dropdown: dropdownView(getOwner(this) as Owner, proseController),
     };
   };
   @tracked plugins: Plugin[] = [

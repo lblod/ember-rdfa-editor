@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
 import { ProseController } from '../core/prosemirror';
+import Owner from '@ember/owner';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -26,6 +27,7 @@ export interface EmberNodeArgs {
 }
 
 export function emberComponent(
+  owner: Owner,
   name: string,
   inline: boolean,
   template: TemplateFactory,
@@ -35,9 +37,9 @@ export function emberComponent(
     contentDOM?: HTMLElement;
   }
 ): { node: HTMLElement; component: EmberInlineComponent } {
-  const instance = window.__APPLICATION;
+  // const instance = window.__APPLICATION;
   const componentName = `${name}-${uuidv4()}`;
-  instance.register(
+  owner.register(
     `component:${componentName}`,
     // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
     Component.extend({
@@ -46,7 +48,7 @@ export function emberComponent(
       ...props,
     })
   );
-  const component = instance.lookup(
+  const component = owner.lookup(
     `component:${componentName}`
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const node = document.createElement(inline ? 'span' : 'div');
@@ -63,6 +65,7 @@ class EmberNodeView implements NodeView {
   template: TemplateFactory;
 
   constructor(
+    owner: Owner,
     controller: ProseController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
@@ -87,21 +90,27 @@ class EmberNodeView implements NodeView {
       ? document.createElement(inline ? 'span' : 'div')
       : undefined;
 
-    const { node, component } = emberComponent(name, inline, this.template, {
-      getPos,
-      node: pNode,
-      updateAttribute: (attr, value) => {
-        const transaction = view.state.tr;
-        transaction.setNodeAttribute(getPos(), attr, value);
-        view.dispatch(transaction);
-      },
-      controller,
-      contentDOM: this.contentDOM,
-      componentPath,
-      atom,
-      view,
-      selected: false,
-    });
+    const { node, component } = emberComponent(
+      owner,
+      name,
+      inline,
+      this.template,
+      {
+        getPos,
+        node: pNode,
+        updateAttribute: (attr, value) => {
+          const transaction = view.state.tr;
+          transaction.setNodeAttribute(getPos(), attr, value);
+          view.dispatch(transaction);
+        },
+        controller,
+        contentDOM: this.contentDOM,
+        componentPath,
+        atom,
+        view,
+        selected: false,
+      }
+    );
     this.dom = node;
     this.emberComponent = component;
   }
@@ -225,9 +234,12 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
 }
 
 export function createEmberNodeView(config: EmberNodeConfig) {
-  return function (controller: ProseController): NodeViewConstructor {
+  return function (
+    owner: Owner,
+    controller: ProseController
+  ): NodeViewConstructor {
     return function (node, view, getPos) {
-      return new EmberNodeView(controller, config, node, view, getPos);
+      return new EmberNodeView(owner, controller, config, node, view, getPos);
     };
   };
 }

@@ -13,14 +13,11 @@ import Prosemirror, {
   ProseController,
   WidgetSpec,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { getOwner } from '@ember/application';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/errors';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
-import { Owner } from 'window';
 
 export type PluginConfig =
   | string
@@ -115,7 +112,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async handleRawEditorInit(target: Element) {
-    window.__APPLICATION = unwrap(getOwner(this)) as Owner;
     await Promise.all(this.initializers);
     this.prosemirror = new Prosemirror({
       target,
