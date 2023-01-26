@@ -21,7 +21,7 @@ export const tableMenu: WidgetSpec = {
   desiredLocation: 'toolbarMiddle',
 };
 export const tablePlugin: Plugin = tableEditing({
-  allowTableNodeSelection: false,
+  allowTableNodeSelection: true,
 });
 
 export const tableKeymap = keymap({
