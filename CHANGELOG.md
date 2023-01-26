@@ -42,6 +42,18 @@
 
 
 
+
+## 1.0.0 (2023-01-26)
+
+#### :rocket: Enhancement
+* [#560](https://github.com/lblod/ember-rdfa-editor/pull/560) Add redo button ([@elpoelma](https://github.com/elpoelma))
+
+#### :house: Internal
+* [#562](https://github.com/lblod/ember-rdfa-editor/pull/562) Remove ember-instance from window and pass it through for ember-nodes ([@elpoelma](https://github.com/elpoelma))
+
+#### Committers: 1
+- Elena Poelman ([@elpoelma](https://github.com/elpoelma))
+
 ## 1.0.0-beta.7 (2023-01-25)
 
 fix(commands): focus and scrollintoview on insert-html
