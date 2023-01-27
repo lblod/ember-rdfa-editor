@@ -22,6 +22,8 @@ export function* findChildren(
   reverse = true,
   recursive = true,
   filter: ({ from, to }: { from: number; to: number }) => boolean = () => true,
+  stopCondition: ({ from, to }: { from: number; to: number }) => boolean = () =>
+    false,
   startIndex?: number
 ): Generator<{ from: number; to: number }, void> {
   const node = pos === -1 ? doc : doc.nodeAt(pos);
@@ -40,6 +42,9 @@ export function* findChildren(
           from: pos + 1 + offset,
           to: pos + 1 + offset + node.child(i).nodeSize,
         };
+        if (stopCondition(childRange)) {
+          return;
+        }
         if (recursive) {
           yield* findChildren(doc, childRange.from, reverse, recursive, filter);
         }
@@ -56,6 +61,9 @@ export function* findChildren(
           from: pos + 1 + offset,
           to: pos + 1 + offset + node.child(i).nodeSize,
         };
+        if (stopCondition(childRange)) {
+          return;
+        }
         if (filter(childRange)) {
           yield childRange;
         }
@@ -70,15 +78,19 @@ export function* findChildren(
 
 export function* findNodes(
   doc: PNode,
-  from: number,
+  start: number,
+  end: number,
   visitParentUpwards = false,
   reverse = false,
   filter: ({ from, to }: { from: number; to: number }) => boolean = () => true
 ): Generator<{ from: number; to: number }, undefined> {
-  if (from === -1) {
+  if ((reverse && start < end) || (!reverse && start > end)) {
+    return;
+  }
+  if (start === -1) {
     throw new Error('Starting position may not lay before root node');
   }
-  const fromResolved = doc.resolve(from);
+  const fromResolved = doc.resolve(start);
   let startIndex: number;
   const index = fromResolved.index();
   const indexAfter = fromResolved.indexAfter();
@@ -91,7 +103,17 @@ export function* findNodes(
     from: fromResolved.depth > 0 ? fromResolved.before() : -1,
     to: fromResolved.depth > 0 ? fromResolved.after() : doc.nodeSize,
   };
-  yield* findChildren(doc, parentRange.from, reverse, true, filter, startIndex);
+  yield* findChildren(
+    doc,
+    parentRange.from,
+    reverse,
+    true,
+    filter,
+    ({ from, to }) => {
+      return (reverse && to < start) || (!reverse && from > end);
+    },
+    startIndex
+  );
   if (visitParentUpwards && fromResolved.depth !== 0) {
     if (filter(parentRange)) {
       yield parentRange;
@@ -99,6 +121,7 @@ export function* findNodes(
     yield* findNodes(
       doc,
       reverse ? parentRange.from : parentRange.to,
+      end,
       visitParentUpwards,
       reverse,
       filter
