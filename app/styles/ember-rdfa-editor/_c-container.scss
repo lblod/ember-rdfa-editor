@@ -13,7 +13,7 @@ $say-editor-sidebar-large: 30% !default;
 
 .say-container {
   height: 100%;
-  position: relative;
+  position: fixed;
   overflow: hidden;
   display: flex;
   flex-direction: column;
