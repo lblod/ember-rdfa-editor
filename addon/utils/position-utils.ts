@@ -16,7 +16,7 @@ export function findAncestors(
   return result;
 }
 
-export function* findChildren(
+function* findChildren(
   doc: PNode,
   pos: number,
   reverse = true,
