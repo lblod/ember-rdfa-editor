@@ -68,8 +68,6 @@ steps:
   image: danlynn/ember-cli:4.8.0
   commands:
   - npx ember try:one ember-lts-3.28
-depends_on:
-- test
 trigger:
   event:
     - pull_request
