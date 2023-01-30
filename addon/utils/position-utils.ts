@@ -76,14 +76,21 @@ function* findChildren(
   }
 }
 
-export function* findNodes(
-  doc: PNode,
-  start: number,
-  end: number,
+export function* findNodes({
+  doc,
   visitParentUpwards = false,
   reverse = false,
-  filter: ({ from, to }: { from: number; to: number }) => boolean = () => true
-): Generator<{ from: number; to: number }, undefined> {
+  start,
+  end = reverse ? 0 : doc.nodeSize,
+  filter = () => true,
+}: {
+  doc: PNode;
+  start: number;
+  end?: number;
+  visitParentUpwards?: boolean;
+  reverse?: boolean;
+  filter?: ({ from, to }: { from: number; to: number }) => boolean;
+}): Generator<{ from: number; to: number }, undefined> {
   if ((reverse && start < end) || (!reverse && start > end)) {
     return;
   }
@@ -118,14 +125,14 @@ export function* findNodes(
     if (filter(parentRange)) {
       yield parentRange;
     }
-    yield* findNodes(
+    yield* findNodes({
       doc,
-      reverse ? parentRange.from : parentRange.to,
+      start: reverse ? parentRange.from : parentRange.to,
       end,
       visitParentUpwards,
       reverse,
-      filter
-    );
+      filter,
+    });
   }
   return;
 }
