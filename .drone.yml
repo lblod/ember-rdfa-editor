@@ -66,7 +66,6 @@ steps:
   - npm ci
 - name: test
   image: danlynn/ember-cli:4.8.0
-  failure: ignore
   commands:
   - npx ember try:one ember-lts-3.28
 depends_on:
