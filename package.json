@@ -41,6 +41,7 @@
     "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/state": "^6.1.1",
     "@codemirror/view": "^6.2.3",
+    "@curvenote/prosemirror-utils": "^1.0.5",
     "@ember/optional-features": "^2.0.0",
     "@ember/render-modifiers": "^2.0.5",
     "@glimmer/tracking": "^1.1.2",
