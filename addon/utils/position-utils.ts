@@ -76,6 +76,15 @@ function* findChildren(
   }
 }
 
+type FindNodesArgs = {
+  doc: PNode;
+  start: number;
+  end?: number;
+  visitParentUpwards?: boolean;
+  reverse?: boolean;
+  filter?: ({ from, to }: { from: number; to: number }) => boolean;
+};
+
 export function* findNodes({
   doc,
   visitParentUpwards = false,
@@ -83,14 +92,7 @@ export function* findNodes({
   start,
   end = reverse ? 0 : doc.nodeSize,
   filter = () => true,
-}: {
-  doc: PNode;
-  start: number;
-  end?: number;
-  visitParentUpwards?: boolean;
-  reverse?: boolean;
-  filter?: ({ from, to }: { from: number; to: number }) => boolean;
-}): Generator<{ from: number; to: number }, undefined> {
+}: FindNodesArgs): Generator<{ from: number; to: number }, undefined> {
   if ((reverse && start < end) || (!reverse && start > end)) {
     return;
   }
