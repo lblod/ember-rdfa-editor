@@ -4,19 +4,19 @@ type: docker
 name: verify-pr
 steps:
 - name: install
-  image: danlynn/ember-cli:3.28.5
+  image: danlynn/ember-cli:4.8.0
   commands:
   - npm ci
 - name: lint
-  image: danlynn/ember-cli:3.28.5
+  image: danlynn/ember-cli:4.8.0
   commands:
   - npm run lint
 - name: test
-  image: danlynn/ember-cli:3.28.5
+  image: danlynn/ember-cli:4.8.0
   commands:
   - npm run test:ember
 - name: precompile
-  image: danlynn/ember-cli:3.28.5
+  image: danlynn/ember-cli:4.8.0
   commands:
   - ember ts:precompile
 trigger:
@@ -58,19 +58,21 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: ember-compat-test
+name: ember-lts-3.28
 steps:
-- name: ember-try
-  image: danlynn/ember-cli:3.28.5
+- name: install
+  image: danlynn/ember-cli:4.8.0
   commands:
-    - npm ci
-    - npm run test:ember-compatibility
+  - npm ci
+- name: test
+  image: danlynn/ember-cli:4.8.0
   failure: ignore
+  commands:
+  - npx ember try:one ember-lts-3.28
+depends_on:
+- test
 trigger:
-  branch:
-    - development
   event:
-    exclude:
     - pull_request
 ---
 kind: pipeline
@@ -78,7 +80,7 @@ type: docker
 name: release
 steps:
 - name: install dependencies
-  image: danlynn/ember-cli:3.28.5
+  image: danlynn/ember-cli:4.8.0
   commands:
     - npm ci
 - name: npm-release
