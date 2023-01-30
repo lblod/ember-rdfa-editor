@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ensure delete and backspace behavior around tables is consistent #566
 - improve performance in chrome #563
 
-## 1.0.0 (2023-01-26)
+## [1.0.0] - 2023-01-26
 
 #### :rocket: Enhancement
 * [#560](https://github.com/lblod/ember-rdfa-editor/pull/560) Add redo button ([@elpoelma](https://github.com/elpoelma))
