@@ -10,7 +10,7 @@ It also means we are currently sticking to v1 lockfiles.
 ## Installation
 
 * `git clone <repository-url>`
-* `cd @lblod/ember-rdfa-editor`
+* `cd lblod-ember-rdfa-editor`
 * `npm install`
 
 ## Linting
@@ -29,4 +29,4 @@ It also means we are currently sticking to v1 lockfiles.
 * `ember serve`
 * Visit the dummy application at [http://localhost:4200](http://localhost:4200).
 
-For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
+For more information on using ember-cli, visit [https://cli.emberjs.com/release/](https://cli.emberjs.com/release/).
