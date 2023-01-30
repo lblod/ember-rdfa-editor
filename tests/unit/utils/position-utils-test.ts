@@ -15,7 +15,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 0);
+    const iterator = findNodes(doc, 0, doc.nodeSize);
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 8);
@@ -39,7 +39,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, doc.content.size, true, true);
+    const iterator = findNodes(doc, doc.content.size, 0, true, true);
 
     const ranges = [...iterator];
 
@@ -65,10 +65,17 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 0, true, false, ({ from }) => {
-      const node = doc.nodeAt(from);
-      return !!node?.isText;
-    });
+    const iterator = findNodes(
+      doc,
+      0,
+      doc.nodeSize,
+      true,
+      false,
+      ({ from }) => {
+        const node = doc.nodeAt(from);
+        return !!node?.isText;
+      }
+    );
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 3);
@@ -91,6 +98,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
     const iterator = findNodes(
       doc,
       doc.content.size,
+      0,
       true,
       true,
       ({ from }) => {
@@ -117,7 +125,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 6);
+    const iterator = findNodes(doc, 6, doc.nodeSize);
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 5);
@@ -139,7 +147,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 13, true, true);
+    const iterator = findNodes(doc, 13, 0, true, true);
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 6);

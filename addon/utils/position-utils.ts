@@ -110,7 +110,7 @@ export function* findNodes(
     true,
     filter,
     ({ from, to }) => {
-      return (reverse && to < start) || (!reverse && from > end);
+      return (reverse && to < end) || (!reverse && from > end);
     },
     startIndex
   );
