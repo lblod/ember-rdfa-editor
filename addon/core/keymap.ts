@@ -20,15 +20,33 @@ import {
   splitBlock,
 } from 'prosemirror-commands';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
-
+import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
   deleteSelection,
-  joinBackward,
+  (state, dispatch, view) => {
+    if (joinBackward(state, dispatch) && dispatch && view) {
+      const { state } = view;
+      selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      return true;
+    }
+    return false;
+  },
   selectNodeBackward
 );
-const del = chainCommands(deleteSelection, joinForward, selectNodeForward);
+const del = chainCommands(
+  deleteSelection,
+  (state, dispatch, view) => {
+    if (joinForward(state, dispatch) && dispatch && view) {
+      const { state } = view;
+      selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      return true;
+    }
+    return false;
+  },
+  selectNodeForward
+);
 /// A basic keymap containing bindings not specific to any schema.
 /// Binds the following keys (when multiple commands are listed, they
 /// are chained with [`chainCommands`](#commands.chainCommands)):

@@ -1,49 +1,31 @@
+# Changelog
 
+All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
 
+## [1.1.0] - 2023-01-30
 
+### Changed
 
+- Use keep-a-changelog instead of lerna-changelog for changelog generation
+- build(deps): bump prosemirror-model from 1.18.3 to 1.19.0 #558
+- build(deps-dev): bump ember-template-lint from 4.18.2 to 5.3.3 #565
+- build(deps): bump prosemirror-view from 1.29.2 to 1.30.0 #559
 
+### Removed
 
+- remove ember-cli-coverage dependency #567
 
+### Fixed
 
+- ensure delete and backspace behavior around tables is consistent #566
+- improve performance in chrome #563
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 1.0.0 (2023-01-26)
+## [1.0.0] - 2023-01-26
 
 #### :rocket: Enhancement
 * [#560](https://github.com/lblod/ember-rdfa-editor/pull/560) Add redo button ([@elpoelma](https://github.com/elpoelma))
@@ -58,11 +40,9 @@
 
 fix(commands): focus and scrollintoview on insert-html
 
-
 ## 1.0.0-beta.6 (2023-01-24)
 
 improve insert-html logic so it doesn't insert unnecessary paragraphs
-
 
 ## 1.0.0-beta.5 (2023-01-20)
 
@@ -87,7 +67,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 
 #### Committers: 1
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
-
 
 ## 1.0.0-beta.2 (2023-01-17)
 
@@ -122,7 +101,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - [@usrtim](https://github.com/usrtim)
 
-
 ## v0.65.0 (2022-11-23)
 
 #### :boom: Breaking Change
@@ -139,7 +117,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 #### Committers: 1
 - Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
 
-
 ## v0.64.0 (2022-11-15)
 
 #### :boom: Breaking Change
@@ -154,7 +131,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 #### Committers: 1
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## v0.63.8 (2022-11-15)
 
 #### :house: Internal
@@ -165,7 +141,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## v0.63.7 (2022-11-04)
 
@@ -188,7 +163,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 #### Committers: 1
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## v0.63.6 (2022-10-27)
 
 #### :house: Internal
@@ -197,7 +171,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 * [#427](https://github.com/lblod/ember-rdfa-editor/pull/427) build(deps-dev): bump @typescript-eslint/parser from 5.40.1 to 5.41.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#426](https://github.com/lblod/ember-rdfa-editor/pull/426) build(deps-dev): bump @types/ember-resolver from 5.0.11 to 5.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#432](https://github.com/lblod/ember-rdfa-editor/pull/432) build(deps): bump ember-cli-typescript from 5.1.1 to 5.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
-
 
 ## v0.63.5 (2022-10-26)
 
@@ -229,7 +202,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 #### Committers: 1
 - [@usrtim](https://github.com/usrtim)
 
-
 ## 1.0.0-alpha.14 (2023-01-17)
 
 #### :rocket: Enhancement
@@ -256,7 +228,6 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 ## 1.0.0-alpha.12 (2022-12-22)
 - Datastore: fix issue with node mappings
 
-
 ## 1.0.0-alpha.11 (2022-12-20)
 
 #### :rocket: Enhancement
@@ -265,10 +236,8 @@ improve insert-html logic so it doesn't insert unnecessary paragraphs
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 1.0.0-alpha.10 (2022-12-20)
 fix test import
-
 
 ## 1.0.0-alpha.9 (2022-12-20)
 
@@ -294,7 +263,6 @@ fix test import
 #### Committers: 1
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 1.0.0-alpha.7 (2022-12-14)
 
 #### :boom: Breaking Change
@@ -316,7 +284,6 @@ fix test import
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 1.0.0-alpha.6 (2022-12-06)
 
 #### :boom: Breaking Change
@@ -335,7 +302,6 @@ fix test import
 * fix mark active state on buttons
 * fix enter handling in lists
 
-
 ## 1.0.0-alpha.4 (2022-11-30)
 
 #### :rocket: Enhancement
@@ -347,7 +313,6 @@ fix test import
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
-
 
 ## 1.0.0-alpha.3 (2022-10-06)
 
@@ -389,7 +354,6 @@ fix test import
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 - Niels V ([@nvdk](https://github.com/nvdk))
 
-
 ## vv1.0.0-alpha.1 (2022-09-12)
 
 #### :boom: Breaking Change
@@ -426,13 +390,6 @@ fix test import
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
-
-
-
-
-
-
-
 
 ## 0.65.0 (2022-11-23)
 
@@ -475,7 +432,6 @@ fix test import
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.63.7 (2022-11-04)
 
 #### :bug: Bug Fix
@@ -497,7 +453,6 @@ fix test import
 #### Committers: 1
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 0.63.6 (2022-10-27)
 
 #### :house: Internal
@@ -506,7 +461,6 @@ fix test import
 * [#427](https://github.com/lblod/ember-rdfa-editor/pull/427) build(deps-dev): bump @typescript-eslint/parser from 5.40.1 to 5.41.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#426](https://github.com/lblod/ember-rdfa-editor/pull/426) build(deps-dev): bump @types/ember-resolver from 5.0.11 to 5.0.12 ([@dependabot[bot]](https://github.com/apps/dependabot))
 * [#432](https://github.com/lblod/ember-rdfa-editor/pull/432) build(deps): bump ember-cli-typescript from 5.1.1 to 5.2.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
-
 
 ## 0.63.5 (2022-10-26)
 
@@ -577,7 +531,6 @@ fix test import
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.63.3 (2022-09-20)
 
 #### :bug: Bug Fix
@@ -616,7 +569,6 @@ fix test import
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.63.0 (2022-09-07)
 
 #### :boom: Breaking Change
@@ -640,7 +592,6 @@ fix test import
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.62.2 (2022-09-06)
 
 #### :bug: Bug Fix
@@ -654,7 +605,6 @@ fix test import
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
-
 
 ## 0.62.1 (2022-09-05)
 
@@ -686,7 +636,6 @@ fix test import
 #### Committers: 1
 - Sam Van Campenhout ([@Windvis](https://github.com/Windvis))
 
-
 ## 0.61.0 (2022-08-12)
 
 #### :bug: Bug Fix
@@ -702,7 +651,6 @@ fix test import
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 0.61.0-0 (2022-07-15)
 
 #### :rocket: Enhancement
@@ -712,7 +660,6 @@ fix test import
 #### Committers: 2
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
-
 
 ## 0.60.5 (2022-07-14)
 
@@ -732,7 +679,6 @@ fix test import
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.60.3 (2022-07-11)
 
@@ -771,7 +717,6 @@ fix test import
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 0.60.0 (2022-06-30)
 
 #### :rocket: Enhancement
@@ -796,7 +741,6 @@ fix test import
 
 fix issues with disappearing text nodes after inserting newlines
 
-
 ## 0.59.0 (2022-05-27)
 
 #### :rocket: Enhancement
@@ -810,7 +754,6 @@ fix issues with disappearing text nodes after inserting newlines
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Elena Poelman ([@elpoelma](https://github.com/elpoelma))
 
-
 ## 0.58.1 (2022-05-23)
 
 #### :bug: Bug Fix
@@ -820,7 +763,6 @@ fix issues with disappearing text nodes after inserting newlines
 #### Committers: 2
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 - Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
-
 
 ## 0.58.0 (2022-05-16)
 
@@ -855,7 +797,6 @@ fix issues with disappearing text nodes after inserting newlines
 - Niels V ([@nvdk](https://github.com/nvdk))
 - Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
 
-
 ## 0.57.0-0 (2022-04-27)
 
 #### :rocket: Enhancement
@@ -872,15 +813,12 @@ fix issues with disappearing text nodes after inserting newlines
 
 fix types again
 
-
 ## 0.56.5 (2022-05-20)
 Fix type issues preventing the build
-
 
 ## 0.56.4 (2022-05-20)
 
 :bug: fix drone config
-
 
 ## 0.56.3 (2022-05-20)
 
@@ -901,7 +839,6 @@ Fix type issues preventing the build
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
 
-
 ## 0.56.1 (2022-04-25)
 
 #### :bug: Bug Fix
@@ -909,7 +846,6 @@ Fix type issues preventing the build
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.56.0 (2022-04-25)
 
@@ -937,14 +873,11 @@ Fix type issues preventing the build
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.55.1 (2022-04-07)
-
 
 #### :bug: Bug fix
 
 * [#251](https://github.com/lblod/ember-rdfa-editor/pull/251) Fix toolbar marks using wrong command arguments ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.55.0 (2022-04-07)
 
@@ -956,7 +889,6 @@ Fix type issues preventing the build
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.54.0 (2022-04-05)
 
@@ -973,7 +905,6 @@ Fix type issues preventing the build
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Niels V ([@nvdk](https://github.com/nvdk))
 
-
 ## 0.53.0 (2022-04-05)
 
 #### :rocket: Enhancement
@@ -984,7 +915,6 @@ Fix type issues preventing the build
 
 #### Committers: 1
 - Niels V ([@nvdk](https://github.com/nvdk))
-
 
 ## 0.52.1 (2022-04-01)
 
@@ -1037,7 +967,6 @@ Fix type issues preventing the build
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 - Niels V ([@nvdk](https://github.com/nvdk))
 
-
 ## 0.50.0 (2022-02-25)
 
 #### :rocket: Enhancement
@@ -1048,7 +977,6 @@ Fix type issues preventing the build
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.50.0-beta.10 (2022-02-25)
 
@@ -1066,7 +994,6 @@ Fix type issues preventing the build
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 
 If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with it
-
 
 ## 0.50.0-beta.9 (2022-02-16)
 
@@ -1089,7 +1016,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 - Niels V ([@nvdk](https://github.com/nvdk))
 
-
 ## 0.50.0-beta.8 (2022-02-11)
 
 #### :bug: Bug Fix
@@ -1097,7 +1023,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.50.0-beta.7 (2022-02-10)
 
@@ -1112,7 +1037,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
 
-
 ## 0.50.0-beta.6 (2022-01-27)
 
 #### :bug: Bug Fix
@@ -1120,7 +1044,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 #### Committers: 1
 - Ben ([@benjay10](https://github.com/benjay10))
-
 
 ## 0.50.0-beta.5 (2022-01-26)
 
@@ -1189,7 +1112,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
-
 ## 0.50.0-beta.0 (2021-12-02)
 
 #### :rocket: Enhancement
@@ -1217,7 +1139,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Dieter Peirs ([@Dietr](https://github.com/Dietr))
 - Sergey Andreev ([@Asergey91](https://github.com/Asergey91))
-
 
 ## 0.48.0 (2021-11-08)
 
@@ -1249,7 +1170,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Oscar Rodriguez Villalobos ([@lagartoverde](https://github.com/lagartoverde))
 - Robbe De Proft ([@RobbeDP](https://github.com/RobbeDP))
 
-
 ## 0.47.0 (2021-08-31)
 
 #### :rocket: Enhancement
@@ -1275,7 +1195,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Niels V ([@nvdk](https://github.com/nvdk))
 - Robbe De Proft ([@RobbeDP](https://github.com/RobbeDP))
 
-
 ## 0.46.2 (2021-07-16)
 
 #### :bug: Bug Fix
@@ -1283,7 +1202,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 #### Committers: 1
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
-
 
 ## 0.46.1 (2021-07-13)
 
@@ -1297,7 +1215,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 #### Committers: 2
 - Niels V ([@nvdk](https://github.com/nvdk))
 - Robbe De Proft ([@RobbeDP](https://github.com/RobbeDP))
-
 
 ## 0.46.0 (2021-07-12)
 
@@ -1315,9 +1232,7 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 - Robbe De Proft ([@RobbeDP](https://github.com/RobbeDP))
 
-
 ## 0.45.0 (2021-07-01)
-
 
 ## 0.45.0-0 (2021-07-01)
 
@@ -1338,3 +1253,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 - Arne Bertrand ([@abeforgit](https://github.com/abeforgit))
 
 
+
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.0.0...v1.1.0
