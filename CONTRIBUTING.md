@@ -2,10 +2,7 @@
 
 ## NPM and node
 
-This project is primarily developed with npm v6.10.3 on node v12.22.1, through the use of [docker-ember](https://github.com/madnificent/docker-ember)
-v3.26.1. 
-This does not mean any other version is incompatible, but when running into trouble, try that version first.
-It also means we are currently sticking to v1 lockfiles.
+This project is primarily developed with npm v8.19.3 on node v18.13.0.
 
 ## Installation
 

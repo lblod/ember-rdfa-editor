@@ -159,7 +159,7 @@ This addon uses CSS variables to customise the styling. You can override these v
 
 * Ember.js v3.28 or above
 * Ember CLI v3.28 or above
-* Node.js v14 or above
+* Node.js v18 or above
 
 
 ## Contributing
