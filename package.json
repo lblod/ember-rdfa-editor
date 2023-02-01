@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -96,7 +96,7 @@
     "@embroider/test-setup": "^1.8.3",
     "@glimmer/component": "^1.1.2",
     "@rdfjs/types": "^1.1.0",
-    "@release-it-plugins/lerna-changelog": "^5.0.0",
+    "@release-it/keep-a-changelog": "^3.1.0",
     "@types/common-tags": "^1.8.0",
     "@types/debug": "^4.1.7",
     "@types/dompurify": "^2.3.3",

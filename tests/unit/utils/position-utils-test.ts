@@ -15,7 +15,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 0);
+    const iterator = findNodes({ doc, start: 0 });
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 8);
@@ -39,7 +39,12 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, doc.content.size, true, true);
+    const iterator = findNodes({
+      doc,
+      start: doc.content.size,
+      visitParentUpwards: true,
+      reverse: true,
+    });
 
     const ranges = [...iterator];
 
@@ -65,9 +70,14 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 0, true, false, ({ from }) => {
-      const node = doc.nodeAt(from);
-      return !!node?.isText;
+    const iterator = findNodes({
+      doc,
+      start: 0,
+      visitParentUpwards: true,
+      filter: ({ from }) => {
+        const node = doc.nodeAt(from);
+        return !!node?.isText;
+      },
     });
 
     const ranges = [...iterator];
@@ -88,16 +98,16 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(
+    const iterator = findNodes({
       doc,
-      doc.content.size,
-      true,
-      true,
-      ({ from }) => {
+      start: doc.content.size,
+      visitParentUpwards: true,
+      reverse: true,
+      filter: ({ from }) => {
         const node = doc.nodeAt(from);
         return !!node?.isText;
-      }
-    );
+      },
+    });
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 3);
@@ -117,7 +127,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 6);
+    const iterator = findNodes({ doc, start: 6 });
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 5);
@@ -139,7 +149,12 @@ module('Unit | utils | position-utils | get-nodes', function () {
         schema.node('paragraph', null, [schema.text('ghi')]),
       ]),
     ]);
-    const iterator = findNodes(doc, 13, true, true);
+    const iterator = findNodes({
+      doc,
+      start: 13,
+      reverse: true,
+      visitParentUpwards: true,
+    });
 
     const ranges = [...iterator];
     assert.strictEqual(ranges.length, 6);
