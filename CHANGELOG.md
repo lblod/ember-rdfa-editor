@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - BREAKING 💥: findNodes now takes an arg object and supports an end position
+- Upgrade ember-source to 4.8.2-lts.
+
+### Removed
+
+- BREAKING 💥: Drop official support for node < 18
 
 ## [1.1.0] - 2023-01-30
 
