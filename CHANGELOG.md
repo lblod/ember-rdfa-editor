@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2023-02-01
+
 ### Added
 
 - add a plugin to enable regeneration of UUIDs on paste #556
@@ -1272,5 +1274,6 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.0.0...v1.1.0
