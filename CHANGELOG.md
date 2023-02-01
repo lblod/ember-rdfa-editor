@@ -9,12 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add a plugin to enable regeneration of UUIDs on paste
+- add a plugin to enable regeneration of UUIDs on paste #556
 
 ### Changed
 
-- BREAKING 💥: findNodes now takes an arg object and supports an end position
-- Upgrade ember-source to 4.8.2-lts.
+- BREAKING 💥: findNodes now takes an arg object and supports an end position #564
+- Upgrade ember-source to 4.8.2-lts. #568
+- build(deps-dev): bump @typescript-eslint/eslint-plugin from 5.48.2 to 5.50.0 #576
+- build(deps-dev): bump @typescript-eslint/parser from 5.45.1 to 5.50.0 #575
+- build(deps-dev): bump sass from 1.56.1 to 1.58.0 #574
+- build(deps-dev): bump qunit from 2.19.3 to 2.19.4 #573
+- build(deps): bump @codemirror/view from 6.7.0 to 6.7.3 #569
 
 ### Removed
 
