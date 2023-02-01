@@ -44,6 +44,7 @@ import {
 } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
+import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
 
 export type WidgetLocation =
@@ -144,6 +145,7 @@ export default class Prosemirror {
         gapCursor(),
         keymap(baseKeymap(schema)),
         history(),
+        recreateUuidsOnPaste,
       ],
     });
     this.view = new RdfaEditorView(target, {
