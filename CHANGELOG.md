@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add a plugin to enable regeneration of UUIDs on paste
 
+### Changed
+
+- BREAKING 💥: findNodes now takes an arg object and supports an end position
+
 ## [1.1.0] - 2023-01-30
 
 ### Changed
