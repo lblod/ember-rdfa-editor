@@ -10,4 +10,5 @@ updates:
     schedule:
       interval: "daily"
     labels:
+      - "dependabot"
       - "internal"
