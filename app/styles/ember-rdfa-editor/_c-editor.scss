@@ -70,8 +70,9 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
 .say-editor__inner {
   position: relative;
   min-height: $say-paper-min-height;
-  white-space: pre-wrap;
+  white-space: break-spaces;
   word-wrap: break-word;
+  overflow-wrap: break-word;
 
   // Remove start styles
   &:focus {
