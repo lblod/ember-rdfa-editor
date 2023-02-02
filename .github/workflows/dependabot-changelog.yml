@@ -18,7 +18,7 @@ jobs:
           # Depending on your needs, you can use a token that will re-trigger workflows
           # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: abeforgit/dependabot-changelog-helper@5137dc8f289002cb7803b8b0a879625a2bea305c
+      - uses: abeforgit/dependabot-changelog-helper@6ac73689e40c543f6b802f4c72b9c4f66053adf5
         with:
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
