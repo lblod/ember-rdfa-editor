@@ -9,24 +9,34 @@ on:
       - labeled
       - unlabeled
 
+
 jobs:
   changelog:
+    permissions:
+      pull-requests: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v2
         with:
-          # Depending on your needs, you can use a token that will re-trigger workflows
-          # See https://github.com/stefanzweifel/git-auto-commit-action#commits-of-this-action-do-not-trigger-new-workflow-runs
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: abeforgit/dependabot-changelog-helper@6ac73689e40c543f6b802f4c72b9c4f66053adf5
+          token: ${{ secrets.DEPENDABOT_TOKEN }}
+
+      - name: Update the changelog
+        uses: abeforgit/dependabot-changelog-helper@6ac73689e40c543f6b802f4c72b9c4f66053adf5
         with:
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
- 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+
+      - name: Commit the changes
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Update changelog"
           branch: ${{ github.head_ref }}
           commit_user_name: dependabot[bot]
           commit_user_email: support@github.com
           commit_options: '--signoff'
+
+
+ 
+
