@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `eslint-plugin-ember` from 11.2.1 to 11.4.6
 - Bumps `prosemirror-transform` from 1.7.0 to 1.7.1
+- Bumps `@types/uuid` from 8.3.4 to 9.0.0
 
 ## [2.0.0] - 2023-02-01
 
