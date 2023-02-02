@@ -22,3 +22,11 @@ jobs:
         with:
           activationLabel: 'dependabot'
           changelogPath: './CHANGELOG.md'
+ 
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update changelog"
+          branch: ${{ github.head_ref }}
+          commit_user_name: dependabot[bot]
+          commit_user_email: support@github.com
+          commit_options: '--signoff'
