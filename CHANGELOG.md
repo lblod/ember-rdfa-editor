@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A deprecation eslint rule using the eslint-plugin-deprecation package.
+
 ## [2.0.1] - 2023-02-02
 
 ### Fixed 
