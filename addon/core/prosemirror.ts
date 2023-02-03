@@ -231,12 +231,18 @@ export class ProseController {
     return new ProseController(this.pm);
   }
 
-  toggleMark(name: string, includeEmbeddedView = false) {
+  toggleMark(type: MarkType, includeEmbeddedView?: boolean): void;
+
+  /**
+   *
+   * @deprecated
+   */
+  toggleMark(name: string, includeEmbeddedView?: boolean): void;
+
+  toggleMark(type: string | MarkType, includeEmbeddedView = false) {
     this.focus(includeEmbeddedView);
-    this.doCommand(
-      toggleMarkAddFirst(this.schema.marks[name]),
-      includeEmbeddedView
-    );
+    const markType = typeof type === 'string' ? this.schema.marks[type] : type;
+    this.doCommand(toggleMarkAddFirst(markType), includeEmbeddedView);
   }
 
   focus(includeEmbeddedView = false) {
