@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Deprecated
+- Usage of `ProseController.view`, use `ProseController.getView` instead.
+- Usage of `ProseController.state`, use `ProseController.getState` instead.
+- Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
+- Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+
 ## [2.0.1] - 2023-02-02
 
 ### Fixed 
