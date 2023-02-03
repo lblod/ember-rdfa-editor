@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Usage of `ProseController.state`, use `ProseController.getState` instead.
 - Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
 - Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+- Usage of the string-based version of `toggleMark`, use the `MarkType`-based version instead.
 
 ## [2.0.1] - 2023-02-02
 
