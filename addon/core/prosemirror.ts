@@ -277,6 +277,9 @@ export class ProseController {
     return command(state);
   }
 
+  /**
+   * @deprecated This method is obsolete and will be removed in version 3.0. Use doCommand instead.
+   */
   checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
     const view = this.pm.getView(includeEmbeddedView);
     if (command(view.state)) {
@@ -320,10 +323,16 @@ export class ProseController {
     return this.pm.state.schema;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getState method instead.
+   */
   get state(): EditorState {
     return this.pm.state;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getView method instead.
+   */
   get view(): EditorView {
     return this.pm.view;
   }

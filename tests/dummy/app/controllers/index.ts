@@ -105,7 +105,7 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
-    applyDevTools(rdfaEditor.view);
+    applyDevTools(rdfaEditor.getView());
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
