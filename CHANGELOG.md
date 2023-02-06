@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix space insertion in table cells
+
 ### Added
 
 - add canSpec property to nodespecs which is checked before splitting the node with enter
