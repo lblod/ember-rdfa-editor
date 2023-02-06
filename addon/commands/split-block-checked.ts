@@ -4,7 +4,7 @@ import { Attrs, NodeSpec, NodeType } from '..';
 import { Node as PNode } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/option';
 
-function specCanSplit(spec: NodeSpec): boolean {
+export function specCanSplit(spec: NodeSpec): boolean {
   return (spec.canSplit as Option<boolean>) ?? true;
 }
 
