@@ -1,13 +1,15 @@
-import { action } from '@ember/object';
+import {action} from '@ember/object';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import {tracked} from '@glimmer/tracking';
+import {ProseController} from '@lblod/ember-rdfa-editor/core/prosemirror';
 import {
   liftListItem,
   sinkListItem,
   wrapInList,
 } from 'prosemirror-schema-list';
-import { redo, undo } from 'prosemirror-history';
+import {redo, undo} from 'prosemirror-history';
+import {NodeType} from 'prosemirror-model';
+import {setBlockType} from '@lblod/ember-rdfa-editor/commands/set-block-type';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -55,16 +57,85 @@ export default class EditorToolbar extends Component<Args> {
     return this.args.controller;
   }
 
+  get schema() {
+    return this.args.controller.schema;
+  }
+
+  get ULButtonActive() {
+    this.canUnindent &&
+    !this.canInsertListOfType(this.schema.nodes.bullet_list);
+  }
+
+  get canWrapInUL() {
+    return this.controller.checkCommand(
+      wrapInList(this.controller.schema.nodes.bullet_list),
+      true
+    );
+  }
+
+  get canWrapInOL() {
+    return this.controller.checkCommand(
+      wrapInList(this.controller.schema.nodes.ordered_list),
+      true
+    );
+  }
+
+  get canSink() {
+    return this.controller.checkCommand(
+      sinkListItem(this.controller.schema.nodes.list_item)
+    );
+  }
+
+  get canLift() {
+    return this.controller.checkCommand(
+      liftListItem(this.controller.schema.nodes.list_item)
+    );
+  }
+
+  @action
+  wrapInUL() {
+    this.controller.focus();
+    this.controller.doCommand(wrapInList(this.schema.nodes.bullet_list), true);
+  }
+
+  @action
+  wrapInOL() {
+    this.controller.focus();
+    this.controller.doCommand(wrapInList(this.schema.nodes.ordered_list), true);
+  }
+
+  @action
+  setOL() {
+    this.controller.focus();
+    this.controller.doCommand(setBlockType(this.schema.nodes.ordered_list), true);
+  }
+
   get isInList() {
-    return this.canUnindent;
+    return this.isInOrderedList || this.isInUnorderedList;
+  }
+
+  get isInUnorderedList() {
+    return (
+      this.canUnindent &&
+      this.canInsertListOfType(this.controller.schema.nodes.ordered_list)
+    );
+  }
+
+  get isInOrderedList() {
+    return (
+      this.canUnindent &&
+      this.canInsertListOfType(this.controller.schema.nodes.bullet_list)
+    );
+  }
+
+  canInsertListOfType(type: NodeType) {
+    return this.controller.checkCommand(wrapInList(type));
   }
 
   get canInsertList() {
     return (
-      this.controller.checkCommand(
-        wrapInList(this.controller.schema.nodes.bullet_list),
-        true
-      ) || this.isInList
+      this.canInsertListOfType(this.controller.schema.nodes.bullet_list) ||
+      this.isInList
     );
   }
 
@@ -108,7 +179,7 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleUnorderedList() {
     this.controller.focus();
-    if (this.isInList) {
+    if (this.isInUnorderedList) {
       while (this.canUnindent) {
         this.insertUnindent();
       }
@@ -123,10 +194,16 @@ export default class EditorToolbar extends Component<Args> {
   @action
   toggleOrderedList() {
     this.controller.focus();
-    this.controller.checkAndDoCommand(
-      wrapInList(this.controller.schema.nodes.ordered_list),
-      true
-    );
+    if (this.isInOrderedList) {
+      while (this.canUnindent) {
+        this.insertUnindent();
+      }
+    } else {
+      this.controller.checkAndDoCommand(
+        wrapInList(this.controller.schema.nodes.ordered_list),
+        true
+      );
+    }
   }
 
   @action

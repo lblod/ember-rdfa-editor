@@ -46,22 +46,22 @@
       )
     }}
       <div class='say-toolbar__group'>
-        {{#if (and @showListButtons this.canInsertList)}}
+        {{#if (and @showListButtons true)}}
 
           <Rdfa::ToolbarIcon
-            @active={{this.isInList}}
+            @active={{this.ULButtonActive}}
             @title={{t 'ember-rdfa-editor.unordered-list'}}
             @icon='unordered-list'
             {{on 'click' this.toggleUnorderedList}}
           />
-          {{!--
-  <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
-     <AuIcon @icon="ordered-list" @ariaHidden={{true}} @size="large" />
-    <span class="au-u-hidden-visually">
-      Ordered list
-    </span>
-  </button>
---}}
+          {{#if @showOrderedListButton }}
+            <Rdfa::ToolbarIcon
+              @active={{this.isInOrderedList}}
+              @title={{t 'ember-rdfa-editor.ordered-list'}}
+              @icon="ordered-list"
+              {{on "click" this.toggleOrderedList}}
+            />
+          {{/if}}
         {{/if}}
         {{#if @showIndentButtons}}
           {{#if this.canUnindent}}
@@ -83,6 +83,23 @@
       </div>
     {{/if}}
     {{yield to='middle'}}
+  </div>
+
+  <div class='say-toolbar__group'>
+    <button type="button"
+            style={{concat "background-color: " (if this.canWrapInUL "green" "red")}}
+      {{on 'click' this.wrapInUL}}>wrapUL
+    </button>
+    <button type="button"
+            style={{concat "background-color: " (if this.canWrapInOL "green" "red")}}
+      {{on 'click' this.wrapInOL}}>wrapOL
+    </button>
+    <button type="button"
+            style={{concat "background-color: " (if this.canWrapInOL "green" "red")}}
+      {{on 'click' this.setOL}}>setOL
+    </button>
+    <span style={{concat "background-color: " (if this.canSink "green" "red")}}>sink</span>
+    <span style={{concat "background-color: " (if this.canLift "green" "red")}}>lift</span>
   </div>
   <div class='say-toolbar__actions'>
     {{yield to='right'}}
