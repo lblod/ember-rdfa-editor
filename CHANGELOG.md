@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix space insertion in table cells
+- Fix delete and backspace selecting the whole table when inside of one
 
 ### Added
 
