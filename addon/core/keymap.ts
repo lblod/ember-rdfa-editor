@@ -17,10 +17,10 @@ import {
   selectNodeForward,
   selectTextblockEnd,
   selectTextblockStart,
-  splitBlock,
 } from 'prosemirror-commands';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
+import { splitBlockChecked } from '../commands/split-block-checked';
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
@@ -73,7 +73,7 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
     newlineInCode,
     createParagraphNear,
     liftEmptyBlock,
-    splitBlock,
+    splitBlockChecked,
     insertHardBreak
   ),
   'Shift-Enter': chainCommands(exitCode, insertHardBreak),
