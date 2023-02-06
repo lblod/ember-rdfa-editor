@@ -1,7 +1,11 @@
-import { splitBlock } from 'prosemirror-commands';
-import { Command } from 'prosemirror-state';
+import {
+  AllSelection,
+  Command,
+  NodeSelection,
+  TextSelection,
+} from 'prosemirror-state';
 import { Attrs, NodeSpec, NodeType } from '..';
-import { Node as PNode } from 'prosemirror-model';
+import { ContentMatch, Node as PNode } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/option';
 
 export function specCanSplit(spec: NodeSpec): boolean {
@@ -71,11 +75,91 @@ export function canSplit(
     );
 }
 
-export const splitBlockChecked: Command = (state, dispatch, view) => {
-  const { $from } = state.selection;
-  //TODO: doing a full custom canSplit check is a bit of a waste because splitBlock does that again
-  if (canSplit(state.doc, $from.pos, $from.depth)) {
-    return splitBlock(state, dispatch, view);
+function defaultBlockAt(match: ContentMatch) {
+  for (let i = 0; i < match.edgeCount; i++) {
+    const { type } = match.edge(i);
+    if (type.isTextblock && !type.hasRequiredAttrs()) {
+      return type;
+    }
   }
-  return false;
-};
+  return null;
+}
+
+export const splitBlockChecked =
+  (
+    splitNode?: (
+      node: PNode,
+      atEnd: boolean
+    ) => { type: NodeType; attrs?: Attrs } | null
+  ): Command =>
+  (state, dispatch) => {
+    const { $from, $to } = state.selection;
+    if (
+      state.selection instanceof NodeSelection &&
+      state.selection.node.isBlock
+    ) {
+      if (!$from.parentOffset || !canSplit(state.doc, $from.pos)) {
+        return false;
+      }
+      if (dispatch) {
+        dispatch(state.tr.split($from.pos).scrollIntoView());
+      }
+      return true;
+    }
+
+    if (!$from.parent.isBlock) {
+      return false;
+    }
+
+    if (dispatch) {
+      const atEnd = $to.parentOffset === $to.parent.content.size;
+      const tr = state.tr;
+      if (
+        state.selection instanceof TextSelection ||
+        state.selection instanceof AllSelection
+      )
+        tr.deleteSelection();
+      const deflt =
+        $from.depth == 0
+          ? null
+          : defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
+      const splitType = splitNode && splitNode($to.parent, atEnd);
+      let types = splitType
+        ? [splitType]
+        : atEnd && deflt
+        ? [{ type: deflt }]
+        : undefined;
+      let can = canSplit(tr.doc, tr.mapping.map($from.pos), 1, types);
+      if (
+        !types &&
+        !can &&
+        canSplit(
+          tr.doc,
+          tr.mapping.map($from.pos),
+          1,
+          deflt ? [{ type: deflt }] : undefined
+        )
+      ) {
+        if (deflt) {
+          types = [{ type: deflt }];
+        }
+        can = true;
+      }
+      if (can) {
+        tr.split(tr.mapping.map($from.pos), 1, types);
+        if (!atEnd && !$from.parentOffset && $from.parent.type != deflt) {
+          const first = tr.mapping.map($from.before()),
+            $first = tr.doc.resolve(first);
+          if (
+            deflt &&
+            $from
+              .node(-1)
+              .canReplaceWith($first.index(), $first.index() + 1, deflt)
+          )
+            tr.setNodeMarkup(tr.mapping.map($from.before()), deflt);
+        }
+      }
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };

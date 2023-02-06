@@ -16,10 +16,11 @@ import {
   selectNodeForward,
   selectTextblockEnd,
   selectTextblockStart,
+  splitBlock,
 } from 'prosemirror-commands';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
-import { splitBlockChecked } from '../commands/split-block-checked';
+import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { liftEmptyBlockChecked } from '@lblod/ember-rdfa-editor/commands/lift-empty-block-checked';
 
 export type Keymap = (schema: Schema) => Record<string, Command>;
@@ -27,9 +28,14 @@ export type Keymap = (schema: Schema) => Record<string, Command>;
 const backspace = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
+    const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
+      state.selection
+    );
     if (joinBackward(state, dispatch) && dispatch && view) {
       const { state } = view;
-      selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      if (!isInTable) {
+        selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      }
       return true;
     }
     return false;
@@ -39,9 +45,14 @@ const backspace = chainCommands(
 const del = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
+    const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
+      state.selection
+    );
     if (joinForward(state, dispatch) && dispatch && view) {
       const { state } = view;
-      selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      if (!isInTable) {
+        selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+      }
       return true;
     }
     return false;
@@ -74,7 +85,7 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
     newlineInCode,
     createParagraphNear,
     liftEmptyBlockChecked,
-    splitBlockChecked,
+    splitBlock,
     insertHardBreak
   ),
   'Shift-Enter': chainCommands(exitCode, insertHardBreak),
