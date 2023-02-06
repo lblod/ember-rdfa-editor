@@ -10,17 +10,18 @@ import {
   exitCode,
   joinBackward,
   joinForward,
-  liftEmptyBlock,
   newlineInCode,
   selectAll,
   selectNodeBackward,
   selectNodeForward,
   selectTextblockEnd,
   selectTextblockStart,
-  splitBlock,
 } from 'prosemirror-commands';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
+import { splitBlockChecked } from '../commands/split-block-checked';
+import { liftEmptyBlockChecked } from '@lblod/ember-rdfa-editor/commands/lift-empty-block-checked';
+
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
@@ -72,8 +73,8 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
     splitListItem(schema.nodes.list_item),
     newlineInCode,
     createParagraphNear,
-    liftEmptyBlock,
-    splitBlock,
+    liftEmptyBlockChecked,
+    splitBlockChecked,
     insertHardBreak
   ),
   'Shift-Enter': chainCommands(exitCode, insertHardBreak),

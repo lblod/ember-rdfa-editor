@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix space insertion in table cells
 
+### Added
+
+- add canSpec property to nodespecs which is checked before splitting the node with enter
+
 ## [2.0.1] - 2023-02-02
 
-### Fixed 
+### Fixed
 
 - Fix wrapping of spaces at line end
 
