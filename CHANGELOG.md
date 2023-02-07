@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- skip paragraph parsing when they contain (erroneous) block content
+
+Some existing documents erroneously contain block elements inside `p` tags, most notably tables.
+These got ignored before and parsed as flat text. Now we detect this case and skip the paragraph.
+
 ## [2.1.1] - 2023-02-07
 
 ### Fixed
