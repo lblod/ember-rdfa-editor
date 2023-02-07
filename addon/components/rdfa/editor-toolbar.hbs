@@ -49,14 +49,14 @@
         {{#if (and @showListButtons true)}}
 
           <Rdfa::ToolbarIcon
-            @active={{this.ULButtonActive}}
+            @active={{this.isInUL}}
             @title={{t 'ember-rdfa-editor.unordered-list'}}
             @icon='unordered-list'
             {{on 'click' this.toggleUnorderedList}}
           />
           {{#if @showOrderedListButton }}
             <Rdfa::ToolbarIcon
-              @active={{this.isInOrderedList}}
+              @active={{this.isInOL}}
               @title={{t 'ember-rdfa-editor.ordered-list'}}
               @icon="ordered-list"
               {{on "click" this.toggleOrderedList}}
@@ -100,6 +100,8 @@
     </button>
     <span style={{concat "background-color: " (if this.canSink "green" "red")}}>sink</span>
     <span style={{concat "background-color: " (if this.canLift "green" "red")}}>lift</span>
+    <span style={{concat "background-color: " (if this.isInOL "green" "red")}}>inOL</span>
+    <span style={{concat "background-color: " (if this.isInUL "green" "red")}}>inUL</span>
   </div>
   <div class='say-toolbar__actions'>
     {{yield to='right'}}

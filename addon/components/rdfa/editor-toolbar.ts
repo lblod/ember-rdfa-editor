@@ -10,6 +10,7 @@ import {
 import {redo, undo} from 'prosemirror-history';
 import {NodeType} from 'prosemirror-model';
 import {setBlockType} from '@lblod/ember-rdfa-editor/commands/set-block-type';
+import {findParentNode} from '@curvenote/prosemirror-utils';
 
 interface Args {
   showTextStyleButtons: boolean;
@@ -53,8 +54,28 @@ export default class EditorToolbar extends Component<Args> {
     );
   }
 
+  get firstListParent() {
+    return findParentNode(
+      (node) =>
+        node.type === this.schema.nodes.ordered_list ||
+        node.type === this.schema.nodes.bullet_list
+    )(this.selection);
+  }
+
+  get isInUL() {
+    return this.firstListParent?.node.type === this.schema.nodes.bullet_list;
+  }
+
+  get isInOL() {
+    return this.firstListParent?.node.type === this.schema.nodes.ordered_list;
+  }
+
   get controller() {
     return this.args.controller;
+  }
+
+  get selection() {
+    return this.controller.getState(true).selection;
   }
 
   get schema() {
@@ -107,7 +128,10 @@ export default class EditorToolbar extends Component<Args> {
   @action
   setOL() {
     this.controller.focus();
-    this.controller.doCommand(setBlockType(this.schema.nodes.ordered_list), true);
+    this.controller.doCommand(
+      setBlockType(this.schema.nodes.ordered_list),
+      true
+    );
   }
 
   get isInList() {
