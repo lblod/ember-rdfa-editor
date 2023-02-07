@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Some existing documents erroneously contain block elements inside `p` tags, most notably tables.
 These got ignored before and parsed as flat text. Now we detect this case and skip the paragraph.
 
+- remove lump-node css
+
+Now that all tables are editable, we don't need this anymore.
+
 ## [2.1.1] - 2023-02-07
 
 ### Fixed
