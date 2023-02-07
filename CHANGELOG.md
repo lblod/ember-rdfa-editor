@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Preserve whitespace when parsing an html document
+
 ## [2.1.0] - 2023-02-06
 
 ### Fixed
