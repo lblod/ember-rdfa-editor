@@ -2,7 +2,7 @@ import { findParentNode } from '@curvenote/prosemirror-utils';
 import { NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
 import { PNode } from '@lblod/ember-rdfa-editor';
-import { liftListItem } from 'prosemirror-schema-list';
+import { liftListItem, wrapInList } from 'prosemirror-schema-list';
 
 function isListNode(node: PNode) {
   return node.type.name === 'ordered_list' || node.type.name === 'bullet_list';
@@ -29,8 +29,23 @@ export function toggleList(listType: NodeType, itemType: NodeType): Command {
       blockRange.depth - parentList.depth <= 1
     ) {
       if (parentList.node.type === listType) {
+        // list is of the same type as the one we toggle to, which means we "turn off" the list, aka remove it
         return liftListItem(itemType)(state, dispatch, view);
       }
+      if (
+        isListNode(parentList.node) &&
+        listType.validContent(parentList.node.content)
+      ) {
+        if (dispatch) {
+          const tr = state.tr;
+          tr.setNodeMarkup(parentList.pos, listType, {
+            ...parentList.node.attrs,
+          });
+          dispatch(tr);
+        }
+        return true;
+      }
     }
+    return wrapInList(listType)(state, dispatch, view);
   };
 }

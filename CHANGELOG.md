@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add unordered list feature
+  Adds the button and appropriate toggling behavior when combined with unordered lists
+  Also includes some needed css fixes
+
 ## [2.1.2] - 2023-02-07
 
 ### Fixed
