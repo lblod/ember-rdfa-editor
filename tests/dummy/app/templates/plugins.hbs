@@ -20,10 +20,10 @@
         <SampleToolbar @controller={{this.rdfaEditor}}/>
       </:top>
       <:aside>
-        <Sidebar>
-          <:collapsible>
+        <Sidebar as |Sidebar|>
+          <Sidebar.Collapsible @title={{t "ember-rdfa-editor.insert"}}>
             <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}}/>
-          </:collapsible>
+          </Sidebar.Collapsible>
         </Sidebar>
       </:aside>
     </Editor>
