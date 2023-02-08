@@ -1,5 +1,5 @@
 <div class='say-editor-hints'>
-  {{#if (has-block "collapsable")}}
+  {{#if (has-block "collapsible")}}
     <div class='say-editor-hints__insert'>
       <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
         <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}as |Group|
@@ -42,7 +42,7 @@
         </AuToolbar>
         <div class={{if this.expanded 'au-c-accordion__content' 'au-u-hidden'}}>
           <AuList @divider={{true}}>
-            {{yield to="collapsable"}}
+            {{yield to="collapsible"}}
           </AuList>
         </div>
       </div>
