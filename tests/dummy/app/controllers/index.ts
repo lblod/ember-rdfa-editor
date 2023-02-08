@@ -6,7 +6,6 @@ import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   em,
-  link,
   strikethrough,
   strong,
   subscript,
@@ -36,6 +35,7 @@ import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { code } from '../dummy-marks/code';
+import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
 
 const nodes = {
   doc,
@@ -61,11 +61,11 @@ const nodes = {
   hard_break,
   invisible_rdfa,
   block_rdfa,
+  link,
 };
 const marks = {
   inline_rdfa,
   code,
-  link,
   em,
   strong,
   underline,
@@ -78,6 +78,11 @@ const dummySchema = new Schema({ nodes, marks });
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked nodeViews = (controller: ProseController) => {
+    return {
+      link: linkView(controller),
+    };
+  };
   schema: Schema = dummySchema;
 
   @action

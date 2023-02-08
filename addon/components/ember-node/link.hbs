@@ -1,0 +1,22 @@
+<Velcro @placement="bottom" @offsetOptions={{hash mainAxis=3}} as |velcro|>
+  <AuPill 
+    class="say-link"
+    @icon="link" 
+    @iconAlignment="right" 
+    @skin="link"
+    aria-describedby="link-tooltip"
+    {{velcro.hook}}
+    {{on "click" this.onClick }}>
+    <EditorComponents::EmbeddedEditor @controller={{@controller}} @node={{@node}} @view={{@view}} @getPos={{@getPos}}/>
+  </AuPill>
+  {{#if this.tooltipOpen}}
+    <AuPill @size="small" 
+            class="say-link-tooltip"
+            id="link-tooltip"
+            {{velcro.loop}}>
+      <AuLinkExternal href={{this.href}} @skin="naked" @icon="link-external"/>
+      <AuInput @value={{this.href}} placeholder='url' {{on 'focus' this.selectHref}}/>
+      <AuButton @icon="link-broken" @skin="naked" @size="small" {{on 'click' this.remove}}/>
+    </AuPill>
+  {{/if}}
+</Velcro>

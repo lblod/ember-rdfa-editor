@@ -1,0 +1,10 @@
+{{#if this.link}}
+<AuCard @flex={{true}} @divided={{true}} @expandable={{false}} @shadow={{true}} @size="flush" as |c|>
+  <c.header class="au-u-hidden-visually">
+    <AuHeading @level="3" @skin="6">Edit link</AuHeading>
+  </c.header>
+  <c.content class="au-c-content--small">
+    <AuInput @value={{this.href}}/>
+  </c.content>
+</AuCard>
+{{/if}}
