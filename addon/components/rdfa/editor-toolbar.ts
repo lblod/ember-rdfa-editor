@@ -217,17 +217,10 @@ export default class EditorToolbar extends Component<Args> {
 
   @action
   toggleOrderedList() {
-    this.controller.focus();
-    if (this.isInOrderedList) {
-      while (this.canUnindent) {
-        this.insertUnindent();
-      }
-    } else {
       this.controller.checkAndDoCommand(
         wrapInList(this.controller.schema.nodes.ordered_list),
         true
       );
-    }
   }
 
   @action
