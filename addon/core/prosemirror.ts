@@ -110,6 +110,7 @@ export default class Prosemirror {
   @tracked view: RdfaEditorView;
   @tracked embeddedView?: RdfaEditorView | null;
   @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
+  @tracked showRdfaBlocks = false;
   owner: Owner;
   root: Element;
   baseIRI: string;
@@ -354,6 +355,15 @@ export class ProseController {
 
   get inEmbeddedView(): boolean {
     return !!this.pm.embeddedView;
+  }
+
+  toggleRdfaBlocks() {
+    console.log('TOGGLE');
+    this.pm.showRdfaBlocks = !this.pm.showRdfaBlocks;
+  }
+
+  get showRdfaBlocks() {
+    return this.pm.showRdfaBlocks;
   }
 }
 

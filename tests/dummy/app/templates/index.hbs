@@ -1,24 +1,39 @@
-<RdfaEditorWithDebug
-  @rdfaEditorInit={{this.rdfaEditorInit}}
-  @editorOptions={{hash
-  showToggleRdfaAnnotations='true'
-  showInsertButton=null
-  showRdfa='true'
-  showRdfaHighlight='true'
-  showRdfaHover='true'
-  showPaper='true'
-  showSidebar='true'
-  showToolbarBottom=null
-}}
-  @toolbarOptions={{hash
-  showTextStyleButtons='true'
-  showListButtons='true'
-  showIndentButtons='true'
-}}
-  @plugins={{this.plugins}}
-  @widgets={{this.widgets}}
-  @schema={{this.schema}}
->
-  App version:
-  {{app-version versionOnly=true showExtended=true}}
-</RdfaEditorWithDebug>
+<DummyContainer>
+  <:header>
+    <Rdfa::DebugTools @controller={{this.rdfaEditor}}/>
+  </:header>
+  <:content>
+    <Rdfa::Editor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @editorOptions={{hash
+        showRdfa='true'
+        showRdfaHighlight='true'
+        showRdfaHover='true'
+        showPaper='true'
+        showSidebar='true'
+        showToolbarBottom=null
+      }}
+      @plugins={{this.plugins}}
+      @widgets={{this.widgets}}
+      @schema={{this.schema}}>
+      <:toolbarLeft>
+        <Rdfa::Toolbar::Group>
+          <Rdfa::Toolbar::History::Undo @controller={{this.rdfaEditor}}/>
+          <Rdfa::Toolbar::History::Redo @controller={{this.rdfaEditor}}/>
+        </Rdfa::Toolbar::Group>
+        <Rdfa::Toolbar::Group>
+          <Rdfa::Toolbar::Marks::Bold @controller={{this.rdfaEditor}}/>
+          <Rdfa::Toolbar::Marks::Italic @controller={{this.rdfaEditor}}/>
+          <Rdfa::Toolbar::Marks::Strikethrough @controller={{this.rdfaEditor}}/>
+          <Rdfa::Toolbar::Marks::Underline @controller={{this.rdfaEditor}}/>
+        </Rdfa::Toolbar::Group>
+        <Rdfa::Toolbar::Group>
+          <Rdfa::Toolbar::List @controller={{this.rdfaEditor}}/>
+        </Rdfa::Toolbar::Group>
+      </:toolbarLeft>
+      <:toolbarRight>
+        <Rdfa::Toolbar::RdfaBlocksToggle @controller={{this.rdfaEditor}}/>
+      </:toolbarRight>
+    </Rdfa::Editor>
+  </:content>
+</DummyContainer>

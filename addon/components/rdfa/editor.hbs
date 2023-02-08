@@ -1,0 +1,47 @@
+<div
+  class='say-container
+    {{if @editorOptions.showRdfaHover "say-container--sidebar-left"}}
+    {{if @editorOptions.showPaper "say-container--paper"}}
+    {{if @editorOptions.showSidebar "say-container--sidebar-right"}}
+    {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
+>
+  <div class='say-toolbar'>
+    <div class='say-toolbar__styling-tools'>
+      {{yield to='toolbarLeft'}}
+    </div>
+    <div class='say-toolbar__actions'>
+      {{yield to='toolbarRight'}}
+    </div>
+  </div>
+  <div class='say-container__main'>
+    {{#if this.editorLoading}}
+      <AuLoader />
+    {{/if}}
+
+    <div
+      class='say-editor
+        {{if @editorOptions.showRdfa "rdfa-annotations"}}
+        {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
+        {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
+        {{if this.controller.showRdfaBlocks "show-rdfa-blocks"}}
+        {{if this.editorLoading "au-u-hidden-visually"}}'
+    >
+      <div class='say-editor__paper' {{did-insert this.handleRawEditorInit}}>
+      </div>
+
+    </div>
+
+    <div class='say-container__aside'>
+      <div class='say-editor-hints'>
+        {{#if (has-block "insertSidebar")}}
+          <Rdfa::PluginWrapper @title={{t "ember-rdfa-editor.insert"}}>
+            {{yield to="insertSidebar"}}
+          </Rdfa::PluginWrapper>
+        {{/if}}
+        <ul class='say-editor-hints__list'>
+          {{yield to="sidebar"}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
