@@ -1,10 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import {
-  ProseController,
-  WidgetSpec,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
@@ -12,6 +9,8 @@ import {
   link,
   strikethrough,
   strong,
+  subscript,
+  superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/marks';
 import {
@@ -30,28 +29,23 @@ import {
   paragraph,
   placeholder,
   repaired_block,
+  tableNodes,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import {
-  tableKeymap,
-  tableMenu,
-  tableNodes,
-  tablePlugin,
-} from '@lblod/ember-rdfa-editor/plugins/table';
-import { code, codeMarkButton } from 'dummy/dummy-plugins/code-mark-plugin';
+import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
 import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
-import {
-  card,
-  cardView,
-  counter,
-  counterView,
-  dropdown,
-  dropdownView,
-  insertDummyComponentsWidget,
-} from 'dummy/dummy-plugins/inline-components-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { code } from '../dummy-marks/code';
+import {
+  card,
+  counter,
+  dropdown,
+  cardView,
+  counterView,
+  dropdownView,
+} from '../dummy-nodes';
 
 const nodes = {
   doc,
@@ -63,7 +57,7 @@ const nodes = {
   ordered_list,
   bullet_list,
   placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
+  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
   heading,
   blockquote,
 
@@ -89,6 +83,8 @@ const marks = {
   strong,
   underline,
   strikethrough,
+  subscript,
+  superscript,
 };
 const dummySchema = new Schema({ nodes, marks });
 
@@ -104,15 +100,9 @@ export default class IndexController extends Controller {
     };
   };
   @tracked plugins: Plugin[] = [
-    // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
     tableKeymap,
-  ];
-  @tracked widgets: WidgetSpec[] = [
-    insertDummyComponentsWidget,
-    codeMarkButton,
-    tableMenu,
   ];
   schema: Schema = dummySchema;
 

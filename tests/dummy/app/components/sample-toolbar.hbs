@@ -1,0 +1,29 @@
+<Toolbar>
+  <:left>
+    <Toolbar::Group>
+      <Toolbar::History::Undo @controller={{@controller}}/>
+      <Toolbar::History::Redo @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::Marks::Bold @controller={{@controller}}/>
+      <Toolbar::Marks::Italic @controller={{@controller}}/>
+      <Toolbar::Marks::Strikethrough @controller={{@controller}}/>
+      <Toolbar::Marks::Underline @controller={{@controller}}/>
+      <Toolbar::Marks::Subscript @controller={{@controller}}/>
+      <Toolbar::Marks::Superscript @controller={{@controller}}/>
+      <CodeMark::ToolbarButton @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::ListMenu @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::TableMenu @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::HeadingMenu @controller={{@controller}}/>
+    </Toolbar::Group>
+  </:left>
+  <:right>
+    <Toolbar::RdfaBlocksToggle @controller={{@controller}}/>
+  </:right>
+</Toolbar>

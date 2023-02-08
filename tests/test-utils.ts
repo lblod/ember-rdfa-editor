@@ -24,9 +24,10 @@ import {
   paragraph,
   repaired_block,
   text,
+  tableNodes,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
-import { code } from 'dummy/dummy-plugins/code-mark-plugin';
+
+import { code } from 'dummy/dummy-marks/code';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 /**

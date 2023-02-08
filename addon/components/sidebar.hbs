@@ -1,0 +1,54 @@
+<div class='say-editor-hints'>
+  {{#if (has-block "collapsable")}}
+    <div class='say-editor-hints__insert'>
+      <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
+        <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}as |Group|
+        >
+          <Group>
+            <div>
+              <AuButton
+                @skin='tertiary'
+                aria-hidden='true'
+                focusable='false'
+                aria-expanded='{{if this.expanded "true" "false"}}'
+              >
+                {{t "ember-rdfa-editor.insert"}}
+              </AuButton>
+            </div>
+          </Group>
+          <Group>
+            {{#if this.expanded}}
+              <AuIcon
+                @icon='remove'
+                @alignment='left'
+                @size='large'
+                @ariaHidden='true'
+              />
+              <span class='au-u-hidden-visually'>
+                Open accordion
+              </span>
+            {{else}}
+              <AuIcon
+                @icon='add'
+                @alignment='left'
+                @size='large'
+                @ariaHidden='true'
+              />
+              <span class='au-u-hidden-visually'>
+                Sluit accordion
+              </span>
+            {{/if}}
+          </Group>
+        </AuToolbar>
+        <div class={{if this.expanded 'au-c-accordion__content' 'au-u-hidden'}}>
+          <AuList @divider={{true}}>
+            {{yield to="collapsable"}}
+          </AuList>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+  <ul class='say-editor-hints__list'>
+    {{yield to="main"}}
+  </ul>
+</div>

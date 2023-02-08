@@ -1,10 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import {
-  ProseController,
-  WidgetSpec,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
@@ -12,6 +9,8 @@ import {
   link,
   strikethrough,
   strong,
+  subscript,
+  superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/marks';
 import {
@@ -30,26 +29,13 @@ import {
   paragraph,
   placeholder,
   repaired_block,
+  tableNodes,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import {
-  tableKeymap,
-  tableMenu,
-  tableNodes,
-  tablePlugin,
-} from '@lblod/ember-rdfa-editor/plugins/table';
-import { code } from 'dummy/dummy-plugins/code-mark-plugin';
+import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
-import { headingsMenu } from '@lblod/ember-rdfa-editor/plugins/headings';
-import {
-  subscript,
-  subscriptWidget,
-} from '@lblod/ember-rdfa-editor/plugins/subscript';
-import {
-  superscript,
-  superscriptWidget,
-} from '@lblod/ember-rdfa-editor/plugins/superscript';
+import { code } from '../dummy-marks/code';
 
 const nodes = {
   doc,
@@ -92,12 +78,6 @@ const dummySchema = new Schema({ nodes, marks });
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
-  @tracked widgets: WidgetSpec[] = [
-    tableMenu,
-    headingsMenu,
-    superscriptWidget,
-    subscriptWidget,
-  ];
   schema: Schema = dummySchema;
 
   @action

@@ -1,9 +1,9 @@
 <DummyContainer>
   <:header>
-    <Rdfa::DebugTools @controller={{this.rdfaEditor}}/>
+    <DebugTools @controller={{this.rdfaEditor}}/>
   </:header>
   <:content>
-    <Rdfa::Editor
+    <Editor
       @rdfaEditorInit={{this.rdfaEditorInit}}
       @editorOptions={{hash
         showRdfa='true'
@@ -14,26 +14,10 @@
         showToolbarBottom=null
       }}
       @plugins={{this.plugins}}
-      @widgets={{this.widgets}}
       @schema={{this.schema}}>
-      <:toolbarLeft>
-        <Rdfa::Toolbar::Group>
-          <Rdfa::Toolbar::History::Undo @controller={{this.rdfaEditor}}/>
-          <Rdfa::Toolbar::History::Redo @controller={{this.rdfaEditor}}/>
-        </Rdfa::Toolbar::Group>
-        <Rdfa::Toolbar::Group>
-          <Rdfa::Toolbar::Marks::Bold @controller={{this.rdfaEditor}}/>
-          <Rdfa::Toolbar::Marks::Italic @controller={{this.rdfaEditor}}/>
-          <Rdfa::Toolbar::Marks::Strikethrough @controller={{this.rdfaEditor}}/>
-          <Rdfa::Toolbar::Marks::Underline @controller={{this.rdfaEditor}}/>
-        </Rdfa::Toolbar::Group>
-        <Rdfa::Toolbar::Group>
-          <Rdfa::Toolbar::List @controller={{this.rdfaEditor}}/>
-        </Rdfa::Toolbar::Group>
-      </:toolbarLeft>
-      <:toolbarRight>
-        <Rdfa::Toolbar::RdfaBlocksToggle @controller={{this.rdfaEditor}}/>
-      </:toolbarRight>
-    </Rdfa::Editor>
+      <:top>
+        <SampleToolbar @controller={{this.rdfaEditor}}/>
+      </:top>
+    </Editor>
   </:content>
 </DummyContainer>
