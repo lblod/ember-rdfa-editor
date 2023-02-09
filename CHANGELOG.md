@@ -8,10 +8,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
+- Bumps `eslint` from 8.29.0 to 8.33.0
+
+## [2.1.2] - 2023-02-07
+
+### Fixed
+
+- skip paragraph parsing when they contain (erroneous) block content
+
+Some existing documents erroneously contain block elements inside `p` tags, most notably tables.
+These got ignored before and parsed as flat text. Now we detect this case and skip the paragraph.
+
+- remove lump-node css
+
+Now that all tables are editable, we don't need this anymore.
+
+## [2.1.1] - 2023-02-07
+
+### Fixed
+
+- Preserve whitespace when parsing an html document
+
+## [2.1.0] - 2023-02-06
+
+### Fixed
+
+- Fix space insertion in table cells
+- Fix delete and backspace selecting the whole table when inside of one
+
+### Added
+
+- add canSpec property to nodespecs which is checked before splitting the node with enter
 
 ## [2.0.1] - 2023-02-02
 
-### Fixed 
+### Fixed
 
 - Fix wrapping of spaces at line end
 
@@ -1289,7 +1320,10 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.1...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.0...v2.1.1
+[2.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.0.0...v1.1.0

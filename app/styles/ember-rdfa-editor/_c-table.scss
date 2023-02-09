@@ -6,7 +6,6 @@
   width: 100%;
   border-collapse: collapse;
   border: 0.1rem solid var(--au-gray-300);
-  white-space: normal;
 
   & + & {
     margin-top: $au-unit;

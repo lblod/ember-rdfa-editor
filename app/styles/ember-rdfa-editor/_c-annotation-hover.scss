@@ -131,14 +131,6 @@
     }
   }
 
-  // Hide nested lump node annotations
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"] [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]
-  {
-    &:before,
-    &:hover:before {
-      display: none;
-    }
-  }
 
   // Hide empty properties or flagged as noHighlight
   [property=""],

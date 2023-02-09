@@ -259,7 +259,10 @@ export class ProseController {
       0,
       tr.doc.nodeSize - 2,
       ProseParser.fromSchema(this.schema).parse(
-        domParser.parseFromString(content, 'text/html')
+        domParser.parseFromString(content, 'text/html'),
+        {
+          preserveWhitespace: true,
+        }
       )
     );
     tr.setSelection(Selection.atEnd(tr.doc));
@@ -341,14 +344,12 @@ export class ProseController {
   }
 
   get htmlContent(): string {
-    const fragment = DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.pm.state.doc.content,
-      {
-        document,
-      }
-    );
     const div = document.createElement('div');
-    div.appendChild(fragment);
+    DOMSerializer.fromSchema(this.schema).serializeFragment(
+      this.pm.state.doc.content,
+      undefined,
+      div
+    );
     return div.innerHTML;
   }
 
