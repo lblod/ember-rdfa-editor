@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `eslint` from 8.29.0 to 8.33.0
+- Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 
 ## [2.1.2] - 2023-02-07
 
