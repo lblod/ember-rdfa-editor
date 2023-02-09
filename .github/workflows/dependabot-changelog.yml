@@ -19,9 +19,10 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.DEPENDABOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Update the changelog
         uses: abeforgit/dependabot-changelog-helper@6ac73689e40c543f6b802f4c72b9c4f66053adf5
@@ -33,7 +34,6 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           message: "Update changelog"
-          ref: ${{ github.event.pull_request.head.ref }}
           commit: '--signoff'
 
 
