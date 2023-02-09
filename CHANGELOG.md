@@ -40,6 +40,10 @@ Now that all tables are editable, we don't need this anymore.
 
 - add canSpec property to nodespecs which is checked before splitting the node with enter
 
+### Changed
+
+- Update and modernize README.
+
 ## [2.0.1] - 2023-02-02
 
 ### Fixed

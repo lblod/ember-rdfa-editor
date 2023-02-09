@@ -1,8 +1,7 @@
 # @lblod/ember-rdfa-editor
 [![Build Status](https://rpio-drone.redpencil.io/api/badges/lblod/ember-rdfa-editor/status.svg)](https://rpio-drone.redpencil.io/lblod/ember-rdfa-editor)
 
-Emberjs addon that provides an RDFa aware rich text editor. This component forms the core of say editor.
-The editor can be enriched with plugins to give hints for specific content entered in the editor (e.g. dates, templates, citations, etc.). The hints will typically insert RDFa annotations in the content.
+Emberjs addon that provides an RDFa aware rich text editor based on the [Prosemirror toolkit](https://prosemirror.net/). 
 
 Main features:
 
@@ -10,21 +9,30 @@ Main features:
  * support for plugins
  * RDFa aware
 
-
 ## Installation
 
 ```sh
+npm install @lblod/ember-rdfa-editor
+# or
 ember install @lblod/ember-rdfa-editor
 ```
 
-To include the editor in a template (ember octane syntax) you can use the following block:
+## Basic example
+
+This section includes a basic example on how to include an instance of the editor in you application.
+This addon provides the `Rdfa::RdfaEditor` component as a main entryway to add an instance of the editor.
+
+The following component is an example on how you can include the editor:
 
 ```handlebars
+<!-- your-application/components/editor.hbs -->
 <Rdfa::RdfaEditor
-  @rdfaEditorInit={{this.rdfaEditorInit}}
+  @rdfaEditorInit={{this.editorInit}}
+  @schema={{this.schema}}
+  @plugins={{this.plugins}}
+  @widgets={{this.widgets}}
   @editorOptions={{hash 
     showToggleRdfaAnnotations="true" 
-    showInsertButton=null 
     showRdfa="true" 
     showRdfaHighlight="true" 
     showRdfaHover="true" 
@@ -37,29 +45,116 @@ To include the editor in a template (ember octane syntax) you can use the follow
     showListButtons="true" 
     showIndentButtons="true"
   }}
-  @pasteBehaviour='standard-html' {{! default is standard-html }}
 />
 ```
 
-The `pasteBehaviour` property can be one of three different values:
-- `textonly`: the `text/plain` buffer of the clipboard is read and pasted.
-- `standard-html`: structural html which is supported by the editor is kept intact
-- `full-html`: all structural html is kept intact
+```js
+// your-application/components/editor.js
+import { action } from '@ember/object';
+import {
+  em,
+  strikethrough,
+  strong,
+  underline,
+} from '@lblod/ember-rdfa-editor/marks';
+import {
+  block_rdfa,
+  blockquote,
+  doc,
+  hard_break,
+  heading,
+  horizontal_rule,
+  inline_rdfa,
+  paragraph,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import {
+  tableKeymap,
+  tableMenu,
+  tableNodes,
+  tablePlugin,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { Schema } from 'prosemirror-model';
 
-The default default value for `pasteBehaviour` is `standard-html`.
+export default class EditorComponent extends Component {
+  get schema(){
+    // A prosemirror schema which determines how documents are parsed and written to the DOM.
+    return new Schema({
+      nodes: {
+        doc,
+        paragraph,
+        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+        heading,
+        blockquote,
+        horizontal_rule,
+        code_block,
+        text,
+        hard_break,
+        block_rdfa,
+      },
+      marks: {
+        inline_rdfa,
+        em,
+        strikethrough,
+        strong,
+        underline
+      }
+    })
+  }
 
-The callback provided to rdfaEditorInit is called when the editor element is inserted and provides an object with the following interface:
- - property `htmlContent`: a cleaned up (with as much as possible internal state remove) version of the htmlContent
- - property `richNode`: a copy of the internal representation of the document.
- - property `rootNode`: a copy of the dom of the editor (includes the editor element)
- - function `setHtmlContent(html)`: function to set the html content of the editor
- 
-You can pass basic options when you load the editor. Add a value of "true" to enable. Remove option or pass null to disable.
+  get plugins(){
+    // A list of prosemirror plugins you want to enable. More information about prosemirror plugins can be found on https://prosemirror.net/docs/guide/#state.plugins.
+    return [tablePlugin, tableKeymap];
+  }
 
-#### Editor Options
+  get widgets(){
+    // A list of widgets which should be shown in the toolbar and sidebar of the editor.
+    return [tableMenu]
+  }
 
+  @action
+  editorInit(controller){
+    // This method may contain code that runs when the editor has just loaded. It can be useful to e.g. load a document into the editor.
+  }
+}
+```
+
+The callback provided to `rdfaEditorInit` is called when the editor element is inserted and provides an instance of a `ProseController` which can be used to insert documents inside the editor and execute commands.
+
+The dummy application of this addon includes an extended example on how to include an editor.
+
+## The `Rdfa:RdfaEditor` component
+
+The main editor component may expect the following properties:
+- `rdfaEditorInit`: a function which is called on initialization of the editor. It receives an instance of a `ProseController`
+- `schema`: an prosemirror `Schema` instance which contain a series of nodes and marks that are supported in the editor
+- `plugins`: a list of prosemirror plugins which should be enabled in the editor
+- `widgets`: a list of editor widget configurations which determine which widgets should be displayed in the toolbar and sidebar
+- `nodeViews`: a function which expects an argument of type `ProseController` and returns a series of prosemirror `
+- `editorOptions`: an object containing different options for the editor
+- `toolbarOptions`: an object containing different options for the editor toolbar
+
+### The `rdfaEditorInit` property
+A function which is called on initialization of the editor. It receives an instance of a `ProseController`. This function is typically used to load documents into the editor.
+
+### The `schema` property
+A Prosemirror schema which should be used to parse and serialize the document. It contains both a series of nodes and marks. More information about Prosemirror schemas can be found on https://prosemirror.net/docs/guide/#schema. This packages already provides some nodes and marks which you can use to compose your own schema.
+
+### The `plugins` property
+A list of Prosemirror plugins which can modify the behaviour of the editor. Examples include keymaps to add shortcuts. More information can be found on https://prosemirror.net/docs/guide/#state.plugins.
+
+### The `nodeViews` property
+A function with the type `(controller: ProseController) => Record<string, NodeViewConstructor>`.
+
+It allows you to provide an object contain a series of `NodeViewConstructor` functions which replace the default nodeviews of specific node types. Nodeviews typically allow you to override the behaviour of the nodes inside the editor, e.g. to add custom elements. More information about nodeviews can be found on https://prosemirror.net/docs/ref/#view.NodeView. 
+
+### The `widgets` property
+A list of widget configurations (see the `WidgetSpec` type) which allow you to add widgets to the toolbar or sidebar of the editor.
+
+### The `editorOptions` property
+
+This object contains a series of `string:boolean` pairs. It may contain the following entries:
 - showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
-- showInsertButton: Show template insert button
 - showRdfa: Show RDFA in the editor
 - showRdfaHighlight: Show Rdfa highlights
 - showRdfaHover: Show Rdfa information on hover
@@ -67,11 +162,52 @@ You can pass basic options when you load the editor. Add a value of "true" to en
 - showSidebar: Show a right sidebar for plugins
 - showToolbarBottom: Display the toolbar at the bottom of the screen
 
-#### Toolbar Options
-
+### The `toolbarOptions` property
+This oject contains a series of `string:boolean` pairs.
+It may contain the following entries:
 - showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
 - showListButtons: Show list styling buttons (ordered list, unordered list)
 - showIndentButtons: Show indent buttons (indent, reverse indent)
+
+## The `ProseController` class
+Instances of the `ProseController` class can be used to control different aspects of the editor.
+
+It provides the following methods:
+- `toggleMark(name: string, includeEmbeddedView = false)`: method which allows to enable/disable a specific mark on the current selection. Expects the name of the mark to toggle and whether the command should be applied on an embedded editor view if such a view is active.
+- `focus(includeEmbeddedView = false)`: method which allows one to focus the main editor view (or an embedded view, if such a view is active).
+- `setHtmlContent(content: string)`: sets the content of the main editor.
+- `doCommand(command: Command, includeEmbeddedView = false)`: executes a Prosemirror command (https://prosemirror.net/docs/guide/#commands) on the main editor, or when active an embedded editor instance.
+- `checkCommand(command: Command, includeEmbeddedView = false)`: checks whether a Prosemirror command may be executed.
+- `isMarkActive(mark: MarkType, includeEmbeddedView = false)`: checks whether a mark is currently active.
+- `withTransaction(callback: (tr: Transaction) => Transaction | null, includeEmbeddedView = false)`: method which allows you to apply a transaction on the main view (or currently active embedded view). When you want to apply the transaction, the callback should return a transaction object.
+- `getState(includeEmbeddedView = false)`: used to request the current state of the main editor view (or an embedded view if active).
+- `getView`: used to request the main editor view (or an embedded view if active).
+- `setEmbeddedView(view: RdfaEditorView)`: activate a specific embedded view.
+- `clearEmbeddedView`: deactive the current embedded view.
+
+Additionally, a controller provides the following attributes:
+- `externalContextStore`: provides an instance of `ProseStore` describing the RDFa around the editor element.
+- `datastore`: provides an instance of `ProseStore` describing the RDFa inside the editor element.
+- `widgets`: provides a map of widgets which are currently enabled.
+- `schema`: provides the schema of the main editor.
+- `state`: provides the current state (see https://prosemirror.net/docs/guide/#state) of the main editor.
+- `view`: provides the main editor view (see https://prosemirror.net/docs/guide/#view).
+
+
+## Widgets
+Additional editor widgets can be defined using widget-specs.
+
+An object of the type `WidgetSpec` expects the following attributes:
+- `componentName`: the path of the widget Ember component.
+- `desiredLocation`: the location the widget should be displayed at.
+- (optional) `widgetArgs`: the arguments the widget should receive. These can be accessed in the component using `this.args.widgetArgs`.
+
+A list of these `WidgetSpecs` can be passed to the `widgets` argument of the editor component.
+
+## More examples
+More examples on how to integrate this editor in your application can be found in the dummy app of this addon or in the plugins repository of the LBLOD project (https://github.com/lblod/ember-rdfa-editor-lblod-plugins).
+
+You can discover additional examples on how to write Prosemirror schemas, plugins, node-specs etc. on https://prosemirror.net/examples/.
 
 ## Styling
 
@@ -166,114 +302,9 @@ This addon uses CSS variables to customise the styling. You can override these v
 
 See the [Contributing](CONTRIBUTING.md) guide for details.
 
-
-## Plugins
-
-### Adding a plugin to the editor
-You can easily find plugins developed for lblod by using the following [github search](https://github.com/search?q=org%3Alblod+ember-rdfa-editor+plugin+archived%3Afalse&type=Repositories&ref=advsearch&l=&l=).
-
-To enrich the editor functionality with rdfa-editor-plugins, execute the following steps:
-
-1.  Install the plugin as an Ember addon in your host app using `ember install [plugin-name]`
-2.  pass the required plugins by name to the editor
-
-```handlebars
-<Rdfa::RdfaEditor
-  @plugins={{array "besluit" "standard-template"}}
-  @rdfaEditorInit={{this.rdfaEditorInit}}
-  @editorOptions={{hash 
-    showToggleRdfaAnnotations="true" 
-    showInsertButton=null 
-    showRdfa="true" 
-    showRdfaHighlight="true" 
-    showRdfaHover="true" 
-    showPaper="true" 
-    showSidebar="true" 
-    showToolbarBottom=null
-  }}
-  @toolbarOptions={{hash 
-    showTextStyleButtons="true" 
-    showListButtons="true" 
-    showIndentButtons="true"
-  }}
-/>
-```
-
-### Developing a plugin
-
-A plugin is an Ember addon that provides at minimum a plugin class. An instance of this class is constructed by the editor and provided with a [controller](https://github.com/lblod/ember-rdfa-editor/blob/master/addon/model/controller.ts) in an (optionally async) initialize method.  An example can be found in the [standard-template plugin](https://github.com/lblod/ember-rdfa-editor-standard-template-plugin/blob/master/addon/standard-template-plugin.js). Make sure to register this class in the ember container using an initializer, for example:
-
-```js
-import StandardTemplatePlugin from '../standard-template-plugin';
-
-function pluginFactory(plugin) {
-  return {
-    create: (initializers) => {
-      const pluginInstance = new plugin();
-      Object.assign(pluginInstance, initializers);
-      return pluginInstance;
-    },
-  };
-}
-
-export function initialize(application) {
-  application.register(
-    'plugin:standard-template',
-    pluginFactory(StandardTemplatePlugin),
-    {
-      singleton: false,
-    }
-  );
-}
-
-export default {
-  initialize,
-};
-```
-
-If you want to test the addon with a dummy app, you could use the debug component to enable debugging features (this was previously done by copying dummy code from the editor). 
-
-To use the debug component create an rdfa-editor-with-debug.js file in `/tests/dummy/app/components` with the contents:
-
-```js
-export {default} from "@lblod/ember-rdfa-editor/components/rdfa/rdfa-editor-with-debug";
-```
-
-include the following dependencies as devDependencies in `package.json`:
-
-```
-@codemirror/basic-setup
-@codemirror/lang-html
-@codemirror/lang-xml
-xml-formatter
-```
-
-The debug component can then be added with `<RdfaEditorWithDebug>` to your dummy app templates. It should support the same variables as the `<Rdfa::RdfaEditor>`. Note that the debug component does not require a namespace prefix because you just imported it directly in the dummy app with the previous steps. The block content of the debug component is yielded at the top of the component, right before the debug features. E.g.:
-
-```handlebars
-<RdfaEditorWithDebug
-  @rdfaEditorInit={{this.rdfaEditorInit}}
-  @plugins={{this.plugins}}
-  @editorOptions={{hash
-    showToggleRdfaAnnotations="true"
-    showInsertButton=null
-    showRdfa="true"
-    showRdfaHighlight="true"
-    showRdfaHover="true"
-    showPaper="true"
-    showSidebar="true"
-    showToolbarBottom=null
-  }}
-  @toolbarOptions={{hash
-    showTextStyleButtons="true"
-    showListButtons="true"
-    showIndentButtons="true"
-  }}>
-  <h1>Plugin title - dummy app</h1>
-</RdfaEditorWithDebug>
-```
-
 # Credits
+
+This project makes use of the [ProseMirror toolkit](https://prosemirror.net/), created by [Marijn Haverbeke](https://github.com/marijnh).
 
 This project makes use of a modified version of [rdfa-streaming-parser](https://github.com/rubensworks/rdfa-streaming-parser.js),
 created by [Ruben Taelman](https://github.com/rubensworks) and distributed under the [MIT license](https://github.com/rubensworks/rdfa-streaming-parser.js/blob/master/LICENSE.txt).
