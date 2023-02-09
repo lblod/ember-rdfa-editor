@@ -81,7 +81,7 @@ class EmberNodeView implements NodeView {
                           selected=this.selected
                         }}
                           {{#unless this.atom}}
-                          <EditorComponents::Slot @contentDOM={{this.contentDOM}}/>
+                          <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
                           {{/unless}}
                         {{/component}}`;
     this.node = pNode;
