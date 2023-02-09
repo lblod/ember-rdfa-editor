@@ -184,6 +184,10 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
       margin-left: $au-unit-small;
     }
 
+    ol {
+      margin-left: $au-unit-small;
+    }
+
     // Stop indenting
     ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
       margin-left: 0;
@@ -199,6 +203,10 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     list-style-type: decimal;
 
     ol {
+      margin-left: $au-unit-small;
+    }
+
+    ul {
       margin-left: $au-unit-small;
     }
 
@@ -222,71 +230,71 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   ul > li {
-    > ul li {
+    > ul > li {
       list-style-type: circle;
     }
 
-    > ul ul li {
+    > ul ul > li {
       list-style-type: square;
     }
 
-    > ul ul ul li {
+    > ul ul ul > li {
       list-style-type: initial;
     }
 
-    > ul ul ul ul li {
+    > ul ul ul ul > li {
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul li {
+    > ul ul ul ul ul > li {
       list-style-type: square;
     }
 
-    > ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul > li {
       list-style-type: initial;
     }
 
-    > ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul > li {
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul > li {
       list-style-type: square;
     }
 
-    > ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul > li {
       list-style-type: initial;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: square;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: initial;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: square;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: initial;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: circle;
     }
 
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul li {
+    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
       list-style-type: square;
     }
   }
