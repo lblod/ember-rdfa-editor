@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.3] - 2023-02-09
+
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
@@ -1321,7 +1323,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.3...HEAD
+[2.1.3]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.1...v2.1.0
