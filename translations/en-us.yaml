@@ -30,6 +30,9 @@ ember-rdfa-editor:
   insert: Insert
   link:
     insert: Insert hyperlink
+    placeholder: 
+      text: Insert text
+      href: Insert URL
     open: Visit hyperlink
     ctrlClickDescription: Ctrl+click to visit hyperlink
     edit:

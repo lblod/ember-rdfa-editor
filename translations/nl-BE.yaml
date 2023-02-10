@@ -30,6 +30,9 @@ ember-rdfa-editor:
   insert: Invoegen
   link:
     insert: Snelkoppeling invoegen
+    placeholder: 
+      text: Voeg tekst in
+      href: Voeg URL in
     open: Snelkoppeling openen
     ctrlClickDescription: Ctrl+klik om deze snelkoppeling te openen.
     edit:

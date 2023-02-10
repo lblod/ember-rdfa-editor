@@ -18,7 +18,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     componentPath: 'ember-node/link',
     inline: true,
     group: 'inline',
-    content: 'text*',
+    content: '(text|placeholder)*',
     atom: true,
     draggable: false,
     attrs: {

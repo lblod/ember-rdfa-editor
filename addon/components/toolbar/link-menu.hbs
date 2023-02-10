@@ -1,0 +1,7 @@
+{{#unless @controller.inEmbeddedView}}
+  <Toolbar::Icon
+    @title={{t "ember-rdfa-editor.link.insert"}}
+    @icon='link'
+    {{on 'click' this.insert}}
+  />
+{{/unless}}
