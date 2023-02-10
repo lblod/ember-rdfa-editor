@@ -27,7 +27,6 @@ import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
-import MapUtils from '../utils/map-utils';
 import { createLogger, Logger } from '../utils/logging-utils';
 import { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
@@ -47,29 +46,12 @@ import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
 
-export type WidgetLocation =
-  | 'toolbarMiddle'
-  | 'toolbarRight'
-  | 'sidebar'
-  | 'insertSidebar';
-
-export interface WidgetSpec {
-  componentName: string;
-  desiredLocation: WidgetLocation;
-  widgetArgs?: unknown;
-}
-
-export type InternalWidgetSpec = WidgetSpec & {
-  controller: ProseController;
-};
-
 interface ProsemirrorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
   baseIRI: string;
   plugins?: Plugin[];
-  widgets?: WidgetSpec[];
   nodeViews?: (
     controller: ProseController
   ) => Record<string, NodeViewConstructor>;
@@ -109,7 +91,6 @@ export class RdfaEditorView extends EditorView {
 export default class Prosemirror {
   @tracked view: RdfaEditorView;
   @tracked embeddedView?: RdfaEditorView | null;
-  @tracked widgets: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
   @tracked showRdfaBlocks = false;
   owner: Owner;
   root: Element;
@@ -125,7 +106,6 @@ export default class Prosemirror {
     schema,
     baseIRI,
     plugins = [],
-    widgets = [],
     nodeViews = () => {
       return {};
     },
@@ -163,18 +143,6 @@ export default class Prosemirror {
         },
       },
     });
-    this.initializeEditorWidgets(widgets);
-  }
-
-  initializeEditorWidgets(widgets: WidgetSpec[]) {
-    const widgetMap: Map<WidgetLocation, InternalWidgetSpec[]> = new Map();
-    widgets.forEach((widgetSpec) => {
-      MapUtils.setOrPush(widgetMap, widgetSpec.desiredLocation, {
-        ...widgetSpec,
-        controller: new ProseController(this),
-      });
-    });
-    this.widgets = widgetMap;
   }
 
   setEmbeddedView(view?: RdfaEditorView) {
@@ -314,10 +282,6 @@ export class ProseController {
 
   get datastore(): ProseStore {
     return unwrap(datastoreKey.getState(this.pm.state)).datastore();
-  }
-
-  get widgets() {
-    return this.pm.widgets;
   }
 
   get schema(): Schema {
