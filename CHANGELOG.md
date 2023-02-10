@@ -19,11 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
 
-### Added
-
-- add unordered list feature
-  Adds the button and appropriate toggling behavior when combined with unordered lists
-  Also includes some needed css fixes
 
 ### Breaking
 - Rework how widgets are passed to the editor
@@ -32,9 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removal of `toolbarOptions` argument of the editor component
 - Removal of `widgets` argument of the editor component
 
-### Added
-- Addition of toolbar and sidebar components
-- Addition of seperate components representing the toolbar widgets
 
 
 ## [2.1.2] - 2023-02-07

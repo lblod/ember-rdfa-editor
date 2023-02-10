@@ -36,6 +36,7 @@ import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
 import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { code } from '../dummy-marks/code';
+import { linkHandler } from '@lblod/ember-rdfa-editor/plugins/links';
 
 const nodes = {
   doc,
@@ -77,7 +78,7 @@ const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   schema: Schema = dummySchema;
 
   @action
