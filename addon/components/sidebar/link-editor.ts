@@ -24,6 +24,11 @@ export default class LinkEditor extends Component<Args> {
     }
   }
 
+  @action
+  selectHref(event: InputEvent) {
+    (event.target as HTMLInputElement).select();
+  }
+
   get link() {
     if (this.controller) {
       const { selection } = this.controller.state;

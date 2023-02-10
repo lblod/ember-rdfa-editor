@@ -4,7 +4,7 @@
     <AuHeading @level="3" @skin="5">{{t "ember-rdfa-editor.link.edit.title"}}</AuHeading>
   </c.header>
   <c.content class="au-c-content--small">
-    <AuInput @value={{this.href}} @width="block"/>
+    <AuInput @value={{this.href}} @width="block" {{on 'focus' this.selectHref}}/>
   </c.content>
   <c.footer>
     <AuLinkExternal @icon="link-external" @skin="button-secondary" href={{this.href}}>{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
