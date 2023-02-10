@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
 
+
 ### Breaking
 - Rework how widgets are passed to the editor
 - Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
@@ -30,9 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removal of `toolbarOptions` argument of the editor component
 - Removal of `widgets` argument of the editor component
 
-### Added
-- Addition of toolbar and sidebar components
-- Addition of seperate components representing the toolbar widgets
 
 
 ## [2.1.2] - 2023-02-07
