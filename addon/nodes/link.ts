@@ -5,31 +5,46 @@ import {
   EmberNodeConfig,
 } from '../utils/ember-node';
 
-const emberNodeConfig: EmberNodeConfig = {
-  name: 'link',
-  componentPath: 'editor-components/link',
-  inline: true,
-  group: 'inline',
-  content: 'text*',
-  atom: true,
-  draggable: false,
-  attrs: {
-    ...rdfaAttrs,
-  },
-  parseDOM: [
-    {
-      tag: 'a',
-      getAttrs(dom: HTMLElement) {
-        return {
-          ...getRdfaAttrs(dom),
-        };
-      },
-    },
-  ],
-  toDOM(mark) {
-    return ['a', mark.attrs, 0];
-  },
+type LinkOptions = {
+  interactive: boolean;
 };
 
-export const link = createEmberNodeSpec(emberNodeConfig);
-export const linkView = createEmberNodeView(emberNodeConfig);
+const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
+  options
+) => {
+  const { interactive } = options;
+  return {
+    name: 'link',
+    componentPath: 'ember-node/link',
+    inline: true,
+    group: 'inline',
+    content: 'text*',
+    atom: true,
+    draggable: false,
+    attrs: {
+      ...rdfaAttrs,
+      interactive: {
+        default: interactive,
+      },
+    },
+    parseDOM: [
+      {
+        tag: 'a',
+        getAttrs(dom: HTMLElement) {
+          return {
+            ...getRdfaAttrs(dom),
+          };
+        },
+      },
+    ],
+    toDOM(mark) {
+      return ['a', mark.attrs, 0];
+    },
+  };
+};
+
+export const link = (options: LinkOptions) =>
+  createEmberNodeSpec(emberNodeConfig(options));
+
+export const linkView = (options: LinkOptions) =>
+  createEmberNodeView(emberNodeConfig(options));

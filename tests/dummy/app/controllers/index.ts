@@ -37,6 +37,10 @@ import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { code } from '../dummy-marks/code';
 import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
 
+const linkOptions = {
+  interactive: true,
+};
+
 const nodes = {
   doc,
   paragraph,
@@ -61,7 +65,7 @@ const nodes = {
   hard_break,
   invisible_rdfa,
   block_rdfa,
-  link,
+  link: link(linkOptions),
 };
 const marks = {
   inline_rdfa,
@@ -80,7 +84,7 @@ export default class IndexController extends Controller {
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
   @tracked nodeViews = (controller: ProseController) => {
     return {
-      link: linkView(controller),
+      link: linkView(linkOptions)(controller),
     };
   };
   schema: Schema = dummySchema;

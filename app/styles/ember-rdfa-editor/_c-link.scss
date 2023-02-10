@@ -1,16 +1,27 @@
 .say-link-tooltip {
   z-index: 3;
-  background-color: white;
+  background-color: var(--au-white);
 
   a, button {
-    padding: 5px;
+    padding: 0.5rem;
   }
 
-  input {
-    border-width: 0px 1px;
+  .au-c-input {
+    border-width: 0 0.1rem;
     border-radius: 0%;
   }
-  input:focus {
-    border-width: 0px 1px !important;
+
+  .au-c-input:focus {
+    border-width: 0 0 !important;
+  }
+}
+
+.say-link {
+  [contenteditable] {
+    outline: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+    cursor: text;
   }
 }

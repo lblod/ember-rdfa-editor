@@ -19,6 +19,11 @@
       <:top>
         <SampleToolbar @controller={{this.rdfaEditor}}/>
       </:top>
+      <:aside>
+        <Sidebar>
+            <Sidebar::LinkEditor @controller={{this.rdfaEditor}}/>
+        </Sidebar>
+      </:aside>
     </Editor>
   </:content>
 </DummyContainer>

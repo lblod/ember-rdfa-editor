@@ -38,7 +38,6 @@ import {
   RdfaEditorView,
   redo,
   Schema,
-  Selection,
   splitBlock,
   StepMap,
   Transaction,
@@ -140,17 +139,6 @@ export default class EmbeddedEditor extends Component<EmberNodeArgs> {
   }
 
   @action
-  onClick() {
-    // if (this.innerView && !this.innerView.hasFocus()) {
-    //   this.innerView.focus();
-    //   const tr = this.innerView.state.tr;
-    //   const selection = Selection.atEnd(tr.doc);
-    //   tr.setSelection(selection);
-    //   this.innerView.dispatch(tr);
-    // }
-  }
-
-  @action
   didInsertContentWrapper(target: Element) {
     this.contentWrapper = target;
     this.innerView = new RdfaEditorView(this.contentWrapper, {
@@ -203,13 +191,6 @@ export default class EmbeddedEditor extends Component<EmberNodeArgs> {
             this.args.controller.setEmbeddedView(this.innerView);
           }
         },
-        focusout: () => {
-          if (this.innerView) {
-            const tr = this.innerView.state.tr;
-            tr.setSelection(Selection.atEnd(this.innerView.state.doc));
-            this.innerView.dispatch(tr);
-          }
-        },
       },
     });
   }
@@ -240,8 +221,6 @@ export default class EmbeddedEditor extends Component<EmberNodeArgs> {
     if (this.innerView) {
       const { state, transactions } = this.innerView.state.applyTransaction(tr);
       this.innerView.updateState(state);
-      console.log('from outside');
-      console.log(tr.getMeta('fromOutside'));
       if (tr.getMeta('fromOutside') !== this.editorId) {
         const outerTr = this.outerView.state.tr,
           offsetMap = StepMap.offset(this.pos + 1);

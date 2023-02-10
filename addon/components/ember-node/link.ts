@@ -11,6 +11,26 @@ export default class Link extends Component<EmberNodeArgs> {
     this.args.updateAttribute('href', value);
   }
 
+  get controller() {
+    return this.args.controller;
+  }
+
+  get node() {
+    return this.args.node;
+  }
+
+  get pos() {
+    return this.args.getPos();
+  }
+
+  get selected() {
+    return this.args.selected;
+  }
+
+  get interactive() {
+    return this.node.attrs.interactive as boolean;
+  }
+
   @action
   selectHref(event: InputEvent) {
     (event.target as HTMLInputElement).select();
@@ -23,17 +43,13 @@ export default class Link extends Component<EmberNodeArgs> {
     }
   }
 
-  get tooltipOpen() {
-    return this.args.selected;
-  }
-
   @action
   remove() {
-    this.args.controller.withTransaction((tr) => {
-      return tr.insertText(
-        this.href,
-        this.args.getPos(),
-        this.args.getPos() + this.args.node.nodeSize
+    this.controller.withTransaction((tr) => {
+      return tr.replaceWith(
+        this.pos,
+        this.pos + this.node.nodeSize,
+        this.node.content
       );
     });
   }

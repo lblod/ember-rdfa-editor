@@ -28,3 +28,11 @@ ember-rdfa-editor:
 
   show-annotations: Toon annotaties
   insert: Invoegen
+  link:
+    insert: Snelkoppeling invoegen
+    open: Snelkoppeling openen
+    ctrlClickDescription: Ctrl+klik om deze snelkoppeling te openen.
+    edit:
+      title: Snelkoppeling wijzigen
+      uncouple: Snelkoppeling loskoppelen
+

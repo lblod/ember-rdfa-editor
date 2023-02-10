@@ -1,10 +1,14 @@
 {{#if this.link}}
-<AuCard @flex={{true}} @divided={{true}} @expandable={{false}} @shadow={{true}} @size="flush" as |c|>
-  <c.header class="au-u-hidden-visually">
-    <AuHeading @level="3" @skin="6">Edit link</AuHeading>
+<AuCard @flex={{true}} @expandable={{false}} @shadow={{true}} @size="small" as |c|>
+  <c.header>
+    <AuHeading @level="3" @skin="5">{{t "ember-rdfa-editor.link.edit.title"}}</AuHeading>
   </c.header>
   <c.content class="au-c-content--small">
-    <AuInput @value={{this.href}}/>
+    <AuInput @value={{this.href}} @width="block"/>
   </c.content>
+  <c.footer>
+    <AuLinkExternal @icon="link-external" @skin="button-secondary" href={{this.href}}>{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
+    <AuButton @icon="link-broken" @alert={{true}} @skin="secondary" {{on 'click' this.remove}}>{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>
+  </c.footer>
 </AuCard>
 {{/if}}

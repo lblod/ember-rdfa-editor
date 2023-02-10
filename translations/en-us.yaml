@@ -28,3 +28,10 @@ ember-rdfa-editor:
 
   show-annotations: Show annotations
   insert: Insert
+  link:
+    insert: Insert hyperlink
+    open: Visit hyperlink
+    ctrlClickDescription: Ctrl+click to visit hyperlink
+    edit:
+      title: Update hyperlink
+      uncouple: Detach hyperlink
