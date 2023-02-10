@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- addition of an attribute generation plugin which auto-generates specific missing attributes.
+
 ## [2.1.0] - 2023-02-06
 
 ### Fixed
