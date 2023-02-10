@@ -70,16 +70,16 @@ const del = chainCommands(
 /// * **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-a** to `selectAll`
 export const pcBaseKeymap: Keymap = (schema: Schema) => ({
-  'Ctrl-z': undo,
-  'Ctrl-Z': undo,
-  'Ctrl-y': redo,
-  'Ctrl-Y': redo,
-  'Ctrl-b': toggleMarkAddFirst(schema.marks['strong']),
-  'Ctrl-B': toggleMarkAddFirst(schema.marks['strong']),
-  'Ctrl-i': toggleMarkAddFirst(schema.marks['em']),
-  'Ctrl-I': toggleMarkAddFirst(schema.marks['em']),
-  'Ctrl-u': toggleMarkAddFirst(schema.marks['underline']),
-  'Ctrl-U': toggleMarkAddFirst(schema.marks['underline']),
+  'Mod-z': undo,
+  'Mod-Z': undo,
+  'Mod-y': redo,
+  'Mod-Y': redo,
+  'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
+  'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
+  'Mod-i': toggleMarkAddFirst(schema.marks['em']),
+  'Mod-I': toggleMarkAddFirst(schema.marks['em']),
+  'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
+  'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
   Enter: chainCommands(
     splitListItem(schema.nodes.list_item),
     newlineInCode,
