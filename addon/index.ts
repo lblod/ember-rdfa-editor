@@ -4,10 +4,8 @@ import { Decoration } from 'prosemirror-view';
 export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 export {
-  WidgetSpec,
   ProseController,
   default as ProseMirror,
-  WidgetLocation,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 export * from 'prosemirror-model';

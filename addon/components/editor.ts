@@ -11,7 +11,6 @@ import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import Prosemirror, {
   ProseController,
-  WidgetSpec,
 } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
@@ -59,7 +58,6 @@ interface RdfaEditorArgs {
   baseIRI?: string;
   plugins?: Plugin[];
   stealFocus?: boolean;
-  widgets?: WidgetSpec[];
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
@@ -134,7 +132,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       baseIRI: this.baseIRI,
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
-      widgets: this.args.widgets,
     });
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);
