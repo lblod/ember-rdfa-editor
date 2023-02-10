@@ -6,7 +6,10 @@ let BLOCK_SELECTOR = '';
 NON_BLOCK_NODES.forEach(
   (tag) => (BLOCK_SELECTOR = `${BLOCK_SELECTOR}${tag}, `)
 );
-BLOCK_SELECTOR = BLOCK_SELECTOR.substring(0, BLOCK_SELECTOR.length - 2);
+BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR.substring(
+  0,
+  BLOCK_SELECTOR.length - 2
+)})`;
 export const paragraph: NodeSpec = {
   content: 'inline*',
   group: 'block',
