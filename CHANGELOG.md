@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-view` from 1.29.2 to 1.30.1
 - Bumps `sinon` from 14.0.2 to 15.0.1
 
+### Fixed
+ - Modify the base keymaps to better support macos users
+
 ## [2.1.3] - 2023-02-09
 
 ### Fixed
