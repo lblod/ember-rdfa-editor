@@ -49,6 +49,10 @@ Now that all tables are editable, we don't need this anymore.
 
 - Preserve whitespace when parsing an html document
 
+### Added
+
+- addition of an attribute generation plugin which auto-generates specific missing attributes.
+
 ## [2.1.0] - 2023-02-06
 
 ### Fixed
