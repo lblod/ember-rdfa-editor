@@ -24,12 +24,10 @@
 
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import {
   chainCommands,
   createParagraphNear,
-  DOMSerializer,
   EditorState,
   keymap,
   liftEmptyBlock,
@@ -69,7 +67,9 @@ import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 
-export default class EmbeddedEditor extends Component<EmberNodeArgs> {
+type Args = EmberNodeArgs & { placeholder: string };
+
+export default class EmbeddedEditor extends Component<Args> {
   @service declare intl: IntlService;
   innerView: RdfaEditorView | null = null;
 
@@ -87,18 +87,6 @@ export default class EmbeddedEditor extends Component<EmberNodeArgs> {
 
   get pos() {
     return this.args.getPos();
-  }
-
-  get htmlContent() {
-    const fragment = DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.node.content,
-      {
-        document,
-      }
-    );
-    const div = document.createElement('div');
-    div.appendChild(fragment);
-    return htmlSafe(div.innerHTML);
   }
 
   get schema() {
@@ -171,6 +159,9 @@ export default class EmbeddedEditor extends Component<EmberNodeArgs> {
         ],
         schema: this.schema,
       }),
+      attributes: {
+        'data-placeholder': this.args.placeholder,
+      },
       dispatchTransaction: this.dispatchInner,
       handleDOMEvents: {
         mousedown: () => {

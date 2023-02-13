@@ -36,58 +36,66 @@ import applyDevTools from 'prosemirror-dev-tools';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { code } from '../dummy-marks/code';
 import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
-
-const linkOptions = {
-  interactive: true,
-};
-
-const nodes = {
-  doc,
-  paragraph,
-
-  repaired_block,
-
-  list_item,
-  ordered_list,
-  bullet_list,
-  placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-  heading,
-  blockquote,
-
-  horizontal_rule,
-  code_block,
-
-  text,
-
-  image,
-
-  hard_break,
-  invisible_rdfa,
-  block_rdfa,
-  link: link(linkOptions),
-};
-const marks = {
-  inline_rdfa,
-  code,
-  em,
-  strong,
-  underline,
-  strikethrough,
-  subscript,
-  superscript,
-};
-const dummySchema = new Schema({ nodes, marks });
+import { service } from '@ember/service';
+import IntlService from 'ember-intl/services/intl';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
+  @service declare intl: IntlService;
+
+  get linkOptions() {
+    return {
+      interactive: true,
+    };
+  }
+
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
   @tracked nodeViews = (controller: ProseController) => {
     return {
-      link: linkView(linkOptions)(controller),
+      link: linkView(this.linkOptions)(controller),
     };
   };
-  schema: Schema = dummySchema;
+
+  get schema() {
+    return new Schema({
+      nodes: {
+        doc,
+        paragraph,
+
+        repaired_block,
+
+        list_item,
+        ordered_list,
+        bullet_list,
+        placeholder,
+        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+        heading,
+        blockquote,
+
+        horizontal_rule,
+        code_block,
+
+        text,
+
+        image,
+
+        hard_break,
+        invisible_rdfa,
+        block_rdfa,
+        link: link(this.linkOptions),
+      },
+      marks: {
+        inline_rdfa,
+        code,
+        em,
+        strong,
+        underline,
+        strikethrough,
+        subscript,
+        superscript,
+      },
+    });
+  }
 
   @action
   rdfaEditorInit(rdfaEditor: ProseController) {

@@ -18,7 +18,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     componentPath: 'ember-node/link',
     inline: true,
     group: 'inline',
-    content: '(text|placeholder)*',
+    content: 'text*',
     atom: true,
     draggable: false,
     attrs: {
@@ -37,8 +37,10 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
         },
       },
     ],
-    toDOM(mark) {
-      return ['a', mark.attrs, 0];
+    toDOM(node) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { interactive, placeholder, ...attrs } = node.attrs;
+      return ['a', attrs, 0];
     },
   };
 };

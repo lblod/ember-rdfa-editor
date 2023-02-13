@@ -16,6 +16,8 @@
   }
 }
 
+
+
 .say-link {
   [contenteditable] {
     outline: none;
@@ -23,5 +25,6 @@
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
+    min-width: 10rem;
   }
 }
