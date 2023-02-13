@@ -17,6 +17,6 @@ export default class CodeMarkToolbarButton extends Component<Args> {
 
   @action
   toggleCode() {
-    this.controller.toggleMark('code');
+    this.controller.toggleMark(this.controller.schema.marks.code);
   }
 }

@@ -18,6 +18,6 @@ export default class SuperscriptButton extends Component<Args> {
 
   @action
   toggle() {
-    this.controller.toggleMark('superscript', true);
+    this.controller.toggleMark(this.controller.schema.marks.superscript, true);
   }
 }

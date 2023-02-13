@@ -18,6 +18,6 @@ export default class SubscriptButton extends Component<Args> {
 
   @action
   toggle() {
-    this.controller.toggleMark('subscript', true);
+    this.controller.toggleMark(this.controller.schema.marks.subscript, true);
   }
 }

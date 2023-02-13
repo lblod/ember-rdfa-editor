@@ -21,6 +21,10 @@ import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export type PluginConfig =
   | string
   | {
@@ -28,6 +32,10 @@ export type PluginConfig =
       options: unknown;
     };
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export interface ResolvedPluginConfig {
   instance: RdfaEditorPlugin;
   options: unknown;

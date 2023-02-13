@@ -231,12 +231,18 @@ export class ProseController {
     return new ProseController(this.pm);
   }
 
-  toggleMark(name: string, includeEmbeddedView = false) {
+  toggleMark(type: MarkType, includeEmbeddedView?: boolean): void;
+
+  /**
+   *
+   * @deprecated
+   */
+  toggleMark(name: string, includeEmbeddedView?: boolean): void;
+
+  toggleMark(type: string | MarkType, includeEmbeddedView = false) {
     this.focus(includeEmbeddedView);
-    this.doCommand(
-      toggleMarkAddFirst(this.schema.marks[name]),
-      includeEmbeddedView
-    );
+    const markType = typeof type === 'string' ? this.schema.marks[type] : type;
+    this.doCommand(toggleMarkAddFirst(markType), includeEmbeddedView);
   }
 
   focus(includeEmbeddedView = false) {
@@ -280,6 +286,9 @@ export class ProseController {
     return command(state);
   }
 
+  /**
+   * @deprecated This method is obsolete and will be removed in version 3.0. Use doCommand instead.
+   */
   checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
     const view = this.pm.getView(includeEmbeddedView);
     if (command(view.state)) {
@@ -323,10 +332,16 @@ export class ProseController {
     return this.pm.state.schema;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getState method instead.
+   */
   get state(): EditorState {
     return this.pm.state;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getView method instead.
+   */
   get view(): EditorView {
     return this.pm.view;
   }

@@ -67,6 +67,13 @@ Now that all tables are editable, we don't need this anymore.
 ### Added
 - A deprecation eslint rule using the eslint-plugin-deprecation package.
 
+### Deprecated
+- Usage of `ProseController.view`, use `ProseController.getView` instead.
+- Usage of `ProseController.state`, use `ProseController.getState` instead.
+- Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
+- Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+- Usage of the string-based version of `toggleMark`, use the `MarkType`-based version instead.
+
 ## [2.0.1] - 2023-02-02
 
 ### Fixed
