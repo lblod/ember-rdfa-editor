@@ -3,13 +3,15 @@ import { isNone } from '@lblod/ember-rdfa-editor/utils/option';
 import { MarkType, NodeType } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
-type PluginOptions = {
+export type DefaultAttrGenPuginOptions = {
   attribute: string;
   generator: () => unknown;
   types?: Set<NodeType | MarkType>;
 }[];
 
-export function defaultAttributeValueGeneration(options: PluginOptions) {
+export function defaultAttributeValueGeneration(
+  options: DefaultAttrGenPuginOptions
+) {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
       if (transactions.some((transaction) => transaction.docChanged)) {

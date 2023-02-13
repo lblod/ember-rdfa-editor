@@ -22,6 +22,7 @@ import {
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
+import { v4 as uuidv4 } from 'uuid';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
@@ -46,6 +47,10 @@ import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
+import {
+  DefaultAttrGenPuginOptions,
+  defaultAttributeValueGeneration,
+} from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -70,6 +75,7 @@ interface ProsemirrorArgs {
   baseIRI: string;
   plugins?: Plugin[];
   widgets?: WidgetSpec[];
+  generateDefaultAttributes?: DefaultAttrGenPuginOptions;
   nodeViews?: (
     controller: ProseController
   ) => Record<string, NodeViewConstructor>;
@@ -128,6 +134,7 @@ export default class Prosemirror {
     nodeViews = () => {
       return {};
     },
+    generateDefaultAttributes = [],
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -146,6 +153,15 @@ export default class Prosemirror {
         keymap(baseKeymap(schema)),
         history(),
         recreateUuidsOnPaste,
+        defaultAttributeValueGeneration([
+          {
+            attribute: '__rdfaId',
+            generator() {
+              return uuidv4();
+            },
+          },
+          ...generateDefaultAttributes,
+        ]),
       ],
     });
     this.view = new RdfaEditorView(target, {
