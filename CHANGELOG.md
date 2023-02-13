@@ -63,6 +63,9 @@ Now that all tables are editable, we don't need this anymore.
 
 - Update and modernize README.
 
+### Added
+- A deprecation eslint rule using the eslint-plugin-deprecation package.
+
 ## [2.0.1] - 2023-02-02
 
 ### Fixed
