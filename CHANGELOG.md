@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Handle ctrl click on links
+- Add ordered list feature.
+  Adds the button and appropriate toggling behavior when combined with unordered lists
+  Also includes some needed css fixes
+- Add eslint-plugin-deprecation package to check for use of deprecated code.
+
+### Dependencies
+- Bumps `typescript` from 4.9.3 to 4.9.5
+- Bumps `eslint` from 8.29.0 to 8.33.0
+- Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
+- Bumps `prosemirror-view` from 1.29.2 to 1.30.1
+- Bumps `sinon` from 14.0.2 to 15.0.1
+
+### Fixed
+ - Modify the base keymaps to better support macos users
+
+## [2.1.3] - 2023-02-09
+
+### Fixed
+
+- fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
+
+
+## [2.1.2] - 2023-02-07
+
+### Fixed
+
+- skip paragraph parsing when they contain (erroneous) block content
+
+Some existing documents erroneously contain block elements inside `p` tags, most notably tables.
+These got ignored before and parsed as flat text. Now we detect this case and skip the paragraph.
+
+- remove lump-node css
+
+Now that all tables are editable, we don't need this anymore.
+
+## [2.1.1] - 2023-02-07
+
+### Fixed
+
+- Preserve whitespace when parsing an html document
 
 ### Added
 
@@ -21,6 +63,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add canSpec property to nodespecs which is checked before splitting the node with enter
+
+### Changed
+
+- Update and modernize README.
+
+### Added
+- A deprecation eslint rule using the eslint-plugin-deprecation package.
+
+### Deprecated
+- Usage of `ProseController.view`, use `ProseController.getView` instead.
+- Usage of `ProseController.state`, use `ProseController.getState` instead.
+- Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
+- Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+- Usage of the string-based version of `toggleMark`, use the `MarkType`-based version instead.
 
 ## [2.0.1] - 2023-02-02
 
@@ -1302,7 +1358,10 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.3...HEAD
+[2.1.3]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...v2.1.3
+[2.1.2]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v1.1.0...v2.0.0

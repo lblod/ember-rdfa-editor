@@ -21,6 +21,10 @@ import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export type PluginConfig =
   | string
   | {
@@ -28,9 +32,27 @@ export type PluginConfig =
       options: unknown;
     };
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export interface ResolvedPluginConfig {
   instance: RdfaEditorPlugin;
   options: unknown;
+}
+
+export interface ToolbarOptions {
+  showTextStyleButtons?: boolean;
+  showListButtons?: boolean;
+  showOrderedListButton?: boolean;
+  showIndentButtons: boolean;
+}
+
+export interface EditorOptions {
+  showRdfaHover?: boolean;
+  showPaper?: boolean;
+  showSidebar: boolean;
+  showToolbarBottom: boolean;
 }
 
 interface RdfaEditorArgs {
@@ -51,6 +73,8 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
+  toolbarOptions?: ToolbarOptions;
+  editorOptions?: EditorOptions;
 }
 
 /**
@@ -101,6 +125,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
+  }
+
+  get showOrderedListButton(): boolean {
+    return this.args.toolbarOptions?.showOrderedListButton ?? false;
   }
 
   /**

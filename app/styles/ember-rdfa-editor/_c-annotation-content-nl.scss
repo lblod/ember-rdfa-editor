@@ -263,17 +263,6 @@
     content: 'Realisatie';
   }
 
-  // Imported HTML block
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]::before,
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"]:hover::before
-  {
-    content: 'Geïmporteerde data – niet aanpasbaar';
-  }
-
-  [property="http://lblod.data.gift/vocabularies/editor/isLumpNode"][data-flagged-remove="complete"]:before
-  {
-    content: 'Wil je deze blok verwijderen? Druk op backspace om te bevestigen.';
-  }
 
   [data-flagged-remove='complete'][data-editor-position-level='0'],
   [data-flagged-remove='complete'] {

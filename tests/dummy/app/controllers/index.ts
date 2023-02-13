@@ -50,6 +50,7 @@ import {
   superscript,
   superscriptWidget,
 } from '@lblod/ember-rdfa-editor/plugins/superscript';
+import { linkHandler } from '@lblod/ember-rdfa-editor/plugins/links';
 
 const nodes = {
   doc,
@@ -91,7 +92,7 @@ const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   @tracked widgets: WidgetSpec[] = [
     tableMenu,
     headingsMenu,
@@ -105,7 +106,7 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
-    applyDevTools(rdfaEditor.view);
+    applyDevTools(rdfaEditor.getView());
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

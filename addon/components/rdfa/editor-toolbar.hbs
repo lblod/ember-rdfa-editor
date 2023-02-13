@@ -40,28 +40,24 @@
         />
       {{/if}}
     </div>
-    {{#if
-      (and
-        @showListButtons (or this.canInsertList this.canUnindent this.canIndent)
-      )
-    }}
+    {{#if @showListButtons }}
       <div class='say-toolbar__group'>
-        {{#if (and @showListButtons this.canInsertList)}}
 
+        {{#if this.canToggleUL}}
           <Rdfa::ToolbarIcon
-            @active={{this.isInList}}
+            @active={{this.isInUL}}
             @title={{t 'ember-rdfa-editor.unordered-list'}}
             @icon='unordered-list'
             {{on 'click' this.toggleUnorderedList}}
           />
-          {{!--
-  <button type="button" class="say-toolbar__button {{if this.isInList "is-active"}}"  {{on "click" this.toggleOrderedList}} data-test-button-id="ordered-list" title={{t 'ember-rdfa-editor.ordered-list'}}>
-     <AuIcon @icon="ordered-list" @ariaHidden={{true}} @size="large" />
-    <span class="au-u-hidden-visually">
-      Ordered list
-    </span>
-  </button>
---}}
+        {{/if}}
+        {{#if (and @showOrderedListButton this.canToggleOL)}}
+          <Rdfa::ToolbarIcon
+            @active={{this.isInOL}}
+            @title={{t 'ember-rdfa-editor.ordered-list'}}
+            @icon="ordered-list"
+            {{on "click" this.toggleOrderedList}}
+          />
         {{/if}}
         {{#if @showIndentButtons}}
           {{#if this.canUnindent}}
