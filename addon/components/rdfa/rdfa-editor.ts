@@ -41,6 +41,20 @@ export interface ResolvedPluginConfig {
   options: unknown;
 }
 
+export interface ToolbarOptions {
+  showTextStyleButtons?: boolean;
+  showListButtons?: boolean;
+  showOrderedListButton?: boolean;
+  showIndentButtons: boolean;
+}
+
+export interface EditorOptions {
+  showRdfaHover?: boolean;
+  showPaper?: boolean;
+  showSidebar: boolean;
+  showToolbarBottom: boolean;
+}
+
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -59,6 +73,8 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
+  toolbarOptions?: ToolbarOptions;
+  editorOptions?: EditorOptions;
 }
 
 /**
@@ -109,6 +125,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
+  }
+
+  get showOrderedListButton(): boolean {
+    return this.args.toolbarOptions?.showOrderedListButton ?? false;
   }
 
   /**

@@ -50,6 +50,7 @@ import {
   superscript,
   superscriptWidget,
 } from '@lblod/ember-rdfa-editor/plugins/superscript';
+import { linkHandler } from '@lblod/ember-rdfa-editor/plugins/links';
 
 const nodes = {
   doc,
@@ -91,7 +92,7 @@ const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: ProseController;
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   @tracked widgets: WidgetSpec[] = [
     tableMenu,
     headingsMenu,

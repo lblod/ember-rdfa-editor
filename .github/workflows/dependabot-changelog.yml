@@ -19,9 +19,10 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.DEPENDABOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Update the changelog
         uses: abeforgit/dependabot-changelog-helper@6ac73689e40c543f6b802f4c72b9c4f66053adf5
@@ -30,13 +31,11 @@ jobs:
           changelogPath: './CHANGELOG.md'
 
       - name: Commit the changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: EndBug/add-and-commit@v9
         with:
-          commit_message: "Update changelog"
-          branch: ${{ github.head_ref }}
-          commit_user_name: dependabot[bot]
-          commit_user_email: support@github.com
-          commit_options: '--signoff'
+          message: "Update changelog"
+          pull: '--rebase --autostash ...'
+          commit: '--signoff'
 
 
  
