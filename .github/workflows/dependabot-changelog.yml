@@ -33,7 +33,7 @@ jobs:
       - name: Commit the changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: "Update changelog"
+          message: "Update changelog [CI SKIP]"
           pull: '--rebase --autostash'
           commit: '--signoff'
 
