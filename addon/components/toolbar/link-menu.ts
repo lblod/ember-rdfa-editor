@@ -1,23 +1,31 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
+import { wrapSelection } from '@lblod/ember-rdfa-editor/commands/wrap-selection';
 import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 
 type Args = {
-  controller?: ProseController;
+  controller: ProseController;
 };
 export default class LinkMenu extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
 
+  get schema() {
+    return this.controller.schema;
+  }
+
+  get canInsert() {
+    return (
+      !this.controller.inEmbeddedView &&
+      this.controller.checkCommand(wrapSelection(this.schema.nodes.link))
+    );
+  }
+
   @action
   insert() {
-    if (this.controller && !this.controller.inEmbeddedView) {
-      const { selection, schema } = this.controller.getState();
-      this.controller.withTransaction((tr) => {
-        const pos = selection.to;
-        return tr.insert(pos, schema.nodes.link.create({ href: '' }));
-      });
+    if (!this.controller.inEmbeddedView) {
+      this.controller.doCommand(wrapSelection(this.schema.nodes.link));
       this.controller.focus();
     }
   }
