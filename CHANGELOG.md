@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
+- Add eslint-plugin-deprecation package to check for use of deprecated code.
 
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
@@ -49,6 +50,10 @@ Now that all tables are editable, we don't need this anymore.
 
 - Preserve whitespace when parsing an html document
 
+### Added
+
+- addition of an attribute generation plugin which auto-generates specific missing attributes.
+
 ## [2.1.0] - 2023-02-06
 
 ### Fixed
@@ -63,6 +68,16 @@ Now that all tables are editable, we don't need this anymore.
 ### Changed
 
 - Update and modernize README.
+
+### Added
+- A deprecation eslint rule using the eslint-plugin-deprecation package.
+
+### Deprecated
+- Usage of `ProseController.view`, use `ProseController.getView` instead.
+- Usage of `ProseController.state`, use `ProseController.getState` instead.
+- Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
+- Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+- Usage of the string-based version of `toggleMark`, use the `MarkType`-based version instead.
 
 ## [2.0.1] - 2023-02-02
 

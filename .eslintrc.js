@@ -10,7 +10,7 @@ module.exports = {
       legacyDecorators: true,
     },
   },
-  plugins: ['ember', '@typescript-eslint'],
+  plugins: ['ember', '@typescript-eslint', 'deprecation'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended',
@@ -65,6 +65,7 @@ module.exports = {
         project: ['./tsconfig.json'],
       },
       rules: {
+        'deprecation/deprecation': 'warn',
         'ember/no-jquery': 'error',
         semi: 'off',
         '@typescript-eslint/no-unused-vars': [
