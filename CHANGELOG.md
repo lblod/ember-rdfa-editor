@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ordered list feature.
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
+- Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 
 ### Dependencies

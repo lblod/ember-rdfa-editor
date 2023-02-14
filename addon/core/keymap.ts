@@ -1,5 +1,9 @@
 import { redo, undo } from 'prosemirror-history';
-import { splitListItem } from 'prosemirror-schema-list';
+import {
+  liftListItem,
+  sinkListItem,
+  splitListItem,
+} from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
@@ -96,6 +100,8 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
   Delete: del,
   'Mod-Delete': del,
   'Mod-a': selectAll,
+  Tab: sinkListItem(schema.nodes.list_item),
+  'Shift-Tab': liftListItem(schema.nodes.list_item),
 });
 
 /// A copy of `pcBaseKeymap` that also binds **Ctrl-h** like Backspace,
