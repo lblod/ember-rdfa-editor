@@ -50,7 +50,6 @@ export interface ToolbarOptions {
 export interface EditorOptions {
   showRdfaHover?: boolean;
   showPaper?: boolean;
-  showSidebar: boolean;
   showToolbarBottom: boolean;
 }
 
