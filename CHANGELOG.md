@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 
+### Changed
+- Update padding of lists so they are on the same level as paragraphs.
+
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `eslint` from 8.29.0 to 8.33.0
