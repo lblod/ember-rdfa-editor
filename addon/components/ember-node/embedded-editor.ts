@@ -36,6 +36,7 @@ import {
   RdfaEditorView,
   redo,
   Schema,
+  Selection,
   splitBlock,
   StepMap,
   Transaction,
@@ -174,6 +175,18 @@ export default class EmbeddedEditor extends Component<Args> {
         },
       },
     });
+  }
+
+  @action
+  onSelected() {
+    if (this.args.selected && this.innerView) {
+      this.innerView.dispatch(
+        this.innerView.state.tr.setSelection(
+          Selection.atEnd(this.innerView.state.doc)
+        )
+      );
+      this.innerView.focus();
+    }
   }
 
   @action
