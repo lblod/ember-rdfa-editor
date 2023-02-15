@@ -194,8 +194,8 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
   }
 
-  ul.bullet-list {
-    padding-left: 0;
+  ul, ol {
+    padding-left: 1.25rem;
   }
 
   ol,
@@ -214,10 +214,6 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
       margin-left: 0;
     }
-  }
-
-  ol.numbered-list {
-    padding-left: 0;
   }
 
   ul.article-list {
