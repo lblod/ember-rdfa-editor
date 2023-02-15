@@ -123,7 +123,7 @@ export class Util<N> {
     if (xmlnsPrefixMappings) {
       for (const attribute in attributes) {
         if (attribute.startsWith('xmlns')) {
-          additionalPrefixes[attribute.substr(6)] = attributes[attribute];
+          additionalPrefixes[attribute.substring(6)] = attributes[attribute];
         }
       }
     }
@@ -174,8 +174,8 @@ export class Util<N> {
     let prefix: string | null = null;
     let local = '';
     if (colonIndex >= 0) {
-      prefix = term.substr(0, colonIndex);
-      local = term.substr(colonIndex + 1);
+      prefix = term.substring(0, colonIndex);
+      local = term.substring(colonIndex + 1);
     }
 
     // Expand default namespace
@@ -231,7 +231,7 @@ export class Util<N> {
     let href: string = baseIriValue;
     const fragmentIndex = href.indexOf('#');
     if (fragmentIndex >= 0) {
-      href = href.substr(0, fragmentIndex);
+      href = href.substring(0, fragmentIndex);
     }
     return this.dataFactory.namedNode(resolve(href, this.baseIRI.value), node);
   }
@@ -366,7 +366,7 @@ export class Util<N> {
 
     // Handle strict CURIEs
     if (term.length > 0 && term[0] === '[' && term[term.length - 1] === ']') {
-      term = term.substr(1, term.length - 2);
+      term = term.substring(1, term.length - 1);
 
       // Strict CURIEs MUST have a prefix separator
       if (term.indexOf(':') < 0) {
@@ -378,7 +378,7 @@ export class Util<N> {
     if (term.startsWith('_:')) {
       return allowBlankNode
         ? this.dataFactory.blankNode(
-            term.substr(2) || 'b_identity',
+            term.substring(2) || 'b_identity',
             activeTag.node
           )
         : null;

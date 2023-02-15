@@ -18,7 +18,12 @@ import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
+import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export type PluginConfig =
   | string
   | {
@@ -26,6 +31,10 @@ export type PluginConfig =
       options: unknown;
     };
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export interface ResolvedPluginConfig {
   instance: RdfaEditorPlugin;
   options: unknown;
@@ -61,6 +70,7 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
+  generateDefaultAttributes?: DefaultAttrGenPuginOptions;
   toolbarOptions?: ToolbarOptions;
   editorOptions?: EditorOptions;
 }
