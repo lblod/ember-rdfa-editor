@@ -60,7 +60,7 @@ interface ProsemirrorArgs {
   nodeViews?: (
     controller: ProseController
   ) => Record<string, NodeViewConstructor>;
-  devtools?: boolean;
+  defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
 
 export class RdfaEditorView extends EditorView {
@@ -114,7 +114,7 @@ export default class Prosemirror {
     nodeViews = () => {
       return {};
     },
-    generateDefaultAttributes = [],
+    defaultAttrGenerators = [],
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -140,7 +140,7 @@ export default class Prosemirror {
               return uuidv4();
             },
           },
-          ...generateDefaultAttributes,
+          ...defaultAttrGenerators,
         ]),
       ],
     });

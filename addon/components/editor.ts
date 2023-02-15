@@ -1,13 +1,10 @@
 import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-
-import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import Prosemirror, {
   ProseController,
@@ -69,9 +66,9 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
-  generateDefaultAttributes?: DefaultAttrGenPuginOptions;
   toolbarOptions?: ToolbarOptions;
   editorOptions?: EditorOptions;
+  defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
 
 /**
@@ -94,8 +91,6 @@ interface RdfaEditorArgs {
  * @extends Component
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
-  @service declare intl: IntlService;
-
   @tracked controller: ProseController | null = null;
 
   @tracked editorLoading = true;
@@ -104,8 +99,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
-    const userLocale = navigator.language || navigator.languages[0];
-    this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
   }
 
@@ -141,6 +134,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       baseIRI: this.baseIRI,
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
+      defaultAttrGenerators: this.args.defaultAttrGenerators,
     });
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);

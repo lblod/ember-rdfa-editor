@@ -1,10 +1,10 @@
 <Toolbar>
-  <:left>
-    <Toolbar::Group>
+  <:left as |Tb|>
+    <Tb.Group>
       <Toolbar::History::Undo @controller={{@controller}}/>
       <Toolbar::History::Redo @controller={{@controller}}/>
-    </Toolbar::Group>
-    <Toolbar::Group>
+    </Tb.Group>
+    <Tb.Group>
       <Toolbar::Marks::Bold @controller={{@controller}}/>
       <Toolbar::Marks::Italic @controller={{@controller}}/>
       <Toolbar::Marks::Strikethrough @controller={{@controller}}/>
@@ -12,18 +12,18 @@
       <Toolbar::Marks::Subscript @controller={{@controller}}/>
       <Toolbar::Marks::Superscript @controller={{@controller}}/>
       <CodeMark::ToolbarButton @controller={{@controller}}/>
-    </Toolbar::Group>
-    <Toolbar::Group>
+    </Tb.Group>
+    <Tb.Group>
       <Toolbar::List::Unordered @controller={{@controller}}/>
       <Toolbar::List::Ordered @controller={{@controller}}/>
       <Toolbar::List::IndentationControls @controller={{@controller}}/>
-    </Toolbar::Group>
-    <Toolbar::Group>
+    </Tb.Group>
+    <Tb.Group>
       <Toolbar::TableMenu @controller={{@controller}}/>
-    </Toolbar::Group>
-    <Toolbar::Group>
+    </Tb.Group>
+    <Tb.Group>
       <Toolbar::HeadingMenu @controller={{@controller}}/>
-    </Toolbar::Group>
+    </Tb.Group>
   </:left>
   <:right>
     <Toolbar::RdfaBlocksToggle @controller={{@controller}}/>
