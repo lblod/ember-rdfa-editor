@@ -38,7 +38,7 @@ export default class Link extends Component<EmberNodeArgs> {
 
   @action
   onClick(event: KeyboardEvent) {
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
       window.open(this.href);
     }
   }
