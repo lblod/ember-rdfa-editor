@@ -28,3 +28,14 @@
     min-width: 5rem;
   }
 }
+
+.ember-node.ProseMirror-selectednode {
+  .say-link {
+    background-color: var(--au-blue-200);
+    outline: 2px solid var(--au-blue-500);
+
+    ::selection {
+      background-color: var(--au-blue-300);
+    }
+  }
+}

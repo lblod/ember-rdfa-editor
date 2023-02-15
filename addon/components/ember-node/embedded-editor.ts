@@ -117,16 +117,6 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   @action
-  onFocus() {
-    const outerSelectionTr = this.outerView.state.tr;
-    const outerSelection = new NodeSelection(
-      this.outerView.state.doc.resolve(this.pos)
-    );
-    outerSelectionTr.setSelection(outerSelection);
-    this.outerView.dispatch(outerSelectionTr);
-  }
-
-  @action
   didInsertContentWrapper(target: Element) {
     this.contentWrapper = target;
     this.innerView = new RdfaEditorView(this.contentWrapper, {
