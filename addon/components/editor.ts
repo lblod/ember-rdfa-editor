@@ -1,4 +1,3 @@
-import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import {
@@ -37,19 +36,6 @@ export interface ResolvedPluginConfig {
   options: unknown;
 }
 
-export interface ToolbarOptions {
-  showTextStyleButtons?: boolean;
-  showListButtons?: boolean;
-  showOrderedListButton?: boolean;
-  showIndentButtons: boolean;
-}
-
-export interface EditorOptions {
-  showRdfaHover?: boolean;
-  showPaper?: boolean;
-  showToolbarBottom: boolean;
-}
-
 interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
@@ -66,8 +52,6 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
-  toolbarOptions?: ToolbarOptions;
-  editorOptions?: EditorOptions;
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
 
@@ -93,14 +77,8 @@ interface RdfaEditorArgs {
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked controller: ProseController | null = null;
 
-  @tracked editorLoading = true;
-  private logger: Logger;
+  private logger: Logger = createLogger(this.constructor.name);
   private prosemirror: Prosemirror | null = null;
-
-  constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
-    super(owner, args);
-    this.logger = createLogger(this.constructor.name);
-  }
 
   get initializers() {
     return this.args.initializers || [];
@@ -108,10 +86,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
-  }
-
-  get showOrderedListButton(): boolean {
-    return this.args.toolbarOptions?.showOrderedListButton ?? false;
   }
 
   /**
@@ -125,7 +99,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async handleRawEditorInit(target: Element) {
-    await Promise.all(this.initializers);
+    if (this.initializers.length) {
+      await Promise.all(this.initializers);
+      this.logger(`Awaited ${this.initializers.length} initializers.`);
+    }
 
     this.prosemirror = new Prosemirror({
       owner: getOwner(this) as Owner,
@@ -139,7 +116,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);
     this.controller = new ProseController(this.prosemirror);
-    this.editorLoading = false;
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(new ProseController(this.prosemirror));
     }
