@@ -2,11 +2,13 @@
   <div class='say-toolbar__styling-tools'>
     <div class='say-toolbar__group'>
       <Rdfa::ToolbarIcon
+        @disabled={{this.undoDisabled}}
         @title={{t 'ember-rdfa-editor.undo'}}
         @icon='undo'
         {{on 'click' this.undo}}
       />
       <Rdfa::ToolbarIcon
+        @disabled={{this.redoDisabled}}
         @title={{t 'ember-rdfa-editor.redo'}}
         @icon='redo'
         {{on 'click' this.redo}}

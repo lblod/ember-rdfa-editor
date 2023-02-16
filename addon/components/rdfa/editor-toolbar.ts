@@ -7,7 +7,7 @@ import {
   sinkListItem,
   wrapInList,
 } from 'prosemirror-schema-list';
-import { redo, undo } from 'prosemirror-history';
+import { redo, undo, undoDepth, redoDepth } from 'prosemirror-history';
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import { toggleList } from '@lblod/ember-rdfa-editor/commands/toggle-list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
@@ -161,10 +161,22 @@ export default class EditorToolbar extends Component<Args> {
     this.controller.toggleMark(this.schema.marks.strikethrough, true);
   }
 
+  get undoDisabled() {
+    const editorState = this.controller.getState(true);
+    const undosAvailable = undoDepth(editorState) as number;
+    return undosAvailable === 0;
+  }
+
   @action
   undo() {
     this.controller.focus();
     this.controller.doCommand(undo);
+  }
+
+  get redoDisabled() {
+    const editorState = this.controller.getState(true);
+    const redosAvailable = redoDepth(editorState) as number;
+    return redosAvailable === 0;
   }
 
   @action
