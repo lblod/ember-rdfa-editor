@@ -31,7 +31,7 @@ export default class LinkEditor extends Component<Args> {
 
   get link() {
     if (this.controller) {
-      const { selection } = this.controller.state;
+      const { selection } = this.controller.mainEditorState;
       if (
         selection instanceof NodeSelection &&
         selection.node.type === this.controller.schema.nodes.link

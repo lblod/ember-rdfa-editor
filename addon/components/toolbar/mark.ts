@@ -17,13 +17,12 @@ export default class BoldComponent extends Component<Args> {
 
   get isActive() {
     return this.controller?.isMarkActive(
-      this.controller.schema.marks[this.mark],
-      true
+      this.controller.schema.marks[this.mark]
     );
   }
 
   @action
   toggle() {
-    this.controller?.toggleMark(this.args.mark, true);
+    this.controller?.toggleMark(this.args.mark);
   }
 }

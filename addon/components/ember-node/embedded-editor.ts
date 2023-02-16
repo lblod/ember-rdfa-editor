@@ -120,61 +120,65 @@ export default class EmbeddedEditor extends Component<Args> {
   @action
   didInsertContentWrapper(target: Element) {
     this.contentWrapper = target;
-    this.innerView = new RdfaEditorView(this.contentWrapper, {
-      state: EditorState.create({
-        doc: this.node,
-        plugins: [
-          keymap({
-            'Mod-z': () =>
-              undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-            'Mod-Z': () =>
-              undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-            'Mod-y': () =>
-              redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-            'Mod-Y': () =>
-              redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-            'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
-            'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
-            'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
-            'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
-            'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
-            'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
-            Enter: chainCommands(
-              newlineInCode,
-              createParagraphNear,
-              liftEmptyBlock,
-              splitBlock,
-              insertHardBreak
-            ),
-          }),
-        ],
-        schema: this.schema,
-      }),
-      attributes: {
-        'data-placeholder': this.args.placeholder,
-      },
-      dispatchTransaction: this.dispatchInner,
-      handleDOMEvents: {
-        mousedown: () => {
-          // Kludge to prevent issues due to the fact that the whole
-          // footnote is node-selected (and thus DOM-selected) when
-          // the parent editor is focused.
+    this.innerView = new RdfaEditorView(
+      this.contentWrapper,
+      {
+        state: EditorState.create({
+          doc: this.node,
+          plugins: [
+            keymap({
+              'Mod-z': () =>
+                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+              'Mod-Z': () =>
+                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+              'Mod-y': () =>
+                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+              'Mod-Y': () =>
+                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+              'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
+              'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
+              'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
+              'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
+              'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
+              'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
+              Enter: chainCommands(
+                newlineInCode,
+                createParagraphNear,
+                liftEmptyBlock,
+                splitBlock,
+                insertHardBreak
+              ),
+            }),
+          ],
+          schema: this.schema,
+        }),
+        attributes: {
+          'data-placeholder': this.args.placeholder,
+        },
+        dispatchTransaction: this.dispatchInner,
+        handleDOMEvents: {
+          mousedown: () => {
+            // Kludge to prevent issues due to the fact that the whole
+            // footnote is node-selected (and thus DOM-selected) when
+            // the parent editor is focused.
 
-          if (this.outerView.hasFocus()) this.innerView?.focus();
-        },
-        focus: () => {
-          const outerSelectionTr = this.outerView.state.tr;
-          const outerSelection = new NodeSelection(
-            this.outerView.state.doc.resolve(this.pos)
-          );
-          outerSelectionTr.setSelection(outerSelection);
-          this.outerView.dispatch(outerSelectionTr);
-          if (this.innerView) {
-            this.args.controller.setEmbeddedView(this.innerView);
-          }
+            if (this.outerView.hasFocus()) this.innerView?.focus();
+          },
+          focus: () => {
+            const outerSelectionTr = this.outerView.state.tr;
+            const outerSelection = new NodeSelection(
+              this.outerView.state.doc.resolve(this.pos)
+            );
+            outerSelectionTr.setSelection(outerSelection);
+            this.outerView.dispatch(outerSelectionTr);
+            if (this.innerView) {
+              this.args.controller.setActiveView(this.innerView);
+            }
+          },
         },
       },
-    });
+      this.outerView
+    );
   }
 
   @action
