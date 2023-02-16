@@ -41,12 +41,12 @@ export function defaultAttributeValueGeneration(
             });
           });
           if (node.isText && !Mark.sameSet(node.marks, newMarks)) {
-            tr.removeMark(pos, pos + node.nodeSize, null)
+            tr.removeMark(pos, pos + node.nodeSize, null);
             newMarks.forEach((mark) => {
               tr.addMark(pos, pos + node.nodeSize, mark);
             });
           } else {
-            if(!node.hasMarkup(node.type, newAttrs, newMarks)){
+            if (!node.hasMarkup(node.type, newAttrs, newMarks)) {
               tr.setNodeMarkup(pos, null, newAttrs, newMarks);
             }
           }
