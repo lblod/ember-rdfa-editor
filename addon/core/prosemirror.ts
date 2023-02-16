@@ -241,10 +241,6 @@ export class ProseController {
     return this.mainEditorState.schema;
   }
 
-  get view(): EditorView {
-    return this.pm.mainView;
-  }
-
   get owner(): Owner {
     return this.pm.owner;
   }
