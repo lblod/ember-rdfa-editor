@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
 - Removal of `toolbarOptions` argument of the editor component
 - Removal of `widgets` argument of the editor component
+- Rework how embedded views are accessed and operated on from the controller
 
 
 
