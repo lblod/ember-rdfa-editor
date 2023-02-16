@@ -98,6 +98,7 @@ $say-toolbar-height: 44px !default;
   &.is-disabled {
     color: var(--au-gray-400);
     background-color: var(--au-gray-100);
+    cursor: not-allowed;
   }
 }
 
