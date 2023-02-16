@@ -171,9 +171,7 @@ export class ProseController {
 
   toggleMark(name: string) {
     this.focus();
-    this.doCommand(toggleMarkAddFirst(this.schema.marks[name]), {
-      applyOnActiveView: true,
-    });
+    this.doCommand(toggleMarkAddFirst(this.schema.marks[name]));
   }
 
   focus() {
@@ -202,18 +200,15 @@ export class ProseController {
     this.pm.mainView.dispatch(tr);
   }
 
-  doCommand(command: Command, { applyOnActiveView = true } = {}): boolean {
-    const view = applyOnActiveView
-      ? this.activeEditorView
-      : this.mainEditorView;
+  doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(view.state, view.dispatch, view);
   }
 
-  checkCommand(command: Command, { applyOnActiveView = true } = {}): boolean {
-    const view = applyOnActiveView
-      ? this.activeEditorView
-      : this.mainEditorView;
+  checkCommand(
+    command: Command,
+    { view = this.activeEditorView } = {}
+  ): boolean {
     return command(view.state);
   }
 
@@ -229,11 +224,8 @@ export class ProseController {
 
   withTransaction(
     callback: (tr: Transaction) => Transaction | null,
-    { applyOnActiveView = true } = {}
+    { view = this.activeEditorView } = {}
   ) {
-    const view = applyOnActiveView
-      ? this.activeEditorView
-      : this.mainEditorView;
     const tr = view.state.tr;
     const result = callback(tr);
     if (result) {
