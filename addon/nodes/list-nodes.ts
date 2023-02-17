@@ -26,7 +26,6 @@ export const ordered_list: NodeSpec = {
   ],
   toDOM(node) {
     const { style, ...attrs } = node.attrs as OrderedListAttrs;
-    console.log('STYLE: ', style);
     return attrs.order == 1
       ? ['ol', { ...attrs, 'data-list-style': style }, 0]
       : ['ol', { start: attrs.order, 'data-list-style': style, ...attrs }, 0];
