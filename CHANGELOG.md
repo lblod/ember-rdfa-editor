@@ -6,12 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Handle ctrl click on links
+- Add ordered list feature.
+  Adds the button and appropriate toggling behavior when combined with unordered lists
+  Also includes some needed css fixes
+- Add tab key handler to indent/unindent list items
+- Add eslint-plugin-deprecation package to check for use of deprecated code.
+
 ### Dependencies
+- Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `eslint` from 8.29.0 to 8.33.0
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.0
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `prosemirror-view` from 1.29.2 to 1.30.1
 - Bumps `sinon` from 14.0.2 to 15.0.1
+- Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
+
+### Fixed
+ - Modify the base keymaps to better support macos users
 
 ## [2.1.3] - 2023-02-09
 
@@ -19,11 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
 
-### Added
-
-- add unordered list feature
-  Adds the button and appropriate toggling behavior when combined with unordered lists
-  Also includes some needed css fixes
 
 ## [2.1.2] - 2023-02-07
 
@@ -44,6 +53,10 @@ Now that all tables are editable, we don't need this anymore.
 
 - Preserve whitespace when parsing an html document
 
+### Added
+
+- addition of an attribute generation plugin which auto-generates specific missing attributes.
+
 ## [2.1.0] - 2023-02-06
 
 ### Fixed
@@ -58,6 +71,16 @@ Now that all tables are editable, we don't need this anymore.
 ### Changed
 
 - Update and modernize README.
+
+### Added
+- A deprecation eslint rule using the eslint-plugin-deprecation package.
+
+### Deprecated
+- Usage of `ProseController.view`, use `ProseController.getView` instead.
+- Usage of `ProseController.state`, use `ProseController.getState` instead.
+- Usage of `ProseController.checkAndDoCommand`, use `ProseController.doCommand` instead.
+- Usage of `NodeConfig`, `MarkConfig`, `PluginConfig`, `ResolvedPluginConfig` and `RdfaEditorPlugin`
+- Usage of the string-based version of `toggleMark`, use the `MarkType`-based version instead.
 
 ## [2.0.1] - 2023-02-02
 
