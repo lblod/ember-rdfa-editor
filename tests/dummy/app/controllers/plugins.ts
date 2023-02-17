@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
@@ -51,6 +50,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 const nodes = {
   doc,

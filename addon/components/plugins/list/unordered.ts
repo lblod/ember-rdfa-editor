@@ -2,10 +2,10 @@ import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
   controller: SayController;

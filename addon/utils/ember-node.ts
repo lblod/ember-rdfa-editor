@@ -10,8 +10,8 @@ import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
-import { SayController } from '../core/say-editor';
 import Owner from '@ember/owner';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;

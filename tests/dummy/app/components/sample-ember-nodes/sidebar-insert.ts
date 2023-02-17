@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { NodeType } from 'prosemirror-model';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 type RdfaIcPluginInsertComponentArgs = {
   controller: SayController;

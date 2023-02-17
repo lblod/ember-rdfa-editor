@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { undo } from 'prosemirror-history';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
   controller: SayController;

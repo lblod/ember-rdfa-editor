@@ -3,10 +3,7 @@ import { Decoration } from 'prosemirror-view';
 
 export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
-export {
-  SayController,
-  default as ProseMirror,
-} from '@lblod/ember-rdfa-editor/core/say-editor';
+export { default as ProseMirror } from '@lblod/ember-rdfa-editor/core/say-editor';
 
 export * from 'prosemirror-model';
 export { Node as PNode, DOMParser as ProseParser } from 'prosemirror-model';
@@ -26,4 +23,5 @@ export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
 
-export { SayView } from '@lblod/ember-rdfa-editor/core/say-editor';
+export { default as SayView } from '@lblod/ember-rdfa-editor/core/say-view';
+export { default as SayController } from '@lblod/ember-rdfa-editor/core/say-controller';

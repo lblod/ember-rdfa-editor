@@ -1,6 +1,5 @@
-import SayEditor, {
-  SayController,
-} from '@lblod/ember-rdfa-editor/core/say-editor';
+import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 declare global {
   interface Window {

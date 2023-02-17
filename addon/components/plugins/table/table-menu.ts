@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import {
@@ -13,6 +12,7 @@ import {
 } from 'prosemirror-tables';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 interface Args {
   controller?: SayController;

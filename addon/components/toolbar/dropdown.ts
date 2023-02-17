@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
-import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 interface Args {
   controller: SayController;
@@ -14,6 +14,7 @@ export default class AuDropdown extends Component<Args> {
   get iconSize() {
     return this.args.iconSize ?? 'large';
   }
+
   // Create a dropdown ID
   dropdownId = 'dropdown-' + guidFor(this);
 

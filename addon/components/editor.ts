@@ -5,9 +5,7 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { tracked } from 'tracked-built-ins';
-import SayEditor, {
-  SayController,
-} from '@lblod/ember-rdfa-editor/core/say-editor';
+import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
@@ -15,6 +13,7 @@ import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 /**
  *
