@@ -15,6 +15,7 @@ import { NodeViewConstructor } from 'prosemirror-view';
 import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import { Schema } from 'prosemirror-model';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
 interface RdfaEditorDebugArgs {
   rdfaEditorInit: (rdfaDocument: ProseController) => void;
@@ -23,6 +24,7 @@ interface RdfaEditorDebugArgs {
   plugins?: ProsePlugin[];
   schema: Schema;
   widgets?: WidgetSpec[];
+  generateDefaultAttributes?: DefaultAttrGenPuginOptions;
   baseIRI: string;
 }
 

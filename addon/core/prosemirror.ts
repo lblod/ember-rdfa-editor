@@ -22,6 +22,7 @@ import {
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
 
+import { v4 as uuidv4 } from 'uuid';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
@@ -46,6 +47,10 @@ import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
+import {
+  DefaultAttrGenPuginOptions,
+  defaultAttributeValueGeneration,
+} from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
 export type WidgetLocation =
   | 'toolbarMiddle'
@@ -70,6 +75,7 @@ interface ProsemirrorArgs {
   baseIRI: string;
   plugins?: Plugin[];
   widgets?: WidgetSpec[];
+  generateDefaultAttributes?: DefaultAttrGenPuginOptions;
   nodeViews?: (
     controller: ProseController
   ) => Record<string, NodeViewConstructor>;
@@ -128,6 +134,7 @@ export default class Prosemirror {
     nodeViews = () => {
       return {};
     },
+    generateDefaultAttributes = [],
   }: ProsemirrorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -146,6 +153,15 @@ export default class Prosemirror {
         keymap(baseKeymap(schema)),
         history(),
         recreateUuidsOnPaste,
+        defaultAttributeValueGeneration([
+          {
+            attribute: '__rdfaId',
+            generator() {
+              return uuidv4();
+            },
+          },
+          ...generateDefaultAttributes,
+        ]),
       ],
     });
     this.view = new RdfaEditorView(target, {
@@ -231,12 +247,18 @@ export class ProseController {
     return new ProseController(this.pm);
   }
 
-  toggleMark(name: string, includeEmbeddedView = false) {
+  toggleMark(type: MarkType, includeEmbeddedView?: boolean): void;
+
+  /**
+   *
+   * @deprecated
+   */
+  toggleMark(name: string, includeEmbeddedView?: boolean): void;
+
+  toggleMark(type: string | MarkType, includeEmbeddedView = false) {
     this.focus(includeEmbeddedView);
-    this.doCommand(
-      toggleMarkAddFirst(this.schema.marks[name]),
-      includeEmbeddedView
-    );
+    const markType = typeof type === 'string' ? this.schema.marks[type] : type;
+    this.doCommand(toggleMarkAddFirst(markType), includeEmbeddedView);
   }
 
   focus(includeEmbeddedView = false) {
@@ -280,6 +302,9 @@ export class ProseController {
     return command(state);
   }
 
+  /**
+   * @deprecated This method is obsolete and will be removed in version 3.0. Use doCommand instead.
+   */
   checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
     const view = this.pm.getView(includeEmbeddedView);
     if (command(view.state)) {
@@ -323,10 +348,16 @@ export class ProseController {
     return this.pm.state.schema;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getState method instead.
+   */
   get state(): EditorState {
     return this.pm.state;
   }
 
+  /**
+   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getView method instead.
+   */
   get view(): EditorView {
     return this.pm.view;
   }
