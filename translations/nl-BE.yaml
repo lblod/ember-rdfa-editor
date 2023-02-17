@@ -20,6 +20,8 @@ ember-rdfa-editor:
   delete-row: Rij verwijderen
   delete-column: Kolom verwijderen
   delete-table: Tabel verwijderen
+  toggle-header-row: Schakel de kopregel in
+  toggle-header-column: Schakel de kopkolom in
   columns: Kolommen
   rows: Rijen
   normalText: Gewone tekst

@@ -56,6 +56,20 @@
       <AuIcon @icon='bin' @ariaHidden={{true}} />
       {{t 'ember-rdfa-editor.delete-table'}}
     </Menu.Item>
+    <Menu.Item
+      @menuAction={{this.toggleHeaderRow}}
+      title={{t 'ember-rdfa-editor.toggle-header-row'}}
+    >
+      <AuIcon @icon='bin' @ariaHidden={{true}} />
+      {{t 'ember-rdfa-editor.toggle-header-row'}}
+    </Menu.Item>
+    <Menu.Item
+      @menuAction={{this.toggleHeaderColumn}}
+      title={{t 'ember-rdfa-editor.toggle-header-column'}}
+    >
+      <AuIcon @icon='bin' @ariaHidden={{true}} />
+      {{t 'ember-rdfa-editor.toggle-header-column'}}
+    </Menu.Item>
   {{else}}
     <div role='group'>
       <div role='menuitem' class='say-dropdown__menu-with-inputs'>
