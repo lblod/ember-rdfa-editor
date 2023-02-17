@@ -9,6 +9,7 @@ function isListNode(node: PNode) {
 }
 
 export function toggleList(listType: NodeType, itemType: NodeType): Command {
+  console.log('toggle list');
   return function (state, dispatch, view): boolean {
     const { selection } = state;
     const { $from, $to } = selection;
