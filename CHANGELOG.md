@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
+- Added features to add table headings 
 
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
