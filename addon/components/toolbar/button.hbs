@@ -1,0 +1,19 @@
+<div class="say-toolbar__button">
+  <button
+    type='button'
+    class='main {{if @active "is-active"}}'
+    title={{@title}}
+    ...attributes
+  >
+    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
+    <span class='au-u-hidden-visually'>
+      {{@title}}
+    </span>
+
+  </button>
+  {{#if (has-block "options")}}
+    <Toolbar::Dropdown @icon={{this.optionsIcon}} @iconSize="" @controller={{@controller}} class="options" as |Menu|>
+      {{yield Menu to="options"}}
+    </Toolbar::Dropdown>
+  {{/if}}
+</div>

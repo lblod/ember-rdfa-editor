@@ -11,6 +11,12 @@ type Args = {
   controller: ProseController;
 };
 export default class ListOrdered extends Component<Args> {
+
+  styles = [
+    { name: 'decimal', description: 'Getallen'},
+    { name: 'lower-alpha', description: 'Letters'},
+    { name: 'upper-roman', description: 'Romeinse Cijfers'}
+  ]
   get firstListParent() {
     return findParentNode(
       (node) =>
@@ -38,24 +44,54 @@ export default class ListOrdered extends Component<Args> {
     return this.controller.schema;
   }
 
-  get toggleCommand(): Command {
+  toggleCommand(listStyle?: string): Command {
     return chainCommands(
-      toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item),
-      wrapInList(this.schema.nodes.ordered_list),
+      toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item, {
+        style: listStyle,
+      }),
+      wrapInList(this.schema.nodes.ordered_list, {
+        style: listStyle,
+      }),
       sinkListItem(this.schema.nodes.list_item)
     );
   }
 
   get canToggle() {
-    return this.controller.checkCommand(this.toggleCommand, true);
+    return this.controller.checkCommand(this.toggleCommand(), true);
   }
 
   @action
-  toggle() {
+  toggle(style?: string) {
     this.controller.focus();
-    this.controller.checkAndDoCommand(
-      autoJoin(this.toggleCommand, ['ordered_list', 'bullet_list']),
+    this.controller.doCommand(
+      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list']),
       true
     );
   }
+
+  @action
+  setStyle(style: string) {
+    const firstListParent = this.firstListParent;
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      const pos = firstListParent.pos;
+      this.controller.withTransaction((tr) => {
+        return tr.setNodeAttribute(pos, 'style', style);
+      });
+    } else {
+      this.toggle(style);
+    }
+  }
+
+  styleIsActive = (style: string) => {
+    const firstListParent = this.firstListParent;
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      return firstListParent.node.attrs.style === style;
+    } else {
+      return false;
+    }
+  };
 }
