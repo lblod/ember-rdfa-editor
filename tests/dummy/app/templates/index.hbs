@@ -3,27 +3,29 @@
     <DebugTools @controller={{this.rdfaEditor}}/>
   </:header>
   <:content>
-    <Editor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
+    <EditorContainer
       @editorOptions={{hash
         showRdfa='true'
         showRdfaHighlight='true'
         showRdfaHover='true'
         showPaper='true'
-        showSidebar='true'
         showToolbarBottom=null
-      }}
-      @plugins={{this.plugins}}
-      @schema={{this.schema}}
-      @nodeViews={{this.nodeViews}}>
+      }}>
       <:top>
         <SampleToolbar @controller={{this.rdfaEditor}}/>
       </:top>
+      <:default>
+        <Editor
+          @plugins={{this.plugins}}
+          @schema={{this.schema}}
+          @nodeViews={{this.nodeViews}}
+          @rdfaEditorInit={{this.rdfaEditorInit}}/>
+      </:default>
       <:aside>
         <Sidebar>
             <Sidebar::LinkEditor @controller={{this.rdfaEditor}}/>
         </Sidebar>
       </:aside>
-    </Editor>
+    </EditorContainer>
   </:content>
 </DummyContainer>

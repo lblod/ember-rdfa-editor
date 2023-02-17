@@ -1,13 +1,9 @@
-import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
-
-import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import Prosemirror, {
   ProseController,
@@ -18,7 +14,12 @@ import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
+import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export type PluginConfig =
   | string
   | {
@@ -26,23 +27,13 @@ export type PluginConfig =
       options: unknown;
     };
 
+/**
+ *
+ * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
+ */
 export interface ResolvedPluginConfig {
   instance: RdfaEditorPlugin;
   options: unknown;
-}
-
-export interface ToolbarOptions {
-  showTextStyleButtons?: boolean;
-  showListButtons?: boolean;
-  showOrderedListButton?: boolean;
-  showIndentButtons: boolean;
-}
-
-export interface EditorOptions {
-  showRdfaHover?: boolean;
-  showPaper?: boolean;
-  showSidebar: boolean;
-  showToolbarBottom: boolean;
 }
 
 interface RdfaEditorArgs {
@@ -61,8 +52,7 @@ interface RdfaEditorArgs {
   nodeViews?: (controller: ProseController) => {
     [node: string]: NodeViewConstructor;
   };
-  toolbarOptions?: ToolbarOptions;
-  editorOptions?: EditorOptions;
+  defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
 
 /**
@@ -85,20 +75,10 @@ interface RdfaEditorArgs {
  * @extends Component
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
-  @service declare intl: IntlService;
-
   @tracked controller: ProseController | null = null;
 
-  @tracked editorLoading = true;
-  private logger: Logger;
+  private logger: Logger = createLogger(this.constructor.name);
   private prosemirror: Prosemirror | null = null;
-
-  constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
-    super(owner, args);
-    const userLocale = navigator.language || navigator.languages[0];
-    this.intl.setLocale([userLocale, 'nl-BE']);
-    this.logger = createLogger(this.constructor.name);
-  }
 
   get initializers() {
     return this.args.initializers || [];
@@ -106,10 +86,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
-  }
-
-  get showOrderedListButton(): boolean {
-    return this.args.toolbarOptions?.showOrderedListButton ?? false;
   }
 
   /**
@@ -123,7 +99,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
    */
   @action
   async handleRawEditorInit(target: Element) {
-    await Promise.all(this.initializers);
+    if (this.initializers.length) {
+      await Promise.all(this.initializers);
+      this.logger(`Awaited ${this.initializers.length} initializers.`);
+    }
 
     this.prosemirror = new Prosemirror({
       owner: getOwner(this) as Owner,
@@ -132,11 +111,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       baseIRI: this.baseIRI,
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
+      defaultAttrGenerators: this.args.defaultAttrGenerators,
     });
     window.__PM = this.prosemirror;
     window.__PC = new ProseController(this.prosemirror);
     this.controller = new ProseController(this.prosemirror);
-    this.editorLoading = false;
     if (this.args.rdfaEditorInit) {
       this.args.rdfaEditorInit(new ProseController(this.prosemirror));
     }

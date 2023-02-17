@@ -1,8 +1,8 @@
 <div class='say-toolbar'>
   <div class='say-toolbar__styling-tools'>
-    {{yield to='left'}}
+    {{yield (hash Group=(component "toolbar/group") ) to='left'}}
   </div>
   <div class='say-toolbar__actions'>
-    {{yield to='right'}}
+    {{yield (hash Group=(component "toolbar/group") )  to='right'}}
   </div>
 </div>
