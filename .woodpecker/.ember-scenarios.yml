@@ -1,0 +1,14 @@
+matrix:
+  scenario:
+    - ember-lts-3.28
+pipeline:
+  ${scenario}:
+    image: danlynn/ember-cli:3.28.0
+    commands:
+      - npm ci
+      - npx ember try:one ${scenario}
+when:
+  event:
+    - pull_request
+  path:
+    exclude: [ '*.md' ]
