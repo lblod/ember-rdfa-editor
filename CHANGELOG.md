@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Internal
 - Replace drone by woodpecker 
+- Modernize toolbar dropdown
 
 ## [2.1.3] - 2023-02-09
 
