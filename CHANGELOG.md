@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
  - Modify the base keymaps to better support macos users
 
+### Internal
+- Replace drone by woodpecker 
+
 ## [2.1.3] - 2023-02-09
 
 ### Fixed

@@ -1,0 +1,11 @@
+pipeline:
+  build-pr:
+    image: plugins/docker
+    settings:
+      repo: lblod/ember-rdfa-editor
+      dry_run: true
+when:
+  event:
+    - pull_request
+  path:
+    exclude: [ '*.md' ]
