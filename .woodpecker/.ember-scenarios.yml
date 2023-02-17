@@ -11,5 +11,5 @@ when:
   event:
     - pull_request
   path:
-    include: ['**/*']
+    include: ['.woodpecker/*.yml']
     exclude: [ '*.md' ]
