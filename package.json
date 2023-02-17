@@ -53,7 +53,7 @@
     "crypto-browserify": "^3.12.0",
     "debug": "^4.3.4",
     "diff-match-patch": "^1.0.5",
-    "dompurify": "^2.3.6",
+    "dompurify": "^3.0.0",
     "ember-auto-import": "^2.5.0",
     "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^6.1.1",
@@ -91,7 +91,7 @@
     "xml-formatter": "^2.6.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.2.0",
+    "@appuniversum/ember-appuniversum": "^2.4.0",
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^1.8.3",
     "@glimmer/component": "^1.1.2",
@@ -130,7 +130,7 @@
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-cli": "~4.8.0",
-    "ember-cli-app-version": "^5.0.0",
+    "ember-cli-app-version": "^6.0.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-code-coverage": "^1.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
@@ -171,7 +171,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.2.0"
+    "@appuniversum/ember-appuniversum": "^2.4.0"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"
