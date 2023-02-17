@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 
 ### Dependencies
+- Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `eslint` from 8.29.0 to 8.33.0
 - Bumps `@codemirror/view` from 6.7.3 to 6.9.0
