@@ -14,29 +14,17 @@ $say-editor-sidebar-large: 30% !default;
 .say-container {
   height: 100%;
   position: relative;
-  overflow: hidden;
+  overflow: unset;
   display: flex;
   flex-direction: column;
 
   &.say-container--toolbar-bottom {
     flex-direction: column-reverse;
   }
-
-  @media (max-height: 500px) {
-    & {
-      overflow: scroll;
-    }
-  }
 }
 
 .say-container__main {
   overflow: scroll;
-
-  @media (max-height: 500px) {
-    & {
-      overflow: unset;
-    }
-  }
 }
 
 .say-container__aside {
