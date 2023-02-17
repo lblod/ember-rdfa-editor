@@ -3,7 +3,7 @@ matrix:
     - ember-lts-3.28
 pipeline:
   ${scenario}:
-    image: danlynn/ember-cli:3.28.0
+    image: danlynn/ember-cli:4.8.0
     commands:
       - npm ci
       - npx ember try:one ${scenario}
