@@ -13,6 +13,7 @@ import {
 } from 'prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
 
+export { tableNodes } from './nodes/table';
 export const tablePlugin: Plugin = tableEditing({
   allowTableNodeSelection: true,
 });

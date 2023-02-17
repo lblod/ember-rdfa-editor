@@ -5,47 +5,52 @@ import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
+  block_rdfa,
+  doc,
+  hard_break,
+  horizontal_rule,
+  invisible_rdfa,
+  paragraph,
+  repaired_block,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
+import { NodeViewConstructor } from 'prosemirror-view';
+import applyDevTools from 'prosemirror-dev-tools';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import {
+  card,
+  cardView,
+  counter,
+  counterView,
+  dropdown,
+  dropdownView,
+} from '../dummy-nodes';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugin,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import {
   em,
-  link,
   strikethrough,
   strong,
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/marks';
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { link } from '@lblod/ember-rdfa-editor/plugins/link';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
-  block_rdfa,
-  blockquote,
   bullet_list,
-  code_block,
-  doc,
-  hard_break,
-  heading,
-  horizontal_rule,
-  image,
-  inline_rdfa,
   list_item,
   ordered_list,
-  paragraph,
-  placeholder,
-  repaired_block,
-  tableNodes,
-  text,
-} from '@lblod/ember-rdfa-editor/nodes';
-import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
-import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
-import { NodeViewConstructor } from 'prosemirror-view';
-import applyDevTools from 'prosemirror-dev-tools';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
-import { code } from '../dummy-marks/code';
-import {
-  card,
-  counter,
-  dropdown,
-  cardView,
-  counterView,
-  dropdownView,
-} from '../dummy-nodes';
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 
 const nodes = {
   doc,

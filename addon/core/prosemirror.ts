@@ -223,6 +223,10 @@ export class ProseController {
    */
   toggleMark(name: string, includeEmbeddedView?: boolean): void;
 
+  /**
+   *
+   * @deprecated use doCommand with the {@link toggleMark} or {@link toggleMarkAddFirst} commands
+   */
   toggleMark(type: string | MarkType, includeEmbeddedView = false) {
     this.focus(includeEmbeddedView);
     const markType = typeof type === 'string' ? this.schema.marks[type] : type;
