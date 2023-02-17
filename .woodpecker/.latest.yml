@@ -1,0 +1,10 @@
+pipeline:
+  push-latest:
+    image: plugins/docker
+    settings:
+      repo: lblod/ember-rdfa-editor
+      tags: latest
+    secrets: [ docker_username, docker_password ]
+when:
+  branch: master
+  event: push
