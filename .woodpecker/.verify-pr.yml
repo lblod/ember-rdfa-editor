@@ -17,7 +17,7 @@ pipeline:
     image: danlynn/ember-cli:4.8.0
     commands:
       - npm run test:ember
-  precompile
+  precompile:
     image: danlynn/ember-cli:4.8.0
     commands:
       - ember ts:precompile
