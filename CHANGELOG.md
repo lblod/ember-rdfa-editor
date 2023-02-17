@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `sinon` from 14.0.2 to 15.0.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
 
 ### Fixed
  - Modify the base keymaps to better support macos users
