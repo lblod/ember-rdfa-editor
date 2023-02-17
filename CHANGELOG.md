@@ -18,14 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update padding of lists so they are on the same level as paragraphs.
 
 ### Dependencies
+- Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `eslint` from 8.29.0 to 8.33.0
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.0
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `prosemirror-view` from 1.29.2 to 1.30.1
 - Bumps `sinon` from 14.0.2 to 15.0.1
+- Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
+- Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
 
 ### Fixed
  - Modify the base keymaps to better support macos users
+
+### Internal
+- Replace drone by woodpecker 
 
 ## [2.1.3] - 2023-02-09
 
