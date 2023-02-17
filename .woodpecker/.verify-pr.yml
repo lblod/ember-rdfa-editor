@@ -24,3 +24,6 @@ pipeline:
 when:
   event:
     - pull_request
+  path:
+    include: ['**/*']
+    exclude: [ '*.md' ]
