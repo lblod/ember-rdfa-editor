@@ -10,22 +10,22 @@ import Datastore, {
 } from '@lblod/ember-rdfa-editor/utils/datastore/datastore';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore';
 
-export interface ProseDatastore extends Datastore<ResolvedPNode> {
-  limitToRange(state: EditorState, start: number, end: number): ProseStore;
+export interface SayDatastore extends Datastore<ResolvedPNode> {
+  limitToRange(state: EditorState, start: number, end: number): SayStore;
 }
 
 export type LimitToRangeStrategy = 'rangeIsInside' | 'rangeContains';
 
-export class ProseStore
+export class SayStore
   extends EditorStore<ResolvedPNode>
-  implements ProseDatastore
+  implements SayDatastore
 {
   limitToRange(
     state: EditorState,
     start: number,
     end: number,
     strategy: LimitToRangeStrategy = 'rangeIsInside'
-  ): ProseStore {
+  ): SayStore {
     const comparisonFunction = (range: { from: number; to: number }) => {
       if (strategy === 'rangeIsInside') {
         return range.from <= start && range.to >= end;
@@ -67,7 +67,7 @@ export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
     prefixMap.set(key, value);
   }
 
-  return new ProseStore({
+  return new SayStore({
     documentRoot: config.root,
     dataset,
     subjectToNodes: subjectToNodesMapping,

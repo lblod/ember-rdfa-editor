@@ -4,9 +4,9 @@ import { Decoration } from 'prosemirror-view';
 export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 export {
-  ProseController,
+  SayController,
   default as ProseMirror,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
+} from '@lblod/ember-rdfa-editor/core/say-editor';
 
 export * from 'prosemirror-model';
 export { Node as PNode, DOMParser as ProseParser } from 'prosemirror-model';
@@ -26,4 +26,4 @@ export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
 
-export { RdfaEditorView } from '@lblod/ember-rdfa-editor/core/prosemirror';
+export { SayView } from '@lblod/ember-rdfa-editor/core/say-editor';

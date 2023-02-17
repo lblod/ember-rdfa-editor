@@ -1,12 +1,12 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { NodeType, ProseController } from '@lblod/ember-rdfa-editor';
+import { NodeType, SayController } from '@lblod/ember-rdfa-editor';
 import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type';
 import IntlService from 'ember-intl/services/intl';
 
 type Args = {
-  controller?: ProseController;
+  controller?: SayController;
 };
 export default class HeadingsMenu extends Component<Args> {
   @service declare intl: IntlService;

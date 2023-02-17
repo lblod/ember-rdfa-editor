@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
@@ -81,12 +81,12 @@ const marks = {
 const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
-  @tracked rdfaEditor?: ProseController;
+  @tracked rdfaEditor?: SayController;
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   schema: Schema = dummySchema;
 
   @action
-  rdfaEditorInit(rdfaEditor: ProseController) {
+  rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);

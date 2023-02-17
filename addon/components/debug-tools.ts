@@ -7,12 +7,12 @@ import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../config/sample-data';
 import { EditorState } from '@codemirror/state';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import ApplicationInstance from '@ember/application/instance';
 
 interface DebugToolArgs {
-  controller?: ProseController;
+  controller?: SayController;
 }
 
 export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {

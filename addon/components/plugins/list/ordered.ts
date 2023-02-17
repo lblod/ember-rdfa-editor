@@ -2,13 +2,13 @@ import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
 
 type Args = {
-  controller: ProseController;
+  controller: SayController;
 };
 export default class ListOrdered extends Component<Args> {
   get firstListParent() {

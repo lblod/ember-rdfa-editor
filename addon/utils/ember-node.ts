@@ -10,7 +10,7 @@ import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
-import { ProseController } from '../core/prosemirror';
+import { SayController } from '../core/say-editor';
 import Owner from '@ember/owner';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
@@ -21,7 +21,7 @@ export interface EmberNodeArgs {
   getPos: () => number;
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
-  controller: ProseController;
+  controller: SayController;
   view: EditorView;
   selected: boolean;
 }
@@ -65,7 +65,7 @@ class EmberNodeView implements NodeView {
   template: TemplateFactory;
 
   constructor(
-    controller: ProseController,
+    controller: SayController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
     view: EditorView,
@@ -239,7 +239,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
 }
 
 export function createEmberNodeView(config: EmberNodeConfig) {
-  return function (controller: ProseController): NodeViewConstructor {
+  return function (controller: SayController): NodeViewConstructor {
     return function (node, view, getPos) {
       return new EmberNodeView(controller, config, node, view, getPos);
     };

@@ -29,7 +29,7 @@ import { history } from 'prosemirror-history';
 import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, Logger } from '../utils/logging-utils';
-import { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+import { SayStore } from '@lblod/ember-rdfa-editor/utils/datastore/say-store';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
 import {
   datastore,
@@ -51,19 +51,19 @@ import {
   defaultAttributeValueGeneration,
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
-interface ProsemirrorArgs {
+interface SayEditorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
   baseIRI: string;
   plugins?: Plugin[];
   nodeViews?: (
-    controller: ProseController
+    controller: SayController
   ) => Record<string, NodeViewConstructor>;
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
 
-export class RdfaEditorView extends EditorView {
+export class SayView extends EditorView {
   @tracked trackedState: EditorState;
 
   constructor(
@@ -93,9 +93,9 @@ export class RdfaEditorView extends EditorView {
   }
 }
 
-export default class Prosemirror {
-  @tracked view: RdfaEditorView;
-  @tracked embeddedView?: RdfaEditorView | null;
+export default class SayEditor {
+  @tracked view: SayView;
+  @tracked embeddedView?: SayView | null;
   @tracked showRdfaBlocks = false;
   owner: Owner;
   root: Element;
@@ -115,7 +115,7 @@ export default class Prosemirror {
       return {};
     },
     defaultAttrGenerators = [],
-  }: ProsemirrorArgs) {
+  }: SayEditorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
     this.root = target;
@@ -144,10 +144,10 @@ export default class Prosemirror {
         ]),
       ],
     });
-    this.view = new RdfaEditorView(target, {
+    this.view = new SayView(target, {
       state,
       attributes: { class: 'say-editor__inner say-content' },
-      nodeViews: nodeViews(new ProseController(this)),
+      nodeViews: nodeViews(new SayController(this)),
       dispatchTransaction: (tr) => {
         const newState = this.state.apply(tr);
         this.view.updateState(newState);
@@ -160,7 +160,7 @@ export default class Prosemirror {
     });
   }
 
-  setEmbeddedView(view?: RdfaEditorView) {
+  setEmbeddedView(view?: SayView) {
     this.embeddedView = view;
   }
 
@@ -199,20 +199,20 @@ export default class Prosemirror {
   }
 }
 
-export class ProseController {
+export class SayController {
   @tracked
-  private pm: Prosemirror;
+  private editor: SayEditor;
 
-  constructor(pm: Prosemirror) {
-    this.pm = pm;
+  constructor(pm: SayEditor) {
+    this.editor = pm;
   }
 
-  get externalContextStore(): ProseStore {
-    return unwrap(datastoreKey.getState(this.pm.state)).contextStore;
+  get externalContextStore(): SayStore {
+    return unwrap(datastoreKey.getState(this.editor.state)).contextStore;
   }
 
   clone() {
-    return new ProseController(this.pm);
+    return new SayController(this.editor);
   }
 
   toggleMark(type: MarkType, includeEmbeddedView?: boolean): void;
@@ -234,20 +234,20 @@ export class ProseController {
   }
 
   focus(includeEmbeddedView = false) {
-    this.pm.focus(includeEmbeddedView);
+    this.editor.focus(includeEmbeddedView);
   }
 
-  setEmbeddedView(view?: RdfaEditorView) {
-    this.pm.setEmbeddedView(view);
+  setEmbeddedView(view?: SayView) {
+    this.editor.setEmbeddedView(view);
   }
 
   clearEmbeddedView() {
-    this.pm.clearEmbeddedView();
+    this.editor.clearEmbeddedView();
   }
 
   setHtmlContent(content: string) {
     this.focus();
-    const tr = this.pm.state.tr;
+    const tr = this.editor.state.tr;
     const domParser = new DOMParser();
     tr.replaceWith(
       0,
@@ -260,17 +260,17 @@ export class ProseController {
       )
     );
     tr.setSelection(Selection.atEnd(tr.doc));
-    this.pm.view.dispatch(tr);
+    this.editor.view.dispatch(tr);
   }
 
   doCommand(command: Command, includeEmbeddedView = false): boolean {
-    const view = this.pm.getView(includeEmbeddedView);
+    const view = this.editor.getView(includeEmbeddedView);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(view.state, view.dispatch, view);
   }
 
   checkCommand(command: Command, includeEmbeddedView = false): boolean {
-    const state = this.pm.getState(includeEmbeddedView);
+    const state = this.editor.getState(includeEmbeddedView);
     return command(state);
   }
 
@@ -278,7 +278,7 @@ export class ProseController {
    * @deprecated This method is obsolete and will be removed in version 3.0. Use doCommand instead.
    */
   checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
-    const view = this.pm.getView(includeEmbeddedView);
+    const view = this.editor.getView(includeEmbeddedView);
     if (command(view.state)) {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       return command(view.state, view.dispatch, view);
@@ -287,7 +287,7 @@ export class ProseController {
   }
 
   isMarkActive(markType: MarkType, includeEmbeddedView = false) {
-    const state = this.pm.getState(includeEmbeddedView);
+    const state = this.editor.getState(includeEmbeddedView);
     const { from, $from, to, empty } = state.selection;
     if (empty) {
       return !!markType.isInSet(state.storedMarks || $from.marks());
@@ -300,7 +300,7 @@ export class ProseController {
     callback: (tr: Transaction) => Transaction | null,
     includeEmbeddedView = false
   ) {
-    const view = this.pm.getView(includeEmbeddedView);
+    const view = this.editor.getView(includeEmbeddedView);
     const tr = view.state.tr;
     const result = callback(tr);
     if (result) {
@@ -308,44 +308,44 @@ export class ProseController {
     }
   }
 
-  get datastore(): ProseStore {
-    return unwrap(datastoreKey.getState(this.pm.state)).datastore();
+  get datastore(): SayStore {
+    return unwrap(datastoreKey.getState(this.editor.state)).datastore();
   }
 
   get schema(): Schema {
-    return this.pm.state.schema;
+    return this.editor.state.schema;
   }
 
   /**
    * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getState method instead.
    */
   get state(): EditorState {
-    return this.pm.state;
+    return this.editor.state;
   }
 
   /**
    * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getView method instead.
    */
   get view(): EditorView {
-    return this.pm.view;
+    return this.editor.view;
   }
 
   get owner(): Owner {
-    return this.pm.owner;
+    return this.editor.owner;
   }
 
   getState(includeEmbeddedView = false) {
-    return this.pm.getState(includeEmbeddedView);
+    return this.editor.getState(includeEmbeddedView);
   }
 
   getView(includeEmbeddedView = false) {
-    return this.pm.getView(includeEmbeddedView);
+    return this.editor.getView(includeEmbeddedView);
   }
 
   get htmlContent(): string {
     const div = document.createElement('div');
     DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.pm.state.doc.content,
+      this.editor.state.doc.content,
       undefined,
       div
     );
@@ -353,16 +353,16 @@ export class ProseController {
   }
 
   get inEmbeddedView(): boolean {
-    return !!this.pm.embeddedView;
+    return !!this.editor.embeddedView;
   }
 
   toggleRdfaBlocks() {
     console.log('TOGGLE');
-    this.pm.showRdfaBlocks = !this.pm.showRdfaBlocks;
+    this.editor.showRdfaBlocks = !this.editor.showRdfaBlocks;
   }
 
   get showRdfaBlocks() {
-    return this.pm.showRdfaBlocks;
+    return this.editor.showRdfaBlocks;
   }
 }
 

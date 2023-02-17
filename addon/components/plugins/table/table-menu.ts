@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import {
@@ -15,7 +15,7 @@ import { PNode } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
 interface Args {
-  controller?: ProseController;
+  controller?: SayController;
 }
 
 export default class TableMenu extends Component<Args> {
@@ -23,7 +23,7 @@ export default class TableMenu extends Component<Args> {
   @tracked tableAddColumns = 2;
 
   // Table commands
-  get controller(): ProseController | undefined {
+  get controller(): SayController | undefined {
     return this.args.controller;
   }
 

@@ -3,10 +3,10 @@ import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor/core/say-editor';
 
 interface Args {
-  controller: ProseController;
+  controller: SayController;
   iconSize?: string;
 }
 

@@ -1,10 +1,10 @@
-import { PNode, ProsePlugin, RdfaEditorView } from '@lblod/ember-rdfa-editor';
+import { PNode, ProsePlugin, SayView } from '@lblod/ember-rdfa-editor';
 
 export { link } from './mark/link';
 export const linkHandler: ProsePlugin = new ProsePlugin({
   props: {
     handleClickOn(
-      view: RdfaEditorView,
+      view: SayView,
       pos: number,
       node: PNode,
       nodePos: number,

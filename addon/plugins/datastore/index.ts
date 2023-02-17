@@ -5,12 +5,12 @@ import {
   Transaction,
 } from 'prosemirror-state';
 import {
-  ProseStore,
+  SayStore,
   proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+} from '@lblod/ember-rdfa-editor/utils/datastore/say-store';
 import { Mark, PNode, ProsePlugin, Schema } from '@lblod/ember-rdfa-editor';
 import { map, objectFrom } from 'iter-tools';
-import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/say-editor';
 import {
   createLogger,
   Logger,
@@ -22,7 +22,7 @@ import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
-export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+export { SayStore } from '@lblod/ember-rdfa-editor/utils/datastore/say-store';
 
 export interface TextPNode {
   children: ResolvedPNode[];
@@ -63,8 +63,8 @@ export interface DatastorePluginArgs {
 }
 
 export interface DatastorePluginState {
-  datastore: () => ProseStore;
-  contextStore: ProseStore;
+  datastore: () => SayStore;
+  contextStore: SayStore;
 }
 
 export function datastore({
@@ -124,7 +124,7 @@ export function datastore({
   });
 }
 
-let stateCache: { state: EditorState; store: ProseStore };
+let stateCache: { state: EditorState; store: SayStore };
 
 function createDataStoreGetter(
   state: EditorState,

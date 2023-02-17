@@ -5,9 +5,9 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 import { tracked } from 'tracked-built-ins';
-import Prosemirror, {
-  ProseController,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
+import SayEditor, {
+  SayController,
+} from '@lblod/ember-rdfa-editor/core/say-editor';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
@@ -42,14 +42,14 @@ interface RdfaEditorArgs {
    * @default 'default'
    * @public
    */
-  rdfaEditorInit(editor: ProseController): void;
+  rdfaEditorInit(editor: SayController): void;
 
   initializers?: Array<() => Promise<void>>;
   schema: Schema;
   baseIRI?: string;
   plugins?: Plugin[];
   stealFocus?: boolean;
-  nodeViews?: (controller: ProseController) => {
+  nodeViews?: (controller: SayController) => {
     [node: string]: NodeViewConstructor;
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
@@ -75,10 +75,10 @@ interface RdfaEditorArgs {
  * @extends Component
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
-  @tracked controller: ProseController | null = null;
+  @tracked controller: SayController | null = null;
 
   private logger: Logger = createLogger(this.constructor.name);
-  private prosemirror: Prosemirror | null = null;
+  private prosemirror: SayEditor | null = null;
 
   get initializers() {
     return this.args.initializers || [];
@@ -104,7 +104,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.logger(`Awaited ${this.initializers.length} initializers.`);
     }
 
-    this.prosemirror = new Prosemirror({
+    this.prosemirror = new SayEditor({
       owner: getOwner(this) as Owner,
       target,
       schema: this.args.schema,
@@ -114,10 +114,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       defaultAttrGenerators: this.args.defaultAttrGenerators,
     });
     window.__PM = this.prosemirror;
-    window.__PC = new ProseController(this.prosemirror);
-    this.controller = new ProseController(this.prosemirror);
+    window.__PC = new SayController(this.prosemirror);
+    this.controller = new SayController(this.prosemirror);
     if (this.args.rdfaEditorInit) {
-      this.args.rdfaEditorInit(new ProseController(this.prosemirror));
+      this.args.rdfaEditorInit(new SayController(this.prosemirror));
     }
   }
 }
