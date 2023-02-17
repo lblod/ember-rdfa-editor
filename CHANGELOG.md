@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
+- Add support for ordered list styles
+
+### Changed
+- Rename Toolbar::Icon to Toolbar::Button
+- Added the ability to pass optional attributes to the `toggleList` command.
 
 ### Dependencies
 - Bumps `typescript` from 4.9.3 to 4.9.5
