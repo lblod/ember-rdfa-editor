@@ -8,7 +8,13 @@ ember-rdfa-editor:
   subscript: Subscript
   superscript: Superscript
   unordered-list: Unordered list
-  ordered-list: Ordered list
+  ordered-list: 
+    button-label: Ordered list
+    options-label: List styles
+    styles:
+      decimal: Numbers
+      lower-alpha: Lowercase letters
+      upper-roman: Roman Numbers
   unindent-list: List level higher
   indent-list: List level lower
   table-options: Table options

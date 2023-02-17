@@ -12,7 +12,7 @@
 
   </button>
   {{#if (has-block "options")}}
-    <Toolbar::Dropdown @icon={{this.optionsIcon}} @iconSize="" @controller={{@controller}} class="options" as |Menu|>
+    <Toolbar::Dropdown @icon={{this.optionsIcon}} @iconSize="" @controller={{@controller}} class="options" title={{@optionsLabel}} as |Menu|>
       {{yield Menu to="options"}}
     </Toolbar::Dropdown>
   {{/if}}

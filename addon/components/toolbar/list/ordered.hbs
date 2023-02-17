@@ -2,8 +2,8 @@
   {{#if this.canToggle}}
     <Toolbar::Button
       @active={{this.isActive}}
-      @title={{t 'ember-rdfa-editor.ordered-list'}}
-      @optionsLabel="Ordered List Options"
+      @title={{t 'ember-rdfa-editor.ordered-list.button-label'}}
+      @optionsLabel={{t 'ember-rdfa-editor.ordered-list.options-label'}}
       @icon="ordered-list"
       {{on "click" (fn this.toggle undefined)}}
       @controller={{@controller}}

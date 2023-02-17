@@ -1,8 +1,10 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { toggleList } from '@lblod/ember-rdfa-editor/commands/toggle-list';
 import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import IntlService from 'ember-intl/services/intl';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList, sinkListItem } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
@@ -11,12 +13,31 @@ type Args = {
   controller: ProseController;
 };
 export default class ListOrdered extends Component<Args> {
+  @service declare intl: IntlService;
 
-  styles = [
-    { name: 'decimal', description: 'Getallen'},
-    { name: 'lower-alpha', description: 'Letters'},
-    { name: 'upper-roman', description: 'Romeinse Cijfers'}
-  ]
+  get styles() {
+    return [
+      {
+        name: 'decimal',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.decimal'
+        ),
+      },
+      {
+        name: 'lower-alpha',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.lower-alpha'
+        ),
+      },
+      {
+        name: 'upper-roman',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.upper-roman'
+        ),
+      },
+    ];
+  }
+
   get firstListParent() {
     return findParentNode(
       (node) =>
