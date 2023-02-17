@@ -7,6 +7,3 @@ pipeline:
 when:
   event:
     - pull_request
-  path:
-    include: ['.woodpecker/*.yml']
-    exclude: [ '*.md' ]

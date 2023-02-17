@@ -22,8 +22,5 @@ pipeline:
     commands:
       - ember ts:precompile
 when:
-  path:
-    include: ['.woodpecker/*.yml']
-    exclude: [ '*.md' ]
   event:
     - pull_request
