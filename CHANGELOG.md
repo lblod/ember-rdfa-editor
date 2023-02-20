@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
+### Dependencies
+- Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
