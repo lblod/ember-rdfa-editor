@@ -171,7 +171,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   @action
   toggleRdfaBlocks() {
-    if(this.controller){
+    if (this.controller) {
       this.controller.focus();
     }
     this.showRdfaBlocks = !this.showRdfaBlocks;

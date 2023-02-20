@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - Modify the base keymaps to better support macos users
+ - Keep selection on the document when toggling annotations
 
 ### Internal
 - Replace drone by woodpecker 
