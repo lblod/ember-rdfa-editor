@@ -1,45 +1,22 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import {
-  ProseController,
-  WidgetSpec,
-} from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
-  em,
-  link,
-  strikethrough,
-  strong,
-  underline,
-} from '@lblod/ember-rdfa-editor/marks';
-import {
   block_rdfa,
-  blockquote,
-  bullet_list,
-  code_block,
   doc,
   hard_break,
-  heading,
   horizontal_rule,
-  image,
-  inline_rdfa,
-  list_item,
-  ordered_list,
+  invisible_rdfa,
   paragraph,
-  placeholder,
   repaired_block,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import {
-  tableKeymap,
-  tableMenu,
-  tableNodes,
-  tablePlugin,
-} from '@lblod/ember-rdfa-editor/plugins/table';
-import { code, codeMarkButton } from 'dummy/dummy-plugins/code-mark-plugin';
 import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
+import { NodeViewConstructor } from 'prosemirror-view';
+import applyDevTools from 'prosemirror-dev-tools';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import {
   card,
   cardView,
@@ -47,11 +24,33 @@ import {
   counterView,
   dropdown,
   dropdownView,
-  insertDummyComponentsWidget,
-} from 'dummy/dummy-plugins/inline-components-plugin';
-import { NodeViewConstructor } from 'prosemirror-view';
-import applyDevTools from 'prosemirror-dev-tools';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+} from '../dummy-nodes';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugin,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import {
+  em,
+  strikethrough,
+  strong,
+  subscript,
+  superscript,
+  underline,
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { link } from '@lblod/ember-rdfa-editor/plugins/link';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
+import {
+  bullet_list,
+  list_item,
+  ordered_list,
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 const nodes = {
   doc,
@@ -63,7 +62,7 @@ const nodes = {
   ordered_list,
   bullet_list,
   placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
+  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
   heading,
   blockquote,
 
@@ -89,13 +88,15 @@ const marks = {
   strong,
   underline,
   strikethrough,
+  subscript,
+  superscript,
 };
 const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
-  @tracked rdfaEditor?: ProseController;
+  @tracked rdfaEditor?: SayController;
   @tracked nodeViews: (
-    proseController: ProseController
+    proseController: SayController
   ) => Record<string, NodeViewConstructor> = (proseController) => {
     return {
       card: cardView(proseController),
@@ -104,20 +105,14 @@ export default class IndexController extends Controller {
     };
   };
   @tracked plugins: Plugin[] = [
-    // placeholderEditing(),
     highlight({ testKey: 'yeet' }),
     tablePlugin,
     tableKeymap,
   ];
-  @tracked widgets: WidgetSpec[] = [
-    insertDummyComponentsWidget,
-    codeMarkButton,
-    tableMenu,
-  ];
   schema: Schema = dummySchema;
 
   @action
-  rdfaEditorInit(rdfaEditor: ProseController) {
+  rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
