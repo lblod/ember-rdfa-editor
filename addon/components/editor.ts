@@ -35,7 +35,7 @@ export interface ResolvedPluginConfig {
   options: unknown;
 }
 
-interface RdfaEditorArgs {
+export interface RdfaEditorArgs {
   /**
    * callback that is called with an interface to the editor after editor init completed
    * @default 'default'

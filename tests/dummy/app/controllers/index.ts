@@ -85,6 +85,9 @@ export default class IndexController extends Controller {
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   schema: Schema = dummySchema;
 
+  get showRdfaBlocks() {
+    return this.rdfaEditor?.showRdfaBlocks;
+  }
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
