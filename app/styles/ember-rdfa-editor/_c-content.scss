@@ -112,16 +112,18 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   // Setup some margin rules
-  //p + *,
+  p + *,
   div + *,
   span + *,
   ul + *,
   ol + *,
-  i + * {
+  i + *,
+  table + * {
     margin-top: $say-typography-margin;
   }
 
   // No margin
+  li p + *,
   p * + *,
   p + br,
   div + br,
