@@ -9,11 +9,8 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+  toggleHeader,
 } from 'prosemirror-tables';
-import {
-  toggleHeaderRow,
-  toggleHeaderColumn,
-} from '../../../commands/toggle-header';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
@@ -102,12 +99,12 @@ export default class TableMenu extends Component<Args> {
   @action
   toggleHeaderRow() {
     this.controller?.focus();
-    this.controller?.doCommand(toggleHeaderRow);
+    this.controller?.doCommand(toggleHeader('row'));
   }
 
   @action
   toggleHeaderColumn() {
     this.controller?.focus();
-    this.controller?.doCommand(toggleHeaderColumn);
+    this.controller?.doCommand(toggleHeader('column'));
   }
 }
