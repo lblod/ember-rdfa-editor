@@ -1,0 +1,30 @@
+<Toolbar as |Tb|>
+  <Tb.Group>
+    <Plugins::History::Undo @controller={{@controller}}/>
+    <Plugins::History::Redo @controller={{@controller}}/>
+  </Tb.Group>
+  <Tb.Group>
+    <Plugins::TextStyle::Bold @controller={{@controller}}/>
+    <Plugins::TextStyle::Italic @controller={{@controller}}/>
+    <Plugins::TextStyle::Strikethrough @controller={{@controller}}/>
+    <Plugins::TextStyle::Underline @controller={{@controller}}/>
+    <Plugins::TextStyle::Subscript @controller={{@controller}}/>
+    <Plugins::TextStyle::Superscript @controller={{@controller}}/>
+    <CodeMark::ToolbarButton @controller={{@controller}}/>
+  </Tb.Group>
+  <Tb.Group>
+    <Plugins::List::Unordered @controller={{@controller}}/>
+    <Plugins::List::Ordered @controller={{@controller}}/>
+    <Plugins::List::IndentationControls @controller={{@controller}}/>
+  </Tb.Group>
+  <Tb.Group>
+    <Plugins::Table::TableMenu @controller={{@controller}}/>
+  </Tb.Group>
+  <Tb.Group>
+    <Plugins::Heading::HeadingMenu @controller={{@controller}}/>
+  </Tb.Group>
+  <Tb.Spacer />
+  <Tb.Group>
+    <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}}/>
+  </Tb.Group>
+</Toolbar>

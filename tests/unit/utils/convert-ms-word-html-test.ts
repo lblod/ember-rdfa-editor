@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
-import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-func';
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
+import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 
 module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should handle rtf -> html correctly', function (assert) {

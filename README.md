@@ -26,11 +26,10 @@ The following component is an example on how you can include the editor:
 
 ```handlebars
 <!-- your-application/components/editor.hbs -->
-<Rdfa::RdfaEditor
+<Editor
   @rdfaEditorInit={{this.editorInit}}
   @schema={{this.schema}}
   @plugins={{this.plugins}}
-  @widgets={{this.widgets}}
   @editorOptions={{hash 
     showToggleRdfaAnnotations="true" 
     showRdfa="true" 
@@ -45,7 +44,14 @@ The following component is an example on how you can include the editor:
     showListButtons="true" 
     showIndentButtons="true"
   }}
-/>
+>
+  <:top>
+    <SampleToolbar @controller={{this.rdfaEditor}}/>
+  </:top>
+  <:aside>
+    <!-- Content which is placed on the right side of the editor -->
+  </:aside>
+</Editor>
 ```
 
 ```js
@@ -107,17 +113,42 @@ export default class EditorComponent extends Component {
     return [tablePlugin, tableKeymap];
   }
 
-  get widgets(){
-    // A list of widgets which should be shown in the toolbar and sidebar of the editor.
-    return [tableMenu]
-  }
-
   @action
   editorInit(controller){
     // This method may contain code that runs when the editor has just loaded. It can be useful to e.g. load a document into the editor.
   }
 }
 ```
+
+The above template includes a `SampleToolbar` component. An editor toolbar can be constructed in the following way:
+
+```handlebars
+<Toolbar>
+  <:left>
+    <Toolbar::Group>
+      <Toolbar::History::Undo @controller={{@controller}}/>
+      <Toolbar::History::Redo @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::Marks::Bold @controller={{@controller}}/>
+      <Toolbar::Marks::Italic @controller={{@controller}}/>
+      <Toolbar::Marks::Strikethrough @controller={{@controller}}/>
+      <Toolbar::Marks::Underline @controller={{@controller}}/>
+    </Toolbar::Group>
+    <Toolbar::Group>
+      <Toolbar::TableMenu @controller={{@controller}}/>
+    </Toolbar::Group>
+  </:left>
+  <:right>
+    <!-- Buttons which are placed on the right side in the toolbar -->
+  </:right>
+</Toolbar>
+```
+
+The above sample toolbar component includes options for:
+- undoing/redoing editor actions
+- applying bold, italic, strikethrough or underline styling to text
+- table insertion
 
 The callback provided to `rdfaEditorInit` is called when the editor element is inserted and provides an instance of a `ProseController` which can be used to insert documents inside the editor and execute commands.
 
@@ -129,7 +160,6 @@ The main editor component may expect the following properties:
 - `rdfaEditorInit`: a function which is called on initialization of the editor. It receives an instance of a `ProseController`
 - `schema`: an prosemirror `Schema` instance which contain a series of nodes and marks that are supported in the editor
 - `plugins`: a list of prosemirror plugins which should be enabled in the editor
-- `widgets`: a list of editor widget configurations which determine which widgets should be displayed in the toolbar and sidebar
 - `nodeViews`: a function which expects an argument of type `ProseController` and returns a series of prosemirror `
 - `editorOptions`: an object containing different options for the editor
 - `toolbarOptions`: an object containing different options for the editor toolbar
@@ -147,9 +177,6 @@ A list of Prosemirror plugins which can modify the behaviour of the editor. Exam
 A function with the type `(controller: ProseController) => Record<string, NodeViewConstructor>`.
 
 It allows you to provide an object contain a series of `NodeViewConstructor` functions which replace the default nodeviews of specific node types. Nodeviews typically allow you to override the behaviour of the nodes inside the editor, e.g. to add custom elements. More information about nodeviews can be found on https://prosemirror.net/docs/ref/#view.NodeView. 
-
-### The `widgets` property
-A list of widget configurations (see the `WidgetSpec` type) which allow you to add widgets to the toolbar or sidebar of the editor.
 
 ### The `editorOptions` property
 
@@ -188,21 +215,9 @@ It provides the following methods:
 Additionally, a controller provides the following attributes:
 - `externalContextStore`: provides an instance of `ProseStore` describing the RDFa around the editor element.
 - `datastore`: provides an instance of `ProseStore` describing the RDFa inside the editor element.
-- `widgets`: provides a map of widgets which are currently enabled.
 - `schema`: provides the schema of the main editor.
 - `state`: provides the current state (see https://prosemirror.net/docs/guide/#state) of the main editor.
 - `view`: provides the main editor view (see https://prosemirror.net/docs/guide/#view).
-
-
-## Widgets
-Additional editor widgets can be defined using widget-specs.
-
-An object of the type `WidgetSpec` expects the following attributes:
-- `componentName`: the path of the widget Ember component.
-- `desiredLocation`: the location the widget should be displayed at.
-- (optional) `widgetArgs`: the arguments the widget should receive. These can be accessed in the component using `this.args.widgetArgs`.
-
-A list of these `WidgetSpecs` can be passed to the `widgets` argument of the editor component.
 
 ## More examples
 More examples on how to integrate this editor in your application can be found in the dummy app of this addon or in the plugins repository of the LBLOD project (https://github.com/lblod/ember-rdfa-editor-lblod-plugins).
