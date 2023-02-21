@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
+- Keep selection on the document when toggling annotations
 
 ## [2.1.2] - 2023-02-07
 
