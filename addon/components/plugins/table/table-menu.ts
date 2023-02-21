@@ -10,9 +10,11 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+} from 'prosemirror-tables';
+import {
   toggleHeaderRow,
   toggleHeaderColumn,
-} from 'prosemirror-tables';
+} from '../../../commands/toggle-header';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 
