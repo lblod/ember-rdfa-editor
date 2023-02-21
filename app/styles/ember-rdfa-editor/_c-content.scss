@@ -117,7 +117,8 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   span + *,
   ul + *,
   ol + *,
-  i + * {
+  i + *,
+  table + * {
     margin-top: $say-typography-margin;
   }
 
