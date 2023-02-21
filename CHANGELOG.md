@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of spacing between paragraphs/tables and other elements.
 
 ### Changed
+- Increase left-padding of lists
 - remove overflow: hidden on editor container div
 - Replace drone by woodpecker
 - BREAKING: Rework how widgets are passed to the editor
