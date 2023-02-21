@@ -4,7 +4,7 @@ import {
 } from '@lblod/ember-rdfa-editor/commands/split-block-checked';
 import { Command, TextSelection } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
-import { isNone, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { isNone, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export const liftEmptyBlockChecked: Command = (state, dispatch) => {
   const { $cursor } = state.selection as TextSelection;

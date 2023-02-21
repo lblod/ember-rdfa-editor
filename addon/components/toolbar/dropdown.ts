@@ -2,11 +2,11 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 interface Args {
-  controller: ProseController;
+  controller: SayController;
   iconSize?: string;
 }
 
@@ -14,6 +14,7 @@ export default class AuDropdown extends Component<Args> {
   get iconSize() {
     return this.args.iconSize ?? 'large';
   }
+
   // Create a dropdown ID
   dropdownId = 'dropdown-' + guidFor(this);
 

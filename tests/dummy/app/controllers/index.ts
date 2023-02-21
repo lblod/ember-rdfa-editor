@@ -1,42 +1,46 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   em,
-  link,
   strikethrough,
   strong,
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/marks';
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
-  blockquote,
-  bullet_list,
-  code_block,
   doc,
   hard_break,
-  heading,
   horizontal_rule,
-  image,
-  inline_rdfa,
-  list_item,
-  ordered_list,
   paragraph,
-  placeholder,
   repaired_block,
-  tableNodes,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { tableKeymap, tablePlugin } from '@lblod/ember-rdfa-editor/plugins';
 import applyDevTools from 'prosemirror-dev-tools';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
-import { code } from '../dummy-marks/code';
-import { linkHandler } from '@lblod/ember-rdfa-editor/plugins/links';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugin,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { link, linkHandler } from '@lblod/ember-rdfa-editor/plugins/link';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
+import {
+  bullet_list,
+  list_item,
+  ordered_list,
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 const nodes = {
   doc,
@@ -77,12 +81,15 @@ const marks = {
 const dummySchema = new Schema({ nodes, marks });
 
 export default class IndexController extends Controller {
-  @tracked rdfaEditor?: ProseController;
+  @tracked rdfaEditor?: SayController;
   @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
   schema: Schema = dummySchema;
 
+  get showRdfaBlocks() {
+    return this.rdfaEditor?.showRdfaBlocks;
+  }
   @action
-  rdfaEditorInit(rdfaEditor: ProseController) {
+  rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);

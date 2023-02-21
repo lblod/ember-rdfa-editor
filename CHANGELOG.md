@@ -7,13 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Handle ctrl click on links
+- Add ordered list feature.
+  Adds the button and appropriate toggling behavior when combined with unordered lists
+  Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
+- Disable undo and redo button when there's no more steps
 - Add support for ordered list styles
+- Added the ability to pass optional attributes to the `toggleList` command.
 
 ### Changed
-- Rename Toolbar::Icon to Toolbar::Button
-- Added the ability to pass optional attributes to the `toggleList` command.
+- BREAKING: Rename Toolbar::Icon to Toolbar::Button
+- remove overflow: hidden on editor container div
+- Replace drone by woodpecker
+- BREAKING: Rework how widgets are passed to the editor
+- BREAKING: Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
+- BREAKING: Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
+- BREAKING: Removal of `toolbarOptions` argument of the editor component
+- BREAKING: Removal of `widgets` argument of the editor component
+
+### Fixed
+- Modify the base keymaps to better support macos users
+- Replace text marks in another way in attribute generation plugin to fix cursor jumping
+- Keep selection on the document when toggling annotations
 
 ### Dependencies
 - Bumps `dompurify` from 2.4.1 to 3.0.0
@@ -26,28 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
-
-### Fixed
- - Modify the base keymaps to better support macos users
-
-### Internal
-- Replace drone by woodpecker 
+- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
 
 ## [2.1.3] - 2023-02-09
 
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
-
-
-### Breaking
-- Rework how widgets are passed to the editor
-- Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
-- Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
-- Removal of `toolbarOptions` argument of the editor component
-- Removal of `widgets` argument of the editor component
-
-
 
 ## [2.1.2] - 2023-02-07
 
