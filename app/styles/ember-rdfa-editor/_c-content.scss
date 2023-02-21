@@ -177,49 +177,53 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
   }
 
+
+  ul, ol {
+    padding-left: 3rem;
+  }
+
   // Style lists
   ul,
   ul.bullet-list {
     list-style-type: initial;
 
-    ul {
-      margin-left: $au-unit-small;
-    }
-
-    ol {
-      margin-left: $au-unit-small;
-    }
-
     // Stop indenting
     ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
       margin-left: 0;
+      padding-left: 0;
     }
-  }
-
-  ul.bullet-list {
-    padding-left: 0;
   }
 
   ol,
   ol.numbered-list {
     list-style-type: decimal;
 
-    ol {
-      margin-left: $au-unit-small;
+    &[data-list-style=decimal] {
+      ol {
+        list-style-type: decimal;
+      }
+      list-style-type: decimal !important;
     }
 
-    ul {
-      margin-left: $au-unit-small;
+    &[data-list-style=upper-roman] {
+      ol {
+        list-style-type: upper-roman;
+      }
+      list-style-type: upper-roman !important;
+    }
+
+    &[data-list-style=lower-alpha] {
+      ol {
+        list-style-type: lower-alpha;
+      }
+      list-style-type: lower-alpha !important;
     }
 
     // Stop indenting
     ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
       margin-left: 0;
+      padding-left: 0;
     }
-  }
-
-  ol.numbered-list {
-    padding-left: 0;
   }
 
   ul.article-list {
