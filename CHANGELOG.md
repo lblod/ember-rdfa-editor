@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
-### Dependencies
-- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
@@ -42,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
+- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
 
 ## [2.1.3] - 2023-02-09
 
