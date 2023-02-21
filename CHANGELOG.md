@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Handle ctrl click on links
-- Add ordered list feature.
-  Adds the button and appropriate toggling behavior when combined with unordered lists
-  Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 - Disable undo and redo button when there's no more steps
@@ -38,6 +34,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
+
+
+### Breaking
+- Rework how widgets are passed to the editor
+- Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
+- Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
+- Removal of `toolbarOptions` argument of the editor component
+- Removal of `widgets` argument of the editor component
+
 
 
 ## [2.1.2] - 2023-02-07

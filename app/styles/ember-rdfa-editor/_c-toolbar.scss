@@ -15,7 +15,7 @@ $say-toolbar-height: 44px !default;
 .say-toolbar {
   @include au-font-size($au-base);
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
   height: $say-toolbar-height;
   background-color: $say-toolbar-background;
@@ -32,19 +32,8 @@ $say-toolbar-height: 44px !default;
   height: 100%;
 }
 
-.say-toolbar__styling-tools {
-  display: flex;
-  align-items: center;
-}
-
-.say-toolbar__actions {
-  display: flex;
-  align-items: center;
-  padding: 0 $au-unit-small;
-
-  > * + * {
-    margin-left: $au-unit-small;
-  }
+.say-toolbar__spacer {
+  width: 100%;
 }
 
 .say-toolbar__group {
