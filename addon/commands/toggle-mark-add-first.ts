@@ -1,7 +1,7 @@
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { Attrs, MarkType } from 'prosemirror-model';
 import { Command, SelectionRange, TextSelection } from 'prosemirror-state';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export function rangeHasMarkEverywhere(
   root: PNode,

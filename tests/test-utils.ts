@@ -3,32 +3,34 @@ import hbs from 'htmlbars-inline-precompile';
 import { Schema } from 'prosemirror-model';
 import {
   em,
-  link,
   strikethrough,
   strong,
   underline,
-} from '@lblod/ember-rdfa-editor/marks';
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
+import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
   block_rdfa,
-  blockquote,
-  bullet_list,
-  code_block,
   doc,
   hard_break,
-  heading,
   horizontal_rule,
-  image,
-  inline_rdfa,
-  list_item,
-  ordered_list,
   paragraph,
   repaired_block,
   text,
-  tableNodes,
 } from '@lblod/ember-rdfa-editor/nodes';
 
-import { code } from 'dummy/dummy-marks/code';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import {
+  bullet_list,
+  list_item,
+  ordered_list,
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
+import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
+import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 
 /**
  * Utility to get the editor element in a type-safe way

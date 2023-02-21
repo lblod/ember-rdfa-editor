@@ -1,10 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { NodeSelection } from 'prosemirror-state';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 type Args = {
-  controller?: ProseController;
+  controller?: SayController;
 };
 export default class LinkEditor extends Component<Args> {
   get controller() {

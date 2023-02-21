@@ -26,53 +26,52 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
-  chainCommands,
-  createParagraphNear,
   EditorState,
   keymap,
-  liftEmptyBlock,
-  newlineInCode,
   NodeSelection,
-  RdfaEditorView,
-  redo,
+  SayView,
   Schema,
   Selection,
-  splitBlock,
   StepMap,
   Transaction,
-  undo,
 } from '@lblod/ember-rdfa-editor';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
-import {
-  link,
-  em,
-  strong,
-  underline,
-  strikethrough,
-} from '@lblod/ember-rdfa-editor/marks';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   block_rdfa,
   hard_break,
-  placeholder,
-  text,
+  invisible_rdfa,
   paragraph,
   repaired_block,
+  text,
 } from '@lblod/ember-rdfa-editor/nodes';
+import { link } from '@lblod/ember-rdfa-editor/nodes/link';
 import {
-  inline_rdfa,
-  invisible_rdfa,
-} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+  em,
+  strikethrough,
+  strong,
+  underline,
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
-import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
+import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';
+import {
+  chainCommands,
+  createParagraphNear,
+  liftEmptyBlock,
+  newlineInCode,
+  splitBlock,
+} from '@lblod/ember-rdfa-editor/commands';
+import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type Args = EmberNodeArgs & { placeholder: string };
 
 export default class EmbeddedEditor extends Component<Args> {
   @service declare intl: IntlService;
-  innerView: RdfaEditorView | null = null;
+  innerView: SayView | null = null;
 
   contentWrapper: Element | null = null;
 
@@ -120,7 +119,7 @@ export default class EmbeddedEditor extends Component<Args> {
   @action
   didInsertContentWrapper(target: Element) {
     this.contentWrapper = target;
-    this.innerView = new RdfaEditorView(
+    this.innerView = new SayView(
       this.contentWrapper,
       {
         state: EditorState.create({

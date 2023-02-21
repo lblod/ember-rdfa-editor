@@ -1,10 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
 import { NodeType } from 'prosemirror-model';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 type RdfaIcPluginInsertComponentArgs = {
-  controller: ProseController;
+  controller: SayController;
 };
 
 export default class RdfaIcPluginInsertComponent extends Component<RdfaIcPluginInsertComponentArgs> {
