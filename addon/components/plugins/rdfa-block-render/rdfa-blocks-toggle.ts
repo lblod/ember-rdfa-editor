@@ -9,6 +9,9 @@ type Args = {
 export default class RdfaBlocksToggleComponent extends Component<Args> {
   @action
   toggle() {
+    if (this.args.controller) {
+      this.args.controller.focus();
+    }
     this.args.controller?.toggleRdfaBlocks();
   }
 }

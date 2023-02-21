@@ -16,7 +16,8 @@
         {{if @editorOptions.showRdfa "rdfa-annotations"}}
         {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
         {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
-        {{if @loading "au-u-hidden-visually"}}'
+        {{if @loading "au-u-hidden-visually"}}
+        {{if @showRdfaBlocks 'show-rdfa-blocks'}}'
     >
       {{yield}}
 

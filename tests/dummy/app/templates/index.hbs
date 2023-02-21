@@ -10,7 +10,9 @@
         showRdfaHover='true'
         showPaper='true'
         showToolbarBottom=null
-      }}>
+      }}
+      @showRdfaBlocks={{this.showRdfaBlocks}}
+    >
       <:top>
         <SampleToolbar @controller={{this.rdfaEditor}}/>
       </:top>

@@ -102,6 +102,9 @@ export default class IndexController extends Controller {
     });
   }
 
+  get showRdfaBlocks() {
+    return this.rdfaEditor?.showRdfaBlocks;
+  }
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
