@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Modify the base keymaps to better support macos users
 - Replace text marks in another way in attribute generation plugin to fix cursor jumping
+- Keep selection on the document when toggling annotations
 
 ### Dependencies
 - Bumps `dompurify` from 2.4.1 to 3.0.0
@@ -45,7 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
-- Keep selection on the document when toggling annotations
 
 ## [2.1.2] - 2023-02-07
 
