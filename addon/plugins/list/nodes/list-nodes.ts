@@ -4,9 +4,10 @@ import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type OrderedListAttrs = typeof rdfaAttrs & {
   order: number;
+  style: string;
 };
 export const ordered_list: NodeSpec = {
-  attrs: { order: { default: 1 }, ...rdfaAttrs },
+  attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrs },
   content: 'list_item+',
   group: 'block',
   parseDOM: [
@@ -16,6 +17,7 @@ export const ordered_list: NodeSpec = {
         const start = dom.getAttribute('start');
         return {
           order: optionMapOr(1, (val) => Number(val), start),
+          style: dom.dataset.listStyle,
           ...getRdfaAttrs(dom),
         };
       },
@@ -23,11 +25,16 @@ export const ordered_list: NodeSpec = {
     },
   ],
   toDOM(node) {
-    const attrs = node.attrs as OrderedListAttrs;
-
-    return attrs.order == 1
-      ? ['ol', attrs, 0]
-      : ['ol', { start: attrs.order, ...attrs }, 0];
+    const { style, order, ...attrs } = node.attrs as OrderedListAttrs;
+    return [
+      'ol',
+      {
+        ...(order !== 1 && { start: order }),
+        ...(style && { 'data-list-style': style }),
+        ...attrs,
+      },
+      0,
+    ];
   },
 };
 export const bullet_list: NodeSpec = {

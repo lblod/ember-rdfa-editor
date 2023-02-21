@@ -198,6 +198,27 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   ol.numbered-list {
     list-style-type: decimal;
 
+    &[data-list-style=decimal] {
+      ol {
+        list-style-type: decimal;
+      }
+      list-style-type: decimal !important;
+    }
+
+    &[data-list-style=upper-roman] {
+      ol {
+        list-style-type: upper-roman;
+      }
+      list-style-type: upper-roman !important;
+    }
+
+    &[data-list-style=lower-alpha] {
+      ol {
+        list-style-type: lower-alpha;
+      }
+      list-style-type: lower-alpha !important;
+    }
+
     // Stop indenting
     ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
       margin-left: 0;
