@@ -44,8 +44,8 @@ interface SayEditorArgs {
 }
 
 export default class SayEditor {
-  @tracked view: SayView;
-  @tracked embeddedView?: SayView | null;
+  @tracked mainView: SayView;
+  @tracked activeView: SayView;
   @tracked showRdfaBlocks = false;
   owner: Owner;
   root: Element;
@@ -94,58 +94,25 @@ export default class SayEditor {
         ]),
       ],
     });
-    this.view = new SayView(target, {
+    this.mainView = new SayView(target, {
       state,
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: nodeViews(new SayController(this)),
       dispatchTransaction: (tr) => {
-        const newState = this.state.apply(tr);
-        this.view.updateState(newState);
+        const newState = this.mainView.state.apply(tr);
+        this.mainView.updateState(newState);
       },
       handleDOMEvents: {
         focus: () => {
-          this.clearEmbeddedView();
+          this.setActiveView(this.mainView);
         },
       },
     });
+    this.activeView = this.mainView;
   }
 
-  setEmbeddedView(view?: SayView) {
-    this.embeddedView = view;
-  }
-
-  clearEmbeddedView() {
-    this.embeddedView = null;
-  }
-
-  get editable() {
-    return this.view.editable;
-  }
-
-  get embeddedState() {
-    return this.embeddedView?.trackedState;
-  }
-
-  get state() {
-    return this.view.trackedState;
-  }
-
-  getState(includeEmbeddedView = false) {
-    return includeEmbeddedView && this.embeddedState
-      ? this.embeddedState
-      : this.state;
-  }
-
-  getView(includeEmbeddedView = false) {
-    return includeEmbeddedView && this.embeddedView
-      ? this.embeddedView
-      : this.view;
-  }
-
-  focus(includeEmbeddedView = false) {
-    includeEmbeddedView && this.embeddedView
-      ? this.embeddedView.focus()
-      : this.view.focus();
+  setActiveView(view: SayView) {
+    this.activeView = view;
   }
 }
 
