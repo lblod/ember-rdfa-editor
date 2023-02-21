@@ -1,25 +1,23 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
+import { modifier } from 'ember-modifier';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
-import { SayController } from '@lblod/ember-rdfa-editor';
 
-interface Args {
+type Args = {
   controller: SayController;
-  iconSize?: string;
-}
-
-export default class AuDropdown extends Component<Args> {
-  get iconSize() {
-    return this.args.iconSize ?? 'large';
-  }
-
-  // Create a dropdown ID
-  dropdownId = 'dropdown-' + guidFor(this);
-
-  // Track dropdown state
+};
+export default class ToolbarDropdown extends Component<Args> {
+  @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
+
+  reference = modifier(
+    (element) => {
+      this.referenceElement = element;
+    },
+    { eager: false }
+  );
 
   @action
   openDropdown() {
@@ -27,16 +25,25 @@ export default class AuDropdown extends Component<Args> {
   }
 
   @action
-  async closeDropdown(event: Event) {
-    if (event) {
-      event.preventDefault();
-    }
+  async closeDropdown() {
     this.dropdownOpen = false;
-    // It seems impossible to manage the focus correctly synchronously
-    // some kind of focus event always seems to happen at the wrong time
-    // so this is a bit of hack, but it works well.
     await paintCycleHappened();
     this.args.controller.focus();
+  }
+
+  @action
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  @action
+  async clickOutsideDeactivates(event: InputEvent) {
+    const isClosedByToggleButton = this.referenceElement?.contains(
+      event.target as Node
+    );
+    if (!isClosedByToggleButton) {
+      await this.closeDropdown();
+    }
     return true;
   }
 }
