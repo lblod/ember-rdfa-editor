@@ -1,5 +1,5 @@
-import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/changed-descendants';
-import { isNone } from '@lblod/ember-rdfa-editor/utils/option';
+import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
+import { isNone } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Mark, MarkType, NodeType } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
