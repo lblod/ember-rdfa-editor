@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disable undo and redo button when there's no more steps
 
 ### Changed
-- Update padding of lists so they are on the same level as paragraphs.
+- Increase left-padding of lists
 - remove overflow: hidden on editor container div
  
 ### Dependencies
