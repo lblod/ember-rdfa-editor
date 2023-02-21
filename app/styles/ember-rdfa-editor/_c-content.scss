@@ -206,7 +206,6 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
 
     ol {
       margin-left: $au-unit-small;
-      list-style-type: inherit;
     }
 
     ul {
@@ -214,15 +213,24 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
 
     &[data-list-style=decimal] {
-      list-style-type: decimal;
+      ol {
+        list-style-type: decimal;
+      }
+      list-style-type: decimal !important;
     }
 
     &[data-list-style=upper-roman] {
-      list-style-type: upper-roman;
+      ol {
+        list-style-type: upper-roman;
+      }
+      list-style-type: upper-roman !important;
     }
 
     &[data-list-style=lower-alpha] {
-      list-style-type: lower-alpha;
+      ol {
+        list-style-type: lower-alpha;
+      }
+      list-style-type: lower-alpha !important;
     }
 
     // Stop indenting
