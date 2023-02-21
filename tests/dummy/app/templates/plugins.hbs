@@ -3,22 +3,26 @@
     <DebugTools @controller={{this.rdfaEditor}}/>
   </:header>
   <:content>
-    <Editor
-      @rdfaEditorInit={{this.rdfaEditorInit}}
+    <EditorContainer
       @editorOptions={{hash
         showRdfa='true'
         showRdfaHighlight='true'
         showRdfaHover='true'
         showPaper='true'
-        showSidebar='true'
         showToolbarBottom=null
       }}
-      @plugins={{this.plugins}}
-      @schema={{this.schema}}
-      @nodeViews={{this.nodeViews}}>
+      @showRdfaBlocks={{this.showRdfaBlocks}}
+    >
       <:top>
         <SampleToolbar @controller={{this.rdfaEditor}}/>
       </:top>
+      <:default>
+        <Editor
+          @plugins={{this.plugins}}
+          @schema={{this.schema}}
+          @nodeViews={{this.nodeViews}}
+          @rdfaEditorInit={{this.rdfaEditorInit}}/>
+      </:default>
       <:aside>
         <Sidebar as |Sidebar|>
           <Sidebar.Collapsible @title={{t "ember-rdfa-editor.insert"}}>
@@ -26,6 +30,6 @@
           </Sidebar.Collapsible>
         </Sidebar>
       </:aside>
-    </Editor>
+    </EditorContainer>
   </:content>
 </DummyContainer>
