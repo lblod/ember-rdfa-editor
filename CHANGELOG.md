@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
+### Dependencies
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
