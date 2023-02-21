@@ -11,7 +11,7 @@ export default class UndoComponent extends Component<Args> {
     if (!this.args.controller) {
       return true;
     }
-    const editorState = this.args.controller?.getState(true);
+    const editorState = this.args.controller.activeEditorState;
     const redosAvailable = undoDepth(editorState) as number;
     return redosAvailable === 0;
   }

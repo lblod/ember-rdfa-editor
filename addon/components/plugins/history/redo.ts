@@ -11,7 +11,7 @@ export default class RedoComponent extends Component<Args> {
     if (!this.args.controller) {
       return true;
     }
-    const editorState = this.args.controller.getState(true);
+    const editorState = this.args.controller.activeEditorState;
     const undosAvailable = redoDepth(editorState) as number;
     return undosAvailable === 0;
   }
