@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 - Disable undo and redo button when there's no more steps
-- Addition of spacing between paragraphs and other elements.
+- Addition of spacing between paragraphs/tables and other elements.
 
 ### Changed
 - remove overflow: hidden on editor container div
