@@ -1,5 +1,5 @@
 {{#unless @controller.inEmbeddedView}}
-<Rdfa::ToolbarDropdown
+<Toolbar::Dropdown
   @controller={{@controller}}
   @icon="table"
   @label={{t 'ember-rdfa-editor.table-options'}}
@@ -93,15 +93,15 @@
       {{t 'ember-rdfa-editor.insert-table'}}
     </Menu.Item>
   {{/if}}
-</Rdfa::ToolbarDropdown>
+</Toolbar::Dropdown>
 {{#if this.isInTable}}
 
-  <Rdfa::ToolbarIcon
+  <Toolbar::Icon
     @title={{t 'ember-rdfa-editor.add-column-after'}}
     @icon='table-column-end-add'
     {{on 'click' this.insertColumnAfter}}
   />
-  <Rdfa::ToolbarIcon
+  <Toolbar::Icon
     @title={{t 'ember-rdfa-editor.add-row-below'}}
     @icon='table-row-end-add'
     {{on 'click' this.insertRowBelow}}

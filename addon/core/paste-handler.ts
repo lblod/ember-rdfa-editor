@@ -1,5 +1,5 @@
 import { ProseParser, ProsePlugin } from '..';
-import { cleanDocx } from '../utils/ce/paste-handler-helper-functions';
+import { cleanDocx } from '../utils/_private/ce/paste-handler-helper-functions';
 
 export function pasteHandler(): ProsePlugin {
   return new ProsePlugin({

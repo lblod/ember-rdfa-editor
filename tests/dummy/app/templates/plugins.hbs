@@ -1,48 +1,31 @@
-<RdfaEditorWithDebug
-  @rdfaEditorInit={{this.rdfaEditorInit}}
-  @editorOptions={{hash
-  showToggleRdfaAnnotations='true'
-  showInsertButton=null
-  showRdfa='true'
-  showRdfaHighlight='true'
-  showRdfaHover='true'
-  showPaper='true'
-  showSidebar='true'
-  showToolbarBottom=null
-}}
-  @toolbarOptions={{hash
-  showTextStyleButtons='true'
-  showListButtons='true'
-  showIndentButtons='true'
-}}
-  @plugins={{this.plugins}}
-  @widgets={{this.widgets}}
-  @nodeViews={{this.nodeViews}}
-  @schema={{this.schema}}
->
-  App version:
-  {{app-version versionOnly=true showExtended=true}}
-  <p>Dummy plugins:
-    <Input
-      @type='checkbox'
-      id='plugin-highlight'
-      @checked={{true}}
-      {{on 'input' (fn this.togglePlugin 'highlight')}}
-    />
-    Highlight
-    <Input
-      @type='checkbox'
-      id='plugin-code-mark'
-      @checked={{true}}
-      {{on 'input' (fn this.togglePlugin 'code-mark')}}
-    />
-    Code Mark
-    <Input
-      @type='checkbox'
-      id='plugin-inline-components'
-      @checked={{true}}
-      {{on 'input' (fn this.togglePlugin 'inline-components')}}
-    />
-    Inline Components
-  </p>
-</RdfaEditorWithDebug>
+<DummyContainer>
+  <:header>
+    <DebugTools @controller={{this.rdfaEditor}}/>
+  </:header>
+  <:content>
+    <Editor
+      @rdfaEditorInit={{this.rdfaEditorInit}}
+      @editorOptions={{hash
+        showRdfa='true'
+        showRdfaHighlight='true'
+        showRdfaHover='true'
+        showPaper='true'
+        showSidebar='true'
+        showToolbarBottom=null
+      }}
+      @plugins={{this.plugins}}
+      @schema={{this.schema}}
+      @nodeViews={{this.nodeViews}}>
+      <:top>
+        <SampleToolbar @controller={{this.rdfaEditor}}/>
+      </:top>
+      <:aside>
+        <Sidebar as |Sidebar|>
+          <Sidebar.Collapsible @title={{t "ember-rdfa-editor.insert"}}>
+            <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}}/>
+          </Sidebar.Collapsible>
+        </Sidebar>
+      </:aside>
+    </Editor>
+  </:content>
+</DummyContainer>
