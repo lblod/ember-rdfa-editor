@@ -7,16 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+
 - Handle ctrl click on links
 - Add ordered list feature.
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
+- Disable undo and redo button when there's no more steps
 
 ### Changed
 - Update padding of lists so they are on the same level as paragraphs.
-
+- remove overflow: hidden on editor container div
+ 
 ### Dependencies
 - Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
@@ -31,16 +34,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - Modify the base keymaps to better support macos users
+ - Replace text marks in another way in attribute generation plugin to fix cursor jumping
 
 ### Internal
 - Replace drone by woodpecker 
+
+### Breaking
+- Rework how widgets are passed to the editor
+- Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
+- Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
+- Removal of `toolbarOptions` argument of the editor component
+- Removal of `widgets` argument of the editor component
+
 
 ## [2.1.3] - 2023-02-09
 
 ### Fixed
 
 - fix paragraph parsing rule so paragraphs are skipped when they contain block content, not inline content.
-
 
 ## [2.1.2] - 2023-02-07
 
