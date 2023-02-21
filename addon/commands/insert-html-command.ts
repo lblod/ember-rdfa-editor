@@ -1,7 +1,7 @@
 import { Command } from 'prosemirror-state';
-import { isTextNode } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { isTextNode } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
-import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
+import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing';
 import { PNode } from '..';
 export function insertHtml(
   html: Node | string,
