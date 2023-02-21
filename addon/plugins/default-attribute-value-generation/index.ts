@@ -1,6 +1,6 @@
 import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
 import { isNone } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { MarkType, NodeType } from 'prosemirror-model';
+import { Mark, MarkType, NodeType } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
 export type DefaultAttrGenPuginOptions = {
@@ -22,13 +22,13 @@ export function defaultAttributeValueGeneration(
           options.forEach(({ attribute, generator, types }) => {
             if (!node.isText) {
               if (!types || types.has(node.type)) {
-                if (attribute in node.attrs && isNone(node.attrs[attribute])) {
-                  newAttrs = { ...node.attrs, [attribute]: generator() };
+                if (attribute in newAttrs && isNone(newAttrs[attribute])) {
+                  newAttrs = { ...newAttrs, [attribute]: generator() };
                 }
               }
             }
 
-            newMarks = node.marks.map((mark) => {
+            newMarks = newMarks.map((mark) => {
               if (!types || types.has(mark.type)) {
                 if (attribute in mark.attrs && isNone(mark.attrs[attribute])) {
                   return mark.type.create({
@@ -40,14 +40,15 @@ export function defaultAttributeValueGeneration(
               return mark;
             });
           });
-          if (node.isText) {
-            tr.replaceWith(
-              pos,
-              pos + node.nodeSize,
-              newState.schema.text(node.textContent, newMarks)
-            );
+          if (node.isText && !Mark.sameSet(node.marks, newMarks)) {
+            tr.removeMark(pos, pos + node.nodeSize, null);
+            newMarks.forEach((mark) => {
+              tr.addMark(pos, pos + node.nodeSize, mark);
+            });
           } else {
-            tr.setNodeMarkup(pos, null, newAttrs, newMarks);
+            if (!node.hasMarkup(node.type, newAttrs, newMarks)) {
+              tr.setNodeMarkup(pos, null, newAttrs, newMarks);
+            }
           }
         });
         return tr.steps.length ? tr : null;
