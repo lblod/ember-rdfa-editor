@@ -1,0 +1,30 @@
+<div
+  class='say-container
+    {{if @editorOptions.showRdfaHover "say-container--sidebar-left"}}
+    {{if @editorOptions.showPaper "say-container--paper"}}
+    {{if (has-block "aside") "say-container--sidebar-right"}}
+    {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
+>
+  {{yield to='top'}}
+  <div class='say-container__main'>
+    {{#if @loading}}
+      <AuLoader />
+    {{/if}}
+
+    <div
+      class='say-editor
+        {{if @editorOptions.showRdfa "rdfa-annotations"}}
+        {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
+        {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
+        {{if @loading "au-u-hidden-visually"}}
+        {{if @showRdfaBlocks 'show-rdfa-blocks'}}'
+    >
+      {{yield}}
+
+    </div>
+
+    <div class='say-container__aside'>
+      {{yield to='aside'}}
+    </div>
+  </div>
+</div>
