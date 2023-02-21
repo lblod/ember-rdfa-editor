@@ -7,7 +7,7 @@ import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../config/sample-data';
 import { EditorState } from '@codemirror/state';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import ApplicationInstance from '@ember/application/instance';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 

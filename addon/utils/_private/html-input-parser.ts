@@ -2,10 +2,10 @@ import {
   isElement,
   isTextNode,
   tagName,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import DOMPurify from 'dompurify';
-import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+import { ParseError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 
 export const DEFAULT_SAFE_ATTRIBUTES = [
   'colspan',

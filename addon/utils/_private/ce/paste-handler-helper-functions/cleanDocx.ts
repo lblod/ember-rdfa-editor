@@ -4,7 +4,7 @@ import {
   preCleanHtml,
   cleanEmptyElements,
   cleanLinkElements,
-} from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-helper-functions';
+} from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions/index';
 
 const parser = new DOMParser();
 

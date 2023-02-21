@@ -24,7 +24,7 @@
  */
 
 import { NodeSelection, ResolvedPos } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { cellAround, CellSelection, Direction } from 'prosemirror-tables';
 
 export function findNextCell(

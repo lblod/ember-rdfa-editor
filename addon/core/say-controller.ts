@@ -1,6 +1,6 @@
-import { SayStore } from '@lblod/ember-rdfa-editor/utils/datastore/say-store';
+import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
 import Owner from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import {
   rangeHasMarkEverywhere,

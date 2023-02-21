@@ -4,7 +4,7 @@ import {
   PNode,
   rdfaAttrs,
 } from '@lblod/ember-rdfa-editor';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 export const invisible_rdfa: NodeSpec = {
   inline: true,

@@ -1,6 +1,6 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
-import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type OrderedListAttrs = typeof rdfaAttrs & {
   order: number;

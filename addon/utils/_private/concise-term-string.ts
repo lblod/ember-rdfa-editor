@@ -1,7 +1,10 @@
 import * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import { RDF_TYPE, XSD_PREFIX } from '@lblod/ember-rdfa-editor/utils/constants';
-import { ParseError } from '@lblod/ember-rdfa-editor/utils/errors';
+import {
+  RDF_TYPE,
+  XSD_PREFIX,
+} from '@lblod/ember-rdfa-editor/utils/_private/constants';
+import { ParseError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 
 /**
  * This is a simplified implementation of {@link https://graphy.link/concise#string/c1 Concise term syntax}

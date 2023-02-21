@@ -5,7 +5,7 @@ import {
   getPathFromRoot,
   isElement,
   tagName,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 import { v4 as uuidv4 } from 'uuid';
 import { gapCursor } from 'prosemirror-gapcursor';
@@ -13,8 +13,8 @@ import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { createLogger, Logger } from '../utils/logging-utils';
-import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/reference-manager';
+import { createLogger, Logger } from '../utils/_private/logging-utils';
+import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
 import {
   datastore,
   isElementPNode,

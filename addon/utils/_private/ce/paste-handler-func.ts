@@ -1,5 +1,5 @@
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
-import { cleanDocx } from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-helper-functions';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import { cleanDocx } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions';
 
 export function convertMsWordHtml(
   htmlPaste: string,

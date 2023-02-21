@@ -4,23 +4,23 @@ import {
   QuadNodes,
   RdfaParseConfig,
   RdfaParser,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-parser/rdfa-parser';
+} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
 import {
   ConciseTerm,
   conciseToRdfjs,
   TermConverter,
-} from '@lblod/ember-rdfa-editor/utils/concise-term-string';
+} from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
-import { ResultSet } from '@lblod/ember-rdfa-editor/utils/datastore/result-set';
-import { TermMapping } from '@lblod/ember-rdfa-editor/utils/datastore/term-mapping';
+import { ResultSet } from '@lblod/ember-rdfa-editor/utils/_private/datastore/result-set';
+import { TermMapping } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-mapping';
 import {
   isPrimitive,
   ObjectSpec,
   PredicateSpec,
   SubjectSpec,
-} from '@lblod/ember-rdfa-editor/utils/datastore/term-spec';
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-spec';
 import { GraphyDataset } from './graphy-dataset';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;

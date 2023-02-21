@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import {
   createLogger,
   Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';

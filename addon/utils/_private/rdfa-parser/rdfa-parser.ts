@@ -11,14 +11,14 @@ import INITIAL_CONTEXT from './initial-context';
 import { IRdfaPattern } from './rdfa-pattern';
 import { IRdfaFeatures, RDFA_FEATURES, RdfaProfile } from './rdfa-profile';
 import { Util } from './util';
-import { CustomError } from '@lblod/ember-rdfa-editor/utils/errors';
+import { CustomError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import {
   isElement,
   isTextNode,
-} from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import MapUtils from '@lblod/ember-rdfa-editor/utils/map-utils';
-import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/datastore/graphy-dataset';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
+import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/_private/datastore/graphy-dataset';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>

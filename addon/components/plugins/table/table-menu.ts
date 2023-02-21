@@ -11,7 +11,7 @@ import {
   deleteTable,
 } from 'prosemirror-tables';
 import { PNode } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 interface Args {
