@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 - Disable undo and redo button when there's no more steps
 
+### Changed
+- remove overflow: hidden on editor container div
+ 
 ### Dependencies
 - Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
