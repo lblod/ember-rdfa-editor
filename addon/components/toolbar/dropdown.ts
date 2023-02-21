@@ -2,13 +2,12 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/editor-utils';
-
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 
 type Args = {
-  controller: ProseController;
-}
+  controller: SayController;
+};
 export default class ToolbarDropdown extends Component<Args> {
   @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
@@ -38,10 +37,12 @@ export default class ToolbarDropdown extends Component<Args> {
   }
 
   @action
-  clickOutsideDeactivates(event: InputEvent) {
-    let isClosedByToggleButton = this.referenceElement?.contains(event.target as Node);
+  async clickOutsideDeactivates(event: InputEvent) {
+    const isClosedByToggleButton = this.referenceElement?.contains(
+      event.target as Node
+    );
     if (!isClosedByToggleButton) {
-      this.closeDropdown();
+      await this.closeDropdown();
     }
     return true;
   }

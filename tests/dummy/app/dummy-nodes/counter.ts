@@ -2,8 +2,8 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   EmberNodeConfig,
-} from '@lblod/ember-rdfa-editor/utils/ember-node';
-import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/option';
+} from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'counter',
