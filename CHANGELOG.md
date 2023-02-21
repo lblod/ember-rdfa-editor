@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - Modify the base keymaps to better support macos users
+ - Replace text marks in another way in attribute generation plugin to fix cursor jumping
 
 ### Internal
 - Replace drone by woodpecker 
