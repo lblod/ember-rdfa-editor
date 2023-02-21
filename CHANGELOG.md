@@ -20,11 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase left-padding of lists
 - remove overflow: hidden on editor container div
 - Replace drone by woodpecker
+- Modernize toolbar dropdown
 - BREAKING: Rework how widgets are passed to the editor
 - BREAKING: Rename of the editor component: `Rdfa::RdfaEditor` to `Editor`
 - BREAKING: Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
 - BREAKING: Removal of `toolbarOptions` argument of the editor component
 - BREAKING: Removal of `widgets` argument of the editor component
+
 
 ### Fixed
 - Modify the base keymaps to better support macos users
