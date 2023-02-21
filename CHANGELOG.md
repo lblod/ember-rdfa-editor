@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
+- Disable undo and redo button when there's no more steps
 
 ### Dependencies
 - Bumps `dompurify` from 2.4.1 to 3.0.0

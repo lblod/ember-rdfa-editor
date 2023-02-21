@@ -83,6 +83,12 @@ $say-toolbar-height: 44px !default;
     background-color: var(--au-gray-300);
     box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-400);
   }
+
+  &.is-disabled {
+    color: var(--au-gray-400);
+    background-color: var(--au-gray-100);
+    cursor: not-allowed;
+  }
 }
 
 .say-toolbar__button img {
