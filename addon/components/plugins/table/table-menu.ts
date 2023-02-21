@@ -99,13 +99,13 @@ export default class TableMenu extends Component<Args> {
 
   @action
   toggleHeaderRow() {
-    this.controller.focus();
-    this.controller.doCommand(toggleHeaderRow);
+    this.controller?.focus();
+    this.controller?.doCommand(toggleHeaderRow);
   }
 
   @action
   toggleHeaderColumn() {
-    this.controller.focus();
-    this.controller.doCommand(toggleHeaderColumn);
+    this.controller?.focus();
+    this.controller?.doCommand(toggleHeaderColumn);
   }
 }
