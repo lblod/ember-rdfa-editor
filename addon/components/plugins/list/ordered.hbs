@@ -1,0 +1,10 @@
+{{#if @controller}}
+  {{#if this.canToggle}}
+    <Toolbar::Icon
+      @active={{this.isActive}}
+      @title={{t 'ember-rdfa-editor.ordered-list'}}
+      @icon="ordered-list"
+      {{on "click" this.toggle}}
+    />
+  {{/if}}
+{{/if}}

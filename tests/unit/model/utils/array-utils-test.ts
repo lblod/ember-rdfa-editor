@@ -1,5 +1,5 @@
 import { module, test } from 'qunit';
-import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils';
 
 module('Unit | utils | array-utils', function () {
   module('Unit | utils | array-utils | findCommonSlice', function () {
