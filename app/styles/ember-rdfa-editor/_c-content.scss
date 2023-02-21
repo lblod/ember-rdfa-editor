@@ -123,6 +123,7 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   }
 
   // No margin
+  li p + *,
   p * + *,
   p + br,
   div + br,
