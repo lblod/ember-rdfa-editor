@@ -1,10 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import {
-  redo,
-  redoDepth,
-  undoDepth,
-} from '@lblod/ember-rdfa-editor/plugins/history';
+import { redo, redoDepth } from '@lblod/ember-rdfa-editor/plugins/history';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
