@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import TEST_SCHEMA from 'dummy/tests/test-utils';
-import { findNodes } from '@lblod/ember-rdfa-editor/utils/position-utils';
+import { findNodes } from '@lblod/ember-rdfa-editor/utils/_private/position-utils';
 
 module('Unit | utils | position-utils | get-nodes', function () {
   // Replace this with your real tests.
