@@ -5,24 +5,27 @@ import {
   Transaction,
 } from 'prosemirror-state';
 import {
-  ProseStore,
   proseStoreFromParse,
-} from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+  SayStore,
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
 import { Mark, PNode, ProsePlugin, Schema } from '@lblod/ember-rdfa-editor';
 import { map, objectFrom } from 'iter-tools';
-import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/say-editor';
 import {
   createLogger,
   Logger,
-} from '@lblod/ember-rdfa-editor/utils/logging-utils';
+} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
-import { isElement, tagName } from '@lblod/ember-rdfa-editor/utils/dom-helpers';
-import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
-import ArrayUtils from '@lblod/ember-rdfa-editor/utils/array-utils';
+import {
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
-export { ProseStore } from '@lblod/ember-rdfa-editor/utils/datastore/prose-store';
+export { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
 
 export interface TextPNode {
   children: ResolvedPNode[];
@@ -63,8 +66,8 @@ export interface DatastorePluginArgs {
 }
 
 export interface DatastorePluginState {
-  datastore: () => ProseStore;
-  contextStore: ProseStore;
+  datastore: () => SayStore;
+  contextStore: SayStore;
 }
 
 export function datastore({
@@ -124,7 +127,7 @@ export function datastore({
   });
 }
 
-let stateCache: { state: EditorState; store: ProseStore };
+let stateCache: { state: EditorState; store: SayStore };
 
 function createDataStoreGetter(
   state: EditorState,

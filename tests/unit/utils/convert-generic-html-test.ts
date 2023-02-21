@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
-import { convertGenericHtml } from '@lblod/ember-rdfa-editor/utils/ce/paste-handler-func';
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
+import { convertGenericHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 
 module('Utils | CS | paste-handler | convertGenericHtml', function () {
   test('It should display clean HTML', function (assert) {

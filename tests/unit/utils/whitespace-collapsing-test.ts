@@ -2,8 +2,8 @@ import { module, test } from 'qunit';
 import {
   preWrapToNormalWhiteSpace,
   normalToPreWrapWhiteSpace,
-} from '@lblod/ember-rdfa-editor/utils/whitespace-collapsing';
-import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/constants';
+} from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing';
+import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 
 module(
   'Unit | utils | whitespace-collapsing | pre-wrap-to-normal ',
