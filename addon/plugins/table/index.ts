@@ -1,4 +1,4 @@
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
 
@@ -13,6 +13,7 @@ import {
 } from 'prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
 
+export { tableNodes } from './nodes/table';
 export const tablePlugin: Plugin = tableEditing({
   allowTableNodeSelection: true,
 });

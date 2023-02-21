@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 
 export default class InlineComponentsPluginCounter extends Component<EmberNodeArgs> {
   @action

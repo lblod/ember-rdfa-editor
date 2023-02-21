@@ -1,9 +1,9 @@
-import HtmlInputParser from '@lblod/ember-rdfa-editor/utils/html-input-parser';
+import HtmlInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 import { module, test } from 'qunit';
 import {
   NON_BREAKING_SPACE,
   INVISIBLE_SPACE,
-} from '@lblod/ember-rdfa-editor/utils/constants';
+} from '@lblod/ember-rdfa-editor/utils/_private/constants';
 
 module('Unit | Utility | html-input-parser', function () {
   // Replace this with your real tests.

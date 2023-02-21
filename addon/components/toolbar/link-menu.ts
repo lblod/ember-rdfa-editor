@@ -1,10 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { wrapSelection } from '@lblod/ember-rdfa-editor/commands/wrap-selection';
-import { ProseController } from '@lblod/ember-rdfa-editor/core/prosemirror';
+import { SayController } from '@lblod/ember-rdfa-editor';
 
 type Args = {
-  controller: ProseController;
+  controller: SayController;
 };
 export default class LinkMenu extends Component<Args> {
   get controller() {

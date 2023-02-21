@@ -1,6 +1,6 @@
 import { NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
-import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/constants';
+import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 
 let BLOCK_SELECTOR = '';
 NON_BLOCK_NODES.forEach(
