@@ -34,3 +34,6 @@ ember-rdfa-editor:
 
   show-annotations: Show annotations
   insert: Insert
+  indent: Increase indentation
+  unindent: Reduce indentation
+

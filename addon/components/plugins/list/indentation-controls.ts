@@ -7,6 +7,9 @@ type Args = {
   controller: SayController;
 };
 
+/**
+ * @deprecated
+ */
 export default class ListIndentationControls extends Component<Args> {
   get controller() {
     return this.args.controller;

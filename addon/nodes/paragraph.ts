@@ -1,6 +1,7 @@
 import { NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
+import { optionMapOr } from '../utils/_private/option';
 
 let BLOCK_SELECTOR = '';
 NON_BLOCK_NODES.forEach(
@@ -13,6 +14,11 @@ BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR.substring(
 export const paragraph: NodeSpec = {
   content: 'inline*',
   group: 'block',
+  attrs: {
+    indentationLevel: {
+      default: 0,
+    },
+  },
   // defining: true,
   parseDOM: [
     {
@@ -20,7 +26,13 @@ export const paragraph: NodeSpec = {
       getAttrs(node: HTMLElement) {
         const nonBlockNode = node.querySelector(BLOCK_SELECTOR);
         if (nonBlockNode) {
-          return null;
+          return {
+            indentationLevel: optionMapOr(
+              0,
+              parseInt,
+              node.dataset.indentationLevel
+            ),
+          };
         }
         return false;
       },
@@ -33,12 +45,22 @@ export const paragraph: NodeSpec = {
         if (myAttrs) {
           return false;
         }
-        return null;
+        return {
+          indentationLevel: optionMapOr(
+            0,
+            parseInt,
+            node.dataset.indentationLevel
+          ),
+        };
       },
       consuming: false,
     },
   ],
-  toDOM() {
-    return ['p', {}, 0];
+  toDOM(node) {
+    return [
+      'p',
+      { 'data-indentation-level': node.attrs.indentationLevel as number },
+      0,
+    ];
   },
 };
