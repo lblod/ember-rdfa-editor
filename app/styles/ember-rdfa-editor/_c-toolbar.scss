@@ -52,6 +52,7 @@ $say-toolbar-height: 44px !default;
   width: $say-toolbar-height;
   display: inline-flex;
   flex-direction: row;
+  flex-shrink: 0;
   & + & {
     border-left: 0.1rem solid var(--au-gray-200);
   }
