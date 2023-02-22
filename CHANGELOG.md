@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for ordered list styles
 - Added the ability to pass optional attributes to the `toggleList` command.
 - Addition of spacing between paragraphs/tables and other elements.
+- Addition of the paragraph/heading indentation functionality
 
 ### Changed
 - Increase left-padding of lists
@@ -37,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace text marks in another way in attribute generation plugin to fix cursor jumping
 - Keep selection on the document when toggling annotations
 - Fix shrinking issues with toolbar buttons and dropdowns
+
+### Deprecated
+- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
 
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
