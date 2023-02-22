@@ -175,6 +175,7 @@ export default class EmbeddedEditor extends Component<Args> {
             }
           },
         },
+        // These handlers are needed to fix part of a bug in Gecko (firefox): https://bugzilla.mozilla.org/show_bug.cgi?id=1612076
         handleKeyDown: (view, event) => {
           if (event.code === 'ArrowLeft') {
             const { selection } = view.state;
