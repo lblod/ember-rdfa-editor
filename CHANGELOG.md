@@ -37,23 +37,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep selection on the document when toggling annotations
 
 ### Dependencies
-- Bumps `dompurify` from 2.4.1 to 3.0.0
-- Bumps `typescript` from 4.9.3 to 4.9.5
-- Bumps `eslint` from 8.29.0 to 8.34.0
-- Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
-- Bumps `@codemirror/view` from 6.7.3 to 6.9.1
-- Bumps `prosemirror-view` from 1.29.2 to 1.30.1
-- Bumps `sinon` from 14.0.2 to 15.0.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
-- Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
-- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
-- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
-- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
-- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.53.0
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
-- Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
+- Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
+- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.53.0
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
+- Bumps `dompurify` from 2.4.1 to 3.0.0
+- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
+- Bumps `eslint` from 8.29.0 to 8.34.0
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
+- Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
+- Bumps `prosemirror-view` from 1.29.2 to 1.30.1
+- Bumps `sinon` from 14.0.2 to 15.0.1
+- Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `xml-formatter` from 2.6.1 to 3.2.1
 
 
