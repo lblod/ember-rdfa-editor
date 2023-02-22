@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- changelog test
 - Handle ctrl click on links
 - Add ordered list feature.
   Adds the button and appropriate toggling behavior when combined with unordered lists
