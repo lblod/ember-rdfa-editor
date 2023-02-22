@@ -1,6 +1,7 @@
 # @lblod/ember-rdfa-editor
 [![Build Status](https://rpio-drone.redpencil.io/api/badges/lblod/ember-rdfa-editor/status.svg)](https://rpio-drone.redpencil.io/lblod/ember-rdfa-editor)
 
+IGNORE THIS CHANGE
 Emberjs addon that provides an RDFa aware rich text editor based on the [Prosemirror toolkit](https://prosemirror.net/). 
 
 Main features:
