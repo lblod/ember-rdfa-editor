@@ -15,6 +15,7 @@ $say-smaller-font-size: 1.4rem !default;
 .say-dropdown {
   position: relative;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .say-toolbar__button {}
