@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
 - Bumps `@codemirror/state` from 6.1.4 to 6.2.0
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.53.0
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
 - Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
