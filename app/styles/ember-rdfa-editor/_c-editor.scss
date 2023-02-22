@@ -57,7 +57,6 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
 
   .say-container--paper & {
     background-color: $say-paper-background;
-    padding: $say-paper-padding;
     box-shadow: $say-paper-box-shadow;
   }
 }
@@ -68,6 +67,7 @@ $say-annotation-width: $au-unit-huge * 1.5 !default;
 }
 
 .say-editor__inner {
+  padding: $say-paper-padding;
   position: relative;
   min-height: $say-paper-min-height;
   white-space: break-spaces;
