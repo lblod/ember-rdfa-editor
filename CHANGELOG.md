@@ -54,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
+- Bumps `xml-formatter` from 2.6.1 to 3.2.1
+
 
 ## [2.1.3] - 2023-02-09
 
