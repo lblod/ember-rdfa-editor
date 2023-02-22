@@ -175,6 +175,22 @@ export default class EmbeddedEditor extends Component<Args> {
             }
           },
         },
+        handleKeyDown: (view, event) => {
+          if (event.code === 'ArrowLeft') {
+            const { selection } = view.state;
+            if (selection.empty && selection.from === 0) {
+              this.outerView.focus();
+            }
+          } else if (event.code === 'ArrowRight') {
+            const { selection } = view.state;
+            if (
+              selection.empty &&
+              selection.from === view.state.doc.nodeSize - 2
+            ) {
+              this.outerView.focus();
+            }
+          }
+        },
       },
       this.outerView
     );
