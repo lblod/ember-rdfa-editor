@@ -58,7 +58,7 @@ export default class ListOrdered extends Component<Args> {
   }
 
   get selection() {
-    return this.controller.getState(true).selection;
+    return this.controller.activeEditorState.selection;
   }
 
   get schema() {
@@ -78,15 +78,14 @@ export default class ListOrdered extends Component<Args> {
   }
 
   get canToggle() {
-    return this.controller.checkCommand(this.toggleCommand(), true);
+    return this.controller.checkCommand(this.toggleCommand());
   }
 
   @action
   toggle(style?: string) {
     this.controller.focus();
     this.controller.doCommand(
-      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list']),
-      true
+      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list'])
     );
   }
 

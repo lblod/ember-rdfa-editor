@@ -15,12 +15,7 @@ import {
   MarkType,
   Schema,
 } from 'prosemirror-model';
-import {
-  Command,
-  EditorState,
-  Selection,
-  Transaction,
-} from 'prosemirror-state';
+import { Command, Selection, Transaction } from 'prosemirror-state';
 
 export default class SayController {
   @tracked
@@ -31,7 +26,8 @@ export default class SayController {
   }
 
   get externalContextStore(): SayStore {
-    return unwrap(datastoreKey.getState(this.editor.state)).contextStore;
+    return unwrap(datastoreKey.getState(this.editor.mainView.state))
+      .contextStore;
   }
 
   clone() {
@@ -50,27 +46,23 @@ export default class SayController {
    *
    * @deprecated use doCommand with the {@link toggleMark} or {@link toggleMarkAddFirst} commands
    */
-  toggleMark(type: string | MarkType, includeEmbeddedView = false) {
-    this.focus(includeEmbeddedView);
+  toggleMark(type: string | MarkType) {
+    this.focus();
     const markType = typeof type === 'string' ? this.schema.marks[type] : type;
-    this.doCommand(toggleMarkAddFirst(markType), includeEmbeddedView);
+    this.doCommand(toggleMarkAddFirst(markType));
   }
 
-  focus(includeEmbeddedView = false) {
-    this.editor.focus(includeEmbeddedView);
+  focus() {
+    this.editor.activeView.focus();
   }
 
-  setEmbeddedView(view?: SayView) {
-    this.editor.setEmbeddedView(view);
-  }
-
-  clearEmbeddedView() {
-    this.editor.clearEmbeddedView();
+  setActiveView(view: SayView) {
+    this.editor.setActiveView(view);
   }
 
   setHtmlContent(content: string) {
     this.focus();
-    const tr = this.editor.state.tr;
+    const tr = this.mainEditorState.tr;
     const domParser = new DOMParser();
     tr.replaceWith(
       0,
@@ -83,34 +75,23 @@ export default class SayController {
       )
     );
     tr.setSelection(Selection.atEnd(tr.doc));
-    this.editor.view.dispatch(tr);
+    this.editor.mainView.dispatch(tr);
   }
 
-  doCommand(command: Command, includeEmbeddedView = false): boolean {
-    const view = this.editor.getView(includeEmbeddedView);
+  doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(view.state, view.dispatch, view);
   }
 
-  checkCommand(command: Command, includeEmbeddedView = false): boolean {
-    const state = this.editor.getState(includeEmbeddedView);
-    return command(state);
+  checkCommand(
+    command: Command,
+    { view = this.activeEditorView } = {}
+  ): boolean {
+    return command(view.state);
   }
 
-  /**
-   * @deprecated This method is obsolete and will be removed in version 3.0. Use doCommand instead.
-   */
-  checkAndDoCommand(command: Command, includeEmbeddedView = false): boolean {
-    const view = this.editor.getView(includeEmbeddedView);
-    if (command(view.state)) {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      return command(view.state, view.dispatch, view);
-    }
-    return false;
-  }
-
-  isMarkActive(markType: MarkType, includeEmbeddedView = false) {
-    const state = this.editor.getState(includeEmbeddedView);
+  isMarkActive(markType: MarkType) {
+    const state = this.activeEditorState;
     const { from, $from, to, empty } = state.selection;
     if (empty) {
       return !!markType.isInSet(state.storedMarks || $from.marks());
@@ -121,9 +102,8 @@ export default class SayController {
 
   withTransaction(
     callback: (tr: Transaction) => Transaction | null,
-    includeEmbeddedView = false
+    { view = this.activeEditorView } = {}
   ) {
-    const view = this.editor.getView(includeEmbeddedView);
     const tr = view.state.tr;
     const result = callback(tr);
     if (result) {
@@ -132,51 +112,15 @@ export default class SayController {
   }
 
   get datastore(): SayStore {
-    return unwrap(datastoreKey.getState(this.editor.state)).datastore();
+    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
   }
 
   get schema(): Schema {
-    return this.editor.state.schema;
-  }
-
-  /**
-   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getState method instead.
-   */
-  get state(): EditorState {
-    return this.editor.state;
-  }
-
-  /**
-   * @deprecated This getter is deprecated and will be removed in version 3.0. Use the getView method instead.
-   */
-  get view(): SayView {
-    return this.editor.view;
+    return this.mainEditorState.schema;
   }
 
   get owner(): Owner {
     return this.editor.owner;
-  }
-
-  getState(includeEmbeddedView = false) {
-    return this.editor.getState(includeEmbeddedView);
-  }
-
-  getView(includeEmbeddedView = false) {
-    return this.editor.getView(includeEmbeddedView);
-  }
-
-  get htmlContent(): string {
-    const div = document.createElement('div');
-    DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.editor.state.doc.content,
-      undefined,
-      div
-    );
-    return div.innerHTML;
-  }
-
-  get inEmbeddedView(): boolean {
-    return !!this.editor.embeddedView;
   }
 
   toggleRdfaBlocks() {
@@ -186,5 +130,35 @@ export default class SayController {
 
   get showRdfaBlocks() {
     return this.editor.showRdfaBlocks;
+  }
+
+  get mainEditorView() {
+    return this.editor.mainView;
+  }
+
+  get activeEditorView() {
+    return this.editor.activeView;
+  }
+
+  get mainEditorState() {
+    return this.editor.mainView.state;
+  }
+
+  get activeEditorState() {
+    return this.editor.activeView.state;
+  }
+
+  get htmlContent(): string {
+    const div = document.createElement('div');
+    DOMSerializer.fromSchema(this.schema).serializeFragment(
+      this.mainEditorState.doc.content,
+      undefined,
+      div
+    );
+    return div.innerHTML;
+  }
+
+  get inEmbeddedView(): boolean {
+    return !!this.activeEditorView.parent;
   }
 }

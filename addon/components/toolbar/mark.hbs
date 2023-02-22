@@ -1,6 +1,8 @@
+{{#if @controller}}
 <Toolbar::Button
   @active={{this.isActive}}
   @title={{@title}}
   @icon={{@icon}}
   {{on 'click' this.toggle}}
 />
+{{/if}}

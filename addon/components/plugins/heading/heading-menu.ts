@@ -93,7 +93,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   isActive = (nodeType: NodeType, attrs: Record<string, unknown> = {}) => {
     if (this.controller) {
-      const { selection } = this.controller.getState();
+      const { selection } = this.controller.mainEditorState;
       const { $from, to } = selection;
       return (
         to <= $from.end() &&
