@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
 - BREAKING: Removal of `toolbarOptions` argument of the editor component
 - BREAKING: Removal of `widgets` argument of the editor component
+- Allow users to set a cursor by clicking in the margin of the editor
 
 
 ### Fixed
