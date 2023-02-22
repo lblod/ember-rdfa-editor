@@ -46,9 +46,12 @@ export default class LinkEditor extends Component<Args> {
   remove() {
     if (this.controller && this.link) {
       const { pos, node } = this.link;
-      this.controller.withTransaction((tr) => {
-        return tr.replaceWith(pos, pos + node.nodeSize, node.content);
-      });
+      this.controller.withTransaction(
+        (tr) => {
+          return tr.replaceWith(pos, pos + node.nodeSize, node.content);
+        },
+        { view: this.controller.mainEditorView }
+      );
     }
   }
 }

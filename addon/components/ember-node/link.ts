@@ -45,12 +45,15 @@ export default class Link extends Component<EmberNodeArgs> {
 
   @action
   remove() {
-    this.controller.withTransaction((tr) => {
-      return tr.replaceWith(
-        this.pos,
-        this.pos + this.node.nodeSize,
-        this.node.content
-      );
-    });
+    this.controller.withTransaction(
+      (tr) => {
+        return tr.replaceWith(
+          this.pos,
+          this.pos + this.node.nodeSize,
+          this.node.content
+        );
+      },
+      { view: this.controller.mainEditorView }
+    );
   }
 }
