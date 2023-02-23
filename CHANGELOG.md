@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
-### Dependencies
-- Bumps `sass` from 1.58.0 to 1.58.3
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Addition of interactive link node
@@ -58,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-view` from 1.29.2 to 1.30.1
+- Bumps `sass` from 1.58.0 to 1.58.3
 - Bumps `sinon` from 14.0.2 to 15.0.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `typescript` from 4.9.3 to 4.9.5
