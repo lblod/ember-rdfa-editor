@@ -26,6 +26,8 @@ ember-rdfa-editor:
   delete-row: Delete row
   delete-column: Delete column
   delete-table: Delete table
+  toggle-header-row: Toggle header row
+  toggle-header-column: Toggle header column
   columns: Columns
   rows: Rows
   normalText: Normal text
