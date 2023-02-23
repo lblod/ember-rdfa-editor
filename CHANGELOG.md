@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
-### Dependencies
-- Bumps `xml-formatter` from 3.2.1 to 3.3.0
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Addition of interactive link node
@@ -61,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `sinon` from 14.0.2 to 15.0.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `typescript` from 4.9.3 to 4.9.5
-- Bumps `xml-formatter` from 2.6.1 to 3.2.1
+- Bumps `xml-formatter` from 2.6.1 to 3.3.0
 
 
 ## [2.1.3] - 2023-02-09
