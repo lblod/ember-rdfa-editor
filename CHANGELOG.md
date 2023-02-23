@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- move ember-intl config in editor constructor to beforeModel hook
+
 ## [2.1.3] - 2023-02-09
 
 ### Fixed

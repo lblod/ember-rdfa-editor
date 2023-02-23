@@ -1,13 +1,11 @@
 import ApplicationInstance from '@ember/application/instance';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
   createLogger,
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/logging-utils';
 
-import type IntlService from 'ember-intl/services/intl';
 import { tracked } from 'tracked-built-ins';
 import Prosemirror, {
   ProseController,
@@ -73,8 +71,6 @@ interface RdfaEditorArgs {
  * @extends Component
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
-  @service declare intl: IntlService;
-
   @tracked controller: ProseController | null = null;
   @tracked toolbarController: ProseController | null = null;
 
@@ -86,8 +82,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
   constructor(owner: ApplicationInstance, args: RdfaEditorArgs) {
     super(owner, args);
     this.owner = owner;
-    const userLocale = navigator.language || navigator.languages[0];
-    this.intl.setLocale([userLocale, 'nl-BE']);
     this.logger = createLogger(this.constructor.name);
   }
 
