@@ -55,7 +55,6 @@
     "diff-match-patch": "^1.0.5",
     "dompurify": "^3.0.0",
     "ember-auto-import": "^2.5.0",
-    "ember-cli-app-version": "^6.0.0",
     "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^6.1.1",
     "ember-cli-typescript": "^5.1.0",

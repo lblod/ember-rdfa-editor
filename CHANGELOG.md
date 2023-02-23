@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Move `ember-cli-app-version` package to dependencies
+### Removed
+- Removed `ember-cli-app-version` package
 
 ### Dependencies
 - Add `ember-cli-sass` 11.0.1 as peerdependency
