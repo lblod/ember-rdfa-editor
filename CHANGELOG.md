@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep selection on the document when toggling annotations
 - Fix shrinking issues with toolbar buttons and dropdowns
 - Fix sidebar area not clickable when sidebar is hidden
+- Fix alignment of table buttons
 
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
