@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace text marks in another way in attribute generation plugin to fix cursor jumping
 - Keep selection on the document when toggling annotations
 - Fix shrinking issues with toolbar buttons and dropdowns
+- Fix sidebar area not clickable when sidebar is hidden
 
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
