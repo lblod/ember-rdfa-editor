@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
-### Dependencies
-- Bumps `ember-template-lint` from 5.3.3 to 5.5.1
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Addition of interactive link node
@@ -53,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
 - Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
+- Bumps `ember-template-lint` from 5.3.3 to 5.5.1
 - Bumps `eslint` from 8.29.0 to 8.34.0
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
