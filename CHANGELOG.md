@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for ordered list styles
 - Added the ability to pass optional attributes to the `toggleList` command.
 - Addition of spacing between paragraphs/tables and other elements.
+- Added features to add table headings
 
 ### Changed
 - Increase left-padding of lists
