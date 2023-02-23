@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
+### Dependencies
+- Bumps `@types/uuid` from 9.0.0 to 9.0.1
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Addition of interactive link node
