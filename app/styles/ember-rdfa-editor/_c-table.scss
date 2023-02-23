@@ -32,7 +32,9 @@
   }
 
   th + th,
-  td + td {
+  td + td,
+  th + td,
+  td + th {
     border-left: 0.1rem solid var(--au-gray-300);
   }
 
