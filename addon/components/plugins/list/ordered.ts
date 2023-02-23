@@ -1,6 +1,8 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
+import IntlService from 'ember-intl/services/intl';
 import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
@@ -11,6 +13,31 @@ type Args = {
   controller: SayController;
 };
 export default class ListOrdered extends Component<Args> {
+  @service declare intl: IntlService;
+
+  get styles() {
+    return [
+      {
+        name: 'decimal',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.decimal'
+        ),
+      },
+      {
+        name: 'lower-alpha',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.lower-alpha'
+        ),
+      },
+      {
+        name: 'upper-roman',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.upper-roman'
+        ),
+      },
+    ];
+  }
+
   get firstListParent() {
     return findParentNode(
       (node) =>
@@ -31,31 +58,60 @@ export default class ListOrdered extends Component<Args> {
   }
 
   get selection() {
-    return this.controller.getState(true).selection;
+    return this.controller.activeEditorState.selection;
   }
 
   get schema() {
     return this.controller.schema;
   }
 
-  get toggleCommand(): Command {
+  toggleCommand(listStyle?: string): Command {
     return chainCommands(
-      toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item),
-      wrapInList(this.schema.nodes.ordered_list),
+      toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item, {
+        style: listStyle,
+      }),
+      wrapInList(this.schema.nodes.ordered_list, {
+        style: listStyle,
+      }),
       sinkListItem(this.schema.nodes.list_item)
     );
   }
 
   get canToggle() {
-    return this.controller.checkCommand(this.toggleCommand, true);
+    return this.controller.checkCommand(this.toggleCommand());
   }
 
   @action
-  toggle() {
+  toggle(style?: string) {
     this.controller.focus();
-    this.controller.checkAndDoCommand(
-      autoJoin(this.toggleCommand, ['ordered_list', 'bullet_list']),
-      true
+    this.controller.doCommand(
+      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list'])
     );
   }
+
+  @action
+  setStyle(style: string) {
+    const firstListParent = this.firstListParent;
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      const pos = firstListParent.pos;
+      this.controller.withTransaction((tr) => {
+        return tr.setNodeAttribute(pos, 'style', style);
+      });
+    } else {
+      this.toggle(style);
+    }
+  }
+
+  styleIsActive = (style: string) => {
+    const firstListParent = this.firstListParent;
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      return firstListParent.node.attrs.style === style;
+    } else {
+      return false;
+    }
+  };
 }

@@ -41,7 +41,6 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
-import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bullet_list,
@@ -51,50 +50,61 @@ import {
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-
-const nodes = {
-  doc,
-  paragraph,
-
-  repaired_block,
-
-  list_item,
-  ordered_list,
-  bullet_list,
-  placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-  heading,
-  blockquote,
-
-  horizontal_rule,
-  code_block,
-
-  text,
-
-  image,
-
-  hard_break,
-  invisible_rdfa,
-  block_rdfa,
-  card,
-  counter,
-  dropdown,
-};
-const marks = {
-  inline_rdfa,
-  code,
-  link,
-  em,
-  strong,
-  underline,
-  strikethrough,
-  subscript,
-  superscript,
-};
-const dummySchema = new Schema({ nodes, marks });
+import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
+
+  get linkOptions() {
+    return {
+      interactive: true,
+    };
+  }
+
+  get schema() {
+    return new Schema({
+      nodes: {
+        doc,
+        paragraph,
+
+        repaired_block,
+
+        list_item,
+        ordered_list,
+        bullet_list,
+        placeholder,
+        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+        heading,
+        blockquote,
+
+        horizontal_rule,
+        code_block,
+
+        text,
+
+        image,
+
+        hard_break,
+        invisible_rdfa,
+        block_rdfa,
+        card,
+        counter,
+        dropdown,
+        link: link(this.linkOptions),
+      },
+      marks: {
+        inline_rdfa,
+        code,
+        em,
+        strong,
+        underline,
+        strikethrough,
+        subscript,
+        superscript,
+      },
+    });
+  }
+
   @tracked nodeViews: (
     proseController: SayController
   ) => Record<string, NodeViewConstructor> = (proseController) => {
@@ -102,6 +112,7 @@ export default class IndexController extends Controller {
       card: cardView(proseController),
       counter: counterView(proseController),
       dropdown: dropdownView(proseController),
+      link: linkView(this.linkOptions)(proseController),
     };
   };
   @tracked plugins: Plugin[] = [
@@ -109,14 +120,13 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
   ];
-  schema: Schema = dummySchema;
 
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
-    applyDevTools(rdfaEditor.getView());
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

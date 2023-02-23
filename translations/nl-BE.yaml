@@ -8,7 +8,13 @@ ember-rdfa-editor:
   subscript: Subscript
   superscript: Superscript
   unordered-list: Ongeordende lijst
-  ordered-list: Geordende lijst
+  ordered-list: 
+    button-label: Geordende lijst
+    options-label: Lijststijlen
+    styles:
+      decimal: Getallen
+      lower-alpha: Letters
+      upper-roman: Romeinse Cijfers
   unindent-list: Lijstniveau hoger
   indent-list: Lijstniveau lager
   table-options: Tabel opties
@@ -30,3 +36,14 @@ ember-rdfa-editor:
 
   show-annotations: Toon annotaties
   insert: Invoegen
+  link:
+    insert: Snelkoppeling invoegen
+    placeholder: 
+      text: Voeg tekst in
+      href: Voeg URL in
+    open: Snelkoppeling openen
+    ctrlClickDescription: Ctrl+klik om deze snelkoppeling te openen.
+    edit:
+      title: Snelkoppeling wijzigen
+      uncouple: Snelkoppeling loskoppelen
+

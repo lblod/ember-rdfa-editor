@@ -1,5 +1,5 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
-import { NodeType } from 'prosemirror-model';
+import { Attrs, NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { liftListItem, wrapInList } from 'prosemirror-schema-list';
@@ -8,7 +8,11 @@ function isListNode(node: PNode) {
   return node.type.name === 'ordered_list' || node.type.name === 'bullet_list';
 }
 
-export function toggleList(listType: NodeType, itemType: NodeType): Command {
+export function toggleList(
+  listType: NodeType,
+  itemType: NodeType,
+  attrs?: Attrs
+): Command {
   return function (state, dispatch, view): boolean {
     const { selection } = state;
     const { $from, $to } = selection;
@@ -46,6 +50,6 @@ export function toggleList(listType: NodeType, itemType: NodeType): Command {
         return true;
       }
     }
-    return wrapInList(listType)(state, dispatch, view);
+    return wrapInList(listType, attrs)(state, dispatch, view);
   };
 }

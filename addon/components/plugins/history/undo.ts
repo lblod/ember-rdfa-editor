@@ -7,15 +7,21 @@ type Args = {
   controller?: SayController;
 };
 export default class UndoComponent extends Component<Args> {
+  get mainEditorView() {
+    return this.args.controller?.mainEditorView;
+  }
+
   get disabled() {
-    return !this.args.controller?.checkCommand(undo);
+    return !this.args.controller?.checkCommand(undo, {
+      view: this.mainEditorView,
+    });
   }
 
   @action
   onClick() {
     if (this.args.controller) {
       this.args.controller.focus();
-      this.args.controller.doCommand(undo);
+      this.args.controller.doCommand(undo, { view: this.mainEditorView });
     }
   }
 }

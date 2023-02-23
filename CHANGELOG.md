@@ -6,19 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
+- Addition of interactive link node
 - Add tab key handler to indent/unindent list items
 - Add eslint-plugin-deprecation package to check for use of deprecated code.
 - Disable undo and redo button when there's no more steps
+- Add support for ordered list styles
+- Added the ability to pass optional attributes to the `toggleList` command.
 - Addition of spacing between paragraphs/tables and other elements.
 - Added features to add table headings
 
 ### Changed
 - Increase left-padding of lists
+- BREAKING: Rename Toolbar::Icon to Toolbar::Button
 - remove overflow: hidden on editor container div
 - Replace drone by woodpecker
 - Modernize toolbar dropdown
@@ -27,29 +32,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: Removal of the `RdfaEditorWithDebug` component, use `DebugTools` instead.
 - BREAKING: Removal of `toolbarOptions` argument of the editor component
 - BREAKING: Removal of `widgets` argument of the editor component
+- BREAKING: Rework how embedded views are accessed and operated on from the controller
+- Allow users to set a cursor by clicking in the margin of the editor
 
 
 ### Fixed
 - Modify the base keymaps to better support macos users
 - Replace text marks in another way in attribute generation plugin to fix cursor jumping
 - Keep selection on the document when toggling annotations
+- Fix shrinking issues with toolbar buttons and dropdowns
+- Fix sidebar area not clickable when sidebar is hidden
 
 ### Dependencies
-- Bumps `dompurify` from 2.4.1 to 3.0.0
-- Bumps `typescript` from 4.9.3 to 4.9.5
-- Bumps `eslint` from 8.29.0 to 8.33.0
-- Bumps `@codemirror/view` from 6.7.3 to 6.9.0
+- Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
+- Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
+- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.1
+- Bumps `@types/uuid` from 9.0.0 to 9.0.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.53.0
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
+- Bumps `dompurify` from 2.4.1 to 3.0.0
+- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
+- Bumps `ember-template-lint` from 5.3.3 to 5.5.1
+- Bumps `eslint` from 8.29.0 to 8.34.0
+- Bumps `prettier` from 2.8.3 to 2.8.4
+- Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
+- Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
+- Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-view` from 1.29.2 to 1.30.1
 - Bumps `sinon` from 14.0.2 to 15.0.1
-- Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.1
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
-- Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
-- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
-- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
-- Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
-- Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
-- Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
+- Bumps `typescript` from 4.9.3 to 4.9.5
+- Bumps `xml-formatter` from 2.6.1 to 3.3.0
+
 
 ## [2.1.3] - 2023-02-09
 

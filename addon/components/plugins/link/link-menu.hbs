@@ -1,0 +1,9 @@
+{{#if @controller}}
+  {{#if this.canInsert}}
+    <Toolbar::Button
+      @title={{t "ember-rdfa-editor.link.insert"}}
+      @icon='link'
+      {{on 'click' this.insert}}
+    />
+  {{/if}}
+{{/if}}

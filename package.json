@@ -66,6 +66,7 @@
     "ember-get-config": "^2.0.0",
     "ember-intl": "^5.7.2",
     "ember-truth-helpers": "^3.0.0",
+    "ember-velcro": "^1.1.0",
     "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.2",
     "iter-tools": "^7.4.0",
@@ -88,10 +89,10 @@
     "stream-browserify": "^3.0.0",
     "tracked-built-ins": "^3.1.0",
     "uuid": "^9.0.0",
-    "xml-formatter": "^2.6.1"
+    "xml-formatter": "^3.2.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.4.0",
+    "@appuniversum/ember-appuniversum": "^2.4.2",
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^1.8.3",
     "@glimmer/component": "^1.1.2",
@@ -171,7 +172,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.4.0"
+    "@appuniversum/ember-appuniversum": "^2.4.2"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"
