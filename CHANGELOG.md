@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
 - Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
+- Bumps `ember-template-lint` from 5.3.3 to 5.5.1
 - Bumps `eslint` from 8.29.0 to 8.34.0
 - Bumps `prettier` from 2.8.3 to 2.8.4
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
