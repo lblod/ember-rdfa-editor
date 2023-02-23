@@ -8,7 +8,7 @@ ember-rdfa-editor:
   subscript: Subscript
   superscript: Superscript
   unordered-list: Ongeordende lijst
-  ordered-list: 
+  ordered-list:
     button-label: Geordende lijst
     options-label: Lijststijlen
     styles:
@@ -26,6 +26,8 @@ ember-rdfa-editor:
   delete-row: Rij verwijderen
   delete-column: Kolom verwijderen
   delete-table: Tabel verwijderen
+  toggle-header-row: Kopregel aan/uit
+  toggle-header-column: Kopkolom aan/uit
   columns: Kolommen
   rows: Rijen
   normalText: Gewone tekst
@@ -36,3 +38,14 @@ ember-rdfa-editor:
   insert: Invoegen
   indent: Indentatie vergroten
   unindent: Indentatie verkleinen
+  link:
+    insert: Snelkoppeling invoegen
+    placeholder:
+      text: Voeg tekst in
+      href: Voeg URL in
+    open: Snelkoppeling openen
+    ctrlClickDescription: Ctrl+klik om deze snelkoppeling te openen.
+    edit:
+      title: Snelkoppeling wijzigen
+      uncouple: Snelkoppeling loskoppelen
+

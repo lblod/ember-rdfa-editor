@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
-  controller?: SayController;
+  controller: SayController;
   mark: string;
 };
 export default class BoldComponent extends Component<Args> {
@@ -12,18 +12,15 @@ export default class BoldComponent extends Component<Args> {
   }
 
   get mark() {
-    return this.args.mark;
+    return this.controller.schema.marks[this.args.mark];
   }
 
   get isActive() {
-    return this.controller?.isMarkActive(
-      this.controller.schema.marks[this.mark],
-      true
-    );
+    return this.controller.isMarkActive(this.mark);
   }
 
   @action
   toggle() {
-    this.controller?.toggleMark(this.args.mark, true);
+    this.controller.toggleMark(this.mark);
   }
 }

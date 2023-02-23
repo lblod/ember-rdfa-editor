@@ -64,6 +64,7 @@ $say-toolbar-height: 44px !default;
     justify-content: center;
     align-items: center;
     text-align: center;
+    display: inline-flex;
     color: var(--au-gray-600);
     background-color: transparent;
     transition: color var(--au-transition);

@@ -7,15 +7,23 @@ type Args = {
   controller?: SayController;
 };
 export default class RedoComponent extends Component<Args> {
+  get mainEditorView() {
+    return this.args.controller?.mainEditorView;
+  }
+
   get disabled() {
-    return !this.args.controller?.checkCommand(redo);
+    return !this.args.controller?.checkCommand(redo, {
+      view: this.mainEditorView,
+    });
   }
 
   @action
   onClick() {
     if (this.args.controller) {
       this.args.controller.focus();
-      this.args.controller.doCommand(redo);
+      this.args.controller.doCommand(redo, {
+        view: this.mainEditorView,
+      });
     }
   }
 }

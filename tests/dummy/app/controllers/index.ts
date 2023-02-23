@@ -31,7 +31,6 @@ import {
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
-import { link, linkHandler } from '@lblod/ember-rdfa-editor/plugins/link';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bullet_list,
@@ -41,49 +40,67 @@ import {
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-
-const nodes = {
-  doc,
-  paragraph,
-
-  repaired_block,
-
-  list_item,
-  ordered_list,
-  bullet_list,
-  placeholder,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-  heading,
-  blockquote,
-
-  horizontal_rule,
-  code_block,
-
-  text,
-
-  image,
-
-  hard_break,
-  invisible_rdfa,
-  block_rdfa,
-};
-const marks = {
-  inline_rdfa,
-  code,
-  link,
-  em,
-  strong,
-  underline,
-  strikethrough,
-  subscript,
-  superscript,
-};
-const dummySchema = new Schema({ nodes, marks });
+import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
+import { inject as service } from '@ember/service';
+import IntlService from 'ember-intl/services/intl';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap, linkHandler];
-  schema: Schema = dummySchema;
+  @service declare intl: IntlService;
+
+  get linkOptions() {
+    return {
+      interactive: true,
+    };
+  }
+
+  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked nodeViews = (controller: SayController) => {
+    return {
+      link: linkView(this.linkOptions)(controller),
+    };
+  };
+
+  get schema() {
+    return new Schema({
+      nodes: {
+        doc,
+        paragraph,
+
+        repaired_block,
+
+        list_item,
+        ordered_list,
+        bullet_list,
+        placeholder,
+        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+        heading,
+        blockquote,
+
+        horizontal_rule,
+        code_block,
+
+        text,
+
+        image,
+
+        hard_break,
+        invisible_rdfa,
+        block_rdfa,
+        link: link(this.linkOptions),
+      },
+      marks: {
+        inline_rdfa,
+        code,
+        em,
+        strong,
+        underline,
+        strikethrough,
+        subscript,
+        superscript,
+      },
+    });
+  }
 
   get showRdfaBlocks() {
     return this.rdfaEditor?.showRdfaBlocks;
@@ -93,7 +110,7 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.setHtmlContent(presetContent);
-    applyDevTools(rdfaEditor.getView());
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

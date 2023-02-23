@@ -6,12 +6,13 @@ import {
   NodeSpec,
   ParseRule,
 } from 'prosemirror-model';
-import { EditorView, NodeView, NodeViewConstructor } from 'prosemirror-view';
+import { NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
 import Owner from '@ember/owner';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { SayView } from '@lblod/ember-rdfa-editor';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -22,7 +23,7 @@ export interface EmberNodeArgs {
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
   controller: SayController;
-  view: EditorView;
+  view: SayView;
   selected: boolean;
 }
 
@@ -68,7 +69,7 @@ class EmberNodeView implements NodeView {
     controller: SayController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
-    view: EditorView,
+    view: SayView,
     getPos: () => number
   ) {
     const { name, componentPath, atom, inline } = emberNodeConfig;
@@ -240,7 +241,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
 
 export function createEmberNodeView(config: EmberNodeConfig) {
   return function (controller: SayController): NodeViewConstructor {
-    return function (node, view, getPos) {
+    return function (node, view: SayView, getPos) {
       return new EmberNodeView(controller, config, node, view, getPos);
     };
   };
