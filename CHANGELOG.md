@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `@codemirror/state` from 6.1.4 to 6.2.0
 - Bumps `@codemirror/view` from 6.7.3 to 6.9.1
+- Bumps `@types/uuid` from 9.0.0 to 9.0.1
 - Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.53.0
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.53.0
 - Bumps `dompurify` from 2.4.1 to 3.0.0
