@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
+### Dependencies
+- Bumps `ember-template-lint` from 5.3.3 to 5.5.1
   Adds the button and appropriate toggling behavior when combined with unordered lists
   Also includes some needed css fixes
 - Addition of interactive link node
