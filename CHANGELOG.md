@@ -44,8 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix alignment of table buttons
 
 ### Removed
-- Removal of `RdfaEditorPlugin` class
-- Removal of `toggleMark` controller method, use `doCommand` in combination with the `toggleMark` or `toggleMarkAddFirst` commands instead
+- BREAKING: removal of `RdfaEditorPlugin` class
+- BREAKING: removal of `toggleMark` controller method, use `doCommand` in combination with the `toggleMark` or `toggleMarkAddFirst` commands instead
 
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
