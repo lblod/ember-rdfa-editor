@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `dompurify` from 2.4.1 to 3.0.0
 - Bumps `ember-cli-app-version` from 5.0.0 to 6.0.0
 - Bumps `eslint` from 8.29.0 to 8.34.0
+- Bumps `prettier` from 2.8.3 to 2.8.4
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
 - Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
