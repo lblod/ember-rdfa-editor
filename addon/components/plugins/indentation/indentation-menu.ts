@@ -9,7 +9,7 @@ type Args = {
   controller: SayController;
 };
 
-export default class ListIndentationControls extends Component<Args> {
+export default class IndentationMenuComponent extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
@@ -45,18 +45,18 @@ export default class ListIndentationControls extends Component<Args> {
   }
 
   get canIndent() {
-    return this.controller.checkCommand(this.indentCommand, true);
+    return this.controller.checkCommand(this.indentCommand);
   }
 
   get canUnindent() {
-    return this.controller.checkCommand(this.unindentCommand, true);
+    return this.controller.checkCommand(this.unindentCommand);
   }
 
   @action
   insertIndent() {
     if (this.controller) {
       this.controller.focus();
-      this.controller.doCommand(this.indentCommand, true);
+      this.controller.doCommand(this.indentCommand);
     }
   }
 
@@ -64,7 +64,7 @@ export default class ListIndentationControls extends Component<Args> {
   insertUnindent() {
     if (this.controller) {
       this.controller.focus();
-      this.controller.doCommand(this.unindentCommand, true);
+      this.controller.doCommand(this.unindentCommand);
     }
   }
 }
