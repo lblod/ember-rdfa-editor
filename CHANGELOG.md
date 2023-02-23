@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix sidebar area not clickable when sidebar is hidden
 - Fix alignment of table buttons
 
+### Removed
+- Removal of `RdfaEditorPlugin` class
+- Removal of `toggleMark` controller method, use `doCommand` in combination with the `toggleMark` or `toggleMarkAddFirst` commands instead
+
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
