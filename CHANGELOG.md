@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Deprecated
+- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
+
+### Removed
+- Removed `ember-cli-app-version` package
+
+### Dependencies
+- Add `ember-cli-sass` 11.0.1 as peerdependency
+
+## [3.0.0] - 2023-02-23
+
 ### Added
 - Handle ctrl click on links
 - Add ordered list feature.
@@ -45,8 +56,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix sidebar area not clickable when sidebar is hidden
 - Fix alignment of table buttons
 
-### Deprecated
-- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
+### Removed
+- BREAKING: removal of `RdfaEditorPlugin` class
+- BREAKING: removal of `toggleMark` controller method, use `doCommand` in combination with the `toggleMark` or `toggleMarkAddFirst` commands instead
 
 ### Dependencies
 - Bumps `@appuniversum/ember-appuniversum` from 2.2.0 to 2.4.2
@@ -72,6 +84,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `xml-formatter` from 2.6.1 to 3.3.0
 
+
+## [2.1.4] - 2023-02-23
+
+### Fixed
+- move ember-intl config in editor constructor to beforeModel hook
 
 ## [2.1.3] - 2023-02-09
 
@@ -1407,7 +1424,9 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.3...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.4...v3.0.0
+[2.1.4]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.0...v2.1.1

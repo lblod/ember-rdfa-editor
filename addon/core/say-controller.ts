@@ -2,10 +2,7 @@ import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-
 import Owner from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import {
-  rangeHasMarkEverywhere,
-  toggleMarkAddFirst,
-} from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
@@ -32,24 +29,6 @@ export default class SayController {
 
   clone() {
     return new SayController(this.editor);
-  }
-
-  toggleMark(type: MarkType, includeEmbeddedView?: boolean): void;
-
-  /**
-   *
-   * @deprecated
-   */
-  toggleMark(name: string, includeEmbeddedView?: boolean): void;
-
-  /**
-   *
-   * @deprecated use doCommand with the {@link toggleMark} or {@link toggleMarkAddFirst} commands
-   */
-  toggleMark(type: string | MarkType) {
-    this.focus();
-    const markType = typeof type === 'string' ? this.schema.marks[type] : type;
-    this.doCommand(toggleMarkAddFirst(markType));
   }
 
   focus() {

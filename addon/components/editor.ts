@@ -6,7 +6,6 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import RdfaEditorPlugin from '@lblod/ember-rdfa-editor/core/rdfa-editor-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
@@ -14,26 +13,6 @@ import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-
-/**
- *
- * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
- */
-export type PluginConfig =
-  | string
-  | {
-      name: string;
-      options: unknown;
-    };
-
-/**
- *
- * @deprecated RdfaEditor plugins are deprecated and will be removed in version 3.0.
- */
-export interface ResolvedPluginConfig {
-  instance: RdfaEditorPlugin;
-  options: unknown;
-}
 
 export interface RdfaEditorArgs {
   /**
