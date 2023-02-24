@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Add padding to rdfa-toggle
+- Fix shrinking issue with toolbar groups
+
 ### Removed
 - Removed `ember-cli-app-version` package
 
