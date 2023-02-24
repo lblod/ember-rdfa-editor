@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Add `ember-cli-sass` 11.0.1 as peerdependency
+- Bumps `@codemirror/state` from 6.1.4 to 6.2.0
 
 ## [3.0.0] - 2023-02-23
 
