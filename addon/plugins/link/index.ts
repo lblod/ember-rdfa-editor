@@ -1,6 +1,7 @@
 import { PNode, ProsePlugin, SayView } from '@lblod/ember-rdfa-editor';
 
-export { link } from './mark/link';
+export { link as linkMark } from './mark/link';
+export { link, linkView } from './nodes/link';
 export const linkHandler: ProsePlugin = new ProsePlugin({
   props: {
     handleClickOn(

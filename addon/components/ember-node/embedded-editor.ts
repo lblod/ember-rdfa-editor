@@ -46,7 +46,7 @@ import {
   repaired_block,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { link } from '@lblod/ember-rdfa-editor/nodes/link';
+import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
   em,
   strikethrough,

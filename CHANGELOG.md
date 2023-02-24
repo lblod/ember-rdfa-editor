@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- export link nodes in the plugin and deprecate the other import
+
 ### Removed
 - Removed `ember-cli-app-version` package
 

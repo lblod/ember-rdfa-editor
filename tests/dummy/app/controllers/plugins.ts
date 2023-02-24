@@ -50,7 +50,7 @@ import {
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { link, linkView } from '@lblod/ember-rdfa-editor/nodes/link';
+import { link, linkView } from '@lblod/ember-rdfa-editor/plugins/link';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
