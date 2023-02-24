@@ -140,6 +140,12 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     margin-left: 12rem;
   }
 
+  li > {
+    [data-indentation-level] {
+      margin-left: 0;
+    }
+  }
+
 
   // No margin
   li p + *,
