@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2023-02-24
+
 ### Changed
 - export link nodes in the plugin and deprecate the other import
 
@@ -1425,7 +1427,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.0.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.4...v3.0.0
 [2.1.4]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.2...v2.1.3
