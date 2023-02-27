@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `ember-cli-sass` 11.0.1 as peerdependency
 - Bumps `typescript` from 4.9.3 to 4.9.5
 - Bumps `@codemirror/state` from 6.1.4 to 6.2.0
+- Bumps `sass` from 1.58.0 to 1.58.3
 
 ## [3.0.0] - 2023-02-23
 
