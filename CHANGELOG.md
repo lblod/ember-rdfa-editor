@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `@types/uuid` from 9.0.0 to 9.0.1
 - Bumps `sass` from 1.58.0 to 1.58.3
+- Bumps `prosemirror-schema-basic` from 1.2.0 to 1.2.1
 
 ## [3.1.0] - 2023-02-24
 
