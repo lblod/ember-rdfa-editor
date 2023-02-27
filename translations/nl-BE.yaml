@@ -36,6 +36,8 @@ ember-rdfa-editor:
 
   show-annotations: Toon annotaties
   insert: Invoegen
+  indent: Indentatie vergroten
+  unindent: Indentatie verkleinen
   link:
     insert: Snelkoppeling invoegen
     placeholder:

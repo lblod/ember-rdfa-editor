@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - export link nodes in the plugin and deprecate the other import
 
+### Deprecated
+- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
+
 ### Removed
 - Removed `ember-cli-app-version` package
 
@@ -42,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the ability to pass optional attributes to the `toggleList` command.
 - Addition of spacing between paragraphs/tables and other elements.
 - Added features to add table headings
+- Addition of the paragraph/heading indentation functionality
 
 ### Changed
 - Increase left-padding of lists

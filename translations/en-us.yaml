@@ -8,7 +8,7 @@ ember-rdfa-editor:
   subscript: Subscript
   superscript: Superscript
   unordered-list: Unordered list
-  ordered-list: 
+  ordered-list:
     button-label: Ordered list
     options-label: List styles
     styles:
@@ -36,9 +36,12 @@ ember-rdfa-editor:
 
   show-annotations: Show annotations
   insert: Insert
+  indent: Increase indentation
+  unindent: Reduce indentation
+
   link:
     insert: Insert hyperlink
-    placeholder: 
+    placeholder:
       text: Insert text
       href: Insert URL
     open: Visit hyperlink

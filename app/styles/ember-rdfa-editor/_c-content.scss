@@ -111,6 +111,8 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
     }
   }
 
+
+
   // Setup some margin rules
   p + *,
   div + *,
@@ -121,6 +123,29 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
   table + * {
     margin-top: $say-typography-margin;
   }
+
+  [data-indentation-level='1'] {
+    margin-left: 3rem;
+  }
+
+  [data-indentation-level='2'] {
+    margin-left: 6rem;
+  }
+
+  [data-indentation-level='3'] {
+    margin-left: 9rem;
+  }
+
+  [data-indentation-level='4'] {
+    margin-left: 12rem;
+  }
+
+  li > {
+    [data-indentation-level] {
+      margin-left: 0;
+    }
+  }
+
 
   // No margin
   li p + *,
