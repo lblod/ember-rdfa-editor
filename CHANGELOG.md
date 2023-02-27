@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- Addition of the paragraph/heading indentation functionality
+
+### Fixed
+- Add padding to rdfa-toggle
+- Fix shrinking issue with toolbar groups
+
+### Deprecated
+- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
 ### Dependencies
 - Bumps `@types/uuid` from 9.0.0 to 9.0.1
 - Bumps `sass` from 1.58.0 to 1.58.3
@@ -17,13 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - export link nodes in the plugin and deprecate the other import
-
-### Deprecated
-- Usage of `Plugins::List::IndentationControls`, use `Plugins::Indentation::IndentationMenu` instead.
-
-### Fixed
-- Add padding to rdfa-toggle
-- Fix shrinking issue with toolbar groups
 
 ### Removed
 - Removed `ember-cli-app-version` package
@@ -49,7 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the ability to pass optional attributes to the `toggleList` command.
 - Addition of spacing between paragraphs/tables and other elements.
 - Added features to add table headings
-- Addition of the paragraph/heading indentation functionality
 
 ### Changed
 - Increase left-padding of lists
