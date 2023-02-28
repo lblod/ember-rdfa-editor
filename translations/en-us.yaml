@@ -35,6 +35,7 @@ ember-rdfa-editor:
   insert-heading: Insert heading
 
   show-annotations: Show annotations
+  show-formatting-marks: Show formatting marks
   insert: Insert
   indent: Increase indentation
   unindent: Reduce indentation

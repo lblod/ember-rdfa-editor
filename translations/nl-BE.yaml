@@ -35,6 +35,7 @@ ember-rdfa-editor:
   insert-heading: Voeg koptitel toe
 
   show-annotations: Toon annotaties
+  show-formatting-marks: Toon opmaakmarkeringen
   insert: Invoegen
   indent: Indentatie vergroten
   unindent: Indentatie verkleinen

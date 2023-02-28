@@ -111,6 +111,14 @@ export default class SayController {
     return this.editor.showRdfaBlocks;
   }
 
+  toggleFormattingMarks() {
+    this.editor.showFormattingMarks = !this.editor.showFormattingMarks;
+  }
+
+  get showFormattingMarks() {
+    return this.editor.showFormattingMarks;
+  }
+
   get mainEditorView() {
     return this.editor.mainView;
   }
