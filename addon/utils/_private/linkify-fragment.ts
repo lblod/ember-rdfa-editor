@@ -36,7 +36,6 @@ export default function linkifyFragment(
   const transformedContent: PNode[] = [];
   fragment.forEach((child) => {
     if (child.isText && child.text) {
-      console.log(child.text);
       const links = linkify.find(child.text);
       let pos = 0;
       for (const link of links) {

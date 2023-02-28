@@ -43,7 +43,6 @@ export function linkPasteHandler(linkType: NodeType | MarkType) {
   return new ProsePlugin({
     props: {
       transformPasted(slice, view) {
-        console.log('Transform pasted');
         return new Slice(
           linkifyFragment(slice.content, linkType, view.state.schema),
           slice.openStart,
