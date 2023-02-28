@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Addition of linkPasteHandler plugin which detects and converts links in pasted content
 
+### Changed
+- Use the new view pasteHTML method inside the Word paste handler.
+
 ## [3.2.0] - 2023-02-27
 
 ### Added
