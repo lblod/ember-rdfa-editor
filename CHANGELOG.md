@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add formatting toggle component which allows showing paragraph endings as pilcrows
+- Add formatting toggle component which allows showing formatting marks
 ### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 
