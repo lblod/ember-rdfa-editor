@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix shrinking issues with toolbar buttons and dropdowns
 - Fix sidebar area not clickable when sidebar is hidden
 - Fix alignment of table buttons
+- Only allow paragraphs and lists in the list items
 
 ### Removed
 - BREAKING: removal of `RdfaEditorPlugin` class
