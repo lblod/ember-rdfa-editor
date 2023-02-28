@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fix `ember.js` 3.28 compatibility issue
 ### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 
