@@ -1,4 +1,4 @@
-import { ProseParser, ProsePlugin } from '..';
+import { ProsePlugin } from '..';
 import { cleanDocx } from '../utils/_private/ce/paste-handler-helper-functions';
 
 export function pasteHandler(): ProsePlugin {
@@ -9,14 +9,7 @@ export function pasteHandler(): ProsePlugin {
         if (clipboardData?.getData('text/rtf')) {
           event.preventDefault();
           const cleanedHTML = cleanDocx(clipboardData.getData('text/html'));
-          const domParser = new DOMParser();
-          const { state } = view;
-          const slice = ProseParser.fromSchema(state.schema).parseSlice(
-            domParser.parseFromString(cleanedHTML, 'text/html')
-          );
-          const tr = view.state.tr;
-          tr.replaceSelection(slice);
-          view.dispatch(tr);
+          view.pasteHTML(cleanedHTML);
           return true;
         } else {
           return;
