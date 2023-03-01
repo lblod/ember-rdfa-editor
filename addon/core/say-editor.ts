@@ -33,6 +33,7 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   createInvisiblesPlugin,
   hardBreak,
+  heading,
   paragraph,
   space,
 } from '@guardian/prosemirror-invisibles';
@@ -97,7 +98,7 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
-        createInvisiblesPlugin([space, hardBreak, paragraph], {
+        createInvisiblesPlugin([space, hardBreak, paragraph, heading], {
           shouldShowInvisibles: false,
         }),
       ],
