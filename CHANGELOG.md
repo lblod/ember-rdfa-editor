@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `ember-qunit` from 6.1.1 to 6.2.0
 
+### Fixed
+- Inherit ordered list style correctly 
+
 ## [3.2.1] - 2023-02-28
 
 ### Fixed
