@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
+- Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `ember-qunit` from 6.1.1 to 6.2.0
