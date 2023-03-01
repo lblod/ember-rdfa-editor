@@ -8,6 +8,7 @@
     type='button'
     {{on 'click' this.toggleDropdown}}
     title={{@label}}
+    disabled={{@disabled}}
   >
     <span class={{if @hideLabel 'au-u-hidden-visually' ''}}>{{@label}}</span>
     {{#if @icon}}
