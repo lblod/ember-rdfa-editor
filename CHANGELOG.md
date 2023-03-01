@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Inherit ordered list style correctly 
+
 ## [3.2.1] - 2023-02-28
 
 ### Fixed
