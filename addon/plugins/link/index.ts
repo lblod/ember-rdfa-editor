@@ -1,4 +1,12 @@
-import { PNode, ProsePlugin, SayView } from '@lblod/ember-rdfa-editor';
+import {
+  MarkType,
+  NodeType,
+  PNode,
+  ProsePlugin,
+  SayView,
+  Slice,
+} from '@lblod/ember-rdfa-editor';
+import linkifyFragment from '@lblod/ember-rdfa-editor/utils/_private/linkify-fragment';
 
 export { link as linkMark } from './mark/link';
 export { link, linkView } from './nodes/link';
@@ -30,3 +38,17 @@ export const linkHandler: ProsePlugin = new ProsePlugin({
     },
   },
 });
+
+export function linkPasteHandler(linkType: NodeType | MarkType) {
+  return new ProsePlugin({
+    props: {
+      transformPasted(slice, view) {
+        return new Slice(
+          linkifyFragment(slice.content, linkType, view.state.schema),
+          slice.openStart,
+          slice.openEnd
+        );
+      },
+    },
+  });
+}
