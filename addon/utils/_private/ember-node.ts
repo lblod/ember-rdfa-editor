@@ -182,6 +182,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     attrs,
     parseDOM,
     toDOM,
+    ...passthrough
   } = config;
   return {
     inline,
@@ -236,6 +237,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
             : [[inline ? 'span' : 'div', { 'data-slot': 'true' }, 0]]),
         ];
       }),
+    ...passthrough,
   };
 }
 
