@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `ember-qunit` from 6.1.1 to 6.2.0
 
 ## [3.2.1] - 2023-02-28
 
@@ -16,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
-- Bumps `ember-qunit` from 6.1.1 to 6.2.0
 
 ## [3.2.0] - 2023-02-27
 
