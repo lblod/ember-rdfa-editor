@@ -59,6 +59,8 @@ export default function linkifyFragment(
       if (pos < child.text.length) {
         transformedContent.push(child.cut(pos, child.text.length));
       }
+    } else if (child.type === linkType) {
+      transformedContent.push(child);
     } else {
       transformedContent.push(
         child.copy(linkifyFragment(child.content, linkType, schema))
