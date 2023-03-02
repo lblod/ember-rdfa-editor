@@ -1,9 +1,9 @@
-{{#if this.enabled}}
 <Toolbar::Dropdown
   @label={{this.currentStyle}}
   @icon="nav-down"
   @iconSize="small"
   @controller={{@controller}}
+  @disabled={{not this.enabled}}
   as |Menu|
 >
   <Menu.Item
@@ -29,4 +29,3 @@
     </Menu.Item>
   {{/each}}
 </Toolbar::Dropdown>
-{{/if}}

@@ -1,16 +1,14 @@
 {{#if @controller}}
-  {{#if this.enabled}}
-    <Toolbar::Button
-      @title={{t 'ember-rdfa-editor.unindent'}}
-      @icon='reverse-indent'
-      {{on 'click' this.insertUnindent}}
-      @disabled={{not this.canUnindent}}
-    />
-    <Toolbar::Button
-      @title={{t 'ember-rdfa-editor.indent'}}
-      @icon='indent'
-      {{on 'click' this.insertIndent}}
-      @disabled={{not this.canIndent}}
-    />
-  {{/if}}
+  <Toolbar::Button
+    @title={{t 'ember-rdfa-editor.unindent'}}
+    @icon='reverse-indent'
+    {{on 'click' this.insertUnindent}}
+    @disabled={{not this.canUnindent}}
+  />
+  <Toolbar::Button
+    @title={{t 'ember-rdfa-editor.indent'}}
+    @icon='indent'
+    {{on 'click' this.insertIndent}}
+    @disabled={{not this.canIndent}}
+  />
 {{/if}}

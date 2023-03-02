@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- Disable toolbar buttons when not applicable instead of hiding them
 ### Dependencies
 - Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
@@ -13,11 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-qunit` from 6.1.1 to 6.2.0
 - Bumps `prettier` from 2.8.3 to 2.8.4
 - Bumps `minimist` from 0.2.2 to 0.2.4
+- Bumps `release-it` from 15.6.0 to 15.7.0
+- Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.1
 
 ### Fixed
 - Inherit ordered list style correctly 
 
 ## [3.2.1] - 2023-02-28
+
+### Updated
+- Updated selection background-color of selections inside highlighted elements
 
 ### Fixed
 - Fix `ember.js` 3.28 compatibility issue
