@@ -8,7 +8,16 @@
     aria-describedby="link-tooltip"
     {{velcro.hook}}
     {{on "click" this.onClick }}>
-    <EmberNode::EmbeddedEditor @controller={{@controller}} @node={{@node}} @view={{@view}} @getPos={{@getPos}} @selected={{@selected}} @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}/>
+    <EmberNode::EmbeddedEditor 
+      @controller={{@controller}} 
+      @node={{@node}} 
+      @view={{@view}} 
+      @getPos={{@getPos}} 
+      @selected={{@selected}} 
+      @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
+      @decorations={{@decorations}}
+      @contentDecorations={{@contentDecorations}}
+    />
   </AuPill>
   {{#if (and this.selected this.interactive)}}
     <AuPill @size="small" 

@@ -6,7 +6,12 @@ import {
   NodeSpec,
   ParseRule,
 } from 'prosemirror-model';
-import { NodeView, NodeViewConstructor } from 'prosemirror-view';
+import {
+  Decoration,
+  DecorationSource,
+  NodeView,
+  NodeViewConstructor,
+} from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
@@ -25,6 +30,7 @@ export interface EmberNodeArgs {
   controller: SayController;
   view: SayView;
   selected: boolean;
+  contentDecorations?: DecorationSource;
 }
 
 export function emberComponent(
@@ -80,6 +86,7 @@ class EmberNodeView implements NodeView {
                           controller=this.controller
                           view=this.view
                           selected=this.selected
+                          contentDecorations=this.contentDecorations
                         }}
                           {{#unless this.atom}}
                           <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
@@ -115,10 +122,15 @@ class EmberNodeView implements NodeView {
     this.emberComponent = component;
   }
 
-  update(node: PNode) {
+  update(
+    node: PNode,
+    _decorations: Decoration[],
+    innerDecorations: DecorationSource
+  ) {
     if (node.type !== this.node.type) return false;
     this.node = node;
     this.emberComponent.set('node', node);
+    this.emberComponent.set('contentDecorations', innerDecorations);
     return true;
   }
 
