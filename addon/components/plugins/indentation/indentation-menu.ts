@@ -18,10 +18,6 @@ export default class IndentationMenuComponent extends Component<Args> {
     return this.controller.schema;
   }
 
-  get enabled() {
-    return this.canIndent || this.canUnindent;
-  }
-
   get indentCommand() {
     return chainCommands(
       sinkListItem(this.schema.nodes.list_item),

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- Disable toolbar buttons when not applicable instead of hiding them
 ### Dependencies
 - Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
