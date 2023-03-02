@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Addition of a formatting toggle component which allows showing formatting marks
 - Addition of linkPasteHandler plugin which detects and converts links in pasted content
 ### Changed
 - Disable toolbar buttons when not applicable instead of hiding them

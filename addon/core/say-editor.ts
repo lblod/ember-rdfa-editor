@@ -30,7 +30,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-
 interface SayEditorArgs {
   owner: Owner;
   target: Element;

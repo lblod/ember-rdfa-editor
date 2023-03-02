@@ -47,6 +47,13 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/link';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import {
+  createInvisiblesPlugin,
+  hardBreak,
+  space,
+  paragraph as paragraphInvisible,
+  heading as headingInvisible,
+} from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
 export default class IndexController extends Controller {
@@ -102,6 +109,12 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
+    createInvisiblesPlugin(
+      [space, hardBreak, paragraphInvisible, headingInvisible],
+      {
+        shouldShowInvisibles: false,
+      }
+    ),
   ];
   @tracked nodeViews = (controller: SayController) => {
     return {

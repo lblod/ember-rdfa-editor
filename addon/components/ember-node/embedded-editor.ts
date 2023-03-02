@@ -122,6 +122,7 @@ export default class EmbeddedEditor extends Component<Args> {
     this.innerView = new SayView(
       this.contentWrapper,
       {
+        decorations: () => this.args.contentDecorations,
         state: EditorState.create({
           doc: this.node,
           plugins: [
@@ -229,6 +230,11 @@ export default class EmbeddedEditor extends Component<Args> {
         );
       }
     }
+  }
+
+  @action
+  onDecorationsUpdate() {
+    this.innerView?.dispatch(this.innerView.state.tr);
   }
 
   dispatchInner = (tr: Transaction) => {
