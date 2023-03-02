@@ -50,59 +50,60 @@ import {
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { link, linkView } from '@lblod/ember-rdfa-editor/plugins/link';
+import {
+  link,
+  linkPasteHandler,
+  linkView,
+} from '@lblod/ember-rdfa-editor/plugins/link';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
+  schema = new Schema({
+    nodes: {
+      doc,
+      paragraph,
+
+      repaired_block,
+
+      list_item,
+      ordered_list,
+      bullet_list,
+      placeholder,
+      ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+      heading,
+      blockquote,
+
+      horizontal_rule,
+      code_block,
+
+      text,
+
+      image,
+
+      hard_break,
+      invisible_rdfa,
+      block_rdfa,
+      card,
+      counter,
+      dropdown,
+      link: link(this.linkOptions),
+    },
+    marks: {
+      inline_rdfa,
+      code,
+      em,
+      strong,
+      underline,
+      strikethrough,
+      subscript,
+      superscript,
+    },
+  });
 
   get linkOptions() {
     return {
       interactive: true,
     };
-  }
-
-  get schema() {
-    return new Schema({
-      nodes: {
-        doc,
-        paragraph,
-
-        repaired_block,
-
-        list_item,
-        ordered_list,
-        bullet_list,
-        placeholder,
-        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-        heading,
-        blockquote,
-
-        horizontal_rule,
-        code_block,
-
-        text,
-
-        image,
-
-        hard_break,
-        invisible_rdfa,
-        block_rdfa,
-        card,
-        counter,
-        dropdown,
-        link: link(this.linkOptions),
-      },
-      marks: {
-        inline_rdfa,
-        code,
-        em,
-        strong,
-        underline,
-        strikethrough,
-        subscript,
-        superscript,
-      },
-    });
   }
 
   @tracked nodeViews: (
@@ -119,6 +120,7 @@ export default class IndexController extends Controller {
     highlight({ testKey: 'yeet' }),
     tablePlugin,
     tableKeymap,
+    linkPasteHandler(this.schema.nodes.link),
   ];
 
   @action

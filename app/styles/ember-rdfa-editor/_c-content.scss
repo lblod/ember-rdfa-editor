@@ -34,6 +34,7 @@ $say-typography-margin: $au-unit-small !default;
 $say-editor-private-color: var(--au-gray-900) !default;
 $say-editor-highlight-color: var(--au-gray-100) !default;
 $say-editor-highlight-hover-color: var(--au-gray-200) !default;
+$say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
 /* Component
   ========================================================================== */
@@ -217,31 +218,29 @@ $say-editor-highlight-hover-color: var(--au-gray-200) !default;
       margin-left: 0;
       padding-left: 0;
     }
+
+    & > ol:not([data-list-style]),
+    & > li > ol:not([data-list-style]) {
+      list-style-type: decimal;
+    }
   }
 
   ol,
   ol.numbered-list {
-    list-style-type: decimal;
-
-    &[data-list-style=decimal] {
-      ol {
-        list-style-type: decimal;
-      }
-      list-style-type: decimal !important;
+    &:not([data-list-style]) {
+      list-style-type: inherit;
     }
 
-    &[data-list-style=upper-roman] {
-      ol {
-        list-style-type: upper-roman;
-      }
-      list-style-type: upper-roman !important;
+    &[data-list-style='decimal'] {
+      list-style-type: decimal;
     }
 
-    &[data-list-style=lower-alpha] {
-      ol {
-        list-style-type: lower-alpha;
-      }
-      list-style-type: lower-alpha !important;
+    &[data-list-style='upper-roman'] {
+      list-style-type: upper-roman;
+    }
+
+    &[data-list-style='lower-alpha'] {
+      list-style-type: lower-alpha;
     }
 
     // Stop indenting

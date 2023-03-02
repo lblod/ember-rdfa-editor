@@ -9,7 +9,7 @@ type OrderedListAttrs = typeof rdfaAttrs & {
 export const ordered_list: NodeSpec = {
   attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrs },
   content: 'list_item+',
-  group: 'block',
+  group: 'block list',
   parseDOM: [
     {
       tag: 'ol',
@@ -39,7 +39,7 @@ export const ordered_list: NodeSpec = {
 };
 export const bullet_list: NodeSpec = {
   content: 'list_item+',
-  group: 'block',
+  group: 'block list',
   attrs: { ...rdfaAttrs },
   parseDOM: [
     {
@@ -57,7 +57,7 @@ export const bullet_list: NodeSpec = {
   },
 };
 export const list_item: NodeSpec = {
-  content: 'paragraph block*',
+  content: 'paragraph+ list*',
   defining: true,
   attrs: { ...rdfaAttrs },
   parseDOM: [

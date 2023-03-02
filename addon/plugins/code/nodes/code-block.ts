@@ -1,7 +1,7 @@
 import { NodeSpec } from 'prosemirror-model';
 
 export const code_block: NodeSpec = {
-  content: 'text*',
+  content: 'inline*',
   marks: '',
   group: 'block',
   code: true,
