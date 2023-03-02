@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
 - Bumps `ember-qunit` from 6.1.1 to 6.2.0
 - Bumps `prettier` from 2.8.3 to 2.8.4
+- Bumps `minimist` from 0.2.2 to 0.2.4
 - Bumps `release-it` from 15.6.0 to 15.7.0
 - Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
 - Bumps `@codemirror/view` from 6.7.3 to 6.9.1
