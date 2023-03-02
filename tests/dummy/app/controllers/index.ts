@@ -47,6 +47,13 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/link';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import {
+  createInvisiblesPlugin,
+  hardBreak,
+  space,
+  paragraph as paragraphInvisible,
+  heading as headingInvisible,
+} from '@guardian/prosemirror-invisibles';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -100,6 +107,12 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
+    createInvisiblesPlugin(
+      [space, hardBreak, paragraphInvisible, headingInvisible],
+      {
+        shouldShowInvisibles: false,
+      }
+    ),
   ];
   @tracked nodeViews = (controller: SayController) => {
     return {

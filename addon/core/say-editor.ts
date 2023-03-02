@@ -30,13 +30,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import {
-  createInvisiblesPlugin,
-  hardBreak,
-  heading,
-  paragraph,
-  space,
-} from '@guardian/prosemirror-invisibles';
 interface SayEditorArgs {
   owner: Owner;
   target: Element;
@@ -98,9 +91,6 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
-        createInvisiblesPlugin([space, hardBreak, paragraph, heading], {
-          shouldShowInvisibles: false,
-        }),
       ],
     });
     this.mainView = new SayView(target, {
