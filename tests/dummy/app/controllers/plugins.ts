@@ -55,6 +55,13 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
+import {
+  createInvisiblesPlugin,
+  hardBreak,
+  space,
+  paragraph as paragraphInvisible,
+  heading as headingInvisible,
+} from '@lblod/ember-rdfa-editor/plugins/invisibles';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -121,6 +128,12 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
+    createInvisiblesPlugin(
+      [space, hardBreak, paragraphInvisible, headingInvisible],
+      {
+        shouldShowInvisibles: false,
+      }
+    ),
   ];
 
   @action

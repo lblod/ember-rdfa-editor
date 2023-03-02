@@ -28,6 +28,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
         default: interactive,
       },
     },
+    needsFFKludge: true,
     parseDOM: [
       {
         tag: 'a',

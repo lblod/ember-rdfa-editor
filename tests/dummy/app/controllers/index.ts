@@ -53,7 +53,8 @@ import {
   space,
   paragraph as paragraphInvisible,
   heading as headingInvisible,
-} from '@guardian/prosemirror-invisibles';
+} from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -104,6 +105,7 @@ export default class IndexController extends Controller {
   }
 
   @tracked plugins: Plugin[] = [
+    firefoxCursorFix(),
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
