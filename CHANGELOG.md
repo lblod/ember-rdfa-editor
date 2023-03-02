@@ -6,11 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Added
-- Add formatting toggle component which allows showing formatting marks
+- Addition of a formatting toggle component which allows showing formatting marks
+- Addition of linkPasteHandler plugin which detects and converts links in pasted content
+### Changed
+- Disable toolbar buttons when not applicable instead of hiding them
+- Use the new view pasteHTML method inside the Word paste handler.
+- Updated selection background-color of selections inside highlighted elements
+### Dependencies
+- Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
+- Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `ember-qunit` from 6.1.1 to 6.2.0
+- Bumps `prettier` from 2.8.3 to 2.8.4
+- Bumps `minimist` from 0.2.2 to 0.2.4
+- Bumps `release-it` from 15.6.0 to 15.7.0
+- Bumps `prosemirror-keymap` from 1.2.0 to 1.2.1
+- Bumps `@codemirror/view` from 6.7.3 to 6.9.1
+
+### Fixed
+- Inherit ordered list style correctly 
+- Fixed white-space issue in links
+- Fix issue with parsing links from pasted html
+
+## [3.2.1] - 2023-02-28
+### Fixed
+- Fix `ember.js` 3.28 compatibility issue
 ### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
+- Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 
 ## [3.2.0] - 2023-02-27
 
@@ -82,6 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix shrinking issues with toolbar buttons and dropdowns
 - Fix sidebar area not clickable when sidebar is hidden
 - Fix alignment of table buttons
+- Only allow paragraphs and lists in the list items
 
 ### Removed
 - BREAKING: removal of `RdfaEditorPlugin` class
@@ -1451,7 +1476,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.4...v3.0.0

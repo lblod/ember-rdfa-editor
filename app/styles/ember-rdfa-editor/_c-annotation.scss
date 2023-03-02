@@ -86,8 +86,7 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     transition: background-color var(--au-transition);
 
     &::selection {
-      color: var(--au-gray-900);
-      background-color: $say-editor-highlight-color;
+      background-color: $say-editor-highlight-selected-color;
     }
 
     &:hover {

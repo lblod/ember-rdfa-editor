@@ -1,6 +1,6 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
-import { service } from '@ember/service';
+import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import IntlService from 'ember-intl/services/intl';
 import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
