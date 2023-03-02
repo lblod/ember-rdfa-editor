@@ -7,9 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Dependencies
+- Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
+- Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
+- Bumps `tracked-built-ins` from 3.1.0 to 3.1.1
+- Bumps `ember-qunit` from 6.1.1 to 6.2.0
+- Bumps `prettier` from 2.8.3 to 2.8.4
+
+### Fixed
+- Inherit ordered list style correctly 
+
+## [3.2.1] - 2023-02-28
+
+### Fixed
+- Fix `ember.js` 3.28 compatibility issue
+### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
 - Bumps `minimist` from 0.2.2 to 0.2.4
+
+### Fixed
+- Fix issue with parsing links from pasted html
+
+### Added
+- Addition of linkPasteHandler plugin which detects and converts links in pasted content
+
+### Changed
+- Use the new view pasteHTML method inside the Word paste handler.
 
 ## [3.2.0] - 2023-02-27
 
@@ -1451,7 +1474,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v2.1.4...v3.0.0

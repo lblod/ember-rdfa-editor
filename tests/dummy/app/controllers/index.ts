@@ -40,13 +40,55 @@ import {
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { link, linkView } from '@lblod/ember-rdfa-editor/plugins/link';
+import {
+  link,
+  linkPasteHandler,
+  linkView,
+} from '@lblod/ember-rdfa-editor/plugins/link';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
+  schema = new Schema({
+    nodes: {
+      doc,
+      paragraph,
+
+      repaired_block,
+
+      list_item,
+      ordered_list,
+      bullet_list,
+      placeholder,
+      ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+      heading,
+      blockquote,
+
+      horizontal_rule,
+      code_block,
+
+      text,
+
+      image,
+
+      hard_break,
+      invisible_rdfa,
+      block_rdfa,
+      link: link(this.linkOptions),
+    },
+    marks: {
+      inline_rdfa,
+      code,
+      em,
+      strong,
+      underline,
+      strikethrough,
+      subscript,
+      superscript,
+    },
+  });
 
   get linkOptions() {
     return {
@@ -54,53 +96,16 @@ export default class IndexController extends Controller {
     };
   }
 
-  @tracked plugins: Plugin[] = [tablePlugin, tableKeymap];
+  @tracked plugins: Plugin[] = [
+    tablePlugin,
+    tableKeymap,
+    linkPasteHandler(this.schema.nodes.link),
+  ];
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
     };
   };
-
-  get schema() {
-    return new Schema({
-      nodes: {
-        doc,
-        paragraph,
-
-        repaired_block,
-
-        list_item,
-        ordered_list,
-        bullet_list,
-        placeholder,
-        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-        heading,
-        blockquote,
-
-        horizontal_rule,
-        code_block,
-
-        text,
-
-        image,
-
-        hard_break,
-        invisible_rdfa,
-        block_rdfa,
-        link: link(this.linkOptions),
-      },
-      marks: {
-        inline_rdfa,
-        code,
-        em,
-        strong,
-        underline,
-        strikethrough,
-        subscript,
-        superscript,
-      },
-    });
-  }
 
   get showRdfaBlocks() {
     return this.rdfaEditor?.showRdfaBlocks;

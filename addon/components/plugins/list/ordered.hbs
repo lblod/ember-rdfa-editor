@@ -5,7 +5,7 @@
       @title={{t 'ember-rdfa-editor.ordered-list.button-label'}}
       @optionsLabel={{t 'ember-rdfa-editor.ordered-list.options-label'}}
       @icon="ordered-list"
-      {{on "click" (fn this.toggle undefined)}}
+      {{on "click" (fn this.toggle 'decimal')}}
       @controller={{@controller}}
     >
       <:options as |Menu|>
