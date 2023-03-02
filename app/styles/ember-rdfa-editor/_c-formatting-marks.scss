@@ -28,7 +28,7 @@
       z-index: 1;
     }
     &.invisible--space::before {
-      content: '.';
+      content: '\00B7';
     }
     &.invisible--break::before {
       content: '\23CE';
