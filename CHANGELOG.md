@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Added
+- Addition of linkPasteHandler plugin which detects and converts links in pasted content
 ### Changed
 - Disable toolbar buttons when not applicable instead of hiding them
+- Use the new view pasteHTML method inside the Word paste handler.
+- Updated selection background-color of selections inside highlighted elements
 ### Dependencies
 - Bumps `@embroider/test-setup` from 1.8.3 to 2.1.1
 - Bumps `@typescript-eslint/parser` from 5.50.0 to 5.54.0
@@ -23,26 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Inherit ordered list style correctly 
 - Fixed white-space issue in links
+- Fix issue with parsing links from pasted html
 
 ## [3.2.1] - 2023-02-28
-
-### Updated
-- Updated selection background-color of selections inside highlighted elements
-
 ### Fixed
 - Fix `ember.js` 3.28 compatibility issue
 ### Dependencies
 - Bumps `@codemirror/lang-xml` from 6.0.1 to 6.0.2
 - Bumps `prosemirror-dropcursor` from 1.6.1 to 1.7.0
-
-### Fixed
-- Fix issue with parsing links from pasted html
-
-### Added
-- Addition of linkPasteHandler plugin which detects and converts links in pasted content
-
-### Changed
-- Use the new view pasteHTML method inside the Word paste handler.
 
 ## [3.2.0] - 2023-02-27
 
