@@ -38,11 +38,11 @@
 }
 
 .ProseMirror-firefox-fake-cursor {
-  content: "";
   position: absolute;
-  background: black;
-  width: 0.2rem;
-  height: 1.9rem;
+  //background: black;
+  left: -0.2em;
+  font-size: 1.55em !important;
+  top: -0.25em;
   animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
 }
 

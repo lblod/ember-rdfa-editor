@@ -68,7 +68,9 @@ export function firefoxCursorFix(): ProsePlugin {
                 wrapper.classList.add(
                   'ProseMirror-firefox-fake-cursor-wrapper'
                 );
+                const cursor = new Text('|');
                 const fakeCursor = document.createElement('span');
+                fakeCursor.append(cursor);
                 fakeCursor.classList.add('ProseMirror-firefox-fake-cursor');
                 wrapper.append(fakeCursor);
                 return wrapper;
