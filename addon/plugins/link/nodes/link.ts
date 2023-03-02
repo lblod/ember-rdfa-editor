@@ -20,6 +20,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     group: 'inline',
     content: 'text*',
     atom: true,
+    defining: true,
     draggable: false,
     attrs: {
       ...rdfaAttrs,

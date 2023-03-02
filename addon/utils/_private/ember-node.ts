@@ -149,6 +149,7 @@ export type EmberNodeConfig = {
   content?: string;
   atom: boolean;
   draggable?: boolean;
+  defining?: boolean;
   recreateUri?: boolean;
   uriAttributes?: string[];
   attrs?: {
@@ -177,6 +178,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     content,
     atom,
     draggable,
+    defining,
     recreateUri,
     uriAttributes,
     attrs,
@@ -192,6 +194,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     uriAttributes,
     attrs,
     draggable,
+    defining,
     parseDOM: parseDOM ?? [
       {
         tag: inline ? 'span' : 'div',
