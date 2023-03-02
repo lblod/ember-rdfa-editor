@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.2.1] - 2023-02-28
 
+### Updated
+- Updated selection background-color of selections inside highlighted elements
+
 ### Fixed
 - Fix `ember.js` 3.28 compatibility issue
 ### Dependencies
