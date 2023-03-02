@@ -60,7 +60,6 @@ $say-smaller-font-size: 1.4rem !default;
 
   &:disabled {
     color: var(--au-gray-400);
-    background-color: var(--au-gray-100);
     cursor: not-allowed;
   }
 }
