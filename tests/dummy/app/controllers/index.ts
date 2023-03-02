@@ -10,6 +10,7 @@ import {
   subscript,
   superscript,
   underline,
+  color,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
@@ -95,6 +96,7 @@ export default class IndexController extends Controller {
         em,
         strong,
         underline,
+        color,
         strikethrough,
         subscript,
         superscript,

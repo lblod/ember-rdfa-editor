@@ -52,6 +52,7 @@ import {
   strikethrough,
   strong,
   underline,
+  color,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
@@ -111,6 +112,7 @@ export default class EmbeddedEditor extends Component<Args> {
         em,
         strong,
         underline,
+        color,
         strikethrough,
       },
     });
