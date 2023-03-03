@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed:
-- embedded-editor: only set data-placeholder when placeholder argument is supplied
+- embedded-editor: only set data-placeholder when placeholder argument is supplied\
+
+### Changed
+- Ensure the list toggle button removes selected content completely out of all lists when untoggling
 ### Dependencies
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
 
