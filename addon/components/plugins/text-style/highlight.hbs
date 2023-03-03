@@ -23,10 +23,15 @@
     <input 
       type="color" 
       id='say-highlight-color' 
-      value={{this.selectedColor}} 
+      value={{this.selectedColor}}
+      list="presetColors"
       {{on 'change' this.onColorPickerChange}}
-      {{on 'input' this.onColorPickerInput}}
     />
+    <datalist id="presetColors">
+      {{#each @presetColors as |color|}}
+        <option>{{color}}</option>/>
+      {{/each}}
+    </datalist>
   </div>
   </div>
 </div>
