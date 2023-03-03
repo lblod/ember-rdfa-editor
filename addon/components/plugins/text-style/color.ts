@@ -18,7 +18,7 @@ export default class Color extends Component<Args> {
   }
 
   get currentStyle() {
-    const currentColor: string = this.isActive();
+    const currentColor = this.colors.find(this.colorIsActive);
     if (currentColor) {
       return `${this.intl.t('ember-rdfa-editor.color')} ${currentColor}`;
     } else {
@@ -54,29 +54,43 @@ export default class Color extends Component<Args> {
     }
   }
 
-  colorIsActive = (color?: string) => this.isActive() === color;
+  colorIsActive = (color: string) => {
+    return this.isActive() === color;
+  };
 
-  isActive = (): string => {
+  isActive = () => {
     if (this.controller) {
-      const { selection } = this.controller.mainEditorState;
+      const state = this.controller.mainEditorState;
+      const { selection } = state;
+      const marks = state.storedMarks;
 
-      let node;
+      if (marks?.length) {
+        const color = Object.values(marks).find((item) => {
+          return item.type.name === 'color';
+        })?.attrs?.color as string;
 
-      if (selection instanceof TextSelection) {
-        node = this.controller.mainEditorState.doc.nodeAt(selection.$from.pos);
+        return color || 'black';
+      } else {
+        let node;
+
+        if (selection instanceof TextSelection) {
+          node = this.controller.mainEditorState.doc.nodeAt(
+            selection.$from.pos
+          );
+        }
+
+        if (node === null && selection.$from.parentOffset > 0) {
+          node = this.controller.mainEditorState.doc.nodeAt(
+            selection.$from.pos - 1
+          );
+        }
+
+        const color = Object.values(node?.marks || {}).find((item) => {
+          return item.type.name === 'color';
+        })?.attrs?.color as string;
+
+        return color || 'black';
       }
-
-      if (node === null) {
-        node = this.controller.mainEditorState.doc.nodeAt(
-          selection.$from.pos - 2
-        );
-      }
-
-      const hasMarks =
-        node?.marks.length !== undefined && node?.marks.length > 0;
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return hasMarks && node?.marks[node?.marks.length - 1].attrs.color;
     }
 
     return '';
