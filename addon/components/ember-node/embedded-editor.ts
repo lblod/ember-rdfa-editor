@@ -153,7 +153,9 @@ export default class EmbeddedEditor extends Component<Args> {
           schema: this.schema,
         }),
         attributes: {
-          'data-placeholder': this.args.placeholder,
+          ...(this.args.placeholder && {
+            'data-placeholder': this.args.placeholder,
+          }),
         },
         dispatchTransaction: this.dispatchInner,
         handleDOMEvents: {

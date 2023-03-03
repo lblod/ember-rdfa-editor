@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed:
+- embedded-editor: only set data-placeholder when placeholder argument is supplied
 ### Dependencies
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
