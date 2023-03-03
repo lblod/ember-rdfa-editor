@@ -1,3 +1,3 @@
 export { toggleList } from './commands/toggle-list';
-export { liftOutOfList } from './commands/lift-out-of-list';
+export { liftOutOfNestedLists } from './commands/lift-out-of-nested-lists';
 export { ordered_list, list_item, bullet_list } from './nodes/list-nodes';

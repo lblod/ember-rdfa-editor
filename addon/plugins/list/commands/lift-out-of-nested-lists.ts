@@ -30,7 +30,7 @@ import { Fragment, NodeRange, NodeType, Slice } from 'prosemirror-model';
 import { Command, Transaction } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';
 
-export function liftOutOfList(itemType: NodeType): Command {
+export function liftOutOfNestedLists(itemType: NodeType): Command {
   return function (state, dispatch) {
     let { $from, $to } = state.selection;
     let range = $from.blockRange(
