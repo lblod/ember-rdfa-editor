@@ -55,6 +55,7 @@ import {
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -95,6 +96,7 @@ export default class IndexController extends Controller {
       strikethrough,
       subscript,
       superscript,
+      highlight,
     },
   });
 

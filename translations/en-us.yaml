@@ -50,3 +50,6 @@ ember-rdfa-editor:
     edit:
       title: Update hyperlink
       uncouple: Detach hyperlink
+  highlight:
+    button-label: Highlight
+    options-label: Highlight options

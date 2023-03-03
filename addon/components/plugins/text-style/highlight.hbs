@@ -1,0 +1,33 @@
+{{#if @controller}}
+<div class="say-toolbar__button say-toolbar__highlight-button">
+  <button
+    type='button'
+    class='main {{if @active "is-active"}} {{if @disabled "is-disabled"}}'
+    title={{t 'ember-rdfa-editor.highlight.button-label'}}
+    {{on 'click' (fn this.setHighlight this.selectedColor)}}
+  >
+    <AuIcon 
+      @icon='pencil' 
+      @ariaHidden={{true}} 
+      @size='large' 
+      style={{html-safe (concat "border-bottom-color: " this.selectedColor)}}
+    />
+  </button>
+  <div class="say-dropdown options">
+    <div
+    class='say-dropdown__button'
+    title={{t 'ember-rdfa-editor.highlight.options-label'}}
+    disabled={{@disabled}}
+  >
+    <AuIcon @icon='chevron-down' @ariaHidden={{true}} @size='large' />
+    <input 
+      type="color" 
+      id='say-highlight-color' 
+      value={{this.selectedColor}} 
+      {{on 'change' this.onColorPickerChange}}
+      {{on 'input' this.onColorPickerInput}}
+    />
+  </div>
+  </div>
+</div>
+{{/if}}

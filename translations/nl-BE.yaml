@@ -49,4 +49,7 @@ ember-rdfa-editor:
     edit:
       title: Snelkoppeling wijzigen
       uncouple: Snelkoppeling loskoppelen
+  highlight:
+    button-label: Markering
+    options-label: Markeringsopties
 

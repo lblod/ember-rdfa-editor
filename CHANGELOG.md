@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Addition of a color highlighting mark and toolbar menu
+
 ## [3.3.0] - 2023-03-02
 ### Added
 - Addition of a formatting toggle component which allows showing formatting marks
