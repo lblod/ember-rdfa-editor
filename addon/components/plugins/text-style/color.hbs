@@ -7,10 +7,10 @@
 >
   {{#each this.colors as |color|}}
     <Menu.Item
-      @menuAction={{fn this.enableColor color}}
+      @menuAction={{fn this.setColorMark color}}
       title='{{t 'ember-rdfa-editor.heading'}} {{color}}'
     >
-      {{#if (this.colorIsActive color)}}
+      {{#if (this.selectedColor color)}}
         <AuIcon @icon='check' @ariaHidden={{true}} />
       {{/if}}
       {{t 'ember-rdfa-editor.color'}} {{color}}

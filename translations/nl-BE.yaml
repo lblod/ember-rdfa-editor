@@ -33,8 +33,8 @@ ember-rdfa-editor:
   normalText: Gewone tekst
   heading: Koptitel
   insert-heading: Voeg koptitel toe
-  color: Color
-  default-color: Color Black
+  color: Tekstkleur
+  default-color: Tekstkleur zwart
 
   show-annotations: Toon annotaties
   insert: Invoegen

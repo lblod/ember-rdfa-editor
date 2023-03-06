@@ -5,6 +5,8 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 
 import IntlService from 'ember-intl/services/intl';
 import { TextSelection } from 'prosemirror-state';
+import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { tracked } from '@glimmer/tracking';
 
 type Args = {
   controller?: SayController;
@@ -12,22 +14,25 @@ type Args = {
 export default class Color extends Component<Args> {
   @service declare intl: IntlService;
   colors = ['black', 'red', 'green', 'blue', 'orange'];
+  @tracked selectedColor = this.colors[0];
 
   get controller() {
     return this.args.controller;
   }
 
   get currentStyle() {
-    const currentColor = this.colors.find(this.colorIsActive);
-    if (currentColor) {
-      return `${this.intl.t('ember-rdfa-editor.color')} ${currentColor}`;
+    this.setActiveColorName();
+    const activeColor = this.selectedColor;
+
+    if (activeColor) {
+      return `${this.intl.t('ember-rdfa-editor.color')} ${activeColor}`;
     } else {
       return this.intl.t('ember-rdfa-editor.default-color');
     }
   }
 
   @action
-  enableColor(color: string) {
+  setColorMark(color: string) {
     if (this.controller) {
       const state = this.controller.mainEditorState;
       const { selection } = state;
@@ -39,11 +44,11 @@ export default class Color extends Component<Args> {
         if (markType.isInSet(state.storedMarks || $cursor.marks())) {
           this.controller.withTransaction((tr) => {
             tr.removeStoredMark(markType);
-            return tr.addStoredMark(markType.create({ color }));
+            return tr.addStoredMark(mark);
           });
         } else {
           this.controller.withTransaction((tr) => {
-            return tr.addStoredMark(markType.create({ color }));
+            return tr.addStoredMark(mark);
           });
         }
       } else {
@@ -54,22 +59,18 @@ export default class Color extends Component<Args> {
     }
   }
 
-  colorIsActive = (color: string) => {
-    return this.isActive() === color;
-  };
-
-  isActive = () => {
+  setActiveColorName = () => {
     if (this.controller) {
       const state = this.controller.mainEditorState;
       const { selection } = state;
       const marks = state.storedMarks;
+      const markType = state.schema.marks.color;
 
       if (marks?.length) {
-        const color = Object.values(marks).find((item) => {
-          return item.type.name === 'color';
-        })?.attrs?.color as string;
+        const markSet = markType.isInSet(marks);
+        const color = markSet?.attrs?.color as Option<string>;
 
-        return color || 'black';
+        this.selectedColor = color || 'black';
       } else {
         let node;
 
@@ -85,14 +86,13 @@ export default class Color extends Component<Args> {
           );
         }
 
-        const color = Object.values(node?.marks || {}).find((item) => {
-          return item.type.name === 'color';
-        })?.attrs?.color as string;
+        const markSet = markType.isInSet(node?.marks || []);
+        const color = markSet?.attrs?.color as Option<string>;
 
-        return color || 'black';
+        this.selectedColor = color || 'black';
       }
     }
 
-    return '';
+    return null;
   };
 }
