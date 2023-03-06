@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
 - Bumps `dompurify` from 3.0.0 to 3.0.1
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
+- Bumps `eslint` from 8.29.0 to 8.35.0
 
 ## [3.3.0] - 2023-03-02
 ### Added
