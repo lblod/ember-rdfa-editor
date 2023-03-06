@@ -36,6 +36,11 @@ $say-toolbar-height: 44px !default;
   width: 100%;
 }
 
+.say-toolbar__divider {
+  height: $say-toolbar-height;
+  border-left: 1px solid var(--au-gray-300);
+}
+
 .say-toolbar__group {
   display: flex;
   padding-left: .1rem;
