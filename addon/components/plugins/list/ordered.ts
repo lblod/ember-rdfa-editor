@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import IntlService from 'ember-intl/services/intl';
-import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
+import { OrderListStyle, toggleList } from "@lblod/ember-rdfa-editor/plugins/list";
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
@@ -65,7 +65,7 @@ export default class ListOrdered extends Component<Args> {
     return this.controller.schema;
   }
 
-  toggleCommand(listStyle?: string): Command {
+  toggleCommand(listStyle?: OrderListStyle): Command {
     return chainCommands(
       toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item, {
         style: listStyle,
@@ -82,7 +82,7 @@ export default class ListOrdered extends Component<Args> {
   }
 
   @action
-  toggle(style?: string) {
+  toggle(style?: OrderListStyle) {
     this.controller.focus();
     this.controller.doCommand(
       autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list'])
@@ -90,7 +90,7 @@ export default class ListOrdered extends Component<Args> {
   }
 
   @action
-  setStyle(style: string) {
+  setStyle(style: OrderListStyle) {
     const firstListParent = this.firstListParent;
     if (
       firstListParent?.node.type === this.controller.schema.nodes.ordered_list
