@@ -25,7 +25,29 @@ $say-toolbar-height: 44px !default;
     border-bottom: 0;
     border-top: 1px solid $say-toolbar-border;
   }
+
+  *[data-hidden='true'] {
+    visibility: hidden;
+    pointer-events: none;
+    order: 100;
+  }
+
+  .say-toolbar__main {
+    min-width: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+  }
+
+  .say-toolbar__side {
+    min-width: 0;
+    flex-shrink: 200;
+  }
+
+  .say-toolbar__more {
+    position: sticky;
+  }
 }
+
 
 .say-toolbar img {
   max-width: inherit;

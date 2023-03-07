@@ -1,0 +1,28 @@
+<div class='say-toolbar' >
+  {{#if (has-block 'main')}}
+    <div class="say-toolbar__main au-u-flex" {{this.setUpMainToolbar}}>
+      {{yield (hash
+      Group=(component "toolbar/group")
+      Spacer=(component "toolbar/spacer")
+      Divider=(component "toolbar/divider")
+      ) to="main"}}
+    </div>
+    <Toolbar::Group class="say-toolbar__more">
+      <Toolbar::Button @icon="three-dots"/>
+    </Toolbar::Group>
+  {{/if}}
+  {{#if (has-block 'side')}}
+    <div class="au-u-flex say-toolbar__side" {{this.setUpSideToolbar}}>
+      <div class="au-u-flex" {{this.setUpToolbar}}>
+          {{yield (hash
+          Group=(component "toolbar/group")
+          Spacer=(component "toolbar/spacer")
+          Divider=(component "toolbar/divider")
+          ) to='side'}}
+      </div>
+    </div>
+    <Toolbar::Group class="say-toolbar__more">
+        <Toolbar::Button @icon="nav-down"/>
+    </Toolbar::Group>
+  {{/if}}
+</div>
