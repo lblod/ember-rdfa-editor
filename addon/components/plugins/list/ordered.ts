@@ -3,7 +3,10 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import IntlService from 'ember-intl/services/intl';
-import { OrderListStyle, toggleList } from "@lblod/ember-rdfa-editor/plugins/list";
+import {
+  OrderListStyle,
+  toggleList,
+} from '@lblod/ember-rdfa-editor/plugins/list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
