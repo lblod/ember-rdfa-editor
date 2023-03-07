@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
 - toolbar: add missing missing toolbar divider styles
 - Fix switching unordered list to ordered and applying correct styling
+- ember-node: Fix cursor placement inside of `ember-node` when navigating from left 
 ### Dependencies
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
