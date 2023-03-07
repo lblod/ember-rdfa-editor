@@ -55,6 +55,7 @@ import {
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -106,6 +107,7 @@ export default class IndexController extends Controller {
 
   @tracked plugins: Plugin[] = [
     firefoxCursorFix(),
+    lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
