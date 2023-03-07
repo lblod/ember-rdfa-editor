@@ -26,27 +26,51 @@ $say-toolbar-height: 44px !default;
     border-top: 1px solid $say-toolbar-border;
   }
 
-  *[data-hidden='true'] {
-    visibility: hidden;
-    pointer-events: none;
-    order: 100;
-  }
+
 
   .say-toolbar__main {
-    min-width: 0;
-    flex-shrink: 1;
+    display: flex;
     flex-grow: 1;
+    flex-shrink: 1;
   }
 
   .say-toolbar__side {
-    min-width: 0;
-    flex-shrink: 200;
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
   }
-
-  .say-toolbar__more {
-    position: sticky;
+  
+  *[data-hidden='true'] {
+    display: none;
   }
 }
+
+
+
+.say-toolbar__main-dropdown {
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap;
+  min-height: $say-toolbar-height; // Fixes height bug on Safari
+  border-radius: $au-unit-tiny;
+  padding: 0.1rem $au-unit-tiny 0; // Visually center the text in the pill
+  margin: 0 1rem;
+  background-color: $say-toolbar-background;
+  z-index: 1;
+}
+
+.say-toolbar__side-dropdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  flex-wrap: wrap;
+  border-radius: $au-unit-tiny;
+  padding: 0.1rem $au-unit-tiny 0; // Visually center the text in the pill
+  margin: 0 1rem;
+  background-color: $say-toolbar-background;
+  z-index: 1;
+}
+
 
 
 .say-toolbar img {

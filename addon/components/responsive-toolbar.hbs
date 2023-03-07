@@ -1,28 +1,59 @@
-<div class='say-toolbar' >
+<div class='say-toolbar' {{this.setUpToolbar}}>
   {{#if (has-block 'main')}}
-    <div class="say-toolbar__main au-u-flex" {{this.setUpMainToolbar}}>
+            <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+      <div class="say-toolbar__main" {{this.setUpMainToolbar}}  {{velcro.hook}}>
+        {{yield (hash
+        Group=(component "toolbar/group")
+        Spacer=(component "toolbar/spacer")
+        Divider=(component "toolbar/divider")
+        ) to="main"}}
+          <Toolbar::Group class="say-toolbar__more" data-ignore-resize data-hidden={{if this.showMainOptionsButton 'false' 'true'}}>
+            <Toolbar::Button @icon="three-dots" {{on 'click' this.toggleMainOptions}}/>
+          </Toolbar::Group>
+          <div
+              class="say-toolbar__main-dropdown"
+              data-ignore-resize
+              data-hidden={{if (and this.showMainOptionsButton this.showMainOptionsDropdown) 'false' 'true'}}
+              {{velcro.loop}}
+          >
+              {{yield (hash
+                Group=(component "toolbar/group")
+                Spacer=(component "toolbar/spacer")
+                Divider=(component "toolbar/divider")
+                ) to="main"}}
+          </div>
+        
+      </div>
+</Velcro>
+  {{/if}}
+  {{#if (has-block 'side')}}
+              <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+
+    <div class="say-toolbar__side" {{this.setUpSideToolbar}} {{velcro.hook}}>
       {{yield (hash
       Group=(component "toolbar/group")
       Spacer=(component "toolbar/spacer")
       Divider=(component "toolbar/divider")
-      ) to="main"}}
+      ) to='side'}}
+
+        {{#if this.showSideOptionsButton}}
+        <Toolbar::Group class="say-toolbar__more" data-ignore-resize>
+          <Toolbar::Button @icon="nav-down"/>
+        </Toolbar::Group>
+        {{/if}}
+        <div
+              class="say-toolbar__main-dropdown"
+              data-ignore-resize
+              data-hidden={{if this.showSideOptionsButton 'false' 'true'}}
+              {{velcro.loop}}
+          >
+              {{yield (hash
+                Group=(component "toolbar/group")
+                Spacer=(component "toolbar/spacer")
+                Divider=(component "toolbar/divider")
+                ) to="side"}}
+          </div>
     </div>
-    <Toolbar::Group class="say-toolbar__more">
-      <Toolbar::Button @icon="three-dots"/>
-    </Toolbar::Group>
-  {{/if}}
-  {{#if (has-block 'side')}}
-    <div class="au-u-flex say-toolbar__side" {{this.setUpSideToolbar}}>
-      <div class="au-u-flex" {{this.setUpToolbar}}>
-          {{yield (hash
-          Group=(component "toolbar/group")
-          Spacer=(component "toolbar/spacer")
-          Divider=(component "toolbar/divider")
-          ) to='side'}}
-      </div>
-    </div>
-    <Toolbar::Group class="say-toolbar__more">
-        <Toolbar::Button @icon="nav-down"/>
-    </Toolbar::Group>
+              </Velcro>
   {{/if}}
 </div>
