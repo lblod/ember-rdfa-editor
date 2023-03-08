@@ -35,7 +35,6 @@ export function toggleList(
     ) {
       if (parentList.node.type === listType) {
         // list is of the same type as the one we toggle to, which means we "turn off" the list, aka remove it
-        // return liftListItem(itemType)(state, dispatch, view);
         return liftOutOfNestedLists(itemType)(state, dispatch, view);
       }
       if (

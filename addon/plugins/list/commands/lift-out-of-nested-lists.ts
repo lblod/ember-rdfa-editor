@@ -35,29 +35,29 @@ export function liftOutOfNestedLists(itemType: NodeType): Command {
     let { $from, $to } = state.selection;
     let range = $from.blockRange(
       $to,
-      (node) => node.childCount > 0 && unwrap(node.firstChild).type == itemType
+      (node) => node.childCount > 0 && unwrap(node.firstChild).type === itemType
     );
     if (!range) return false;
     if (dispatch) {
       const tr = state.tr;
       while (range) {
-        if ($from.node(range.depth - 1).type == itemType) {
+        if ($from.node(range.depth - 1).type === itemType) {
           const result = liftToOuterList(tr, itemType, range);
           if (!result) {
-            return true;
+            break;
           }
         } else {
           const result = liftOutOfCurrentList(tr, range);
           if (!result) {
-            return true;
+            break;
           }
         }
         $from = tr.selection.$from;
         $to = tr.selection.$to;
-        range = tr.selection.$from.blockRange(
-          tr.selection.$to,
+        range = $from.blockRange(
+          $to,
           (node) =>
-            node.childCount > 0 && unwrap(node.firstChild).type == itemType
+            node.childCount > 0 && unwrap(node.firstChild).type === itemType
         );
       }
       dispatch(tr);
