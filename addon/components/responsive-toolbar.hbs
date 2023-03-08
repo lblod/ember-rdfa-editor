@@ -8,7 +8,11 @@
       <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.main.enableDropdown}}
           <Toolbar::Group class="say-toolbar__more" data-ignore-resize {{velcro.hook}}>
-            <Toolbar::Button @icon="three-dots" {{on 'click' this.toggleMainDropdown}} />
+            <Toolbar::Button 
+              @icon="three-dots" 
+              {{on 'click' this.toggleMainDropdown}} 
+              @active={{this.main.showDropdown}}
+            />
           </Toolbar::Group>
         {{/if}}
         <div 
@@ -35,7 +39,11 @@
       <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.side.enableDropdown}}
           <Toolbar::Group class="say-toolbar__more" data-ignore-resize {{velcro.hook}}>
-            <Toolbar::Button @icon="nav-down" {{on 'click' this.toggleSideDropdown}}/>
+            <Toolbar::Button 
+              @icon="nav-down" 
+              {{on 'click' this.toggleSideDropdown}}
+              @active={{this.side.showDropdown}}
+            />
           </Toolbar::Group>
         {{/if}}
         <div 
