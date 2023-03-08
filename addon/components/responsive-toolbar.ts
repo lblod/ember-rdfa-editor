@@ -5,13 +5,26 @@ import { tracked } from 'tracked-built-ins';
 
 export default class ResponsiveToolbar extends Component {
   toolbar?: HTMLElement;
-  mainToolbar?: HTMLElement;
-  sideToolbar?: HTMLElement;
 
-  @tracked showSideOptionsButton = false;
-  @tracked showMainOptionsButton = false;
+  main: {
+    toolbar?: HTMLElement;
+    dropdown?: HTMLElement;
+    enableDropdown: boolean;
+    showDropdown: boolean;
+  } = tracked({
+    enableDropdown: false,
+    showDropdown: false,
+  });
 
-  @tracked showMainOptionsDropdown = false;
+  side: {
+    toolbar?: HTMLElement;
+    dropdown?: HTMLElement;
+    enableDropdown: boolean;
+    showDropdown: boolean;
+  } = tracked({
+    enableDropdown: false,
+    showDropdown: false,
+  });
 
   setUpToolbar = modifier(
     (element: HTMLElement) => {
@@ -24,7 +37,7 @@ export default class ResponsiveToolbar extends Component {
 
   setUpMainToolbar = modifier(
     (element: HTMLElement) => {
-      this.mainToolbar = element;
+      this.main.toolbar = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
@@ -33,7 +46,25 @@ export default class ResponsiveToolbar extends Component {
 
   setUpSideToolbar = modifier(
     (element: HTMLElement) => {
-      this.sideToolbar = element;
+      this.side.toolbar = element;
+      // Call handleResize to ensure the toolbar is correctly initialized
+      this.handleResize();
+    },
+    { eager: false }
+  );
+
+  setUpMainDropdown = modifier(
+    (element: HTMLElement) => {
+      this.main.dropdown = element;
+      // Call handleResize to ensure the toolbar is correctly initialized
+      this.handleResize();
+    },
+    { eager: false }
+  );
+
+  setUpSideDropdown = modifier(
+    (element: HTMLElement) => {
+      this.side.dropdown = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
@@ -41,8 +72,19 @@ export default class ResponsiveToolbar extends Component {
   );
 
   @action
-  toggleMainOptions() {
-    this.showMainOptionsDropdown = !this.showMainOptionsDropdown;
+  toggleMainDropdown() {
+    this.main.showDropdown = !this.main.showDropdown;
+    if (this.main.showDropdown) {
+      this.side.showDropdown = false;
+    }
+  }
+
+  @action
+  toggleSideDropdown() {
+    this.side.showDropdown = !this.side.showDropdown;
+    if (this.side.showDropdown) {
+      this.main.showDropdown = false;
+    }
   }
 
   isOverflowing = () => {
@@ -55,41 +97,53 @@ export default class ResponsiveToolbar extends Component {
 
   handleResize() {
     requestAnimationFrame(() => {
-      this.showSideOptionsButton = false;
-      this.showMainOptionsButton = false;
+      this.main.enableDropdown = false;
+      this.side.enableDropdown = false;
       if (this.toolbar) {
-        if (this.sideToolbar) {
-          for (const child of this.sideToolbar.children) {
-            if (!child.hasAttribute('data-ignore-resize')) {
-              child.removeAttribute('data-hidden');
-            }
+        const toolbarChildren = [
+          ...(this.side.toolbar?.children ?? []),
+          ...(this.main.toolbar?.children ?? []),
+        ];
+        for (const child of toolbarChildren) {
+          if (!child.hasAttribute('data-ignore-resize')) {
+            child.removeAttribute('data-hidden');
           }
         }
-        if (this.mainToolbar) {
-          for (const child of this.mainToolbar.children) {
-            if (!child.hasAttribute('data-ignore-resize')) {
-              child.removeAttribute('data-hidden');
-            }
+        const dropdownChildren = [
+          ...(this.side.dropdown?.children ?? []),
+          ...(this.main.dropdown?.children ?? []),
+        ];
+        for (const child of dropdownChildren) {
+          if (!child.hasAttribute('data-ignore-resize')) {
+            child.setAttribute('data-hidden', 'true');
           }
         }
-        if (this.sideToolbar) {
-          let i = this.sideToolbar.childElementCount - 1;
+        if (this.side.toolbar && this.side.dropdown) {
+          let i = this.side.toolbar.childElementCount - 1;
           while (i >= 0 && this.isOverflowing()) {
-            const child = this.sideToolbar.children[i];
+            const child = this.side.toolbar.children[i];
             if (!child.hasAttribute('data-ignore-resize')) {
-              this.showSideOptionsButton = true;
+              this.side.enableDropdown = true;
               child.setAttribute('data-hidden', 'true');
+              this.side.dropdown.children[i].setAttribute(
+                'data-hidden',
+                'false'
+              );
             }
             i--;
           }
         }
-        if (this.mainToolbar) {
-          let i = this.mainToolbar.childElementCount - 1;
+        if (this.main.toolbar && this.main.dropdown) {
+          let i = this.main.toolbar.childElementCount - 1;
           while (i >= 0 && this.isOverflowing()) {
-            const child = this.mainToolbar.children[i];
+            const child = this.main.toolbar.children[i];
             if (!child.hasAttribute('data-ignore-resize')) {
-              this.showMainOptionsButton = true;
+              this.main.enableDropdown = true;
               child.setAttribute('data-hidden', 'true');
+              this.main.dropdown.children[i].setAttribute(
+                'data-hidden',
+                'false'
+              );
             }
             i--;
           }
