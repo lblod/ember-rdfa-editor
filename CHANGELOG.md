@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-template-lint` from 5.3.3 to 5.6.0
 - Bumps `@typescript-eslint/parser` from 5.54.0 to 5.54.1
 - Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
+- Bumps `xml-formatter` from 3.3.0 to 3.3.1
 
 ## [3.3.0] - 2023-03-02
 ### Added
