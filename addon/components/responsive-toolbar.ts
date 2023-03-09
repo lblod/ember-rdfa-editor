@@ -114,21 +114,17 @@ export default class ResponsiveToolbar extends Component {
           ...(this.main.dropdown?.children ?? []),
         ];
         for (const child of dropdownChildren) {
-          if (!child.hasAttribute('data-ignore-resize')) {
-            child.setAttribute('data-hidden', 'true');
-          }
+          child.setAttribute('data-hidden', 'true');
         }
         if (this.side.toolbar && this.side.dropdown) {
           let i = this.side.toolbar.childElementCount - 1;
           while (i >= 0 && this.isOverflowing()) {
-            const child = this.side.toolbar.children[i];
-            if (!child.hasAttribute('data-ignore-resize')) {
+            const toolbarChild = this.side.toolbar.children[i];
+            if (!toolbarChild.hasAttribute('data-ignore-resize')) {
+              const dropdownChild = this.side.dropdown.children[i];
               this.side.enableDropdown = true;
-              child.setAttribute('data-hidden', 'true');
-              this.side.dropdown.children[i].setAttribute(
-                'data-hidden',
-                'false'
-              );
+              toolbarChild.setAttribute('data-hidden', 'true');
+              dropdownChild.setAttribute('data-hidden', 'false');
             }
             i--;
           }
@@ -136,14 +132,12 @@ export default class ResponsiveToolbar extends Component {
         if (this.main.toolbar && this.main.dropdown) {
           let i = this.main.toolbar.childElementCount - 1;
           while (i >= 0 && this.isOverflowing()) {
-            const child = this.main.toolbar.children[i];
-            if (!child.hasAttribute('data-ignore-resize')) {
+            const toolbarChild = this.main.toolbar.children[i];
+            if (!toolbarChild.hasAttribute('data-ignore-resize')) {
+              const dropdownChild = this.main.dropdown.children[i];
               this.main.enableDropdown = true;
-              child.setAttribute('data-hidden', 'true');
-              this.main.dropdown.children[i].setAttribute(
-                'data-hidden',
-                'false'
-              );
+              toolbarChild.setAttribute('data-hidden', 'true');
+              dropdownChild.setAttribute('data-hidden', 'false');
             }
             i--;
           }
