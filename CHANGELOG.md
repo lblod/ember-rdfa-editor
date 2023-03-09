@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
 - Bumps `xml-formatter` from 3.3.0 to 3.3.1
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
+- Bumps `@codemirror/view` from 6.9.1 to 6.9.2
 
 ## [3.3.0] - 2023-03-02
 ### Added
