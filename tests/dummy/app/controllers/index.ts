@@ -50,11 +50,10 @@ import IntlService from 'ember-intl/services/intl';
 import {
   createInvisiblesPlugin,
   hardBreak,
-  space,
-  paragraph as paragraphInvisible,
   heading as headingInvisible,
+  paragraph as paragraphInvisible,
+  space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
-import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 export default class IndexController extends Controller {
@@ -106,7 +105,8 @@ export default class IndexController extends Controller {
   }
 
   @tracked plugins: Plugin[] = [
-    firefoxCursorFix(),
+    // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
+    // firefoxCursorFix(),
     lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
@@ -127,6 +127,7 @@ export default class IndexController extends Controller {
   get showRdfaBlocks() {
     return this.rdfaEditor?.showRdfaBlocks;
   }
+
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
