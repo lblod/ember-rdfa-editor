@@ -1,37 +1,41 @@
 
 <div class="say-dropdown" ...attributes>
-  <button
-    {{this.reference}}
-    class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
-    aria-haspopup='true'
-    aria-expanded='{{if this.dropdownOpen "true" "false"}}'
-    type='button'
-    {{on 'click' this.toggleDropdown}}
-    title={{@label}}
-    disabled={{@disabled}}
-  >
-    <span class={{if @hideLabel 'au-u-hidden-visually' ''}}>{{@label}}</span>
-    {{#if @icon}}
-    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
-    {{/if}}
-  </button>
-  {{#if this.dropdownOpen}}
-    <div
-      {{focus-trap
-        shouldSelfFocus=true
-        focusTrapOptions=(hash
-          clickOutsideDeactivates=this.clickOutsideDeactivates
-        )
-      }}
-      class="say-dropdown__menu is-visible"
-      role="menu"
-      tabindex="-1"
+  <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+    <button
+      {{this.reference}}
+      class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
+      aria-haspopup='true'
+      aria-expanded='{{if this.dropdownOpen "true" "false"}}'
+      type='button'
+      {{on 'click' this.toggleDropdown}}
+      title={{@label}}
+      disabled={{@disabled}}
+      {{velcro.hook}}
     >
-      {{yield 
-        (hash 
-          Item=(component 'toolbar/dropdown-item' onActivate=this.closeDropdown)
-        )
-      }}
-    </div>
-  {{/if}}
+      <span class={{if @hideLabel 'au-u-hidden-visually' ''}}>{{@label}}</span>
+      {{#if @icon}}
+      <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
+      {{/if}}
+    </button>
+    {{#if this.dropdownOpen}}
+      <div
+        {{focus-trap
+          shouldSelfFocus=true
+          focusTrapOptions=(hash
+            clickOutsideDeactivates=this.clickOutsideDeactivates
+          )
+        }}
+        class="say-dropdown__menu is-visible"
+        role="menu"
+        tabindex="-1"
+        {{velcro.loop}}
+      >
+        {{yield 
+          (hash 
+            Item=(component 'toolbar/dropdown-item' onActivate=this.closeDropdown)
+          )
+        }}
+      </div>
+    {{/if}}
+  </Velcro>
 </div>
