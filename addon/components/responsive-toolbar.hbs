@@ -1,0 +1,64 @@
+<div class='say-toolbar' {{this.setUpToolbar}}>
+  {{#if (has-block 'main')}}
+    <div class="say-toolbar__main" {{this.setUpMainToolbar}}>
+      {{yield (hash
+      Group=(component "toolbar/group")
+      Divider=(component "toolbar/divider")
+      ) to="main"}}
+      <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+        {{#if this.main.enableDropdown}}
+          <Toolbar::Group data-ignore-resize {{velcro.hook}}>
+            <Toolbar::Button 
+              @icon="three-dots" 
+              {{on 'click' this.toggleMainDropdown}} 
+              @active={{this.main.showDropdown}}
+            />
+          </Toolbar::Group>
+        {{/if}}
+        <div 
+          class="say-toolbar__main-dropdown" 
+          data-ignore-resize 
+          data-hidden={{if this.main.showDropdown 'false' 'true'}} 
+          {{velcro.loop}} 
+          {{this.setUpMainDropdown}}
+        >
+          {{yield (hash
+          Group=(component "toolbar/group")
+          Divider=(component "toolbar/divider")
+          ) to="main"}}
+        </div>
+      </Velcro>
+    </div>
+  {{/if}}
+  {{#if (has-block 'side')}}
+    <div class="say-toolbar__side" {{this.setUpSideToolbar}}>
+      {{yield (hash
+      Group=(component "toolbar/group")
+      Divider=(component "toolbar/divider")
+      ) to='side'}}
+      <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+        {{#if this.side.enableDropdown}}
+          <Toolbar::Group data-ignore-resize {{velcro.hook}}>
+            <Toolbar::Button 
+              @icon="nav-down" 
+              {{on 'click' this.toggleSideDropdown}}
+              @active={{this.side.showDropdown}}
+            />
+          </Toolbar::Group>
+        {{/if}}
+        <div 
+          class="say-toolbar__side-dropdown" 
+          data-ignore-resize 
+          data-hidden={{if this.side.showDropdown 'false' 'true'}} 
+          {{velcro.loop}} 
+          {{this.setUpSideDropdown}}
+        >
+          {{yield (hash
+          Group=(component "toolbar/group")
+          Divider=(component "toolbar/divider")
+          ) to="side"}}
+        </div>
+      </Velcro>
+    </div>
+  {{/if}}
+</div>
