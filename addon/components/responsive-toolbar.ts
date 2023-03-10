@@ -3,25 +3,22 @@ import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { tracked } from 'tracked-built-ins';
 
+type ToolbarSection = {
+  reference?: HTMLElement;
+  dropdown?: HTMLElement;
+  enableDropdown: boolean;
+  showDropdown: boolean;
+};
+
 export default class ResponsiveToolbar extends Component {
   toolbar?: HTMLElement;
 
-  main: {
-    toolbar?: HTMLElement;
-    dropdown?: HTMLElement;
-    enableDropdown: boolean;
-    showDropdown: boolean;
-  } = tracked({
+  main: ToolbarSection = tracked({
     enableDropdown: false,
     showDropdown: false,
   });
 
-  side: {
-    toolbar?: HTMLElement;
-    dropdown?: HTMLElement;
-    enableDropdown: boolean;
-    showDropdown: boolean;
-  } = tracked({
+  side: ToolbarSection = tracked({
     enableDropdown: false,
     showDropdown: false,
   });
@@ -37,7 +34,7 @@ export default class ResponsiveToolbar extends Component {
 
   setUpMainToolbar = modifier(
     (element: HTMLElement) => {
-      this.main.toolbar = element;
+      this.main.reference = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
@@ -46,7 +43,7 @@ export default class ResponsiveToolbar extends Component {
 
   setUpSideToolbar = modifier(
     (element: HTMLElement) => {
-      this.side.toolbar = element;
+      this.side.reference = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
@@ -87,13 +84,13 @@ export default class ResponsiveToolbar extends Component {
     }
   }
 
-  isOverflowing = () => {
+  get isOverflowing() {
     if (this.toolbar) {
       return this.toolbar?.scrollWidth > this.toolbar?.offsetWidth;
     } else {
       return false;
     }
-  };
+  }
 
   handleResize() {
     requestAnimationFrame(() => {
@@ -101,8 +98,8 @@ export default class ResponsiveToolbar extends Component {
       this.side.enableDropdown = false;
       if (this.toolbar) {
         const toolbarChildren = [
-          ...(this.side.toolbar?.children ?? []),
-          ...(this.main.toolbar?.children ?? []),
+          ...(this.side.reference?.children ?? []),
+          ...(this.main.reference?.children ?? []),
         ];
         for (const child of toolbarChildren) {
           if (!child.hasAttribute('data-ignore-resize')) {
@@ -116,10 +113,10 @@ export default class ResponsiveToolbar extends Component {
         for (const child of dropdownChildren) {
           child.setAttribute('data-hidden', 'true');
         }
-        if (this.side.toolbar && this.side.dropdown) {
-          let i = this.side.toolbar.childElementCount - 1;
-          while (i >= 0 && this.isOverflowing()) {
-            const toolbarChild = this.side.toolbar.children[i];
+        if (this.side.reference && this.side.dropdown) {
+          let i = this.side.reference.childElementCount - 1;
+          while (i >= 0 && this.isOverflowing) {
+            const toolbarChild = this.side.reference.children[i];
             if (!toolbarChild.hasAttribute('data-ignore-resize')) {
               const dropdownChild = this.side.dropdown.children[i];
               this.side.enableDropdown = true;
@@ -129,10 +126,10 @@ export default class ResponsiveToolbar extends Component {
             i--;
           }
         }
-        if (this.main.toolbar && this.main.dropdown) {
-          let i = this.main.toolbar.childElementCount - 1;
-          while (i >= 0 && this.isOverflowing()) {
-            const toolbarChild = this.main.toolbar.children[i];
+        if (this.main.reference && this.main.dropdown) {
+          let i = this.main.reference.childElementCount - 1;
+          while (i >= 0 && this.isOverflowing) {
+            const toolbarChild = this.main.reference.children[i];
             if (!toolbarChild.hasAttribute('data-ignore-resize')) {
               const dropdownChild = this.main.dropdown.children[i];
               this.main.enableDropdown = true;
