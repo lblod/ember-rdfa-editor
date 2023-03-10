@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed:
 - disable broken firefox cursor fix plugin
+- Breaking: usage of ember-velcro for toolbar-dropdown component
  
 ### Dependencies
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
