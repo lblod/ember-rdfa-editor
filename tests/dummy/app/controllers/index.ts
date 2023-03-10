@@ -54,6 +54,7 @@ import {
   paragraph as paragraphInvisible,
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -106,6 +107,7 @@ export default class IndexController extends Controller {
   @tracked plugins: Plugin[] = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     // firefoxCursorFix(),
+    lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
