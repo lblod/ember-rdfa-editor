@@ -1,7 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController, Selection } from '@lblod/ember-rdfa-editor';
+import { SayController } from '@lblod/ember-rdfa-editor';
+import { setHighlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 
 type Args = {
   controller: SayController;
@@ -25,19 +26,7 @@ export default class HighlightMenu extends Component<Args> {
 
   @action
   setHighlight(color: string) {
-    const mark = this.schema.marks.highlight.create({ value: color });
-    const { selection } = this.state;
-    if (selection.empty) {
-      this.controller.withTransaction((tr) => {
-        return tr.addStoredMark(mark);
-      });
-    } else {
-      this.controller.withTransaction((tr) => {
-        return tr
-          .addMark(tr.selection.from, tr.selection.to, mark)
-          .setSelection(Selection.near(tr.selection.$to));
-      });
-    }
+    this.controller.doCommand(setHighlight(color));
     this.controller.focus();
     this.selectedColor = color;
   }
