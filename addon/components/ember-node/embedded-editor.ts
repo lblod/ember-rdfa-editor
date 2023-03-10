@@ -90,6 +90,10 @@ export default class EmbeddedEditor extends Component<Args> {
     return this.args.getPos();
   }
 
+  get controller() {
+    return this.args.controller;
+  }
+
   get schema() {
     return new Schema({
       nodes: {
@@ -205,7 +209,7 @@ export default class EmbeddedEditor extends Component<Args> {
   onSelected() {
     if (this.args.selected && this.innerView) {
       const lastKeyPressedPluginState = lastKeyPressedPluginKey.getState(
-        this.outerView.state
+        this.controller.mainEditorState
       );
 
       const lastKeyPressed =
