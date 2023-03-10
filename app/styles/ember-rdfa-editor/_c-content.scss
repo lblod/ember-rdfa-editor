@@ -218,16 +218,13 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       margin-left: 0;
       padding-left: 0;
     }
-
-    & > ol:not([data-list-style]),
-    & > li > ol:not([data-list-style]) {
-      list-style-type: decimal;
-    }
   }
 
   ol,
   ol.numbered-list {
-    &:not([data-list-style]) {
+    list-style-type: decimal;
+
+    & > li > ol:not([data-list-style]) {
       list-style-type: inherit;
     }
 

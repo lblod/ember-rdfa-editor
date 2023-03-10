@@ -66,6 +66,7 @@ import {
   splitBlock,
 } from '@lblod/ember-rdfa-editor/commands';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 type Args = EmberNodeArgs & { placeholder: string };
 
@@ -87,6 +88,10 @@ export default class EmbeddedEditor extends Component<Args> {
 
   get pos() {
     return this.args.getPos();
+  }
+
+  get controller() {
+    return this.args.controller;
   }
 
   get schema() {
@@ -153,7 +158,9 @@ export default class EmbeddedEditor extends Component<Args> {
           schema: this.schema,
         }),
         attributes: {
-          'data-placeholder': this.args.placeholder,
+          ...(this.args.placeholder && {
+            'data-placeholder': this.args.placeholder,
+          }),
         },
         dispatchTransaction: this.dispatchInner,
         handleDOMEvents: {
@@ -201,11 +208,21 @@ export default class EmbeddedEditor extends Component<Args> {
   @action
   onSelected() {
     if (this.args.selected && this.innerView) {
+      const lastKeyPressedPluginState = lastKeyPressedPluginKey.getState(
+        this.controller.mainEditorState
+      );
+
+      const lastKeyPressed =
+        lastKeyPressedPluginState?.lastKeyPressed ?? 'ArrowRight';
+
       this.innerView.dispatch(
         this.innerView.state.tr.setSelection(
-          Selection.atEnd(this.innerView.state.doc)
+          Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
+            this.innerView.state.doc
+          )
         )
       );
+
       this.innerView.focus();
     }
   }

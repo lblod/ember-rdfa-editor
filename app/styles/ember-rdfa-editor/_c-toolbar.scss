@@ -25,7 +25,40 @@ $say-toolbar-height: 44px !default;
     border-bottom: 0;
     border-top: 1px solid $say-toolbar-border;
   }
+
+
+
+  .say-toolbar__main {
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  .say-toolbar__side {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+  }
+  
+  *[data-hidden='true'] {
+    display: none;
+  }
 }
+
+
+
+.say-toolbar__main-dropdown, .say-toolbar__side-dropdown {
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap;
+  min-height: $say-toolbar-height; // Fixes height bug on Safari
+  border-radius: $au-unit-tiny;
+  padding: 0.1rem $au-unit-tiny 0; // Visually center the text in the pill
+  background-color: $say-toolbar-background;
+  z-index: 1;
+}
+
+
 
 .say-toolbar img {
   max-width: inherit;
@@ -34,6 +67,11 @@ $say-toolbar-height: 44px !default;
 
 .say-toolbar__spacer {
   width: 100%;
+}
+
+.say-toolbar__divider {
+  height: $say-toolbar-height;
+  border-left: 1px solid var(--au-gray-300);
 }
 
 .say-toolbar__group {
@@ -46,6 +84,12 @@ $say-toolbar-height: 44px !default;
 
 .say-toolbar__group + .say-toolbar__group {
   border-left: 1px solid var(--au-gray-300);
+}
+
+.say-toolbar__main-dropdown, .say-toolbar__side-dropdown {
+  .say-toolbar__group + .say-toolbar__group {
+    border-left: 0;
+  }
 }
 
 .say-toolbar__button {
