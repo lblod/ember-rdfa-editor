@@ -1,19 +1,15 @@
-<Toolbar::Dropdown
-  @label={{this.currentStyle}}
-  @icon="nav-down"
-  @iconSize="small"
-  @controller={{@controller}}
-  as |Menu|
->
-  {{#each this.colors as |color|}}
-    <Menu.Item
-      @menuAction={{fn this.setColorMark color}}
-      title='{{t 'ember-rdfa-editor.heading'}} {{color}}'
-    >
-      {{#if (this.selectedColor color)}}
-        <AuIcon @icon='check' @ariaHidden={{true}} />
-      {{/if}}
-      {{t 'ember-rdfa-editor.color'}} {{color}}
-    </Menu.Item>
-  {{/each}}
-</Toolbar::Dropdown>
+{{#if @controller}}
+<div {{ this.currentStyle }} class="color-picker">
+  <Picker
+    @color={{this.color}}
+    @onDone={{this.onDone}}
+    class="color-picker__icon"
+    style="{{if
+      this.selectedColor
+      (concat 'background:' this.selectedColor ';')
+    }}"
+  >
+    <span>A</span>
+  </Picker>
+</div>
+{{/if}}

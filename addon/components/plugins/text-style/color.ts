@@ -13,25 +13,32 @@ type Args = {
 };
 export default class Color extends Component<Args> {
   @service declare intl: IntlService;
-  colors = ['black', 'red', 'green', 'blue', 'orange'];
-  @tracked selectedColor = this.colors[0];
+  @tracked selectedColor = 'black';
 
   get controller() {
     return this.args.controller;
   }
 
   get currentStyle() {
-    this.setActiveColorName();
-    const activeColor = this.selectedColor;
-
-    if (activeColor) {
-      return `${this.intl.t('ember-rdfa-editor.color')} ${activeColor}`;
-    } else {
-      return this.intl.t('ember-rdfa-editor.default-color');
-    }
+    return this.setActiveColor();
   }
 
   @action
+  onDone(selectedColorInfo: { _rgba: number[] }) {
+    const rgba = selectedColorInfo._rgba;
+    let color = 'rgba(';
+
+    rgba.forEach((code, index) => {
+      if (index === rgba.length - 1) {
+        color += ` ${code})`;
+      } else {
+        color += ` ${code},`;
+      }
+    });
+
+    this.setColorMark(color);
+  }
+
   setColorMark(color: string) {
     if (this.controller) {
       const state = this.controller.mainEditorState;
@@ -56,10 +63,12 @@ export default class Color extends Component<Args> {
           return tr.addMark($from.pos, $to.pos, mark);
         });
       }
+
+      this.controller.focus();
     }
   }
 
-  setActiveColorName = () => {
+  setActiveColor() {
     if (this.controller) {
       const state = this.controller.mainEditorState;
       const { selection } = state;
@@ -94,5 +103,5 @@ export default class Color extends Component<Args> {
     }
 
     return null;
-  };
+  }
 }

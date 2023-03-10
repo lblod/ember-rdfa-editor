@@ -16,7 +16,7 @@ export const color: MarkSpec = {
   ],
   toDOM(mark: Mark) {
     const { color } = mark.attrs;
-    const style = `color: ${color}`;
+    const style = `color: ${color as string}`;
     return ['span', { style }, 0];
   },
 };
