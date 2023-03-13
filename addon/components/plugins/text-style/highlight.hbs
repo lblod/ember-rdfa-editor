@@ -14,25 +14,36 @@
     />
   </button>
   <div class="say-dropdown options">
-    <div
-    class='say-dropdown__button'
-    title={{t 'ember-rdfa-editor.highlight.options-label'}}
-    disabled={{@disabled}}
-  >
-    <AuIcon @icon='chevron-down' @ariaHidden={{true}} @size='large' />
-    <input 
-      type="color" 
-      id='say-highlight-color' 
-      value={{this.selectedColor}}
-      list="presetColors"
-      {{on 'change' this.onColorPickerChange}}
-    />
-    <datalist id="presetColors">
-      {{#each @presetColors as |color|}}
-        <option>{{color}}</option>/>
-      {{/each}}
-    </datalist>
+    <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+      <button
+        type="button"
+        class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
+        title={{t 'ember-rdfa-editor.highlight.options-label'}}
+        {{velcro.hook}}
+        {{on 'click' this.toggleDropdown}}
+        {{this.setupDropdownButton}}
+      >
+      <AuIcon @icon='chevron-down' @ariaHidden={{true}} @size='large' />
+
+      </button>
+      {{#if this.dropdownOpen}}
+        <Utils::ColorSelector 
+          class='say-dropdown__menu is-visible' 
+          {{velcro.loop}}  
+          {{focus-trap
+            shouldSelfFocus=true
+            focusTrapOptions=(hash
+              clickOutsideDeactivates=this.clickOutsideDropdown
+            )
+          }}
+          tabindex="-1"
+          @onChange={{this.setHighlight}}
+          @color={{this.selectedColor}}
+          @presetColors={{@presetColors}}
+        />
+      {{/if}}
+    </Velcro>
   </div>
-  </div>
+
 </div>
 {{/if}}

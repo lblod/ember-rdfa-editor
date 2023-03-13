@@ -172,12 +172,4 @@ $say-toolbar-height: 44px !default;
       border-bottom: 3px solid transparent;
     }
   }
-  .options {
-    input[type='color'] {
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      opacity: 0;
-    }
-  }
 }
