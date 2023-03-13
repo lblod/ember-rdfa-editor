@@ -25,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
 - Bumps `dompurify` from 3.0.0 to 3.0.1
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
-- Bumps `eslint` from 8.29.0 to 8.35.0
+- Bumps `eslint` from 8.35.0 to 8.36.0
+- Bumps `eslint` from 8.29.0 to 8.36.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.54.1
 - Bumps `ember-template-lint` from 5.3.3 to 5.6.0
 - Bumps `@typescript-eslint/parser` from 5.54.0 to 5.54.1
@@ -33,8 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `xml-formatter` from 3.3.0 to 3.3.2
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
 - Bumps `@codemirror/view` from 6.9.1 to 6.9.2
-- Bumps `webpack` from 5.75.0 to 5.76.0
+- Bumps `webpack` from 5.76.0 to 5.76.1
+- Bumps `webpack` from 5.75.0 to 5.76.1
 - Bumps `release-it` from 15.7.0 to 15.8.0
+- Bumps `sinon` from 15.0.1 to 15.0.2
+- Bumps `sass` from 1.58.3 to 1.59.2
 
 ## [3.3.0] - 2023-03-02
 ### Added
