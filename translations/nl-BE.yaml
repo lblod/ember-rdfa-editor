@@ -52,4 +52,7 @@ ember-rdfa-editor:
   highlight:
     button-label: Markering
     options-label: Markeringsopties
+  color-selector:
+    no-color: Geen kleur
+    additional-colors: Meer kleuren
 
