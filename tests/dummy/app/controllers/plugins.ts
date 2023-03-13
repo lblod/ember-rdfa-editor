@@ -13,7 +13,7 @@ import {
   repaired_block,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { highlight } from 'dummy/dummy-plugins/highlight-plugin';
+import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
@@ -62,6 +62,7 @@ import {
   paragraph as paragraphInvisible,
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -104,6 +105,7 @@ export default class IndexController extends Controller {
       strikethrough,
       subscript,
       superscript,
+      highlight,
     },
   });
 
@@ -124,7 +126,7 @@ export default class IndexController extends Controller {
     };
   };
   @tracked plugins: Plugin[] = [
-    highlight({ testKey: 'yeet' }),
+    highlightPlugin({ testKey: 'yeet' }),
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),

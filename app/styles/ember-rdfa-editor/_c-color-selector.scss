@@ -1,0 +1,24 @@
+.color-selector {
+  .color-selector__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px 5px;
+    justify-items: center;
+    padding: 5px;
+    > * {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: none;
+    
+      &:hover {
+        border: 1px solid black;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .color-selector__picker {
+    display: none;
+  }
+}

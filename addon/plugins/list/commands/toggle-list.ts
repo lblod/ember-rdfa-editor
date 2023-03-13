@@ -45,6 +45,7 @@ export function toggleList(
           const tr = state.tr;
           tr.setNodeMarkup(parentList.pos, listType, {
             ...parentList.node.attrs,
+            ...attrs,
           });
           dispatch(tr);
         }

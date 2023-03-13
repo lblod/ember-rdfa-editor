@@ -29,7 +29,7 @@ export interface HighlightOptions {
   testKey: string;
 }
 
-export function highlight(options: HighlightOptions): ProsePlugin {
+export function highlightPlugin(options: HighlightOptions): ProsePlugin {
   const highlight: ProsePlugin<DecorationSet> = new ProsePlugin<DecorationSet>({
     state: {
       init(_, state: EditorState) {
