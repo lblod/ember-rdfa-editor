@@ -165,3 +165,11 @@ $say-toolbar-height: 44px !default;
 .say-rdfa-toggle {
   padding: 0 1.2rem;
 }
+
+.say-toolbar__highlight-button {
+  .main {
+    .au-c-icon {
+      border-bottom: 3px solid transparent;
+    }
+  }
+}

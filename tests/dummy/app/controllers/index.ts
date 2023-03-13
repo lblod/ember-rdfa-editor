@@ -54,6 +54,7 @@ import {
   paragraph as paragraphInvisible,
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 export default class IndexController extends Controller {
@@ -95,6 +96,7 @@ export default class IndexController extends Controller {
       strikethrough,
       subscript,
       superscript,
+      highlight,
     },
   });
 
