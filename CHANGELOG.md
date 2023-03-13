@@ -33,7 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `xml-formatter` from 3.3.0 to 3.3.2
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
 - Bumps `@codemirror/view` from 6.9.1 to 6.9.2
-- Bumps `webpack` from 5.75.0 to 5.76.0
+- Bumps `webpack` from 5.76.0 to 5.76.1
+- Bumps `webpack` from 5.75.0 to 5.76.1
 - Bumps `release-it` from 15.7.0 to 15.8.0
 - Bumps `sinon` from 15.0.1 to 15.0.2
 
