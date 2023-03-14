@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `release-it` from 15.7.0 to 15.8.0
 - Bumps `sinon` from 15.0.1 to 15.0.2
 - Bumps `sass` from 1.58.3 to 1.59.2
+- Bumps `@types/dompurify` from 2.4.0 to 3.0.0
 
 ## [3.3.0] - 2023-03-02
 ### Added
