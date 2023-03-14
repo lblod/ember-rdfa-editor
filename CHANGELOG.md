@@ -28,7 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
 - Bumps `eslint` from 8.35.0 to 8.36.0
 - Bumps `eslint` from 8.29.0 to 8.36.0
-- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.54.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.54.1 to 5.55.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.55.0
 - Bumps `ember-template-lint` from 5.3.3 to 5.6.0
 - Bumps `@typescript-eslint/parser` from 5.54.1 to 5.55.0
 - Bumps `@typescript-eslint/parser` from 5.54.0 to 5.55.0
