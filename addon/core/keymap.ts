@@ -42,9 +42,7 @@ const reduceParagraphIndent: Command = (state, dispatch) => {
     $cursor.pos === 0 ||
     // Skip action if cursor is not at the first position of "child"
     $cursor.parentOffset !== 0 ||
-    // Skip action if parent is not paragraph
-    $cursor.parent.type.name !== 'paragraph' ||
-    // Skip action if paragraph has no existing "indentationLevel"
+    // Skip action node has no existing "indentationLevel"
     !$cursor.parent.attrs.indentationLevel
   ) {
     return false;
