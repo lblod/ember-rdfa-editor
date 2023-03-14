@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added:
 - Addition of a `ResponsiveToolbar` component which takes into account container and screen size.
 - Addition of a color highlighting mark and toolbar menu
+- Addition of a toolbar menu which allows for inserting an image given it's URL.
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
