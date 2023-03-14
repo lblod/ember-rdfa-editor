@@ -172,12 +172,16 @@ export default class EmbeddedEditor extends Component<Args> {
             if (this.outerView.hasFocus()) this.innerView?.focus();
           },
           focus: () => {
-            const outerSelectionTr = this.outerView.state.tr;
-            const outerSelection = new NodeSelection(
-              this.outerView.state.doc.resolve(this.pos)
-            );
-            outerSelectionTr.setSelection(outerSelection);
-            this.outerView.dispatch(outerSelectionTr);
+            const pos = this.pos;
+            if (pos !== undefined) {
+              const outerSelectionTr = this.outerView.state.tr;
+              const outerSelection = new NodeSelection(
+                this.outerView.state.doc.resolve(pos)
+              );
+              outerSelectionTr.setSelection(outerSelection);
+              this.outerView.dispatch(outerSelectionTr);
+            }
+
             if (this.innerView) {
               this.args.controller.setActiveView(this.innerView);
             }
@@ -255,12 +259,13 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   dispatchInner = (tr: Transaction) => {
-    if (this.innerView) {
+    const pos = this.pos;
+    if (this.innerView && pos !== undefined) {
       const { state, transactions } = this.innerView.state.applyTransaction(tr);
       this.innerView.updateState(state);
       if (tr.getMeta('fromOutside') !== this.editorId) {
         const outerTr = this.outerView.state.tr,
-          offsetMap = StepMap.offset(this.pos + 1);
+          offsetMap = StepMap.offset(pos + 1);
         for (let i = 0; i < transactions.length; i++) {
           const steps = transactions[i].steps;
           for (let j = 0; j < steps.length; j++)
