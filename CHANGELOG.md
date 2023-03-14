@@ -22,15 +22,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - usage of ember-velcro for toolbar-dropdown component
  
 ### Dependencies
+- Bumps `@types/dompurify` from 2.4.0 to 3.0.0
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
 - Bumps `dompurify` from 3.0.0 to 3.0.1
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
 - Bumps `eslint` from 8.35.0 to 8.36.0
 - Bumps `eslint` from 8.29.0 to 8.36.0
-- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.54.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.54.1 to 5.55.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.55.0
 - Bumps `ember-template-lint` from 5.3.3 to 5.6.0
-- Bumps `@typescript-eslint/parser` from 5.54.0 to 5.54.1
+- Bumps `@typescript-eslint/parser` from 5.54.1 to 5.55.0
+- Bumps `@typescript-eslint/parser` from 5.54.0 to 5.55.0
 - Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
 - Bumps `xml-formatter` from 3.3.0 to 3.3.2
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
