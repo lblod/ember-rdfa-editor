@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
 - toolbar: add missing missing toolbar divider styles
 - Fix switching unordered list to ordered and applying correct styling
-- ember-node: Fix cursor placement inside of `ember-node` when navigating from left 
+- ember-node: Fix cursor placement inside of `ember-node` when navigating from left
+- Un-indent paragraph on backspace at the front of paragraph
 
 ### Changed:
 - disable broken firefox cursor fix plugin
