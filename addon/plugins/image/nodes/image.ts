@@ -20,7 +20,7 @@ const emberNodeConfig: EmberNodeConfig = {
   },
   parseDOM: [
     {
-      tag: 'img[src]',
+      tag: 'img[src]:not([src^="data:"])',
       getAttrs(dom: HTMLElement) {
         return {
           src: dom.getAttribute('src'),
