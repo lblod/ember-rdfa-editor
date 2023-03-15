@@ -103,7 +103,7 @@
     "@release-it/keep-a-changelog": "^3.1.0",
     "@types/common-tags": "^1.8.0",
     "@types/debug": "^4.1.7",
-    "@types/dompurify": "^2.3.3",
+    "@types/dompurify": "^3.0.0",
     "@types/ember": "~4.0",
     "@types/ember__application": "~4.0",
     "@types/ember__array": "~4.0",
