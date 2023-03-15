@@ -47,13 +47,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/link';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
-import {
-  createInvisiblesPlugin,
-  hardBreak,
-  heading as headingInvisible,
-  paragraph as paragraphInvisible,
-  space,
-} from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
@@ -113,12 +106,13 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin(
-      [space, hardBreak, paragraphInvisible, headingInvisible],
-      {
-        shouldShowInvisibles: false,
-      }
-    ),
+    // disabled until https://binnenland.atlassian.net/browse/GN-4152 is fixed
+    // createInvisiblesPlugin(
+    //   [space, hardBreak, paragraphInvisible, headingInvisible],
+    //   {
+    //     shouldShowInvisibles: false,
+    //   }
+    // ),
   ];
   @tracked nodeViews = (controller: SayController) => {
     return {
