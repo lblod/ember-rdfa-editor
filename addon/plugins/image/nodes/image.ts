@@ -1,27 +1,55 @@
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import {
+  createEmberNodeSpec,
+  createEmberNodeView,
+  EmberNodeConfig,
+} from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { Node as PNode } from 'prosemirror-model';
 
-export const image: NodeSpec = {
+const emberNodeConfig: EmberNodeConfig = {
+  name: 'image',
+  componentPath: 'plugins/image/node',
   inline: true,
+  group: 'inline',
+  draggable: true,
+  atom: true,
   attrs: {
     src: {},
     alt: { default: null },
-    title: { default: null },
+    width: { default: null },
+    height: { default: null },
   },
-  group: 'inline',
-  draggable: true,
   parseDOM: [
     {
       tag: 'img[src]',
       getAttrs(dom: HTMLElement) {
         return {
           src: dom.getAttribute('src'),
-          title: dom.getAttribute('title'),
           alt: dom.getAttribute('alt'),
+          width: dom.dataset.width ? Number(dom.dataset.width) : null,
+          height: dom.dataset.height ? Number(dom.dataset.height) : null,
         };
       },
     },
   ],
   toDOM(node: PNode) {
-    return ['img', node.attrs];
+    const { src, alt, width, height } = node.attrs;
+    const widthStyle = width ? `width: ${width as number}px;` : '';
+    const heightStyle = height ? `height: ${height as number}px;` : '';
+    return [
+      'img',
+      {
+        src: src as string,
+        alt: alt as string | undefined,
+        'data-width': width as number,
+        'data-height': height as number,
+        style: widthStyle + heightStyle,
+      },
+    ];
+  },
+  stopEvent() {
+    return false;
   },
 };
+
+export const image = createEmberNodeSpec(emberNodeConfig);
+export const imageView = createEmberNodeView(emberNodeConfig);
