@@ -48,6 +48,7 @@ import {
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
 export default class IndexController extends Controller {
@@ -90,6 +91,7 @@ export default class IndexController extends Controller {
       subscript,
       superscript,
       highlight,
+      color,
     },
   });
 
