@@ -55,13 +55,6 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
-import {
-  createInvisiblesPlugin,
-  hardBreak,
-  space,
-  paragraph as paragraphInvisible,
-  heading as headingInvisible,
-} from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 
 export default class IndexController extends Controller {
@@ -130,12 +123,13 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin(
-      [space, hardBreak, paragraphInvisible, headingInvisible],
-      {
-        shouldShowInvisibles: false,
-      }
-    ),
+    // disabled until https://binnenland.atlassian.net/browse/GN-4152 is fixed
+    // createInvisiblesPlugin(
+    //   [space, hardBreak, paragraphInvisible, headingInvisible],
+    //   {
+    //     shouldShowInvisibles: false,
+    //   }
+    // ),
   ];
 
   @action
