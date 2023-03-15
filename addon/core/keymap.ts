@@ -22,14 +22,18 @@ import {
   selectTextblockStart,
   splitBlock,
 } from 'prosemirror-commands';
-import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
+import {
+  insertHardBreak,
+  reduceIndent,
+  liftEmptyBlockChecked,
+} from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
-import { liftEmptyBlockChecked } from '@lblod/ember-rdfa-editor/commands/lift-empty-block-checked';
 
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
+  reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {
     const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
