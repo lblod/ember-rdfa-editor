@@ -33,10 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `dompurify` from 3.0.0 to 3.0.1
 - Bumps `ember-template-lint` from 5.3.3 to 5.6.0
 - Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
-- Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
+- Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.8
 - Bumps `eslint` from 8.29.0 to 8.36.0
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
+- Bumps `prosemirror-view` from 1.30.1 to 1.30.2
 - Bumps `release-it` from 15.7.0 to 15.8.0
 - Bumps `sass` from 1.58.3 to 1.59.3
 - Bumps `sinon` from 15.0.1 to 15.0.2
