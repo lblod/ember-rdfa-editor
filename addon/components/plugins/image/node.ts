@@ -162,11 +162,12 @@ export default class ImageNode extends Component<EmberNodeArgs> {
   select(event: InputEvent) {
     event.preventDefault();
     if (!this.args.selected) {
-      this.args.controller.withTransaction((tr) => {
-        return tr.setSelection(
-          NodeSelection.create(tr.doc, this.args.getPos())
-        );
-      });
+      const pos = this.args.getPos();
+      if (pos !== undefined) {
+        this.args.controller.withTransaction((tr) => {
+          return tr.setSelection(NodeSelection.create(tr.doc, pos));
+        });
+      }
     }
   }
 
@@ -228,7 +229,7 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     if (this.image) {
       const { clientWidth, clientHeight } = this.image;
       const pos = this.args.getPos();
-      if (pos) {
+      if (pos !== undefined) {
         this.controller.withTransaction((tr) => {
           return tr
             .setNodeAttribute(pos, 'width', clientWidth)
