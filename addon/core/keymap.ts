@@ -4,7 +4,7 @@ import {
   sinkListItem,
   splitListItem,
 } from 'prosemirror-schema-list';
-import { Command, TextSelection } from 'prosemirror-state';
+import { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import {
@@ -22,53 +22,18 @@ import {
   selectTextblockStart,
   splitBlock,
 } from 'prosemirror-commands';
-import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
+import {
+  insertHardBreak,
+  reduceIndent,
+  liftEmptyBlockChecked,
+} from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
-import { liftEmptyBlockChecked } from '@lblod/ember-rdfa-editor/commands/lift-empty-block-checked';
 
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
-const reduceParagraphIndent: Command = (state, dispatch) => {
-  if (!(state.selection instanceof TextSelection)) {
-    return false;
-  }
-
-  const { $cursor } = state.selection;
-
-  if (
-    !$cursor ||
-    // Skip action at the start of document
-    $cursor.pos === 0 ||
-    // Skip action if cursor is not at the first position of "child"
-    $cursor.parentOffset !== 0 ||
-    // Skip action node has no existing "indentationLevel"
-    !$cursor.parent.attrs.indentationLevel
-  ) {
-    return false;
-  }
-
-  const paragraphPosition = $cursor.before($cursor.depth);
-  const currentIndentationLevel = $cursor.parent.attrs
-    .indentationLevel as number;
-
-  if (dispatch) {
-    const tr = state.tr.setNodeAttribute(
-      paragraphPosition,
-      'indentationLevel',
-      currentIndentationLevel - 1
-    );
-
-    dispatch(tr);
-
-    return true;
-  }
-
-  return false;
-};
-
 const backspace = chainCommands(
-  reduceParagraphIndent,
+  reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {
     const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
