@@ -50,7 +50,7 @@ type Position = {
   y: number;
 };
 
-type HandleType =
+type HandlePosition =
   | 'topLeft'
   | 'topRight'
   | 'bottomRight'
@@ -65,7 +65,7 @@ type Handle = {
   resizeFunction: ResizeFunction;
 };
 
-const HANDLES: Record<HandleType, Handle> = {
+const HANDLES: Record<HandlePosition, Handle> = {
   topLeft: {
     direction: 1,
     resizeFunction: updateSize,
@@ -107,16 +107,18 @@ type ResizeState = {
 };
 
 export default class ImageNode extends Component<EmberNodeArgs> {
-  handleReferences: Partial<Record<HandleType, HTMLElement>> = {};
+  handleReferences: Partial<Record<HandlePosition, HTMLElement>> = {};
   imageContainer?: HTMLElement;
   image?: HTMLElement;
 
   resizeState?: ResizeState;
 
   setUpHandle = modifier(
-    (element: HTMLElement, [position]: [HandleType]) => {
+    (element: HTMLElement, [position]: [HandlePosition]) => {
       this.handleReferences[position] = element;
-      element.addEventListener('mousedown', this.onMouseDown);
+      element.addEventListener('mousedown', (event) =>
+        this.onMouseDown(event, position)
+      );
     },
     {
       eager: false,
@@ -171,16 +173,13 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     }
   }
 
-  onMouseDown = (event: MouseEvent) => {
+  onMouseDown = (event: MouseEvent, handlePosition: HandlePosition) => {
     event.preventDefault();
     event.stopPropagation();
-    const handleType = Object.keys(this.handleReferences).find(
-      (key: HandleType) => this.handleReferences[key] === event.target
-    ) as HandleType | undefined;
-    if (this.image && handleType) {
+    if (this.image && handlePosition) {
       this.handleReferences;
       this.resizeState = {
-        handle: HANDLES[handleType],
+        handle: HANDLES[handlePosition],
         initialPosition: { x: event.clientX, y: event.clientY },
         initialSize: {
           height: this.image.clientHeight,
