@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of a `ResponsiveToolbar` component which takes into account container and screen size.
 - Addition of a color highlighting mark and toolbar menu
 - Addition of a text color mark
+- Required parts of `AuPill` extracted into `Pill` component
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
@@ -18,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix switching unordered list to ordered and applying correct styling
 - ember-node: Fix cursor placement inside of `ember-node` when navigating from left
 - Un-indent paragraph on backspace at the front of paragraph
+- Change `EmberNode` "inline" style to be `inline-block` to avoid pushing away surrounding content
+- Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
 
 ### Changed:
 - disable broken firefox cursor fix plugin
@@ -31,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.55.0
 - Bumps `@typescript-eslint/parser` from 5.54.0 to 5.55.0
 - Bumps `dompurify` from 3.0.0 to 3.0.1
-- Bumps `ember-template-lint` from 5.3.3 to 5.6.0
+- Bumps `ember-template-lint` from 5.6.0 to 5.7.0
+- Bumps `ember-template-lint` from 5.3.3 to 5.7.0
 - Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
 - Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.8
 - Bumps `eslint` from 8.29.0 to 8.36.0
@@ -41,7 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `release-it` from 15.7.0 to 15.8.0
 - Bumps `sass` from 1.58.3 to 1.59.3
 - Bumps `sinon` from 15.0.1 to 15.0.2
-- Bumps `webpack` from 5.75.0 to 5.76.1
+- Bumps `webpack` from 5.76.1 to 5.76.2
+- Bumps `webpack` from 5.75.0 to 5.76.2
 - Bumps `xml-formatter` from 3.3.0 to 3.3.2
 
 ## [3.3.0] - 2023-03-02
