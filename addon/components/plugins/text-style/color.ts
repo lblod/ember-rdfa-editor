@@ -5,7 +5,6 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { clearColor, setColor } from '@lblod/ember-rdfa-editor/plugins/color';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
-import { TextSelection } from 'prosemirror-state';
 
 type Args = {
   controller: SayController;
