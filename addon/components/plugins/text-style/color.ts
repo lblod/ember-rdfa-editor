@@ -35,11 +35,18 @@ export default class ColorMenu extends Component<Args> {
   get currentColor() {
     if (this.controller) {
       const state = this.controller.mainEditorState;
-      const { selection } = state;
+      const { selection, storedMarks } = state;
       const markType = state.schema.marks.color;
 
-      return (markType.isInSet(selection.$from.marks() || [])?.attrs?.color ||
-        '#000000') as string;
+      if (storedMarks?.length) {
+        const markSet = markType.isInSet(storedMarks);
+        const color = markSet?.attrs?.color as string;
+
+        return color || '#000000';
+      } else {
+        return (markType.isInSet(selection.$from.marks())?.attrs?.color ||
+          '#000000') as string;
+      }
     }
 
     return null;
