@@ -1,13 +1,13 @@
 <div class='say-dropdown' ...attributes>
-  <AuPill
+  <Pill
     aria-haspopup='true'
     aria-expanded='{{if this.dropdownOpen "true" "false"}}'
     {{on 'click' this.openDropdown}}
     @icon={{@icon}}
     @iconAlignment={{@iconAlignment}}
-  > 
+  >
     {{yield to='header'}}
-  </AuPill>
+  </Pill>
   {{#if this.dropdownOpen}}
     <div
       id='{{this.dropdownId}}'

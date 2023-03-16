@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added:
 - Addition of a `ResponsiveToolbar` component which takes into account container and screen size.
 - Addition of a color highlighting mark and toolbar menu
+- Required parts of `AuPill` extracted into `Pill` component
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
@@ -17,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix switching unordered list to ordered and applying correct styling
 - ember-node: Fix cursor placement inside of `ember-node` when navigating from left
 - Un-indent paragraph on backspace at the front of paragraph
+- Change `EmberNode` "inline" style to be `inline-block` to avoid pushing away surrounding content
+- Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
 
 ### Changed:
 - disable broken firefox cursor fix plugin
