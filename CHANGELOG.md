@@ -44,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
 - Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
 - Bumps `prosemirror-view` from 1.30.1 to 1.30.2
-- Bumps `release-it` from 15.7.0 to 15.8.0
+- Bumps `release-it` from 15.8.0 to 15.9.0
+- Bumps `release-it` from 15.7.0 to 15.9.0
 - Bumps `sass` from 1.58.3 to 1.59.3
 - Bumps `sinon` from 15.0.1 to 15.0.2
 - Bumps `webpack` from 5.76.1 to 5.76.2
