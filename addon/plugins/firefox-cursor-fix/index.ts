@@ -75,16 +75,9 @@ export function firefoxCursorFix(): ProsePlugin {
             Decoration.widget(
               from,
               () => {
-                const wrapper = document.createElement('span');
-                wrapper.classList.add(
-                  'ProseMirror-firefox-fake-cursor-wrapper'
-                );
-                const cursor = new Text('|');
                 const fakeCursor = document.createElement('span');
-                fakeCursor.append(cursor);
                 fakeCursor.classList.add('ProseMirror-firefox-fake-cursor');
-                wrapper.append(fakeCursor);
-                return wrapper;
+                return fakeCursor;
               },
               { side: 1 }
             ),
