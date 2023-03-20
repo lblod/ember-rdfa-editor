@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - disable broken firefox cursor fix plugin
 - usage of ember-velcro for toolbar-dropdown component
 - remove support for base64 images
+- Improve appearance of fake firefox cursor
  
 ### Dependencies
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
