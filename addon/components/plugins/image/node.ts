@@ -31,12 +31,7 @@ import Component from '@glimmer/component';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { NodeSelection } from 'prosemirror-state';
 import { modifier } from 'ember-modifier';
-import {
-  ResizeFunction,
-  updateHeight,
-  updateSize,
-  updateWidth,
-} from '@lblod/ember-rdfa-editor/plugins/image/utils/resize-functions';
+import { updateSize } from '@lblod/ember-rdfa-editor/plugins/image/utils/resize-functions';
 
 const MIN_SURFACE = 625;
 
@@ -62,41 +57,46 @@ type HandlePosition =
 
 type Handle = {
   direction: -1 | 1;
-  resizeFunction: ResizeFunction;
+  updatesWidth?: boolean;
+  updatesHeight?: boolean;
 };
 
 const HANDLES: Record<HandlePosition, Handle> = {
   topLeft: {
     direction: 1,
-    resizeFunction: updateSize,
+    updatesWidth: true,
+    updatesHeight: true,
   },
   topRight: {
     direction: -1,
-    resizeFunction: updateSize,
+    updatesWidth: true,
+    updatesHeight: true,
   },
   bottomRight: {
     direction: -1,
-    resizeFunction: updateSize,
+    updatesWidth: true,
+    updatesHeight: true,
   },
   bottomLeft: {
     direction: 1,
-    resizeFunction: updateSize,
+    updatesWidth: true,
+    updatesHeight: true,
   },
   top: {
     direction: 1,
-    resizeFunction: updateHeight,
+    updatesHeight: true,
   },
   right: {
     direction: -1,
-    resizeFunction: updateWidth,
+    updatesWidth: true,
   },
   bottom: {
     direction: -1,
-    resizeFunction: updateHeight,
+    updatesHeight: true,
   },
   left: {
     direction: 1,
-    resizeFunction: updateWidth,
+    updatesWidth: true,
   },
 };
 
@@ -202,22 +202,18 @@ export default class ImageNode extends Component<EmberNodeArgs> {
 
       let newWidth = initialSize.width;
       let newHeight = initialSize.height;
-      switch (handle.resizeFunction) {
-        case updateSize:
-          newWidth = initialSize.width + dX;
-          newHeight = newWidth * aspectRatio;
-          break;
-        case updateWidth:
-          newWidth = initialSize.width + dX;
-          break;
-        case updateHeight:
-          newHeight = initialSize.height + dY;
-          break;
+      if (handle.updatesWidth && handle.updatesHeight) {
+        newWidth = initialSize.width + dX;
+        newHeight = newWidth * aspectRatio;
+      } else if (handle.updatesWidth) {
+        newWidth = initialSize.width + dX;
+      } else if (handle.updatesHeight) {
+        newHeight = initialSize.height + dY;
       }
 
       if (newWidth * newHeight >= MIN_SURFACE) {
-        handle.resizeFunction(this.imageContainer, newWidth, newHeight);
-        handle.resizeFunction(this.image, newWidth, newHeight);
+        updateSize(this.imageContainer, newWidth, newHeight);
+        updateSize(this.image, newWidth, newHeight);
       }
     }
   };
