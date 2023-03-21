@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `webpack` from 5.76.1 to 5.76.2
 - Bumps `webpack` from 5.75.0 to 5.76.2
 - Bumps `xml-formatter` from 3.3.0 to 3.3.2
+- Bumps `ember-cli` from 4.8.0 to 4.11.0
 
 ## [3.3.0] - 2023-03-02
 ### Added
