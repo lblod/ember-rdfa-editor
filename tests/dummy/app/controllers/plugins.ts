@@ -30,7 +30,7 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import {
   em,
@@ -123,6 +123,7 @@ export default class IndexController extends Controller {
       counter: counterView(proseController),
       dropdown: dropdownView(proseController),
       link: linkView(this.linkOptions)(proseController),
+      image: imageView(proseController),
     };
   };
   @tracked plugins: Plugin[] = [

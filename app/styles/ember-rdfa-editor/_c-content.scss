@@ -55,6 +55,10 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     font-size: inherit;
   }
 
+  [data-mark~="color"]::selection {
+    color: inherit;
+  }
+
   h1,
   .h1 {
     @include au-font-size($say-h1-font-size, 1.1);

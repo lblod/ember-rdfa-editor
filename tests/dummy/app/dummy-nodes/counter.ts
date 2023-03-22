@@ -11,6 +11,7 @@ const emberNodeConfig: EmberNodeConfig = {
   inline: true,
   group: 'inline',
   atom: true,
+  draggable: true,
   attrs: {
     count: {
       default: 0,
@@ -21,6 +22,9 @@ const emberNodeConfig: EmberNodeConfig = {
         return optionMapOr(0, parseInt, element.getAttribute('count'));
       },
     },
+  },
+  stopEvent() {
+    return false;
   },
 };
 
