@@ -57,6 +57,7 @@ import {
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -110,7 +111,7 @@ export default class IndexController extends Controller {
 
   @tracked plugins: Plugin[] = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
-    // firefoxCursorFix(),
+    firefoxCursorFix(),
     lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,

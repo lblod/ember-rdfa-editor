@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Un-indent paragraph on backspace at the front of paragraph
 - Change `EmberNode` "inline" style to be `inline-block` to avoid pushing away surrounding content
 - Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
+- fix backspacing into link nodes on firefox
 - When the `prosemirror-invisibles` is enabled, an `undefined` is no longer thrown on some occasions
 
 ### Changed:
