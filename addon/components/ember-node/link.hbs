@@ -1,32 +1,50 @@
-<Velcro @placement="bottom" @offsetOptions={{hash mainAxis=3}} as |velcro|>
-  <AuPill 
-    class="say-link"
-    @icon="link" 
-    @iconAlignment="right" 
-    @skin="link"
-    title={{t "ember-rdfa-editor.link.ctrlClickDescription"}}
-    aria-describedby="link-tooltip"
+<Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
+  <Pill
+    class='say-link'
+    @icon='link'
+    @iconAlignment='right'
+    @skin='link'
+    title={{t 'ember-rdfa-editor.link.ctrlClickDescription'}}
+    aria-describedby='link-tooltip'
     {{velcro.hook}}
-    {{on "click" this.onClick }}>
-    <EmberNode::EmbeddedEditor 
-      @controller={{@controller}} 
-      @node={{@node}} 
-      @view={{@view}} 
-      @getPos={{@getPos}} 
-      @selected={{@selected}} 
+    {{on 'click' this.onClick}}
+  >
+    <EmberNode::EmbeddedEditor
+      @controller={{@controller}}
+      @node={{@node}}
+      @view={{@view}}
+      @getPos={{@getPos}}
+      @selected={{@selected}}
       @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
       @decorations={{@decorations}}
       @contentDecorations={{@contentDecorations}}
     />
-  </AuPill>
+  </Pill>
   {{#if (and this.selected this.interactive)}}
-    <AuPill @size="small" 
-            class="say-link-tooltip"
-            id="link-tooltip"
-            {{velcro.loop}}>
-      <AuLinkExternal href={{this.href}} @skin="naked" @icon="link-external" title="Link openen"/>
-      <AuInput @value={{this.href}} placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}} {{on 'focus' this.selectHref}}/>
-      <AuButton @icon="link-broken" @skin="naked" @size="small" {{on 'click' this.remove}} title="Link ontkoppelen"/>
-    </AuPill>
+    <Pill
+      @size='small'
+      class='say-link-tooltip'
+      id='link-tooltip'
+      {{velcro.loop}}
+    >
+      <AuLinkExternal
+        href={{this.href}}
+        @skin='naked'
+        @icon='link-external'
+        title='Link openen'
+      />
+      <AuInput
+        @value={{this.href}}
+        placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
+        {{on 'focus' this.selectHref}}
+      />
+      <AuButton
+        @icon='link-broken'
+        @skin='naked'
+        @size='small'
+        {{on 'click' this.remove}}
+        title='Link ontkoppelen'
+      />
+    </Pill>
   {{/if}}
 </Velcro>

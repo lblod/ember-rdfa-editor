@@ -33,6 +33,7 @@
   .say-link {
     background-color: var(--au-blue-200);
     outline: 2px solid var(--au-blue-500);
+    outline-offset: -2px;
 
     ::selection {
       background-color: var(--au-blue-300);
