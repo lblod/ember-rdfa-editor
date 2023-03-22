@@ -70,6 +70,7 @@ class EmberNodeView implements NodeView {
   contentDOM?: HTMLElement;
   emberComponent: EmberInlineComponent;
   template: TemplateFactory;
+  stopEvent: (event: InputEvent) => boolean;
 
   constructor(
     controller: SayController,
@@ -78,7 +79,13 @@ class EmberNodeView implements NodeView {
     view: SayView,
     getPos: () => number | undefined
   ) {
-    const { name, componentPath, atom, inline } = emberNodeConfig;
+    const {
+      name,
+      componentPath,
+      atom,
+      inline,
+      stopEvent = () => true,
+    } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
                           getPos=this.getPos
                           node=this.node
@@ -96,6 +103,7 @@ class EmberNodeView implements NodeView {
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div')
       : undefined;
+    this.stopEvent = stopEvent;
 
     const { node, component } = emberComponent(
       controller.owner,
@@ -150,10 +158,6 @@ class EmberNodeView implements NodeView {
   destroy() {
     this.emberComponent.destroy();
   }
-
-  stopEvent() {
-    return true;
-  }
 }
 
 export type EmberNodeConfig = {
@@ -175,6 +179,7 @@ export type EmberNodeConfig = {
   };
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
+  stopEvent?: (event: InputEvent) => boolean;
 } & (
   | {
       atom: true;

@@ -11,6 +11,10 @@ const emberNodeConfig: EmberNodeConfig = {
   group: 'block',
   content: 'inline*',
   atom: false,
+  draggable: true,
+  stopEvent() {
+    return false;
+  },
 };
 
 export const card = createEmberNodeSpec(emberNodeConfig);

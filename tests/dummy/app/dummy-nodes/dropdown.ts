@@ -10,6 +10,10 @@ const emberNodeConfig: EmberNodeConfig = {
   inline: true,
   group: 'inline',
   atom: true,
+  draggable: true,
+  stopEvent() {
+    return false;
+  },
 };
 
 export const dropdown = createEmberNodeSpec(emberNodeConfig);
