@@ -1,3 +1,15 @@
+.say-image-insert-modal {
+  .say-image-insert-preview {
+    display: block;
+    margin: auto;
+    padding: $au-unit-tiny;
+    margin-top: $au-unit-small;
+    max-width: 300px;
+    max-height: 300px;
+    border: .1rem solid var(--au-gray-200);
+    border-radius: var(--au-radius);
+  }
+}
 .say-image {
   display: inline-flex;
   cursor: move;

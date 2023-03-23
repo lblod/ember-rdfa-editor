@@ -1,4 +1,6 @@
 ember-rdfa-editor:
+  utils:
+    back: Terug
   undo: Ongedaan maken
   redo: Herstellen
   bold: Vetgedrukt
@@ -57,4 +59,9 @@ ember-rdfa-editor:
   color-selector:
     no-color: Geen kleur
     additional-colors: Meer kleuren
+  image:
+    insert: Afbeelding invoegen
+    url-label: Afbeeldings-URL
+    alt-label: Alternatieve tekst (Alt)
+
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added:
 - Addition of a `ResponsiveToolbar` component which takes into account container and screen size.
 - Addition of a color highlighting mark and toolbar menu
+- Addition of a toolbar menu which allows for inserting an image given it's URL.
 - Support for resizable images
 - Addition of an optional stopEvent attribute which can be provided when configuring an ember-node, it can be used to override the default behaviour of the stopEvent attribute of the ember-node node-view.
 - Addition of a text color mark
