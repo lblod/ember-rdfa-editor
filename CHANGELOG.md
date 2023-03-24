@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
 - fix backspacing into link nodes on firefox
 - When the `prosemirror-invisibles` is enabled, an `undefined` is no longer thrown on some occasions
+- More clear handling of delete at end of rdfa-block
 
 ### Changed:
 - disable broken firefox cursor fix plugin

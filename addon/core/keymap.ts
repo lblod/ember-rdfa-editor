@@ -26,6 +26,7 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
+  selectBlockRdfaNode,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
@@ -35,6 +36,7 @@ export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
   undoInputRule,
+  selectBlockRdfaNode,
   reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {
@@ -52,6 +54,7 @@ const backspace = chainCommands(
   },
   selectNodeBackward
 );
+
 const del = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
