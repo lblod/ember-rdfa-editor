@@ -4,9 +4,12 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { tracked } from 'tracked-built-ins';
 
+const DEFAULT_SVG_HEIGHT = 100;
+
 type Args = {
   controller: SayController;
 };
+
 export default class ImageInsertMenu extends Component<Args> {
   @tracked modalOpen = false;
   @tracked url = '';
@@ -18,6 +21,14 @@ export default class ImageInsertMenu extends Component<Args> {
 
   get schema() {
     return this.args.controller.schema;
+  }
+
+  get defaultHeight() {
+    if (this.url.trim().toLowerCase().endsWith('svg')) {
+      return DEFAULT_SVG_HEIGHT;
+    }
+
+    return undefined;
   }
 
   @action
@@ -52,6 +63,7 @@ export default class ImageInsertMenu extends Component<Args> {
         image.create({
           src: this.url,
           alt: this.altText,
+          height: this.defaultHeight,
         })
       );
     });
