@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of an optional stopEvent attribute which can be provided when configuring an ember-node, it can be used to override the default behaviour of the stopEvent attribute of the ember-node node-view.
 - Addition of a text color mark
 - Required parts of `AuPill` extracted into `Pill` component
+- Added the possibility to use Insert Card as open by default
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
