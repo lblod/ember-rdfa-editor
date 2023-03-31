@@ -22,9 +22,10 @@ export function defaultAttributeValueGeneration(
           options.forEach(({ attribute, generator, types }) => {
             if (!node.isText) {
               if (!types || types.has(node.type)) {
-                if (attribute in newAttrs && isNone(newAttrs[attribute])) {
-                  newAttrs = { ...newAttrs, [attribute]: generator() };
+                if (attribute in newAttrs && newAttrs[attribute] !== null) {
+                  return
                 }
+                newAttrs = { ...newAttrs, [attribute]: generator() };
               }
             }
 
