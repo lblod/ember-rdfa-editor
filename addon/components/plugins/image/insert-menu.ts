@@ -8,6 +8,7 @@ const DEFAULT_SVG_HEIGHT = 100;
 
 type Args = {
   controller: SayController;
+  defaultSvgHeight?: number;
 };
 
 export default class ImageInsertMenu extends Component<Args> {
@@ -25,7 +26,7 @@ export default class ImageInsertMenu extends Component<Args> {
 
   get defaultHeight() {
     if (this.url.trim().toLowerCase().endsWith('svg')) {
-      return DEFAULT_SVG_HEIGHT;
+      return this.args.defaultSvgHeight ?? DEFAULT_SVG_HEIGHT;
     }
 
     return undefined;
