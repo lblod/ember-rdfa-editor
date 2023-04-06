@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prettier` from 2.8.4 to 2.8.7
 - Bumps `@typescript-eslint/eslint-plugin` from 5.55.0 to 5.57.1
 - Bumps `@codemirror/view` from 6.9.2 to 6.9.3
+- Bumps `linkifyjs` from 4.1.0 to 4.1.1
 
 ### Fixed:
 - Support SVG without height/width
