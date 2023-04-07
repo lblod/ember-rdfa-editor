@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added the possibility to use Insert Card as open by default
+
 ### Fixed:
 - Add unique id package missing
+
 ### Dependencies
 - Bumps `prettier` from 2.8.4 to 2.8.7
 - Bumps `@typescript-eslint/eslint-plugin` from 5.55.0 to 5.57.1
@@ -31,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of an optional stopEvent attribute which can be provided when configuring an ember-node, it can be used to override the default behaviour of the stopEvent attribute of the ember-node node-view.
 - Addition of a text color mark
 - Required parts of `AuPill` extracted into `Pill` component
-- Added the possibility to use Insert Card as open by default
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
