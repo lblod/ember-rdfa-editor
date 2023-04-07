@@ -1,9 +1,8 @@
 import { action } from '@ember/object';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 
-type Args = EmberNodeArgs & { expandedInitially?: boolean };
+type Args = { expandedInitially?: boolean };
 export default class CollapsibleComponent extends Component<Args> {
   @tracked _expanded: boolean | null = null;
 
