@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `linkifyjs` from 4.1.0 to 4.1.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
 - Bumps `vm2` from 3.9.12 to 3.9.15
+- Bumps `typescript` from 4.9.5 to 5.0.4
 
 ## [3.5.0] - 2023-04-07
 ### Added
