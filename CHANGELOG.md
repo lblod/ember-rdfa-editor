@@ -6,8 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Dependencies
+- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.58.0
 - Bumps `linkifyjs` from 4.1.0 to 4.1.1
 
 ## [3.5.0] - 2023-04-07
