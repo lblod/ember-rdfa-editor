@@ -28,7 +28,7 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { image } from '@lblod/ember-rdfa-editor/plugins/image';
+import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
@@ -55,7 +55,9 @@ import {
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -97,6 +99,7 @@ export default class IndexController extends Controller {
       subscript,
       superscript,
       highlight,
+      color,
     },
   });
 
@@ -108,7 +111,7 @@ export default class IndexController extends Controller {
 
   @tracked plugins: Plugin[] = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
-    // firefoxCursorFix(),
+    firefoxCursorFix(),
     lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
@@ -123,6 +126,7 @@ export default class IndexController extends Controller {
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
+      image: imageView(controller),
     };
   };
 

@@ -24,7 +24,7 @@ export interface EmberInlineComponent extends Component, EmberNodeArgs {
 }
 
 export interface EmberNodeArgs {
-  getPos: () => number;
+  getPos: () => number | undefined;
   node: PNode;
   updateAttribute: (attr: string, value: unknown) => void;
   controller: SayController;
@@ -70,15 +70,22 @@ class EmberNodeView implements NodeView {
   contentDOM?: HTMLElement;
   emberComponent: EmberInlineComponent;
   template: TemplateFactory;
+  stopEvent: (event: InputEvent) => boolean;
 
   constructor(
     controller: SayController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
     view: SayView,
-    getPos: () => number
+    getPos: () => number | undefined
   ) {
-    const { name, componentPath, atom, inline } = emberNodeConfig;
+    const {
+      name,
+      componentPath,
+      atom,
+      inline,
+      stopEvent = () => true,
+    } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
                           getPos=this.getPos
                           node=this.node
@@ -96,6 +103,7 @@ class EmberNodeView implements NodeView {
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div')
       : undefined;
+    this.stopEvent = stopEvent;
 
     const { node, component } = emberComponent(
       controller.owner,
@@ -106,9 +114,12 @@ class EmberNodeView implements NodeView {
         getPos,
         node: pNode,
         updateAttribute: (attr, value) => {
-          const transaction = view.state.tr;
-          transaction.setNodeAttribute(getPos(), attr, value);
-          view.dispatch(transaction);
+          const pos = getPos();
+          if (pos !== undefined) {
+            const transaction = view.state.tr;
+            transaction.setNodeAttribute(pos, attr, value);
+            view.dispatch(transaction);
+          }
         },
         controller,
         contentDOM: this.contentDOM,
@@ -147,10 +158,6 @@ class EmberNodeView implements NodeView {
   destroy() {
     this.emberComponent.destroy();
   }
-
-  stopEvent() {
-    return true;
-  }
 }
 
 export type EmberNodeConfig = {
@@ -172,6 +179,7 @@ export type EmberNodeConfig = {
   };
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
+  stopEvent?: (event: InputEvent) => boolean;
 } & (
   | {
       atom: true;

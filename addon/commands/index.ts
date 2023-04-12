@@ -9,3 +9,4 @@ export { splitBlockChecked } from './split-block-checked';
 export { toggleMarkAddFirst } from './toggle-mark-add-first';
 export { addType, removeType } from './type-commands';
 export { indentNode } from './indent-node';
+export { reduceIndent } from './reduce-indent';

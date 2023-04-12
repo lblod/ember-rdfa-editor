@@ -7,41 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Ensure the list toggle button removes selected content completely out of all lists when untoggling
+### Dependencies
+- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.58.0
+- Bumps `linkifyjs` from 4.1.0 to 4.1.1
+- Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
+- Bumps `vm2` from 3.9.12 to 3.9.15
+- Bumps `typescript` from 4.9.5 to 5.0.4
+- Bumps `sinon` from 15.0.2 to 15.0.3
+- Bumps `eslint-plugin-deprecation` from 1.3.3 to 1.4.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.58.0
+
+## [3.5.0] - 2023-04-07
+### Added
+- Added the possibility to use Insert Card as open by default
+
+### Fixed:
+- Add unique id package missing
+
+### Dependencies
+- Bumps `prettier` from 2.8.4 to 2.8.7
+- Bumps `@typescript-eslint/eslint-plugin` from 5.55.0 to 5.57.1
+- Bumps `@codemirror/view` from 6.9.2 to 6.9.3
+
+### Fixed:
+- Support SVG without height/width
+
+## [3.4.1] - 2023-03-27
+
+### Dependencies
+- bump prosemirror dependencies to latest
+ 
+## [3.4.0] - 2023-03-23
+
 ### Added:
 - Addition of a `ResponsiveToolbar` component which takes into account container and screen size.
 - Addition of a color highlighting mark and toolbar menu
+- Addition of a toolbar menu which allows for inserting an image given it's URL.
+- Support for resizable images
+- Addition of an optional stopEvent attribute which can be provided when configuring an ember-node, it can be used to override the default behaviour of the stopEvent attribute of the ember-node node-view.
+- Addition of a text color mark
+- Required parts of `AuPill` extracted into `Pill` component
 
 ### Fixed:
 - embedded-editor: only set data-placeholder when placeholder argument is supplied
-
-### Changed
-- Ensure the list toggle button removes selected content completely out of all lists when untoggling
-- embedded-editor: only set data-placeholder when placeholder argument is supplied
 - toolbar: add missing missing toolbar divider styles
 - Fix switching unordered list to ordered and applying correct styling
-- ember-node: Fix cursor placement inside of `ember-node` when navigating from left 
+- ember-node: Fix cursor placement inside of `ember-node` when navigating from left
+- Un-indent paragraph on backspace at the front of paragraph
+- Change `EmberNode` "inline" style to be `inline-block` to avoid pushing away surrounding content
+- Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
+- fix backspacing into link nodes on firefox
+- When the `prosemirror-invisibles` is enabled, an `undefined` is no longer thrown on some occasions
+
+### Changed:
 - disable broken firefox cursor fix plugin
 - usage of ember-velcro for toolbar-dropdown component
+- remove support for base64 images
+- Improve appearance of fake firefox cursor
  
 ### Dependencies
-- Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.7
-- Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
-- Bumps `dompurify` from 3.0.0 to 3.0.1
-- Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
-- Bumps `eslint` from 8.35.0 to 8.36.0
-- Bumps `eslint` from 8.29.0 to 8.36.0
-- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.54.1
-- Bumps `ember-template-lint` from 5.3.3 to 5.6.0
-- Bumps `@typescript-eslint/parser` from 5.54.0 to 5.54.1
-- Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
-- Bumps `xml-formatter` from 3.3.0 to 3.3.2
 - Bumps `@codemirror/lang-html` from 6.4.1 to 6.4.2
 - Bumps `@codemirror/view` from 6.9.1 to 6.9.2
-- Bumps `webpack` from 5.76.0 to 5.76.1
-- Bumps `webpack` from 5.75.0 to 5.76.1
-- Bumps `release-it` from 15.7.0 to 15.8.0
+- Bumps `@types/dompurify` from 2.4.0 to 3.0.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.50.0 to 5.55.0
+- Bumps `@typescript-eslint/parser` from 5.54.0 to 5.55.0
+- Bumps `dompurify` from 3.0.0 to 3.0.1
+- Bumps `ember-template-lint` from 5.7.0 to 5.7.1
+- Bumps `ember-template-lint` from 5.6.0 to 5.7.1
+- Bumps `ember-template-lint` from 5.3.3 to 5.7.0
+- Bumps `eslint-config-prettier` from 8.6.0 to 8.7.0
+- Bumps `eslint-plugin-ember` from 11.4.6 to 11.4.8
+- Bumps `eslint` from 8.29.0 to 8.36.0
+- Bumps `prosemirror-commands` from 1.5.0 to 1.5.1
+- Bumps `prosemirror-dropcursor` from 1.7.0 to 1.7.1
+- Bumps `prosemirror-view` from 1.30.1 to 1.30.2
+- Bumps `release-it` from 15.8.0 to 15.9.0
+- Bumps `release-it` from 15.7.0 to 15.9.0
+- Bumps `sass` from 1.58.3 to 1.59.3
 - Bumps `sinon` from 15.0.1 to 15.0.2
-- Bumps `sass` from 1.58.3 to 1.59.2
+- Bumps `webpack` from 5.76.1 to 5.76.2
+- Bumps `webpack` from 5.75.0 to 5.76.2
+- Bumps `xml-formatter` from 3.3.0 to 3.3.2
 
 ## [3.3.0] - 2023-03-02
 ### Added
@@ -1515,7 +1563,10 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.3.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.1...v3.5.0
+[3.4.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.0...v3.4.1
+[3.4.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.1...v3.3.0
 [3.2.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.1.0...v3.2.0

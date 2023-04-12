@@ -1,4 +1,6 @@
 ember-rdfa-editor:
+  utils:
+    back: Back
   undo: Undo
   redo: Redo
   bold: Bold
@@ -53,6 +55,13 @@ ember-rdfa-editor:
   highlight:
     button-label: Highlight
     options-label: Highlight options
+  color:
+    button-label: Color
   color-selector:
     no-color: Remove color
     additional-colors: Additional colors
+  image:
+    insert: Insert image
+    url-label: Image URL
+    alt-label: Alternative text (Alt)
+    
