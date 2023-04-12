@@ -27,6 +27,12 @@ export default class ResponsiveToolbar extends Component {
     (element: HTMLElement) => {
       const observer = new ResizeObserver(this.handleResize.bind(this));
       observer.observe(element);
+      if (element.children.length) {
+        const childs = element.children;
+        for (const child of childs) {
+          observer.observe(child);
+        }
+      }
       this.toolbar = element;
     },
     { eager: false }
