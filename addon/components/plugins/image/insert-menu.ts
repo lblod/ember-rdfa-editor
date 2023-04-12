@@ -15,6 +15,7 @@ export default class ImageInsertMenu extends Component<Args> {
   @tracked modalOpen = false;
   @tracked url = '';
   @tracked altText = '';
+  @tracked showError = false;
 
   get controller() {
     return this.args.controller;
@@ -32,10 +33,25 @@ export default class ImageInsertMenu extends Component<Args> {
     return undefined;
   }
 
+  get isValidUrl(): boolean {
+    try {
+      const parsedUrl = new URL(this.url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch (_) {
+      return false;
+    }
+  }
+
   @action
   resetValues() {
     this.url = '';
     this.altText = '';
+    this.hideError();
+  }
+
+  @action
+  hideError() {
+    this.showError = false;
   }
 
   @action
@@ -58,6 +74,11 @@ export default class ImageInsertMenu extends Component<Args> {
 
   @action
   async onInsert() {
+    if (!this.isValidUrl) {
+      this.showError = true;
+      return;
+    }
+
     const { image } = this.schema.nodes;
     this.controller.withTransaction((tr) => {
       return tr.replaceSelectionWith(
