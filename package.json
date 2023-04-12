@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -156,7 +156,7 @@
     "ember-try": "^2.0.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-deprecation": "^1.3.3",
+    "eslint-plugin-deprecation": "^1.4.1",
     "eslint-plugin-ember": "^11.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -171,12 +171,17 @@
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
     "svg-symbols": "^1.0.5",
-    "typescript": "^4.6.3",
+    "typescript": "^5.0.4",
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
     "ember-cli-sass": "^11.0.1"
+  },
+  "overrides": {
+    "ember-intl": {
+      "typescript": "^5.0.0"
+    }
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"
