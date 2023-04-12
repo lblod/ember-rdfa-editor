@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
 - Bumps `vm2` from 3.9.12 to 3.9.15
 - Bumps `typescript` from 4.9.5 to 5.0.4
+- Bumps `sinon` from 15.0.2 to 15.0.3
+- Bumps `eslint-plugin-deprecation` from 1.3.3 to 1.4.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.58.0
 
 ## [3.5.0] - 2023-04-07
 ### Added
