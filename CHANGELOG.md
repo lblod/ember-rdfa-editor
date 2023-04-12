@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed:
 - Support SVG without height/width
+- Validate the URL when inserting an image
 
 ## [3.4.1] - 2023-03-27
 
