@@ -26,6 +26,7 @@
  */
 
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { mapPositionFrom } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Fragment, NodeRange, NodeType, Slice } from 'prosemirror-model';
 import { Command, Transaction } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';
@@ -71,6 +72,7 @@ function liftToOuterList(
   itemType: NodeType,
   range: NodeRange
 ) {
+  const trStart = Math.max(tr.steps.length - 1, 0);
   const end = range.end,
     endOfList = range.$to.end(range.depth);
   if (end < endOfList) {
@@ -100,12 +102,13 @@ function liftToOuterList(
   const target = liftTarget(range);
   if (target == null) return false;
   tr.lift(range, target);
-  const after = tr.mapping.map(end, -1) - 1;
+  const after = mapPositionFrom(end, tr.mapping, trStart, -1) - 1;
   if (canJoin(tr.doc, after)) tr.join(after);
   return true;
 }
 
 function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
+  const trStart = tr.steps.length - 1;
   const list = range.parent;
   // Merge the list items into a single big item
   for (
@@ -119,7 +122,7 @@ function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
   const $start = tr.doc.resolve(range.start),
     item = unwrap($start.nodeAfter);
   if (
-    tr.mapping.map(range.end) !=
+    mapPositionFrom(range.end, tr.mapping, trStart) !=
     range.start + unwrap($start.nodeAfter).nodeSize
   )
     return false;
