@@ -28,6 +28,9 @@ export default class ResponsiveToolbar extends Component {
       const observer = new ResizeObserver(this.handleResize.bind(this));
       observer.observe(element);
       this.toolbar = element;
+      return () => {
+        observer.disconnect();
+      };
     },
     { eager: false }
   );
@@ -45,6 +48,9 @@ export default class ResponsiveToolbar extends Component {
       this.main.reference = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
+      return () => {
+        observer.disconnect();
+      };
     },
     { eager: false }
   );
@@ -62,6 +68,9 @@ export default class ResponsiveToolbar extends Component {
       this.side.reference = element;
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
+      return () => {
+        observer.disconnect();
+      };
     },
     { eager: false }
   );
