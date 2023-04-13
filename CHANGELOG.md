@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `sinon` from 15.0.2 to 15.0.3
 - Bumps `eslint-plugin-deprecation` from 1.3.3 to 1.4.1
 - Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.58.0
+- Bumps `eslint` from 8.36.0 to 8.38.0
 
 ## [3.5.0] - 2023-04-07
 ### Added
