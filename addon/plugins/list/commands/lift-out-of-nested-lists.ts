@@ -72,7 +72,7 @@ function liftToOuterList(
   itemType: NodeType,
   range: NodeRange
 ) {
-  const trStart = Math.max(tr.steps.length - 1, 0);
+  const trLength = tr.mapping.maps.length;
   const end = range.end,
     endOfList = range.$to.end(range.depth);
   if (end < endOfList) {
@@ -102,13 +102,13 @@ function liftToOuterList(
   const target = liftTarget(range);
   if (target == null) return false;
   tr.lift(range, target);
-  const after = mapPositionFrom(end, tr.mapping, trStart, -1) - 1;
+  const after = mapPositionFrom(end, tr.mapping, trLength, -1) - 1;
   if (canJoin(tr.doc, after)) tr.join(after);
   return true;
 }
 
 function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
-  const trStart = tr.steps.length - 1;
+  const trLength = tr.mapping.maps.length;
   const list = range.parent;
   // Merge the list items into a single big item
   for (
@@ -122,7 +122,7 @@ function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
   const $start = tr.doc.resolve(range.start),
     item = unwrap($start.nodeAfter);
   if (
-    mapPositionFrom(range.end, tr.mapping, trStart) !=
+    mapPositionFrom(range.end, tr.mapping, trLength) !=
     range.start + unwrap($start.nodeAfter).nodeSize
   )
     return false;
