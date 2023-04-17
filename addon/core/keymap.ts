@@ -29,10 +29,12 @@ import {
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
+import { undoInputRule } from 'prosemirror-inputrules';
 
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
 const backspace = chainCommands(
+  undoInputRule,
   reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {

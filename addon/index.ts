@@ -15,6 +15,8 @@ export * from 'prosemirror-view';
 
 export * from 'prosemirror-transform';
 
+export * from 'prosemirror-inputrules';
+
 export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
