@@ -58,6 +58,11 @@ import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/high
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import {
+  bullet_list_input_rule,
+  ordered_list_input_rule,
+} from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
+import { inputRules } from '@lblod/ember-rdfa-editor';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -122,6 +127,12 @@ export default class IndexController extends Controller {
         shouldShowInvisibles: false,
       }
     ),
+    inputRules({
+      rules: [
+        bullet_list_input_rule(this.schema.nodes.bullet_list),
+        ordered_list_input_rule(this.schema.nodes.ordered_list),
+      ],
+    }),
   ];
   @tracked nodeViews = (controller: SayController) => {
     return {

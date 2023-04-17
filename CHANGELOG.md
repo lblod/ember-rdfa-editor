@@ -7,17 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Addition of list inputrules
+### Fixed
+- Also observe responsive toolbar children for resize
+
+
 ### Changed
 - Ensure the list toggle button removes selected content completely out of all lists when untoggling
 ### Dependencies
 - Bumps `@typescript-eslint/parser` from 5.55.0 to 5.58.0
 - Bumps `linkifyjs` from 4.1.0 to 4.1.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
-- Bumps `vm2` from 3.9.12 to 3.9.15
+- Bumps `vm2` from 3.9.15 to 3.9.16
+- Bumps `vm2` from 3.9.12 to 3.9.16
 - Bumps `typescript` from 4.9.5 to 5.0.4
 - Bumps `sinon` from 15.0.2 to 15.0.3
 - Bumps `eslint-plugin-deprecation` from 1.3.3 to 1.4.1
 - Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.58.0
+- Bumps `eslint` from 8.36.0 to 8.38.0
+- Bumps `webpack` from 5.76.2 to 5.79.0
+- Bumps `ember-template-lint` from 5.7.1 to 5.7.2
+- Bumps `eslint-config-prettier` from 8.7.0 to 8.8.0
+- Bumps `@codemirror/view` from 6.9.3 to 6.9.4
+- Bumps `sass` from 1.59.3 to 1.62.0
 
 ## [3.5.0] - 2023-04-07
 ### Added
@@ -33,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed:
 - Support SVG without height/width
+- Validate the URL when inserting an image
 
 ## [3.4.1] - 2023-03-27
 
