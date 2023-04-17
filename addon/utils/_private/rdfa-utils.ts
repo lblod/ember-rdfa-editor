@@ -1,5 +1,5 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
 
 export type RdfaAttr =
   | 'vocab'
@@ -85,4 +85,17 @@ export function getRdfaAttribute(node: PNode, attr: RdfaAttr): string[] {
     result.push(node.attrs[attr]);
   }
   return result;
+}
+
+export function mapPositionFrom(
+  pos: number,
+  mapping: Mapping,
+  from: number,
+  assoc?: number
+) {
+  let curPos = pos;
+  for (let i = from ?? 0; i < mapping.maps.length; i++) {
+    curPos = mapping.maps[i].map(curPos, assoc);
+  }
+  return curPos;
 }
