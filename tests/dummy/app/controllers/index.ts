@@ -62,7 +62,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules } from 'prosemirror-inputrules';
+import { inputRules } from '@lblod/ember-rdfa-editor';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
