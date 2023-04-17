@@ -94,8 +94,6 @@ export function mapPositionFrom(
   assoc?: number
 ) {
   let curPos = pos;
-  console.log('From: ', from);
-  console.log('Length', mapping.maps.length);
   for (let i = from ?? 0; i < mapping.maps.length; i++) {
     curPos = mapping.maps[i].map(curPos, assoc);
   }
