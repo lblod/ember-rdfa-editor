@@ -26,7 +26,6 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
-  selectBlockRdfaNode,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
