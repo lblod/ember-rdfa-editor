@@ -26,14 +26,20 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
+  selectBlockRdfaNode,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
 
-export type Keymap = (schema: Schema) => Record<string, Command>;
+type KeymapOptions = { backspace?: { selectBlockRdfaNode: boolean } };
 
-const backspace = chainCommands(
+export type Keymap = (
+  schema: Schema,
+  options?: KeymapOptions
+) => Record<string, Command>;
+
+const backspaceBase: Command[] = [
   undoInputRule,
   selectBlockRdfaNode,
   reduceIndent,
@@ -51,8 +57,16 @@ const backspace = chainCommands(
     }
     return false;
   },
-  selectNodeBackward
-);
+  selectNodeBackward,
+];
+
+const getBackspaceCommand = (options?: KeymapOptions) => {
+  if (options?.backspace?.selectBlockRdfaNode) {
+    return chainCommands(selectBlockRdfaNode, ...backspaceBase);
+  }
+
+  return chainCommands(...backspaceBase);
+};
 
 const del = chainCommands(
   deleteSelection,
@@ -81,7 +95,7 @@ const del = chainCommands(
 /// * **Delete** and **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-a** to `selectAll`
-export const pcBaseKeymap: Keymap = (schema: Schema) => ({
+export const pcBaseKeymap: Keymap = (schema, options) => ({
   'Mod-z': undo,
   'Mod-Z': undo,
   'Mod-y': redo,
@@ -102,9 +116,9 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
   ),
   'Shift-Enter': chainCommands(exitCode, insertHardBreak),
   'Mod-Enter': exitCode,
-  Backspace: backspace,
-  'Mod-Backspace': backspace,
-  'Shift-Backspace': backspace,
+  Backspace: getBackspaceCommand(options),
+  'Mod-Backspace': getBackspaceCommand(options),
+  'Shift-Backspace': getBackspaceCommand(options),
   Delete: del,
   'Mod-Delete': del,
   'Mod-a': selectAll,
@@ -116,8 +130,8 @@ export const pcBaseKeymap: Keymap = (schema: Schema) => ({
 /// **Ctrl-d** like Delete, **Alt-Backspace** like Ctrl-Backspace, and
 /// **Ctrl-Alt-Backspace**, **Alt-Delete**, and **Alt-d** like
 /// Ctrl-Delete.
-export const macBaseKeymap: Keymap = (schema: Schema) => {
-  const pcmap = pcBaseKeymap(schema);
+export const macBaseKeymap: Keymap = (schema, options) => {
+  const pcmap = pcBaseKeymap(schema, options);
   return {
     ...pcmap,
     'Ctrl-h': pcmap['Backspace'],
