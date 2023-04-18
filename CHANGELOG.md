@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `sass` from 1.59.3 to 1.62.0
 - Bumps `@codemirror/lang-html` from 6.4.2 to 6.4.3
 - Bumps `ember-auto-import` from 2.6.1 to 2.6.3
+- Bumps `@types/sinon` from 10.0.13 to 10.0.14
 
 ## [3.5.0] - 2023-04-07
 ### Added
