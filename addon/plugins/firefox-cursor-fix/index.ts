@@ -58,9 +58,6 @@ export function firefoxCursorFix(): ProsePlugin {
         return;
       },
       decorations(state: EditorState): DecorationSet | undefined {
-        if (!gecko) {
-          return;
-        }
         const { $from, from, to } = state.selection;
         if (from !== to) {
           return;
@@ -68,7 +65,7 @@ export function firefoxCursorFix(): ProsePlugin {
         const nextNode = $from.nodeAfter;
         const prevNode = $from.nodeBefore;
         if (
-          (nextNode?.type.spec.needsFFKludge && !prevNode) ||
+          nextNode?.type.spec.needsFFKludge ||
           prevNode?.type.spec.needsFFKludge
         ) {
           return DecorationSet.create(state.doc, [
