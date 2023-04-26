@@ -31,7 +31,7 @@
   animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
 }
 
-.ProseMirror-firefox-fake-cursor {
+.ProseMirror-fake-cursor {
   pointer-events: none;
   border-left: 0.08em solid black;
   animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
