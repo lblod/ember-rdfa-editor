@@ -68,6 +68,8 @@ import {
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
+import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -132,6 +134,8 @@ export default class IndexController extends Controller {
     };
   };
   @tracked plugins: Plugin[] = [
+    firefoxCursorFix(),
+    chromeHacksPlugin(),
     highlightPlugin({ testKey: 'yeet' }),
     tablePlugin,
     tableKeymap,

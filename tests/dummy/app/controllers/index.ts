@@ -63,6 +63,7 @@ import {
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
+import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -117,6 +118,7 @@ export default class IndexController extends Controller {
   @tracked plugins: Plugin[] = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
+    chromeHacksPlugin(),
     lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
