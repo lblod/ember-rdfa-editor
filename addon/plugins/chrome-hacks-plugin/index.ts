@@ -24,7 +24,6 @@ export function chromeHacksPlugin(): ProsePlugin {
               from,
               () => {
                 const fakeCursor = document.createElement('span');
-                fakeCursor.classList.add('ProseMirror-chrome-fake-cursor');
                 return fakeCursor;
               },
               { side: 1 }
