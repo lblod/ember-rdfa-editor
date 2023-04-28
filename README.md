@@ -198,26 +198,7 @@ It may contain the following entries:
 
 ## The `ProseController` class
 Instances of the `ProseController` class can be used to control different aspects of the editor.
-
-It provides the following methods:
-- `toggleMark(name: string, includeEmbeddedView = false)`: method which allows to enable/disable a specific mark on the current selection. Expects the name of the mark to toggle and whether the command should be applied on an embedded editor view if such a view is active.
-- `focus(includeEmbeddedView = false)`: method which allows one to focus the main editor view (or an embedded view, if such a view is active).
-- `setHtmlContent(content: string)`: sets the content of the main editor.
-- `doCommand(command: Command, includeEmbeddedView = false)`: executes a Prosemirror command (https://prosemirror.net/docs/guide/#commands) on the main editor, or when active an embedded editor instance.
-- `checkCommand(command: Command, includeEmbeddedView = false)`: checks whether a Prosemirror command may be executed.
-- `isMarkActive(mark: MarkType, includeEmbeddedView = false)`: checks whether a mark is currently active.
-- `withTransaction(callback: (tr: Transaction) => Transaction | null, includeEmbeddedView = false)`: method which allows you to apply a transaction on the main view (or currently active embedded view). When you want to apply the transaction, the callback should return a transaction object.
-- `getState(includeEmbeddedView = false)`: used to request the current state of the main editor view (or an embedded view if active).
-- `getView`: used to request the main editor view (or an embedded view if active).
-- `setEmbeddedView(view: RdfaEditorView)`: activate a specific embedded view.
-- `clearEmbeddedView`: deactive the current embedded view.
-
-Additionally, a controller provides the following attributes:
-- `externalContextStore`: provides an instance of `ProseStore` describing the RDFa around the editor element.
-- `datastore`: provides an instance of `ProseStore` describing the RDFa inside the editor element.
-- `schema`: provides the schema of the main editor.
-- `state`: provides the current state (see https://prosemirror.net/docs/guide/#state) of the main editor.
-- `view`: provides the main editor view (see https://prosemirror.net/docs/guide/#view).
+🚧 interface docs under construction, refer to the source files for now 🚧
 
 ## More examples
 More examples on how to integrate this editor in your application can be found in the dummy app of this addon or in the plugins repository of the LBLOD project (https://github.com/lblod/ember-rdfa-editor-lblod-plugins).
