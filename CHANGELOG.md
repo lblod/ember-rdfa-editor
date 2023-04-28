@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/lang-html` from 6.4.2 to 6.4.3
 - Bumps `ember-auto-import` from 2.6.1 to 2.6.3
 - Bumps `release-it` from 15.9.0 to 15.10.1
+- Bumps `eslint-plugin-ember` from 11.4.8 to 11.5.2
 
 ## [3.5.0] - 2023-04-07
 ### Added
