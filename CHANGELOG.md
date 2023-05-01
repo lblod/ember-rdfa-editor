@@ -32,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `webpack` from 5.76.2 to 5.79.0
 - Bumps `ember-template-lint` from 5.7.1 to 5.7.2
 - Bumps `eslint-config-prettier` from 8.7.0 to 8.8.0
-- Bumps `@codemirror/view` from 6.9.3 to 6.9.4
+- Bumps `@codemirror/view` from 6.9.4 to 6.10.0
+- Bumps `@codemirror/view` from 6.9.3 to 6.10.0
 - Bumps `sass` from 1.59.3 to 1.62.0
 - Bumps `@codemirror/lang-html` from 6.4.2 to 6.4.3
 - Bumps `ember-auto-import` from 2.6.1 to 2.6.3
