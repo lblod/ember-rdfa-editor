@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Ensure the list toggle button removes selected content completely out of all lists when untoggling
 ### Dependencies
-- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.58.0
+- Bumps `@typescript-eslint/parser` from 5.58.0 to 5.59.1
+- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.59.1
 - Bumps `linkifyjs` from 4.1.0 to 4.1.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
 - Bumps `vm2` from 3.9.16 to 3.9.17
