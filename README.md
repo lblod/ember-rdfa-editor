@@ -172,8 +172,19 @@ return new Schema({
     // Same schema as in the previous example
   },
 });
-
 ```
+
+```handlebars
+<!-- your-application/components/editor.hbs -->
+<Editor
+  <!-- Same as in the main example -->
+  @keyMapOptions={{this.keyMapOptions}}
+>
+    <!-- Same as in the main example -->
+</Editor>
+```
+
+Where `this.keyMapOptions` is of type `KeymapOptions`
 
 ## The `Rdfa:RdfaEditor` component
 
