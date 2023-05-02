@@ -32,7 +32,17 @@ import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
 
-type KeymapOptions = { backspace?: { selectBlockRdfaNode: boolean } };
+export type KeymapOptions = {
+  backspace?: {
+    /**
+     * Enables alternative behaviour for backspace.
+     * Instead of deleting into the preceding block_rdfa node, it will select the preceding block_rdfa node.
+     *
+     * `block_rdfa` node has to enhanced with `isolating: true, selectable: true` in the schema.
+     */
+    selectBlockRdfaNode: boolean;
+  };
+};
 
 export type Keymap = (
   schema: Schema,
@@ -41,7 +51,6 @@ export type Keymap = (
 
 const backspaceBase: Command[] = [
   undoInputRule,
-  selectBlockRdfaNode,
   reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {
