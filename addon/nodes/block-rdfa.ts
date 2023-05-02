@@ -9,8 +9,6 @@ export const block_rdfa: NodeSpec = {
     __tag: { default: 'div' },
   },
   defining: true,
-  isolating: true,
-  selectable: true,
   parseDOM: [
     {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
