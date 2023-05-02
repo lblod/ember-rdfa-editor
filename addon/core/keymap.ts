@@ -26,6 +26,7 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
+  connectParagraphToPrecedingList,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
@@ -37,6 +38,7 @@ const backspace = chainCommands(
   undoInputRule,
   reduceIndent,
   deleteSelection,
+  connectParagraphToPrecedingList,
   (state, dispatch, view) => {
     const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
       state.selection
@@ -52,6 +54,7 @@ const backspace = chainCommands(
   },
   selectNodeBackward
 );
+
 const del = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
