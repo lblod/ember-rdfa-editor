@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-auto-import` from 2.6.1 to 2.6.3
 - Bumps `release-it` from 15.9.0 to 15.10.1
 - Bumps `eslint-plugin-ember` from 11.4.8 to 11.5.2
+- Bumps `@types/qunit` from 2.19.4 to 2.19.5
 
 ## [3.5.0] - 2023-04-07
 ### Added
