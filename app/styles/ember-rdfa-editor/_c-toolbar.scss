@@ -15,7 +15,7 @@ $say-toolbar-height: 44px !default;
 .say-toolbar {
   @include au-font-size($au-base);
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
   height: $say-toolbar-height;
   background-color: $say-toolbar-background;
@@ -49,7 +49,7 @@ $say-toolbar-height: 44px !default;
 
 .say-toolbar__main-dropdown, .say-toolbar__side-dropdown {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
   border-radius: $au-unit-tiny;
