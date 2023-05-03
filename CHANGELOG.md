@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Also observe responsive toolbar children for resize
 - Add color mark to dummy-plugins schema
+- Use `flex-start` instead of `start` as justify-content value
 
 
 ### Changed
