@@ -29,7 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.58.0 to 5.59.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.59.0
 - Bumps `eslint` from 8.36.0 to 8.38.0
-- Bumps `webpack` from 5.76.2 to 5.79.0
+- Bumps `webpack` from 5.79.0 to 5.81.0
+- Bumps `webpack` from 5.76.2 to 5.81.0
 - Bumps `ember-template-lint` from 5.7.1 to 5.7.2
 - Bumps `eslint-config-prettier` from 8.7.0 to 8.8.0
 - Bumps `@codemirror/view` from 6.9.4 to 6.10.1
