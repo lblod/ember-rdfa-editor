@@ -154,6 +154,38 @@ The callback provided to `rdfaEditorInit` is called when the editor element is i
 
 The dummy application of this addon includes an extended example on how to include an editor.
 
+### Alternative backspace behavior for `block_rdfa`
+
+To use alternative backspace behavior for `block_rdfa`, which instead of deleting into the preceding `block_rdfa` node, selects the preceding `block_rdfa` node, do the following
+
+```js
+return new Schema({
+  nodes: {
+    // ...
+    // Same schema as in the previous example
+    block_rdfa: {
+      ...block_rdfa,
+      isolating: true,
+      selectable: true,
+    }
+    // ...
+    // Same schema as in the previous example
+  },
+});
+```
+
+```handlebars
+<!-- your-application/components/editor.hbs -->
+<Editor
+  <!-- Same as in the main example -->
+  @keyMapOptions={{this.keyMapOptions}}
+>
+    <!-- Same as in the main example -->
+</Editor>
+```
+
+Where `this.keyMapOptions` is of type `KeymapOptions`
+
 ## The `Rdfa:RdfaEditor` component
 
 The main editor component may expect the following properties:
