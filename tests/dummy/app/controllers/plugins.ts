@@ -63,6 +63,7 @@ import {
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import {
   bullet_list_input_rule,
   ordered_list_input_rule,
@@ -111,6 +112,7 @@ export default class IndexController extends Controller {
       subscript,
       superscript,
       highlight,
+      color,
     },
   });
 
