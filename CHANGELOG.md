@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.0] - 2023-05-04
+
 ### Added
 - Addition of list inputrules
 ### Fixed
@@ -1592,7 +1594,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.6.0...HEAD
+[3.6.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.1...v3.5.0
 [3.4.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.3.0...v3.4.0
