@@ -11,7 +11,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
+import {
+  baseKeymap,
+  KeymapOptions,
+} from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, Logger } from '../utils/_private/logging-utils';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
@@ -36,6 +39,7 @@ interface SayEditorArgs {
   schema: Schema;
   baseIRI: string;
   plugins?: Plugin[];
+  keyMapOptions?: KeymapOptions;
   nodeViews?: (
     controller: SayController
   ) => Record<string, NodeViewConstructor>;
@@ -64,6 +68,7 @@ export default class SayEditor {
       return {};
     },
     defaultAttrGenerators = [],
+    keyMapOptions,
   }: SayEditorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -79,7 +84,7 @@ export default class SayEditor {
         pasteHandler(),
         dropCursor(),
         gapCursor(),
-        keymap(baseKeymap(schema)),
+        keymap(baseKeymap(schema, keyMapOptions)),
         history(),
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([

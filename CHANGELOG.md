@@ -12,30 +12,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Also observe responsive toolbar children for resize
 - Solve bug with cursor in front a multiple line link
+- Add color mark to dummy-plugins schema
+- Use `flex-start` instead of `start` as justify-content value
 
 
 ### Changed
 - Ensure the list toggle button removes selected content completely out of all lists when untoggling
 ### Dependencies
-- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.58.0
+- Bumps `@typescript-eslint/parser` from 5.58.0 to 5.59.2
+- Bumps `@typescript-eslint/parser` from 5.55.0 to 5.59.2
 - Bumps `linkifyjs` from 4.1.0 to 4.1.1
 - Bumps `@appuniversum/ember-appuniversum` from 2.4.2 to 2.5.0
 - Bumps `vm2` from 3.9.16 to 3.9.17
 - Bumps `vm2` from 3.9.15 to 3.9.17
 - Bumps `vm2` from 3.9.12 to 3.9.16
 - Bumps `typescript` from 4.9.5 to 5.0.4
-- Bumps `sinon` from 15.0.2 to 15.0.3
+- Bumps `sinon` from 15.0.3 to 15.0.4
+- Bumps `sinon` from 15.0.2 to 15.0.4
 - Bumps `eslint-plugin-deprecation` from 1.3.3 to 1.4.1
 - Bumps `@typescript-eslint/eslint-plugin` from 5.58.0 to 5.59.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.57.1 to 5.59.0
 - Bumps `eslint` from 8.36.0 to 8.38.0
-- Bumps `webpack` from 5.76.2 to 5.79.0
+- Bumps `webpack` from 5.79.0 to 5.81.0
+- Bumps `webpack` from 5.76.2 to 5.81.0
 - Bumps `ember-template-lint` from 5.7.1 to 5.7.2
 - Bumps `eslint-config-prettier` from 8.7.0 to 8.8.0
-- Bumps `@codemirror/view` from 6.9.3 to 6.9.4
+- Bumps `@codemirror/view` from 6.9.4 to 6.10.1
+- Bumps `@codemirror/view` from 6.9.3 to 6.10.1
 - Bumps `sass` from 1.59.3 to 1.62.0
 - Bumps `@codemirror/lang-html` from 6.4.2 to 6.4.3
 - Bumps `ember-auto-import` from 2.6.1 to 2.6.3
+- Bumps `release-it` from 15.9.0 to 15.10.1
+- Bumps `eslint-plugin-ember` from 11.4.8 to 11.5.2
+- Bumps `@types/qunit` from 2.19.4 to 2.19.5
 
 ## [3.5.0] - 2023-04-07
 ### Added
@@ -79,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `outline` for `Link` "ember-node" to have `outline-offset` `-2px` for it not to cover nearby content when focused
 - fix backspacing into link nodes on firefox
 - When the `prosemirror-invisibles` is enabled, an `undefined` is no longer thrown on some occasions
+- More clear handling of delete at end of rdfa-block
 
 ### Changed:
 - disable broken firefox cursor fix plugin

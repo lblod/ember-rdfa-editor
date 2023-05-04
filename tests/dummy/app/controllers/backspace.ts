@@ -4,35 +4,6 @@ import { tracked } from 'tracked-built-ins';
 import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
-  block_rdfa,
-  doc,
-  hard_break,
-  horizontal_rule,
-  invisible_rdfa,
-  paragraph,
-  repaired_block,
-  text,
-} from '@lblod/ember-rdfa-editor/nodes';
-import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
-import { NodeViewConstructor } from 'prosemirror-view';
-import applyDevTools from 'prosemirror-dev-tools';
-import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import {
-  card,
-  cardView,
-  counter,
-  counterView,
-  dropdown,
-  dropdownView,
-} from '../dummy-nodes';
-import {
-  tableKeymap,
-  tableNodes,
-  tablePlugin,
-} from '@lblod/ember-rdfa-editor/plugins/table';
-import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
-import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import {
   em,
   strikethrough,
   strong,
@@ -40,6 +11,25 @@ import {
   superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
+import {
+  block_rdfa,
+  doc,
+  hard_break,
+  horizontal_rule,
+  paragraph,
+  repaired_block,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import applyDevTools from 'prosemirror-dev-tools';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugin,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
@@ -55,25 +45,36 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
+import { inject as service } from '@ember/service';
+import IntlService from 'ember-intl/services/intl';
 import {
   createInvisiblesPlugin,
   hardBreak,
-  space,
-  paragraph as paragraphInvisible,
   heading as headingInvisible,
+  paragraph as paragraphInvisible,
+  space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
+import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
-import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
 
-export default class IndexController extends Controller {
+export default class BackspaceController extends Controller {
   @tracked rdfaEditor?: SayController;
+
+  keyMapOptions: KeymapOptions = {
+    backspace: {
+      selectBlockRdfaNode: true,
+    },
+  };
+
+  @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
       doc,
@@ -98,10 +99,11 @@ export default class IndexController extends Controller {
 
       hard_break,
       invisible_rdfa,
-      block_rdfa,
-      card,
-      counter,
-      dropdown,
+      block_rdfa: {
+        ...block_rdfa,
+        isolating: true,
+        selectable: true,
+      },
       link: link(this.linkOptions),
     },
     marks: {
@@ -124,21 +126,10 @@ export default class IndexController extends Controller {
     };
   }
 
-  @tracked nodeViews: (
-    proseController: SayController
-  ) => Record<string, NodeViewConstructor> = (proseController) => {
-    return {
-      card: cardView(proseController),
-      counter: counterView(proseController),
-      dropdown: dropdownView(proseController),
-      link: linkView(this.linkOptions)(proseController),
-      image: imageView(proseController),
-    };
-  };
   @tracked plugins: Plugin[] = [
+    // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
-    chromeHacksPlugin(),
-    highlightPlugin({ testKey: 'yeet' }),
+    lastKeyPressedPlugin,
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
@@ -155,6 +146,16 @@ export default class IndexController extends Controller {
       ],
     }),
   ];
+  @tracked nodeViews = (controller: SayController) => {
+    return {
+      link: linkView(this.linkOptions)(controller),
+      image: imageView(controller),
+    };
+  };
+
+  get showRdfaBlocks() {
+    return this.rdfaEditor?.showRdfaBlocks;
+  }
 
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
