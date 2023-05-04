@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of list inputrules
 ### Fixed
 - Also observe responsive toolbar children for resize
+- Solve bug with cursor in front a multiple line link
 - Add color mark to dummy-plugins schema
 - Use `flex-start` instead of `start` as justify-content value
 
