@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Solve bug with cursor in front a multiple line link
 - Add color mark to dummy-plugins schema
 - Use `flex-start` instead of `start` as justify-content value
+- Backspace into nested list
 
 
 ### Changed
