@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `sass` from 1.62.0 to 1.62.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.59.0 to 5.59.2
 
 ## [3.6.0] - 2023-05-04
 
