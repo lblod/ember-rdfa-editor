@@ -188,7 +188,10 @@ export type EmberNodeConfig = {
       atom: false;
       content: string;
     }
-);
+) & {
+    // This is so we can use custom node config specs, like `needsFFKludge`
+    [key: string]: unknown;
+  };
 
 export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
   const {

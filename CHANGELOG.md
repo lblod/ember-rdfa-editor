@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `sass` from 1.62.0 to 1.62.1
+### Added
+- Update `EmberNodeConfig` type
 
 ## [3.6.0] - 2023-05-04
 
