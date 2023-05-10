@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Addition of list inputrules
+- Possibility to pass `ignoreMutation` to the EmberNodeSpec when creating Ember Nodes
 ### Fixed
 - Also observe responsive toolbar children for resize
 - Solve bug with cursor in front a multiple line link
