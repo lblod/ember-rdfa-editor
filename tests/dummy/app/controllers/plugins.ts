@@ -13,6 +13,7 @@ import {
   repaired_block,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
 import { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
@@ -111,6 +112,7 @@ export default class IndexController extends Controller {
       subscript,
       superscript,
       highlight,
+      color,
     },
   });
 
