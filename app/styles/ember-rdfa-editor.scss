@@ -37,7 +37,6 @@
   animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
 }
 
-
 @keyframes ProseMirror-cursor-blink {
   to {
     visibility: hidden;

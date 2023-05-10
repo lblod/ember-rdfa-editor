@@ -29,6 +29,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
       },
     },
     needsFFKludge: true,
+    needsChromeCursorFix: true,
     parseDOM: [
       {
         tag: 'a',
