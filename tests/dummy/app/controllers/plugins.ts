@@ -114,6 +114,7 @@ export default class IndexController extends Controller {
       subscript,
       superscript,
       highlight,
+      color,
     },
   });
 
