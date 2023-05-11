@@ -19,6 +19,30 @@ import Owner from '@ember/owner';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { SayView } from '@lblod/ember-rdfa-editor';
 
+/**
+ * An EmberNode is a node with a custom Node View defined by an ember template.
+ * First define your EmberNodeConfig, which should contain the information for:
+ * - Prosemirror NodeSpec
+ * - Prosemirror NodeView e.g.:
+ *   - `ignoreMutation`: Use this to avoid rerendering a component for every change.
+ *        Already as a default implementation. Only override if you know what you are doing.
+ *   - `stopEvent`: defaults to true (stopping all event bubbling). Implement this if you need events to bubble up.
+ * - Custom values for EmberNode, e.g.:
+ *   - `componentPath`: path to the ember component to render as a Node View
+ *
+ * Afterwards use `createEmberNodeSpec(config)` and `createEmberNodeView(config)` to insert them in the schema.
+ *
+ * Special notes for EmberNode components:
+ *   - Prosemirror nodes are immutable by design. Any change to a node will create a new node that is loaded in.
+ *     - A rerender is avoided as much as possible here
+ *     - An ember component might still rerender because of other reasons (-> not yet known which reasons and if they exist)
+ *     - This means EmberNode components might lose their state at any time. *Don't save state in components properties*. @tracked properties will most likely not work as wanted.
+ *     - Keep state in `attrs` of the node.
+ *       Instead of a tracked property, you'll often use the following logic to keep state inside the node:
+ *       `get someText() { return this.args.node.attrs.someText; }`
+ *       `set someText(value) { return this.args.updateAttribute('someText', value); }`
+ */
+
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
 }
@@ -71,6 +95,7 @@ class EmberNodeView implements NodeView {
   emberComponent: EmberInlineComponent;
   template: TemplateFactory;
   stopEvent: (event: InputEvent) => boolean;
+  ignoreMutation: (mutation: MutationRecord) => boolean;
 
   constructor(
     controller: SayController,
@@ -79,12 +104,17 @@ class EmberNodeView implements NodeView {
     view: SayView,
     getPos: () => number | undefined
   ) {
+    // when a node gets updated, `update()` is called.
+    // We set the new node here and pass it to the component to render it.
+    // However, this will create a DOM mutation, which prosemirror will catch and use to rerender.
+    // to avoid a NodeView rerendering when we already handled the state change, we pass true to `ignoreMutation` (by default).
     const {
       name,
       componentPath,
       atom,
       inline,
       stopEvent = () => true,
+      ignoreMutation = (_) => true,
     } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
                           getPos=this.getPos
@@ -104,6 +134,7 @@ class EmberNodeView implements NodeView {
       ? document.createElement(inline ? 'span' : 'div')
       : undefined;
     this.stopEvent = stopEvent;
+    this.ignoreMutation = ignoreMutation;
 
     const { node, component } = emberComponent(
       controller.owner,
@@ -180,6 +211,7 @@ export type EmberNodeConfig = {
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
   stopEvent?: (event: InputEvent) => boolean;
+  ignoreMutation?: (mutation: MutationRecord) => boolean;
 } & (
   | {
       atom: true;
@@ -188,7 +220,10 @@ export type EmberNodeConfig = {
       atom: false;
       content: string;
     }
-);
+) & {
+    // This is so we can use custom node config specs, like `needsFFKludge`
+    [key: string]: unknown;
+  };
 
 export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
   const {
