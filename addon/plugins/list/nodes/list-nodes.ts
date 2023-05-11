@@ -59,8 +59,9 @@ export const bullet_list: NodeSpec = {
     return ['ul', { ...node.attrs }, 0];
   },
 };
+
 export const list_item: NodeSpec = {
-  content: 'paragraph+ list*',
+  content: 'paragraph+ block*',
   defining: true,
   attrs: { ...rdfaAttrs },
   parseDOM: [
