@@ -24,17 +24,18 @@ import { SayView } from '@lblod/ember-rdfa-editor';
  * First define your EmberNodeConfig, which should contain the information for:
  * - Prosemirror NodeSpec
  * - Prosemirror NodeView e.g.:
- *   - `ignoreMutation`: Use this to avoid rerendering a component for every change,
- *      For example any change to attributes that don't influence prosemirror node content.
- *      e.g. an attribute "showButton" that defines if a button should be displayed.
+ *   - `ignoreMutation`: Use this to avoid rerendering a component for every change.
+ *        Already as a default implementation. Only override if you know what you are doing.
+ *   - `stopEvent`: defaults to true (stopping all event bubbling). Implement this if you need events to bubble up.
  * - Custom values for EmberNode, e.g.:
  *   - `componentPath`: path to the ember component to render as a Node View
  *
  * Afterwards use `createEmberNodeSpec(config)` and `createEmberNodeView(config)` to insert them in the schema.
  *
  * Special notes for EmberNode components:
- *   - Prosemirror nodes are immutable by design. Any change to a node will create a new node that is loaded in, which might be outside of your control.
- *     - `ignoreMutation` can help with avoiding this partially
+ *   - Prosemirror nodes are immutable by design. Any change to a node will create a new node that is loaded in.
+ *     - A rerender is avoided as much as possible here
+ *     - An ember component might still rerender because of other reasons (-> not yet known which reasons and if they exist)
  *     - This means EmberNode components might lose their state at any time. *Don't save state in components properties*. @tracked properties will most likely not work as wanted.
  *     - Keep state in `attrs` of the node.
  *       Instead of a tracked property, you'll often use the following logic to keep state inside the node:
@@ -103,13 +104,17 @@ class EmberNodeView implements NodeView {
     view: SayView,
     getPos: () => number | undefined
   ) {
+    // when a node gets updated, `update()` is called.
+    // We set the new node here and pass it to the component to render it.
+    // However, this will create a DOM mutation, which prosemirror will catch and use to rerender.
+    // to avoid a NodeView rerendering when we already handled the state change, we pass true to `ignoreMutation` (by default).
     const {
       name,
       componentPath,
       atom,
       inline,
       stopEvent = () => true,
-      ignoreMutation = (_) => false,
+      ignoreMutation = (_) => true,
     } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
                           getPos=this.getPos
