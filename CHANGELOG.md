@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `sass` from 1.62.0 to 1.62.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.59.0 to 5.59.5
 ### Added
 - Update `EmberNodeConfig` type
 
@@ -15,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Addition of list inputrules
+- Possibility to pass `ignoreMutation` to the EmberNodeSpec when creating Ember Nodes
 ### Fixed
 - Also observe responsive toolbar children for resize
 - Solve bug with cursor in front a multiple line link
