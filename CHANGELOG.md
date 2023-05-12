@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.7.0] - 2023-05-12
 ### Dependencies
 - Bumps `sass` from 1.62.0 to 1.62.1
 - Bumps `@typescript-eslint/eslint-plugin` from 5.59.0 to 5.59.5
@@ -1601,7 +1603,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.6.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.0...HEAD
+[3.7.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.1...v3.5.0
 [3.4.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.0...v3.4.1
