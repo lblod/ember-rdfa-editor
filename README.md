@@ -68,7 +68,6 @@ import {
   blockquote,
   doc,
   hard_break,
-  heading,
   horizontal_rule,
   inline_rdfa,
   paragraph,
@@ -80,6 +79,7 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { Schema } from 'prosemirror-model';
 
 export default class EditorComponent extends Component {
