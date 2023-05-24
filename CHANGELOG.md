@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-template-lint` from 5.7.2 to 5.7.3
 - Bumps `dompurify` from 3.0.1 to 3.0.3
 - Bumps `socket.io-parser` from 4.2.1 to 4.2.3
+- Bumps `engine.io` from 6.2.1 to 6.4.2
+- Bumps `socket.io` from 4.5.4 to 4.6.1
 
 ## [3.7.1] - 2023-05-17
 ### Fixed
