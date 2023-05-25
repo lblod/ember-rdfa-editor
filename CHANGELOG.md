@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `socket.io-parser` from 4.2.1 to 4.2.3
 - Bumps `engine.io` from 6.2.1 to 6.4.2
 - Bumps `socket.io` from 4.5.4 to 4.6.1
+- Bumps `prosemirror-dropcursor` from 1.8.0 to 1.8.1
 
 ## [3.7.1] - 2023-05-17
 ### Fixed
