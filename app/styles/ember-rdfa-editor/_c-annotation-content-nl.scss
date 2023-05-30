@@ -173,6 +173,26 @@
     content: '';
   }
 
+  [typeof~='besluit:Title']:before,
+  [typeof='say:Title']:before {
+    content: 'Titel';
+  }
+
+  [typeof~='besluit:Chapter']:before,
+  [typeof='say:Chapter']:before {
+    content: 'Hoofdstuk';
+  }
+
+  [typeof~='besluit:Section']:before,
+  [typeof='say:Section']:before {
+    content: 'Afdeling';
+  }
+
+  [typeof~='besluit:Subsection']:before,
+  [typeof='say:Subsection']:before {
+    content: 'Onderafdeling';
+  }
+
   [typeof~='besluit:Artikel']:before,
   [typeof='say:Article']:before {
     content: 'Artikel';
