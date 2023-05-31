@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Allow the parent component to get the innerView in Embedded Editor
 ### Dependencies
+- Bumps `prosemirror-view` from 1.30.2 to 1.31.3
+- Bumps `prosemirror-history` from 1.3.0 to 1.3.2
+- Bumps `prosemirror-gapcursor` from 1.3.1 to 1.3.2
+
+## [3.7.2] - 2023-05-30
+### Dependencies
 - Bumps `vm2` from 3.9.17 to 3.9.19
 - Bumps `ember-template-lint` from 5.7.2 to 5.7.3
 - Bumps `dompurify` from 3.0.1 to 3.0.3
@@ -1620,7 +1626,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.1...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...HEAD
+[3.7.2]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.1...v3.7.2
 [3.7.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.0...v3.7.1
 [3.7.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...v3.6.0
