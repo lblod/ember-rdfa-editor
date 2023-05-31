@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `prosemirror-view` from 1.30.2 to 1.31.3
 - Bumps `prosemirror-history` from 1.3.0 to 1.3.2
+- Bumps `prosemirror-gapcursor` from 1.3.1 to 1.3.2
 
 ## [3.7.2] - 2023-05-30
 ### Dependencies
