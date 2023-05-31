@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+- Bumps `caniuse-lite` to 1.0.30001492
+
 ## [3.8.0] - 2023-05-31
 ### Added
 - Allow the parent component to get the innerView in Embedded Editor
