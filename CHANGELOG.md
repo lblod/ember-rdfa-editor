@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Bumps `caniuse-lite` to 1.0.30001492
+- Bumps `ember-focus-trap` from 1.0.1 to 1.0.2
 
 ## [3.8.0] - 2023-05-31
 ### Added
