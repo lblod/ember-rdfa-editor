@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-state` from 1.4.2 to 1.4.3
 - Bumps `eslint` from 8.38.0 to 8.42.0
 - Bumps `release-it` from 15.10.1 to 15.11.0
+- Bumps `@typescript-eslint/parser` from 5.59.2 to 5.59.9
 
 ## [3.8.0] - 2023-05-31
 ### Added
