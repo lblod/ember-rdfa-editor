@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-focus-trap` from 1.0.1 to 1.0.2
 - Bumps `ember-velcro` to 2.1.0
 - Pin `typescript` to 5.0.x
+- Bumps `prosemirror-state` from 1.4.2 to 1.4.3
 
 ## [3.8.0] - 2023-05-31
 ### Added
