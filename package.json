@@ -171,7 +171,7 @@
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
     "svg-symbols": "^1.0.5",
-    "typescript": "^5.0.4",
+    "typescript": "~5.0.4",
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
