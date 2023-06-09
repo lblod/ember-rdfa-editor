@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-plugin-ember` from 11.5.2 to 11.8.0
 - Bumps `prosemirror-keymap` from 1.2.1 to 1.2.2
 - Bumps `webpack` from 5.81.0 to 5.86.0
+- Bumps `prosemirror-transform` from 1.7.1 to 1.7.3
 
 ## [3.8.0] - 2023-05-31
 ### Added
