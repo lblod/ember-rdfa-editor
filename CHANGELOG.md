@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/view` from 6.10.1 to 6.13.0
 - Bumps `prosemirror-inputrules` from 1.2.0 to 1.2.1
 - Bumps `@types/debug` from 4.1.7 to 4.1.8
+- Bumps `iter-tools` from 7.5.1 to 7.5.3
 
 ## [3.8.0] - 2023-05-31
 ### Added
