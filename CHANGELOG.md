@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@types/debug` from 4.1.7 to 4.1.8
 - Bumps `iter-tools` from 7.5.1 to 7.5.3
 - Bumps `@typescript-eslint/eslint-plugin` from 5.59.5 to 5.59.11
+- Bumps `prosemirror-commands` from 1.5.1 to 1.5.2
 
 ## [3.8.0] - 2023-05-31
 ### Added
