@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-keymap` from 1.2.1 to 1.2.2
 - Bumps `webpack` from 5.81.0 to 5.86.0
 - Bumps `prosemirror-transform` from 1.7.1 to 1.7.3
-- Bumps `@codemirror/view` from 6.10.1 to 6.13.0
+- Bumps `@codemirror/view` from 6.13.0 to 6.13.1
+- Bumps `@codemirror/view` from 6.10.1 to 6.13.1
 - Bumps `prosemirror-inputrules` from 1.2.0 to 1.2.1
 - Bumps `@types/debug` from 4.1.7 to 4.1.8
 - Bumps `iter-tools` from 7.5.1 to 7.5.3
