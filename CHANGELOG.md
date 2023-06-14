@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `@codemirror/state` from 6.2.0 to 6.2.1
 - Bumps `sinon` from 15.0.4 to 15.1.2
+- Bumps `ember-cli` from 4.8.0 to 5.0.0
 
 ## [3.8.1] - 2023-06-13
 
