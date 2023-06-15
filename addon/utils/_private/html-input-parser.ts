@@ -1,11 +1,4 @@
-import {
-  isElement,
-  isTextNode,
-  tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import DOMPurify from 'dompurify';
-import { ParseError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 
 export const DEFAULT_SAFE_ATTRIBUTES = [
   'colspan',
@@ -26,8 +19,9 @@ export const DEFAULT_SAFE_ATTRIBUTES = [
   'prefix',
   'href',
   'src',
+  'style',
 ];
-export const DEFAULT_LUMP_TAGS = ['table'];
+
 export const DEFAULT_SAFE_TAGS = [
   'a',
   'br',
@@ -84,12 +78,6 @@ export const DEFAULT_URI_SAFE_ATTRIBUTES = [
   'vocab',
   'prefix',
 ];
-export const DEFAULT_TAG_MAP = new Map([
-  ['b', 'strong'],
-  ['i', 'em'],
-  ['del', 's'],
-  ['mark', 'span'],
-]);
 
 // limited set of tags we allow for pasting
 export const LIMITED_SAFE_TAGS = [
@@ -134,30 +122,24 @@ interface HTMLInputParserArguments {
 export default class HTMLInputParser {
   static DEFAULTS = {
     safeAttributes: DEFAULT_SAFE_ATTRIBUTES,
-    lumpTags: DEFAULT_LUMP_TAGS,
     safeTags: DEFAULT_SAFE_TAGS,
     uriSafeAttributes: DEFAULT_URI_SAFE_ATTRIBUTES,
-    tagMap: DEFAULT_TAG_MAP,
   };
 
   private readonly safeAttributes: string[];
-  private readonly lumpTags: string[];
+
   private readonly safeTags: string[];
   private readonly uriSafeAttributes: string[];
-  private readonly tagMap: Map<string, string>;
 
   constructor({
     safeAttributes = DEFAULT_SAFE_ATTRIBUTES,
-    lumpTags = DEFAULT_LUMP_TAGS,
     safeTags = DEFAULT_SAFE_TAGS,
     uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
-    tagMap = DEFAULT_TAG_MAP,
   }: HTMLInputParserArguments) {
     this.safeAttributes = safeAttributes;
-    this.lumpTags = lumpTags;
+
     this.safeTags = safeTags;
     this.uriSafeAttributes = uriSafeAttributes;
-    this.tagMap = tagMap;
   }
 
   /**
@@ -172,111 +154,11 @@ export default class HTMLInputParser {
     const rootNode = document.body;
     rootNode.normalize();
 
-    const preprocessedNode = this.preprocessNode(rootNode);
-    if (!preprocessedNode || !isElement(preprocessedNode)) {
-      throw new ParseError('Root node must be an element');
-    }
-
-    return DOMPurify.sanitize(preprocessedNode.innerHTML, {
+    return DOMPurify.sanitize(rootNode.innerHTML, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
+      IN_PLACE: true,
       // ADD_URI_SAFE_ATTR: this.uriSafeAttributes TODO: does this work?
     });
-  }
-
-  /**
-   * Takes a tag and an HTML element and creates a new HTML element
-   * with the given tag and the attributes of the given base HTML element.
-   *
-   * @method cleanupHTML
-   */
-  createNewElement(tag: string, baseElement: HTMLElement) {
-    const newElement = document.createElement(tag);
-    this.copyAllAttributes(baseElement, newElement);
-
-    return newElement;
-  }
-
-  /**
-   * Preprocess all nodes replacing the tag if it appears on the tagMap variable
-   * and adds the lumpNode property if needed.
-   *
-   * @method preprocessNode
-   */
-  preprocessNode(node: Node): Node | null {
-    let cleanedNode = node.cloneNode();
-    if (isElement(cleanedNode)) {
-      let newElement = cleanedNode;
-      const tag = tagName(cleanedNode);
-      const tagMapping = this.tagMap.get(tag);
-
-      // If we have to replace the tag name we create another node with the new
-      // tag name and copy all the attribute of the original node.
-      if (tagMapping) {
-        newElement = this.createNewElement(tagMapping, cleanedNode);
-      } else if (tag === 'a' && !(cleanedNode as HTMLLinkElement).href) {
-        newElement = this.createNewElement('span', cleanedNode);
-      }
-
-      newElement.textContent = '';
-      if (this.lumpTags.includes(tag)) {
-        newElement.setAttribute(
-          'property',
-          'http://lblod.data.gift/vocabularies/editor/isLumpNode'
-        );
-      }
-
-      // Clean all children of node.
-      if (node.hasChildNodes()) {
-        for (let i = 0; i < node.childNodes.length; i++) {
-          const cleanedChild = this.preprocessNode(node.childNodes[i]);
-
-          if (cleanedChild) {
-            if (this.lumpTags.includes(tag)) {
-              // Make sure we can place the cursor before the non editable element.
-              newElement.appendChild(document.createTextNode(''));
-            }
-
-            newElement.appendChild(cleanedChild);
-
-            if (this.lumpTags.includes(tag)) {
-              // Make sure we can place the cursor after the non editable element.
-              newElement.appendChild(document.createTextNode(''));
-            }
-          }
-        }
-      }
-
-      cleanedNode = newElement;
-    } else if (isTextNode(cleanedNode)) {
-      if (node.textContent) {
-        cleanedNode.textContent = node.textContent
-          // replace special spaces with regular spaces
-          .replace(
-            /[\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g,
-            ' '
-          )
-          // remove invisible spaces
-          .replace(new RegExp(INVISIBLE_SPACE, 'g'), '');
-      }
-
-      if (cleanedNode.length === 0) {
-        return null;
-      }
-    }
-
-    return cleanedNode;
-  }
-
-  /**
-   * Takes a source node and a target node.
-   * Copies all attributes from the source node to the target node.
-   *
-   * @method copyAllAttributes
-   */
-  copyAllAttributes(source: HTMLElement, target: HTMLElement) {
-    for (const attr of source.attributes) {
-      target.setAttribute(attr.name, attr.value);
-    }
   }
 }
