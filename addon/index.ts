@@ -3,7 +3,10 @@ import { Decoration } from 'prosemirror-view';
 
 export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
-export { default as ProseMirror } from '@lblod/ember-rdfa-editor/core/say-editor';
+export {
+  default as ProseMirror,
+  PluginConfig,
+} from '@lblod/ember-rdfa-editor/core/say-editor';
 
 export * from 'prosemirror-model';
 export { Node as PNode, DOMParser as ProseParser } from 'prosemirror-model';

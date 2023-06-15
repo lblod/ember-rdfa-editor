@@ -5,10 +5,11 @@ import {
   Logger,
 } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
+import SayEditor, {
+  PluginConfig,
+} from '@lblod/ember-rdfa-editor/core/say-editor';
 import { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
 import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
@@ -26,7 +27,7 @@ export interface RdfaEditorArgs {
   initializers?: Array<() => Promise<void>>;
   schema: Schema;
   baseIRI?: string;
-  plugins?: Plugin[];
+  plugins?: PluginConfig;
   stealFocus?: boolean;
   nodeViews?: (controller: SayController) => {
     [node: string]: NodeViewConstructor;
