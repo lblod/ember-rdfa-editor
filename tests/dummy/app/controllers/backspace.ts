@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   em,
