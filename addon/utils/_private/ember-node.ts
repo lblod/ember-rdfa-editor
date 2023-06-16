@@ -1,3 +1,13 @@
+/**
+ * Contains code from https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#L195
+ *
+ * MIT License
+ * Copyright (c) 2023, Tiptap GmbH
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import {
   AttributeSpec,
@@ -94,8 +104,7 @@ class EmberNodeView implements NodeView {
   contentDOM?: HTMLElement;
   emberComponent: EmberInlineComponent;
   template: TemplateFactory;
-  stopEvent: (event: InputEvent) => boolean;
-  ignoreMutation: (mutation: MutationRecord) => boolean;
+  config: EmberNodeConfig;
 
   constructor(
     controller: SayController,
@@ -108,14 +117,8 @@ class EmberNodeView implements NodeView {
     // We set the new node here and pass it to the component to render it.
     // However, this will create a DOM mutation, which prosemirror will catch and use to rerender.
     // to avoid a NodeView rerendering when we already handled the state change, we pass true to `ignoreMutation` (by default).
-    const {
-      name,
-      componentPath,
-      atom,
-      inline,
-      stopEvent = () => true,
-      ignoreMutation = (_) => true,
-    } = emberNodeConfig;
+    this.config = emberNodeConfig;
+    const { name, componentPath, atom, inline } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
                           getPos=this.getPos
                           node=this.node
@@ -131,11 +134,11 @@ class EmberNodeView implements NodeView {
                         {{/component}}`;
     this.node = pNode;
     this.contentDOM = !atom
-      ? document.createElement(inline ? 'span' : 'div')
+      ? document.createElement(inline ? 'span' : 'div', {})
       : undefined;
-    this.stopEvent = stopEvent;
-    this.ignoreMutation = ignoreMutation;
-
+    if (this.contentDOM) {
+      this.contentDOM.dataset.content = 'true';
+    }
     const { node, component } = emberComponent(
       controller.owner,
       name,
@@ -189,6 +192,63 @@ class EmberNodeView implements NodeView {
   destroy() {
     this.emberComponent.destroy();
   }
+
+  /**
+   * Based on https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#LL99C6-L99C6
+   */
+  stopEvent(event: Event) {
+    if (!this.dom) {
+      return false;
+    }
+
+    if (this.config.stopEvent) {
+      return this.config.stopEvent(event);
+    }
+
+    const target = event.target as HTMLElement;
+    const isInElement =
+      this.dom.contains(target) && !this.contentDOM?.contains(target);
+
+    return isInElement;
+  }
+
+  /**
+   * Taken from https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#L195
+   */
+  ignoreMutation(
+    mutation: MutationRecord | { type: 'selection'; target: Element }
+  ) {
+    if (!this.dom || !this.contentDOM) {
+      return true;
+    }
+    if (this.config.ignoreMutation) {
+      return this.config.ignoreMutation(mutation);
+    }
+
+    // a leaf/atom node is like a black box for ProseMirror
+    // and should be fully handled by the node view
+    if (this.node.isLeaf || this.node.isAtom) {
+      return true;
+    }
+
+    // ProseMirror should handle any selections
+    if (mutation.type === 'selection') {
+      return false;
+    }
+
+    // we will allow mutation contentDOM with attributes
+    // so we can for example adding classes within our node view
+    if (this.contentDOM === mutation.target && mutation.type === 'attributes') {
+      return true;
+    }
+
+    // ProseMirror should handle any changes within contentDOM
+    if (this.contentDOM.contains(mutation.target)) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 export type EmberNodeConfig = {
@@ -210,8 +270,10 @@ export type EmberNodeConfig = {
   };
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
-  stopEvent?: (event: InputEvent) => boolean;
-  ignoreMutation?: (mutation: MutationRecord) => boolean;
+  stopEvent?: (event: Event) => boolean;
+  ignoreMutation?: (
+    mutation: MutationRecord | { type: 'selection'; target: Element }
+  ) => boolean;
 } & (
   | {
       atom: true;
