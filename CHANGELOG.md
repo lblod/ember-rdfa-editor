@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prettier` from 2.8.7 to 2.8.8
 - Bumps `webpack` from 5.86.0 to 5.87.0
 - Bumps `prosemirror-tables` from 1.3.2 to 1.3.3
+- Bumps `@types/ember__error` from 4.0.2 to 4.0.3
 
 ## [3.8.1] - 2023-06-13
 
