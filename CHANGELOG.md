@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-tables` from 1.3.2 to 1.3.3
 - Bumps `@types/ember__error` from 4.0.2 to 4.0.3
 - Bumps `@ember/test-helpers` from 2.9.3 to 2.9.4
+- Bumps `@codemirror/lang-html` from 6.4.3 to 6.4.4
 
 ## [3.8.1] - 2023-06-13
 
