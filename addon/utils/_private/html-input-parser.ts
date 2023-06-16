@@ -5,6 +5,7 @@ export const DEFAULT_SAFE_ATTRIBUTES = [
   'rowspan',
   'title',
   'alt',
+  'class',
   'cellspacing',
   'axis',
   'about',
@@ -24,6 +25,7 @@ export const DEFAULT_SAFE_ATTRIBUTES = [
 
 export const DEFAULT_SAFE_TAGS = [
   'a',
+  'b',
   'br',
   'body',
   'code',
@@ -33,6 +35,7 @@ export const DEFAULT_SAFE_TAGS = [
   'dl',
   'dt',
   'dd',
+  'i',
   'em',
   'h1',
   'h2',
@@ -152,11 +155,10 @@ export default class HTMLInputParser {
     const parser = new DOMParser();
     const document = parser.parseFromString(htmlString, 'text/html');
     const rootNode = document.body;
-    rootNode.normalize();
 
     return DOMPurify.sanitize(rootNode.innerHTML, {
-      ALLOWED_TAGS: this.safeTags,
-      ALLOWED_ATTR: this.safeAttributes,
+      // ALLOWED_TAGS: this.safeTags,
+      // ALLOWED_ATTR: this.safeAttributes,
       IN_PLACE: true,
       // ADD_URI_SAFE_ATTR: this.uriSafeAttributes TODO: does this work?
     });
