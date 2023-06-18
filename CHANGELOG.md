@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.9.0] - 2023-06-18
+
 ### Added
 - add pr template
 - Addition of `getGroups` and `hasGroups` utility functions
@@ -1667,7 +1669,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...HEAD
+[3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...v3.8.0
 [3.7.2]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.1...v3.7.2
