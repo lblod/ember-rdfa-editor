@@ -10,8 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - remove unused say-editor specific svgs
 ### Dependencies
+- Bumps `prosemirror-view` from 1.31.3 to 1.31.4
+- Bumps `xml-formatter` from 3.3.2 to 3.4.1
+- Bumps `@types/uuid` from 9.0.1 to 9.0.2
+
+## [3.9.0] - 2023-06-18
+
+### Added
+- add pr template
+- Addition of `getGroups` and `hasGroups` utility functions
+### Dependencies
 - Bumps `@codemirror/state` from 6.2.0 to 6.2.1
 - Bumps `sinon` from 15.0.4 to 15.1.2
+- Bumps `prettier` from 2.8.7 to 2.8.8
+- Bumps `webpack` from 5.86.0 to 5.87.0
+- Bumps `prosemirror-tables` from 1.3.2 to 1.3.3
+- Bumps `@types/ember__error` from 4.0.2 to 4.0.3
+- Bumps `@ember/test-helpers` from 2.9.3 to 2.9.4
+- Bumps `@codemirror/lang-html` from 6.4.3 to 6.4.4
+- Bumps `@appuniversum/ember-appuniversum` from 2.5.0 to 2.7.0
 
 ## [3.8.1] - 2023-06-13
 
@@ -1659,7 +1676,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...HEAD
+[3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...v3.8.0
 [3.7.2]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.1...v3.7.2
