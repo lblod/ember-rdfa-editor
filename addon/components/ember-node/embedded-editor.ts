@@ -68,7 +68,10 @@ import {
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 
-type Args = EmberNodeArgs & { placeholder: string };
+type Args = EmberNodeArgs & {
+  placeholder: string;
+  initEditor?: (view: SayView) => void;
+};
 
 export default class EmbeddedEditor extends Component<Args> {
   @service declare intl: IntlService;
@@ -207,6 +210,9 @@ export default class EmbeddedEditor extends Component<Args> {
       },
       this.outerView
     );
+    if (this.args.initEditor) {
+      this.args.initEditor(this.innerView);
+    }
   }
 
   @action

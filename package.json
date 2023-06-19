@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "3.7.0",
+  "version": "3.9.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -69,7 +69,7 @@
     "ember-intl": "^5.7.2",
     "ember-truth-helpers": "^3.0.0",
     "ember-unique-id-helper-polyfill": "^1.2.2",
-    "ember-velcro": "^1.1.0",
+    "ember-velcro": "^2.1.0",
     "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.2",
     "iter-tools": "^7.4.0",
@@ -171,7 +171,7 @@
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
     "svg-symbols": "^1.0.5",
-    "typescript": "^5.0.4",
+    "typescript": "~5.0.4",
     "webpack": "^5.74.0"
   },
   "peerDependencies": {

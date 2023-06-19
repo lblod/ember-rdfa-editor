@@ -7,8 +7,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- better handle weird edgecases when copying from word
+### Dependencies
+- Bumps `prosemirror-view` from 1.31.3 to 1.31.4
+- Bumps `xml-formatter` from 3.3.2 to 3.4.1
+- Bumps `@types/uuid` from 9.0.1 to 9.0.2
+
+## [3.9.0] - 2023-06-18
+
+### Added
+- add pr template
+- add ability to completely override plugin array
+- Addition of `getGroups` and `hasGroups` utility functions
+### Dependencies
+- Bumps `@codemirror/state` from 6.2.0 to 6.2.1
+- Bumps `sinon` from 15.0.4 to 15.1.2
+- Bumps `prettier` from 2.8.7 to 2.8.8
+- Bumps `webpack` from 5.86.0 to 5.87.0
+- Bumps `prosemirror-tables` from 1.3.2 to 1.3.3
+- Bumps `@types/ember__error` from 4.0.2 to 4.0.3
+- Bumps `@ember/test-helpers` from 2.9.3 to 2.9.4
+- Bumps `@codemirror/lang-html` from 6.4.3 to 6.4.4
+- Bumps `@appuniversum/ember-appuniversum` from 2.5.0 to 2.7.0
+
+## [3.8.1] - 2023-06-13
+
+### Dependencies
+- Bumps `caniuse-lite` to 1.0.30001492
+- Bumps `ember-focus-trap` from 1.0.1 to 1.0.2
+- Bumps `ember-velcro` to 2.1.0
+- Pin `typescript` to 5.0.x
+- Bumps `prosemirror-state` from 1.4.2 to 1.4.3
+- Bumps `eslint` from 8.38.0 to 8.42.0
+- Bumps `release-it` from 15.10.1 to 15.11.0
+- Bumps `@typescript-eslint/parser` from 5.59.2 to 5.59.9
+- Bumps `eslint-plugin-ember` from 11.5.2 to 11.8.0
+- Bumps `prosemirror-keymap` from 1.2.1 to 1.2.2
+- Bumps `webpack` from 5.81.0 to 5.86.0
+- Bumps `prosemirror-transform` from 1.7.1 to 1.7.3
+- Bumps `@codemirror/view` from 6.13.0 to 6.13.1
+- Bumps `@codemirror/view` from 6.10.1 to 6.13.1
+- Bumps `prosemirror-inputrules` from 1.2.0 to 1.2.1
+- Bumps `@types/debug` from 4.1.7 to 4.1.8
+- Bumps `iter-tools` from 7.5.1 to 7.5.3
+- Bumps `@typescript-eslint/eslint-plugin` from 5.59.5 to 5.59.11
+- Bumps `prosemirror-commands` from 1.5.1 to 1.5.2
+- Bumps `prosemirror-schema-list` from 1.2.2 to 1.3.0
+
+## [3.8.0] - 2023-05-31
+### Added
+- Allow the parent component to get the innerView in Embedded Editor
+### Dependencies
+- Bumps `prosemirror-view` from 1.30.2 to 1.31.3
+- Bumps `prosemirror-history` from 1.3.0 to 1.3.2
+- Bumps `prosemirror-gapcursor` from 1.3.1 to 1.3.2
+- Bumps `prosemirror-model` from 1.19.0 to 1.19.2
+
+## [3.7.2] - 2023-05-30
+### Dependencies
+- Bumps `vm2` from 3.9.17 to 3.9.19
+- Bumps `ember-template-lint` from 5.7.2 to 5.7.3
+- Bumps `dompurify` from 3.0.1 to 3.0.3
+- Bumps `socket.io-parser` from 4.2.1 to 4.2.3
+- Bumps `engine.io` from 6.2.1 to 6.4.2
+- Bumps `socket.io` from 4.5.4 to 4.6.1
+- Bumps `prosemirror-dropcursor` from 1.8.0 to 1.8.1
+### Fixed
+- Annotation UX not present for some structures
+
+## [3.7.1] - 2023-05-17
+### Fixed
 - Show correct import for heading node in documentation
 - Whitespace is not removed in table headers
+- correct woodpecker secret indentation
 
 ## [3.7.0] - 2023-05-12
 ### Dependencies
@@ -1606,7 +1677,12 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...HEAD
+[3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
+[3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
+[3.8.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...v3.8.0
+[3.7.2]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.1...v3.7.2
+[3.7.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.0...v3.7.1
 [3.7.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.4.1...v3.5.0

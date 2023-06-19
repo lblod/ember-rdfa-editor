@@ -186,6 +186,26 @@
     content: '';
   }
 
+  [typeof~='besluit:Title']:before,
+  [typeof='say:Title']:before {
+    content: 'Title';
+  }
+
+  [typeof~='besluit:Chapter']:before,
+  [typeof='say:Chapter']:before {
+    content: 'Chapter';
+  }
+
+  [typeof~='besluit:Section']:before,
+  [typeof='say:Section']:before {
+    content: 'Section';
+  }
+
+  [typeof~='besluit:Subsection']:before,
+  [typeof='say:Subsection']:before {
+    content: 'Subsection';
+  }
+
   [typeof~='besluit:Artikel']:before,
   [typeof='say:Article']:before {
     content: 'Article';
