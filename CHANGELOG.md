@@ -6,17 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- Improve behaviour of ember-nodes with editable content
+
 ### Dependencies
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
+
+### Breaking
+- The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
+- The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
 
 ## [3.9.0] - 2023-06-18
 
 ### Added
 - add pr template
 - Addition of `getGroups` and `hasGroups` utility functions
-- Improve behaviour of ember-nodes with editable content
 ### Dependencies
 - Bumps `@codemirror/state` from 6.2.0 to 6.2.1
 - Bumps `sinon` from 15.0.4 to 15.1.2
@@ -27,11 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@ember/test-helpers` from 2.9.3 to 2.9.4
 - Bumps `@codemirror/lang-html` from 6.4.3 to 6.4.4
 - Bumps `@appuniversum/ember-appuniversum` from 2.5.0 to 2.7.0
-
-### Breaking
-- The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
-- The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
-
 
 ## [3.8.1] - 2023-06-13
 
