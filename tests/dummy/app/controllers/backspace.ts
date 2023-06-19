@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   em,
@@ -62,7 +61,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules } from '@lblod/ember-rdfa-editor';
+import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
 
 export default class BackspaceController extends Controller {
@@ -126,7 +125,7 @@ export default class BackspaceController extends Controller {
     };
   }
 
-  @tracked plugins: Plugin[] = [
+  @tracked plugins: PluginConfig = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
     lastKeyPressedPlugin,
