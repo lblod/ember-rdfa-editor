@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
+- Bumps `xml-formatter` from 3.3.2 to 3.4.1
 
 ## [3.9.0] - 2023-06-18
 
