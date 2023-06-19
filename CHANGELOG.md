@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Show correct import for heading node in documentation
+- Whitespace is not removed in table headers
 
 ## [3.7.0] - 2023-05-12
 ### Dependencies
