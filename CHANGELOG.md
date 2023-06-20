@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
+### Changed
+- `SayController::setHtmlContent` can now receive `shouldFocus` option which determines whether editor will be focused or not after calling `setHtmlContent`. Defaults to `true` for back compatibility.
 
 ## [3.9.0] - 2023-06-18
 
