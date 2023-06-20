@@ -1,4 +1,4 @@
-pipeline:
+steps:
   install:
     image: danlynn/ember-cli:4.8.0
     commands:

@@ -1,4 +1,4 @@
-pipeline:
+steps:
   install:
     image: danlynn/ember-cli:4.8.0
     commands:
@@ -17,4 +17,4 @@ pipeline:
     secrets: [ docker_username, docker_password ]
 when:
   event: tag
-  tag: v*
+  ref: refs/tags/v*
