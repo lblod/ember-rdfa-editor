@@ -8,11 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - better handle weird edgecases when copying from word
+
+### Internal
+- use `github.token` for github checkout action
 ### Dependencies
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
 ### Changed
+- fix woodpecker syntax
+- replacement of github ensure-changelog action by changelog check in woodpecker CI
 - `SayController::setHtmlContent` can now receive `shouldFocus` option which determines whether editor will be focused or not after calling `setHtmlContent`. Defaults to `true` for back compatibility.
 
 ## [3.9.0] - 2023-06-18
@@ -80,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.7.1] - 2023-05-17
 ### Fixed
 - Show correct import for heading node in documentation
+- Whitespace is not removed in table headers
 - correct woodpecker secret indentation
 
 ## [3.7.0] - 2023-05-12

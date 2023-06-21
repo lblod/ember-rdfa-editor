@@ -21,7 +21,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.DEPENDABOT_TOKEN }}
+          token: ${{ github.token }}
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Update the changelog
