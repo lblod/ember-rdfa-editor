@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - fix woodpecker syntax
 - replacement of github ensure-changelog action by changelog check in woodpecker CI
+- `SayController::setHtmlContent` can now receive `shouldFocus` option which determines whether editor will be focused or not after calling `setHtmlContent`. Defaults to `true` for back compatibility.
 
 ## [3.9.0] - 2023-06-18
 

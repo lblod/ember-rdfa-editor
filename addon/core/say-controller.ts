@@ -39,8 +39,11 @@ export default class SayController {
     this.editor.setActiveView(view);
   }
 
-  setHtmlContent(content: string) {
-    this.focus();
+  setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
+    const { shouldFocus = true } = options;
+    if (shouldFocus) {
+      this.focus();
+    }
     const tr = this.mainEditorState.tr;
     const domParser = new DOMParser();
     tr.replaceWith(
