@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
+- Bumps `ember-cli-dependency-checker` from 3.3.1 to 3.3.2
 ### Changed
 - fix woodpecker syntax
 - replacement of github ensure-changelog action by changelog check in woodpecker CI
