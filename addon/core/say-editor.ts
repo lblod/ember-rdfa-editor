@@ -33,6 +33,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { locale } from '@lblod/ember-rdfa-editor/plugins/locale';
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
   owner: Owner;
@@ -85,6 +86,7 @@ export default class SayEditor {
     } else {
       pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
+        locale({ locale: 'nl-BE' }),
         ...pluginArr,
         pasteHandler(),
         dropCursor(),

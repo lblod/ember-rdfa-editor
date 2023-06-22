@@ -13,6 +13,7 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { Command, Selection, Transaction } from 'prosemirror-state';
+import { localePluginKey } from '@lblod/ember-rdfa-editor/plugins/locale';
 
 export default class SayController {
   @tracked
@@ -95,6 +96,10 @@ export default class SayController {
 
   get datastore(): SayStore {
     return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
+  }
+
+  get locale() {
+    return unwrap(localePluginKey.getState(this.mainEditorState)).locale;
   }
 
   get schema(): Schema {
