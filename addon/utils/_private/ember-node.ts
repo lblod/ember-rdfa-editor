@@ -136,6 +136,7 @@ class EmberNodeView implements NodeView {
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div', {})
       : undefined;
+    // Note `this.contentDOM` needs an attribute to prevent chromium-based browsers from deleting it when it is empty/only has empty children.
     if (this.contentDOM) {
       this.contentDOM.dataset.content = 'true';
     }
