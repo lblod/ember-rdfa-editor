@@ -115,8 +115,6 @@ class EmberNodeView implements NodeView {
   ) {
     // when a node gets updated, `update()` is called.
     // We set the new node here and pass it to the component to render it.
-    // However, this will create a DOM mutation, which prosemirror will catch and use to rerender.
-    // to avoid a NodeView rerendering when we already handled the state change, we pass true to `ignoreMutation` (by default).
     this.config = emberNodeConfig;
     const { name, componentPath, atom, inline } = emberNodeConfig;
     this.template = hbs`{{#component this.componentPath
