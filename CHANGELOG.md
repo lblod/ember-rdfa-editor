@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Addition of a `locale` prosemirror plugin which allows other plugins/code to lookup the locale/language of the current document/editor instance.
+- Addition of a `locale` getter to the `SayController` class which returns the state of the `locale` plugin.
+
 ## [3.10.0] - 2023-06-22
 ### Fixed
 - better handle weird edgecases when copying from word
