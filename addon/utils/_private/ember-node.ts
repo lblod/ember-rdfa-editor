@@ -8,6 +8,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+
+ */
+
 import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
 import {
   AttributeSpec,
@@ -51,6 +55,33 @@ import { SayView } from '@lblod/ember-rdfa-editor';
  *       Instead of a tracked property, you'll often use the following logic to keep state inside the node:
  *       `get someText() { return this.args.node.attrs.someText; }`
  *       `set someText(value) { return this.args.updateAttribute('someText', value); }`
+ *
+ *   - when defining an ember-node using these utility functions, nested contenteditable attributes should be prevented.
+ *     Ember nodes which can contain editable content should never be `contenteditable: false` as a whole,
+ *     but only the parts which are `contenteditable: false` should be marked as so.
+ *     E.g.: It's preferred to write:
+ *
+ *     ```
+ *     <div>
+ *     <header contenteditable="false">
+ *      <p>header</p>
+ *     </header>
+ *     <content>
+ *      {{yield}}
+ *     </content>
+ *     </div>
+ *     ```
+ *     instead of
+ *     ```
+ *     <div contenteditable="false">
+ *     <header>
+ *      <p>header</p>
+ *     </header>
+ *     <content contenteditable="true">
+ *      {{yield}}
+ *     </content>
+ *     </div>
+ *     ```
  */
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
