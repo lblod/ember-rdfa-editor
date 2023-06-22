@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
 - Bumps `ember-cli-dependency-checker` from 3.3.1 to 3.3.2
-- Bumps `sass` from 1.62.1 to 1.63.5
+- Bumps `sass` from 1.63.5 to 1.63.6
+- Bumps `sass` from 1.62.1 to 1.63.6
 - Bumps `rdf-data-factory` from 1.1.1 to 1.1.2
 - Bumps `eslint` from 8.42.0 to 8.43.0
 ### Changed
