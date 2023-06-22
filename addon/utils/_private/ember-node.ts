@@ -36,7 +36,7 @@ import { SayView } from '@lblod/ember-rdfa-editor';
  * - Prosemirror NodeView e.g.:
  *   - `ignoreMutation`: Use this to avoid rerendering a component for every change.
  *        Already as a default implementation. Only override if you know what you are doing.
- *   - `stopEvent`: defaults to true (stopping all event bubbling). Implement this if you need events to bubble up.
+ *   - `stopEvent`: By default this will stop events which occur inside the ember-node but not inside it's content. Only override if you know what you are doing.
  * - Custom values for EmberNode, e.g.:
  *   - `componentPath`: path to the ember component to render as a Node View
  *
@@ -194,7 +194,10 @@ class EmberNodeView implements NodeView {
   }
 
   /**
+   *
+   * Prevents the editor view from handling events which are inside the ember-node but not inside it's editable content.
    * Based on https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#LL99C6-L99C6
+   * @param event The event to check
    */
   stopEvent(event: Event) {
     if (!this.dom) {
@@ -213,7 +216,13 @@ class EmberNodeView implements NodeView {
   }
 
   /**
+   *
+   * Determines whether a DOM mutation should be ignored by prosemirror.
+   * DOM mutations occuring inside the ember-node which are not inside it's editable content are ignored.
+   * Selections are always handled by prosemirror.
    * Taken from https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#L195
+   * @param mutation
+   * @returns
    */
   ignoreMutation(
     mutation: MutationRecord | { type: 'selection'; target: Element }
