@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   em,
@@ -64,6 +63,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
+import { PluginConfig } from '@lblod/ember-rdfa-editor';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -115,7 +115,7 @@ export default class IndexController extends Controller {
     };
   }
 
-  @tracked plugins: Plugin[] = [
+  @tracked plugins: PluginConfig = [
     // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
     chromeHacksPlugin(),
@@ -136,6 +136,7 @@ export default class IndexController extends Controller {
       ],
     }),
   ];
+
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),

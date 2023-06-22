@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Plugin } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import {
   block_rdfa,
@@ -68,7 +67,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules } from '@lblod/ember-rdfa-editor';
+import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 
@@ -135,7 +134,7 @@ export default class IndexController extends Controller {
       image: imageView(proseController),
     };
   };
-  @tracked plugins: Plugin[] = [
+  @tracked plugins: PluginConfig = [
     firefoxCursorFix(),
     chromeHacksPlugin(),
     highlightPlugin({ testKey: 'yeet' }),

@@ -1,8 +1,8 @@
 matrix:
   scenario:
     - ember-lts-3.28
-pipeline:
-  ${scenario}:
+steps:
+  - name: ${scenario}
     image: danlynn/ember-cli:4.8.0
     commands:
       - npm ci
