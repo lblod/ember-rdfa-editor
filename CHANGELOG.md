@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `ember-cli-dependency-checker` from 3.3.1 to 3.3.2
 - Bumps `sass` from 1.62.1 to 1.63.5
 - Bumps `rdf-data-factory` from 1.1.1 to 1.1.2
+- Bumps `eslint` from 8.42.0 to 8.43.0
 ### Changed
 - fix woodpecker syntax
 - replacement of github ensure-changelog action by changelog check in woodpecker CI
