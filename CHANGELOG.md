@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improve behaviour of ember-nodes with editable content
+
+### Breaking
+- The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
+- The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
+
+## [3.10.0] - 2023-06-22
 ### Fixed
 - better handle weird edgecases when copying from word
 
@@ -27,11 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix woodpecker syntax
 - replacement of github ensure-changelog action by changelog check in woodpecker CI
 - `SayController::setHtmlContent` can now receive `shouldFocus` option which determines whether editor will be focused or not after calling `setHtmlContent`. Defaults to `true` for back compatibility.
-- Improve behaviour of ember-nodes with editable content
-
-### Breaking
-- The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
-- The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
 
 ## [3.9.0] - 2023-06-18
 
@@ -1697,7 +1700,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...HEAD
+[3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...v3.8.0
