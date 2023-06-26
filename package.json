@@ -98,7 +98,7 @@
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
     "@ember/test-helpers": "^2.9.3",
-    "@embroider/test-setup": "^2.1.1",
+    "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
     "@rdfjs/types": "^1.1.0",
     "@release-it/keep-a-changelog": "^3.1.0",
