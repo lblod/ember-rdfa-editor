@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
 - Bumps `@types/qunit` from 2.19.5 to 2.19.6
+- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
