@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/view` from 6.13.1 to 6.13.2
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
+- Bumps `@types/qunit` from 2.19.5 to 2.19.6
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
