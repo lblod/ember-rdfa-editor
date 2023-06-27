@@ -75,7 +75,9 @@ export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
   schema = new Schema({
     nodes: {
-      doc,
+      doc: doc({
+        defaultLanguage: 'nl-BE',
+      }),
       paragraph,
 
       repaired_block,

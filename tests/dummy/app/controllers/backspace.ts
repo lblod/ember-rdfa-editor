@@ -76,7 +76,9 @@ export default class BackspaceController extends Controller {
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
-      doc,
+      doc: doc({
+        defaultLanguage: 'nl-BE',
+      }),
       paragraph,
 
       repaired_block,
