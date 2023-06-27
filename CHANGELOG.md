@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Addition of documentLanguage getter and setter to SayController
+- Addition of a `SetDocAttribute` step, which allows updating the attribute value on the `doc` node.
 
 ### Changed
 - Improve behaviour of ember-nodes with editable content
