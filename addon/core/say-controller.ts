@@ -13,6 +13,7 @@ import {
   Schema,
 } from 'prosemirror-model';
 import { Command, Selection, Transaction } from 'prosemirror-state';
+import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 
 export default class SayController {
   @tracked
@@ -103,6 +104,16 @@ export default class SayController {
 
   get owner(): Owner {
     return this.editor.owner;
+  }
+
+  get documentLanguage() {
+    return this.mainEditorState.doc.attrs.lang as string;
+  }
+
+  set documentLanguage(language: string) {
+    this.withTransaction((tr) => {
+      return tr.step(new SetDocAttributeStep('lang', language));
+    });
   }
 
   toggleRdfaBlocks() {
