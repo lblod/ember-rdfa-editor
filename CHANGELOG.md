@@ -7,12 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Addition of documentLanguage getter and setter to SayController
+
 ### Changed
 - Improve behaviour of ember-nodes with editable content
+- Update the dummy counter node to make use of new document language feature
 
 ### Breaking
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
 - The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
+- Update the `doc` nodeSpec to support a language attribute. `doc` is now a function which takes an optional config containing a defaultLanguage setting, `doc` will use that defaultLanguage as the default value of its `lang` property
 ### Dependencies
 - Bumps `@codemirror/view` from 6.13.1 to 6.13.2
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
