@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
 - Bumps `prosemirror-view` from 1.31.4 to 1.31.5
 - Bumps `ember-template-lint` from 5.7.3 to 5.10.3
+- Bumps `webpack` from 5.87.0 to 5.88.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
