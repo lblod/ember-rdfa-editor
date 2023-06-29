@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.1
 - Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
 - Bumps `prosemirror-view` from 1.31.4 to 1.31.5
-- Bumps `ember-template-lint` from 5.7.3 to 5.10.3
+- Bumps `ember-template-lint` from 5.10.3 to 5.11.0
+- Bumps `ember-template-lint` from 5.7.3 to 5.11.0
 - Bumps `webpack` from 5.88.0 to 5.88.1
 - Bumps `webpack` from 5.87.0 to 5.88.1
 - Bumps `eslint-plugin-ember` from 11.8.0 to 11.9.0
