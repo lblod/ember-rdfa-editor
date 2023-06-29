@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- remove unused say-editor specific svgs
 ### Changed
 - Improve behaviour of ember-nodes with editable content
 - Woodpecker: do not run changelog-check when PR contains `dependabot` label
