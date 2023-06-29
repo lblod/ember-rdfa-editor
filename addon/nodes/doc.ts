@@ -6,9 +6,10 @@ interface DocumentConfig {
 
 export const doc: (config?: DocumentConfig) => NodeSpec = ({
   defaultLanguage = 'nl-BE',
+  content = 'block+',
 } = {}) => {
   return {
-    content: 'block+',
+    content,
     attrs: {
       lang: {
         default: defaultLanguage,
