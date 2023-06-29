@@ -21,7 +21,7 @@ export const doc: (config: DocumentConfig) => NodeSpec = (
         tag: 'div',
         getAttrs(node: HTMLElement) {
           return {
-            lang: node.lang,
+            lang: node.getAttribute('lang'),
           };
         },
       },
