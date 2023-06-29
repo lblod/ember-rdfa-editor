@@ -25,7 +25,11 @@ export const doc: (config?: DocumentConfig) => NodeSpec = ({
       },
     ],
     toDOM(node) {
-      return ['div', { lang: node.attrs.lang as string }, 0];
+      return [
+        'div',
+        { lang: node.attrs.lang as string, 'data-say-document': true },
+        0,
+      ];
     },
   };
 };
