@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -96,7 +96,7 @@
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
     "@ember/test-helpers": "^2.9.3",
-    "@embroider/test-setup": "^2.1.1",
+    "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
     "@rdfjs/types": "^1.1.0",
     "@release-it/keep-a-changelog": "^3.1.0",

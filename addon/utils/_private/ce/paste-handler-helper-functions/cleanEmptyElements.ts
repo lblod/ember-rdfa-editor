@@ -1,12 +1,20 @@
 import { traverseElements } from './traverseElements';
 
 const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG'];
+const NOTRIM_ELEMENTS = ['SPAN'];
 
 function isEmpty(element: Element): boolean {
-  return (
-    !ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName) &&
-    !element.innerHTML.trim()
-  );
+  if (ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName)) {
+    return false;
+  }
+  let content;
+  if (NOTRIM_ELEMENTS.includes(element.nodeName)) {
+    content = element.innerHTML;
+  } else {
+    content = element.innerHTML.trim();
+  }
+
+  return !content;
 }
 
 function removeIfEmpty(element: Element): void {

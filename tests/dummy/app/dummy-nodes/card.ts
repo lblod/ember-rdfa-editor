@@ -9,12 +9,11 @@ const emberNodeConfig: EmberNodeConfig = {
   componentPath: 'sample-ember-nodes/card',
   inline: false,
   group: 'block',
-  content: 'inline*',
+  content: 'block+',
   atom: false,
-  draggable: true,
-  stopEvent() {
-    return false;
-  },
+  draggable: false,
+  selectable: true,
+  isolating: true,
 };
 
 export const card = createEmberNodeSpec(emberNodeConfig);

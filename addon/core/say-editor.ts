@@ -33,12 +33,14 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
   baseIRI: string;
-  plugins?: Plugin[];
+  plugins?: PluginConfig;
+
   keyMapOptions?: KeymapOptions;
   nodeViews?: (
     controller: SayController
@@ -76,11 +78,14 @@ export default class SayEditor {
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.baseIRI = baseIRI;
     this.schema = schema;
-    const state = EditorState.create({
-      doc: ProseParser.fromSchema(this.schema).parse(target),
-      plugins: [
+    const pluginArr = plugins instanceof Array ? plugins : plugins.plugins;
+    let pluginConf;
+    if ('override' in plugins && plugins.override) {
+      pluginConf = pluginArr;
+    } else {
+      pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
-        ...plugins,
+        ...pluginArr,
         pasteHandler(),
         dropCursor(),
         gapCursor(),
@@ -96,7 +101,12 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
-      ],
+      ];
+    }
+
+    const state = EditorState.create({
+      doc: ProseParser.fromSchema(this.schema).parse(target),
+      plugins: pluginConf,
     });
     this.mainView = new SayView(target, {
       state,

@@ -1,4 +1,4 @@
-pipeline:
+steps:
   build-pr:
     image: plugins/docker
     settings:

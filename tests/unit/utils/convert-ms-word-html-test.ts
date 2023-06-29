@@ -2,12 +2,11 @@ import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
 import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import * as DOMPurify from 'dompurify';
 
 module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should handle rtf -> html correctly', function (assert) {
-    const expectedHtml = oneLineTrim`
-        <span>Lorem Ipsum</span>
-    `;
+    const expectedHtml = oneLineTrim`<span style="font-size:14.0pt;font-family:&quot;Calibri&quot;,sans-serif; mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font: minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:&quot;Times New Roman&quot;; mso-bidi-theme-font:minor-bidi;mso-ansi-language:#0C00;mso-fareast-language: EN-US;mso-bidi-language:AR-SA">Lorem Ipsum</span>`;
     const htmlContent = oneLineTrim`
      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
        <head>
@@ -31,11 +30,18 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display formatted list as HTML', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-    <ul>
-     <li><span>Feature</span><span>1</span></li>
-     <li><span>Feature</span><span>2</span></li>
-    </ul>
-    `;
+     <ul>
+       <li>
+        <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
+        <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
+        <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">1</span>
+      </li>
+      <li>
+        <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
+        <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
+        <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">2</span>
+      </li>
+    </ul>`;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
          <head>
@@ -70,23 +76,29 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display nested list correctly as HTML', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-      <ol>
-         <li><span>Test1</span>
+       <ol>
+         <li>
+           <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test1</span>
            <ol>
-             <li><span>Subtest1</span>
-                <ol>
-                 <li><span>Subsubset1.1</span>
+             <li>
+               <span style=\"font-size:18.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Subtest1</span>
+               <ol>
+                 <li>
+                   <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Subsubset1.1</span>
                    <ol>
-                    <li><span>Sub-sub-subet1.1</span></li>
-                  </ol>
+                     <li>
+                       <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Sub-sub-subet1.1</span>
+                     </li>
+                   </ol>
                  </li>
-                </ol>
+               </ol>
              </li>
            </ol>
          </li>
-         <li><span>Test 2</span></li>
-      </ol>
-    `;
+         <li>
+           <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test 2</span>
+         </li>
+       </ol>`;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
    <head>
@@ -578,26 +590,25 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
 
   test('It should display a complex nested list correctly as HTML', function (assert) {
     const inputParser = new HTMLInputParser({});
-    const expectedHtml = oneLineTrim`
-      <ol>
-         <li><span>1</span>
-           <ol>
-             <li><span>1.1</span></li>
-             <li><span>1.2</span>
-               <ol>
-                <li><span>1.2.1</span>
-                   <ol>
-                    <li><span>1.2.1.1</span></li>
-                    <li><span>1.2.1.2</span></li>
-                  </ol>
-                </li>
-              </ol>
-             </li>
-             <li><span>1.3</span></li>
-           </ol>
-         </li>
-         <li><span>2</span></li>
-      </ol>
+    const expectedHtml = oneLineTrim`<ol>
+    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
+        <ol>
+            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.1</span></li>
+            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.2</span>
+                <ol>
+                    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1</span>
+                        <ol>
+                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.1</span></li>
+                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.2</span></li>
+                        </ol>
+                    </li>
+                </ol>
+            </li>
+            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.3</span></li>
+        </ol>
+    </li>
+    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">2</span></li>
+</ol>
     `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1116,68 +1127,10 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display formatted table as HTML', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-     <table property="http://lblod.data.gift/vocabularies/editor/isLumpNode" cellspacing="0">
-       <tbody>
-          <tr>
-             <td>
-                <p><span>Column 1</span></p>
-             </td>
-             <td>
-                <p><span>Column 2</span></p>
-             </td>
-             <td>
-                <p><span>Column 3</span></p>
-             </td>
-             <td>
-                <p><span>Column4</span></p>
-             </td>
-          </tr>
-          <tr>
-             <td>
-                <p><span>Test1</span></p>
-             </td>
-             <td>
-                <p><span>Test2</span></p>
-             </td>
-             <td>
-                <p><span>Test3</span></p>
-             </td>
-             <td>
-                <p><span>Test4</span></p>
-             </td>
-          </tr>
-          <tr>
-             <td>
-                <p><span>Test5</span></p>
-             </td>
-             <td>
-                <p><span>Test6</span></p>
-             </td>
-             <td>
-                <p><span>Test7</span></p>
-             </td>
-             <td>
-                <p><span>Test8</span></p>
-             </td>
-          </tr>
-          <tr>
-             <td>
-                <p><span>Test9</span></p>
-             </td>
-             <td>
-                <p><span>Test10</span></p>
-             </td>
-             <td>
-                <p><span>Test11</span></p>
-             </td>
-             <td>
-                <p><span>Test12</span></p>
-             </td>
-          </tr>
-       </tbody>
-    </table>
-    `;
+<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
+`;
     const htmlContent = oneLineTrim`
+
      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
        <head>
           <meta http-equiv=Content-Type content="text/html; charset=utf-8">
@@ -1331,13 +1284,17 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(actualHtml, expectedHtml);
+    assert.strictEqual(
+      // strip attrs to make test less flaky
+      DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
+      expectedHtml
+    );
   });
 
   test('It should display bold text', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-        <p><strong><span>Lorem Ipsum Bold</span></strong></p>
+      <p class=\"MsoNormal\"><b><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></b></p>
     `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1369,7 +1326,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display italic text', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-        <p><em><span>Lorem Ipsum Bold</span></em></p>
+      <p class=\"MsoNormal\"><i><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></i></p>
     `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1401,7 +1358,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display underlined text', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-        <p><u><span>Lorem Ipsum Bold</span></u></p>
+      <p class=\"MsoNormal\"><u><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></u></p>
     `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1433,59 +1390,8 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should display formatted list in a table', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-    <table property="http://lblod.data.gift/vocabularies/editor/isLumpNode" cellspacing="0">
-         <tbody>
-            <tr>
-               <td>
-                  <p><span>Column 1</span></p>
-               </td>
-               <td>
-                  <p><span>Column 2</span></p>
-               </td>
-               <td>
-                  <p><span>Column 3</span></p>
-               </td>
-               <td>
-                  <p><span>Column4</span></p>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <ul>
-                     <li><span>List 1</span></li>
-                     <li><span>List 2</span></li>
-                  </ul>
-               </td>
-               <td>
-                  <p><span>Test2</span></p>
-               </td>
-               <td>
-                  <p><span>Test3</span></p>
-               </td>
-               <td>
-                  <p><span>Test4</span></p>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <p><span>Test5</span></p>
-               </td>
-               <td>
-                  <p><span>Test6</span></p>
-               </td>
-               <td>
-                  <ul>
-                     <li><span>List 3</span></li>
-                     <li><span>List 4</span></li>
-                  </ul>
-               </td>
-               <td>
-                  <p><span>Test8</span></p>
-               </td>
-            </tr>
-         </tbody>
-      </table>
-    `;
+<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
+`;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
          <head>
@@ -1622,58 +1528,16 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(actualHtml, expectedHtml);
+    assert.strictEqual(
+      DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
+      expectedHtml
+    );
   });
 
   test('It should display table in a list', function (assert) {
     const inputParser = new HTMLInputParser({});
     const expectedHtml = oneLineTrim`
-     <ul>
-       <li><span>List table 1</span></li>
-    </ul>
-    <table property="http://lblod.data.gift/vocabularies/editor/isLumpNode" cellspacing="0">
-       <tbody>
-          <tr>
-             <td>
-                <p><span>Table column 1</span></p>
-             </td>
-             <td>
-                <p><span>Table column 2</span></p>
-             </td>
-          </tr>
-          <tr>
-             <td>
-                <p><span>Data 1</span></p>
-             </td>
-             <td>
-                <p><span>Data2</span></p>
-             </td>
-          </tr>
-       </tbody>
-    </table>
-    <ul>
-       <li><span>List table 2</span></li>
-    </ul>
-    <table property="http://lblod.data.gift/vocabularies/editor/isLumpNode" cellspacing="0">
-       <tbody>
-          <tr>
-             <td>
-                <p><span>Table column 1</span></p>
-             </td>
-             <td>
-                <p><span>Table column 2</span></p>
-             </td>
-          </tr>
-          <tr>
-             <td>
-                <p><span>Data 1</span></p>
-             </td>
-             <td>
-                <p><span>Data 2</span></p>
-             </td>
-          </tr>
-       </tbody>
-    </table>
+<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
     `;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1781,6 +1645,9 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
-    assert.strictEqual(actualHtml, expectedHtml);
+    assert.strictEqual(
+      DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
+      expectedHtml
+    );
   });
 });

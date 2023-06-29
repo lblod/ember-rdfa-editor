@@ -9,15 +9,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - remove unused say-editor specific svgs
+### Changed
+- Improve behaviour of ember-nodes with editable content
+- Woodpecker: do not run changelog-check when PR contains `dependabot` label
+
+### Breaking
+- The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
+- The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
+### Dependencies
+- Bumps `@codemirror/view` from 6.13.1 to 6.13.2
+- Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
+- Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
+- Bumps `@types/qunit` from 2.19.5 to 2.19.6
+- Bumps `@typescript-eslint/parser` from 5.60.0 to 5.60.1
+- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.1
+- Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
+- Bumps `prosemirror-view` from 1.31.4 to 1.31.5
+- Bumps `ember-template-lint` from 5.10.3 to 5.11.0
+- Bumps `ember-template-lint` from 5.7.3 to 5.11.0
+- Bumps `webpack` from 5.88.0 to 5.88.1
+- Bumps `webpack` from 5.87.0 to 5.88.1
+- Bumps `eslint-plugin-ember` from 11.8.0 to 11.9.0
+- Bumps `@codemirror/lang-html` from 6.4.4 to 6.4.5
+
+## [3.10.0] - 2023-06-22
+### Fixed
+- better handle weird edgecases when copying from word
+
+### Internal
+- use `github.token` for github checkout action
 ### Dependencies
 - Bumps `prosemirror-view` from 1.31.3 to 1.31.4
 - Bumps `xml-formatter` from 3.3.2 to 3.4.1
 - Bumps `@types/uuid` from 9.0.1 to 9.0.2
+- Bumps `ember-cli-dependency-checker` from 3.3.1 to 3.3.2
+- Bumps `sass` from 1.63.5 to 1.63.6
+- Bumps `sass` from 1.62.1 to 1.63.6
+- Bumps `rdf-data-factory` from 1.1.1 to 1.1.2
+- Bumps `eslint` from 8.42.0 to 8.43.0
+- Bumps `@types/ember__string` from 3.0.10 to 3.0.11
+- Bumps `prosemirror-schema-basic` from 1.2.1 to 1.2.2
+### Changed
+- fix woodpecker syntax
+- replacement of github ensure-changelog action by changelog check in woodpecker CI
+- `SayController::setHtmlContent` can now receive `shouldFocus` option which determines whether editor will be focused or not after calling `setHtmlContent`. Defaults to `true` for back compatibility.
 
 ## [3.9.0] - 2023-06-18
 
 ### Added
 - add pr template
+- add ability to completely override plugin array
 - Addition of `getGroups` and `hasGroups` utility functions
 ### Dependencies
 - Bumps `@codemirror/state` from 6.2.0 to 6.2.1
@@ -78,6 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.7.1] - 2023-05-17
 ### Fixed
 - Show correct import for heading node in documentation
+- Whitespace is not removed in table headers
 - correct woodpecker secret indentation
 
 ## [3.7.0] - 2023-05-12
@@ -1676,7 +1718,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...HEAD
+[3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.7.2...v3.8.0

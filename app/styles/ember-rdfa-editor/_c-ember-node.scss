@@ -13,4 +13,8 @@ span.ember-node {
       min-height: 50px;
     }
   }
+
+  [data-ember-node-content='true'] {
+    white-space: break-spaces;
+  }
 }
