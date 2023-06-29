@@ -70,7 +70,7 @@ export async function renderEditor() {
 }
 
 const nodes = {
-  doc,
+  doc: doc(),
   paragraph,
 
   repaired_block,
