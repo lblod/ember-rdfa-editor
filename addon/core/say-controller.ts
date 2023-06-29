@@ -14,6 +14,7 @@ import {
 } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
+import { PNode } from '@lblod/ember-rdfa-editor';
 
 export default class SayController {
   @tracked
@@ -44,14 +45,21 @@ export default class SayController {
     const { shouldFocus = true } = options;
 
     const domParser = new DOMParser();
-    const parsedBody = domParser.parseFromString(content, 'text/html').body;
-    const documentConfig = {
-      lang: parsedBody.firstElementChild?.getAttribute('lang') ?? undefined,
-    };
-    const doc = ProseParser.fromSchema(this.schema).parse(parsedBody, {
-      preserveWhitespace: true,
-      topNode: this.schema.nodes.doc.create(documentConfig),
-    });
+    const parsed = domParser.parseFromString(content, 'text/html').body;
+    const documentDiv = parsed.querySelector('div[data-say-document="true"]');
+    let doc: PNode;
+    if (documentDiv) {
+      doc = ProseParser.fromSchema(this.schema).parse(documentDiv, {
+        preserveWhitespace: true,
+        topNode: this.schema.nodes.doc.create({
+          lang: documentDiv.getAttribute('lang') ?? undefined,
+        }),
+      });
+    } else {
+      doc = ProseParser.fromSchema(this.schema).parse(parsed, {
+        preserveWhitespace: true,
+      });
+    }
     this.editor.mainView.updateState(
       EditorState.create({ doc, plugins: this.mainEditorState.plugins })
     );
