@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Improve behaviour of ember-nodes with editable content
+- Woodpecker: do not run changelog-check when PR contains `dependabot` label
 
 ### Breaking
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
