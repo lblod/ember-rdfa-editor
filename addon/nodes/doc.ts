@@ -1,19 +1,17 @@
 import { NodeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
-  defaultLanguage: string;
+  defaultLanguage?: string;
 }
 
-export const doc: (config?: DocumentConfig) => NodeSpec = (
-  config = {
-    defaultLanguage: 'nl-BE',
-  }
-) => {
+export const doc: (config?: DocumentConfig) => NodeSpec = ({
+  defaultLanguage = 'nl-BE',
+} = {}) => {
   return {
     content: 'block+',
     attrs: {
       lang: {
-        default: config.defaultLanguage,
+        default: defaultLanguage,
       },
     },
     parseDOM: [
