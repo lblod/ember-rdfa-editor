@@ -4,7 +4,7 @@ interface DocumentConfig {
   defaultLanguage: string;
 }
 
-export const doc: (config: DocumentConfig) => NodeSpec = (
+export const doc: (config?: DocumentConfig) => NodeSpec = (
   config = {
     defaultLanguage: 'nl-BE',
   }
