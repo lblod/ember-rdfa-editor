@@ -2,8 +2,11 @@ import { NodeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
   defaultLanguage?: string;
+  content?: string;
 }
 
+// Note: the `doc` node-spec does not have any parsing rules, as the parsing of the doc node is done in the `setHtmlContent` method
+// of the `SayController` class.
 export const doc: (config?: DocumentConfig) => NodeSpec = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
@@ -15,16 +18,6 @@ export const doc: (config?: DocumentConfig) => NodeSpec = ({
         default: defaultLanguage,
       },
     },
-    parseDOM: [
-      {
-        tag: 'div',
-        getAttrs(node: HTMLElement) {
-          return {
-            lang: node.getAttribute('lang'),
-          };
-        },
-      },
-    ],
     toDOM(node) {
       return [
         'div',
