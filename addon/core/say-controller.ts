@@ -12,7 +12,7 @@ import {
   MarkType,
   Schema,
 } from 'prosemirror-model';
-import { Command, Selection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 
 export default class SayController {
@@ -42,23 +42,22 @@ export default class SayController {
 
   setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
     const { shouldFocus = true } = options;
+
+    const domParser = new DOMParser();
+    const parsedBody = domParser.parseFromString(content, 'text/html').body;
+    const documentConfig = {
+      lang: parsedBody.firstElementChild?.getAttribute('lang') ?? undefined,
+    };
+    const doc = ProseParser.fromSchema(this.schema).parse(parsedBody, {
+      preserveWhitespace: true,
+      topNode: this.schema.nodes.doc.create(documentConfig),
+    });
+    this.editor.mainView.updateState(
+      EditorState.create({ doc, plugins: this.mainEditorState.plugins })
+    );
     if (shouldFocus) {
       this.focus();
     }
-    const tr = this.mainEditorState.tr;
-    const domParser = new DOMParser();
-    tr.replaceWith(
-      0,
-      tr.doc.nodeSize - 2,
-      ProseParser.fromSchema(this.schema).parse(
-        domParser.parseFromString(content, 'text/html'),
-        {
-          preserveWhitespace: true,
-        }
-      )
-    );
-    tr.setSelection(Selection.atEnd(tr.doc));
-    this.editor.mainView.dispatch(tr);
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
@@ -143,11 +142,11 @@ export default class SayController {
 
   get htmlContent(): string {
     const div = document.createElement('div');
-    DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.mainEditorState.doc.content,
-      undefined,
-      div
+    const doc = DOMSerializer.fromSchema(this.schema).serializeNode(
+      this.mainEditorState.doc,
+      undefined
     );
+    div.appendChild(doc);
     return div.innerHTML;
   }
 
