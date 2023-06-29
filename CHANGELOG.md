@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
 - Bumps `@types/qunit` from 2.19.5 to 2.19.6
-- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.0
+- Bumps `@typescript-eslint/parser` from 5.60.0 to 5.60.1
+- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.1
 - Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
 - Bumps `prosemirror-view` from 1.31.4 to 1.31.5
 - Bumps `ember-template-lint` from 5.7.3 to 5.10.3
