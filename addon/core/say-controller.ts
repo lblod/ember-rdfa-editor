@@ -15,7 +15,6 @@ import {
 } from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import { ProseParser } from '@lblod/ember-rdfa-editor';
 
 export default class SayController {
   @tracked
