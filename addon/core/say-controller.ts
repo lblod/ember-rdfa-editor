@@ -73,18 +73,9 @@ export default class SayController {
     if (shouldFocus) {
       this.focus();
     }
+    const doc = htmlToDoc(content, { schema: this.schema });
     const tr = this.mainEditorState.tr;
-    const domParser = new DOMParser();
-    tr.replaceWith(
-      0,
-      tr.doc.nodeSize - 2,
-      ProseParser.fromSchema(this.schema).parse(
-        domParser.parseFromString(content, 'text/html'),
-        {
-          preserveWhitespace: true,
-        }
-      )
-    );
+    tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));
     this.editor.mainView.dispatch(tr);
   }
