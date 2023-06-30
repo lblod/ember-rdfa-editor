@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Addition of documentLanguage getter and setter to SayController
 - Addition of a `SetDocAttribute` step, which allows updating the attribute value on the `doc` node.
+- Addition of an `initialize` method to the `SayController` which allows re-initializing the editor given an html string.
 
 ### Changed
 - Improve behaviour of ember-nodes with editable content
@@ -20,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
 - The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
 - Update the `doc` nodeSpec to support a language attribute. `doc` is now a function which takes an optional config containing a defaultLanguage setting, `doc` will use that defaultLanguage as the default value of its `lang` property
-- The `setHtmlContent` method of the controller now creates a new `ProsemirrorState` instead of updating the current `ProsemirrorState`. Plugin state (e.g. history state) is not carried over.
 
 ### Dependencies
 - Bumps `@codemirror/view` from 6.13.1 to 6.13.2

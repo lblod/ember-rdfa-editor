@@ -6,15 +6,16 @@ import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
+import { DOMSerializer, MarkType, Schema } from 'prosemirror-model';
 import {
-  DOMParser as ProseParser,
-  DOMSerializer,
-  MarkType,
-  Schema,
-} from 'prosemirror-model';
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+  Command,
+  EditorState,
+  Selection,
+  Transaction,
+} from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import { ProseParser } from '@lblod/ember-rdfa-editor';
 
 export default class SayController {
   @tracked
@@ -41,31 +42,51 @@ export default class SayController {
     this.editor.setActiveView(view);
   }
 
-  setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
-    const { shouldFocus = true } = options;
+  /**
+   * Replaces the state (and current document) with a parsed version of the provided `html` string.
+   * This method creates a new `doc` node and parses it correctly based on the provided html.
+   * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
+   */
+  initialize(html: string, { shouldFocus = true } = {}) {
+    const doc = htmlToDoc(html, { schema: this.schema });
 
-    const domParser = new DOMParser();
-    const parsed = domParser.parseFromString(content, 'text/html').body;
-    const documentDiv = parsed.querySelector('div[data-say-document="true"]');
-    let doc: PNode;
-    if (documentDiv) {
-      doc = ProseParser.fromSchema(this.schema).parse(documentDiv, {
-        preserveWhitespace: true,
-        topNode: this.schema.nodes.doc.create({
-          lang: documentDiv.getAttribute('lang') ?? undefined,
-        }),
-      });
-    } else {
-      doc = ProseParser.fromSchema(this.schema).parse(parsed, {
-        preserveWhitespace: true,
-      });
-    }
     this.editor.mainView.updateState(
-      EditorState.create({ doc, plugins: this.mainEditorState.plugins })
+      EditorState.create({
+        doc,
+        plugins: this.mainEditorState.plugins,
+        selection: Selection.atEnd(doc),
+      })
     );
+
     if (shouldFocus) {
       this.focus();
     }
+  }
+
+  /**
+   * setHtmlContent replaces the content of the current document with the provided html
+   * Note: it does not create a new `doc` node and does not update the `doc` node based on the provided html
+   * (e.g. `lang` attributes on the `doc` node are not parsed)
+   */
+  setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
+    const { shouldFocus = true } = options;
+    if (shouldFocus) {
+      this.focus();
+    }
+    const tr = this.mainEditorState.tr;
+    const domParser = new DOMParser();
+    tr.replaceWith(
+      0,
+      tr.doc.nodeSize - 2,
+      ProseParser.fromSchema(this.schema).parse(
+        domParser.parseFromString(content, 'text/html'),
+        {
+          preserveWhitespace: true,
+        }
+      )
+    );
+    tr.setSelection(Selection.atEnd(tr.doc));
+    this.editor.mainView.dispatch(tr);
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
