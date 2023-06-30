@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `webpack` from 5.87.0 to 5.88.1
 - Bumps `eslint-plugin-ember` from 11.8.0 to 11.9.0
 - Bumps `@codemirror/lang-html` from 6.4.4 to 6.4.5
+- Bumps `eslint-plugin-qunit` from 7.3.4 to 8.0.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
