@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve behaviour of ember-nodes with editable content
 - Update the dummy counter node to make use of new document language feature
 - Updated behaviour of `htmlContent` getter and setter to take into document node and lang attribute into account
+- Woodpecker: do not run changelog-check when PR contains `dependabot` label
+### Removed
+- remove unused say-editor specific svgs
 
 ### Breaking
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
@@ -27,12 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
 - Bumps `@types/qunit` from 2.19.5 to 2.19.6
-- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.0
+- Bumps `@typescript-eslint/parser` from 5.60.0 to 5.60.1
+- Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.1
 - Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
 - Bumps `prosemirror-view` from 1.31.4 to 1.31.5
-- Bumps `ember-template-lint` from 5.7.3 to 5.10.3
-- Bumps `webpack` from 5.87.0 to 5.88.0
+- Bumps `ember-template-lint` from 5.10.3 to 5.11.0
+- Bumps `ember-template-lint` from 5.7.3 to 5.11.0
+- Bumps `webpack` from 5.88.0 to 5.88.1
+- Bumps `webpack` from 5.87.0 to 5.88.1
 - Bumps `eslint-plugin-ember` from 11.8.0 to 11.9.0
+- Bumps `@codemirror/lang-html` from 6.4.4 to 6.4.5
+- Bumps `eslint-plugin-qunit` from 7.3.4 to 8.0.0
+- Bumps `dompurify` from 3.0.3 to 3.0.4
+- Bumps `@typescript-eslint/eslint-plugin` from 5.59.11 to 5.60.1
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
