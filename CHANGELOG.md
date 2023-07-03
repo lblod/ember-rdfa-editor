@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
 
 ### Dependencies
-- Bumps `@codemirror/view` from 6.13.1 to 6.13.2
+- Bumps `@codemirror/view` from 6.13.2 to 6.14.0
+- Bumps `@codemirror/view` from 6.13.1 to 6.14.0
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
 - Bumps `@types/qunit` from 2.19.5 to 2.19.6
@@ -44,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-plugin-qunit` from 7.3.4 to 8.0.0
 - Bumps `dompurify` from 3.0.3 to 3.0.4
 - Bumps `@typescript-eslint/eslint-plugin` from 5.59.11 to 5.60.1
+- Bumps `eslint` from 8.43.0 to 8.44.0
+- Bumps `sinon` from 15.1.2 to 15.2.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
