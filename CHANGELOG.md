@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-plugin-qunit` from 7.3.4 to 8.0.0
 - Bumps `dompurify` from 3.0.3 to 3.0.4
 - Bumps `@typescript-eslint/eslint-plugin` from 5.59.11 to 5.60.1
+- Bumps `eslint` from 8.43.0 to 8.44.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
