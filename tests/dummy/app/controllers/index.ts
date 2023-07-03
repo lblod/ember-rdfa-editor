@@ -12,7 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -70,7 +70,7 @@ export default class IndexController extends Controller {
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
-      doc: doc({
+      doc: docWithConfig({
         defaultLanguage: 'nl-BE',
       }),
       paragraph,

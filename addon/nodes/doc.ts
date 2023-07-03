@@ -7,7 +7,7 @@ interface DocumentConfig {
 
 // Note: the `doc` node-spec does not have any parsing rules, as the parsing of the doc node is done in the `initalize` method
 // of the `SayController` class.
-export const doc: (config?: DocumentConfig) => NodeSpec = ({
+export const docWithConfig: (config?: DocumentConfig) => NodeSpec = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
 } = {}) => {
@@ -27,3 +27,5 @@ export const doc: (config?: DocumentConfig) => NodeSpec = ({
     },
   };
 };
+
+export const doc = docWithConfig();

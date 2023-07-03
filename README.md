@@ -87,7 +87,7 @@ export default class EditorComponent extends Component {
     // A prosemirror schema which determines how documents are parsed and written to the DOM.
     return new Schema({
       nodes: {
-        doc: doc({
+        doc: docWithConfig({
           defaultLanguage: 'nl-BE',
         }),
         paragraph,

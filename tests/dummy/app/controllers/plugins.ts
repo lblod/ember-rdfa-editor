@@ -4,7 +4,7 @@ import { tracked } from 'tracked-built-ins';
 import { Schema } from 'prosemirror-model';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   invisible_rdfa,
@@ -75,7 +75,7 @@ export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
   schema = new Schema({
     nodes: {
-      doc: doc({
+      doc: docWithConfig({
         defaultLanguage: 'nl-BE',
       }),
       paragraph,
