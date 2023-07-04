@@ -64,7 +64,7 @@
     "ember-feature-flags": "^6.0.0",
     "ember-focus-trap": "^1.0.1",
     "ember-get-config": "^2.0.0",
-    "ember-intl": "^5.7.2",
+    "ember-intl": "^6.0.0",
     "ember-truth-helpers": "^3.0.0",
     "ember-unique-id-helper-polyfill": "^1.2.2",
     "ember-velcro": "^2.1.0",
