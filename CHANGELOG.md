@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint` from 8.43.0 to 8.44.0
 - Bumps `sinon` from 15.1.2 to 15.2.0
 - Bumps `@types/sinon` from 10.0.13 to 10.0.15
+- Bumps `ember-intl` from 5.7.2 to 6.0.0
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
