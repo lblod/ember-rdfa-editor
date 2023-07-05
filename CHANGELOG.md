@@ -32,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@ember/render-modifiers` from 2.0.5 to 2.1.0
 - Bumps `prosemirror-tables` from 1.3.3 to 1.3.4
 - Bumps `@types/qunit` from 2.19.5 to 2.19.6
-- Bumps `@typescript-eslint/parser` from 5.60.0 to 5.60.1
+- Bumps `@typescript-eslint/parser` from 5.60.1 to 5.61.0
+- Bumps `@typescript-eslint/parser` from 5.60.0 to 5.61.0
 - Bumps `@typescript-eslint/parser` from 5.59.9 to 5.60.1
 - Bumps `@embroider/test-setup` from 2.1.1 to 3.0.1
 - Bumps `prosemirror-view` from 1.31.4 to 1.31.5
@@ -44,9 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/lang-html` from 6.4.4 to 6.4.5
 - Bumps `eslint-plugin-qunit` from 7.3.4 to 8.0.0
 - Bumps `dompurify` from 3.0.3 to 3.0.4
-- Bumps `@typescript-eslint/eslint-plugin` from 5.59.11 to 5.60.1
+- Bumps `@typescript-eslint/eslint-plugin` from 5.60.1 to 5.61.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.59.11 to 5.61.0
 - Bumps `eslint` from 8.43.0 to 8.44.0
 - Bumps `sinon` from 15.1.2 to 15.2.0
+- Bumps `@types/sinon` from 10.0.13 to 10.0.15
 
 ## [3.10.0] - 2023-06-22
 ### Fixed
