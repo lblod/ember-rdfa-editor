@@ -6,13 +6,15 @@ import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
+import { DOMSerializer, MarkType, Schema } from 'prosemirror-model';
 import {
-  DOMParser as ProseParser,
-  DOMSerializer,
-  MarkType,
-  Schema,
-} from 'prosemirror-model';
-import { Command, Selection, Transaction } from 'prosemirror-state';
+  Command,
+  EditorState,
+  Selection,
+  Transaction,
+} from 'prosemirror-state';
+import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
+import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 export default class SayController {
   @tracked
@@ -39,23 +41,40 @@ export default class SayController {
     this.editor.setActiveView(view);
   }
 
+  /**
+   * Replaces the state (and current document) with a parsed version of the provided `html` string.
+   * This method creates a new `doc` node and parses it correctly based on the provided html.
+   * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
+   */
+  initialize(html: string, { shouldFocus = true } = {}) {
+    const doc = htmlToDoc(html, { schema: this.schema });
+
+    this.editor.mainView.updateState(
+      EditorState.create({
+        doc,
+        plugins: this.mainEditorState.plugins,
+        selection: Selection.atEnd(doc),
+      })
+    );
+
+    if (shouldFocus) {
+      this.focus();
+    }
+  }
+
+  /**
+   * setHtmlContent replaces the content of the current document with the provided html
+   * Note: it does not create a new `doc` node and does not update the `doc` node based on the provided html
+   * (e.g. `lang` attributes on the `doc` node are not parsed)
+   */
   setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
     const { shouldFocus = true } = options;
     if (shouldFocus) {
       this.focus();
     }
+    const doc = htmlToDoc(content, { schema: this.schema });
     const tr = this.mainEditorState.tr;
-    const domParser = new DOMParser();
-    tr.replaceWith(
-      0,
-      tr.doc.nodeSize - 2,
-      ProseParser.fromSchema(this.schema).parse(
-        domParser.parseFromString(content, 'text/html'),
-        {
-          preserveWhitespace: true,
-        }
-      )
-    );
+    tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));
     this.editor.mainView.dispatch(tr);
   }
@@ -105,6 +124,16 @@ export default class SayController {
     return this.editor.owner;
   }
 
+  get documentLanguage() {
+    return this.mainEditorState.doc.attrs.lang as string;
+  }
+
+  set documentLanguage(language: string) {
+    this.withTransaction((tr) => {
+      return tr.step(new SetDocAttributeStep('lang', language));
+    });
+  }
+
   toggleRdfaBlocks() {
     console.log('TOGGLE');
     this.editor.showRdfaBlocks = !this.editor.showRdfaBlocks;
@@ -132,11 +161,11 @@ export default class SayController {
 
   get htmlContent(): string {
     const div = document.createElement('div');
-    DOMSerializer.fromSchema(this.schema).serializeFragment(
-      this.mainEditorState.doc.content,
-      undefined,
-      div
+    const doc = DOMSerializer.fromSchema(this.schema).serializeNode(
+      this.mainEditorState.doc,
+      undefined
     );
+    div.appendChild(doc);
     return div.innerHTML;
   }
 

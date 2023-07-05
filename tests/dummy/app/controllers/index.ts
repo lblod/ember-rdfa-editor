@@ -12,7 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -70,7 +70,9 @@ export default class IndexController extends Controller {
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
-      doc,
+      doc: docWithConfig({
+        defaultLanguage: 'nl-BE',
+      }),
       paragraph,
 
       repaired_block,
@@ -152,7 +154,7 @@ export default class IndexController extends Controller {
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
-    this.rdfaEditor.setHtmlContent(presetContent);
+    this.rdfaEditor.initialize(presetContent);
     applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);

@@ -96,7 +96,7 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   setEditorContent(type: 'xml' | 'html', content: string) {
     if (this.controller) {
       if (type === 'html') {
-        this.controller.setHtmlContent(content);
+        this.controller.initialize(content);
         this.saveEditorContentToLocalStorage();
       }
     }

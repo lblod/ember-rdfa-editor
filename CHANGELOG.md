@@ -7,15 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-- remove unused say-editor specific svgs
+### Added
+- Addition of documentLanguage getter and setter to SayController
+- Addition of a `SetDocAttribute` step, which allows updating the attribute value on the `doc` node.
+- Addition of an `initialize` method to the `SayController` which allows re-initializing the editor given an html string.
+- Introduction of a `docWithConfig` function. This function produces a doc node-spec based on a `DocumentConfig` object. This config may contain the default language and the allowed content of a document.
+
 ### Changed
 - Improve behaviour of ember-nodes with editable content
+- Update the dummy counter node to make use of new document language feature
+- Updated behaviour of `htmlContent` getter and setter to take into document node and lang attribute into account
 - Woodpecker: do not run changelog-check when PR contains `dependabot` label
+- Addition of a `lang` attribute to the `doc` node-spec.
+### Removed
+- remove unused say-editor specific svgs
 
 ### Breaking
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
 - The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
+
 ### Dependencies
 - Bumps `@codemirror/view` from 6.13.2 to 6.14.0
 - Bumps `@codemirror/view` from 6.13.1 to 6.14.0

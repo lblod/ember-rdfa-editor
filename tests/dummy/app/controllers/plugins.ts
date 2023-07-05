@@ -4,7 +4,7 @@ import { tracked } from 'tracked-built-ins';
 import { Schema } from 'prosemirror-model';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   invisible_rdfa,
@@ -75,7 +75,9 @@ export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
   schema = new Schema({
     nodes: {
-      doc,
+      doc: docWithConfig({
+        defaultLanguage: 'nl-BE',
+      }),
       paragraph,
 
       repaired_block,
@@ -159,7 +161,7 @@ export default class IndexController extends Controller {
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
-    this.rdfaEditor.setHtmlContent(presetContent);
+    this.rdfaEditor.initialize(presetContent);
     applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
