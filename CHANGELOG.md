@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2023-07-05
+
 ### Added
 - Addition of documentLanguage getter and setter to SayController
 - Addition of a `SetDocAttribute` step, which allows updating the attribute value on the `doc` node.
@@ -1737,7 +1739,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...v4.0.0
 [3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
