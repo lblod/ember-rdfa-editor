@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Improve behaviour of ember-nodes with editable content
 - Update the dummy counter node to make use of new document language feature
-- Updated behaviour of `htmlContent` getter and setter to take into document node and lang attribute into account
 - Woodpecker: do not run changelog-check when PR contains `dependabot` label
 - Addition of a `lang` attribute to the `doc` node-spec.
 ### Removed
@@ -27,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking
 - The default behaviour of the `stopEvent` method of ember-nodeviews has changed in order to provide an improved handling of (input) event in and around ember-nodes
 - The default behaviour of the `ignoreMutation` method of ember-nodeviews has changed in order to provide better handling of mutations and selection changes in and around ember-nodes
+- Updated behaviour of `htmlContent` getter and setter to take into document node and lang attribute into account. Note: this getter now also serializes the `doc` node, so the output will slightly differ in comparison to previous releases.
+- The `doc` node-spec in your schema now needs a `toDOM` method as the `htmlContent` getter needs to be able to serialize it.
 
 ### Dependencies
 - Bumps `@codemirror/view` from 6.13.2 to 6.14.0
