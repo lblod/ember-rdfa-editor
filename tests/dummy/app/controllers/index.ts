@@ -118,7 +118,6 @@ export default class IndexController extends Controller {
   }
 
   @tracked plugins: PluginConfig = [
-    // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,

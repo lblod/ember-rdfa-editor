@@ -128,7 +128,6 @@ export default class BackspaceController extends Controller {
   }
 
   @tracked plugins: PluginConfig = [
-    // disabled until https://binnenland.atlassian.net/browse/GN-4147 is fixed
     firefoxCursorFix(),
     lastKeyPressedPlugin,
     tablePlugin,
