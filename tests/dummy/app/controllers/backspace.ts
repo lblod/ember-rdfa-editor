@@ -63,6 +63,8 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
+import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
+import { getOwner } from '@ember/application';
 
 export default class BackspaceController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -146,6 +148,7 @@ export default class BackspaceController extends Controller {
         ordered_list_input_rule(this.schema.nodes.ordered_list),
       ],
     }),
+    emberApplication({ application: getOwner(this) }),
   ];
   @tracked nodeViews = (controller: SayController) => {
     return {

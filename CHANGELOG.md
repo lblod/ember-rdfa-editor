@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
 ### Dependencies
 - Bumps `@codemirror/view` from 6.14.0 to 6.14.1
 
