@@ -64,5 +64,8 @@ ember-rdfa-editor:
     url-label: Afbeeldings-URL
     url-error: Enkel afbeeldings-URLs die beginnen met http(s) zijn toegelaten
     alt-label: Alternatieve tekst (Alt)
+  dummy:
+    counter:
+      label: Teller
 
 
