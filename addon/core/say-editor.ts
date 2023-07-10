@@ -33,6 +33,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
   owner: Owner;
@@ -57,6 +58,7 @@ export default class SayEditor {
   baseIRI: string;
   pathFromRoot: Node[];
   schema: Schema;
+  serializer: SaySerializer;
 
   private logger: Logger;
 
@@ -108,6 +110,7 @@ export default class SayEditor {
       doc: ProseParser.fromSchema(this.schema).parse(target),
       plugins: pluginConf,
     });
+    this.serializer = SaySerializer.fromSchema(this.schema, this);
     this.mainView = new SayView(target, {
       state,
       attributes: { class: 'say-editor__inner say-content' },
@@ -121,12 +124,23 @@ export default class SayEditor {
           this.setActiveView(this.mainView);
         },
       },
+      clipboardSerializer: this.serializer,
     });
     this.activeView = this.mainView;
   }
 
   setActiveView(view: SayView) {
     this.activeView = view;
+  }
+
+  get htmlContent(): string {
+    const div = document.createElement('div');
+    const doc = this.serializer.serializeNode(
+      this.mainView.state.doc,
+      undefined
+    );
+    div.appendChild(doc);
+    return div.innerHTML;
   }
 }
 
