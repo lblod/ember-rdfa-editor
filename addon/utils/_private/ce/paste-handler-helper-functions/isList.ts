@@ -12,7 +12,7 @@ export function isList(element: Element): boolean {
   }
 
   const hasMsoListIgnoreChild = Boolean(
-    element.querySelector('[style="mso-list:Ignore"]')
+    element.querySelector('[style="mso-list:Ignore"]'),
   );
 
   if (hasMsoListIgnoreChild) {

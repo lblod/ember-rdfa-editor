@@ -24,7 +24,7 @@ export enum PropertyState {
 export type TextOrElement = Text | HTMLElement;
 
 export function isTextOrElement(
-  node: Node | null | undefined
+  node: Node | null | undefined,
 ): node is TextOrElement {
   return (
     !!node &&

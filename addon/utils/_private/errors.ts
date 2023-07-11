@@ -24,7 +24,7 @@ export class MisbehavedSelectionError extends SelectionError {
 export class NoTopSelectionError extends SelectionError {
   constructor() {
     super(
-      'Unable to find commonAncestor children that are part of the selection'
+      'Unable to find commonAncestor children that are part of the selection',
     );
   }
 }

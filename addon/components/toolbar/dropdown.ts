@@ -16,7 +16,7 @@ export default class ToolbarDropdown extends Component<Args> {
     (element) => {
       this.referenceElement = element;
     },
-    { eager: false }
+    { eager: false },
   );
 
   @action
@@ -39,7 +39,7 @@ export default class ToolbarDropdown extends Component<Args> {
   @action
   async clickOutsideDeactivates(event: InputEvent) {
     const isClosedByToggleButton = this.referenceElement?.contains(
-      event.target as Node
+      event.target as Node,
     );
     if (!isClosedByToggleButton) {
       await this.closeDropdown();

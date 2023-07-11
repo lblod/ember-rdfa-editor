@@ -81,7 +81,7 @@ export default class HashSet<I> implements Set<I> {
 
   forEach(
     callbackfn: (value: I, value2: I, set: Set<I>) => void,
-    thisArg?: unknown
+    thisArg?: unknown,
   ): void {
     this.items.forEach((value) => callbackfn(value, value, this), thisArg);
   }

@@ -2,7 +2,7 @@ import { Node as PNode, ResolvedPos } from 'prosemirror-model';
 
 export function findAncestors(
   pos: ResolvedPos,
-  predicate: (node: PNode) => boolean = () => true
+  predicate: (node: PNode) => boolean = () => true,
 ) {
   const result: { node: PNode; pos: number }[] = [];
   let depth = pos.depth;
@@ -24,7 +24,7 @@ function* findChildren(
   filter: ({ from, to }: { from: number; to: number }) => boolean = () => true,
   stopCondition: ({ from, to }: { from: number; to: number }) => boolean = () =>
     false,
-  startIndex?: number
+  startIndex?: number,
 ): Generator<{ from: number; to: number }, void> {
   const node = pos === -1 ? doc : doc.nodeAt(pos);
   if (!node) {
@@ -121,7 +121,7 @@ export function* findNodes({
     ({ from, to }) => {
       return (reverse && to < end) || (!reverse && from > end);
     },
-    startIndex
+    startIndex,
   );
   if (visitParentUpwards && fromResolved.depth !== 0) {
     if (filter(parentRange)) {

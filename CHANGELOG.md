@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/eslint-plugin` from 5.61.0 to 6.0.0
 - Bumps `@typescript-eslint/parser` to 6.0.0
 - Bumps `semver` from 5.7.1 to 5.7.2
+- Bumps `prettier` from 2.8.8 to 3.0.0
+- Bumps `eslint-plugin-prettier` to 5.0.0
 
 ## [4.0.0] - 2023-07-05
 

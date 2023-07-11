@@ -50,7 +50,7 @@ export default class LinkEditor extends Component<Args> {
         (tr) => {
           return tr.replaceWith(pos, pos + node.nodeSize, node.content);
         },
-        { view: this.controller.mainEditorView }
+        { view: this.controller.mainEditorView },
       );
     }
   }

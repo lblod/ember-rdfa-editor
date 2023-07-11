@@ -10,7 +10,7 @@ export const clearHighlight: Command = (state, dispatch) => {
       tr.removeMark(
         selection.from,
         selection.to,
-        schema.marks.highlight
+        schema.marks.highlight,
       ).setSelection(Selection.near(tr.selection.$to));
     }
     dispatch(tr);

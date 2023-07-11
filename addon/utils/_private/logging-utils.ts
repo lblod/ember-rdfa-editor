@@ -73,12 +73,12 @@ interface LogMethodConfig {
  */
 export function logMethod(
   message: string | MethodMessageFunc = defaultLogMethodMessage,
-  { scopePrefix, scopeSuffix, scope }: LogMethodConfig
+  { scopePrefix, scopeSuffix, scope }: LogMethodConfig,
 ) {
   return function (
     target: Record<never, never>,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>
+    descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>,
   ) {
     const prefix = scopePrefix ? `${scopePrefix}:` : '';
     const suffix = scopeSuffix ? `:${scopeSuffix}` : '';
@@ -95,7 +95,7 @@ export function logMethod(
       } else {
         const compiledMessage: string | [string, ...unknown[]] = message(
           propertyKey,
-          ...args
+          ...args,
         );
         if (typeof compiledMessage === 'string') {
           doLog(compiledMessage);

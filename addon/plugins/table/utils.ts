@@ -29,7 +29,7 @@ import { cellAround, CellSelection, Direction } from 'prosemirror-tables';
 
 export function findNextCell(
   $cell: ResolvedPos,
-  dir: Direction
+  dir: Direction,
 ): number | null {
   if (dir < 0) {
     const before = $cell.nodeBefore;

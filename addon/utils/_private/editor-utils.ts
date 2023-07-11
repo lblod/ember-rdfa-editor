@@ -22,7 +22,7 @@ export function paintCycleHappened(): Promise<void> {
     requestAnimationFrame(() =>
       setTimeout(() => {
         cb();
-      }, 0)
+      }, 0),
     );
   });
 }
@@ -58,7 +58,7 @@ export function moveCaret(node: Node, position: number): null | Selection {
         const textNodeBeforeCursor = element.childNodes[position - 1] as Text;
         currentSelection.collapse(
           textNodeBeforeCursor,
-          textNodeBeforeCursor.length
+          textNodeBeforeCursor.length,
         );
       } else {
         currentSelection.collapse(node, position);
@@ -84,7 +84,7 @@ export function moveCaretBefore(child: ChildNode): null | Selection {
     return moveCaret(parentElement, indexOfChild);
   } else {
     console.warn(
-      'trying to move cursor before a child that is no longer connected to the dom tree'
+      'trying to move cursor before a child that is no longer connected to the dom tree',
     );
     return null;
   }
@@ -98,7 +98,7 @@ export function moveCaretAfter(child: ChildNode): null | Selection {
     return moveCaret(parentElement, indexOfChild + 1);
   } else {
     console.warn(
-      'trying to move cursor before a child that is no longer connected to the dom tree'
+      'trying to move cursor before a child that is no longer connected to the dom tree',
     );
     return null;
   }
@@ -159,7 +159,7 @@ export function hasVisibleChildren(parent: Element): boolean {
         editorDebug(
           'hasVisibleChildren',
           'assuming this node is not visible',
-          child
+          child,
         );
       }
     } else {
@@ -167,7 +167,7 @@ export function hasVisibleChildren(parent: Element): boolean {
       editorDebug(
         'hasVisibleChildren',
         'ignoring node, assuming non visible',
-        child
+        child,
       );
     }
   }
@@ -196,7 +196,7 @@ export function stringToVisibleText(string: string): string {
     .replace(new RegExp(`[${INVISIBLE_SPACE}]+`, 'g'), '')
     .replace(
       /[ \f\n\r\t\v\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
-      ''
+      '',
     );
 }
 

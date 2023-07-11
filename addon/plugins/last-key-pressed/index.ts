@@ -5,7 +5,7 @@ export type State = {
 };
 
 export const lastKeyPressedPluginKey = new PluginKey<State>(
-  'LAST_KEY_PRESSED_PLUGIN'
+  'LAST_KEY_PRESSED_PLUGIN',
 );
 
 export const lastKeyPressedPlugin = new Plugin<State>({

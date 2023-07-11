@@ -8,6 +8,6 @@ declare module '@lblod/marawa/rdfa-context-scanner' {
   export function analyse(
     node: Node,
     region?: Region,
-    options?: unknown
+    options?: unknown,
   ): RdfaBlock[];
 }

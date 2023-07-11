@@ -86,7 +86,7 @@ export default class ImageInsertMenu extends Component<Args> {
           src: this.url,
           alt: this.altText,
           height: this.defaultHeight,
-        })
+        }),
       );
     });
     this.resetValues();

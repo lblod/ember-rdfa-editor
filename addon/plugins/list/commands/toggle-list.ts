@@ -12,7 +12,7 @@ function isListNode(node: PNode) {
 export function toggleList(
   listType: NodeType,
   itemType: NodeType,
-  attrs?: Attrs
+  attrs?: Attrs,
 ): Command {
   return function (state, dispatch, view): boolean {
     const { selection } = state;

@@ -21,7 +21,7 @@ export default class HighlightMenu extends Component<Args> {
     (element: HTMLElement) => {
       this.dropdownButton = element;
     },
-    { eager: false }
+    { eager: false },
   );
   @tracked dropdownOpen = false;
   @tracked selectedColor = this.args.defaultColor;
@@ -44,7 +44,7 @@ export default class HighlightMenu extends Component<Args> {
 
   @action async clickOutsideDropdown(event: InputEvent) {
     const isClosedByToggleButton = this.dropdownButton?.contains(
-      event.target as Node
+      event.target as Node,
     );
     if (!isClosedByToggleButton) {
       await this.closeDropdown();

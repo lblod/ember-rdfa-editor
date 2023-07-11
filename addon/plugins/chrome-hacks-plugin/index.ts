@@ -26,7 +26,7 @@ export function chromeHacksPlugin(): ProsePlugin {
                 const fakeCursor = document.createElement('span');
                 return fakeCursor;
               },
-              { side: 1 }
+              { side: 1 },
             ),
           ]);
         }

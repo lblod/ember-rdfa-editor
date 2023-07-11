@@ -10,7 +10,7 @@ type LinkOptions = {
 };
 
 const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
-  options
+  options,
 ) => {
   const { interactive } = options;
   return {

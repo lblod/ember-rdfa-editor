@@ -4,7 +4,7 @@ import { traverseComments } from './traverseComments';
 export function removeNodesBetweenComments(
   rootNode: Node,
   start: string,
-  end: string
+  end: string,
 ): void {
   function isClosingComment(node: Node): boolean {
     return isComment(node) && node.data === end;

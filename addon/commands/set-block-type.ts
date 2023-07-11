@@ -34,7 +34,7 @@ import { PNode } from '..';
 export function setBlockType(
   nodeType: NodeType,
   attrs: Attrs | null = null,
-  keepAttrs = false
+  keepAttrs = false,
 ): Command {
   return function (state, dispatch) {
     let applicable = false;
@@ -79,7 +79,7 @@ function _setBlockType(
   to: number,
   type: NodeType,
   attrs: Attrs | null,
-  keepAttrs = false
+  keepAttrs = false,
 ) {
   if (!type.isTextblock)
     throw new RangeError('Type given to setBlockType should be a textblock');
@@ -106,11 +106,11 @@ function _setBlockType(
           new Slice(
             Fragment.from(type.create(newAttrs, null, node.marks)),
             0,
-            0
+            0,
           ),
           1,
-          true
-        )
+          true,
+        ),
       );
       return false;
     }

@@ -18,7 +18,7 @@ export default class ColorMenu extends Component<Args> {
     (element: HTMLElement) => {
       this.dropdownButton = element;
     },
-    { eager: false }
+    { eager: false },
   );
   @tracked dropdownOpen = false;
 
@@ -60,7 +60,7 @@ export default class ColorMenu extends Component<Args> {
 
   @action async clickOutsideDropdown(event: InputEvent) {
     const isClosedByToggleButton = this.dropdownButton?.contains(
-      event.target as Node
+      event.target as Node,
     );
     if (!isClosedByToggleButton) {
       await this.closeDropdown();

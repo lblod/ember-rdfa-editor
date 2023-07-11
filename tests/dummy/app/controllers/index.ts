@@ -130,7 +130,7 @@ export default class IndexController extends Controller {
       [space, hardBreak, paragraphInvisible, headingInvisible],
       {
         shouldShowInvisibles: false,
-      }
+      },
     ),
     inputRules({
       rules: [

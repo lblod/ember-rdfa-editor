@@ -5,7 +5,10 @@ import { Step, StepResult } from 'prosemirror-transform';
 export class SetDocAttributeStep extends Step {
   private prevValue: unknown;
   static ID = 'setDocAttribute';
-  constructor(readonly key: string, readonly value: unknown) {
+  constructor(
+    readonly key: string,
+    readonly value: unknown,
+  ) {
     super();
   }
   apply(doc: Node): StepResult {

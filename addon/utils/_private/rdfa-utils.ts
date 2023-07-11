@@ -91,7 +91,7 @@ export function mapPositionFrom(
   pos: number,
   mapping: Mapping,
   from: number,
-  assoc?: number
+  assoc?: number,
 ) {
   let curPos = pos;
   for (let i = from ?? 0; i < mapping.maps.length; i++) {

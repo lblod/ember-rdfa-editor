@@ -31,7 +31,7 @@ import * as linkify from 'linkifyjs';
 export default function linkifyFragment(
   fragment: Fragment,
   linkType: NodeType | MarkType,
-  schema: Schema
+  schema: Schema,
 ) {
   const transformedContent: PNode[] = [];
   fragment.forEach((child) => {
@@ -46,7 +46,7 @@ export default function linkifyFragment(
         if (linkType instanceof NodeType) {
           linkNode = linkType.create(
             { href: link.href },
-            child.cut(link.start, link.end)
+            child.cut(link.start, link.end),
           );
         } else {
           linkNode = child
@@ -63,7 +63,7 @@ export default function linkifyFragment(
       transformedContent.push(child);
     } else {
       transformedContent.push(
-        child.copy(linkifyFragment(child.content, linkType, schema))
+        child.copy(linkifyFragment(child.content, linkType, schema)),
       );
     }
   });

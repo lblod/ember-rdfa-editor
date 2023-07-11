@@ -139,7 +139,7 @@ export default class BackspaceController extends Controller {
       [space, hardBreak, paragraphInvisible, headingInvisible],
       {
         shouldShowInvisibles: false,
-      }
+      },
     ),
     inputRules({
       rules: [

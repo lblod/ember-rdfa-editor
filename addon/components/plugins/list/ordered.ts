@@ -23,19 +23,19 @@ export default class ListOrdered extends Component<Args> {
       {
         name: 'decimal',
         description: this.intl.t(
-          'ember-rdfa-editor.ordered-list.styles.decimal'
+          'ember-rdfa-editor.ordered-list.styles.decimal',
         ),
       },
       {
         name: 'lower-alpha',
         description: this.intl.t(
-          'ember-rdfa-editor.ordered-list.styles.lower-alpha'
+          'ember-rdfa-editor.ordered-list.styles.lower-alpha',
         ),
       },
       {
         name: 'upper-roman',
         description: this.intl.t(
-          'ember-rdfa-editor.ordered-list.styles.upper-roman'
+          'ember-rdfa-editor.ordered-list.styles.upper-roman',
         ),
       },
     ];
@@ -45,7 +45,7 @@ export default class ListOrdered extends Component<Args> {
     return findParentNode(
       (node) =>
         node.type === this.schema.nodes.ordered_list ||
-        node.type === this.schema.nodes.bullet_list
+        node.type === this.schema.nodes.bullet_list,
     )(this.selection);
   }
 
@@ -76,7 +76,7 @@ export default class ListOrdered extends Component<Args> {
       wrapInList(this.schema.nodes.ordered_list, {
         style: listStyle,
       }),
-      sinkListItem(this.schema.nodes.list_item)
+      sinkListItem(this.schema.nodes.list_item),
     );
   }
 
@@ -88,7 +88,7 @@ export default class ListOrdered extends Component<Args> {
   toggle(style?: OrderListStyle) {
     this.controller.focus();
     this.controller.doCommand(
-      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list'])
+      autoJoin(this.toggleCommand(style), ['ordered_list', 'bullet_list']),
     );
   }
 

@@ -99,7 +99,7 @@ export default class HeadingsMenu extends Component<Args> {
         to <= $from.end() &&
         $from.parent.type === nodeType &&
         Object.keys(attrs).every(
-          (key) => $from.parent.attrs[key] === attrs[key]
+          (key) => $from.parent.attrs[key] === attrs[key],
         )
       );
     } else {
