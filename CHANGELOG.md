@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
 ### Dependencies
 - Bumps `@codemirror/view` from 6.14.0 to 6.14.1
+- Bumps `eslint-plugin-ember` from 11.9.0 to 11.10.0
 
 ## [4.0.0] - 2023-07-05
 
