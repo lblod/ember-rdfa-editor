@@ -161,7 +161,7 @@
     "eslint-plugin-qunit": "^8.0.0",
     "loader.js": "^4.7.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
+    "prettier": "^3.0.0",
     "prosemirror-dev-tools": "^4.0.0",
     "qunit": "^2.19.2",
     "qunit-dom": "^2.0.0",
