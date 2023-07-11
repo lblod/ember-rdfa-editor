@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Bumps `@codemirror/view` from 6.14.0 to 6.14.1
 - Bumps `eslint-plugin-ember` from 11.9.0 to 11.10.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.61.0 to 6.0.0
+- Bumps `@typescript-eslint/parser` to 6.0.0
 
 ## [4.0.0] - 2023-07-05
 
