@@ -3,7 +3,7 @@ declare module '@lblod/marawa/rdfa-attributes' {
     constructor(
       node: { getAttribute(key: string): string | undefined },
       knownPrefixes?: unknown,
-      options?: Record<string, unknown>
+      options?: Record<string, unknown>,
     );
     get vocab(): string;
     get content(): string;

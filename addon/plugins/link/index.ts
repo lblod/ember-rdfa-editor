@@ -17,7 +17,7 @@ export const linkHandler: ProsePlugin = new ProsePlugin({
       pos: number,
       node: PNode,
       nodePos: number,
-      event: MouseEvent
+      event: MouseEvent,
     ) {
       const schema = view.state.schema;
 
@@ -28,7 +28,7 @@ export const linkHandler: ProsePlugin = new ProsePlugin({
         return;
       }
       const linkMark = textNode.marks.find(
-        (mark) => mark.type === schema.marks['link']
+        (mark) => mark.type === schema.marks['link'],
       );
       if (linkMark) {
         if (event.ctrlKey || event.metaKey) {
@@ -46,7 +46,7 @@ export function linkPasteHandler(linkType: NodeType | MarkType) {
         return new Slice(
           linkifyFragment(slice.content, linkType, view.state.schema),
           slice.openStart,
-          slice.openEnd
+          slice.openEnd,
         );
       },
     },

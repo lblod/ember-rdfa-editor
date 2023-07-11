@@ -7,7 +7,7 @@ export function rangeHasMarkEverywhere(
   root: PNode,
   from: number,
   to: number,
-  markType: MarkType
+  markType: MarkType,
 ) {
   let found = false;
   let keepSearching = true;
@@ -29,7 +29,7 @@ export function rangeHasMarkEverywhere(
 function markApplies(
   doc: PNode,
   ranges: readonly SelectionRange[],
-  type: MarkType
+  type: MarkType,
 ) {
   for (let i = 0; i < ranges.length; i++) {
     const { $from, $to } = ranges[i];
@@ -65,7 +65,7 @@ function markApplies(
  */
 export function toggleMarkAddFirst(
   markType: MarkType,
-  attrs: Attrs | null = null
+  attrs: Attrs | null = null,
 ): Command {
   return function (state, dispatch) {
     const { empty, $cursor, ranges } = state.selection as TextSelection;

@@ -80,13 +80,13 @@ export function datastore({
     state: {
       init(
         config: EditorStateConfig,
-        state: EditorState
+        state: EditorState,
       ): DatastorePluginState {
         const datastore = createDataStoreGetter(
           state,
           pathFromRoot,
           baseIRI,
-          logger
+          logger,
         );
 
         const refman = new ProseReferenceManager();
@@ -111,14 +111,14 @@ export function datastore({
         tr: Transaction,
         oldStore: DatastorePluginState,
         oldState: EditorState,
-        newState: EditorState
+        newState: EditorState,
       ) {
         return {
           datastore: createDataStoreGetter(
             newState,
             pathFromRoot,
             baseIRI,
-            logger
+            logger,
           ),
           contextStore: oldStore.contextStore,
         };
@@ -133,7 +133,7 @@ function createDataStoreGetter(
   state: EditorState,
   pathFromRoot: Node[],
   baseIRI: string,
-  logger: Logger
+  logger: Logger,
 ) {
   const refman = new ProseReferenceManager();
   return function () {
@@ -208,10 +208,19 @@ function children(schema: Schema, refman: ProseReferenceManager) {
         } else {
           if (textBuffer.length) {
             rslt.push(
-              ...map((pChild: TextPNode) => {
-                pChild.parent = resolvedNode;
-                return pChild;
-              }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer))
+              ...map(
+                (pChild: TextPNode) => {
+                  pChild.parent = resolvedNode;
+                  return pChild;
+                },
+                serializeTextBlob(
+                  refman,
+                  rdfaMarks,
+                  serializer,
+                  schema,
+                  textBuffer,
+                ),
+              ),
             );
           }
           textBuffer = [];
@@ -220,7 +229,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
               node: child,
               from: absolutePos,
               to: absolutePos + child.nodeSize,
-            })
+            }),
           );
         }
 
@@ -228,10 +237,19 @@ function children(schema: Schema, refman: ProseReferenceManager) {
       });
       if (textBuffer.length) {
         rslt.push(
-          ...map((pChild: TextPNode) => {
-            pChild.parent = resolvedNode;
-            return pChild;
-          }, serializeTextBlob(refman, rdfaMarks, serializer, schema, textBuffer))
+          ...map(
+            (pChild: TextPNode) => {
+              pChild.parent = resolvedNode;
+              return pChild;
+            },
+            serializeTextBlob(
+              refman,
+              rdfaMarks,
+              serializer,
+              schema,
+              textBuffer,
+            ),
+          ),
         );
       }
       return rslt;
@@ -246,7 +264,7 @@ function serializeTextBlob(
   rdfaMarks: MarkType[],
   serializer: DOMSerializer,
   schema: Schema,
-  buffer: [PNode, number][]
+  buffer: [PNode, number][],
 ): Iterable<ResolvedPNode> {
   let currentMark: Mark | null = null;
   let newBuffer: [PNode, number][] = [];
@@ -268,8 +286,8 @@ function serializeTextBlob(
             serializer,
             schema,
             newBuffer,
-            currentMark
-          )
+            currentMark,
+          ),
         );
       }
       if (rdfaMark) {
@@ -288,8 +306,8 @@ function serializeTextBlob(
         serializer,
         schema,
         newBuffer,
-        currentMark
-      )
+        currentMark,
+      ),
     );
   }
   return children;
@@ -301,7 +319,7 @@ function serializeTextBlobRec(
   serializer: DOMSerializer,
   schema: Schema,
   buffer: [PNode, number][],
-  mark: Option<Mark>
+  mark: Option<Mark>,
 ): Iterable<ResolvedPNode> {
   if (!mark) {
     return buffer.map(([node, pos]) =>
@@ -309,7 +327,7 @@ function serializeTextBlobRec(
         from: pos,
         to: pos + node.nodeSize,
         node,
-      })
+      }),
     );
   } else {
     const from = buffer[0][1];
@@ -338,8 +356,8 @@ function serializeTextBlobRec(
               serializer,
               schema,
               newBuffer,
-              currentMark
-            )
+              currentMark,
+            ),
           );
         }
         if (rdfaMark) {
@@ -359,8 +377,8 @@ function serializeTextBlobRec(
           serializer,
           schema,
           newBuffer,
-          currentMark
-        )
+          currentMark,
+        ),
       );
     }
     const result = refman.get({

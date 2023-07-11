@@ -8,7 +8,7 @@ export function insertHtml(
   from: number,
   to: number,
   marks?: Mark[],
-  preserveWhitespace = false
+  preserveWhitespace = false,
 ): Command {
   return function (state, dispatch, view) {
     if (dispatch) {

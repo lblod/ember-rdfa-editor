@@ -38,7 +38,7 @@ export function indentNode({
         tr.setNodeAttribute(
           pos,
           'indentationLevel',
-          indentationLevel + direction
+          indentationLevel + direction,
         );
       });
       dispatch(tr);

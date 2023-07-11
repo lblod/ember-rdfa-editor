@@ -154,7 +154,7 @@ export default class EmbeddedEditor extends Component<Args> {
                 createParagraphNear,
                 liftEmptyBlock,
                 splitBlock,
-                insertHardBreak
+                insertHardBreak,
               ),
             }),
           ],
@@ -179,7 +179,7 @@ export default class EmbeddedEditor extends Component<Args> {
             if (pos !== undefined) {
               const outerSelectionTr = this.outerView.state.tr;
               const outerSelection = new NodeSelection(
-                this.outerView.state.doc.resolve(pos)
+                this.outerView.state.doc.resolve(pos),
               );
               outerSelectionTr.setSelection(outerSelection);
               this.outerView.dispatch(outerSelectionTr);
@@ -208,7 +208,7 @@ export default class EmbeddedEditor extends Component<Args> {
           }
         },
       },
-      this.outerView
+      this.outerView,
     );
     if (this.args.initEditor) {
       this.args.initEditor(this.innerView);
@@ -219,7 +219,7 @@ export default class EmbeddedEditor extends Component<Args> {
   onSelected() {
     if (this.args.selected && this.innerView) {
       const lastKeyPressedPluginState = lastKeyPressedPluginKey.getState(
-        this.controller.mainEditorState
+        this.controller.mainEditorState,
       );
 
       const lastKeyPressed =
@@ -228,9 +228,9 @@ export default class EmbeddedEditor extends Component<Args> {
       this.innerView.dispatch(
         this.innerView.state.tr.setSelection(
           Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
-            this.innerView.state.doc
-          )
-        )
+            this.innerView.state.doc,
+          ),
+        ),
       );
 
       this.innerView.focus();
@@ -253,7 +253,7 @@ export default class EmbeddedEditor extends Component<Args> {
         this.innerView.dispatch(
           state.tr
             .replace(start, endB, this.node.slice(start, endA))
-            .setMeta('fromOutside', this.editorId)
+            .setMeta('fromOutside', this.editorId),
         );
       }
     }

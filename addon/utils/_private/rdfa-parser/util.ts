@@ -25,7 +25,7 @@ export class ModelDataFactory<N> extends DataFactory {
     subject: ModelQuadSubject<N>,
     predicate: ModelQuadPredicate<N>,
     object: ModelQuadObject<N>,
-    graph: RDF.Quad_Graph
+    graph: RDF.Quad_Graph,
   ): ModelQuad<N> {
     const quad = super.quad(subject, predicate, object, graph);
     return { ...quad, subject, predicate, object, graph };
@@ -33,7 +33,7 @@ export class ModelDataFactory<N> extends DataFactory {
 
   namedNode<N, I extends string = string>(
     iri: I,
-    node?: N
+    node?: N,
   ): ModelNamedNode<N, I> {
     const namedNode: ModelNamedNode<N, I> = super.namedNode<I>(iri);
     namedNode.node = node;
@@ -49,7 +49,7 @@ export class ModelDataFactory<N> extends DataFactory {
   literal(
     value: string,
     languageOrDataType?: string | ModelNamedNode<N>,
-    node?: N
+    node?: N,
   ): ModelLiteral<N> {
     const literal: ModelLiteral<N> = super.literal(value, languageOrDataType);
     literal.node = node;
@@ -98,7 +98,7 @@ export class Util<N> {
   constructor(
     rootModelNode: N,
     dataFactory?: ModelDataFactory<N>,
-    baseIRI?: string
+    baseIRI?: string,
   ) {
     this.dataFactory = dataFactory || new ModelDataFactory<N>();
     this.baseIRI = this.dataFactory.namedNode(baseIRI || '', rootModelNode);
@@ -117,7 +117,7 @@ export class Util<N> {
     attributes: { [s: string]: string },
     parentPrefixes: { [prefix: string]: string },
     xmlnsPrefixMappings = false,
-    globallySeenPrefixes?: Map<string, string>
+    globallySeenPrefixes?: Map<string, string>,
   ): { [prefix: string]: string } {
     const additionalPrefixes: { [prefix: string]: string } = {};
     if (xmlnsPrefixMappings) {
@@ -167,7 +167,7 @@ export class Util<N> {
    */
   public static expandPrefixedTerm<N>(
     term: string,
-    activeTag: IActiveTag<N>
+    activeTag: IActiveTag<N>,
   ): string {
     // Check if the term is prefixed
     const colonIndex: number = term.indexOf(':');
@@ -244,7 +244,7 @@ export class Util<N> {
    */
   public getResourceOrBaseIri(
     term: ModelTerm<N> | boolean,
-    activeTag: IActiveTag<N>
+    activeTag: IActiveTag<N>,
   ): ModelNamedNode<N> {
     return term === true
       ? this.getBaseIriTerm(activeTag)
@@ -272,19 +272,19 @@ export class Util<N> {
     terms: string,
     activeTag: IActiveTag<N>,
     allowTerms: boolean,
-    allowBlankNode: B
+    allowBlankNode: B,
   ): B extends true ? (RDF.BlankNode | RDF.NamedNode)[] : RDF.NamedNode[];
   public createVocabIris(
     terms: string,
     activeTag: IActiveTag<N>,
     allowTerms: boolean,
-    allowBlankNode: boolean
+    allowBlankNode: boolean,
   ): (RDF.NamedNode | RDF.BlankNode)[] {
     return terms
       .split(/\s+/)
       .filter((term) => term && (allowTerms || term.indexOf(':') >= 0))
       .map((property) =>
-        this.createIri(property, activeTag, true, true, allowBlankNode)
+        this.createIri(property, activeTag, true, true, allowBlankNode),
       )
       .filter((term) => term != null);
   }
@@ -301,7 +301,7 @@ export class Util<N> {
         if (entry.regex.exec(literal)) {
           activeTag.datatype = this.dataFactory.namedNode(
             Util.XSD + entry.type,
-            activeTag.node
+            activeTag.node,
           );
           break;
         }
@@ -310,7 +310,7 @@ export class Util<N> {
     return this.dataFactory.literal(
       literal,
       activeTag.datatype || activeTag.language,
-      activeTag.node
+      activeTag.node,
     );
   }
 
@@ -343,14 +343,14 @@ export class Util<N> {
     activeTag: IActiveTag<N>,
     vocab: boolean,
     allowSafeCurie: boolean,
-    allowBlankNode: B
+    allowBlankNode: B,
   ): B extends true ? ModelNamedNode<N> | ModelBlankNode<N> : ModelNamedNode<N>;
   public createIri<B extends boolean>(
     term: string,
     activeTag: IActiveTag<N>,
     vocab: boolean,
     allowSafeCurie: boolean,
-    allowBlankNode: B
+    allowBlankNode: B,
   ): ModelNamedNode<N> | ModelBlankNode<N> | null {
     term = term || '';
 
@@ -379,7 +379,7 @@ export class Util<N> {
       return allowBlankNode
         ? this.dataFactory.blankNode(
             term.substring(2) || 'b_identity',
-            activeTag.node
+            activeTag.node,
           )
         : null;
     }
@@ -389,7 +389,7 @@ export class Util<N> {
       if (activeTag.vocab && term.indexOf(':') < 0) {
         return this.dataFactory.namedNode(
           activeTag.vocab + term,
-          activeTag.node
+          activeTag.node,
         );
       }
     }

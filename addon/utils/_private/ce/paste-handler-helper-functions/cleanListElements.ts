@@ -9,7 +9,7 @@ export function cleanListElements(body: Node): void {
     if (styleAttribute) {
       element.setAttribute(
         'style',
-        styleAttribute.replace(/mso-list:\s*Ignore/gim, 'mso-list:Ignore')
+        styleAttribute.replace(/mso-list:\s*Ignore/gim, 'mso-list:Ignore'),
       );
     }
 

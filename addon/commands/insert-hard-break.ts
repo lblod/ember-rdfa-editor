@@ -5,7 +5,7 @@ export const insertHardBreak: Command = (state, dispatch) => {
     dispatch(
       state.tr
         .replaceSelectionWith(state.schema.nodes.hard_break.create())
-        .scrollIntoView()
+        .scrollIntoView(),
     );
   return true;
 };

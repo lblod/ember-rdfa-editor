@@ -128,7 +128,7 @@ export default class IndexController extends Controller {
   }
 
   @tracked nodeViews: (
-    proseController: SayController
+    proseController: SayController,
   ) => Record<string, NodeViewConstructor> = (proseController) => {
     return {
       card: cardView(proseController),
@@ -149,7 +149,7 @@ export default class IndexController extends Controller {
       [space, hardBreak, paragraphInvisible, headingInvisible],
       {
         shouldShowInvisibles: false,
-      }
+      },
     ),
     inputRules({
       rules: [

@@ -16,7 +16,7 @@ export default class ListUnordered extends Component<Args> {
     return findParentNode(
       (node) =>
         node.type === this.schema.nodes.ordered_list ||
-        node.type === this.schema.nodes.bullet_list
+        node.type === this.schema.nodes.bullet_list,
     )(this.selection);
   }
 
@@ -42,7 +42,7 @@ export default class ListUnordered extends Component<Args> {
   get toggleCommand(): Command {
     return chainCommands(
       toggleList(this.schema.nodes.bullet_list, this.schema.nodes.list_item),
-      wrapInList(this.schema.nodes.bullet_list)
+      wrapInList(this.schema.nodes.bullet_list),
     );
   }
 
@@ -55,7 +55,7 @@ export default class ListUnordered extends Component<Args> {
     if (this.controller) {
       this.controller.focus();
       this.controller.doCommand(
-        autoJoin(this.toggleCommand, ['ordered_list', 'bullet_list'])
+        autoJoin(this.toggleCommand, ['ordered_list', 'bullet_list']),
       );
     }
   }

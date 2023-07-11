@@ -107,7 +107,7 @@ export function emberComponent(
     atom: boolean;
     componentPath: string;
     contentDOM?: HTMLElement;
-  }
+  },
 ): { node: HTMLElement; component: EmberInlineComponent } {
   // const instance = window.__APPLICATION;
   const componentName = `${name}-${uuidv4()}`;
@@ -118,10 +118,10 @@ export function emberComponent(
       layout: template,
       tagName: '',
       ...props,
-    })
+    }),
   );
   const component = owner.lookup(
-    `component:${componentName}`
+    `component:${componentName}`,
   ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const node = document.createElement(inline ? 'span' : 'div');
   node.classList.add('ember-node');
@@ -142,7 +142,7 @@ class EmberNodeView implements NodeView {
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
     view: SayView,
-    getPos: () => number | undefined
+    getPos: () => number | undefined,
   ) {
     // when a node gets updated, `update()` is called.
     // We set the new node here and pass it to the component to render it.
@@ -191,7 +191,7 @@ class EmberNodeView implements NodeView {
         atom,
         view,
         selected: false,
-      }
+      },
     );
     this.dom = node;
     this.emberComponent = component;
@@ -200,7 +200,7 @@ class EmberNodeView implements NodeView {
   update(
     node: PNode,
     _decorations: Decoration[],
-    innerDecorations: DecorationSource
+    innerDecorations: DecorationSource,
   ) {
     if (node.type !== this.node.type) return false;
     this.node = node;
@@ -255,7 +255,7 @@ class EmberNodeView implements NodeView {
    * @returns
    */
   ignoreMutation(
-    mutation: MutationRecord | { type: 'selection'; target: Element }
+    mutation: MutationRecord | { type: 'selection'; target: Element },
   ) {
     if (!this.dom || !this.contentDOM) {
       return true;
@@ -311,7 +311,7 @@ export type EmberNodeConfig = {
   toDOM?: (node: PNode) => DOMOutputSpec;
   stopEvent?: (event: Event) => boolean;
   ignoreMutation?: (
-    mutation: MutationRecord | { type: 'selection'; target: Element }
+    mutation: MutationRecord | { type: 'selection'; target: Element },
   ) => boolean;
 } & (
   | {
@@ -360,7 +360,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
             const result: Record<string, unknown> = {};
             if (attrs) {
               for (const [attributeName, attributeSpec] of Object.entries(
-                attrs
+                attrs,
               )) {
                 if (attributeSpec.parse) {
                   result[attributeName] = attributeSpec.parse(node);

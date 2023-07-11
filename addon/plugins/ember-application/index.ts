@@ -3,7 +3,7 @@ import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import Owner from '@ember/owner';
 
 export const emberApplicationPluginKey = new PluginKey<DatastorePluginState>(
-  'ember_application'
+  'ember_application',
 );
 
 export interface DatastorePluginArgs {

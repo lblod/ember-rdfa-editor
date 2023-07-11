@@ -46,8 +46,8 @@ export class TermMapping<T extends RDF.Term, N>
             term: entry[0],
             nodes: entry[1],
           }),
-          this.termMap.entries()
-        )
+          this.termMap.entries(),
+        ),
       ) || null
     );
   }
@@ -58,7 +58,7 @@ export class TermMapping<T extends RDF.Term, N>
         term: entry[0],
         nodes: entry[1],
       }),
-      this.termMap.entries()
+      this.termMap.entries(),
     )[Symbol.iterator]();
   }
 
@@ -75,8 +75,8 @@ export class TermMapping<T extends RDF.Term, N>
         execPipe(
           this.termMap.entries(),
           filter((entry) => entry[0].equals(convertedTerm)),
-          map((entry) => entry[1])
-        )
+          map((entry) => entry[1]),
+        ),
       ) || null
     );
   }
@@ -89,7 +89,7 @@ export class TermMapping<T extends RDF.Term, N>
     return execPipe(
       this.termMap.entries(),
       map((entry) => ({ term: entry[0], nodes: entry[1] })),
-      map(mappingFunc)
+      map(mappingFunc),
     );
   }
 

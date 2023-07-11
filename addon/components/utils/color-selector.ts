@@ -13,7 +13,7 @@ export default class ColorSelector extends Component<Args> {
     (element: HTMLElement) => {
       this.colorPicker = element;
     },
-    { eager: false }
+    { eager: false },
   );
 
   get presetColors() {

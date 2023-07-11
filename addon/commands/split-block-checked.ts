@@ -30,7 +30,7 @@ export function canSplit(
   doc: PNode,
   pos: number,
   depth = 1,
-  typesAfter?: (null | { type: NodeType; attrs?: Attrs | null })[]
+  typesAfter?: (null | { type: NodeType; attrs?: Attrs | null })[],
 ): boolean {
   const $pos = doc.resolve(pos);
   const base = $pos.depth - depth;
@@ -42,7 +42,7 @@ export function canSplit(
     !specCanSplit($pos.parent.type.spec) ||
     !$pos.parent.canReplace($pos.index(), $pos.parent.childCount) ||
     !innerType.type.validContent(
-      $pos.parent.content.cutByIndex($pos.index(), $pos.parent.childCount)
+      $pos.parent.content.cutByIndex($pos.index(), $pos.parent.childCount),
     )
   )
     return false;
@@ -71,7 +71,7 @@ export function canSplit(
     .canReplaceWith(
       index,
       index,
-      baseType ? baseType.type : $pos.node(base + 1).type
+      baseType ? baseType.type : $pos.node(base + 1).type,
     );
 }
 
@@ -89,8 +89,8 @@ export const splitBlockChecked =
   (
     splitNode?: (
       node: PNode,
-      atEnd: boolean
-    ) => { type: NodeType; attrs?: Attrs } | null
+      atEnd: boolean,
+    ) => { type: NodeType; attrs?: Attrs } | null,
   ): Command =>
   (state, dispatch) => {
     const { $from, $to } = state.selection;
@@ -137,7 +137,7 @@ export const splitBlockChecked =
           tr.doc,
           tr.mapping.map($from.pos),
           1,
-          deflt ? [{ type: deflt }] : undefined
+          deflt ? [{ type: deflt }] : undefined,
         )
       ) {
         if (deflt) {

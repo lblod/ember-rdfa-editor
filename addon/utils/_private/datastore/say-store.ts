@@ -24,7 +24,7 @@ export class SayStore
     state: EditorState,
     start: number,
     end: number,
-    strategy: LimitToRangeStrategy = 'rangeIsInside'
+    strategy: LimitToRangeStrategy = 'rangeIsInside',
   ): SayStore {
     const comparisonFunction = (range: { from: number; to: number }) => {
       if (strategy === 'rangeIsInside') {

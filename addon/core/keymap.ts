@@ -46,7 +46,7 @@ export type KeymapOptions = {
 
 export type Keymap = (
   schema: Schema,
-  options?: KeymapOptions
+  options?: KeymapOptions,
 ) => Record<string, Command>;
 
 const backspaceBase: Command[] = [
@@ -55,7 +55,7 @@ const backspaceBase: Command[] = [
   deleteSelection,
   (state, dispatch, view) => {
     const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
-      state.selection
+      state.selection,
     );
     if (joinBackward(state, dispatch) && dispatch && view) {
       const { state } = view;
@@ -81,7 +81,7 @@ const del = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
     const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
-      state.selection
+      state.selection,
     );
     if (joinForward(state, dispatch) && dispatch && view) {
       const { state } = view;
@@ -92,7 +92,7 @@ const del = chainCommands(
     }
     return false;
   },
-  selectNodeForward
+  selectNodeForward,
 );
 /// A basic keymap containing bindings not specific to any schema.
 /// Binds the following keys (when multiple commands are listed, they
@@ -121,7 +121,7 @@ export const pcBaseKeymap: Keymap = (schema, options) => ({
     createParagraphNear,
     liftEmptyBlockChecked,
     splitBlock,
-    insertHardBreak
+    insertHardBreak,
   ),
   'Shift-Enter': chainCommands(exitCode, insertHardBreak),
   'Mod-Enter': exitCode,

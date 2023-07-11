@@ -51,7 +51,7 @@ function splitInTwo(term: string, separator: string): [string, string] | null {
 function toAbsIri(
   prefix: string,
   suffix: string,
-  prefixMapping: PrefixMapping
+  prefixMapping: PrefixMapping,
 ): string {
   const iri = prefixMapping(prefix);
   if (!iri) {
@@ -67,27 +67,27 @@ function toAbsIri(
  */
 export function conciseToRdfjs(
   term: ConPrefixedName,
-  prefixMapping: PrefixMapping
+  prefixMapping: PrefixMapping,
 ): RDF.NamedNode;
 export function conciseToRdfjs(
   term: ConAbsoluteIRI,
-  prefixMapping?: PrefixMapping
+  prefixMapping?: PrefixMapping,
 ): RDF.NamedNode;
 export function conciseToRdfjs(
   term: ConTypeAlias,
-  prefixMapping?: PrefixMapping
+  prefixMapping?: PrefixMapping,
 ): RDF.NamedNode;
 export function conciseToRdfjs(
   term: ConLiteral,
-  prefixMapping?: PrefixMapping
+  prefixMapping?: PrefixMapping,
 ): RDF.Literal;
 export function conciseToRdfjs(
   term: ConBlankNode,
-  prefixMapping?: PrefixMapping
+  prefixMapping?: PrefixMapping,
 ): RDF.BlankNode;
 export function conciseToRdfjs(
   term: ConciseTerm,
-  prefixMapping?: PrefixMapping
+  prefixMapping?: PrefixMapping,
 ): RDF.Term {
   const factory = new DataFactory();
   if (typeof term === 'number') {
@@ -122,7 +122,7 @@ export function conciseToRdfjs(
           const split = splitInTwo(content, '"');
           if (!split) {
             throw new ParseError(
-              `Languaged literal without separator. Got: ${term}`
+              `Languaged literal without separator. Got: ${term}`,
             );
           }
           const [language, value] = split;
@@ -133,7 +133,7 @@ export function conciseToRdfjs(
           const split = splitInTwo(content, '"');
           if (!split) {
             throw new ParseError(
-              `Datatyped literal without separator. Got: ${term}`
+              `Datatyped literal without separator. Got: ${term}`,
             );
           }
           const [dataType, value] = split;
@@ -145,18 +145,18 @@ export function conciseToRdfjs(
             const split = splitInTwo(dataType, ':');
             if (!split) {
               throw new ParseError(
-                `Invalid datatype spec, either provide an absolute or a prefixed IRI. Got: ${term}`
+                `Invalid datatype spec, either provide an absolute or a prefixed IRI. Got: ${term}`,
               );
             }
             const [prefix, suffix] = split;
             if (!prefixMapping) {
               throw new ParseError(
-                'Cannot parse prefixed dataType without prefixMapping'
+                'Cannot parse prefixed dataType without prefixMapping',
               );
             }
             return factory.literal(
               value,
-              factory.namedNode(toAbsIri(prefix, suffix, prefixMapping))
+              factory.namedNode(toAbsIri(prefix, suffix, prefixMapping)),
             );
           }
         }
@@ -168,7 +168,7 @@ export function conciseToRdfjs(
             const [prefix, suffix] = split;
             if (!prefixMapping) {
               throw new ParseError(
-                'Cannot parse prefixed name without prefixMapping'
+                'Cannot parse prefixed name without prefixMapping',
               );
             }
             return factory.namedNode(toAbsIri(prefix, suffix, prefixMapping));

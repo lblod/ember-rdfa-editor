@@ -27,7 +27,7 @@ export const tableKeymap = keymap({
       let transaction = state.tr;
       let cell = findNextCell(
         unwrap(selectionCell(state.selection as CellSelection | NodeSelection)),
-        1
+        1,
       );
       if (!cell) {
         const rect = selectedRect(state);
@@ -36,18 +36,18 @@ export const tableKeymap = keymap({
           findNextCell(
             unwrap(
               selectionCell(
-                transaction.selection as CellSelection | NodeSelection
-              )
+                transaction.selection as CellSelection | NodeSelection,
+              ),
             ),
-            1
-          )
+            1,
+          ),
         );
       }
       const $cell = transaction.doc.resolve(cell);
       dispatch(
         transaction
           .setSelection(TextSelection.between($cell, moveCellForward($cell)))
-          .scrollIntoView()
+          .scrollIntoView(),
       );
     }
     return true;

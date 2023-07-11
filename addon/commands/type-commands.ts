@@ -9,7 +9,7 @@ export function addType(pos: number, type: string): Command {
       transaction.setNodeAttribute(
         pos,
         'typeof',
-        typeOfValue.concat(' ', type)
+        typeOfValue.concat(' ', type),
       );
       dispatch(transaction);
     }

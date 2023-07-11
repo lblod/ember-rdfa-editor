@@ -10,7 +10,7 @@ export const clearColor: Command = (state, dispatch) => {
       tr.removeMark(
         selection.from,
         selection.to,
-        schema.marks.color
+        schema.marks.color,
       ).setSelection(Selection.near(tr.selection.$to));
     }
     dispatch(tr);

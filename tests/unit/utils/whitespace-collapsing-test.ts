@@ -13,7 +13,7 @@ module(
       const result = preWrapToNormalWhiteSpace(editorText);
       assert.strictEqual(
         result,
-        `I like two spaces after my sentence.${NON_BREAKING_SPACE} See?`
+        `I like two spaces after my sentence.${NON_BREAKING_SPACE} See?`,
       );
     });
     test('replaces the space with a nbsp if its at the end of the string', function (assert) {
@@ -26,10 +26,10 @@ module(
       const result = preWrapToNormalWhiteSpace(editorText);
       assert.strictEqual(
         result,
-        `${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE}${NON_BREAKING_SPACE}`
+        `${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE} ${NON_BREAKING_SPACE}${NON_BREAKING_SPACE}`,
       );
     });
-  }
+  },
 );
 
 module(
@@ -46,5 +46,5 @@ module(
       const result = normalToPreWrapWhiteSpace(inputText);
       assert.strictEqual(result, 'line one line two line 3');
     });
-  }
+  },
 );

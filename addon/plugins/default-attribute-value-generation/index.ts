@@ -10,7 +10,7 @@ export type DefaultAttrGenPuginOptions = {
 }[];
 
 export function defaultAttributeValueGeneration(
-  options: DefaultAttrGenPuginOptions
+  options: DefaultAttrGenPuginOptions,
 ) {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {

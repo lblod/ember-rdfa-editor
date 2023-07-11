@@ -23,7 +23,7 @@ export function unwrapOr<A>(defaultValue: A, thing: Option<A>): A {
 
 export function optionMap<A, U>(
   func: (thing: A) => U,
-  thing: Option<A>
+  thing: Option<A>,
 ): Option<U> {
   if (isSome(thing)) {
     return func(thing);
@@ -34,7 +34,7 @@ export function optionMap<A, U>(
 export function optionMapOr<A, U>(
   defaultValue: U,
   func: (thing: A) => U,
-  thing: Option<A>
+  thing: Option<A>,
 ): U {
   if (isSome(thing)) {
     return func(thing);
