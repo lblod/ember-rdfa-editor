@@ -64,6 +64,8 @@ import {
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { PluginConfig } from '@lblod/ember-rdfa-editor';
+import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
+import { getOwner } from '@ember/application';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -136,6 +138,7 @@ export default class IndexController extends Controller {
         ordered_list_input_rule(this.schema.nodes.ordered_list),
       ],
     }),
+    emberApplication({ application: getOwner(this) }),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
