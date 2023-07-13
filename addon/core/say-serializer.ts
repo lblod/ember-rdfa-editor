@@ -21,6 +21,7 @@ type MarkSerializer = (
 /**
  * ProseMirror DOMSerializer which serializes nodes and marks based on their `serialize` or `toDOM` method.
  * If the node/mark has a `serialize` method, the current editor state is passed to that method.
+ * When a node has both `serialize` and `toDOM` methods defined, the `serialize` method always takes precendence over the `toDOM` method when using the `SaySerializer`.
  * Note, for the `SaySerializer` to work, an instance of `SayEditor` is required.
  * If such an instance is not passed to the `fromSchema` static function, a default ProseMirror `DOMSerializer` is created.
  */
