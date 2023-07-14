@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-plugin-prettier` to 5.0.0
 - Bumps `release-it` to 16.1.0
 - Bumps `@release-it/keep-a-changelog` to 4.0.0
+- Bumps `prosemirror-model` from 1.19.2 to 1.19.3
 
 ## [4.0.0] - 2023-07-05
 
