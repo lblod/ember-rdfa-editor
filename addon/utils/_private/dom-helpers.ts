@@ -19,7 +19,7 @@ import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constan
 export function sliceTextIntoTextNode(
   textNode: Text,
   text: string,
-  start: number
+  start: number,
 ): void {
   const textContent = textNode.textContent || '';
   const content = [];
@@ -40,7 +40,7 @@ export function sliceTextIntoTextNode(
 export function insertTextNodeWithSpace(
   parentDomNode: Node,
   relativeToSibling: ChildNode | null = null,
-  after = false
+  after = false,
 ): Text {
   const textNode = document.createTextNode(INVISIBLE_SPACE);
 
@@ -138,7 +138,7 @@ export function isVoidElement(node: Node): boolean {
   return (
     isElement(node) &&
     /^(AREA|BASE|BR|COL|EMBED|HR|IMG|INPUT|LINK|META|PARAM|SOURCE|TRACK|WBR)$/i.test(
-      node.tagName
+      node.tagName,
     )
   );
 }
@@ -189,13 +189,13 @@ export function isContentEditable(node: Node) {
  */
 export function smartSplitTextNode(
   textNode: Text,
-  splitAt: number
+  splitAt: number,
 ): HTMLElement[] {
   const parent = textNode.parentElement;
   if (parent) {
     const textContent = textNode.textContent || '';
     const firstTextNode = document.createTextNode(
-      textContent.slice(0, splitAt)
+      textContent.slice(0, splitAt),
     );
     const lastTextNode = document.createTextNode(textContent.slice(splitAt));
     const extraParent = parent.cloneNode(false) as HTMLElement;
@@ -308,7 +308,7 @@ export function siblingLis(node: HTMLLIElement): HTMLLIElement[] {
  * @public
  */
 export function getAllLisFromList(
-  list: HTMLUListElement | HTMLOListElement
+  list: HTMLUListElement | HTMLOListElement,
 ): HTMLLIElement[] {
   const listItems: HTMLLIElement[] = [];
   for (const element of [...list.children]) {
@@ -327,7 +327,7 @@ export function getAllLisFromList(
  * @public
  */
 export function isEmptyList(
-  node: HTMLUListElement | HTMLOListElement
+  node: HTMLUListElement | HTMLOListElement,
 ): boolean {
   if (!isList(node)) {
     return false;
@@ -368,7 +368,7 @@ export function isIgnorableElement(node: Text): boolean {
 export function insertNodeBAfterNodeA(
   _parent: HTMLElement,
   nodeA: ChildNode,
-  nodeB: ChildNode
+  nodeB: ChildNode,
 ) {
   nodeA.after(nodeB);
 }
@@ -454,7 +454,7 @@ export function getParentLI(node: Node): HTMLLIElement | null {
  * @public
  */
 export function getListTagName(
-  listElement: HTMLUListElement | HTMLOListElement
+  listElement: HTMLUListElement | HTMLOListElement,
 ): 'ul' | 'ol' {
   return tagName(listElement) === 'ul' ? 'ul' : 'ol';
 }
@@ -466,7 +466,7 @@ export function getListTagName(
  * @public
  */
 export function findFirstLi(
-  list: HTMLUListElement | HTMLOListElement
+  list: HTMLUListElement | HTMLOListElement,
 ): HTMLLIElement | undefined {
   if (!isList(list)) {
     throw new Error('Invalid argument: node is not a list.');
@@ -482,7 +482,7 @@ export function findFirstLi(
  * @public
  */
 export function findLastLi(
-  list: HTMLUListElement | HTMLOListElement
+  list: HTMLUListElement | HTMLOListElement,
 ): HTMLLIElement | undefined {
   if (!isList(list)) {
     throw new Error('Invalid argument: node is not a list.');
@@ -519,7 +519,7 @@ export function getWindowSelection(): Selection {
   if (!selection) {
     throw new Error(
       'Window selection not found. This is an error and does not mean' +
-        'the selection was empty'
+        'the selection was empty',
     );
   }
 
@@ -555,7 +555,7 @@ export function getLeafCount(node: Node) {
 export function getLeafChildren(node: Node) {
   if (node.childNodes.length) {
     const leafs: Node[] = [...node.childNodes].flatMap((node) =>
-      getLeafChildren(node)
+      getLeafChildren(node),
     );
     return leafs;
   } else {

@@ -15,7 +15,7 @@ export default class SayView extends EditorView {
         }
       | null,
     props: DirectEditorProps,
-    parent?: SayView
+    parent?: SayView,
   ) {
     super(place, props);
     this.parent = parent;

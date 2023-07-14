@@ -47,7 +47,7 @@ export default class TableMenu extends Component<Args> {
       this.controller.withTransaction((tr) => {
         return tr
           .replaceSelectionWith(
-            unwrap(this.controller).schema.node('table', null, tableContent)
+            unwrap(this.controller).schema.node('table', null, tableContent),
           )
           .scrollIntoView();
       });

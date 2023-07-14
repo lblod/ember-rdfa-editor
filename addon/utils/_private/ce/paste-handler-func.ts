@@ -3,7 +3,7 @@ import { cleanDocx } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-hand
 
 export function convertMsWordHtml(
   htmlPaste: string,
-  inputParser: HTMLInputParser
+  inputParser: HTMLInputParser,
 ): string {
   const cleanHtmlFromRTF = cleanDocx(htmlPaste);
   return inputParser.cleanupHTML(cleanHtmlFromRTF);
@@ -11,7 +11,7 @@ export function convertMsWordHtml(
 
 export function convertGenericHtml(
   htmlPaste: string,
-  inputParser: HTMLInputParser
+  inputParser: HTMLInputParser,
 ): string {
   return inputParser.cleanupHTML(htmlPaste);
 }

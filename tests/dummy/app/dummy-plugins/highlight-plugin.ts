@@ -17,7 +17,7 @@ function calculateDecorations(doc: PNode, testKey: string) {
         decorations.push(
           Decoration.inline(pos + index, pos + index + 4, {
             style: 'background: yellow',
-          })
+          }),
         );
       }
     }
@@ -40,7 +40,7 @@ export function highlightPlugin(options: HighlightOptions): ProsePlugin {
         tr: Transaction,
         set: DecorationSet,
         oldState: EditorState,
-        newState: EditorState
+        newState: EditorState,
       ) {
         const { doc } = newState;
         return calculateDecorations(doc, options.testKey);

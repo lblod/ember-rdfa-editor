@@ -6,16 +6,16 @@ declare module '@lblod/marawa/rdfa-helpers' {
     richNode: RichNode,
     parentContext: RdfaAttributes[],
     parentPrefixes?: unknown,
-    options?: Record<string, unknown>
+    options?: Record<string, unknown>,
   ): void;
   export function resolvePrefix(
     attribute: string,
     uri: string | string[],
     prefixes: unknown,
-    documentUri?: string
+    documentUri?: string,
   ): string;
   export function rdfaAttributesToTriples(
-    rdfaAttributes: RdfaAttributes[]
+    rdfaAttributes: RdfaAttributes[],
   ): unknown[];
   export function isFullUri(uri: string): boolean;
   export function isPrefixedUri(uri: string): boolean;

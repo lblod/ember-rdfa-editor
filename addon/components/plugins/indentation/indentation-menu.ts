@@ -27,7 +27,7 @@ export default class IndentationMenuComponent extends Component<Args> {
         predicate: (node, pos, parent) => {
           return parent?.type !== this.schema.nodes.list_item;
         },
-      })
+      }),
     );
   }
 
@@ -40,7 +40,7 @@ export default class IndentationMenuComponent extends Component<Args> {
         predicate: (node, pos, parent) => {
           return parent?.type !== this.schema.nodes.list_item;
         },
-      })
+      }),
     );
   }
 

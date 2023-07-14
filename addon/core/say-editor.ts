@@ -44,7 +44,7 @@ interface SayEditorArgs {
 
   keyMapOptions?: KeymapOptions;
   nodeViews?: (
-    controller: SayController
+    controller: SayController,
   ) => Record<string, NodeViewConstructor>;
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
 }
@@ -169,7 +169,7 @@ export class ProseReferenceManager extends ReferenceManager<
           }
           return `${from} - ${to} - ${domNodeTag} - ${domNodeAttrs}`;
         }
-      }
+      },
     );
   }
 }

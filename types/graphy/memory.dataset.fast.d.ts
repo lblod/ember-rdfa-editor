@@ -64,7 +64,7 @@ declare module '@graphy/memory.dataset.fast' {
       subject?: RDF.Quad_Subject | null,
       predicate?: RDF.Quad_Predicate | null,
       object?: RDF.Quad_Object | null,
-      graph?: RDF.Quad_Graph | null
+      graph?: RDF.Quad_Graph | null,
     ): FastDataset;
 
     equals(other: FastDataset): boolean;

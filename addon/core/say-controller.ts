@@ -54,7 +54,7 @@ export default class SayController {
         doc,
         plugins: this.mainEditorState.plugins,
         selection: Selection.atEnd(doc),
-      })
+      }),
     );
 
     if (shouldFocus) {
@@ -86,7 +86,7 @@ export default class SayController {
 
   checkCommand(
     command: Command,
-    { view = this.activeEditorView } = {}
+    { view = this.activeEditorView } = {},
   ): boolean {
     return command(view.state);
   }
@@ -103,7 +103,7 @@ export default class SayController {
 
   withTransaction(
     callback: (tr: Transaction) => Transaction | null,
-    { view = this.activeEditorView } = {}
+    { view = this.activeEditorView } = {},
   ) {
     const tr = view.state.tr;
     const result = callback(tr);

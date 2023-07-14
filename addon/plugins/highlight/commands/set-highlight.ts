@@ -10,7 +10,7 @@ export function setHighlight(color: string): Command {
         tr.addStoredMark(mark);
       } else {
         tr.addMark(tr.selection.from, tr.selection.to, mark).setSelection(
-          Selection.near(tr.selection.$to)
+          Selection.near(tr.selection.$to),
         );
       }
       dispatch(tr);

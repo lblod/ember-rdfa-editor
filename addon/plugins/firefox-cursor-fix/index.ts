@@ -49,9 +49,9 @@ export function firefoxCursorFix(): ProsePlugin {
           view.dispatch(
             view.state.tr
               .setSelection(
-                new TextSelection(view.state.doc.resolve(insertPos))
+                new TextSelection(view.state.doc.resolve(insertPos)),
               )
-              .scrollIntoView()
+              .scrollIntoView(),
           );
           return true;
         }
@@ -79,7 +79,7 @@ export function firefoxCursorFix(): ProsePlugin {
                 fakeCursor.classList.add('ProseMirror-firefox-fake-cursor');
                 return fakeCursor;
               },
-              { side: 1 }
+              { side: 1 },
             ),
           ]);
         }

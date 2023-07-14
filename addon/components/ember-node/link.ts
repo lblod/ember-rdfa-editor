@@ -52,10 +52,10 @@ export default class Link extends Component<EmberNodeArgs> {
           return tr.replaceWith(
             pos,
             pos + this.node.nodeSize,
-            this.node.content
+            this.node.content,
           );
         },
-        { view: this.controller.mainEditorView }
+        { view: this.controller.mainEditorView },
       );
     }
   }

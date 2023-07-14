@@ -61,10 +61,10 @@ export class GraphyDataset implements QuadDataSet {
     subject?: RDF.Quad_Subject | null,
     predicate?: RDF.Quad_Predicate | null,
     object?: RDF.Quad_Object | null,
-    graph?: RDF.Quad_Graph | null
+    graph?: RDF.Quad_Graph | null,
   ): QuadDataSet {
     return new GraphyDataset(
-      this.fastDataset.match(subject, predicate, object, graph)
+      this.fastDataset.match(subject, predicate, object, graph),
     );
   }
 
@@ -81,10 +81,10 @@ export class GraphyDataset implements QuadDataSet {
     subject?: RDF.Quad_Subject,
     predicate?: RDF.Quad_Predicate,
     object?: RDF.Quad_Object,
-    graph?: RDF.Quad_Graph
+    graph?: RDF.Quad_Graph,
   ): this {
     const matches = new GraphyDataset(
-      this.match(subject, predicate, object, graph)
+      this.match(subject, predicate, object, graph),
     );
     this._fastDataset = this.fastDataset.difference(matches.fastDataset);
 
@@ -111,7 +111,7 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   filter(
-    iteratee: (quad: RDF.Quad, dataset: this) => boolean
+    iteratee: (quad: RDF.Quad, dataset: this) => boolean,
   ): RDF.Dataset<RDF.Quad, RDF.Quad> {
     const rslt = [];
     for (const quad of this) {
@@ -140,8 +140,8 @@ export class GraphyDataset implements QuadDataSet {
   map(
     iteratee: (
       quad: RDF.Quad,
-      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>
-    ) => RDF.Quad
+      dataset: RDF.Dataset<RDF.Quad, RDF.Quad>,
+    ) => RDF.Quad,
   ): RDF.Dataset<RDF.Quad, RDF.Quad> {
     const result = [];
     for (const quad of this) {
@@ -153,7 +153,7 @@ export class GraphyDataset implements QuadDataSet {
   reduce<A>(
     iteratee: (accumulator: A, quad: RDF.Quad, dataset: this) => A,
     initialValue: A | RDF.Quad | null = this[Symbol.iterator]().next()
-      .value as RDF.Quad | null
+      .value as RDF.Quad | null,
   ): A {
     let accumulator = initialValue;
     // some bad typing in the spec causes these ugly casts
@@ -190,7 +190,7 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   union(
-    quads: RDF.Dataset<RDF.Quad, RDF.Quad>
+    quads: RDF.Dataset<RDF.Quad, RDF.Quad>,
   ): RDF.Dataset<RDF.Quad, RDF.Quad> {
     const gds = new GraphyDataset(quads);
     return new GraphyDataset(this.fastDataset.union(gds.fastDataset));

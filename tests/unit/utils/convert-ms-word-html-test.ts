@@ -1287,7 +1287,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     assert.strictEqual(
       // strip attrs to make test less flaky
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
-      expectedHtml
+      expectedHtml,
     );
   });
 
@@ -1530,7 +1530,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
-      expectedHtml
+      expectedHtml,
     );
   });
 
@@ -1647,7 +1647,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
-      expectedHtml
+      expectedHtml,
     );
   });
 });

@@ -36,7 +36,8 @@ export function liftOutOfNestedLists(itemType: NodeType): Command {
     let { $from, $to } = state.selection;
     let range = $from.blockRange(
       $to,
-      (node) => node.childCount > 0 && unwrap(node.firstChild).type === itemType
+      (node) =>
+        node.childCount > 0 && unwrap(node.firstChild).type === itemType,
     );
     if (!range) return false;
     if (dispatch) {
@@ -58,7 +59,7 @@ export function liftOutOfNestedLists(itemType: NodeType): Command {
         range = $from.blockRange(
           $to,
           (node) =>
-            node.childCount > 0 && unwrap(node.firstChild).type === itemType
+            node.childCount > 0 && unwrap(node.firstChild).type === itemType,
         );
       }
       dispatch(tr);
@@ -70,7 +71,7 @@ export function liftOutOfNestedLists(itemType: NodeType): Command {
 function liftToOuterList(
   tr: Transaction,
   itemType: NodeType,
-  range: NodeRange
+  range: NodeRange,
 ) {
   const trLength = tr.mapping.maps.length;
   const end = range.end,
@@ -87,16 +88,16 @@ function liftToOuterList(
         new Slice(
           Fragment.from(itemType.create(null, range.parent.copy())),
           1,
-          0
+          0,
         ),
         1,
-        true
-      )
+        true,
+      ),
     );
     range = new NodeRange(
       tr.doc.resolve(range.$from.pos),
       tr.doc.resolve(endOfList),
-      range.depth
+      range.depth,
     );
   }
   const target = liftTarget(range);
@@ -134,7 +135,7 @@ function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
     !parent.canReplace(
       indexBefore + (atStart ? 0 : 1),
       indexBefore + 1,
-      item.content.append(atEnd ? Fragment.empty : Fragment.from(list))
+      item.content.append(atEnd ? Fragment.empty : Fragment.from(list)),
     )
   )
     return false;
@@ -154,13 +155,13 @@ function liftOutOfCurrentList(tr: Transaction, range: NodeRange) {
           ? Fragment.empty
           : Fragment.from(list.copy(Fragment.empty))
         ).append(
-          atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))
+          atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty)),
         ),
         atStart ? 0 : 1,
-        atEnd ? 0 : 1
+        atEnd ? 0 : 1,
       ),
-      atStart ? 0 : 1
-    )
+      atStart ? 0 : 1,
+    ),
   );
   return true;
 }

@@ -20,7 +20,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };
@@ -34,7 +34,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };
@@ -48,7 +48,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };
@@ -62,7 +62,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };
@@ -76,7 +76,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };
@@ -90,7 +90,7 @@ export const heading: NodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel
+            node.dataset.indentationLevel,
           ),
           ...getRdfaAttrs(node),
         };

@@ -27,7 +27,7 @@ export const reduceIndent: Command = (state, dispatch) => {
     const tr = state.tr.setNodeAttribute(
       paragraphPosition,
       'indentationLevel',
-      currentIndentationLevel - 1
+      currentIndentationLevel - 1,
     );
 
     dispatch(tr);

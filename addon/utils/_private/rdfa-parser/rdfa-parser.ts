@@ -209,7 +209,7 @@ export class RdfaParser<N> {
   static parseRec<N>(
     node: N,
     parser: RdfaParser<N>,
-    config: RdfaParseConfig<N>
+    config: RdfaParseConfig<N>,
   ) {
     const { isText, textContent, tag, attributes, children } = config;
     if (isText(node)) {
@@ -226,7 +226,7 @@ export class RdfaParser<N> {
   protected onTagOpen(
     name: string,
     attributes: Record<string, string>,
-    node?: N
+    node?: N,
   ) {
     // Determine the parent tag (ignore skipped tags)
     let parentTagI: number = this.activeTagStack.length - 1;
@@ -343,7 +343,7 @@ export class RdfaParser<N> {
             parentTag,
             this.rdfaPatterns[copyTargetPatternId],
             copyTargetPatternId,
-            activeTag.node
+            activeTag.node,
           );
         } else {
           if (!this.pendingRdfaPatternCopies[copyTargetPatternId]) {
@@ -363,7 +363,7 @@ export class RdfaParser<N> {
     if (this.features.xmlBase && attributes['xml:base']) {
       activeTag.localBaseIRI = this.util.getBaseIRI(
         attributes['xml:base'],
-        node
+        node,
       );
     }
 
@@ -392,7 +392,7 @@ export class RdfaParser<N> {
         this.emitTriple(
           this.util.getBaseIriTerm(activeTag),
           this.util.dataFactory.namedNode(Util.RDFA + 'usesVocabulary', node),
-          this.util.dataFactory.namedNode(activeTag.vocab, node)
+          this.util.dataFactory.namedNode(activeTag.vocab, node),
         );
       } else {
         // If vocab is set to '', then we fallback to the root vocab as defined via the parser constructor
@@ -407,7 +407,7 @@ export class RdfaParser<N> {
       attributes,
       parentTag.prefixesCustom,
       this.features.xmlnsPrefixMappings,
-      this.globallySeenPrefixes
+      this.globallySeenPrefixes,
     );
     activeTag.prefixesAll =
       Object.keys(activeTag.prefixesCustom).length > 0
@@ -422,7 +422,7 @@ export class RdfaParser<N> {
             activeTag,
             false,
             false,
-            false
+            false,
           )
         : this.util.createBlankNode(node);
       // Temporarily override vocab
@@ -432,15 +432,15 @@ export class RdfaParser<N> {
         attributes.role,
         activeTag,
         true,
-        false
+        false,
       )) {
         this.emitTriple(
           roleSubject,
           this.util.dataFactory.namedNode(
             'http://www.w3.org/1999/xhtml/vocab#role',
-            node
+            node,
           ),
-          role
+          role,
         );
       }
       activeTag.vocab = vocabOld;
@@ -469,7 +469,7 @@ export class RdfaParser<N> {
             activeTag,
             false,
             true,
-            true
+            true,
           );
           activeTag.explicitNewSubject = !!newSubject;
         } else if (isRootTag) {
@@ -486,7 +486,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               true,
-              true
+              true,
             );
           }
           if (!typedResource && isRootTag) {
@@ -498,7 +498,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               true,
-              true
+              true,
             );
           }
           if (!typedResource && (attributes.href || attributes.src)) {
@@ -507,7 +507,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               false,
-              true
+              true,
             );
           }
           if (!typedResource && this.isInheritSubjectInHeadBody(name)) {
@@ -527,7 +527,7 @@ export class RdfaParser<N> {
             activeTag,
             false,
             true,
-            true
+            true,
           );
           activeTag.explicitNewSubject = !!newSubject;
         }
@@ -537,7 +537,7 @@ export class RdfaParser<N> {
             activeTag,
             false,
             false,
-            true
+            true,
           );
           activeTag.explicitNewSubject = !!newSubject;
         }
@@ -573,7 +573,7 @@ export class RdfaParser<N> {
           activeTag,
           false,
           true,
-          true
+          true,
         );
         activeTag.explicitNewSubject = !!newSubject;
         if (attributes.typeof) {
@@ -592,7 +592,7 @@ export class RdfaParser<N> {
           activeTag,
           false,
           true,
-          true
+          true,
         );
       }
       if (!currentObjectResource) {
@@ -602,7 +602,7 @@ export class RdfaParser<N> {
             activeTag,
             false,
             false,
-            true
+            true,
           );
         } else if (
           attributes.typeof &&
@@ -629,12 +629,12 @@ export class RdfaParser<N> {
         attributes.typeof,
         activeTag,
         true,
-        true
+        true,
       )) {
         this.emitTriple(
           this.util.getResourceOrBaseIri(typedResource, activeTag),
           this.util.dataFactory.namedNode(Util.RDF + 'type', node),
-          type
+          type,
         );
       }
     }
@@ -655,13 +655,13 @@ export class RdfaParser<N> {
           attributes.rel,
           activeTag,
           allowTermsInRelPredicates,
-          false
+          false,
         )) {
           this.addListMapping(
             activeTag,
             newSubject,
             predicate,
-            currentObjectResource
+            currentObjectResource,
           );
         }
       }
@@ -673,12 +673,12 @@ export class RdfaParser<N> {
             attributes.rel,
             activeTag,
             allowTermsInRelPredicates,
-            false
+            false,
           )) {
             this.emitTriple(
               this.util.getResourceOrBaseIri(newSubject, activeTag),
               predicate,
-              this.util.getResourceOrBaseIri(currentObjectResource, activeTag)
+              this.util.getResourceOrBaseIri(currentObjectResource, activeTag),
             );
           }
         }
@@ -687,12 +687,12 @@ export class RdfaParser<N> {
             attributes.rev,
             activeTag,
             allowTermsInRevPredicates,
-            false
+            false,
           )) {
             this.emitTriple(
               this.util.getResourceOrBaseIri(currentObjectResource, activeTag),
               predicate,
-              this.util.getResourceOrBaseIri(newSubject, activeTag)
+              this.util.getResourceOrBaseIri(newSubject, activeTag),
             );
           }
         }
@@ -707,7 +707,7 @@ export class RdfaParser<N> {
             attributes.rel,
             activeTag,
             allowTermsInRelPredicates,
-            false
+            false,
           )) {
             if (!newSubject) {
               throw new NullOrUndefinedError();
@@ -724,7 +724,7 @@ export class RdfaParser<N> {
             attributes.rel,
             activeTag,
             allowTermsInRelPredicates,
-            false
+            false,
           )) {
             activeTag.incompleteTriples.push({ predicate, reverse: false });
           }
@@ -735,7 +735,7 @@ export class RdfaParser<N> {
           attributes.rev,
           activeTag,
           allowTermsInRevPredicates,
-          false
+          false,
         )) {
           activeTag.incompleteTriples.push({ predicate, reverse: true });
         }
@@ -754,7 +754,7 @@ export class RdfaParser<N> {
         attributes.property,
         activeTag,
         true,
-        false
+        false,
       );
 
       // Save datatype attribute value in active tag
@@ -766,7 +766,7 @@ export class RdfaParser<N> {
           activeTag,
           true,
           true,
-          false
+          false,
         );
         if (
           activeTag.datatype &&
@@ -785,7 +785,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               true,
-              true
+              true,
             );
           }
           if (!localObjectResource && attributes.href) {
@@ -794,7 +794,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               false,
-              true
+              true,
             );
           }
           if (!localObjectResource && attributes.src) {
@@ -803,7 +803,7 @@ export class RdfaParser<N> {
               activeTag,
               false,
               false,
-              true
+              true,
             );
           }
         }
@@ -855,7 +855,7 @@ export class RdfaParser<N> {
         // Emit triples for all resource objects
         const object = this.util.getResourceOrBaseIri(
           localObjectResource,
-          activeTag
+          activeTag,
         );
         if (attributes.inlist) {
           for (const predicate of activeTag.predicates) {
@@ -886,7 +886,7 @@ export class RdfaParser<N> {
       }
       const subject = this.util.getResourceOrBaseIri(
         parentTag.subject,
-        activeTag
+        activeTag,
       );
       const object = this.util.getResourceOrBaseIri(newSubject, activeTag);
       for (const incompleteTriple of parentTag.incompleteTriples) {
@@ -909,7 +909,7 @@ export class RdfaParser<N> {
               firstInListTag,
               newSubject,
               incompleteTriple.predicate,
-              object
+              object,
             );
           } else {
             this.emitTriple(subject, incompleteTriple.predicate, object);
@@ -921,7 +921,7 @@ export class RdfaParser<N> {
     }
     if (!incompleteTriplesCompleted && parentTag.incompleteTriples.length > 0) {
       activeTag.incompleteTriples = activeTag.incompleteTriples.concat(
-        parentTag.incompleteTriples
+        parentTag.incompleteTriples,
       );
     }
 
@@ -983,7 +983,7 @@ export class RdfaParser<N> {
               tag,
               activeTag.collectedPatternTag,
               patternId,
-              activeTag.node
+              activeTag.node,
             );
           }
           delete this.pendingRdfaPatternCopies[patternId];
@@ -1002,7 +1002,7 @@ export class RdfaParser<N> {
         }
         const subject = this.util.getResourceOrBaseIri(
           activeTag.subject,
-          activeTag
+          activeTag,
         );
         let textSegments: string[] = activeTag.text || [];
         if (activeTag.collectChildTags && parentTag.collectChildTags) {
@@ -1011,7 +1011,7 @@ export class RdfaParser<N> {
         }
         const object = this.util.createLiteral(
           textSegments.join(''),
-          activeTag
+          activeTag,
         );
         if (activeTag.inlist) {
           for (const predicate of activeTag.predicates) {
@@ -1033,12 +1033,12 @@ export class RdfaParser<N> {
       if (activeTag.object && Object.keys(activeTag.listMapping).length > 0) {
         const subject = this.util.getResourceOrBaseIri(
           activeTag.object,
-          activeTag
+          activeTag,
         );
         for (const predicateValue in activeTag.listMapping) {
           const predicate = this.util.dataFactory.namedNode(
             predicateValue,
-            activeTag.node
+            activeTag.node,
           );
           const values = activeTag.listMapping[predicateValue];
 
@@ -1046,31 +1046,31 @@ export class RdfaParser<N> {
             // Non-empty list, emit linked list of rdf:first and rdf:rest chains
             const bnodes = values.map((value) =>
               this.util.createBlankNode(
-                typeof value === 'boolean' ? undefined : value.node
-              )
+                typeof value === 'boolean' ? undefined : value.node,
+              ),
             );
             for (let i = 0; i < values.length; i++) {
               const object = this.util.getResourceOrBaseIri(
                 values[i],
-                activeTag
+                activeTag,
               );
               this.emitTriple(
                 bnodes[i],
                 this.util.dataFactory.namedNode(
                   Util.RDF + 'first',
-                  activeTag.node
+                  activeTag.node,
                 ),
-                object
+                object,
               );
               this.emitTriple(
                 bnodes[i],
                 this.util.dataFactory.namedNode(
                   Util.RDF + 'rest',
-                  activeTag.node
+                  activeTag.node,
                 ),
                 i < values.length - 1
                   ? bnodes[i + 1]
-                  : this.util.dataFactory.namedNode(Util.RDF + 'nil')
+                  : this.util.dataFactory.namedNode(Util.RDF + 'nil'),
               );
             }
 
@@ -1081,7 +1081,7 @@ export class RdfaParser<N> {
             this.emitTriple(
               subject,
               predicate,
-              this.util.dataFactory.namedNode(Util.RDF + 'nil')
+              this.util.dataFactory.namedNode(Util.RDF + 'nil'),
             );
           }
         }
@@ -1160,14 +1160,14 @@ export class RdfaParser<N> {
     activeTag: IActiveTag<N>,
     subject: ModelQuadSubject<N> | boolean,
     predicate: ModelQuadPredicate<N>,
-    currentObjectResource: ModelQuadObject<N> | boolean | null
+    currentObjectResource: ModelQuadObject<N> | boolean | null,
   ) {
     if (activeTag.explicitNewSubject) {
       const bNode = this.util.createBlankNode(activeTag.node);
       this.emitTriple(
         this.util.getResourceOrBaseIri(subject, activeTag),
         predicate,
-        bNode
+        bNode,
       );
       if (!currentObjectResource) {
         throw new NullOrUndefinedError();
@@ -1175,12 +1175,12 @@ export class RdfaParser<N> {
       this.emitTriple(
         bNode,
         this.util.dataFactory.namedNode(Util.RDF + 'first', activeTag.node),
-        this.util.getResourceOrBaseIri(currentObjectResource, activeTag)
+        this.util.getResourceOrBaseIri(currentObjectResource, activeTag),
       );
       this.emitTriple(
         bNode,
         this.util.dataFactory.namedNode(Util.RDF + 'rest', activeTag.node),
-        this.util.dataFactory.namedNode(Util.RDF + 'nil')
+        this.util.dataFactory.namedNode(Util.RDF + 'nil'),
       );
     } else {
       let predicateList = activeTag.listMappingLocal[predicate.value];
@@ -1199,7 +1199,7 @@ export class RdfaParser<N> {
   protected emitTriple(
     subject: ModelQuadSubject<N>,
     predicate: ModelQuadPredicate<N>,
-    object: ModelQuadObject<N>
+    object: ModelQuadObject<N>,
   ) {
     // Validate IRIs
     if (
@@ -1214,7 +1214,7 @@ export class RdfaParser<N> {
       subject,
       predicate,
       object,
-      this.defaultGraph
+      this.defaultGraph,
     );
     if (subject.node && !this.seenSubjectNodes.has(subject)) {
       this.seenSubjectNodes.set(subject, subject.node);
@@ -1222,7 +1222,7 @@ export class RdfaParser<N> {
       MapUtils.setOrPush(
         this.subjectToNodesMapping,
         subject.value,
-        subject.node
+        subject.node,
       );
     }
     if (predicate.node && !this.seenPredicateNodes.has(predicate)) {
@@ -1231,7 +1231,7 @@ export class RdfaParser<N> {
       MapUtils.setOrPush(
         this.predicateToNodesMapping,
         predicate.value,
-        predicate.node
+        predicate.node,
       );
     }
     if (object.node && !this.seenObjectNodes.has(object)) {
@@ -1259,7 +1259,7 @@ export class RdfaParser<N> {
     parentTag: IActiveTag<N>,
     pattern: IRdfaPattern<N>,
     rootPatternId: string,
-    node?: N
+    node?: N,
   ) {
     this.activeTagStack.push(parentTag);
     pattern.referenced = true;
@@ -1305,7 +1305,7 @@ export class RdfaParser<N> {
     pattern: IRdfaPattern<N>,
     root: boolean,
     rootPatternId: string,
-    node?: N
+    node?: N,
   ) {
     // Stop on detection of cyclic patterns
     if (

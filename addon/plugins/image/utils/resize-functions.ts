@@ -1,7 +1,7 @@
 export type ResizeFunction = (
   element: HTMLElement,
   width: number,
-  height: number
+  height: number,
 ) => void;
 
 export const updateSize: ResizeFunction = (element, width, height) => {

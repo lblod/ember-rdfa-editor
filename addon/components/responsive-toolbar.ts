@@ -32,7 +32,7 @@ export default class ResponsiveToolbar extends Component {
         observer.disconnect();
       };
     },
-    { eager: false }
+    { eager: false },
   );
 
   setUpMainToolbar = modifier(
@@ -52,7 +52,7 @@ export default class ResponsiveToolbar extends Component {
         observer.disconnect();
       };
     },
-    { eager: false }
+    { eager: false },
   );
 
   setUpSideToolbar = modifier(
@@ -72,7 +72,7 @@ export default class ResponsiveToolbar extends Component {
         observer.disconnect();
       };
     },
-    { eager: false }
+    { eager: false },
   );
 
   setUpMainDropdown = modifier(
@@ -81,7 +81,7 @@ export default class ResponsiveToolbar extends Component {
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
-    { eager: false }
+    { eager: false },
   );
 
   setUpSideDropdown = modifier(
@@ -90,7 +90,7 @@ export default class ResponsiveToolbar extends Component {
       // Call handleResize to ensure the toolbar is correctly initialized
       this.handleResize();
     },
-    { eager: false }
+    { eager: false },
   );
 
   @action

@@ -8,7 +8,7 @@ interface DebounceOpts {
 export function debounced<A extends unknown[], R>(
   func: (...args: A) => R,
   delayMs: number,
-  { leading = false, trailing = true, maxWait }: DebounceOpts = {}
+  { leading = false, trailing = true, maxWait }: DebounceOpts = {},
 ) {
   let lastArgs: A | null = null;
   let lastThis: unknown;

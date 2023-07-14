@@ -78,7 +78,7 @@ export default interface Datastore<N> {
   match(
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
-    object?: ObjectSpec
+    object?: ObjectSpec,
   ): this;
 
   /**
@@ -90,7 +90,7 @@ export default interface Datastore<N> {
    * @param action
    */
   transformDataset(
-    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
+    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset,
   ): this;
 
   /** Transformer method.
@@ -220,7 +220,7 @@ export class EditorStore<N> implements Datastore<N> {
   static empty<N>(
     documentRoot: N,
     getParent: (node: N) => N | null,
-    attributes: (node: N) => Record<string, string>
+    attributes: (node: N) => Record<string, string>,
   ): Datastore<N> {
     const subjectToNodes = new Map<string, N[]>();
     const nodeToSubject = new Map<N, ModelQuad<N>>();
@@ -290,7 +290,7 @@ export class EditorStore<N> implements Datastore<N> {
   match(
     subject?: SubjectSpec,
     predicate?: PredicateSpec,
-    object?: ObjectSpec
+    object?: ObjectSpec,
   ): this {
     const convertedSubject =
       typeof subject === 'string'
@@ -307,7 +307,7 @@ export class EditorStore<N> implements Datastore<N> {
       convertedSubject,
       convertedPredicate,
       convertedObject,
-      null
+      null,
     );
     return this.fromDataset(this._documentRoot, newSet);
   }
@@ -322,7 +322,7 @@ export class EditorStore<N> implements Datastore<N> {
   asSubjectNodeMapping(): TermMapping<RDF.Quad_Subject, N> {
     return new TermMapping<RDF.Quad_Subject, N>(
       this.subjectNodeGenerator(),
-      this.getPrefix
+      this.getPrefix,
     );
   }
 
@@ -344,7 +344,7 @@ export class EditorStore<N> implements Datastore<N> {
   asPredicateNodeMapping(): TermMapping<RDF.Quad_Predicate, N> {
     return new TermMapping<RDF.Quad_Predicate, N>(
       this.predicateNodeGenerator(),
-      this.getPrefix
+      this.getPrefix,
     );
   }
 
@@ -382,7 +382,7 @@ export class EditorStore<N> implements Datastore<N> {
   asObjectNodeMapping(): TermMapping<RDF.Quad_Object, N> {
     return new TermMapping<RDF.Quad_Object, N>(
       this.objectNodeGenerator(),
-      this.getPrefix
+      this.getPrefix,
     );
   }
 
@@ -459,17 +459,17 @@ export class EditorStore<N> implements Datastore<N> {
   }
 
   transformDataset(
-    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset
+    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset,
   ): this {
     return this.fromDataset(
       this._documentRoot,
-      action(this.dataset, this.termConverter)
+      action(this.dataset, this.termConverter),
     );
   }
 
   protected fromDataset(documentRoot: N, dataset: RDF.Dataset): this {
     const Clazz = this.constructor as new (
-      config: GenericDatastoreConfig<N>
+      config: GenericDatastoreConfig<N>,
     ) => this;
     return new Clazz({
       documentRoot,

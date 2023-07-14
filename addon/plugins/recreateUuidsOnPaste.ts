@@ -9,7 +9,7 @@ const recreateUuidsOnPaste = new Plugin({
       return new Slice(
         recreateUuidsFromFragment(slice.content, schema),
         slice.openStart,
-        slice.openEnd
+        slice.openEnd,
       );
     },
   },
@@ -53,7 +53,7 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
     node.type,
     attrs,
     Fragment.fromArray(children),
-    node.marks
+    node.marks,
   );
 }
 

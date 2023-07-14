@@ -5,7 +5,7 @@ export function changedDescendants(
   old: PNode,
   cur: PNode,
   offset: number,
-  f: (node: PNode, pos: number) => void
+  f: (node: PNode, pos: number) => void,
 ): void {
   const oldSize = old.childCount;
   const curSize = cur.childCount;
