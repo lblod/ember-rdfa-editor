@@ -137,7 +137,7 @@ export default class SayEditor {
     const div = document.createElement('div');
     const doc = this.serializer.serializeNode(
       this.mainView.state.doc,
-      undefined
+      undefined,
     );
     div.appendChild(doc);
     return div.innerHTML;

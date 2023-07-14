@@ -18,6 +18,6 @@ export default interface SayMarkSpec extends MarkSpec {
   serialize?: (
     mark: Mark,
     inline: boolean,
-    state: EditorState
+    state: EditorState,
   ) => DOMOutputSpec;
 }

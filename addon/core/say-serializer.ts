@@ -41,7 +41,7 @@ type NodeSerializer = (node: PNode, state?: EditorState) => DOMOutputSpec;
 type MarkSerializer = (
   mark: Mark,
   inline: boolean,
-  state?: EditorState
+  state?: EditorState,
 ) => DOMOutputSpec;
 
 /**
@@ -64,7 +64,7 @@ export default class SaySerializer extends DOMSerializer {
     },
     /// The mark serialization functions.
     marks: { [mark: string]: MarkSerializer },
-    readonly editor: SayEditor
+    readonly editor: SayEditor,
   ) {
     super(nodes, marks);
   }
@@ -77,7 +77,7 @@ export default class SaySerializer extends DOMSerializer {
   serializeNodeInner(node: PNode, options: { document?: Document }) {
     const { dom, contentDOM } = DOMSerializer.renderSpec(
       doc(options),
-      this.nodes[node.type.name](node, this.state)
+      this.nodes[node.type.name](node, this.state),
     );
     if (contentDOM) {
       if (node.isLeaf)
@@ -91,14 +91,14 @@ export default class SaySerializer extends DOMSerializer {
   serializeMark(
     mark: Mark,
     inline: boolean,
-    options: { document?: Document } = {}
+    options: { document?: Document } = {},
   ) {
     const serializer = this.marks[mark.type.name];
     return (
       serializer &&
       DOMSerializer.renderSpec(
         doc(options),
-        serializer(mark, inline, this.state)
+        serializer(mark, inline, this.state),
       )
     );
   }
@@ -117,7 +117,7 @@ export default class SaySerializer extends DOMSerializer {
         (schema.cached.saySerializer = new SaySerializer(
           SaySerializer.nodesFromSchema(schema),
           SaySerializer.marksFromSchema(schema),
-          editor
+          editor,
         ))
       );
     } else {
@@ -125,7 +125,7 @@ export default class SaySerializer extends DOMSerializer {
         (schema.cached.domSerializer as DOMSerializer) ||
         (schema.cached.domSerializer = new DOMSerializer(
           DOMSerializer.nodesFromSchema(schema),
-          DOMSerializer.marksFromSchema(schema)
+          DOMSerializer.marksFromSchema(schema),
         ))
       );
     }
