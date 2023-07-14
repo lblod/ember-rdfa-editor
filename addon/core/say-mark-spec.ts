@@ -10,8 +10,9 @@ export default interface SayMarkSpec extends MarkSpec {
    * `serialize` method which is used by an instance of a `SaySerializer`.
    * When defined, this method takes precedence over `toDOM` when serializing using a `SaySerializer`.
    *
-   * Note: this method is not a replacement to `toDOM`, `toDOM` is still used to construct the a node-view for this node,
-   * this method is only used when the `SaySerializer` is explicitely used (e.g. when copying a part of the editor or when extracting the document html using the 'SayController.htmlContent` method).
+   * Note: this method is not a replacement to `toDOM`, `toDOM` is still used by Prosemirror to construct the node-view for this node,
+   * `serialize` is only used when `SaySerializer` is explicitly used in our code to serialize something.
+   * e.g. copying a part of the editor (see `clipboardSerializer`) or extracting the document html using the 'SayController.htmlContent` method.
    *
    */
   serialize?: (
