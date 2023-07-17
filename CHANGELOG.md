@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-model` from 1.19.2 to 1.19.3
 - Bumps `eslint` from 8.44.0 to 8.45.0
 - Bumps `prosemirror-view` from 1.31.5 to 1.31.6
+- Bumps `dompurify` from 3.0.4 to 3.0.5
 
 ## [4.0.0] - 2023-07-05
 
