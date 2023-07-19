@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prosemirror-view` from 1.31.5 to 1.31.6
 - Bumps `dompurify` from 3.0.4 to 3.0.5
 - Bumps `@typescript-eslint/parser` from 6.0.0 to 6.1.0
+- Bumps `release-it` from 16.1.0 to 16.1.2
 
 ## [4.0.0] - 2023-07-05
 
