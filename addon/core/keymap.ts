@@ -4,7 +4,7 @@ import {
   sinkListItem,
   splitListItem,
 } from 'prosemirror-schema-list';
-import { Command } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import {
@@ -33,6 +33,14 @@ import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
 
 export type KeymapOptions = {
+  /**
+   * Pass the state and dispatch if the keymap is used in an embedded editor
+   * e.g. `state: this.args.view.state, dispatch: this.args.view.dispatch.bind(this)`
+   */
+  embeddedConfig?: {
+    state: EditorState;
+    dispatch: (tr: Transaction) => void;
+  };
   backspace?: {
     /**
      * Enables alternative behaviour for backspace.
@@ -48,6 +56,23 @@ export type Keymap = (
   schema: Schema,
   options?: KeymapOptions,
 ) => Record<string, Command>;
+
+/**
+ * Wrap a command to run on the "outer"-editor. For use in embedded editor
+ * if configurations (`embeddedConfig`) is defined.
+ * @param command the command like `undo` or `redo`
+ */
+const wrapForEmbeddedConfig: (
+  command: Command,
+  config?: KeymapOptions,
+) => Command = (command, config) => {
+  if (config?.embeddedConfig) {
+    return () =>
+      command(config.embeddedConfig.state, config.embeddedConfig.dispatch);
+  } else {
+    return command;
+  }
+};
 
 const backspaceBase: Command[] = [
   undoInputRule,
@@ -104,11 +129,14 @@ const del = chainCommands(
 /// * **Delete** and **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-a** to `selectAll`
+///
+/// add `embeddedConfig` to the options for embedded editors, so `undo` and `redo` work for the
+/// outer editor, which keeps the history intact
 export const pcBaseKeymap: Keymap = (schema, options) => ({
-  'Mod-z': undo,
-  'Mod-Z': undo,
-  'Mod-y': redo,
-  'Mod-Y': redo,
+  'Mod-z': wrapForEmbeddedConfig(undo, options),
+  'Mod-Z': wrapForEmbeddedConfig(undo, options),
+  'Mod-y': wrapForEmbeddedConfig(redo, options),
+  'Mod-Y': wrapForEmbeddedConfig(redo, options),
   'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
   'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
   'Mod-i': toggleMarkAddFirst(schema.marks['em']),
