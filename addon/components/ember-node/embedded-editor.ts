@@ -26,6 +26,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
+  Command,
   EditorState,
   keymap,
   NodeSelection,
@@ -67,10 +68,17 @@ import {
 } from '@lblod/ember-rdfa-editor/commands';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { Plugin } from 'prosemirror-state';
 
 type Args = EmberNodeArgs & {
   placeholder: string;
   initEditor?: (view: SayView) => void;
+  /* override the schema */
+  schema?: Schema;
+  /* override the keymap. Pass outerView where needed. See `embeddedConfig` option in baseKeymap as example) */
+  keymap?: { [key: string]: Command };
+  /* editor plugins to add */
+  plugins?: Plugin[];
 };
 
 export default class EmbeddedEditor extends Component<Args> {
@@ -97,31 +105,69 @@ export default class EmbeddedEditor extends Component<Args> {
     return this.args.controller;
   }
 
+  get plugins() {
+    return this.args.plugins || [];
+  }
+
   get schema() {
-    return new Schema({
-      nodes: {
-        doc: {
-          content: 'block+',
+    if (this.args.schema) {
+      return this.args.schema;
+    } else {
+      return new Schema({
+        nodes: {
+          doc: {
+            content: 'block+',
+          },
+          paragraph,
+          repaired_block,
+          placeholder,
+
+          text,
+
+          hard_break,
+          block_rdfa,
+          invisible_rdfa,
         },
-        paragraph,
-        repaired_block,
-        placeholder,
+        marks: {
+          inline_rdfa,
+          link,
+          em,
+          strong,
+          underline,
+          strikethrough,
+        },
+      });
+    }
+  }
 
-        text,
-
-        hard_break,
-        block_rdfa,
-        invisible_rdfa,
-      },
-      marks: {
-        inline_rdfa,
-        link,
-        em,
-        strong,
-        underline,
-        strikethrough,
-      },
-    });
+  get keymap() {
+    if (this.args.keymap) {
+      return this.args.keymap;
+    } else {
+      return {
+        'Mod-z': () =>
+          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-Z': () =>
+          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-y': () =>
+          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-Y': () =>
+          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
+        'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
+        'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
+        'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
+        'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
+        'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
+        Enter: chainCommands(
+          newlineInCode,
+          createParagraphNear,
+          liftEmptyBlock,
+          splitBlock,
+          insertHardBreak,
+        ),
+      };
+    }
   }
 
   @action
@@ -133,31 +179,7 @@ export default class EmbeddedEditor extends Component<Args> {
         decorations: () => this.args.contentDecorations,
         state: EditorState.create({
           doc: this.node,
-          plugins: [
-            keymap({
-              'Mod-z': () =>
-                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-Z': () =>
-                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-y': () =>
-                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-Y': () =>
-                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
-              'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
-              'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
-              'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
-              'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
-              'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
-              Enter: chainCommands(
-                newlineInCode,
-                createParagraphNear,
-                liftEmptyBlock,
-                splitBlock,
-                insertHardBreak,
-              ),
-            }),
-          ],
+          plugins: [keymap(this.keymap), ...this.plugins],
           schema: this.schema,
         }),
         attributes: {
