@@ -66,9 +66,9 @@ const wrapForEmbeddedConfig: (
   command: Command,
   config?: KeymapOptions,
 ) => Command = (command, config) => {
-  if (config?.embeddedConfig) {
-    return () =>
-      command(config.embeddedConfig.state, config.embeddedConfig.dispatch);
+  const editorConfig = config?.embeddedConfig;
+  if (editorConfig) {
+    return () => command(editorConfig.state, editorConfig.dispatch);
   } else {
     return command;
   }
