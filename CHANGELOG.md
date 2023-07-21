@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `dompurify` from 3.0.4 to 3.0.5
 - Bumps `@typescript-eslint/parser` from 6.0.0 to 6.1.0
 - Bumps `release-it` from 16.1.0 to 16.1.2
+- Bumps `ember-template-lint` from 5.11.0 to 5.11.1
 
 ## [4.0.0] - 2023-07-05
 
