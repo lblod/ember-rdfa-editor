@@ -73,8 +73,6 @@ import { Plugin } from 'prosemirror-state';
 type Args = EmberNodeArgs & {
   placeholder: string;
   initEditor?: (view: SayView) => void;
-  /* override the schema */
-  schema?: Schema;
   /* override the keymap. Pass outerView where needed. See `embeddedConfig` option in baseKeymap as example) */
   keymap?: { [key: string]: Command };
   /* editor plugins to add */
@@ -97,6 +95,10 @@ export default class EmbeddedEditor extends Component<Args> {
     return this.args.node;
   }
 
+  get schema() {
+    return this.controller.schema;
+  }
+
   get pos() {
     return this.args.getPos();
   }
@@ -107,37 +109,6 @@ export default class EmbeddedEditor extends Component<Args> {
 
   get plugins() {
     return this.args.plugins || [];
-  }
-
-  get schema() {
-    if (this.args.schema) {
-      return this.args.schema;
-    } else {
-      return new Schema({
-        nodes: {
-          doc: {
-            content: 'block+',
-          },
-          paragraph,
-          repaired_block,
-          placeholder,
-
-          text,
-
-          hard_break,
-          block_rdfa,
-          invisible_rdfa,
-        },
-        marks: {
-          inline_rdfa,
-          link,
-          em,
-          strong,
-          underline,
-          strikethrough,
-        },
-      });
-    }
   }
 
   get keymap() {
@@ -180,7 +151,7 @@ export default class EmbeddedEditor extends Component<Args> {
         state: EditorState.create({
           doc: this.node,
           plugins: [keymap(this.keymap), ...this.plugins],
-          schema: this.schema,
+          // the schema is derived from 'doc' key and can't be customized
         }),
         attributes: {
           ...(this.args.placeholder && {
