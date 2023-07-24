@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0] - 2023-07-24
+
 ### Added
 - Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
 
@@ -1768,7 +1770,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...v4.0.0
 [3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
