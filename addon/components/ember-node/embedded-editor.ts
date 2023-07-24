@@ -31,30 +31,12 @@ import {
   keymap,
   NodeSelection,
   SayView,
-  Schema,
   Selection,
   StepMap,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
 import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
-import {
-  block_rdfa,
-  hard_break,
-  invisible_rdfa,
-  paragraph,
-  repaired_block,
-  text,
-} from '@lblod/ember-rdfa-editor/nodes';
-import { link } from '@lblod/ember-rdfa-editor/plugins/link';
-import {
-  em,
-  strikethrough,
-  strong,
-  underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
-import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
