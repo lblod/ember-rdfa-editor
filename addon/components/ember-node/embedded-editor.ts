@@ -95,7 +95,17 @@ export default class EmbeddedEditor extends Component<Args> {
 
   get keymap() {
     if (this.args.keymap) {
-      return this.args.keymap;
+      return {
+        ...this.args.keymap,
+        'Mod-z': () =>
+          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-Z': () =>
+          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-y': () =>
+          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+        'Mod-Y': () =>
+          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      };
     } else {
       return {
         'Mod-z': () =>

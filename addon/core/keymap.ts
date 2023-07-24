@@ -33,14 +33,6 @@ import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
 
 export type KeymapOptions = {
-  /**
-   * Pass the state and dispatch if the keymap is used in an embedded editor
-   * e.g. `state: this.args.view.state, dispatch: this.args.view.dispatch.bind(this)`
-   */
-  embeddedConfig?: {
-    state: EditorState;
-    dispatch: (tr: Transaction) => void;
-  };
   backspace?: {
     /**
      * Enables alternative behaviour for backspace.
@@ -56,23 +48,6 @@ export type Keymap = (
   schema: Schema,
   options?: KeymapOptions,
 ) => Record<string, Command>;
-
-/**
- * Wrap a command to run on the "outer"-editor. For use in embedded editor
- * if configurations (`embeddedConfig`) is defined.
- * @param command the command like `undo` or `redo`
- */
-const wrapForEmbeddedConfig: (
-  command: Command,
-  config?: KeymapOptions,
-) => Command = (command, config) => {
-  const editorConfig = config?.embeddedConfig;
-  if (editorConfig) {
-    return () => command(editorConfig.state, editorConfig.dispatch);
-  } else {
-    return command;
-  }
-};
 
 const backspaceBase: Command[] = [
   undoInputRule,
@@ -130,13 +105,12 @@ const del = chainCommands(
 /// * **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 /// * **Mod-a** to `selectAll`
 ///
-/// add `embeddedConfig` to the options for embedded editors, so `undo` and `redo` work for the
-/// outer editor, which keeps the history intact
+/// `undo` and `redo` pc keybindings are overwritten in embedded-controller!
 export const pcBaseKeymap: Keymap = (schema, options) => ({
-  'Mod-z': wrapForEmbeddedConfig(undo, options),
-  'Mod-Z': wrapForEmbeddedConfig(undo, options),
-  'Mod-y': wrapForEmbeddedConfig(redo, options),
-  'Mod-Y': wrapForEmbeddedConfig(redo, options),
+  'Mod-z': undo,
+  'Mod-Z': undo,
+  'Mod-y': redo,
+  'Mod-Y': redo,
   'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
   'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
   'Mod-i': toggleMarkAddFirst(schema.marks['em']),
