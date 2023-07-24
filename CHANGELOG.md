@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `release-it` from 16.1.0 to 16.1.2
 - Bumps `ember-template-lint` from 5.11.0 to 5.11.1
 - Bumps `sass` from 1.63.6 to 1.64.1
+- Bumps `webpack` from 5.88.1 to 5.88.2
 
 ## [4.0.0] - 2023-07-05
 
