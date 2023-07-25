@@ -98,7 +98,7 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   get keymap() {
-    const baseMap = {
+    const undoRedoMap = {
       'Mod-z': () =>
         undo(this.outerView.state, this.outerView.dispatch.bind(this)),
       'Mod-Z': () =>
@@ -107,6 +107,8 @@ export default class EmbeddedEditor extends Component<Args> {
         redo(this.outerView.state, this.outerView.dispatch.bind(this)),
       'Mod-Y': () =>
         redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+    };
+    const baseMap = {
       'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
       'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
       'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
@@ -125,9 +127,10 @@ export default class EmbeddedEditor extends Component<Args> {
       return {
         ...baseMap,
         ...this.args.keymap,
+        ...undoRedoMap,
       };
     } else {
-      return baseMap;
+      return { ...baseMap, ...undoRedoMap };
     }
   }
 
