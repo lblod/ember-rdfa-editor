@@ -61,6 +61,10 @@ type Args = EmberNodeArgs & {
   plugins?: Plugin[];
 };
 
+/**
+ * An embedded editor to use for *inline* content. This way you can specify extra content for an
+ * inline (atom) node. For block content, use content directly instead ({{yield}} in ember-nodes).
+ */
 export default class EmbeddedEditor extends Component<Args> {
   @service declare intl: IntlService;
   innerView: SayView | null = null;

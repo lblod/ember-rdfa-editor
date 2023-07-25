@@ -4,7 +4,7 @@ import {
   sinkListItem,
   splitListItem,
 } from 'prosemirror-schema-list';
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import {
