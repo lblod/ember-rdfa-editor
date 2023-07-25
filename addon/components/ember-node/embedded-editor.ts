@@ -55,7 +55,7 @@ import { Plugin } from 'prosemirror-state';
 type Args = EmberNodeArgs & {
   placeholder: string;
   initEditor?: (view: SayView) => void;
-  /* override the keymap. Pass outerView where needed. See `embeddedConfig` option in baseKeymap as example) */
+  /* override the keymap. */
   keymap?: { [key: string]: Command };
   /* editor plugins to add */
   plugins?: Plugin[];
@@ -98,42 +98,36 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   get keymap() {
+    const baseMap = {
+      'Mod-z': () =>
+        undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-Z': () =>
+        undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-y': () =>
+        redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-Y': () =>
+        redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
+      'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
+      'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
+      'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
+      'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
+      'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
+      Enter: chainCommands(
+        newlineInCode,
+        createParagraphNear,
+        liftEmptyBlock,
+        splitBlock,
+        insertHardBreak,
+      ),
+    };
     if (this.args.keymap) {
       return {
+        ...baseMap,
         ...this.args.keymap,
-        'Mod-z': () =>
-          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-Z': () =>
-          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-y': () =>
-          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-Y': () =>
-          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
       };
     } else {
-      return {
-        'Mod-z': () =>
-          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-Z': () =>
-          undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-y': () =>
-          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-Y': () =>
-          redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-        'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
-        'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
-        'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
-        'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
-        'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
-        'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
-        Enter: chainCommands(
-          newlineInCode,
-          createParagraphNear,
-          liftEmptyBlock,
-          splitBlock,
-          insertHardBreak,
-        ),
-      };
+      return baseMap;
     }
   }
 
