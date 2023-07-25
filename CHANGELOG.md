@@ -7,15 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0] - 2023-07-24
+
 ### Added
 - Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
 - Addition of a custom `SayNodeSpec` interface which adds support for a `serialize` method. This method gets called each time the custom `SaySerializer` is executed.
 - Addition of a custom `SayMarkSpec` interface which adds support for a `serialize` method. This method gets called each time the custom `SaySerializer` is executed.
 - Addition of the `SaySerializer` class. This is a custom `DOMSerializer` which execute the `serialize` method of node- and mark-specs if available.
+
+### Changed
+- Updated docker build to serve static files
 ### Dependencies
-- Bumps `@codemirror/view` from 6.14.0 to 6.14.1
+- Bumps `@codemirror/view` from 6.14.1 to 6.15.3
+- Bumps `@codemirror/view` from 6.14.0 to 6.15.3
 - Bumps `eslint-plugin-ember` from 11.9.0 to 11.10.0
-- Bumps `@typescript-eslint/eslint-plugin` from 5.61.0 to 6.0.0
+- Bumps `@typescript-eslint/eslint-plugin` from 6.0.0 to 6.1.0
+- Bumps `@typescript-eslint/eslint-plugin` from 5.61.0 to 6.1.0
 - Bumps `@typescript-eslint/parser` to 6.0.0
 - Bumps `semver` from 5.7.1 to 5.7.2
 - Bumps `prettier` from 2.8.8 to 3.0.0
@@ -23,6 +30,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `release-it` to 16.1.0
 - Bumps `@release-it/keep-a-changelog` to 4.0.0
 - Bumps `prosemirror-model` from 1.19.2 to 1.19.3
+- Bumps `eslint` from 8.44.0 to 8.45.0
+- Bumps `prosemirror-view` from 1.31.5 to 1.31.6
+- Bumps `dompurify` from 3.0.4 to 3.0.5
+- Bumps `@typescript-eslint/parser` from 6.0.0 to 6.1.0
+- Bumps `release-it` from 16.1.2 to 16.1.3
+- Bumps `release-it` from 16.1.0 to 16.1.3
+- Bumps `ember-template-lint` from 5.11.0 to 5.11.1
+- Bumps `sass` from 1.63.6 to 1.64.1
+- Bumps `webpack` from 5.88.1 to 5.88.2
 
 ## [4.0.0] - 2023-07-05
 
@@ -1757,7 +1773,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...v4.0.0
 [3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
