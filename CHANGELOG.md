@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
+- Addition of a custom `SayNodeSpec` interface which adds support for a `serialize` method. This method gets called each time the custom `SaySerializer` is executed.
+- Addition of a custom `SayMarkSpec` interface which adds support for a `serialize` method. This method gets called each time the custom `SaySerializer` is executed.
+- Addition of the `SaySerializer` class. This is a custom `DOMSerializer` which execute the `serialize` method of node- and mark-specs if available.
 
 ### Changed
 - Updated docker build to serve static files

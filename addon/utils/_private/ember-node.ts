@@ -17,7 +17,6 @@ import {
   AttributeSpec,
   DOMOutputSpec,
   Node as PNode,
-  NodeSpec,
   ParseRule,
 } from 'prosemirror-model';
 import {
@@ -31,7 +30,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Component from '@ember/component';
 import Owner from '@ember/owner';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { SayView } from '@lblod/ember-rdfa-editor';
+import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
+import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 /**
  * An EmberNode is a node with a custom Node View defined by an ember template.
@@ -309,6 +309,7 @@ export type EmberNodeConfig = {
   };
   parseDOM?: readonly ParseRule[];
   toDOM?: (node: PNode) => DOMOutputSpec;
+  serialize?: (node: PNode, state: EditorState) => DOMOutputSpec;
   stopEvent?: (event: Event) => boolean;
   ignoreMutation?: (
     mutation: MutationRecord | { type: 'selection'; target: Element },
@@ -326,7 +327,7 @@ export type EmberNodeConfig = {
     [key: string]: unknown;
   };
 
-export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
+export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
   const {
     name,
     inline,
@@ -340,6 +341,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
     attrs,
     parseDOM,
     toDOM,
+    serialize,
     ...passthrough
   } = config;
   return {
@@ -396,6 +398,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): NodeSpec {
             : [[inline ? 'span' : 'div', { 'data-slot': 'true' }, 0]]),
         ];
       }),
+    serialize,
     ...passthrough,
   };
 }
