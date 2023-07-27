@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
+- Check if table can be inserted
 
 ### Fixed
 - All Paragraphs are now part of the group `paragraphGroup`

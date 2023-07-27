@@ -3,7 +3,7 @@
   @icon="table"
   @label={{t 'ember-rdfa-editor.table-options'}}
   @hideLabel={{true}}
-  @disabled={{@controller.inEmbeddedView}}
+  @disabled={{not this.canInsertTable}}
   as |Menu|
 >
   {{#if this.isInTable}}
