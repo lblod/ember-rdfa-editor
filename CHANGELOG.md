@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `@typescript-eslint/parser` from 6.1.0 to 6.2.0
+- Bumps `@typescript-eslint/eslint-plugin` from 6.1.0 to 6.2.0
 
 ## [4.1.0] - 2023-07-24
 
