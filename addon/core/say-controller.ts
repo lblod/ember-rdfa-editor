@@ -6,7 +6,7 @@ import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
-import { DOMSerializer, MarkType, Schema } from 'prosemirror-model';
+import { MarkType, Schema } from 'prosemirror-model';
 import {
   Command,
   EditorState,
@@ -160,13 +160,7 @@ export default class SayController {
   }
 
   get htmlContent(): string {
-    const div = document.createElement('div');
-    const doc = DOMSerializer.fromSchema(this.schema).serializeNode(
-      this.mainEditorState.doc,
-      undefined,
-    );
-    div.appendChild(doc);
-    return div.innerHTML;
+    return this.editor.htmlContent;
   }
 
   get inEmbeddedView(): boolean {
