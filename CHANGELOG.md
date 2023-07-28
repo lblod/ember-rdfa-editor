@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Addition of an ember-application prosemirror plugin which allows for accessing the current instance of the ember application given a prosemirror state.
+- Can specify plugins and keymap for embedded-editor.
+- `ParagraphWithConfig` node that allows paragraphs with customized configuration like marks, groups and allowed content.
+- Option `allowedTypes` for indentation menu to override which types can be indented. 
+### Changed
+- The schema defined for embedded-editor was not used by prosemirror. This has been removed to avoid confusion.
+- Mark buttons (bold, italic, ...) are now disabled if not allowed for the selected text.
 ### Dependencies
 - Bumps `@codemirror/view` from 6.14.1 to 6.15.3
 - Bumps `@codemirror/view` from 6.14.0 to 6.15.3
