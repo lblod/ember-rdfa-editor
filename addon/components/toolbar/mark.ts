@@ -20,6 +20,10 @@ export default class BoldComponent extends Component<Args> {
     return this.controller.isMarkActive(this.mark);
   }
 
+  get canToggle() {
+    return this.controller.checkCommand(toggleMarkAddFirst(this.mark));
+  }
+
   @action
   toggle() {
     this.controller.focus();

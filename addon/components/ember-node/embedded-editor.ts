@@ -26,53 +26,37 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
+  Command,
   EditorState,
   keymap,
   NodeSelection,
   SayView,
-  Schema,
   Selection,
   StepMap,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
-import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
-import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
-import {
-  block_rdfa,
-  hard_break,
-  invisible_rdfa,
-  paragraph,
-  repaired_block,
-  text,
-} from '@lblod/ember-rdfa-editor/nodes';
-import { link } from '@lblod/ember-rdfa-editor/plugins/link';
-import {
-  em,
-  strikethrough,
-  strong,
-  underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
-import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';
-import {
-  chainCommands,
-  createParagraphNear,
-  liftEmptyBlock,
-  newlineInCode,
-  splitBlock,
-} from '@lblod/ember-rdfa-editor/commands';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { Plugin } from 'prosemirror-state';
+import { embeddedEditorBaseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 
 type Args = EmberNodeArgs & {
   placeholder: string;
   initEditor?: (view: SayView) => void;
+  /* override the keymap. */
+  keymap?: { [key: string]: Command };
+  /* editor plugins to add */
+  plugins?: Plugin[];
 };
 
+/**
+ * An embedded editor to use for *inline* content. This way you can specify extra content for an
+ * inline (atom) node. For block content, use content directly instead ({{yield}} in ember-nodes).
+ */
 export default class EmbeddedEditor extends Component<Args> {
   @service declare intl: IntlService;
   innerView: SayView | null = null;
@@ -89,6 +73,10 @@ export default class EmbeddedEditor extends Component<Args> {
     return this.args.node;
   }
 
+  get schema() {
+    return this.controller.schema;
+  }
+
   get pos() {
     return this.args.getPos();
   }
@@ -97,31 +85,30 @@ export default class EmbeddedEditor extends Component<Args> {
     return this.args.controller;
   }
 
-  get schema() {
-    return new Schema({
-      nodes: {
-        doc: {
-          content: 'block+',
-        },
-        paragraph,
-        repaired_block,
-        placeholder,
+  get plugins() {
+    return this.args.plugins || [];
+  }
 
-        text,
+  get keymap() {
+    const undoRedoMap = {
+      'Mod-z': () =>
+        undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-Z': () =>
+        undo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-y': () =>
+        redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+      'Mod-Y': () =>
+        redo(this.outerView.state, this.outerView.dispatch.bind(this)),
+    };
 
-        hard_break,
-        block_rdfa,
-        invisible_rdfa,
-      },
-      marks: {
-        inline_rdfa,
-        link,
-        em,
-        strong,
-        underline,
-        strikethrough,
-      },
-    });
+    if (this.args.keymap) {
+      return {
+        ...this.args.keymap,
+        ...undoRedoMap,
+      };
+    } else {
+      return { ...embeddedEditorBaseKeymap, ...undoRedoMap };
+    }
   }
 
   @action
@@ -133,32 +120,8 @@ export default class EmbeddedEditor extends Component<Args> {
         decorations: () => this.args.contentDecorations,
         state: EditorState.create({
           doc: this.node,
-          plugins: [
-            keymap({
-              'Mod-z': () =>
-                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-Z': () =>
-                undo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-y': () =>
-                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-Y': () =>
-                redo(this.outerView.state, this.outerView.dispatch.bind(this)),
-              'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
-              'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
-              'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
-              'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
-              'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
-              'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
-              Enter: chainCommands(
-                newlineInCode,
-                createParagraphNear,
-                liftEmptyBlock,
-                splitBlock,
-                insertHardBreak,
-              ),
-            }),
-          ],
-          schema: this.schema,
+          plugins: [keymap(this.keymap), ...this.plugins],
+          // the schema is derived from 'doc' key and can't be customized
         }),
         attributes: {
           ...(this.args.placeholder && {

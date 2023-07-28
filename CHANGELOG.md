@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@typescript-eslint/eslint-plugin` from 6.1.0 to 6.2.0
 - Bumps `eslint-plugin-deprecation` from 1.4.1 to 1.5.0
 
+### Added
+- Can specify plugins and keymap for embedded-editor.
+- `ParagraphWithConfig` node that allows paragraphs with customized configuration like marks, groups and allowed content.
+- Option `allowedTypes` for indentation menu to override which types can be indented.
+
+### Changed
+- The schema defined for embedded-editor was not used by prosemirror. This has been removed to avoid confusion.
+- Mark buttons (bold, italic, ...) are now disabled if not allowed for the selected text.
+
 ## [4.1.0] - 2023-07-24
 
 ### Added
