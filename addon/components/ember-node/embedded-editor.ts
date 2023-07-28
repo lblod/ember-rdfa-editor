@@ -51,6 +51,7 @@ import {
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 import { Plugin } from 'prosemirror-state';
+import { embeddedEditorBaseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 
 type Args = EmberNodeArgs & {
   placeholder: string;
@@ -108,29 +109,14 @@ export default class EmbeddedEditor extends Component<Args> {
       'Mod-Y': () =>
         redo(this.outerView.state, this.outerView.dispatch.bind(this)),
     };
-    const baseMap = {
-      'Mod-b': toggleMarkAddFirst(this.schema.marks.strong),
-      'Mod-B': toggleMarkAddFirst(this.schema.marks.strong),
-      'Mod-i': toggleMarkAddFirst(this.schema.marks.em),
-      'Mod-I': toggleMarkAddFirst(this.schema.marks.em),
-      'Mod-u': toggleMarkAddFirst(this.schema.marks.underline),
-      'Mod-U': toggleMarkAddFirst(this.schema.marks.underline),
-      Enter: chainCommands(
-        newlineInCode,
-        createParagraphNear,
-        liftEmptyBlock,
-        splitBlock,
-        insertHardBreak,
-      ),
-    };
+
     if (this.args.keymap) {
       return {
-        ...baseMap,
         ...this.args.keymap,
         ...undoRedoMap,
       };
     } else {
-      return { ...baseMap, ...undoRedoMap };
+      return { ...embeddedEditorBaseKeymap, ...undoRedoMap };
     }
   }
 

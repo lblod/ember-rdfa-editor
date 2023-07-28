@@ -14,6 +14,7 @@ import {
   exitCode,
   joinBackward,
   joinForward,
+  liftEmptyBlock,
   newlineInCode,
   selectAll,
   selectNodeBackward,
@@ -153,6 +154,24 @@ export const macBaseKeymap: Keymap = (schema, options) => {
     'Alt-d': pcmap['Mod-Delete'],
     'Ctrl-a': selectTextblockStart,
     'Ctrl-e': selectTextblockEnd,
+  };
+};
+
+export const embeddedEditorBaseKeymap: Keymap = (schema) => {
+  return {
+    'Mod-b': toggleMarkAddFirst(schema.marks.strong),
+    'Mod-B': toggleMarkAddFirst(schema.marks.strong),
+    'Mod-i': toggleMarkAddFirst(schema.marks.em),
+    'Mod-I': toggleMarkAddFirst(schema.marks.em),
+    'Mod-u': toggleMarkAddFirst(schema.marks.underline),
+    'Mod-U': toggleMarkAddFirst(schema.marks.underline),
+    Enter: chainCommands(
+      newlineInCode,
+      createParagraphNear,
+      liftEmptyBlock,
+      splitBlock,
+      insertHardBreak,
+    ),
   };
 };
 
