@@ -8,7 +8,7 @@ import { NodeType } from 'prosemirror-model';
 
 type Args = {
   controller: SayController;
-  extraTypes?: NodeType[] | NodeType;
+  allowedTypes?: NodeType[] | NodeType;
 };
 
 export default class IndentationMenuComponent extends Component<Args> {
@@ -20,18 +20,11 @@ export default class IndentationMenuComponent extends Component<Args> {
     return this.controller.schema;
   }
 
-  get extraTypes() {
-    if (!this.args.extraTypes) return [];
-    if (this.args.extraTypes instanceof Array) return this.args.extraTypes;
-    return [this.args.extraTypes];
-  }
-
   get allowedTypes() {
-    return [
-      this.schema.nodes.paragraph,
-      this.schema.nodes.heading,
-      ...this.extraTypes,
-    ];
+    if (!this.args.allowedTypes)
+      return [this.schema.nodes.paragraph, this.schema.nodes.heading];
+    if (this.args.allowedTypes instanceof Array) return this.args.allowedTypes;
+    return [this.args.allowedTypes];
   }
 
   get indentCommand() {
