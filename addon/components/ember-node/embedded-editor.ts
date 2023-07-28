@@ -35,19 +35,10 @@ import {
   StepMap,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
-import { insertHardBreak } from '@lblod/ember-rdfa-editor/commands/insert-hard-break';
-import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';
-import {
-  chainCommands,
-  createParagraphNear,
-  liftEmptyBlock,
-  newlineInCode,
-  splitBlock,
-} from '@lblod/ember-rdfa-editor/commands';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 import { Plugin } from 'prosemirror-state';
