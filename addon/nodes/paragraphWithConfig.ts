@@ -3,6 +3,11 @@ import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
 
+type paragraphDataAttributes = {
+  'data-indentation-level': number;
+  'data-paragraph-type'?: string;
+};
+
 let BLOCK_SELECTOR = '';
 NON_BLOCK_NODES.forEach(
   (tag) => (BLOCK_SELECTOR = `${BLOCK_SELECTOR}${tag}, `),
@@ -61,7 +66,6 @@ export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
       {
         tag: 'p',
         getAttrs(node: HTMLElement) {
-          console.log('2, ', node.dataset.paragraphType);
           const myAttrs = getRdfaAttrs(node);
           if (myAttrs) {
             return false;
@@ -84,8 +88,9 @@ export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
       },
     ],
     toDOM(node) {
-      const attrs = {};
-      attrs['data-indentation-level'] = node.attrs.indentationLevel as number;
+      const attrs: paragraphDataAttributes = {
+        'data-indentation-level': node.attrs.indentationLevel as number,
+      };
       if (node.attrs.paragraphType && node.attrs.paragraphType !== '') {
         attrs['data-paragraph-type'] = node.attrs.paragraphType as string;
       }
