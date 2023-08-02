@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Dependencies
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
+- Bumps `sass` from 1.64.1 to 1.64.2
 
 ## [4.2.0] - 2023-07-29
 ### Dependencies
