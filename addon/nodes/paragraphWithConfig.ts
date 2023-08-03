@@ -3,10 +3,12 @@ import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
 
-type paragraphDataAttributes = {
+export type ParagraphDataAttributes = {
   'data-indentation-level': number;
-  'data-paragraph-type'?: string;
+  'data-sub-type'?: string;
 };
+
+export type ParagraphNodeSpec = NodeSpec & { subType: string };
 
 let BLOCK_SELECTOR = '';
 NON_BLOCK_NODES.forEach(
@@ -17,28 +19,34 @@ BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR.substring(
   BLOCK_SELECTOR.length - 2,
 )})`;
 
-interface paragraphConfig {
+const BASE_PARAGRAPH_TYPE = 'paragraph';
+const matchingSubType = (node: HTMLElement, subType: string) => {
+  // basic paragraph has no subtype in its dataset and an empty subType
+  const isBasicParagraph = node.dataset.subType === undefined && subType === '';
+  return isBasicParagraph || node.dataset.subType === subType;
+};
+
+export interface ParagraphConfig {
   content?: string;
   marks?: string;
   group?: string;
-  /* A name to separate different kinds of paragraphs in toDom functions.
-  Mandatory for anything that isn't a basic paragraph.*/
-  name?: string;
+  /* A mandatory subType name to separate different kinds of paragraphs in toDom functions.
+  For the basic paragraph this is the empty string and will not be added to dataset */
+  subType: string;
 }
 
-export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
-  config,
-) => {
+export const paragraphWithConfig: (
+  config: ParagraphConfig,
+) => ParagraphNodeSpec = (config) => {
+  const name = config.subType !== '' ? config.subType : BASE_PARAGRAPH_TYPE;
   return {
-    name: config?.name || 'paragraphWithConfig',
+    name: name,
     content: config?.content || 'inline*',
     group: config?.group || 'block paragraphGroup',
+    subType: config.subType,
     attrs: {
       indentationLevel: {
         default: 0,
-      },
-      paragraphType: {
-        default: config?.name || '',
       },
     },
     parseDOM: [
@@ -46,17 +54,13 @@ export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
         tag: 'p',
         getAttrs(node: HTMLElement) {
           const nonBlockNode = node.querySelector(BLOCK_SELECTOR);
-          const matchingType =
-            !node.dataset.paragraphType ||
-            node.dataset.paragraphType === config?.name;
-          if (nonBlockNode && matchingType) {
+          if (nonBlockNode && matchingSubType(node, config.subType)) {
             return {
               indentationLevel: optionMapOr(
                 0,
                 parseInt,
                 node.dataset.indentationLevel,
               ),
-              paragraphType: node.dataset.paragraphType || '',
             };
           }
           return false;
@@ -70,10 +74,8 @@ export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
           if (myAttrs) {
             return false;
           }
-          const matchingType =
-            !node.dataset.paragraphType ||
-            node.dataset.paragraphType === config?.name;
-          if (!matchingType) return false;
+
+          if (!matchingSubType(node, config.subType)) return false;
 
           return {
             indentationLevel: optionMapOr(
@@ -81,18 +83,18 @@ export const paragraphWithConfig: (config?: paragraphConfig) => NodeSpec = (
               parseInt,
               node.dataset.indentationLevel,
             ),
-            paragraphType: node.dataset.paragraphType || '',
           };
         },
         consuming: false,
       },
     ],
     toDOM(node) {
-      const attrs: paragraphDataAttributes = {
+      const attrs: ParagraphDataAttributes = {
         'data-indentation-level': node.attrs.indentationLevel as number,
       };
-      if (node.attrs.paragraphType && node.attrs.paragraphType !== '') {
-        attrs['data-paragraph-type'] = node.attrs.paragraphType as string;
+      const subType = (node.type.spec as ParagraphNodeSpec).subType;
+      if (subType && subType !== '') {
+        attrs['data-sub-type'] = subType;
       }
       return ['p', attrs, 0];
     },
