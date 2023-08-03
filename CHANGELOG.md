@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - All Paragraphs are now part of the group `paragraphGroup`
   - A list will accept any `paragraphGroup`
-- ParagraphWithConfig will get parsed as itself by using the `name` attribute in the config, which gets added as an attribute. Before all paragraphs would get parsed as a basic paragraph.
+- ParagraphWithConfig accepts a config option `subType` which is required.
+  - For a normal paragraph this can be the empty string
+  - For others, this will be added to the nodespec as `subType` and the dataset of the node in `parseDom`
 ### Dependencies
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
 - Bumps `sass` from 1.64.1 to 1.64.2
