@@ -1,16 +1,13 @@
-import { NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
 import { PNode } from '..';
 
 type IndentNodeArgs = {
-  types: NodeType[];
   direction: number;
   predicate?: (node: PNode, pos: number, parent: PNode | null) => boolean;
   maxLevel?: number;
 };
 
 export function indentNode({
-  types,
   direction,
   predicate = () => true,
   maxLevel = 4,
@@ -20,7 +17,7 @@ export function indentNode({
     const applicableNodes: { node: PNode; pos: number }[] = [];
     state.doc.nodesBetween(from, to, (node, pos, parent) => {
       if (
-        types.includes(node.type) &&
+        node.type.spec.indentable &&
         predicate(node, pos, parent) &&
         ((direction === -1 && node.attrs.indentationLevel > 0) ||
           (direction === 1 && node.attrs.indentationLevel < maxLevel))

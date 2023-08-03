@@ -64,6 +64,7 @@ export const list_item: NodeSpec = {
   content: 'paragraph+ block*',
   defining: true,
   attrs: { ...rdfaAttrs },
+  indentable: true,
   parseDOM: [
     {
       tag: 'li',
