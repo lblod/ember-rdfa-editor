@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
 - Bumps `sass` from 1.64.1 to 1.64.2
 - Bumps `prosemirror-view` from 1.31.6 to 1.31.7
+- Bumps `@types/sinon` from 10.0.15 to 10.0.16
+- Bumps `eslint` from 8.45.0 to 8.46.0
+- Bumps `handlebars` from 4.7.7 to 4.7.8
+- Bumps `prettier` from 3.0.0 to 3.0.1
+- Bumps `prosemirror-transform` from 1.7.3 to 1.7.4
+- Bumps `@codemirror/view` from 6.15.3 to 6.16.0
 
 ## [4.2.0] - 2023-07-29
 ### Dependencies
