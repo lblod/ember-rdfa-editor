@@ -7,6 +7,14 @@ type IndentNodeArgs = {
   maxLevel?: number;
 };
 
+/**
+ * Returns a command to indent the node(s) in the selection. Only nodes with 
+ * nodespec `indentable` equal to true and `indentationLevel` as node attribute can be indented.
+ * @direction the number -1 or 1 to indent back or further
+ * @predicate extra check to see if a node should be allowed to indent
+ * @maxLevel max level to indent
+ * @returns Command
+ */
 export function indentNode({
   direction,
   predicate = () => true,
