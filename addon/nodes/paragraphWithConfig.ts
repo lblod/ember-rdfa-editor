@@ -93,7 +93,7 @@ export const paragraphWithConfig: (
         'data-indentation-level': node.attrs.indentationLevel as number,
       };
       const subType = (node.type.spec as ParagraphNodeSpec).subType;
-      if (subType && subType !== '') {
+      if (subType) {
         attrs['data-sub-type'] = subType;
       }
       return ['p', attrs, 0];
