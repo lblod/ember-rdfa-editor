@@ -8,8 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Nodes with nodespec `indentable: true` can be indented.
-### Changed
-- remove option `allowedTypes`. Instead add a nodespec `indentable: true` for nodes that should be indented.
 ### Dependencies
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
 - Bumps `sass` from 1.64.1 to 1.64.2
@@ -17,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@types/sinon` from 10.0.15 to 10.0.16
 - Bumps `eslint` from 8.45.0 to 8.46.0
 - Bumps `handlebars` from 4.7.7 to 4.7.8
+
+### Breaking
+- remove option `allowedTypes`. Instead add a nodespec `indentable: true` for nodes that should be indented.
 
 ## [4.2.0] - 2023-07-29
 ### Dependencies
