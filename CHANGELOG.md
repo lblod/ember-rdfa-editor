@@ -6,8 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added
-- Nodes with nodespec `indentable: true` can be indented.
+### Changed
+- All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
 ### Dependencies
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
 - Bumps `sass` from 1.64.1 to 1.64.2
@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `@codemirror/view` from 6.15.3 to 6.16.0
 
 ### Breaking
-- remove option `allowedTypes`. Instead add a nodespec `indentable: true` for nodes that should be indented.
+- remove option `allowedTypes`. Instead all nodes with attribute `indentationLevel` can be indented.
 
 ## [4.2.0] - 2023-07-29
 ### Dependencies

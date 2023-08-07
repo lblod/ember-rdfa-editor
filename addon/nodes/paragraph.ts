@@ -19,7 +19,6 @@ export const paragraph: NodeSpec = {
       default: 0,
     },
   },
-  indentable: true,
   // defining: true,
   parseDOM: [
     {

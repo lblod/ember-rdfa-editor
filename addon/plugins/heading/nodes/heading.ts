@@ -10,7 +10,6 @@ export const heading: NodeSpec = {
   },
   content: 'inline*',
   group: 'block',
-  indentable: true,
   defining: true,
   parseDOM: [
     {
