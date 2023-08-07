@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `prettier` from 3.0.0 to 3.0.1
 - Bumps `prosemirror-transform` from 1.7.3 to 1.7.4
 - Bumps `@codemirror/view` from 6.15.3 to 6.16.0
+- Bumps `@typescript-eslint/eslint-plugin` from 6.2.0 to 6.2.1
 
 ## [4.2.0] - 2023-07-29
 ### Dependencies
