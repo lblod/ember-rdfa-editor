@@ -8,6 +8,5 @@ steps:
       - npm ci
       - npx ember try:one ${scenario}
 when:
-  - event: pull_request
-  - event: push
-    branch: gh-readonly-queue/*
+  event:
+    - pull_request

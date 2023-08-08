@@ -29,9 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking
 - remove option `allowedTypes`. Instead all nodes with attribute `indentationLevel` can be indented.
 
-### Internal
-- Add support for Github merge queues
-
 ## [4.2.0] - 2023-07-29
 ### Dependencies
 - Bumps `@typescript-eslint/parser` from 6.1.0 to 6.2.0

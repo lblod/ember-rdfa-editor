@@ -5,6 +5,5 @@ steps:
       repo: lblod/ember-rdfa-editor
       dry_run: true
 when:
-  - event: pull_request
-  - event: push
-    branch: gh-readonly-queue/*
+  event:
+    - pull_request
