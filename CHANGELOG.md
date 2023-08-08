@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - All Paragraphs are now part of the group `paragraphGroup`
+### Dependencies
+- Bumps `@typescript-eslint/eslint-plugin` from 6.2.0 to 6.3.0
   - A list will accept any `paragraphGroup`
 - ParagraphWithConfig accepts a config option `subType` which is required.
   - For a normal paragraph this can be the empty string
