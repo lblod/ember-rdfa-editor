@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
+
+### Fixed
+- All Paragraphs are now part of the group `paragraphGroup`
+  - A list will accept any `paragraphGroup`
+- ParagraphWithConfig accepts a config option `subType` which is required.
+  - For a normal paragraph this can be the empty string
+  - For others, this will be added to the nodespec as `subType` and the dataset of the node in `parseDom`
 ### Dependencies
 - Bumps `eslint-config-prettier` from 8.8.0 to 8.9.0
 - Bumps `sass` from 1.64.1 to 1.64.2
