@@ -29,5 +29,7 @@ steps:
     commands:
       - ember ts:precompile
 when:
-  event:
-    - pull_request
+  - event: pull_request
+  - event: push
+    branch: gh-readonly-queue/*
+
