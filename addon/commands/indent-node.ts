@@ -1,16 +1,21 @@
-import { NodeType } from 'prosemirror-model';
 import { Command } from 'prosemirror-state';
 import { PNode } from '..';
 
 type IndentNodeArgs = {
-  types: NodeType[];
   direction: number;
   predicate?: (node: PNode, pos: number, parent: PNode | null) => boolean;
   maxLevel?: number;
 };
 
+/**
+ * Returns a command to indent the node(s) in the selection.
+ * Only nodes with `indentationLevel` as node attribute can be indented.
+ * @direction the number -1 or 1 to indent back or further
+ * @predicate extra check to see if a node should be allowed to indent
+ * @maxLevel max level to indent
+ * @returns Command
+ */
 export function indentNode({
-  types,
   direction,
   predicate = () => true,
   maxLevel = 4,
@@ -20,7 +25,7 @@ export function indentNode({
     const applicableNodes: { node: PNode; pos: number }[] = [];
     state.doc.nodesBetween(from, to, (node, pos, parent) => {
       if (
-        types.includes(node.type) &&
+        node.attrs.indentationLevel !== undefined &&
         predicate(node, pos, parent) &&
         ((direction === -1 && node.attrs.indentationLevel > 0) ||
           (direction === 1 && node.attrs.indentationLevel < maxLevel))

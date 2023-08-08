@@ -1,5 +1,11 @@
 import { Command, TextSelection } from 'prosemirror-state';
 
+/**
+ * Returns a command to indent something to the left if selection cursor is at the start of the node.
+ * This is useful specifically for backspace, as this should only happen at the start of a node.
+ * Only nodes with `indentationLevel` as node attribute can be indented.
+ * @returns Command
+ */
 export const reduceIndent: Command = (state, dispatch) => {
   if (!(state.selection instanceof TextSelection)) {
     return false;
