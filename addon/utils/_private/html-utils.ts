@@ -11,7 +11,14 @@ export function htmlToDoc(html: string, options: { schema: Schema }) {
     doc = ProseParser.fromSchema(schema).parse(documentDiv, {
       preserveWhitespace: true,
       topNode: schema.nodes.doc.create({
-        lang: documentDiv.getAttribute('lang') ?? undefined,
+        ...Object.entries(schema.nodes.doc.spec.attrs ?? {}).reduce(
+          (acc, [key, value]) => {
+            acc[key] = documentDiv.getAttribute(key) ?? value.default;
+
+            return acc;
+          },
+          {} as Record<string, unknown>,
+        ),
       }),
     });
   } else {
