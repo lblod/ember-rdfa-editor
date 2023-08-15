@@ -21,8 +21,6 @@ BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR.substring(
 
 const BASE_PARAGRAPH_TYPE = 'paragraph';
 
-export const DERIVED_FROM_PARAGRAPH = 'paragraph';
-
 const matchingSubType = (node: HTMLElement, subType: string) => {
   // basic paragraph has no subtype in its dataset and an empty subType
   const isBasicParagraph = node.dataset.subType === undefined && subType === '';
@@ -47,7 +45,6 @@ export const paragraphWithConfig: (
     content: config?.content || 'inline*',
     group: config?.group || 'block paragraphGroup',
     subType: config.subType,
-    derivedFrom: DERIVED_FROM_PARAGRAPH,
     attrs: {
       indentationLevel: {
         default: 0,
