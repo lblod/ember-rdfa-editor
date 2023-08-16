@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumps `xml-formatter` from 3.4.1 to 3.5.0
 - Bumps `eslint-config-prettier` from 8.9.0 to 9.0.0
 - Bumps `release-it` from 16.1.3 to 16.1.5
+- Bumps `ember-velcro` from 2.1.0 to 2.1.1
   - A list will accept any `paragraphGroup`
 - ParagraphWithConfig accepts a config option `subType` which is required.
   - For a normal paragraph this can be the empty string
