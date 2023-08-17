@@ -11,9 +11,8 @@ import {
   deleteTable,
   toggleHeader,
 } from 'prosemirror-tables';
-import { PNode } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table';
 
 interface Args {
   controller?: SayController;
@@ -32,26 +31,17 @@ export default class TableMenu extends Component<Args> {
     return this.controller?.checkCommand(deleteTable);
   }
 
+  get canInsertTable() {
+    if (this.controller?.inEmbeddedView) {
+      return false;
+    }
+
+    return this.controller?.checkCommand(insertTable(1, 1));
+  }
+
   @action
   insertTable(rows: number, columns: number) {
-    if (this.controller) {
-      const { schema } = this.controller;
-      const tableContent: PNode[] = [];
-      for (let r = 0; r < rows; r++) {
-        const cells = [];
-        for (let c = 0; c < columns; c++) {
-          cells.push(unwrap(schema.nodes.table_cell.createAndFill()));
-        }
-        tableContent.push(schema.node('table_row', null, cells));
-      }
-      this.controller.withTransaction((tr) => {
-        return tr
-          .replaceSelectionWith(
-            unwrap(this.controller).schema.node('table', null, tableContent),
-          )
-          .scrollIntoView();
-      });
-    }
+    return this.controller?.doCommand(insertTable(rows, columns));
   }
 
   @action

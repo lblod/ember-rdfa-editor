@@ -14,6 +14,8 @@ import {
 import { findNextCell, selectionCell } from './utils';
 
 export { tableNodes } from './nodes/table';
+export { insertTable } from './commands/insertTable';
+
 export const tablePlugin: Plugin = tableEditing({
   allowTableNodeSelection: true,
 });
