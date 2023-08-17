@@ -125,7 +125,7 @@ export default class SayController {
   }
 
   get documentLanguage() {
-    return this.mainEditorState.doc.attrs.lang as string;
+    return this.getDocumentAttribute('lang');
   }
 
   set documentLanguage(language: string) {
@@ -134,8 +134,17 @@ export default class SayController {
     });
   }
 
+  setDocumentAttribute(key: string, value: unknown) {
+    this.withTransaction((tr) => {
+      return tr.step(new SetDocAttributeStep(key, value));
+    });
+  }
+
+  getDocumentAttribute<TAttribute = string>(attribute: string) {
+    return this.mainEditorState.doc.attrs[attribute] as TAttribute;
+  }
+
   toggleRdfaBlocks() {
-    console.log('TOGGLE');
     this.editor.showRdfaBlocks = !this.editor.showRdfaBlocks;
   }
 
