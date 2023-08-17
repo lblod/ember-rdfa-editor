@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- fetch dependency `lblod/prosemirror-invisibles` via https instead of ssh, as the repo is public (hotfix)
+
 ## [3.10.0] - 2023-06-22
 ### Fixed
 - better handle weird edgecases when copying from word

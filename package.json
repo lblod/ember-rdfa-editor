@@ -46,7 +46,7 @@
     "@ember/render-modifiers": "^2.0.5",
     "@glimmer/tracking": "^1.1.2",
     "@graphy/memory.dataset.fast": "4.3.3",
-    "@guardian/prosemirror-invisibles": "git+ssh://git@github.com/lblod/prosemirror-invisibles",
+    "@guardian/prosemirror-invisibles": "git+https://git@github.com/lblod/prosemirror-invisibles",
     "@lblod/marawa": "^0.8.0-beta.2",
     "@types/diff-match-patch": "^1.0.32",
     "codemirror": "^6.0.1",
