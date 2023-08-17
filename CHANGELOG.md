@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.10.1] - 2023-08-17
+
 ### Fixed
 - fetch dependency `lblod/prosemirror-invisibles` via https instead of ssh, as the repo is public (hotfix)
 
@@ -1696,7 +1698,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.1...HEAD
+[3.10.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...v3.10.1
 [3.10.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/lblod/ember-rdfa-editor/compare/v3.8.0...v3.8.1
