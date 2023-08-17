@@ -1,11 +1,35 @@
 import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
-// this might be better in ember-rdfa-editor as this works for any node and schema
 
 /**
  * Find a position between nodes that passes a predicate test in document order.
- * Tries out all possible node spots to the right if the given position
+ * Tries out all possible node spots to the *left* of the given position
  * in order of how nodes are displayed in the document.
- * returns the position of the first match of the predicate or null if none found.
+ * returns the position of the first match of the predicate or undefined if none found.
+ * @param mainDoc the main doc for which the position is returned
+ * @param $startPos the starting ResolvedPos position to start the search from
+ * @param predicate a predicate returning if the resolved position is valid.
+ * @returns the global position (in reference to `mainDoc`)
+ */
+export function* findNodePosUp(
+  mainDoc: PNode,
+  startPos: number,
+  predicate: ($pos: ResolvedPos) => boolean = () => true,
+): Generator<number, void> {
+  for (let pos = startPos - 1; pos >= 0; pos--) {
+    const $pos = mainDoc.resolve(pos);
+    // TextOffset = 0 means it is between nodes or inside a node with "empty" text content
+    // isTextblock checks for this special case
+    if ($pos.textOffset === 0 && !$pos.parent.isTextblock && predicate($pos)) {
+      yield $pos.pos;
+    }
+  }
+}
+
+/**
+ * Find a position between nodes that passes a predicate test in document order.
+ * Tries out all possible node spots to the right of the given position
+ * in order of how nodes are displayed in the document.
+ * returns the position of the first match of the predicate or undefined if none found.
  * If you want to use the position (instead of just parent and index) to check if a node is valid,
  * loop over the return values of the generator instead.
  * @param mainDoc the main doc for which the position is returned
