@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `findNodePosDown` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching down (=to the right) in order of the document as seen by the user
+- `findNodePosUp` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching up (=to the left) in order of the document as seen by the user
 ### Changed
 - All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
 - Check if table can be inserted
