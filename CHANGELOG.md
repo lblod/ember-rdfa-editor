@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `findNodePosUp` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching up (=to the left) in order of the document as seen by the user
 ### Changed
 - All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
+- Add a `setDocumentAttribute` on `SayController`
+- Export `SetDocAttributeStep`
 - Check if table can be inserted
 
 ### Fixed
