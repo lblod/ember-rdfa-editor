@@ -20,7 +20,6 @@ BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR.substring(
 )})`;
 
 const BASE_PARAGRAPH_TYPE = 'paragraph';
-
 const matchingSubType = (node: HTMLElement, subType: string) => {
   // basic paragraph has no subtype in its dataset and an empty subType
   const isBasicParagraph = node.dataset.subType === undefined && subType === '';
