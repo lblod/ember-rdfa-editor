@@ -28,6 +28,11 @@ export function* findNodePosDown(
     const parent = $pos.parent;
     let index = $pos.index();
 
+    // for this depth, check if the first place is valid (before checking inside the children)
+    if ($pos.pos !== $startPos.pos && predicate(parent, index)) {
+      yield $pos.pos;
+    }
+
     // loop over the children *after* the given $startPos
     // and find a match in one of those children.
     // Note that checkContentMatchChildren returns offset starting from the
