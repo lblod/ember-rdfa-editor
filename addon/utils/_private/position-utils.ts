@@ -85,6 +85,12 @@ type FindNodesArgs = {
   filter?: ({ from, to }: { from: number; to: number }) => boolean;
 };
 
+/**
+ * Finds nodes that matche the filter, given the start and end position of that node.
+ * This search does not follow a specificied order.
+ * For specific searching order, use `findNodePosDown`.
+ * @returns generator for nodes matching the filter
+ */
 export function* findNodes({
   doc,
   visitParentUpwards = false,
