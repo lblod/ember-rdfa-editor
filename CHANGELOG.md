@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - All Paragraphs are now part of the group `paragraphGroup`
+- fetch dependency `lblod/prosemirror-invisibles` via https instead of ssh, as the repo is public
 ### Dependencies
 - Bumps `@typescript-eslint/eslint-plugin` from 6.2.0 to 6.3.0
 - Bumps `xml-formatter` from 3.4.1 to 3.5.0
