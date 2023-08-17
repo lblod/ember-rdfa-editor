@@ -6,9 +6,11 @@ import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
  * Tries out all possible node spots to the right if the given position
  * in order of how nodes are displayed in the document.
  * returns the position of the first match of the predicate or null if none found.
+ * If you want to use the position (instead of just parent and index) to check if a node is valid,
+ * loop over the return values of the generator instead.
  * @param mainDoc the main doc for which the position is returned
  * @param $startPos the starting ResolvedPos position to start the search from
- * @param predicate a predicate returning of the position is valid, receiving a parent and a local index. 
+ * @param predicate a predicate returning if the position is valid, receiving a parent and a local index. 
  *                  `parent.child(index)` is then the child after the index place.
 
  * @returns the global position (in reference to `mainDoc`)
@@ -16,7 +18,7 @@ import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
 export function* findNodePosDown(
   mainDoc: PNode,
   $startPos: ResolvedPos,
-  predicate: (parent: PNode, index: number) => boolean,
+  predicate: (parent: PNode, index: number) => boolean = () => true,
 ): Generator<number, void> {
   // loop over the depths.
   // if at a depth no match is found, should check all children of a depth higher
