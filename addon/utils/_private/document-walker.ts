@@ -5,6 +5,7 @@ import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
  * Tries out all possible node spots to the *left* of the given position
  * in order of how nodes are displayed in the document.
  * returns the position of the first match of the predicate or undefined if none found.
+ * Note that unlike `findnodePosDown`, this is not optimized and might be slow for bigger documents.
  * @param mainDoc the main doc for which the position is returned
  * @param $startPos the starting ResolvedPos position to start the search from
  * @param predicate a predicate returning if the resolved position is valid.
