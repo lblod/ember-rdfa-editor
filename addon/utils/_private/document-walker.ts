@@ -64,7 +64,7 @@ export function* findNodePosDown(
     // passed node, so an offset has to be kept for the final result.
     let offsetChildren = 0;
     while (index < parent.childCount) {
-      const matchedChildOffsets = FindNodePosChildrenAsOffset(
+      const matchedChildOffsets = findNodePosChildrenAsOffset(
         parent,
         index,
         offsetChildren,
@@ -101,7 +101,7 @@ export function* findNodePosDown(
  * @param predicate the predicate to check for positions between nodes
  * @returns the offset (starting from the parent's startIndex) to the position that was found
  */
-export function* FindNodePosChildrenAsOffset(
+export function* findNodePosChildrenAsOffset(
   parent: PNode,
   startIndex: number,
   currentOffset: number,
@@ -129,7 +129,7 @@ export function* FindNodePosChildrenAsOffset(
     nodeIndex < node.childCount;
     childOffset += node.child(nodeIndex).nodeSize, nodeIndex++
   ) {
-    const childrenMatches = FindNodePosChildrenAsOffset(
+    const childrenMatches = findNodePosChildrenAsOffset(
       node,
       nodeIndex,
       currentOffset + childOffset,
