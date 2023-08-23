@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `findNodePosDown` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching down (=to the right) in order of the document as seen by the user
 - `findNodePosUp` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching up (=to the left) in order of the document as seen by the user
+
+## [5.0.0] - 2023-08-22
 ### Changed
 - All nodes with `indentationLevel` attribute can be indented, instead of only hardcoded nodes.
 - Add a `setDocumentAttribute` on `SayController`
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - For a normal paragraph this can be the empty string
   - For others, this will be added to the nodespec as `subType` and the dataset of the node in `parseDom`
 - fetch dependency `lblod/prosemirror-invisibles` via https instead of ssh, as the repo is public
+
 ### Dependencies
 - Bumps `@typescript-eslint/eslint-plugin` from 6.2.0 to 6.3.0
 - Bumps `xml-formatter` from 3.4.1 to 3.5.0
@@ -1822,7 +1825,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v4.2.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v5.0.0...HEAD
+[5.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.2.0...v5.0.0
 [4.2.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.1.1...v4.2.0
 [4.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v3.10.0...v4.0.0
