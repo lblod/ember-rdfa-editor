@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- pin the focus-trap dependency to 1.0.x since 1.1.0 has a faulty peerdep spec, see [this issue](https://github.com/josemarluedke/ember-focus-trap/issues/82)
+
 ### Added
 - `findNodePosDown` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching down (=to the right) in order of the document as seen by the user
 - `findNodePosUp` function in `addon/utils/position-utils` that can find a node with specific predicate in the document, searching up (=to the left) in order of the document as seen by the user
