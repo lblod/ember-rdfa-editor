@@ -151,7 +151,7 @@
     "ember-source-channel-url": "^3.0.0",
     "ember-template-lint": "^5.3.3",
     "ember-test-selectors": "^6.0.0",
-    "ember-try": "^2.0.0",
+    "ember-try": "^3.0.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
