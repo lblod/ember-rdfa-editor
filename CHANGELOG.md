@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [5.1.0] - 2023-08-25
 ### Fixed
 - pin the focus-trap dependency to 1.0.x since 1.1.0 has a faulty peerdep spec, see [this issue](https://github.com/josemarluedke/ember-focus-trap/issues/82)
 
@@ -1828,7 +1830,8 @@ If you bump to this release, also upgrade ember-appuniversum to 1.0.0 along with
 
 
 
-[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v5.0.0...HEAD
+[unreleased]: https://github.com/lblod/ember-rdfa-editor/compare/v5.1.0...HEAD
+[5.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.2.0...v5.0.0
 [4.2.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.1.1...v4.2.0
 [4.1.0]: https://github.com/lblod/ember-rdfa-editor/compare/v4.0.0...v4.1.0
