@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- remove unused dependencies
+
 ## [5.1.0] - 2023-08-25
 ### Fixed
 - pin the focus-trap dependency to 1.0.x since 1.1.0 has a faulty peerdep spec, see [this issue](https://github.com/josemarluedke/ember-focus-trap/issues/82)
