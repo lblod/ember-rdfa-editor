@@ -167,7 +167,8 @@
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
-    "ember-cli-sass": "^11.0.1"
+    "ember-cli-sass": "^11.0.1",
+    "ember-modifier": "^4.1.0"
   },
   "overrides": {
     "ember-intl": {
