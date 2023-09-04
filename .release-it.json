@@ -3,7 +3,7 @@
     "release": true
   },
   "plugins": {
-    "abeforgit/changesets-release-it-plugin": {}
+    "changesets-release-it-plugin": {}
   },
   "npm": {
     "publish": false,
