@@ -1,0 +1,15 @@
+# These can be merged into the ember-scenarios job once they pass
+matrix:
+  scenario:
+    - embroider-safe
+    - embroider-optimized
+steps:
+  - name: ${scenario}
+    image: danlynn/ember-cli:4.8.0
+    failure: ignore
+    commands:
+      - npm ci
+      - npx ember try:one ${scenario}
+when:
+  event:
+    - pull_request
