@@ -1,7 +1,6 @@
 # These can be merged into the ember-scenarios job once they pass
 matrix:
   scenario:
-    - embroider-safe
     - embroider-optimized
 steps:
   - name: ${scenario}
