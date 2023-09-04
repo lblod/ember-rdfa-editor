@@ -163,11 +163,13 @@
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
     "typescript": "~5.0.4",
-    "webpack": "^5.74.0"
+    "webpack": "^5.74.0",
+    "ember-modifier": "^3.2.7"
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
-    "ember-cli-sass": "^11.0.1"
+    "ember-cli-sass": "^11.0.1",
+    "ember-modifier": "^3.2.7"
   },
   "overrides": {
     "ember-intl": {
