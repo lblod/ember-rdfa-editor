@@ -30,6 +30,7 @@ import {
   EditorState,
   keymap,
   NodeSelection,
+  NodeViewConstructor,
   SayView,
   Selection,
   StepMap,
@@ -51,6 +52,9 @@ type Args = EmberNodeArgs & {
   keymap?: { [key: string]: Command };
   /* editor plugins to add */
   plugins?: Plugin[];
+  nodeViews?: {
+    [node: string]: NodeViewConstructor;
+  };
 };
 
 /**
@@ -170,6 +174,7 @@ export default class EmbeddedEditor extends Component<Args> {
             }
           }
         },
+        nodeViews: this.args.nodeViews,
       },
       this.outerView,
     );
