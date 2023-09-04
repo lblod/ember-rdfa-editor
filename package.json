@@ -90,6 +90,8 @@
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2",
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
@@ -127,6 +129,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
+    "changesets-release-it-plugin": "^0.1.1",
     "ember-cli": "~4.8.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
