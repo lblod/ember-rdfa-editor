@@ -55,7 +55,6 @@
     "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^6.1.1",
     "ember-cli-typescript": "^5.1.0",
-    "ember-feature-flags": "^6.0.0",
     "ember-focus-trap": "~1.0.1",
     "ember-functions-as-helper-polyfill": "^2.1.2",
     "ember-get-config": "^2.0.0",
