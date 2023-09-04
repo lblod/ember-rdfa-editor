@@ -1,4 +1,4 @@
-import config from 'ember-get-config';
+import { isDevelopingApp, macroCondition } from '@embroider/macros';
 import { debug } from 'debug';
 
 /**
@@ -28,7 +28,7 @@ window.setLogFilter = setLogFilter;
 
 // Setup default loglevel based on environment.
 if (!localStorage.getItem('debug')) {
-  if (config.environment === 'development') {
+  if (macroCondition(isDevelopingApp())) {
     setLogFilter('ember-rdfa-editor:*');
   } else {
     setLogFilter('');
