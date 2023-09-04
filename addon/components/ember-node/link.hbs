@@ -18,7 +18,7 @@
       @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
       @decorations={{@decorations}}
       @contentDecorations={{@contentDecorations}}
-      {{leaveOnEnterKey this.controller this.pos}}
+      {{leave-on-enter-key this.controller this.pos}}
     />
   </Pill>
   {{#if (and this.selected this.interactive)}}
@@ -38,7 +38,7 @@
         @value={{this.href}}
         placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
         {{on 'focus' this.selectHref}}
-        {{leaveOnEnterKey this.controller this.pos}}
+        {{leave-on-enter-key this.controller this.pos}}
       />
       <AuButton
         @icon='link-broken'
