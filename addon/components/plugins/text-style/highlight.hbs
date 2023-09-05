@@ -10,7 +10,7 @@
       @icon='pencil' 
       @ariaHidden={{true}} 
       @size='large' 
-      style={{html-safe (concat "border-bottom-color: " this.selectedColor)}}
+      style={{this.htmlSafe (concat "border-bottom-color: " this.selectedColor)}}
     />
   </button>
   <div class="say-dropdown options">

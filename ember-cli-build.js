@@ -52,7 +52,25 @@ module.exports = function (defaults) {
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
   const { maybeEmbroider } = require('@embroider/test-setup');
-  return maybeEmbroider(app);
+  return maybeEmbroider(app, {
+    packagerOptions: {
+      webpackConfig: {
+        // Config copied from the auto-import config in index.js
+        node: {
+          global: true,
+          __filename: true,
+          __dirname: true,
+        },
+        resolve: {
+          fallback: {
+            stream: require.resolve('stream-browserify'),
+            crypto: require.resolve('crypto-browserify'),
+          },
+        },
+      },
+    },
+  });
+
   //Older config to check if still needed
   //const { maybeEmbroider } = require('@embroider/test-setup');
   //return maybeEmbroider(app, {

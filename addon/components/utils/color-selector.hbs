@@ -11,7 +11,7 @@
     {{#each this.presetColors as |presetColor|}}
       <button 
         type="button" 
-        style={{html-safe (concat "background-color: " presetColor)}}
+        style={{this.htmlSafe (concat "background-color: " presetColor)}}
         title={{presetColor}}
         {{on 'click' (fn this.selectColor presetColor)}}
       />

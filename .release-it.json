@@ -3,14 +3,11 @@
     "release": true
   },
   "plugins": {
-    "@release-it/keep-a-changelog": {
-      "filename": "CHANGELOG.md",
-      "addUnreleased": true,
-      "strictLatest": false,
-      "addVersionUrl": true
-    }
+    "changesets-release-it-plugin": {}
   },
   "npm": {
-    "publish": false
+    "publish": false,
+    "ignoreVersion": true,
+    "allowSameVersion": true
   }
 }
