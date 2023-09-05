@@ -1,5 +1,6 @@
 import { modifier } from 'ember-modifier';
 import { NodeSelection } from 'prosemirror-state';
+import { SayController } from '..';
 
 /* Set the node selection of the node given by `getPos` when clicking the bound element. */
 export default modifier(
