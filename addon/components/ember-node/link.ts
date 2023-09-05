@@ -19,10 +19,6 @@ export default class Link extends Component<EmberNodeArgs> {
     return this.args.node;
   }
 
-  get pos() {
-    return this.args.getPos();
-  }
-
   get selected() {
     return this.args.selected;
   }
@@ -45,7 +41,7 @@ export default class Link extends Component<EmberNodeArgs> {
 
   @action
   remove() {
-    const pos = this.pos;
+    const pos = this.args.getPos();
     if (pos !== undefined) {
       this.controller.withTransaction(
         (tr) => {
