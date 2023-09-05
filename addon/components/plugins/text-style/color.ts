@@ -1,4 +1,5 @@
 import { action } from '@ember/object';
+import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
@@ -13,6 +14,7 @@ type Args = {
 
 export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
+  htmlSafe = htmlSafe;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {
