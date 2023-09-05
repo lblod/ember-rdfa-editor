@@ -1,0 +1,60 @@
+name: 'pull-request'
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - labeled
+      - unlabeled
+
+
+jobs:
+  changelog:
+    permissions:
+      pull-requests: write
+      contents: write
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      
+      - name: Generate changeset
+        uses: actions/github-script@v6
+        with:
+          activationLabel: 'dependabot'
+          script: |
+            const { promises: fs } = require("fs");
+
+            const diff = await exec.getExecOutput("git diff --name-only HEAD~1");
+            const diffFiles = diff.stdout.split("\n");
+            if (diffFiles.find((f) => f.startsWith(".changeset"))) {
+              console.log("Changeset already exists, skipping");
+              return;
+            }
+
+            const prTitle = context.payload.pull_request.title;
+
+            const pjson = JSON.parse(await fs.readfile('package.json'));
+            const packageName = pjson.name;
+            
+            const changesetBody = `---\n${'${packageName}': patch}\n---\n\n${prTitle}\n`;
+            const changesetFile = `.changeset/dependabot-PR-${context.payload.pull_request.number}`;
+            await fs.writeFile(changesetFile, changesetBody);
+
+
+      - name: Commit the changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "Update changelog [CI SKIP]"
+          pull: '--rebase --autostash'
+          commit: '--signoff'
+
+
+ 
+
