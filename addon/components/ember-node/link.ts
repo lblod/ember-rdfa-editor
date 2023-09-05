@@ -1,8 +1,11 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { Velcro } from 'ember-velcro';
 
 export default class Link extends Component<EmberNodeArgs> {
+  Velcro = Velcro;
+
   get href() {
     return this.args.node.attrs.href as string;
   }

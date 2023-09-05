@@ -1,6 +1,6 @@
 {{#if @controller}}
   <div class="say-toolbar__button say-toolbar__highlight-button">
-    <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+    <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
       <button
         type='button'
         class='main {{if @active "is-active"}} {{if @disabled "is-disabled"}}'
@@ -33,6 +33,6 @@
           @presetColors={{@presetColors}}
         />
       {{/if}}
-    </Velcro>
+    </this.Velcro>
   </div>
 {{/if}}
