@@ -26,6 +26,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
+  AttrStep,
   Command,
   EditorState,
   keymap,
@@ -33,6 +34,7 @@ import {
   NodeViewConstructor,
   SayView,
   Selection,
+  Step,
   StepMap,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
@@ -242,8 +244,20 @@ export default class EmbeddedEditor extends Component<Args> {
           offsetMap = StepMap.offset(pos + 1);
         for (let i = 0; i < transactions.length; i++) {
           const steps = transactions[i].steps;
-          for (let j = 0; j < steps.length; j++)
-            outerTr.step(unwrap(steps[j].map(offsetMap)));
+          for (let j = 0; j < steps.length; j++) {
+            const step = steps[j];
+            let mappedStep: Step;
+            if (step instanceof AttrStep) {
+              const mappedPos = offsetMap.mapResult(step.pos, 1);
+              if (mappedPos.deleted) {
+                throw new Error('Mapped position has been deleted');
+              }
+              mappedStep = new AttrStep(mappedPos.pos, step.attr, step.value);
+            } else {
+              mappedStep = unwrap(step.map(offsetMap));
+            }
+            outerTr.step(mappedStep);
+          }
         }
         if (outerTr.docChanged) this.outerView.dispatch(outerTr);
       }
