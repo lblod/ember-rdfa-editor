@@ -20,7 +20,7 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': '~4.4.0',
-            'ember-resolver': '^9.0.0', // ember-resolver v11 doesn't support <4.8
+            'ember-resolver': '^8.0.0', // ember-resolver v11 doesn't support <4.8
           },
         },
       },
