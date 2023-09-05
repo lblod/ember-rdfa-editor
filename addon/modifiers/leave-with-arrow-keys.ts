@@ -1,28 +1,37 @@
-import Modifier from 'ember-modifier';
+import Modifier, { ArgsFor, PositionalArgs } from 'ember-modifier';
 import { SayController, TextSelection } from '..';
 import { registerDestructor } from '@ember/destroyable';
 
 function removeListeners(instance: LeaveWithArrowKeysModifier) {
-  instance.element?.removeEventListener(
+  instance.modifiedElement?.removeEventListener(
     'keydown',
     instance.setPositionBeforeArrowKeyLoose,
   );
-  instance.element?.removeEventListener('keyup', instance.leaveEdgeOnArrowKey);
+  instance.modifiedElement?.removeEventListener(
+    'keyup',
+    instance.leaveEdgeOnArrowKey,
+  );
+}
+
+interface ModifierArgs {
+  Args: {
+    Positional: [SayController, () => number | undefined];
+  };
 }
 
 /* Set the cursor before or behind the node after `startPosNode`
  * when pressing the left or right arrow key respectively.
  */
-export default class LeaveWithArrowKeysModifier extends Modifier {
+export default class LeaveWithArrowKeysModifier extends Modifier<ModifierArgs> {
   // We only want to move out if the cursor was already at the edge
   // This can only be known by getting the position before the keypress
   // and comparing after the keypress, when the cursor move already happened.
   cursorPositionKeyDown: number | null = null;
-  element: HTMLElement = null;
-  controller: SayController = null;
-  getPos: () => number | undefined;
+  modifiedElement: HTMLElement | null = null;
+  controller: SayController | null = null;
+  getPos: () => number | undefined = () => undefined;
 
-  constructor(owner, args) {
+  constructor(owner: unknown, args: ArgsFor<ModifierArgs>) {
     super(owner, args);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -31,17 +40,17 @@ export default class LeaveWithArrowKeysModifier extends Modifier {
 
   modify(
     element: HTMLElement,
-    [controller, getPos]: [SayController, () => number | undefined],
+    [controller, getPos]: PositionalArgs<ModifierArgs>,
   ) {
-    if (!this.element) {
+    if (!this.modifiedElement) {
       // initialize element once as `modify` will get called everytime a parameter changes.
       // Although in practice changes to `getPos` will make the descructor get called instead.
-      this.element = element;
-      this.element.addEventListener(
+      this.modifiedElement = element;
+      this.modifiedElement.addEventListener(
         'keydown',
         this.setPositionBeforeArrowKeyLoose,
       );
-      this.element.addEventListener('keyup', this.leaveEdgeOnArrowKey);
+      this.modifiedElement.addEventListener('keyup', this.leaveEdgeOnArrowKey);
     }
     this.getPos = getPos;
     this.controller = controller;
@@ -67,6 +76,7 @@ export default class LeaveWithArrowKeysModifier extends Modifier {
   };
 
   setSelectionAt(pos: number) {
+    if (!this.controller) return;
     const tr = this.controller.mainEditorState.tr;
     tr.setSelection(
       TextSelection.create(this.controller.mainEditorState.doc, pos),
@@ -76,15 +86,17 @@ export default class LeaveWithArrowKeysModifier extends Modifier {
   }
 
   selectAfterNode() {
-    const node = this.controller.mainEditorState.doc.resolve(
-      this.getPos(),
-    ).nodeAfter;
+    const pos = this.getPos();
+    if (pos === undefined || !this.controller) return;
+    const node = this.controller.mainEditorState.doc.resolve(pos).nodeAfter;
     if (node) {
-      this.setSelectionAt(this.getPos() + node.nodeSize);
+      this.setSelectionAt(pos + node.nodeSize);
     }
   }
 
   selectBeforeNode() {
-    this.setSelectionAt(this.getPos());
+    const pos = this.getPos();
+    if (pos === undefined || !this.controller) return;
+    this.setSelectionAt(pos);
   }
 }

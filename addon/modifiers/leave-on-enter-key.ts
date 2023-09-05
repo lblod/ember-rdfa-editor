@@ -8,9 +8,9 @@ export default modifier(
     [controller, getPos]: [SayController, () => number | undefined],
   ) {
     const leaveOnEnter = (event: KeyboardEvent) => {
-      if (event.key !== 'Enter' || getPos === undefined) return;
-
       const startPosNode = getPos();
+      if (event.key !== 'Enter' || startPosNode === undefined) return;
+
       const state = controller.mainEditorState;
       const node = state.doc.resolve(startPosNode).nodeAfter;
       if (!node) return;

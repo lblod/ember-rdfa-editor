@@ -9,9 +9,9 @@ export default modifier(
     [controller, getPos]: [SayController, () => number | undefined],
   ) {
     const selectOnClick = () => {
-      if (getPos === undefined) return;
-
       const startPosNode = getPos();
+      if (startPosNode === undefined) return;
+
       const state = controller.mainEditorState;
 
       const tr = state.tr;
