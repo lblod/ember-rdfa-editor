@@ -1,4 +1,5 @@
 import { action } from '@ember/object';
+import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 
@@ -15,6 +16,7 @@ export default class ColorSelector extends Component<Args> {
     },
     { eager: false },
   );
+  htmlSafe = htmlSafe;
 
   get presetColors() {
     return (

@@ -5,7 +5,7 @@ export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 export {
   default as ProseMirror,
-  PluginConfig,
+  type PluginConfig,
 } from '@lblod/ember-rdfa-editor/core/say-editor';
 
 export * from 'prosemirror-model';
