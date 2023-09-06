@@ -1,5 +1,3 @@
-## [5.2.0] - 2023-08-29
-
 ## 5.3.0
 
 ### Minor Changes
@@ -32,6 +30,8 @@
 - [#961](https://github.com/lblod/ember-rdfa-editor/pull/961) [`c34477bb`](https://github.com/lblod/ember-rdfa-editor/commit/c34477bb1f1d3122be673635d34d68c21a88eae4) Thanks [@Windvis](https://github.com/Windvis)! - Replace ember-get-config
 
 - [#958](https://github.com/lblod/ember-rdfa-editor/pull/958) [`f27f3a19`](https://github.com/lblod/ember-rdfa-editor/commit/f27f3a19e59ccbc1ae438044154f8176706606c5) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4483: Remove styling for `#ember-basic-dropdown-wormhole`
+
+## [5.2.0] - 2023-08-29
 
 ### Changed
 
