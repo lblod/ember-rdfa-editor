@@ -15,31 +15,6 @@ module.exports = function (defaults) {
       cascade: true,
       sourcemap: true,
     },
-    autoImport: {
-      webpack: {
-        node: {
-          global: true,
-          __filename: true,
-          __dirname: true,
-        },
-        module: {
-          rules: [{ test: /\.handlebars$/, loader: 'handlebars-loader' }],
-        },
-        // plugins: [
-        //   new webpack.ProvidePlugin({
-        //     process: 'process/browser'
-        //   })
-        // ],
-        resolve: {
-          fallback: {
-            stream: require.resolve('stream-browserify'),
-            // buffer: require.resolve('buffer/'),
-            // events: require.resolve("events/"),
-            crypto: require.resolve('crypto-browserify'),
-          },
-        },
-      },
-    },
     '@appuniversum/ember-appuniversum': {
       disableWormholeElement: true,
     },
@@ -54,20 +29,7 @@ module.exports = function (defaults) {
   const { maybeEmbroider } = require('@embroider/test-setup');
   return maybeEmbroider(app, {
     packagerOptions: {
-      webpackConfig: {
-        // Config copied from the auto-import config in index.js
-        node: {
-          global: true,
-          __filename: true,
-          __dirname: true,
-        },
-        resolve: {
-          fallback: {
-            stream: require.resolve('stream-browserify'),
-            crypto: require.resolve('crypto-browserify'),
-          },
-        },
-      },
+      webpackConfig: require('./webpack-config'),
     },
   });
 

@@ -11,19 +11,7 @@ module.exports = {
       plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
     autoImport: {
-      webpack: {
-        node: {
-          global: true,
-          __filename: true,
-          __dirname: true,
-        },
-        resolve: {
-          fallback: {
-            stream: require.resolve('stream-browserify'),
-            crypto: require.resolve('crypto-browserify'),
-          },
-        },
-      },
+      webpack: require('./webpack-config'),
     },
   },
 
