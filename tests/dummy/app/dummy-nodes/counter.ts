@@ -1,3 +1,4 @@
+import type { ComponentLike } from '@glint/template';
 import { emberApplicationPluginKey } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import {
   createEmberNodeSpec,
@@ -6,10 +7,11 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import IntlService from 'ember-intl/services/intl';
+import Counter from 'dummy/components/sample-ember-nodes/counter';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'counter',
-  componentPath: 'sample-ember-nodes/counter',
+  component: Counter as unknown as ComponentLike,
   inline: true,
   group: 'inline',
   atom: true,

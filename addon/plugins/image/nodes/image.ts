@@ -1,13 +1,15 @@
+import type { ComponentLike } from '@glint/template';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
   EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import Image from '@lblod/ember-rdfa-editor/components/plugins/image/node';
 import { Node as PNode } from 'prosemirror-model';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'image',
-  componentPath: 'plugins/image/node',
+  component: Image as unknown as ComponentLike,
   inline: true,
   group: 'inline',
   draggable: true,
