@@ -190,9 +190,3 @@
 .form__row + .form__row {
   margin-top: $au-unit-tiny;
 }
-
-// Fix ember basic dropdown z-index
-#ember-basic-dropdown-wormhole {
-  position: relative;
-  z-index: 9999;
-}
