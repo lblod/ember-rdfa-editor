@@ -9,6 +9,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
+import { Velcro } from 'ember-velcro';
 
 type Args = {
   controller: SayController;
@@ -18,6 +19,7 @@ type Args = {
 export default class HighlightMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
+  Velcro = Velcro;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {

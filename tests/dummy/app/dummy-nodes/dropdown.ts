@@ -1,12 +1,14 @@
+import type { ComponentLike } from '@glint/template';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
   EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import Dropdown from 'dummy/components/sample-ember-nodes/dropdown';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'dropdown',
-  componentPath: 'sample-ember-nodes/dropdown',
+  component: Dropdown as unknown as ComponentLike,
   inline: true,
   group: 'inline',
   atom: true,

@@ -20,7 +20,7 @@ ember install @lblod/ember-rdfa-editor
 ## Basic example
 
 This section includes a basic example on how to include an instance of the editor in you application.
-This addon provides the `Rdfa::RdfaEditor` component as a main entryway to add an instance of the editor.
+This addon provides the `Editor` component as a main entryway to add an instance of the editor.
 
 The following component is an example on how you can include the editor:
 

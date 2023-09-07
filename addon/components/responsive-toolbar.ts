@@ -1,6 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
+import { Velcro } from 'ember-velcro';
 import { tracked } from 'tracked-built-ins';
 
 type ToolbarSection = {
@@ -12,6 +13,7 @@ type ToolbarSection = {
 
 export default class ResponsiveToolbar extends Component {
   toolbar?: HTMLElement;
+  Velcro = Velcro;
 
   main: ToolbarSection = tracked({
     enableDropdown: false,
