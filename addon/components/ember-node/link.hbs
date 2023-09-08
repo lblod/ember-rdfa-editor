@@ -1,4 +1,4 @@
-<Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
+<this.Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
   <Pill
     class='say-link'
     @icon='link'
@@ -18,7 +18,7 @@
       @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
       @decorations={{@decorations}}
       @contentDecorations={{@contentDecorations}}
-      {{leave-on-enter-key this.controller this.pos}}
+      {{leave-on-enter-key this.controller @getPos}}
     />
   </Pill>
   {{#if (and this.selected this.interactive)}}
@@ -38,7 +38,7 @@
         @value={{this.href}}
         placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
         {{on 'focus' this.selectHref}}
-        {{leave-on-enter-key this.controller this.pos}}
+        {{leave-on-enter-key this.controller @getPos}}
       />
       <AuButton
         @icon='link-broken'
@@ -49,4 +49,4 @@
       />
     </Pill>
   {{/if}}
-</Velcro>
+</this.Velcro>

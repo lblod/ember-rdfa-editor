@@ -4,6 +4,8 @@ import {
   createEmberNodeView,
   EmberNodeConfig,
 } from '../../../utils/ember-node';
+import type { ComponentLike } from '@glint/template';
+import Link from '@lblod/ember-rdfa-editor/components/ember-node/link';
 
 type LinkOptions = {
   interactive: boolean;
@@ -15,7 +17,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
   const { interactive } = options;
   return {
     name: 'link',
-    componentPath: 'ember-node/link',
+    component: Link as unknown as ComponentLike,
     inline: true,
     group: 'inline',
     content: 'text*',

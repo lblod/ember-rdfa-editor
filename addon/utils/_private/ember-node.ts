@@ -29,6 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
 import Owner from '@ember/owner';
+import type { ComponentLike } from '@glint/template';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
@@ -105,7 +106,7 @@ export function emberComponent(
   template: TemplateFactory,
   props: EmberNodeArgs & {
     atom: boolean;
-    componentPath: string;
+    component: ComponentLike<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
     contentDOM?: HTMLElement;
   },
 ): { node: HTMLElement; component: EmberInlineComponent } {
@@ -147,20 +148,21 @@ class EmberNodeView implements NodeView {
     // when a node gets updated, `update()` is called.
     // We set the new node here and pass it to the component to render it.
     this.config = emberNodeConfig;
-    const { name, componentPath, atom, inline } = emberNodeConfig;
-    this.template = hbs`{{#component this.componentPath
-                          getPos=this.getPos
-                          node=this.node
-                          updateAttribute=this.updateAttribute
-                          controller=this.controller
-                          view=this.view
-                          selected=this.selected
-                          contentDecorations=this.contentDecorations
-                        }}
+    const { name, component: componentClass, atom, inline } = emberNodeConfig;
+
+    this.template = hbs`<this.component
+                          @getPos={{this.getPos}}
+                          @node={{this.node}}
+                          @updateAttribute={{this.updateAttribute}}
+                          @controller={{this.controller}}
+                          @view={{this.view}}
+                          @selected={{this.selected}}
+                          @contentDecorations={{this.contentDecorations}}
+                        >
                           {{#unless this.atom}}
-                          <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
+                            <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
                           {{/unless}}
-                        {{/component}}`;
+                        </this.component>`;
     this.node = pNode;
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div', {})
@@ -187,7 +189,7 @@ class EmberNodeView implements NodeView {
         },
         controller,
         contentDOM: this.contentDOM,
-        componentPath,
+        component: componentClass,
         atom,
         view,
         selected: false,
@@ -292,7 +294,7 @@ class EmberNodeView implements NodeView {
 
 export type EmberNodeConfig = {
   name: string;
-  componentPath: string;
+  component: ComponentLike<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   inline: boolean;
   group: string;
   content?: string;

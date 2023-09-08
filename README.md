@@ -20,7 +20,7 @@ ember install @lblod/ember-rdfa-editor
 ## Basic example
 
 This section includes a basic example on how to include an instance of the editor in you application.
-This addon provides the `Rdfa::RdfaEditor` component as a main entryway to add an instance of the editor.
+This addon provides the `Editor` component as a main entryway to add an instance of the editor.
 
 The following component is an example on how you can include the editor:
 
@@ -319,6 +319,25 @@ This addon uses CSS variables to customise the styling. You can override these v
   --duet-color-primary: #A933FF;
 }
 ```
+
+## Embroider
+To use `@lblod/ember-rdfa-editor` with Embroider some extra Webpack configuration is needed, which you can import like this:
+
+```js
+// ember-cli-build.js
+  // ...
+  const { Webpack } = require('@embroider/webpack');
+  return require('@embroider/compat').compatBuild(app, Webpack, {
+    // other Embroider options
+    packagerOptions: {
+      webpackConfig: require('@lblod/ember-rdfa-editor/webpack-config'),
+    },
+    extraPublicTrees: [],
+  });
+};
+```
+
+If you already provide some Webpack configuration, you can deep merge that with the config object we provide.
 
 
 ## Compatibility

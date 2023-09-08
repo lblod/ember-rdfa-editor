@@ -1,6 +1,6 @@
 
 <div class="say-dropdown" ...attributes>
-  <Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+  <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
     <button
       {{this.reference}}
       class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
@@ -37,5 +37,5 @@
         }}
       </div>
     {{/if}}
-  </Velcro>
+  </this.Velcro>
 </div>

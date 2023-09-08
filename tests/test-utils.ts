@@ -58,7 +58,7 @@ export function delayMs(ms: number): Promise<void> {
  */
 export async function renderEditor() {
   await render(hbs`
-      <Rdfa::RdfaEditor
+      <Editor
               @rdfaEditorInit={{this.rdfaEditorInit}}
               @profile="default"
               class="rdfa-playground"

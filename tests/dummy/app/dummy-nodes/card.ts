@@ -1,12 +1,14 @@
+import type { ComponentLike } from '@glint/template';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
   EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import Card from 'dummy/components/sample-ember-nodes/card';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'card',
-  componentPath: 'sample-ember-nodes/card',
+  component: Card as unknown as ComponentLike,
   inline: false,
   group: 'block',
   content: 'block+',

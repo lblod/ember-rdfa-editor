@@ -5,7 +5,7 @@
       Group=(component "toolbar/group")
       Divider=(component "toolbar/divider")
       ) to="main"}}
-      <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+      <this.Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.main.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button 
@@ -27,7 +27,7 @@
           Divider=(component "toolbar/divider")
           ) to="main"}}
         </div>
-      </Velcro>
+      </this.Velcro>
     </div>
   {{/if}}
   {{#if (has-block 'side')}}
@@ -36,7 +36,7 @@
       Group=(component "toolbar/group")
       Divider=(component "toolbar/divider")
       ) to='side'}}
-      <Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
+      <this.Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.side.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button 
@@ -58,7 +58,7 @@
           Divider=(component "toolbar/divider")
           ) to="side"}}
         </div>
-      </Velcro>
+      </this.Velcro>
     </div>
   {{/if}}
 </div>

@@ -1,8 +1,11 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { Velcro } from 'ember-velcro';
 
 export default class Link extends Component<EmberNodeArgs> {
+  Velcro = Velcro;
+
   get href() {
     return this.args.node.attrs.href as string;
   }
@@ -17,10 +20,6 @@ export default class Link extends Component<EmberNodeArgs> {
 
   get node() {
     return this.args.node;
-  }
-
-  get pos() {
-    return this.args.getPos();
   }
 
   get selected() {
@@ -45,7 +44,7 @@ export default class Link extends Component<EmberNodeArgs> {
 
   @action
   remove() {
-    const pos = this.pos;
+    const pos = this.args.getPos();
     if (pos !== undefined) {
       this.controller.withTransaction(
         (tr) => {
