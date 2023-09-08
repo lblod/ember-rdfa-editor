@@ -1,11 +1,4 @@
 steps:
-  changelog:
-    image: danlynn/ember-cli:4.8.0
-    commands:
-      - git fetch origin master
-      - git diff -wb --name-only origin/master..HEAD | grep "\.changeset/.*\.md"
-    when:
-      - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "dependabot")'
   install:
     image: danlynn/ember-cli:4.8.0
     commands:
