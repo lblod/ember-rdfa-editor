@@ -1,5 +1,5 @@
 steps:
-  changelog:
+  changeset:
     image: danlynn/ember-cli:4.8.0
     commands:
       - git fetch origin master
