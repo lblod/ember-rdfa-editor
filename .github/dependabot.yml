@@ -12,3 +12,4 @@ updates:
     labels:
       - "dependabot"
       - "internal"
+    rebase-strategy: "disabled"
