@@ -5,5 +5,4 @@ steps:
       - git fetch origin master
       - git diff -wb --name-only origin/master..HEAD | grep "\.changeset/.*\.md"
 when:
-  event: pull_request
-  evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "dependabot")'
+  - evaluate: 'CI_PIPELINE_EVENT == "pull_request" && not (CI_COMMIT_PULL_REQUEST_LABELS contains "dependabot")'
