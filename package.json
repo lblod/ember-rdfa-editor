@@ -166,7 +166,7 @@
     "release-it": "^16.1.0",
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
-    "typescript": "~5.0.4",
+    "typescript": "~5.2.2",
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
