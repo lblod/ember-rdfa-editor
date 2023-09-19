@@ -1,6 +1,39 @@
 # @lblod/ember-rdfa-editor
 
+## 6.0.0
+
+### Major Changes
+
+- [#964](https://github.com/lblod/ember-rdfa-editor/pull/964) [`e2324a3e`](https://github.com/lblod/ember-rdfa-editor/commit/e2324a3e938c36b8476fc18b5b480ea675a08e6e) Thanks [@Windvis](https://github.com/Windvis)! - Add Embroider "optimized" support
+
+  To support the strict Embroider "optimized" preset we needed to make a breaking change. The `componentPath` property for the `createEmberNodeView` util has been replaced by a new `component` property. Instead of providing the path to the component, the component class should be passed instead.
+
+  Before:
+
+  ```js
+  createEmberNodeView({
+    // ... other options
+    componentPath: 'foo',
+  });
+  ```
+
+  After:
+
+  ```js
+  import Foo from 'app-name/components/foo';
+
+  createEmberNodeView({
+    // ... other options
+    component: Foo,
+  });
+  ```
+
+### Patch Changes
+
+- [#959](https://github.com/lblod/ember-rdfa-editor/pull/959) [`6105ec66`](https://github.com/lblod/ember-rdfa-editor/commit/6105ec66301f6cb789ceafe5a881ceb3b36732c8) Thanks [@elpoelma](https://github.com/elpoelma)! - Move changeset check to seperate CI pipeline
+
 ## 5.3.0
+
 ### Minor Changes
 
 - [#966](https://github.com/lblod/ember-rdfa-editor/pull/966) [`6234df46`](https://github.com/lblod/ember-rdfa-editor/commit/6234df46eb25eabb144c6d6947444ceb7cf8ad1a) Thanks [@x-m-el](https://github.com/x-m-el)! - GN-4482: Color Picker UX - increase the clickable size of the color picker color-buttons
