@@ -1,3 +1,5 @@
+# @lblod/ember-rdfa-editor
+
 ## 5.3.0
 ### Minor Changes
 
