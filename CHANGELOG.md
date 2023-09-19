@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 6.1.0
+
+### Minor Changes
+
+- [#977](https://github.com/lblod/ember-rdfa-editor/pull/977) [`fe82e3e3`](https://github.com/lblod/ember-rdfa-editor/commit/fe82e3e3ff8065b40927f34c8e42888923014644) Thanks [@elpoelma](https://github.com/elpoelma)! - Add ember-source as a peerdependency
+
+- [#978](https://github.com/lblod/ember-rdfa-editor/pull/978) [`642e8d3c`](https://github.com/lblod/ember-rdfa-editor/commit/642e8d3cf2801ad48f27cd02b038304a8b7d859c) Thanks [@elpoelma](https://github.com/elpoelma)! - Update ember-source and related packages to 4.12
+
+### Patch Changes
+
+- [#976](https://github.com/lblod/ember-rdfa-editor/pull/976) [`922313d8`](https://github.com/lblod/ember-rdfa-editor/commit/922313d846b8960abb53c77ded80a5144aab2d1d) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4517: Reduce possible CSS conflicts
+
 ## 6.0.0
 
 ### Major Changes
@@ -13,14 +25,14 @@
   ```js
   createEmberNodeView({
     // ... other options
-    componentPath: 'foo',
+    componentPath: "foo",
   });
   ```
 
   After:
 
   ```js
-  import Foo from 'app-name/components/foo';
+  import Foo from "app-name/components/foo";
 
   createEmberNodeView({
     // ... other options
