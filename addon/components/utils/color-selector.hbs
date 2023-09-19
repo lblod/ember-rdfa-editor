@@ -1,4 +1,4 @@
-<div role="menu" class="color-selector" ...attributes>
+<div role="menu" class="say-color-selector" ...attributes>
   <button
     type='button'
     role="menuitem"
@@ -9,8 +9,8 @@
   </button>
   <div class="color-selector__grid">
     {{#each this.presetColors as |presetColor|}}
-      <button 
-        type="button" 
+      <button
+        type="button"
         style={{this.htmlSafe (concat "background-color: " presetColor)}}
         title={{presetColor}}
         {{on 'click' (fn this.selectColor presetColor)}}
@@ -25,10 +25,10 @@
     <AuIcon @icon='add' @ariaHidden={{true}} />
     {{t 'ember-rdfa-editor.color-selector.additional-colors'}}
   </button>
-  <input 
-      type="color" 
+  <input
+      type="color"
       class="color-selector__picker"
-      id='say-highlight-color' 
+      id='say-highlight-color'
       value={{@color}}
       {{on 'change' this.onColorPickerChange}}
       {{this.setUpColorPicker}}
