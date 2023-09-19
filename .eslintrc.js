@@ -4,10 +4,13 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true,
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: [
+        ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }],
+      ],
     },
   },
   plugins: ['ember', '@typescript-eslint', 'deprecation'],
@@ -33,6 +36,7 @@ module.exports = {
       files: [
         './.eslintrc.js',
         './.prettierrc.js',
+        './.stylelintrc.js',
         './.template-lintrc.js',
         './ember-cli-build.js',
         './index.js',
@@ -49,15 +53,7 @@ module.exports = {
         browser: true,
         node: true,
       },
-      plugins: ['node'],
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      rules: Object.assign(
-        {},
-        require('eslint-plugin-node').configs.recommended.rules,
-        {
-          // add your custom rules and overrides for node files here
-        },
-      ),
+      extends: ['plugin:n/recommended'],
     },
     // typescript
     {
