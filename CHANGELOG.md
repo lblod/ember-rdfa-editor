@@ -1,5 +1,4 @@
 ## 5.3.0
-
 ### Minor Changes
 
 - [#966](https://github.com/lblod/ember-rdfa-editor/pull/966) [`6234df46`](https://github.com/lblod/ember-rdfa-editor/commit/6234df46eb25eabb144c6d6947444ceb7cf8ad1a) Thanks [@x-m-el](https://github.com/x-m-el)! - GN-4482: Color Picker UX - increase the clickable size of the color picker color-buttons
