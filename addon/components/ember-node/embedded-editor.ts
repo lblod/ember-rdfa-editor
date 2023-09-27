@@ -36,6 +36,7 @@ import {
   Selection,
   Step,
   StepMap,
+  TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
@@ -204,6 +205,12 @@ export default class EmbeddedEditor extends Component<Args> {
       );
 
       this.innerView.focus();
+    } else if (this.innerView) {
+      const state = this.innerView.state;
+      // De-select the inner node if we're no longer selected
+      this.dispatchInner(
+        state.tr.setSelection(TextSelection.create(state.doc, 0, 0)),
+      );
     }
   }
 
