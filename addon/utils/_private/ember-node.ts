@@ -305,6 +305,7 @@ export type EmberNodeConfig = {
   uriAttributes?: string[];
   attrs?: {
     [name: string]: AttributeSpec & {
+      editable?: boolean;
       serialize?: (node: PNode) => string;
       parse?: (element: HTMLElement) => unknown;
     };
