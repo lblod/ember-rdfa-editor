@@ -84,6 +84,7 @@
     "relative-to-absolute-iri": "^1.0.6",
     "stream-browserify": "^3.0.0",
     "tracked-built-ins": "^3.1.0",
+    "tracked-toolbox": "^2.0.0",
     "uuid": "^9.0.0",
     "xml-formatter": "^3.2.1"
   },
@@ -168,7 +169,6 @@
     "release-it": "^16.1.0",
     "sass": "^1.49.9",
     "sinon": "^15.0.1",
-    "tracked-toolbox": "^2.0.0",
     "typescript": "~5.2.2",
     "webpack": "^5.78.0"
   },

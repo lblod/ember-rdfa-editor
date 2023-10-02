@@ -4,13 +4,21 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { getActiveEditableBlock } from '@lblod/ember-rdfa-editor/plugins/_private/editable-block-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Changeset, EmberChangeset } from 'ember-changeset';
+import { trackedReset } from 'tracked-toolbox';
 type Args = {
   controller?: SayController;
 };
 
 export default class BlockNodeEditor extends Component<Args> {
-  @tracked
+  @trackedReset<BlockNodeEditor, boolean>({
+    memo: 'activeBlock',
+    update: (component) => {
+      component.changeset = undefined;
+      return false;
+    },
+  })
   isEditing = false;
+
   @tracked changeset?: EmberChangeset;
 
   get controller() {

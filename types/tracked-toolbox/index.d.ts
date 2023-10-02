@@ -1,15 +1,11 @@
-import Component from '@glimmer/component';
-
 declare module 'tracked-toolbox' {
-  export function localCopy<C extends Component, T = unknown>(
-    memo: keyof C,
+  export function localCopy<C, T>(
+    memo: string,
     initializer?: T | (() => T),
   ): PropertyDecorator;
-  export function trackedReset<C extends Component>(
-    memo: keyof C,
-  ): PropertyDecorator;
-  export function trackedReset<C extends Component, T = unknown>(args: {
-    memo: keyof C;
+  export function trackedReset<C>(memo: string): PropertyDecorator;
+  export function trackedReset<C, T>(args: {
+    memo: string;
     update: (component: C, key: string, last: T) => T;
   }): PropertyDecorator;
 }
