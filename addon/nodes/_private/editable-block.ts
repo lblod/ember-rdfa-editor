@@ -1,21 +1,13 @@
-import { ComponentLike } from '@glint/template';
 import { PNode } from '@lblod/ember-rdfa-editor';
-import EditableBlockNode from '@lblod/ember-rdfa-editor/components/_private/editable-block-node/node';
-import {
-  type EmberNodeConfig,
-  createEmberNodeSpec,
-  createEmberNodeView,
-} from '@lblod/ember-rdfa-editor/utils/ember-node';
+import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 type Attrs = {
   description?: string;
   comment?: string;
 };
-const emberNodeConfig: EmberNodeConfig = {
-  name: 'block-node',
-  component: EditableBlockNode as unknown as ComponentLike,
+export const editable_block: SayNodeSpec = {
   inline: false,
-  group: 'block',
+  group: 'block editable',
   content: 'block+',
   draggable: false,
   selectable: true,
@@ -51,11 +43,9 @@ const emberNodeConfig: EmberNodeConfig = {
       ...(comment && {
         'data-comment': description,
       }),
+      class: 'say-editable',
     };
 
     return ['div', domAttrs, 0];
   },
 };
-
-export const editable_block = createEmberNodeSpec(emberNodeConfig);
-export const editableBlockNodeView = createEmberNodeView(emberNodeConfig);

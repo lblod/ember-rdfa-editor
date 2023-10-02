@@ -1,22 +1,10 @@
-.say-editable-block-node {
-  cursor: default;
-  .au-c-alert__content {
-    margin-top: 0;
-  }
-
-  background-color: inherit;
-  [data-slot] {
-    white-space: break-spaces;
-    word-break: break-all;
-    word-wrap: break-word;
-    cursor: text;
-  }
-
-  &.say-active-block {
+.say-editable {
+  outline: 2px solid var(--au-gray-300);
+  padding: 10px;
+  &.say-active {
     outline: 2px solid var(--au-blue-500);
   }
-}
-
-.ProseMirror-selectednode > .say-editable-block-node {
-  background-color: var(--au-blue-200);
+  &.ProseMirror-selectednode {
+    background-color: var(--au-blue-200);
+  }
 }
