@@ -15,12 +15,6 @@ import {
 } from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { ModelError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import {
-  IncomingProps,
-  OutgoingProps,
-} from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
 export default class SayController {
   @tracked
@@ -33,6 +27,56 @@ export default class SayController {
   get externalContextStore(): SayStore {
     return unwrap(datastoreKey.getState(this.editor.mainView.state))
       .contextStore;
+  }
+
+  get datastore(): SayStore {
+    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
+  }
+
+  get schema(): Schema {
+    return this.mainEditorState.schema;
+  }
+
+  get owner(): Owner {
+    return this.editor.owner;
+  }
+
+  get documentLanguage() {
+    return this.getDocumentAttribute('lang');
+  }
+
+  set documentLanguage(language: string) {
+    this.withTransaction((tr) => {
+      return tr.step(new SetDocAttributeStep('lang', language));
+    });
+  }
+
+  get showRdfaBlocks() {
+    return this.editor.showRdfaBlocks;
+  }
+
+  get mainEditorView() {
+    return this.editor.mainView;
+  }
+
+  get activeEditorView() {
+    return this.editor.activeView;
+  }
+
+  get mainEditorState() {
+    return this.editor.mainView.state;
+  }
+
+  get activeEditorState() {
+    return this.editor.activeView.state;
+  }
+
+  get htmlContent(): string {
+    return this.editor.htmlContent;
+  }
+
+  get inEmbeddedView(): boolean {
+    return !!this.activeEditorView.parent;
   }
 
   clone() {
@@ -124,28 +168,6 @@ export default class SayController {
     }
   }
 
-  get datastore(): SayStore {
-    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
-  }
-
-  get schema(): Schema {
-    return this.mainEditorState.schema;
-  }
-
-  get owner(): Owner {
-    return this.editor.owner;
-  }
-
-  get documentLanguage() {
-    return this.getDocumentAttribute('lang');
-  }
-
-  set documentLanguage(language: string) {
-    this.withTransaction((tr) => {
-      return tr.step(new SetDocAttributeStep('lang', language));
-    });
-  }
-
   setDocumentAttribute(key: string, value: unknown) {
     this.withTransaction((tr) => {
       return tr.step(new SetDocAttributeStep(key, value));
@@ -158,33 +180,5 @@ export default class SayController {
 
   toggleRdfaBlocks() {
     this.editor.showRdfaBlocks = !this.editor.showRdfaBlocks;
-  }
-
-  get showRdfaBlocks() {
-    return this.editor.showRdfaBlocks;
-  }
-
-  get mainEditorView() {
-    return this.editor.mainView;
-  }
-
-  get activeEditorView() {
-    return this.editor.activeView;
-  }
-
-  get mainEditorState() {
-    return this.editor.mainView.state;
-  }
-
-  get activeEditorState() {
-    return this.editor.activeView.state;
-  }
-
-  get htmlContent(): string {
-    return this.editor.htmlContent;
-  }
-
-  get inEmbeddedView(): boolean {
-    return !!this.activeEditorView.parent;
   }
 }

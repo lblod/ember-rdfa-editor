@@ -9,7 +9,7 @@ export const heading: NodeSpec = {
     ...rdfaAttrs,
   },
   content: 'inline*',
-  group: 'block',
+  group: 'block editable',
   defining: true,
   parseDOM: [
     {
@@ -101,7 +101,11 @@ export const heading: NodeSpec = {
     const { level, indentationLevel, ...attrs } = node.attrs;
     return [
       `h${(level as number).toString()}`,
-      { 'data-indentation-level': indentationLevel as number, ...attrs },
+      {
+        'data-indentation-level': indentationLevel as number,
+        class: 'say-editable',
+        ...attrs,
+      },
       0,
     ];
   },

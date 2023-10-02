@@ -65,15 +65,12 @@ import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks
 import { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
-import BlockNodeEditor from '@lblod/ember-rdfa-editor/components/_private/editable-block-node/node-editor';
-import {
-  editableBlockNodeView,
-  editable_block,
-} from '@lblod/ember-rdfa-editor/nodes/_private/editable-block';
-import { editableBlockNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-block-node';
+import NodeEditor from '@lblod/ember-rdfa-editor/components/_private/editable-node/node-editor';
+import { editable_block } from '@lblod/ember-rdfa-editor/nodes/_private/editable-block';
+import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 
 export default class EditableBlockController extends Controller {
-  BlockNodeEditor = BlockNodeEditor;
+  NodeEditor = NodeEditor;
 
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
@@ -146,14 +143,13 @@ export default class EditableBlockController extends Controller {
       ],
     }),
     emberApplication({ application: getOwner(this) }),
-    editableBlockNodePlugin,
+    editableNodePlugin,
   ];
 
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
-      editable_block: editableBlockNodeView(controller),
     };
   };
 

@@ -1,4 +1,4 @@
-{{#if this.activeBlock}}
+{{#if this.activeNode}}
   <AuPanel as |Section|>
     <Section>
       <AuToolbar as |Group|>
@@ -27,13 +27,13 @@
     <Section>
       <AuContent @skin="tiny">
         <AuHeading @level="5" @skin="5">Debug info</AuHeading>
-        <p><strong>Position: </strong>{{this.activeBlock.pos}}</p>
+      <p><strong>Position: </strong>{{this.activeNode.pos}}</p>
       </AuContent>
     </Section>
     <Section>
       <AuContent @skin="tiny">
         <AuHeading @level="5" @skin="5">Attributes</AuHeading>
-        {{#each-in this.activeNode.attrs as |key value|}}
+      {{#each-in this.activeNode.node.attrs as |key value|}}
           {{#if (and this.isEditing (this.isEditable key))}}
             {{#let (unique-id) as |id|}}
               <AuLabel for={{id}}>
