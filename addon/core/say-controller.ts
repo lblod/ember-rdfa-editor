@@ -15,6 +15,12 @@ import {
 } from 'prosemirror-state';
 import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import { PNode } from '@lblod/ember-rdfa-editor/index';
+import { ModelError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
+import {
+  IncomingProps,
+  OutgoingProps,
+} from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
 export default class SayController {
   @tracked
@@ -47,7 +53,10 @@ export default class SayController {
    * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
    */
   initialize(html: string, { shouldFocus = true } = {}) {
-    const doc = htmlToDoc(html, { schema: this.schema });
+    const doc = htmlToDoc(html, {
+      schema: this.schema,
+      parser: this.editor.parser,
+    });
 
     this.editor.mainView.updateState(
       EditorState.create({
@@ -72,7 +81,10 @@ export default class SayController {
     if (shouldFocus) {
       this.focus();
     }
-    const doc = htmlToDoc(content, { schema: this.schema });
+    const doc = htmlToDoc(content, {
+      schema: this.schema,
+      parser: this.editor.parser,
+    });
     const tr = this.mainEditorState.tr;
     tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));

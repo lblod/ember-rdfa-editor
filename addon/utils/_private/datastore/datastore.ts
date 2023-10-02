@@ -1,6 +1,7 @@
 import * as RDF from '@rdfjs/types';
 import {
   ModelQuad,
+  quadHash,
   QuadNodes,
   RdfaParseConfig,
   RdfaParser,
@@ -157,6 +158,8 @@ export default interface Datastore<N> {
    * Returns a generator of current relevant quads
    */
   asQuads(): Generator<RDF.Quad>;
+
+  nodesForQuad(quad: RDF.Quad): QuadNodes<N> | null;
 }
 
 interface DatastoreConfig<N> {
@@ -286,6 +289,10 @@ export class EditorStore<N> implements Datastore<N> {
   }
 
   termConverter = (term: ConciseTerm) => conciseToRdfjs(term, this.getPrefix);
+
+  nodesForQuad(quad: RDF.Quad): QuadNodes<N> | null {
+    return this._quadToNodes.get(quadHash(quad)) ?? null;
+  }
 
   match(
     subject?: SubjectSpec,

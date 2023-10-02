@@ -1,6 +1,6 @@
 import { EditorState, Plugin } from 'prosemirror-state';
 import { NodeViewConstructor } from 'prosemirror-view';
-import { DOMParser as ProseParser, Schema } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import {
   getPathFromRoot,
   isElement,
@@ -34,7 +34,10 @@ import {
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
+
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
+
 interface SayEditorArgs {
   owner: Owner;
   target: Element;
@@ -61,6 +64,7 @@ export default class SayEditor {
   serializer: SaySerializer;
 
   private logger: Logger;
+  parser: SayParser;
 
   constructor({
     owner,
@@ -106,8 +110,9 @@ export default class SayEditor {
       ];
     }
 
+    this.parser = SayParser.fromSchema(this.schema);
     const state = EditorState.create({
-      doc: ProseParser.fromSchema(this.schema).parse(target),
+      doc: this.parser.parse(target),
       plugins: pluginConf,
     });
     this.serializer = SaySerializer.fromSchema(this.schema, this);
@@ -124,6 +129,7 @@ export default class SayEditor {
           this.setActiveView(this.mainView);
         },
       },
+      domParser: this.parser,
       clipboardSerializer: this.serializer,
     });
     this.activeView = this.mainView;

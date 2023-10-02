@@ -4,7 +4,9 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { getActiveEditableBlock } from '@lblod/ember-rdfa-editor/plugins/_private/editable-block-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Changeset, EmberChangeset } from 'ember-changeset';
+import { NodeSelection } from 'prosemirror-state';
 import { trackedReset } from 'tracked-toolbox';
+
 type Args = {
   controller?: SayController;
 };
@@ -24,6 +26,7 @@ export default class BlockNodeEditor extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
+
   get activeBlock() {
     if (this.controller) {
       return getActiveEditableBlock(this.controller.activeEditorState);
@@ -68,6 +71,28 @@ export default class BlockNodeEditor extends Component<Args> {
   updateChangeset = (attr: string, event: InputEvent) => {
     if (this.changeset) {
       this.changeset[attr] = (event.target as HTMLTextAreaElement).value;
+    }
+  };
+  formatValue = (value: unknown) => {
+    return JSON.stringify(value);
+  };
+  goToNodeWithId = (id: string) => {
+    const doc = this.controller?.mainEditorState.doc;
+    let found = false;
+    let resultPos = 0;
+    doc.descendants((node, pos) => {
+      if (found) return false;
+      if (node.attrs.__rdfaId === id) {
+        found = true;
+        resultPos = pos;
+        return false;
+      }
+      return true;
+    });
+    if (found) {
+      this.controller?.withTransaction((tr) => {
+        return tr.setSelection(new NodeSelection(tr.doc.resolve(resultPos))).scrollIntoView();
+      });
     }
   };
 }

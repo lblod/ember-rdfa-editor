@@ -1,58 +1,69 @@
 {{#if this.activeBlock}}
-<AuPanel as |Section|>
-  <Section>
-    <AuToolbar as |Group|>
-      <Group>
-        <AuHeading @level="4" @skin="4">Current block node</AuHeading>
-      </Group>
-      <Group>
-        <AuButtonGroup>
-        {{#if this.isEditing}}
-          <AuButton @skin="naked" @iconAlignment="right" {{on 'click' this.cancelEditing}}>
-            Cancel
-          </AuButton>
-          <AuButton @icon="check" @iconAlignment="right" {{on 'click' this.saveChanges}}>
-            Save
-          </AuButton>
+  <AuPanel as |Section|>
+    <Section>
+      <AuToolbar as |Group|>
+        <Group>
+          <AuHeading @level="4" @skin="4">Current block node</AuHeading>
+        </Group>
+        <Group>
+          <AuButtonGroup>
+            {{#if this.isEditing}}
+              <AuButton @skin="naked" @iconAlignment="right" {{on 'click' this.cancelEditing}}>
+                Cancel
+              </AuButton>
+              <AuButton @icon="check" @iconAlignment="right" {{on 'click' this.saveChanges}}>
+                Save
+              </AuButton>
+            {{else}}
+              <AuButton @skin="naked" @icon="pencil" @iconAlignment="right" {{on 'click' this.enableEditingMode}}>
+                Edit
+              </AuButton>
+            {{/if}}
+          </AuButtonGroup>
+
+        </Group>
+      </AuToolbar>
+    </Section>
+    <Section>
+      <AuContent @skin="tiny">
+        <AuHeading @level="5" @skin="5">Debug info</AuHeading>
+        <p><strong>Position: </strong>{{this.activeBlock.pos}}</p>
+      </AuContent>
+    </Section>
+    <Section>
+      <AuContent @skin="tiny">
+        <AuHeading @level="5" @skin="5">Attributes</AuHeading>
+        {{#each-in this.activeNode.attrs as |key value|}}
+          {{#if (and this.isEditing (this.isEditable key))}}
+            {{#let (unique-id) as |id|}}
+              <AuLabel for={{id}}>
+                {{key}}
+              </AuLabel>
+              <AuTextarea @width="block" id={{id}} @value={{get this.changeset key}} {{on 'change'
+                                                                                          (fn this.updateChangeset key)}}/>
+            {{/let}}
           {{else}}
-          <AuButton @skin="naked" @icon="pencil" @iconAlignment="right" {{on 'click' this.enableEditingMode}}>
-            Edit
-          </AuButton>
-        {{/if}}
-        </AuButtonGroup>
+            <p><strong>{{key}}</strong></p>
+            <p>{{if value (this.formatValue value) '<No value>'}}</p>
+          {{/if}}
+        {{/each-in}}
+      </AuContent>
+    </Section>
+    <Section>
+      <AuContent @skin="tiny">
+        <AuHeading @level="5" @skin="5">Properties</AuHeading>
+        {{#each-in this.activeNode.attrs.properties as |pred prop|}}
 
-      </Group>
-    </AuToolbar>
-  </Section>
-  <Section>
-    <AuContent @skin="tiny">
-      <AuHeading @level="5" @skin="5">Debug info</AuHeading>
-      <p><strong>Position: </strong>{{this.activeBlock.pos}}</p>
-    </AuContent>
-  </Section>
-  <Section>
-    <AuContent @skin="tiny">
-      <AuHeading @level="5" @skin="5">Attributes</AuHeading>
-      {{#each-in this.activeNode.attrs as |key value|}}
-        {{#if (and this.isEditing (this.isEditable key))}}
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}}>
-              {{key}}
-            </AuLabel>
-            <AuTextarea @width="block" id={{id}} @value={{get this.changeset key}} {{on 'change' (fn this.updateChangeset key)}}/>
-          {{/let}}
-        {{else}}
-          <p><strong>{{key}}</strong></p>
-          <p>{{if value value '<No value>'}}</p>
-        {{/if}}
-      {{/each-in}}
-    </AuContent>
-  </Section>
-  <Section>
-    <AuContent @skin="tiny">
-      <AuHeading @level="5" @skin="5">Relations</AuHeading>
-    </AuContent>
-  </Section>
+          <p><strong>{{pred}}</strong></p>
+          {{#if (eq prop.type 'attr')}}
+            <p>{{prop.value}}</p>
+          {{else}}
+            <button type="button" {{on "click" (fn this.goToNodeWithId prop.value)}}>goto</button>
+          {{/if}}
 
-</AuPanel>
+        {{/each-in}}
+      </AuContent>
+    </Section>
+
+  </AuPanel>
 {{/if}}
