@@ -9,5 +9,5 @@ Router.map(function () {
   this.route('plugins');
   this.route('vendors');
   this.route('backspace');
-  this.route('editable-block');
+  this.route('editable-node');
 });

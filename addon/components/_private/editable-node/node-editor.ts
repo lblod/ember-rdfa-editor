@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { getActiveEditableBlock } from '@lblod/ember-rdfa-editor/plugins/_private/editable-block-node';
+import { getActiveEditableNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
@@ -9,8 +9,8 @@ type Args = {
   controller?: SayController;
 };
 
-export default class BlockNodeEditor extends Component<Args> {
-  @trackedReset<BlockNodeEditor, boolean>({
+export default class NodeEditor extends Component<Args> {
+  @trackedReset<NodeEditor, boolean>({
     memo: 'activeBlock',
     update: (component) => {
       component.changeset = undefined;
@@ -24,27 +24,23 @@ export default class BlockNodeEditor extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
-  get activeBlock() {
+  get activeNode() {
     if (this.controller) {
-      return getActiveEditableBlock(this.controller.activeEditorState);
+      return getActiveEditableNode(this.controller.activeEditorState);
     }
     return;
   }
 
-  get activeNode() {
-    return this.activeBlock?.node;
-  }
-
   isEditable = (attr: string) => {
     //@ts-expect-error editable is not defined on attribute-spec type
-    return this.activeBlock?.node.type.spec.attrs[attr].editable as
+    return this.activeNode?.node.type.spec.attrs[attr].editable as
       | boolean
       | undefined;
   };
 
   enableEditingMode = () => {
     if (this.activeNode) {
-      this.changeset = Changeset(this.activeNode.attrs);
+      this.changeset = Changeset(this.activeNode.node.attrs);
       this.isEditing = true;
     }
   };
@@ -57,7 +53,7 @@ export default class BlockNodeEditor extends Component<Args> {
   saveChanges = () => {
     this.controller?.withTransaction((tr) => {
       for (const { key, value } of unwrap(this.changeset).changes) {
-        tr.setNodeAttribute(unwrap(this.activeBlock).pos, key, value);
+        tr.setNodeAttribute(unwrap(this.activeNode).pos, key, value);
       }
       return tr;
     });

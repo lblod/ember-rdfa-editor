@@ -14,10 +14,10 @@ type Block = {
   node: PNode;
 };
 type State = {
-  activeBlock?: Block;
+  activeNode?: Block;
 };
 
-const activeBlock = (state: EditorState): Block | undefined => {
+const activeNode = (state: EditorState): Block | undefined => {
   const { selection } = state;
   if (selection instanceof NodeSelection) {
     if (hasGroups(selection.node, 'editable')) {
@@ -41,16 +41,16 @@ const activeBlock = (state: EditorState): Block | undefined => {
   return;
 };
 
-export const editableBlockNodePluginKey = new PluginKey<State>(
+export const editableNodePluginKey = new PluginKey<State>(
   'EDITABLE_BLOCK_NODE',
 );
-export const editableBlockNodePlugin = new ProsePlugin<State>({
-  key: editableBlockNodePluginKey,
+export const editableNodePlugin = new ProsePlugin<State>({
+  key: editableNodePluginKey,
   props: {
     decorations(state) {
       const pluginState = this.getState(state);
-      if (pluginState?.activeBlock) {
-        const { node, pos } = pluginState.activeBlock;
+      if (pluginState?.activeNode) {
+        const { node, pos } = pluginState.activeNode;
         const deco = Decoration.node(pos, pos + node.nodeSize, {
           class: 'say-active',
         });
@@ -63,17 +63,17 @@ export const editableBlockNodePlugin = new ProsePlugin<State>({
   state: {
     init(_, state) {
       return {
-        activeBlock: activeBlock(state),
+        activeNode: activeNode(state),
       };
     },
     apply(_tr, _value, _oldState, newState) {
       return {
-        activeBlock: activeBlock(newState),
+        activeNode: activeNode(newState),
       };
     },
   },
 });
 
-export function getActiveEditableBlock(state: EditorState) {
-  return editableBlockNodePluginKey.getState(state)?.activeBlock;
+export function getActiveEditableNode(state: EditorState) {
+  return editableNodePluginKey.getState(state)?.activeNode;
 }
