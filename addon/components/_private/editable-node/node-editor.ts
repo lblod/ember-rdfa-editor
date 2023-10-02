@@ -74,6 +74,9 @@ export default class NodeEditor extends Component<Args> {
   };
   goToNodeWithId = (id: string) => {
     const doc = this.controller?.mainEditorState.doc;
+    if (!doc) {
+      return;
+    }
     let found = false;
     let resultPos = 0;
     doc.descendants((node, pos) => {
