@@ -6,15 +6,21 @@
         <AuHeading @level="4" @skin="4">Current block node</AuHeading>
       </Group>
       <Group>
+        <AuButtonGroup>
         {{#if this.isEditing}}
-        <AuButton @icon="check" @iconAlignment="right" {{on 'click' this.saveChanges}}>
-          Save
-        </AuButton>
-        {{else}}
-        <AuButton @skin="naked" @icon="pencil" @iconAlignment="right" {{on 'click' this.enableEditingMode}}>
-          Edit
-        </AuButton>
+          <AuButton @skin="naked" @iconAlignment="right" {{on 'click' this.cancelEditing}}>
+            Cancel
+          </AuButton>
+          <AuButton @icon="check" @iconAlignment="right" {{on 'click' this.saveChanges}}>
+            Save
+          </AuButton>
+          {{else}}
+          <AuButton @skin="naked" @icon="pencil" @iconAlignment="right" {{on 'click' this.enableEditingMode}}>
+            Edit
+          </AuButton>
         {{/if}}
+        </AuButtonGroup>
+
       </Group>
     </AuToolbar>
   </Section>

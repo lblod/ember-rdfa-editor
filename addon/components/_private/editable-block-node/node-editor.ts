@@ -49,8 +49,12 @@ export default class BlockNodeEditor extends Component<Args> {
     }
   };
 
+  cancelEditing = () => {
+    this.isEditing = false;
+    this.changeset = undefined;
+  };
+
   saveChanges = () => {
-    console.log(unwrap(this.changeset).changes);
     this.controller?.withTransaction((tr) => {
       for (const { key, value } of unwrap(this.changeset).changes) {
         tr.setNodeAttribute(unwrap(this.activeBlock).pos, key, value);
