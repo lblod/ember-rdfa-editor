@@ -14,6 +14,27 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 
+export interface OugoingNodeProp {
+  type: 'node';
+  predicate: string;
+  object: string;
+  nodeId: string;
+}
+
+export interface OutgoingAttrProp {
+  type: 'attr';
+  predicate: string;
+  object: string;
+}
+
+export type OutgoingProp = OugoingNodeProp | OutgoingAttrProp;
+
+export interface IncomingProp {
+  predicate: string;
+  subject: string;
+  subjectId: string;
+}
+
 export default class SayParser extends ProseParser {
   constructor(schema: Schema, rules: readonly ParseRule[]) {
     console.log('making new parser');
@@ -48,17 +69,32 @@ export default class SayParser extends ProseParser {
       },
     });
 
+    // for every subject in the document
     for (const entry of datastore.asSubjectNodeMapping()) {
       const { term, nodes } = entry;
+      // there is rarely more than one node, but it is possible. This means
+      // two nodes are talking about the same subject
       for (const node of nodes) {
+        // constrain the datastore to quads for which our subject is the subject
         const outgoingQuads = datastore.match(term);
-        const outgoingProps = [];
 
+        const outgoingProps: OutgoingProp[] = [];
+        // for every quad in the constrained set, aka all quads for which we are
+        // the subject
         for (const quad of outgoingQuads.asQuadResultSet()) {
+          // find the nodes that define the object for this quad.
+          // is rarely more than 1, but can happen
+          // TODO: it might be a bug if this happens, need to define how this mapping should work
           const objectNodes = outgoingQuads.nodesForQuad(quad)?.objectNodes;
 
+          // should essentially always exist
           if (objectNodes) {
             for (const objectNode of objectNodes) {
+              // this is an early attempt at separating the following two cases:
+              // - the value of a property is determined by the textcontent of a
+              // childnode: this means that we can edit that content directly in the editor later.
+              // - other cases: either it's defined on the subject node, for example a type predicate,
+              // or it is defined on a child node but as a content attribute, and thus invisible in the editor
               if (
                 objectNode === node ||
                 (objectNode as HTMLElement).getAttribute('content') ===
@@ -73,7 +109,8 @@ export default class SayParser extends ProseParser {
                 const rdfaId = ensureId(objectNode as HTMLElement);
                 outgoingProps.push({
                   predicate: quad.predicate.value,
-                  object: rdfaId,
+                  object: quad.object.value,
+                  nodeId: rdfaId,
                   type: 'node',
                 });
               }
@@ -94,17 +131,26 @@ export default class SayParser extends ProseParser {
       const { term, nodes } = entry;
 
       for (const node of nodes) {
+        const incomingProps: IncomingProp[] = [];
         const incomingQuads = datastore.match(null, null, term);
-        const incomingProps = [
-          ...incomingQuads.asQuadResultSet().map((quad) => {
-            return {
-              predicate: quad.predicate.value,
-              subject: quad.subject.value,
-            };
-          }),
-        ];
-        (node as HTMLElement).dataset.incomingProps =
-          JSON.stringify(incomingProps);
+
+        for (const quad of incomingQuads.asQuadResultSet()) {
+          const subjectNodes =
+            incomingQuads.nodesForQuad(quad)?.subjectNodes ?? [];
+
+          for (const subjectNode of subjectNodes) {
+            if (subjectNode !== node) {
+              const rdfaId = ensureId(subjectNode as HTMLElement);
+              incomingProps.push({
+                predicate: quad.predicate.value,
+                subject: quad.subject.value,
+                subjectId: rdfaId,
+              });
+            }
+          }
+          (node as HTMLElement).dataset.incomingProps =
+            JSON.stringify(incomingProps);
+        }
       }
     }
     return super.parse(dom, options);

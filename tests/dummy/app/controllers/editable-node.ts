@@ -11,6 +11,7 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
+  block_rdfa,
   docWithConfig,
   hard_break,
   horizontal_rule,
@@ -60,13 +61,11 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules } from '@lblod/ember-rdfa-editor';
+import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
 import NodeEditor from '@lblod/ember-rdfa-editor/components/_private/editable-node/node-editor';
-import { editable_block } from '@lblod/ember-rdfa-editor/nodes/_private/editable-block';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 
 export default class EditableBlockController extends Controller {
@@ -100,7 +99,7 @@ export default class EditableBlockController extends Controller {
 
       hard_break,
       invisible_rdfa,
-      editable_block,
+      block_rdfa,
       link: link(this.linkOptions),
     },
     marks: {

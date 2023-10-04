@@ -1,6 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import {
+  IncomingProp,
+  OutgoingProp,
+} from '@lblod/ember-rdfa-editor/core/say-parser';
 
 export const rdfaAttrs = {
+  properties: { default: {} },
+  backlinks: { default: {} },
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   vocab: { default: undefined },
@@ -22,22 +28,15 @@ export const rdfaAttrs = {
   inlist: { default: undefined },
   datetime: { default: undefined },
   __rdfaId: { default: undefined },
-  properties: { default: {} },
 };
-type PropertyMap = Record<string, { type: 'node' | 'attr'; value: string }>;
-
-interface OutgoingProps {
-  predicate: string;
-  object: string;
-  type: 'node' | 'attr';
-}
+type OutgoingMap = Record<string, OutgoingProp>;
+type IncomingMap = Record<string, IncomingProp>;
 
 export function getRdfaAttrs(
   node: Element,
-): Record<string, string | PropertyMap> | false {
-  const attrs: Record<string, string | PropertyMap> = {};
+): Record<string, string | OutgoingMap | IncomingMap> | false {
+  const attrs: Record<string, string | OutgoingMap | IncomingMap> = {};
 
-  const properties: PropertyMap = {};
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
@@ -46,12 +45,21 @@ export function getRdfaAttrs(
       hasAnyRdfaAttributes = true;
 
       if (key === 'data-outgoing-props') {
-        const props = JSON.parse(value) as OutgoingProps[];
+        const properties: OutgoingMap = {};
+        const props = JSON.parse(value) as OutgoingProp[];
         for (const prop of props) {
-          properties[prop.predicate] = { type: prop.type, value: prop.object };
+          properties[prop.predicate] = prop;
         }
+        attrs['properties'] = properties;
       }
-      attrs['properties'] = properties;
+      if (key === 'data-incoming-props') {
+        const backlinks: IncomingMap = {};
+        const props = JSON.parse(value) as IncomingProp[];
+        for (const prop of props) {
+          backlinks[prop.predicate] = prop;
+        }
+        attrs['backlinks'] = backlinks;
+      }
     }
   }
   if (hasAnyRdfaAttributes) {

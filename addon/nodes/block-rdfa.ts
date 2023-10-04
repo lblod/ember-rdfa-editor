@@ -3,7 +3,7 @@ import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 
 export const block_rdfa: NodeSpec = {
   content: 'block+',
-  group: 'block',
+  group: 'block editable',
   attrs: {
     ...rdfaAttrs,
     __tag: { default: 'div' },
@@ -18,6 +18,6 @@ export const block_rdfa: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [node.attrs.__tag, node.attrs, 0];
+    return [node.attrs.__tag, { ...node.attrs, class: 'say-editable' }, 0];
   },
 };
