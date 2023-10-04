@@ -1,11 +1,12 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 export const block_rdfa: NodeSpec = {
   content: 'block+',
   group: 'block editable',
   attrs: {
-    ...rdfaAttrs,
+    properties: { default: [] },
+    backlinks: { default: [] },
     __tag: { default: 'div' },
   },
   defining: true,
@@ -13,7 +14,7 @@ export const block_rdfa: NodeSpec = {
     {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
       getAttrs(node: HTMLElement) {
-        return getRdfaAttrs(node);
+        return { __tag: tagName(node) };
       },
     },
   ],

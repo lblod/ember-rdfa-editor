@@ -3,30 +3,17 @@ import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { Attrs, ParseRule } from 'prosemirror-model';
+import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export const rdfaAttrs = {
   properties: { default: {} },
   backlinks: { default: {} },
+  __rdfaId: { default: undefined },
+};
+export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
-  vocab: { default: undefined },
-  typeof: { default: undefined, editable: true },
-  prefix: { default: undefined },
-  property: { default: undefined },
-  rel: { default: undefined },
-  rev: { default: undefined },
-  href: { default: undefined },
-  about: { default: undefined },
-  resource: { default: undefined },
-  content: { default: undefined },
-  datatype: { default: undefined },
-  lang: { default: undefined },
-  xmlns: { default: undefined },
-  src: { default: undefined },
-  id: { default: undefined },
-  role: { default: undefined },
-  inlist: { default: undefined },
-  datetime: { default: undefined },
   __rdfaId: { default: undefined },
 };
 type OutgoingMap = Record<string, OutgoingProp>;
@@ -38,7 +25,7 @@ export function getRdfaAttrs(
   const attrs: Record<string, string | OutgoingMap | IncomingMap> = {};
 
   let hasAnyRdfaAttributes = false;
-  for (const key of Object.keys(rdfaAttrs)) {
+  for (const key of Object.keys(rdfaDomAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
     if (value) {
       attrs[key] = value;
@@ -69,4 +56,47 @@ export function getRdfaAttrs(
     return attrs;
   }
   return false;
+}
+
+export function enhanceRule(rule: ParseRule): ParseRule {
+  const newRule = copy(rule as Record<string, unknown>) as ParseRule;
+  newRule.getAttrs = wrapGetAttrs(newRule.getAttrs, newRule.attrs);
+  return newRule;
+}
+
+type GetAttrs = (node: string | HTMLElement) => false | Attrs | null;
+
+function wrapGetAttrs(
+  getAttrs: Option<GetAttrs>,
+  extraAttrs: Option<Record<string, unknown>>,
+): GetAttrs {
+  return function (node: string | HTMLElement) {
+    const originalAttrs: Record<string, unknown> | false | null = getAttrs
+      ? getAttrs(node)
+      : {};
+    if (originalAttrs === false) {
+      return originalAttrs;
+    }
+    const result = originalAttrs ?? {};
+    if (typeof node !== 'string' && typeof result === 'object') {
+      const rdfaAttrs = getRdfaAttrs(node);
+      if (rdfaAttrs) {
+        result['__rdfaId'] = rdfaAttrs['__rdfaId'];
+        result['properties'] = rdfaAttrs['properties'];
+        result['backlinks'] = rdfaAttrs['backlinks'];
+      }
+    }
+    if (extraAttrs) {
+      return { ...result, ...extraAttrs };
+    }
+    return result;
+  };
+}
+
+function copy(obj: Record<string, unknown>) {
+  const copy: Record<string, unknown> = {};
+  for (const prop in obj) {
+    copy[prop] = obj[prop];
+  }
+  return copy;
 }

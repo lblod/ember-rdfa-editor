@@ -13,6 +13,7 @@ import {
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
+import {enhanceRule} from "@lblod/ember-rdfa-editor/core/schema";
 
 export interface OugoingNodeProp {
   type: 'node';
@@ -179,7 +180,7 @@ export default class SayParser extends ProseParser {
       const rules = schema.marks[name].spec.parseDOM;
       if (rules) {
         rules.forEach((rule) => {
-          insert((rule = copy(rule as Record<string, unknown>)));
+          insert((rule = enhanceRule(rule as Record<string, unknown>)));
           if (!(rule.mark || rule.ignore || rule.clearMark)) {
             rule.mark = name;
           }
@@ -190,7 +191,7 @@ export default class SayParser extends ProseParser {
       const rules = schema.nodes[name].spec.parseDOM;
       if (rules) {
         rules.forEach((rule) => {
-          insert((rule = copy(rule as Record<string, unknown>)));
+          insert((rule = enhanceRule(rule as Record<string, unknown>)));
           if (!(rule.node || rule.ignore || rule.mark)) {
             rule.node = name;
           }

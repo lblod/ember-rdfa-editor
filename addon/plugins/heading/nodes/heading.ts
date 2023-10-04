@@ -1,5 +1,5 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export const heading: NodeSpec = {
@@ -22,7 +22,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
@@ -36,7 +35,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
@@ -50,7 +48,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
@@ -64,7 +61,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
@@ -78,7 +74,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
@@ -92,7 +87,6 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
-          ...getRdfaAttrs(node),
         };
       },
     },
