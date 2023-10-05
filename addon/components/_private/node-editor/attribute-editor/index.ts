@@ -2,19 +2,19 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import { getActiveEditableNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Changeset, EmberChangeset } from 'ember-changeset';
-import { NodeSelection } from 'prosemirror-state';
 import { trackedReset } from 'tracked-toolbox';
 
 type Args = {
-  controller?: SayController;
+  controller: SayController;
+  node: ResolvedNode;
 };
 
-export default class NodeEditor extends Component<Args> {
-  @trackedReset<NodeEditor, boolean>({
-    memo: 'activeBlock',
+export default class AttributeEditor extends Component<Args> {
+  @trackedReset<AttributeEditor, boolean>({
+    memo: 'node',
     update: (component) => {
       component.changeset = undefined;
       return false;
@@ -28,29 +28,24 @@ export default class NodeEditor extends Component<Args> {
     return this.args.controller;
   }
 
-  get activeNode() {
-    if (this.controller) {
-      return getActiveEditableNode(this.controller.activeEditorState);
-    }
-    return;
+  get node() {
+    return this.args.node;
   }
 
   get nodespec() {
-    return this.activeNode?.node.type.spec as SayNodeSpec | undefined;
+    return this.node.value.type.spec as SayNodeSpec;
   }
 
   isEditable = (attr: string) => {
     //@ts-expect-error editable is not defined on attribute-spec type
-    return this.activeNode?.node.type.spec.attrs[attr].editable as
+    return this.node.value.type.spec.attrs[attr].editable as
       | boolean
       | undefined;
   };
 
   enableEditingMode = () => {
-    if (this.activeNode) {
-      this.changeset = Changeset(this.activeNode.node.attrs);
-      this.isEditing = true;
-    }
+    this.changeset = Changeset(this.node.value.attrs);
+    this.isEditing = true;
   };
 
   cancelEditing = () => {
@@ -61,7 +56,7 @@ export default class NodeEditor extends Component<Args> {
   saveChanges = () => {
     this.controller?.withTransaction((tr) => {
       for (const { key, value } of unwrap(this.changeset).changes) {
-        tr.setNodeAttribute(unwrap(this.activeNode).pos, key, value);
+        tr.setNodeAttribute(this.node.pos, key, value);
       }
       return tr;
     });
@@ -74,32 +69,9 @@ export default class NodeEditor extends Component<Args> {
       this.changeset[attr] = (event.target as HTMLTextAreaElement).value;
     }
   };
+
   formatValue = (value: unknown) => {
     return JSON.stringify(value);
-  };
-  goToNodeWithId = (id: string) => {
-    const doc = this.controller?.mainEditorState.doc;
-    if (!doc) {
-      return;
-    }
-    let found = false;
-    let resultPos = 0;
-    doc.descendants((node, pos) => {
-      if (found) return false;
-      if (node.attrs.__rdfaId === id) {
-        found = true;
-        resultPos = pos;
-        return false;
-      }
-      return true;
-    });
-    if (found) {
-      this.controller?.withTransaction((tr) => {
-        return tr
-          .setSelection(new NodeSelection(tr.doc.resolve(resultPos)))
-          .scrollIntoView();
-      });
-    }
   };
 
   editorComponent = (attr: string) => {

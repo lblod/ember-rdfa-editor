@@ -1,0 +1,32 @@
+{{#if this.activeNode}}
+  <AuPanel as |Section|>
+    <Section>
+      <AuToolbar as |Group|>
+        <Group>
+          <AuHeading @level="4" @skin="4">Current block node</AuHeading>
+        </Group>
+      </AuToolbar>
+    </Section>
+    <Section>
+      <this.DebugInfo @node={{this.activeNode}} />
+    </Section>
+    <Section>
+      <this.PropertyEditor
+        @node={{this.activeNode}}
+        @controller={{this.controller}}
+      />
+    </Section>
+    <Section>
+      <this.BacklinkEditor
+        @node={{this.activeNode}}
+        @controller={{this.controller}}
+      />
+    </Section>
+    <Section>
+      <this.AttributeEditor
+        @node={{this.activeNode}}
+        @controller={{this.controller}}
+      />
+    </Section>
+  </AuPanel>
+{{/if}}

@@ -9,21 +9,21 @@ import {
 } from '@lblod/ember-rdfa-editor';
 import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
-type Block = {
+export type ResolvedNode = {
   pos: number;
-  node: PNode;
+  value: PNode;
 };
 type State = {
-  activeNode?: Block;
+  activeNode?: ResolvedNode;
 };
 
-const activeNode = (state: EditorState): Block | undefined => {
+const activeNode = (state: EditorState): ResolvedNode | undefined => {
   const { selection } = state;
   if (selection instanceof NodeSelection) {
     if (isEditable(selection.node)) {
       return {
         pos: selection.from,
-        node: selection.node,
+        value: selection.node,
       };
     }
   }
@@ -34,7 +34,7 @@ const activeNode = (state: EditorState): Block | undefined => {
     if (isEditable(curNode)) {
       return {
         pos,
-        node: curNode,
+        value: curNode,
       };
     }
   }
@@ -50,8 +50,8 @@ export const editableNodePlugin = new ProsePlugin<State>({
     decorations(state) {
       const pluginState = this.getState(state);
       if (pluginState?.activeNode) {
-        const { node, pos } = pluginState.activeNode;
-        const deco = Decoration.node(pos, pos + node.nodeSize, {
+        const { value, pos } = pluginState.activeNode;
+        const deco = Decoration.node(pos, pos + value.nodeSize, {
           class: 'say-active',
         });
         return DecorationSet.create(state.doc, [deco]);

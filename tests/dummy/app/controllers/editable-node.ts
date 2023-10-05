@@ -21,7 +21,6 @@ import {
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
@@ -65,7 +64,7 @@ import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
-import NodeEditor from '@lblod/ember-rdfa-editor/components/_private/editable-node/node-editor';
+import NodeEditor from '@lblod/ember-rdfa-editor/components/_private/node-editor';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 
 export default class EditableBlockController extends Controller {
