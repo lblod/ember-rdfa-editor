@@ -101,29 +101,35 @@ export function renderProps(node: PNode): DOMOutputSpec {
   const properties = node.attrs.properties as Record<string, OutgoingProp>;
   for (const [pred, prop] of Object.entries(properties)) {
     if (prop.type === 'attr') {
-      propElements.push([
-        'span',
-        { property: pred, content: prop.object, about: node.attrs.resource },
-        '',
-      ]);
+      propElements.push(['span', { property: pred, content: prop.object }, '']);
+    }
+  }
+  if (node.attrs.resource) {
+    const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
+    const entries = Object.entries(backlinks);
+    for (const [pred, prop] of entries) {
+      propElements.push(['span', { rev: pred, resource: prop.subject }]);
     }
   }
   return ['span', { style: 'display: none' }, ...propElements];
 }
 
 export function renderAttrs(node: PNode): Record<string, string> {
-  const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
-  const entries = Object.entries(backlinks);
-  if (entries.length > 1) {
-    throw new Error('more than one backlink');
+  if (!node.attrs.resource) {
+    const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
+    const entries = Object.entries(backlinks);
+    if (entries.length > 1) {
+      throw new Error('more than one backlink');
+    }
+    if (!entries.length) {
+      return {};
+    }
+    return {
+      about: entries[0][1].subject,
+      property: entries[0][0],
+    };
   }
-  if (entries.length === 0) {
-    return {};
-  }
-  return {
-    property: entries[0][0],
-    about: entries[0][1].subject,
-  };
+  return {};
 }
 
 function copy(obj: Record<string, unknown>) {

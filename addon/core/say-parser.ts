@@ -66,6 +66,7 @@ export default class SayParser extends ProseParser {
         return node.textContent || '';
       },
     });
+    console.log([...datastore.asQuadResultSet()]);
 
     // for every subject in the document
     for (const entry of datastore.asSubjectNodeMapping()) {
@@ -100,6 +101,12 @@ export default class SayParser extends ProseParser {
                 (objectNode as HTMLElement).getAttribute('content') ||
                 quad.predicate.value === 'eli:language'
               ) {
+                console.log(
+                  'objectnode attr',
+                  quad.subject.value,
+                  quad.predicate.value,
+                  objectNode,
+                );
                 outgoingProps.push({
                   predicate: quad.predicate.value,
                   object: quad.object.value,
@@ -107,6 +114,12 @@ export default class SayParser extends ProseParser {
                 });
               } else {
                 const rdfaId = ensureId(objectNode as HTMLElement);
+                console.log(
+                  'objectnode node',
+                  quad.subject.value,
+                  quad.predicate.value,
+                  objectNode,
+                );
                 outgoingProps.push({
                   predicate: quad.predicate.value,
                   object: quad.object.value,
@@ -140,7 +153,10 @@ export default class SayParser extends ProseParser {
             incomingQuads.nodesForQuad(quad)?.subjectNodes ?? [];
 
           for (const subjectNode of subjectNodes) {
-            if (subjectNode !== node) {
+            if (
+              !(node as HTMLElement).getAttribute('content') &&
+              subjectNode !== node
+            ) {
               const rdfaId = ensureId(subjectNode as HTMLElement);
               incomingProps.push({
                 predicate: quad.predicate.value,
@@ -210,14 +226,6 @@ export default class SayParser extends ProseParser {
       ))
     );
   }
-}
-
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
-  }
-  return copy;
 }
 
 function ensureId(element: HTMLElement): string {
