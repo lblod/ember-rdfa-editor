@@ -527,4 +527,15 @@ world
   TableSelection: `
     Before the table​<table class="say-table"><tbody><tr><td>c1​</td><td>c2​</td></tr></tbody></table>​After the table
   `,
+  RdfaTest: `
+  <div resource="http://test/1" typeof="besluit:Besluit">
+H
+  <div property="prov:value">
+  test
+
+</div>
+
+</div>
+</div>
+  `,
 };
