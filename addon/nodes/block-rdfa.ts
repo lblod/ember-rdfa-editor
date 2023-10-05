@@ -1,10 +1,12 @@
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { Node as PNode } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
+import SayNodeSpec from '../core/say-node-spec';
 
-export const block_rdfa: NodeSpec = {
+export const block_rdfa: SayNodeSpec = {
   content: 'block+',
-  group: 'block editable',
+  editable: true,
+  group: 'block',
   attrs: {
     properties: { default: {} },
     backlinks: { default: {} },

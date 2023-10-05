@@ -7,7 +7,7 @@ import {
   PluginKey,
   ProsePlugin,
 } from '@lblod/ember-rdfa-editor';
-import { hasGroups } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 type Block = {
   pos: number;
@@ -20,7 +20,7 @@ type State = {
 const activeNode = (state: EditorState): Block | undefined => {
   const { selection } = state;
   if (selection instanceof NodeSelection) {
-    if (hasGroups(selection.node, 'editable')) {
+    if (isEditable(selection.node)) {
       return {
         pos: selection.from,
         node: selection.node,
@@ -31,7 +31,7 @@ const activeNode = (state: EditorState): Block | undefined => {
   for (let depth = from.depth; depth > 0; depth--) {
     const curNode = from.node(depth);
     const pos = from.before(depth);
-    if (hasGroups(curNode, 'editable')) {
+    if (isEditable(curNode)) {
       return {
         pos,
         node: curNode,
