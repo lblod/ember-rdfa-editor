@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 6.2.0
+
+### Minor Changes
+
+- [#989](https://github.com/lblod/ember-rdfa-editor/pull/989) [`8ad01b11`](https://github.com/lblod/ember-rdfa-editor/commit/8ad01b1174e84780f5cbf8f530e3a4fc741bc17f) Thanks [@x-m-el](https://github.com/x-m-el)! - export a Sass mixin `say-content` that contains the style of the class `say-content`
+
+### Patch Changes
+
+- [#983](https://github.com/lblod/ember-rdfa-editor/pull/983) [`7e653b78`](https://github.com/lblod/ember-rdfa-editor/commit/7e653b78d356b256eb1ecc0b2ec53743abfdcacd) Thanks [@piemonkey](https://github.com/piemonkey)! - GN-4531 Fix unfocusing of nested variable nodes when clicking main editor
+
 ## 6.1.0
 
 ### Minor Changes
