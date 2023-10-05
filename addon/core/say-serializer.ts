@@ -36,10 +36,6 @@ import {
   NodeType,
   Schema,
 } from 'prosemirror-model';
-import {
-  wrapMarkSerializer,
-  wrapNodeSerializer,
-} from '@lblod/ember-rdfa-editor/core/schema';
 
 export type NodeSerializer = (
   node: PNode,

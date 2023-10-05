@@ -212,6 +212,7 @@ export default class SayParser extends ProseParser {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function copy(obj: Record<string, unknown>) {
   const copy: Record<string, unknown> = {};
   for (const prop in obj) {

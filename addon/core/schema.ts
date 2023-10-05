@@ -103,7 +103,11 @@ export function renderProps(node: PNode): DOMOutputSpec {
     if (prop.type === 'attr') {
       propElements.push([
         'span',
-        { property: pred, content: prop.object, about: node.attrs.resource },
+        {
+          property: pred,
+          content: prop.object,
+          about: node.attrs.resource as string,
+        },
         '',
       ]);
     }
