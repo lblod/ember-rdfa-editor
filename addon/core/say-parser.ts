@@ -13,7 +13,7 @@ import {
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
-import {enhanceRule} from "@lblod/ember-rdfa-editor/core/schema";
+import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
 
 export interface OugoingNodeProp {
   type: 'node';
@@ -38,13 +38,10 @@ export interface IncomingProp {
 
 export default class SayParser extends ProseParser {
   constructor(schema: Schema, rules: readonly ParseRule[]) {
-    console.log('making new parser');
     super(schema, rules);
   }
 
   parse(dom: Node, options?: ParseOptions | undefined): PNode {
-    console.log('parse in custom parser');
-    console.log('starting rdfa parser');
     const datastore = EditorStore.fromParse<Node>({
       parseRoot: true,
       root: dom,
@@ -75,7 +72,9 @@ export default class SayParser extends ProseParser {
       const { term, nodes } = entry;
       // there is rarely more than one node, but it is possible. This means
       // two nodes are talking about the same subject
-      for (const node of nodes) {
+      for (const node of nodes.filter(
+        (node) => (node as HTMLElement).getAttribute('resource') === term.value,
+      )) {
         // constrain the datastore to quads for which our subject is the subject
         const outgoingQuads = datastore.match(term);
 
@@ -98,8 +97,8 @@ export default class SayParser extends ProseParser {
               // or it is defined on a child node but as a content attribute, and thus invisible in the editor
               if (
                 objectNode === node ||
-                (objectNode as HTMLElement).getAttribute('content') ===
-                  quad.object.value
+                (objectNode as HTMLElement).getAttribute('content') ||
+                quad.predicate.value === 'eli:language'
               ) {
                 outgoingProps.push({
                   predicate: quad.predicate.value,
@@ -124,6 +123,7 @@ export default class SayParser extends ProseParser {
             });
           }
         }
+        console.log('outgoing', outgoingProps);
         (node as HTMLElement).dataset.outgoingProps =
           JSON.stringify(outgoingProps);
       }
@@ -149,9 +149,9 @@ export default class SayParser extends ProseParser {
               });
             }
           }
-          (node as HTMLElement).dataset.incomingProps =
-            JSON.stringify(incomingProps);
         }
+        (node as HTMLElement).dataset.incomingProps =
+          JSON.stringify(incomingProps);
       }
     }
     return super.parse(dom, options);
