@@ -101,12 +101,6 @@ export default class SayParser extends ProseParser {
                 (objectNode as HTMLElement).getAttribute('content') ||
                 quad.predicate.value === 'eli:language'
               ) {
-                console.log(
-                  'objectnode attr',
-                  quad.subject.value,
-                  quad.predicate.value,
-                  objectNode,
-                );
                 outgoingProps.push({
                   predicate: quad.predicate.value,
                   object: quad.object.value,
@@ -114,12 +108,6 @@ export default class SayParser extends ProseParser {
                 });
               } else {
                 const rdfaId = ensureId(objectNode as HTMLElement);
-                console.log(
-                  'objectnode node',
-                  quad.subject.value,
-                  quad.predicate.value,
-                  objectNode,
-                );
                 outgoingProps.push({
                   predicate: quad.predicate.value,
                   object: quad.object.value,
@@ -154,9 +142,15 @@ export default class SayParser extends ProseParser {
 
           for (const subjectNode of subjectNodes) {
             if (
-              !(node as HTMLElement).getAttribute('content') &&
+              !(subjectNode as HTMLElement).getAttribute('about') &&
               subjectNode !== node
             ) {
+              console.log(
+                'subjectnode',
+                quad.subject.value,
+                quad.predicate.value,
+                subjectNode,
+              );
               const rdfaId = ensureId(subjectNode as HTMLElement);
               incomingProps.push({
                 predicate: quad.predicate.value,
