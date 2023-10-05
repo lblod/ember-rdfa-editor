@@ -39,7 +39,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 /* Component
   ========================================================================== */
 
-.say-content {
+@mixin say-content() {
   // Set base font size for elements
   &,
   ul,
@@ -421,3 +421,6 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 }
 
+.say-content {
+  @include say-content();
+}
