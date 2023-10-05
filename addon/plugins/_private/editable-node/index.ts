@@ -8,7 +8,6 @@ import {
   ProsePlugin,
 } from '@lblod/ember-rdfa-editor';
 import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import { hasGroups } from '@lblod/ember-rdfa-editor/utils/node-utils';
 
 type Block = {
   pos: number;
