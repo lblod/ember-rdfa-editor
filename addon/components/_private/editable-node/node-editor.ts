@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { getActiveEditableNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Changeset, EmberChangeset } from 'ember-changeset';
@@ -29,6 +30,10 @@ export default class NodeEditor extends Component<Args> {
       return getActiveEditableNode(this.controller.activeEditorState);
     }
     return;
+  }
+
+  get nodespec() {
+    return this.activeNode?.node.type.spec as SayNodeSpec | undefined;
   }
 
   isEditable = (attr: string) => {
@@ -65,5 +70,9 @@ export default class NodeEditor extends Component<Args> {
     if (this.changeset) {
       this.changeset[attr] = (event.target as HTMLTextAreaElement).value;
     }
+  };
+
+  editorComponent = (attr: string) => {
+    return this.nodespec?.attrs?.[attr].editor;
   };
 }

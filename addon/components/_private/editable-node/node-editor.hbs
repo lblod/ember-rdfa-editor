@@ -39,7 +39,21 @@
             <AuLabel for={{id}}>
               {{key}}
             </AuLabel>
-            <AuTextarea @width="block" id={{id}} @value={{get this.changeset key}} {{on 'change' (fn this.updateChangeset key)}}/>
+            {{#let (this.editorComponent key) as |EditorComponent|}}
+              {{#if EditorComponent}}
+                <EditorComponent
+                  id={{id}}
+                  value={{get this.changeset key}}
+                  {{on 'change' (fn this.updateChangeset key)}}
+                />
+              {{else}}
+                <AuTextarea
+                  id={{id}}
+                  @value={{get this.changeset key}}
+                  {{on 'change' (fn this.updateChangeset key)}}
+                />
+              {{/if}}
+            {{/let}}
           {{/let}}
         {{else}}
           <p><strong>{{key}}</strong></p>

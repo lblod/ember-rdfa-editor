@@ -1,9 +1,11 @@
+import { ComponentLike } from '@glint/template';
 import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 export interface SayAttributeSpec {
   default?: unknown;
   editable?: boolean;
+  editor?: ComponentLike;
 }
 /**
  * Custom `NodeSpec` interface which extends it with a `serialize` method. This method is called by the custom `SaySerializer`.
@@ -17,5 +19,6 @@ export default interface SayNodeSpec extends NodeSpec {
   };
 }
 
-export const isEditable = (node: PNode) =>
-  (node.type.spec as SayNodeSpec).editable;
+export const isEditable = (node: PNode) => {
+  return (node.type.spec as SayNodeSpec).editable;
+};
