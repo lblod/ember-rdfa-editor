@@ -1,12 +1,15 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
 
 export const block_rdfa: NodeSpec = {
   content: 'block+',
   group: 'block editable',
   attrs: {
-    properties: { default: [] },
-    backlinks: { default: [] },
+    properties: { default: {} },
+    backlinks: { default: {} },
+    resource: { default: null },
+    __rdfaId: { default: null },
     __tag: { default: 'div' },
   },
   defining: true,
@@ -19,6 +22,11 @@ export const block_rdfa: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [node.attrs.__tag, { ...node.attrs, class: 'say-editable' }, 0];
+    return [
+      node.attrs.__tag,
+      { ...node.attrs, ...renderAttrs(node), class: 'say-editable' },
+      renderProps(node),
+      ['span', {}, 0],
+    ];
   },
 };

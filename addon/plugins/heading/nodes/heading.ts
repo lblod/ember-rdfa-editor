@@ -1,6 +1,7 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
 
 export const heading: NodeSpec = {
   attrs: {
@@ -99,8 +100,10 @@ export const heading: NodeSpec = {
         'data-indentation-level': indentationLevel as number,
         class: 'say-editable',
         ...attrs,
+        ...renderAttrs(node),
       },
-      0,
+      renderProps(node),
+      ['span', {}, 0],
     ];
   },
 };
