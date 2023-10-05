@@ -10,12 +10,12 @@
     </Group>
   </AuToolbar>
   <AuList @divider={{true}} as |Item|>
-    {{#each-in @node.value.attrs.backlinks as |pred prop|}}
+    {{#each-in this.backlinks as |pred prop|}}
       <Item>
         <AuButton
           @icon="external-link"
           @skin="link"
-          {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
+          {{on "click" (fn this.goToNodeWithId prop.subjectId)}}
         >{{pred}}</AuButton>
       </Item>
     {{/each-in}}
