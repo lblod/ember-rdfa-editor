@@ -1,15 +1,17 @@
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { Node as PNode } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
-export const heading: NodeSpec = {
+export const heading: SayNodeSpec = {
   attrs: {
     level: { default: 1 },
     indentationLevel: { default: 0 },
     ...rdfaAttrs,
   },
   content: 'inline*',
-  group: 'block editable',
+  group: 'block',
+  editable: true,
   defining: true,
   parseDOM: [
     {

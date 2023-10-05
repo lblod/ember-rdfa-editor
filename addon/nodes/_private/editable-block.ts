@@ -7,7 +7,8 @@ type Attrs = {
 };
 export const editable_block: SayNodeSpec = {
   inline: false,
-  group: 'block editable',
+  group: 'block',
+  editable: true,
   content: 'block+',
   draggable: false,
   selectable: true,
