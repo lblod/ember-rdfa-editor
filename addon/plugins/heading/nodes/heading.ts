@@ -1,16 +1,28 @@
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { Node as PNode } from 'prosemirror-model';
+import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
 import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
+import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import NumberEditor from '@lblod/ember-rdfa-editor/components/_private/number-editor';
+import { ComponentLike } from '@glint/template';
 
-export const heading: NodeSpec = {
+export const heading: SayNodeSpec = {
   attrs: {
-    level: { default: 1 },
-    indentationLevel: { default: 0 },
+    level: {
+      default: 1,
+      editable: true,
+      editor: NumberEditor as unknown as ComponentLike,
+    },
+    indentationLevel: {
+      default: 0,
+      editable: true,
+      editor: NumberEditor as unknown as ComponentLike,
+    },
     ...rdfaAttrs,
   },
   content: 'inline*',
-  group: 'block editable',
+  group: 'block',
+  editable: true,
   defining: true,
   parseDOM: [
     {
