@@ -3,8 +3,9 @@ import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
-import { Attrs, ParseRule } from 'prosemirror-model';
+import { Attrs, DOMOutputSpec, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { PNode } from '@lblod/ember-rdfa-editor/index';
 
 export const rdfaAttrs = {
   properties: { default: {} },
@@ -14,6 +15,7 @@ export const rdfaAttrs = {
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
+  resource: { default: null },
   __rdfaId: { default: undefined },
 };
 type OutgoingMap = Record<string, OutgoingProp>;
@@ -84,12 +86,43 @@ function wrapGetAttrs(
         result['__rdfaId'] = rdfaAttrs['__rdfaId'];
         result['properties'] = rdfaAttrs['properties'];
         result['backlinks'] = rdfaAttrs['backlinks'];
+        result['resource'] = rdfaAttrs['resource'];
       }
     }
     if (extraAttrs) {
       return { ...result, ...extraAttrs };
     }
     return result;
+  };
+}
+
+export function renderProps(node: PNode): DOMOutputSpec {
+  const propElements = [];
+  const properties = node.attrs.properties as Record<string, OutgoingProp>;
+  for (const [pred, prop] of Object.entries(properties)) {
+    if (prop.type === 'attr') {
+      propElements.push([
+        'span',
+        { property: pred, content: prop.object, about: node.attrs.resource },
+        '',
+      ]);
+    }
+  }
+  return ['span', { style: 'display: none' }, ...propElements];
+}
+
+export function renderAttrs(node: PNode): Record<string, string> {
+  const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
+  const entries = Object.entries(backlinks);
+  if (entries.length > 1) {
+    throw new Error('more than one backlink');
+  }
+  if (entries.length === 0) {
+    return {};
+  }
+  return {
+    property: entries[0][0],
+    about: entries[0][1].subject,
   };
 }
 

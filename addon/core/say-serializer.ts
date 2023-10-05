@@ -2,7 +2,7 @@
  *
  * Baed on https://github.com/ProseMirror/prosemirror-model/blob/master/src/to_dom.ts
  * This modified version of the `DOMSerialize` takes an optional `serialize` method into account.
- * 
+ *
  * Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,9 +36,16 @@ import {
   NodeType,
   Schema,
 } from 'prosemirror-model';
+import {
+  wrapMarkSerializer,
+  wrapNodeSerializer,
+} from '@lblod/ember-rdfa-editor/core/schema';
 
-type NodeSerializer = (node: PNode, state?: EditorState) => DOMOutputSpec;
-type MarkSerializer = (
+export type NodeSerializer = (
+  node: PNode,
+  state?: EditorState,
+) => DOMOutputSpec;
+export type MarkSerializer = (
   mark: Mark,
   inline: boolean,
   state?: EditorState,
