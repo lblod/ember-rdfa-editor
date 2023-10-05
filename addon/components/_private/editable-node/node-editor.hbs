@@ -63,8 +63,14 @@
     </Section>
     <Section>
       <AuContent @skin="tiny">
-        <AuHeading @level="5" @skin="5">Debug info</AuHeading>
-        <p><strong>Position: </strong>{{this.activeNode.pos}}</p>
+        <AuHeading @level="5" @skin="5">Backlinks</AuHeading>
+        {{#each-in this.activeNode.node.attrs.backlinks as |pred prop|}}
+          <p><strong>{{pred}}</strong></p>
+          <button
+            type="button"
+            {{on "click" (fn this.goToNodeWithId prop.subjectId)}}
+          >goto</button>
+        {{/each-in}}
       </AuContent>
     </Section>
     <Section>
@@ -85,52 +91,13 @@
                   />
                 {{else}}
                   <AuTextarea
+                    @width="block"
                     id={{id}}
                     @value={{get this.changeset key}}
                     {{on "change" (fn this.updateChangeset key)}}
                   />
                 {{/if}}
               {{/let}}
-            {{/let}}
-          {{else}}
-            <p><strong>{{key}}</strong></p>
-            <p>{{if value value "<No value>"}}</p>
-          {{/if}}
-        {{/each-in}}
-      </AuContent>
-    </Section>
-    <Section>
-      <AuContent @skin="tiny">
-        <AuHeading @level="5" @skin="5">Relations</AuHeading>
-      </AuContent>
-    </Section>
-    <Section>
-      <AuContent @skin="tiny">
-        <AuHeading @level="5" @skin="5">Backlinks</AuHeading>
-        {{#each-in this.activeNode.node.attrs.backlinks as |pred prop|}}
-          <p><strong>{{pred}}</strong></p>
-          <button
-            type="button"
-            {{on "click" (fn this.goToNodeWithId prop.subjectId)}}
-          >goto</button>
-        {{/each-in}}
-      </AuContent>
-    </Section>
-    <Section>
-      <AuContent @skin="tiny">
-        <AuHeading @level="5" @skin="5">Attributes</AuHeading>
-        {{#each-in this.activeNode.node.attrs as |key value|}}
-          {{#if (and this.isEditing (this.isEditable key))}}
-            {{#let (unique-id) as |id|}}
-              <AuLabel for={{id}}>
-                {{key}}
-              </AuLabel>
-              <AuTextarea
-                @width="block"
-                id={{id}}
-                @value={{get this.changeset key}}
-                {{on "change" (fn this.updateChangeset key)}}
-              />
             {{/let}}
           {{else}}
             <p><strong>{{key}}</strong></p>
