@@ -1,5 +1,8 @@
 import { Node as PNode } from 'prosemirror-model';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import {
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
@@ -21,14 +24,26 @@ export const block_rdfa: SayNodeSpec = {
       getAttrs(node: HTMLElement) {
         return { __tag: tagName(node) };
       },
+      contentElement(node: Node) {
+        if (!isElement(node)) {
+          throw new Error('node is not an element');
+        }
+        for (const child of node.children) {
+          if ((child as HTMLElement).dataset.contentContainer) {
+            console.log('found child', child, 'for node', node);
+            return child as HTMLElement;
+          }
+        }
+        return node;
+      },
     },
   ],
   toDOM(node: PNode) {
     return [
-      node.attrs.__tag,
+      'div',
       { ...node.attrs, ...renderAttrs(node), class: 'say-editable' },
-      renderProps(node),
-      ['span', {}, 0],
+      renderProps(node, 'div'),
+      ['div', { 'data-content-container': true }, 0],
     ];
   },
 };

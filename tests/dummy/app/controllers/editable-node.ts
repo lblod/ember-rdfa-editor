@@ -21,7 +21,6 @@ import {
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,

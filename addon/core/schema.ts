@@ -96,7 +96,7 @@ function wrapGetAttrs(
   };
 }
 
-export function renderProps(node: PNode): DOMOutputSpec {
+export function renderProps(node: PNode, tag: string): DOMOutputSpec {
   const propElements = [];
   const properties = node.attrs.properties as Record<string, OutgoingProp>;
   for (const [pred, prop] of Object.entries(properties)) {
@@ -111,7 +111,11 @@ export function renderProps(node: PNode): DOMOutputSpec {
       propElements.push(['span', { rev: pred, resource: prop.subject }]);
     }
   }
-  return ['span', { style: 'display: none' }, ...propElements];
+  return [
+    tag,
+    { style: 'display: none', 'data-rdfa-container': true },
+    ...propElements,
+  ];
 }
 
 export function renderAttrs(node: PNode): Record<string, string> {
