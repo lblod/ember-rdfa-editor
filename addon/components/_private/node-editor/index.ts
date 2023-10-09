@@ -3,8 +3,8 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { getActiveEditableNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import DebugInfo from './debug-info';
 import PropertyEditor from './property-editor';
-import BacklinkEditor from './backlink-editor';
 import AttributeEditor from './attribute-editor';
+import RelationshipEditor from './relationship-editor';
 
 type Args = {
   controller?: SayController;
@@ -13,8 +13,8 @@ type Args = {
 export default class NodeEditor extends Component<Args> {
   DebugInfo = DebugInfo;
   PropertyEditor = PropertyEditor;
-  BacklinkEditor = BacklinkEditor;
   AttributeEditor = AttributeEditor;
+  RelationshipEditor = RelationshipEditor;
 
   get controller() {
     return this.args.controller;

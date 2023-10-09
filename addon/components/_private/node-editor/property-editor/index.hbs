@@ -4,28 +4,24 @@
       <AuHeading @level="5" @skin="5">Properties</AuHeading>
     </Group>
     <Group>
-      <AuButton @icon="plus" @skin="naked">
-        Add property
+      <AuButton @icon="pencil" @skin="naked" {{on 'click' this.openModal}}>
+        Manage
       </AuButton>
     </Group>
   </AuToolbar>
   <AuList @divider={{true}} as |Item|>
-    {{#each-in @node.value.attrs.properties as |pred prop|}}
+    {{#each-in this.attributeProperties as |pred prop|}}
       <Item>
-        {{#if (eq prop.type "attr")}}
-          <div class="au-u-padding-tiny">
-            <p><strong>{{pred}}</strong></p>
-            <p>{{prop.object}}</p>
-          </div>
-        {{else}}
-          <AuButton
-            @icon="external-link"
-            @skin="link"
-            {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
-          >{{pred}}</AuButton>
-        {{/if}}
+        <div class="au-u-padding-tiny">
+          <p><strong>{{pred}}</strong></p>
+          <p>{{prop.object}}</p>
+        </div>
       </Item>
     {{/each-in}}
   </AuList>
-
 </AuContent>
+<this.Modal
+  @modalOpen={{this.modalOpen}}
+  @onClose={{this.closeModal}}
+  @node={{@node}}
+/>

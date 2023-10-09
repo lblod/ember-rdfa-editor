@@ -1,0 +1,29 @@
+<AuModal
+  @modalOpen={{@modalOpen}}
+  @closable={{true}}
+  @closeModal={{this.cancel}}
+>
+  <:title>Manage properties</:title>
+  <:body>
+    <AuTable>
+      <:header>
+        <tr>
+          <th>Predicate</th>
+          <th>Object</th>
+        </tr>
+      </:header>
+      <:body>
+        {{#each-in this.attributeProperties as |pred prop|}}
+          <tr>
+            <td>{{pred}}</td>
+            <tr>{{prop.object}}</tr>
+          </tr>
+        {{/each-in}}
+      </:body>
+    </AuTable>
+  </:body>
+  <:footer>
+    <AuButton {{on "click" this.saveChanges}}>Save changes</AuButton>
+    <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+  </:footer>
+</AuModal>

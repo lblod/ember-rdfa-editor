@@ -15,7 +15,7 @@ import {
 import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
 
-export interface OugoingNodeProp {
+export interface OutgoingNodeProp {
   type: 'node';
   predicate: string;
   object: string;
@@ -28,7 +28,7 @@ export interface OutgoingAttrProp {
   object: string;
 }
 
-export type OutgoingProp = OugoingNodeProp | OutgoingAttrProp;
+export type OutgoingProp = OutgoingNodeProp | OutgoingAttrProp;
 
 export interface IncomingProp {
   predicate: string;

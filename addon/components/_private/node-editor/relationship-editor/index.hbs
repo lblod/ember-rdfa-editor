@@ -1,0 +1,40 @@
+<AuContent @skin="tiny">
+  <AuToolbar as |Group|>
+    <Group>
+      <AuHeading @level="5" @skin="5">Relationships</AuHeading>
+    </Group>
+    <Group>
+      <AuButton @icon="plus" @skin="naked">
+        Add relationship
+      </AuButton>
+    </Group>
+  </AuToolbar>
+  <div>
+    <AuHeading @level="6" @skin="6">Outgoing</AuHeading>
+    <AuList @divider={{true}} class="au-u-margin-small" as |Item|>
+      {{#each-in this.outgoing as |pred prop|}}
+        <Item>
+          <AuButton
+            @icon="external-link"
+            @skin="link"
+            {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
+          >{{pred}}</AuButton>
+        </Item>
+      {{/each-in}}
+    </AuList>
+  </div>
+  <div>
+    <AuHeading @level="6" @skin="6">Backlinks</AuHeading>
+    <AuList @divider={{true}} class="au-u-margin-small" as |Item|>
+      {{#each-in this.backlinks as |pred prop|}}
+        <Item>
+          <AuButton
+            @icon="external-link"
+            @skin="link"
+            {{on "click" (fn this.goToNodeWithId prop.subjectId)}}
+          >{{pred}}</AuButton>
+        </Item>
+      {{/each-in}}
+    </AuList>
+  </div>
+</AuContent>
