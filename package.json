@@ -58,7 +58,7 @@
     "ember-cli-typescript": "^5.1.0",
     "ember-focus-trap": "~1.0.1",
     "ember-functions-as-helper-polyfill": "^2.1.2",
-    "ember-intl": "^5.7.2",
+    "ember-intl": "^6.1.1",
     "ember-truth-helpers": "^3.0.0",
     "ember-unique-id-helper-polyfill": "^1.2.2",
     "ember-velcro": "^2.1.0",
