@@ -1,5 +1,10 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  getRdfaAttrs,
+  rdfaAttrs,
+  renderAttrs,
+  renderProps,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
@@ -21,7 +26,6 @@ export const ordered_list: NodeSpec = {
         return {
           order: optionMapOr(1, (val) => Number(val), start),
           style: dom.dataset.listStyle,
-          ...getRdfaAttrs(dom),
         };
       },
       consuming: false,
@@ -32,6 +36,7 @@ export const ordered_list: NodeSpec = {
     return [
       'ol',
       {
+        ...renderAttrs(node),
         ...(order !== 1 && { start: order }),
         ...(style && { 'data-list-style': style }),
         ...attrs,
@@ -67,12 +72,14 @@ export const list_item: NodeSpec = {
   parseDOM: [
     {
       tag: 'li',
-      getAttrs(node: HTMLElement) {
-        return { ...getRdfaAttrs(node) };
-      },
     },
   ],
   toDOM(node: PNode) {
-    return ['li', { ...node.attrs }, 0];
+    return [
+      'li',
+      { ...renderAttrs(node), ...node.attrs },
+      renderProps(node, 'div'),
+      ['div', {}, 0],
+    ];
   },
 };

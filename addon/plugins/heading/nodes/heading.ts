@@ -114,7 +114,7 @@ export const heading: SayNodeSpec = {
         ...attrs,
         ...renderAttrs(node),
       },
-      renderProps(node),
+      renderProps(node, 'span'),
       ['span', {}, 0],
     ];
   },

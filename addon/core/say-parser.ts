@@ -66,6 +66,7 @@ export default class SayParser extends ProseParser {
         return node.textContent || '';
       },
     });
+    console.log([...datastore.asQuadResultSet()]);
 
     // for every subject in the document
     for (const entry of datastore.asSubjectNodeMapping()) {
@@ -140,7 +141,16 @@ export default class SayParser extends ProseParser {
             incomingQuads.nodesForQuad(quad)?.subjectNodes ?? [];
 
           for (const subjectNode of subjectNodes) {
-            if (subjectNode !== node) {
+            if (
+              !(subjectNode as HTMLElement).getAttribute('about') &&
+              subjectNode !== node
+            ) {
+              console.log(
+                'subjectnode',
+                quad.subject.value,
+                quad.predicate.value,
+                subjectNode,
+              );
               const rdfaId = ensureId(subjectNode as HTMLElement);
               incomingProps.push({
                 predicate: quad.predicate.value,
@@ -210,15 +220,6 @@ export default class SayParser extends ProseParser {
       ))
     );
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
-  }
-  return copy;
 }
 
 function ensureId(element: HTMLElement): string {
