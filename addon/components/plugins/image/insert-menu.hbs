@@ -1,7 +1,7 @@
 <Toolbar::Button
   @disabled={{this.disabled}}
   @title={{t 'ember-rdfa-editor.image.insert'}}
-  @icon='website'
+  @icon={{this.imageIcon}}
   {{on 'click' this.showModal}}
 />
 <AuModal
