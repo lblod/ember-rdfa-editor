@@ -6,6 +6,7 @@ import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { tracked } from '@glimmer/tracking';
 
 type Args = {
   controller: SayController;
@@ -13,6 +14,7 @@ type Args = {
 };
 
 export default class RelationshipEditor extends Component<Args> {
+  @tracked collapsed = false;
   get controller() {
     return this.args.controller;
   }
@@ -25,17 +27,30 @@ export default class RelationshipEditor extends Component<Args> {
       const filteredEntries = Object.entries(properties).filter(
         ([_, prop]) => prop.type === 'node',
       );
-      return Object.fromEntries(filteredEntries);
+      if (filteredEntries.length) {
+        return Object.fromEntries(filteredEntries);
+      } else {
+        return;
+      }
     } else {
       return;
     }
   }
 
   get backlinks() {
-    return this.args.node.value.attrs.backlinks as
+    const backlinks = this.args.node.value.attrs.backlinks as
       | Record<string, IncomingProp>
       | undefined;
+    if (backlinks && Object.keys(backlinks).length) {
+      return backlinks;
+    } else {
+      return;
+    }
   }
+
+  toggleSection = () => {
+    this.collapsed = !this.collapsed;
+  };
 
   goToNodeWithId = (id: string) => goToNodeWithId(id, this.controller);
 }

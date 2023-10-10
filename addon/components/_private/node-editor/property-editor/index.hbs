@@ -4,21 +4,38 @@
       <AuHeading @level="5" @skin="5">Properties</AuHeading>
     </Group>
     <Group>
-      <AuButton @icon="pencil" @skin="naked" {{on 'click' this.openModal}}>
-        Manage
-      </AuButton>
+      <AuButtonGroup>
+        <AuButton @icon="plus" @skin="naked" {{on "click" this.openModal}}>
+          Add property
+        </AuButton>
+        <AuButton
+          @skin="naked"
+          @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+          {{on "click" this.toggleSection}}
+        />
+      </AuButtonGroup>
     </Group>
   </AuToolbar>
-  <AuList @divider={{true}} as |Item|>
-    {{#each-in this.attributeProperties as |pred prop|}}
-      <Item>
-        <div class="au-u-padding-tiny">
-          <p><strong>{{pred}}</strong></p>
-          <p>{{prop.object}}</p>
-        </div>
-      </Item>
-    {{/each-in}}
-  </AuList>
+  {{#unless this.collapsed}}
+    {{#if this.attributeProperties}}
+      <AuList @divider={{true}} as |Item|>
+        {{#each-in this.attributeProperties as |pred prop|}}
+          <Item
+            class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+          >
+            <div class="au-u-padding-tiny">
+              <p><strong>{{pred}}</strong></p>
+              <p>{{prop.object}}</p>
+            </div>
+            <AuButton @icon="three-dots" @skin="naked" />
+          </Item>
+        {{/each-in}}
+      </AuList>
+    {{else}}
+      <p>This node doesn't have any properties yet.</p>
+    {{/if}}
+  {{/unless}}
+
 </AuContent>
 <this.Modal
   @modalOpen={{this.modalOpen}}

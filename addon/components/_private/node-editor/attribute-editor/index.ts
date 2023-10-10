@@ -13,6 +13,7 @@ type Args = {
 };
 
 export default class AttributeEditor extends Component<Args> {
+  @tracked collapsed = false;
   @trackedReset<AttributeEditor, boolean>({
     memo: 'node',
     update: (component) => {
@@ -35,6 +36,10 @@ export default class AttributeEditor extends Component<Args> {
   get nodespec() {
     return this.node.value.type.spec as SayNodeSpec;
   }
+
+  toggleSection = () => {
+    this.collapsed = !this.collapsed;
+  };
 
   isEditable = (attr: string) => {
     //@ts-expect-error editable is not defined on attribute-spec type

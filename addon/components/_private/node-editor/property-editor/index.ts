@@ -14,12 +14,18 @@ export default class PropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;
   @tracked modalOpen = false;
 
+  @tracked collapsed = false;
+
   openModal = () => {
     this.modalOpen = true;
   };
 
   closeModal = () => {
     this.modalOpen = false;
+  };
+
+  toggleSection = () => {
+    this.collapsed = !this.collapsed;
   };
 
   get controller() {
@@ -34,7 +40,11 @@ export default class PropertyEditor extends Component<Args> {
       const filteredEntries = Object.entries(properties).filter(
         ([_, prop]) => prop.type === 'attr',
       );
-      return Object.fromEntries(filteredEntries);
+      if (filteredEntries.length) {
+        return Object.fromEntries(filteredEntries);
+      } else {
+        return;
+      }
     } else {
       return;
     }
