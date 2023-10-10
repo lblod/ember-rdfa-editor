@@ -11,8 +11,8 @@ export const block_rdfa: SayNodeSpec = {
   editable: true,
   group: 'block',
   attrs: {
-    properties: { default: {} },
-    backlinks: { default: {} },
+    properties: { default: [] },
+    backlinks: { default: [] },
     resource: { default: null },
     __rdfaId: { default: null },
     __tag: { default: 'div' },

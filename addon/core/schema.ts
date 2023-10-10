@@ -8,8 +8,8 @@ import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 
 export const rdfaAttrs = {
-  properties: { default: {} },
-  backlinks: { default: {} },
+  properties: { default: [] },
+  backlinks: { default: [] },
   __rdfaId: { default: undefined },
 };
 export const rdfaDomAttrs = {
@@ -18,13 +18,11 @@ export const rdfaDomAttrs = {
   resource: { default: null },
   __rdfaId: { default: undefined },
 };
-type OutgoingMap = Record<string, OutgoingProp>;
-type IncomingMap = Record<string, IncomingProp>;
 
-export function getRdfaAttrs(
-  node: Element,
-): Record<string, string | OutgoingMap | IncomingMap> | false {
-  const attrs: Record<string, string | OutgoingMap | IncomingMap> = {};
+type RdfaAttrs = Record<string, string | OutgoingProp[] | IncomingProp[]>;
+
+export function getRdfaAttrs(node: Element): RdfaAttrs | false {
+  const attrs: RdfaAttrs = {};
 
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaDomAttrs)) {
@@ -34,19 +32,11 @@ export function getRdfaAttrs(
       hasAnyRdfaAttributes = true;
 
       if (key === 'data-outgoing-props') {
-        const properties: OutgoingMap = {};
-        const props = JSON.parse(value) as OutgoingProp[];
-        for (const prop of props) {
-          properties[prop.predicate] = prop;
-        }
+        const properties = JSON.parse(value) as OutgoingProp[];
         attrs['properties'] = properties;
       }
       if (key === 'data-incoming-props') {
-        const backlinks: IncomingMap = {};
-        const props = JSON.parse(value) as IncomingProp[];
-        for (const prop of props) {
-          backlinks[prop.predicate] = prop;
-        }
+        const backlinks = JSON.parse(value) as IncomingProp[];
         attrs['backlinks'] = backlinks;
       }
     }
@@ -98,17 +88,16 @@ function wrapGetAttrs(
 
 export function renderProps(node: PNode, tag: string): DOMOutputSpec {
   const propElements = [];
-  const properties = node.attrs.properties as Record<string, OutgoingProp>;
-  for (const [pred, prop] of Object.entries(properties)) {
-    if (prop.type === 'attr') {
-      propElements.push(['span', { property: pred, content: prop.object }, '']);
+  const properties = node.attrs.properties as OutgoingProp[];
+  for (const { type, predicate, object } of properties) {
+    if (type === 'attr') {
+      propElements.push(['span', { property: predicate, content: object }, '']);
     }
   }
   if (node.attrs.resource) {
-    const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
-    const entries = Object.entries(backlinks);
-    for (const [pred, prop] of entries) {
-      propElements.push(['span', { rev: pred, resource: prop.subject }]);
+    const backlinks = node.attrs.backlinks as IncomingProp[];
+    for (const { predicate, subject } of backlinks) {
+      propElements.push(['span', { rev: predicate, resource: subject }]);
     }
   }
   return [
@@ -120,17 +109,17 @@ export function renderProps(node: PNode, tag: string): DOMOutputSpec {
 
 export function renderAttrs(node: PNode): Record<string, string> {
   if (!node.attrs.resource) {
-    const backlinks = node.attrs.backlinks as Record<string, IncomingProp>;
-    const entries = Object.entries(backlinks);
-    if (entries.length > 1) {
+    const backlinks = node.attrs.backlinks as IncomingProp[];
+    if (backlinks.length > 1) {
       throw new Error('more than one backlink');
     }
-    if (!entries.length) {
+    if (!backlinks.length) {
       return {};
     }
+
     return {
-      about: entries[0][1].subject,
-      property: entries[0][0],
+      about: backlinks[0].subject,
+      property: backlinks[0].predicate,
     };
   }
   return {};
