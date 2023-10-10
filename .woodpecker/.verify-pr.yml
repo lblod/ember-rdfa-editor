@@ -13,6 +13,11 @@ steps:
     group: lint
     commands:
       - npm run lint:hbs
+  dependency-lint:
+    image: danlynn/ember-cli:4.8.0
+    group: lint
+    commands:
+      - ember dependency-lint
   test:
     image: danlynn/ember-cli:4.8.0
     commands:
