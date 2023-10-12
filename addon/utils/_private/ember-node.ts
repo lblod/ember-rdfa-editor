@@ -294,7 +294,8 @@ interface NonAtomConfig {
   content: string;
 }
 
-// export type EmberNodeConfig<IsAtom extends boolean> = {
+// Maybe this should be split so that a different one exists for each of the 2 functions which takes
+// it as an argument
 export type EmberNodeConfig = {
   name: string;
   /** ember component to render as a Node View */
