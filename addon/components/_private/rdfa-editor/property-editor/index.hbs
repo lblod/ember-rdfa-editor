@@ -1,0 +1,69 @@
+<AuContent @skin="tiny">
+  <AuToolbar as |Group|>
+    <Group>
+      <AuHeading @level="5" @skin="5">Properties</AuHeading>
+    </Group>
+    <Group>
+      <AuButton
+        @icon="plus"
+        @skin="naked"
+        {{on "click" this.startPropertyCreation}}
+      >
+        Add property
+      </AuButton>
+    </Group>
+  </AuToolbar>
+  {{#if this.hasAttributeProperties}}
+    <AuList @divider={{true}} as |Item|>
+      {{#each this.properties as |prop index|}}
+        {{#if (eq prop.type "attr")}}
+          <Item
+            class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+          >
+            <div class="au-u-padding-tiny">
+              <p><strong>{{prop.predicate}}</strong></p>
+              <p>{{prop.object}}</p>
+            </div>
+            <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+              <AuButton
+                @skin="link"
+                @icon="pencil"
+                role="menuitem"
+                {{on "click" (fn this.startPropertyUpdate index)}}
+              >
+                Edit property
+              </AuButton>
+              <AuButton
+                @skin="link"
+                @icon="bin"
+                role="menuitem"
+                class="au-c-button--alert"
+                {{on "click" (fn this.removeProperty index)}}
+              >
+                Remove property
+              </AuButton>
+            </AuDropdown>
+          </Item>
+        {{/if}}
+      {{/each}}
+    </AuList>
+  {{else}}
+    <p>This node doesn't have any properties yet.</p>
+  {{/if}}
+</AuContent>
+{{! Creation modal }}
+<this.Modal
+  @isNew={{true}}
+  @modalOpen={{this.isCreating}}
+  @onSave={{this.addProperty}}
+  @onCancel={{this.cancel}}
+/>
+{{! Update modal }}
+<this.Modal
+  @isNew={{false}}
+  @modalOpen={{this.isUpdating}}
+  @onSave={{this.updateProperty}}
+  @onCancel={{this.cancel}}
+  @predicate={{this.status.property.predicate}}
+  @object={{this.status.property.object}}
+/>

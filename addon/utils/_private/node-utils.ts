@@ -8,3 +8,7 @@ export function hasGroups(node: PNode, ...groups: string[]) {
   const nodeGroups = getGroups(node);
   return groups.every((group) => nodeGroups.includes(group));
 }
+
+export function isResourceNode(node: PNode) {
+  return !!node.attrs.resource;
+}

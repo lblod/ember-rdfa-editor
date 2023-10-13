@@ -1,0 +1,48 @@
+<AuModal
+  @modalOpen={{@modalOpen}}
+  @closable={{true}}
+  @closeModal={{this.cancel}}
+>
+  <:title>{{this.title}}</:title>
+  <:body>
+    <div class="au-o-grid au-o-grid--tiny">
+      <div class="au-o-grid__item au-u-1-2@medium">
+        {{#let (unique-id) as |id|}}
+          <AuLabel for={{id}}>
+            Predicate
+          </AuLabel>
+          <AuInput
+            id={{id}}
+            required={{true}}
+            @value={{this.newPredicate}}
+            @width="block"
+            {{on "input" this.updatePredicate}}
+          />
+        {{/let}}
+      </div>
+      <div class="au-o-grid__item au-u-1-2@medium">
+        {{#let (unique-id) as |id|}}
+          <AuLabel for={{id}}>
+            Object
+          </AuLabel>
+          <AuInput
+            id={{id}}
+            required={{true}}
+            @value={{this.newObject}}
+            @width="block"
+            {{on "input" this.updateObject}}
+          />
+        {{/let}}
+      </div>
+    </div>
+  </:body>
+  <:footer>
+    <AuButtonGroup>
+      <AuButton
+        {{on "click" this.save}}
+        @disabled={{not this.canSave}}
+      >Save</AuButton>
+      <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+    </AuButtonGroup>
+  </:footer>
+</AuModal>

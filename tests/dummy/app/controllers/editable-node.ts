@@ -64,11 +64,18 @@ import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
-import NodeEditor from '@lblod/ember-rdfa-editor/components/_private/node-editor';
-import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import {
+  editableNodePlugin,
+  getActiveEditableNode,
+} from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
+import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
+import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
 
 export default class EditableBlockController extends Controller {
-  NodeEditor = NodeEditor;
+  DebugInfo = DebugInfo;
+  AttributeEditor = AttributeEditor;
+  RdfaEditor = RdfaEditor;
 
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
@@ -149,6 +156,13 @@ export default class EditableBlockController extends Controller {
       image: imageView(controller),
     };
   };
+
+  get activeNode() {
+    if (this.rdfaEditor) {
+      return getActiveEditableNode(this.rdfaEditor.activeEditorState);
+    }
+    return;
+  }
 
   get showRdfaBlocks() {
     return this.rdfaEditor?.showRdfaBlocks;

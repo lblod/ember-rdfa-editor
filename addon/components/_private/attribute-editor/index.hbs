@@ -1,0 +1,81 @@
+<AuPanel class="au-u-margin-bottom-tiny" as |Section|>
+  <Section>
+    <AuToolbar as |Group|>
+      <Group>
+        <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
+      </Group>
+      <Group>
+        <AuButtonGroup>
+          {{#if this.isEditing}}
+            <AuButton
+              @skin="naked"
+              @iconAlignment="right"
+              {{on "click" this.cancelEditing}}
+            >
+              Cancel
+            </AuButton>
+            <AuButton
+              @icon="check"
+              @iconAlignment="right"
+              {{on "click" this.saveChanges}}
+            >
+              Save
+            </AuButton>
+          {{else}}
+            <AuButton
+              @skin="naked"
+              @icon="pencil"
+              @iconAlignment="right"
+              {{on "click" this.enableEditingMode}}
+            >
+              Edit
+            </AuButton>
+          {{/if}}
+          <AuButton
+            @skin="naked"
+            @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+            {{on "click" this.toggleSection}}
+          />
+        </AuButtonGroup>
+      </Group>
+    </AuToolbar>
+  </Section>
+  {{#unless this.collapsed}}
+    <Section>
+      <AuList @divider={{true}} as |Item|>
+        {{#each-in this.node.value.attrs as |key value|}}
+          <Item>
+            <div class="au-u-padding-tiny">
+              {{#if (and this.isEditing (this.isEditable key))}}
+                {{#let (unique-id) as |id|}}
+                  <AuLabel for={{id}}>
+                    {{key}}
+                  </AuLabel>
+                  {{#let (this.editorComponent key) as |EditorComponent|}}
+                    {{#if EditorComponent}}
+                      <EditorComponent
+                        id={{id}}
+                        value={{get this.changeset key}}
+                        {{on "change" (fn this.updateChangeset key)}}
+                      />
+                    {{else}}
+                      <AuTextarea
+                        @width="block"
+                        id={{id}}
+                        @value={{get this.changeset key}}
+                        {{on "change" (fn this.updateChangeset key)}}
+                      />
+                    {{/if}}
+                  {{/let}}
+                {{/let}}
+              {{else}}
+                <p><strong>{{key}}</strong></p>
+                <p>{{if value (this.formatValue value) "<No value>"}}</p>
+              {{/if}}
+            </div>
+          </Item>
+        {{/each-in}}
+      </AuList>
+    </Section>
+  {{/unless}}
+</AuPanel>

@@ -1,0 +1,41 @@
+{{!-- <AuContent @skin="tiny">
+  <AuToolbar as |Group|>
+    <Group>
+      <AuHeading @level="5" @skin="5">Debug Info</AuHeading>
+    </Group>
+    <Group>
+      <AuButton
+        @skin="naked"
+        @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+        {{on "click" this.toggleSection}}
+      />
+    </Group>
+  </AuToolbar>
+  {{#unless this.collapsed}}
+    <p><strong>Position: </strong>{{this.pos}}</p>
+    <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
+  {{/unless}}
+</AuContent> --}}
+
+<AuPanel class="au-u-margin-bottom-tiny" as |Section|>
+  <Section>
+    <AuToolbar as |Group|>
+      <Group>
+        <AuHeading @level="5" @skin="5">Debug Info</AuHeading>
+      </Group>
+      <Group>
+        <AuButton
+          @skin="naked"
+          @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+          {{on "click" this.toggleSection}}
+        />
+      </Group>
+    </AuToolbar>
+  </Section>
+  {{#unless this.collapsed}}
+    <Section>
+      <p><strong>Position: </strong>{{this.pos}}</p>
+      <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
+    </Section>
+  {{/unless}}
+</AuPanel>
