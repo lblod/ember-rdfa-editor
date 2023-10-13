@@ -21,7 +21,12 @@
       </Section>
     {{/if}}
     <Section>
-      <this.RelationshipEditor @node={{@node}} @controller={{@controller}}/>
+      <this.RelationshipEditor @node={{@node}} @controller={{@controller}} />
     </Section>
+    {{#if this.supportsRdfaTypeConversion}}
+      <Section>
+        <this.RdfaTypeConvertor @node={{@node}} @controller={{@controller}} />
+      </Section>
+    {{/if}}
   {{/unless}}
 </AuPanel>

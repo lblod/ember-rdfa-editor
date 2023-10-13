@@ -1,14 +1,11 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
+import RdfaTypeConvertor from './rdfa-type-convertor';
 
 type Args = {
   controller?: SayController;
@@ -17,32 +14,20 @@ type Args = {
 export default class RdfaEditor extends Component<Args> {
   PropertyEditor = RdfaPropertyEditor;
   RelationshipEditor = RdfaRelationshipEditor;
+  RdfaTypeConvertor = RdfaTypeConvertor;
+
   @tracked collapsed = false;
 
   toggleSection = () => {
     this.collapsed = !this.collapsed;
   };
 
+  get isResourceNode() {
+    return isResourceNode(this.args.node.value);
+  }
+
   get type() {
-    return isResourceNode(this.args.node.value) ? 'resource' : 'content';
-  }
-
-  get attributeProperties() {
-    const properties = this.args.node.value.attrs.properties as
-      | OutgoingProp[]
-      | undefined;
-    return properties?.filter((prop) => prop.type === 'attr');
-  }
-
-  get outgoing() {
-    const properties = this.args.node.value.attrs.properties as
-      | OutgoingProp[]
-      | undefined;
-    return properties?.filter((prop) => prop.type === 'node');
-  }
-
-  get backlinks() {
-    return this.args.node.value.attrs.backlinks as IncomingProp[] | undefined;
+    return this.isResourceNode ? 'resource' : 'content';
   }
 
   get controller() {
@@ -50,11 +35,11 @@ export default class RdfaEditor extends Component<Args> {
   }
 
   get showPropertiesSection() {
-    return this.type === 'resource';
+    return this.isResourceNode;
   }
 
-  get showOutgoingSection() {
-    return this.type === 'resource';
+  get supportsRdfaTypeConversion() {
+    return !!this.args.node.value.type.spec.attrs?.['resource'];
   }
 
   goToNodeWithId = (id: string) => {
