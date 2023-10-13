@@ -1,48 +1,50 @@
-<AuModal
-  @modalOpen={{@modalOpen}}
-  @closable={{true}}
-  @closeModal={{this.cancel}}
->
-  <:title>{{this.title}}</:title>
-  <:body>
-    <div class="au-o-grid au-o-grid--tiny">
-      <div class="au-o-grid__item au-u-1-2@medium">
-        {{#let (unique-id) as |id|}}
-          <AuLabel for={{id}}>
-            Predicate
-          </AuLabel>
-          <AuInput
-            id={{id}}
-            required={{true}}
-            @value={{this.newPredicate}}
-            @width="block"
-            {{on "input" this.updatePredicate}}
-          />
-        {{/let}}
-      </div>
-      <div class="au-o-grid__item au-u-1-2@medium">
-        {{#let (unique-id) as |id|}}
-          <AuLabel for={{id}}>
-            Object
-          </AuLabel>
-          <AuInput
-            id={{id}}
-            required={{true}}
-            @value={{this.newObject}}
-            @width="block"
-            {{on "input" this.updateObject}}
-          />
-        {{/let}}
-      </div>
-    </div>
-  </:body>
-  <:footer>
-    <AuButtonGroup>
-      <AuButton
-        {{on "click" this.save}}
-        @disabled={{not this.canSave}}
-      >Save</AuButton>
-      <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
-    </AuButtonGroup>
-  </:footer>
-</AuModal>
+{{#let (unique-id) as |formId|}}
+  <AuModal
+    @modalOpen={{@modalOpen}}
+    @closable={{true}}
+    @closeModal={{this.cancel}}
+  >
+    <:title>{{this.title}}</:title>
+    <:body>
+      <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
+        <AuFormRow @alignment="default">
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
+              Predicate
+            </AuLabel>
+            <AuInput
+              id={{id}}
+              @value={{this.newPredicate}}
+              @width="block"
+              {{on "input" this.updatePredicate}}
+            />
+          {{/let}}
+        </AuFormRow>
+        <AuFormRow @alignment="default">
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
+              Object
+            </AuLabel>
+            <AuInput
+              id={{id}}
+              required={{true}}
+              @value={{this.newObject}}
+              @width="block"
+              {{on "input" this.updateObject}}
+            />
+          {{/let}}
+        </AuFormRow>
+      </form>
+    </:body>
+    <:footer>
+      <AuButtonGroup>
+        <AuButton
+          form={{formId}}
+          type="submit"
+          @disabled={{not this.canSave}}
+        >Save</AuButton>
+        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+      </AuButtonGroup>
+    </:footer>
+  </AuModal>
+{{/let}}
