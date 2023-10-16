@@ -53,17 +53,14 @@
 </AuContent>
 {{! Creation modal }}
 <this.Modal
-  @isNew={{true}}
   @modalOpen={{this.isCreating}}
   @onSave={{this.addProperty}}
   @onCancel={{this.cancel}}
 />
 {{! Update modal }}
 <this.Modal
-  @isNew={{false}}
   @modalOpen={{this.isUpdating}}
   @onSave={{this.updateProperty}}
   @onCancel={{this.cancel}}
-  @predicate={{this.status.property.predicate}}
-  @object={{this.status.property.object}}
+  @property={{this.status.property}}
 />

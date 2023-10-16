@@ -1,20 +1,19 @@
 import Component from '@glimmer/component';
+import { OutgoingAttrProp } from '@lblod/ember-rdfa-editor/core/say-parser';
 import { localCopy } from 'tracked-toolbox';
 
 type Args = {
-  isNew: boolean;
-  predicate?: string;
-  object?: string;
+  property?: OutgoingAttrProp;
   onCancel: () => void;
-  onSave: (predicate: string, object: string) => void;
+  onSave: (property: OutgoingAttrProp) => void;
 };
 
 export default class PropertyEditorModal extends Component<Args> {
-  @localCopy('args.predicate') newPredicate?: string;
-  @localCopy('args.object') newObject?: string;
+  @localCopy('args.property.predicate') newPredicate?: string;
+  @localCopy('args.property.object') newObject?: string;
 
   get isNew() {
-    return this.args.isNew;
+    return !this.args.property;
   }
 
   get title() {
@@ -39,18 +38,21 @@ export default class PropertyEditorModal extends Component<Args> {
 
   save = () => {
     if (this.newPredicate && this.newObject) {
-      this.args.onSave(this.newPredicate, this.newObject);
+      this.args.onSave({
+        type: 'attr',
+        predicate: this.newPredicate,
+        object: this.newObject,
+      });
     }
   };
 
   get canSave() {
-    console.log(this.args.predicate);
     return (
       this.newPredicate &&
       this.newObject &&
       !(
-        this.newPredicate === this.args.predicate &&
-        this.newObject === this.args.object
+        this.newPredicate === this.args.property?.predicate &&
+        this.newObject === this.args.property?.object
       )
     );
   }

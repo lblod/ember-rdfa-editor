@@ -9,6 +9,7 @@ import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
 import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
 
 type CreationStatus = {
   mode: 'creation';
@@ -58,17 +59,20 @@ export default class RdfaPropertyEditor extends Component<Args> {
     };
   };
 
-  addProperty = (predicate: string, object: string) => {
-    const newProperties = this.properties ? [...this.properties] : [];
-    newProperties.push({ type: 'attr', predicate: predicate, object });
-    this.updatePropertiesAttribute(newProperties);
+  addProperty = (property: OutgoingAttrProp) => {
+    this.args.controller?.doCommand(
+      addProperty({
+        position: this.args.node.pos,
+        property,
+      }),
+    );
     this.status = undefined;
   };
 
-  updateProperty = (predicate: string, object: string) => {
+  updateProperty = (newProperty: OutgoingAttrProp) => {
     const { index } = this.status as UpdateStatus;
     const newProperties = unwrap(this.properties).slice();
-    newProperties[index] = { type: 'attr', predicate, object };
+    newProperties[index] = newProperty;
     this.updatePropertiesAttribute(newProperties);
     this.status = undefined;
   };
