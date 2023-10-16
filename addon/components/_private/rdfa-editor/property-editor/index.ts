@@ -8,6 +8,7 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
+import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 
 type CreationStatus = {
   mode: 'creation';
@@ -72,10 +73,10 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.status = undefined;
   };
 
-  removeProperty = (i: number) => {
-    const newProperties = unwrap(this.properties).slice();
-    newProperties.splice(i, 1);
-    this.updatePropertiesAttribute(newProperties);
+  removeProperty = (index: number) => {
+    this.args.controller?.doCommand(
+      removeProperty({ position: this.args.node.pos, index }),
+    );
   };
 
   updatePropertiesAttribute = (newProperties: OutgoingProp[]) => {

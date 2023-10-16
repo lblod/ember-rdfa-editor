@@ -77,12 +77,11 @@ export default class RdfaTypeConvertor extends Component<Args> {
   convertToResourceNode = () => {
     const newResource =
       this.newResource?.trim() || `http://example.org/${uuidv4()}`;
-    this.args.controller.withTransaction((tr) => {
-      tr.setNodeAttribute(this.node.pos, 'resource', newResource);
-      tr.setNodeAttribute(this.node.pos, 'properties', []);
-      tr.setNodeAttribute(this.node.pos, 'backlinks', []);
-      return tr;
+    this.controller.withTransaction((tr) => {
+      return tr.setNodeAttribute(this.node.pos, 'resource', newResource);
     });
+    this.controller.doCommand(clearBacklinks({ position: this.node.pos }));
+    this.controller.doCommand(clearProperties({ position: this.node.pos }));
     this.newResource = undefined;
   };
 }

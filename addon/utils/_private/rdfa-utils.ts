@@ -1,5 +1,10 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
+import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import {
+  IncomingProp,
+  OutgoingProp,
+} from '@lblod/ember-rdfa-editor/core/say-parser';
 
 export type RdfaAttr =
   | 'vocab'
@@ -98,4 +103,39 @@ export function mapPositionFrom(
     curPos = mapping.maps[i].map(curPos, assoc);
   }
   return curPos;
+}
+
+export function findNodeByRdfaId(
+  doc: PNode,
+  rdfaId: string,
+): ResolvedNode | undefined {
+  let result: ResolvedNode | undefined;
+  doc.descendants((node, pos) => {
+    if (result) return false;
+    if (node.attrs.__rdfaId === rdfaId) {
+      result = {
+        pos: pos,
+        value: node,
+      };
+      return false;
+    }
+    return true;
+  });
+  return result;
+}
+
+export function getRdfaId(node: PNode): string | undefined {
+  return node.attrs['__rdfaId'] as string | undefined;
+}
+
+export function getResource(node: PNode): string | undefined {
+  return node.attrs.resource as string | undefined;
+}
+
+export function getProperties(node: PNode): OutgoingProp[] | undefined {
+  return node.attrs.properties as OutgoingProp[] | undefined;
+}
+
+export function getBacklinks(node: PNode): IncomingProp[] | undefined {
+  return node.attrs.backlinks as IncomingProp[] | undefined;
 }

@@ -4,8 +4,9 @@ import {
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
 import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { selectNodeByRdfaId } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 
 type Args = {
   controller?: SayController;
@@ -33,26 +34,6 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   goToNodeWithId = (id: string) => {
-    if (this.controller) {
-      const doc = this.controller.mainEditorState.doc;
-      let found = false;
-      let resultPos = 0;
-      doc.descendants((node, pos) => {
-        if (found) return false;
-        if (node.attrs.__rdfaId === id) {
-          found = true;
-          resultPos = pos;
-          return false;
-        }
-        return true;
-      });
-      if (found) {
-        this.controller.withTransaction((tr) => {
-          return tr
-            .setSelection(new NodeSelection(tr.doc.resolve(resultPos)))
-            .scrollIntoView();
-        });
-      }
-    }
+    this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: id }));
   };
 }
