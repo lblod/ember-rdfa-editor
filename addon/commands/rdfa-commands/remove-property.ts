@@ -1,3 +1,4 @@
+import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   findNodeByRdfaId,
   getBacklinks,
@@ -17,7 +18,7 @@ export function removeProperty({
 }: RemovePropertyArgs): Command {
   return (state, dispatch) => {
     const node = state.doc.nodeAt(position);
-    if (!node) {
+    if (!node || !supportsAttribute(node, 'properties')) {
       return false;
     }
     const properties = getProperties(node);

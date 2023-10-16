@@ -1,3 +1,4 @@
+import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   findNodeByRdfaId,
   getBacklinks,
@@ -13,7 +14,7 @@ type ClearBacklinksArgs = {
 export function clearBacklinks({ position }: ClearBacklinksArgs): Command {
   return function (state, dispatch) {
     const node = state.doc.nodeAt(position);
-    if (!node) {
+    if (!node || !supportsAttribute(node, 'backlinks')) {
       return false;
     }
     const backlinks = getBacklinks(node);
