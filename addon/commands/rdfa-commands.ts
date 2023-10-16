@@ -155,8 +155,10 @@ export function removeBacklink({
     if (!backlinkToRemove) {
       return false;
     }
+    console.log(backlinkToRemove);
     if (dispatch) {
-      const updatedBacklinks = backlinks.slice(index, 1);
+      const updatedBacklinks = backlinks.slice();
+      updatedBacklinks.splice(index, 1);
       const tr = state.tr;
       tr.setNodeAttribute(position, 'backlinks', updatedBacklinks);
       //Delete the inverse property

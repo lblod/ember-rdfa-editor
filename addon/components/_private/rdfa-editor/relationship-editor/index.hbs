@@ -16,19 +16,31 @@
         @skin="6"
         class="au-u-margin-bottom-small"
       >Outgoing</AuHeading>
-      {{#if this.outgoing}}
+      {{#if this.hasOutgoing}}
         <AuList @divider={{true}} as |Item|>
-          {{#each this.outgoing as |prop|}}
-            <Item
-              class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-            >
-              <AuButton
-                @icon="external-link"
-                @skin="link"
-                {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
-              >{{prop.predicate}}</AuButton>
-              <AuButton @icon="three-dots" @skin="naked" />
-            </Item>
+          {{#each this.properties as |prop index|}}
+            {{#if (eq prop.type "node")}}
+              <Item
+                class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+              >
+                <AuButton
+                  @icon="external-link"
+                  @skin="link"
+                  {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
+                >{{prop.predicate}}</AuButton>
+                <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+                  <AuButton
+                    @skin="link"
+                    @icon="bin"
+                    role="menuitem"
+                    class="au-c-button--alert"
+                    {{on "click" (fn this.removeProperty index)}}
+                  >
+                    Remove outgoing
+                  </AuButton>
+                </AuDropdown>
+              </Item>
+            {{/if}}
           {{/each}}
         </AuList>
       {{else}}
@@ -44,7 +56,7 @@
     >Backlinks</AuHeading>
     {{#if this.backlinks}}
       <AuList @divider={{true}} as |Item|>
-        {{#each this.backlinks as |backlink|}}
+        {{#each this.backlinks as |backlink index|}}
           <Item
             class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
           >
@@ -53,7 +65,17 @@
               @skin="link"
               {{on "click" (fn this.goToNodeWithId backlink.subjectId)}}
             >{{backlink.predicate}}</AuButton>
-            <AuButton @icon="three-dots" @skin="naked" />
+            <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+              <AuButton
+                @skin="link"
+                @icon="bin"
+                role="menuitem"
+                class="au-c-button--alert"
+                {{on "click" (fn this.removeBacklink index)}}
+              >
+                Remove backlink
+              </AuButton>
+            </AuDropdown>
           </Item>
         {{/each}}
       </AuList>

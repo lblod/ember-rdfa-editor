@@ -6,7 +6,11 @@ import {
 import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
-import { selectNodeByRdfaId } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
+import {
+  removeBacklink,
+  removeProperty,
+  selectNodeByRdfaId,
+} from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 
 type Args = {
   controller?: SayController;
@@ -14,15 +18,16 @@ type Args = {
 };
 
 export default class RdfaRelationshipEditor extends Component<Args> {
-  get outgoing() {
-    const properties = this.args.node.value.attrs.properties as
-      | OutgoingProp[]
-      | undefined;
-    return properties?.filter((prop) => prop.type === 'node');
-  }
-
   get backlinks() {
     return this.args.node.value.attrs.backlinks as IncomingProp[] | undefined;
+  }
+
+  get properties() {
+    return this.args.node.value.attrs.properties as OutgoingProp[] | undefined;
+  }
+
+  get hasOutgoing() {
+    return this.properties?.some((prop) => prop.type === 'node');
   }
 
   get controller() {
@@ -35,5 +40,18 @@ export default class RdfaRelationshipEditor extends Component<Args> {
 
   goToNodeWithId = (id: string) => {
     this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: id }));
+  };
+
+  removeBacklink = (index: number) => {
+    console.log('remove backlink');
+    this.controller?.doCommand(
+      removeBacklink({ position: this.args.node.pos, index }),
+    );
+  };
+
+  removeProperty = (index: number) => {
+    this.controller?.doCommand(
+      removeProperty({ position: this.args.node.pos, index }),
+    );
   };
 }
