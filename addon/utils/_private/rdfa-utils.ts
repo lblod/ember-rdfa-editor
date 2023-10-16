@@ -139,3 +139,22 @@ export function getProperties(node: PNode): OutgoingProp[] | undefined {
 export function getBacklinks(node: PNode): IncomingProp[] | undefined {
   return node.attrs.backlinks as IncomingProp[] | undefined;
 }
+
+/**
+ * Calculates a set of resource attributes present in the provided node and its children
+ */
+export function getResources(node: PNode): Set<string> {
+  const result = new Set<string>();
+  const resource = getResource(node);
+  if (resource) {
+    result.add(resource);
+  }
+  node.descendants((child) => {
+    const resource = getResource(child);
+    if (resource) {
+      result.add(resource);
+    }
+    return true;
+  });
+  return result;
+}
