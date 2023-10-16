@@ -12,3 +12,7 @@ export function hasGroups(node: PNode, ...groups: string[]) {
 export function isResourceNode(node: PNode) {
   return !!node.attrs.resource;
 }
+
+export function supportsAttribute(node: PNode, attribute: string) {
+  return !!node.type.spec.attrs?.[attribute];
+}
