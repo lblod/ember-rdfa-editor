@@ -24,6 +24,11 @@ export function clearProperties({ position }: ClearPropertiesArgs): Command {
       tr.setNodeAttribute(position, 'properties', []);
       properties.forEach((prop) => {
         if (prop.type === 'node') {
+          /**
+           * TODO: we need two make two cases here
+           * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
+           * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
+           */
           const targetNode = findNodeByRdfaId(tr.doc, prop.nodeId);
           if (targetNode) {
             const targetNodeBacklinks = getBacklinks(targetNode.value);
