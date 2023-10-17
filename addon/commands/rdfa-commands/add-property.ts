@@ -20,7 +20,7 @@ export function addProperty({ position, property }: AddPropertyArgs): Command {
   return (state, dispatch) => {
     const node = state.doc.nodeAt(position);
 
-    if (!node || !node.type.spec.attrs?.properties) {
+    if (!node || !supportsAttribute(node, 'properties')) {
       return false;
     }
     const resource = getResource(node);

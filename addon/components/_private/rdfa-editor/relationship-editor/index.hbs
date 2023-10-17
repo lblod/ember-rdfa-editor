@@ -4,7 +4,7 @@
       <AuHeading @level="5" @skin="5">Relationships</AuHeading>
     </Group>
     <Group>
-      <AuButton @icon="plus" @skin="naked">
+      <AuButton @icon="plus" @skin="naked" @disabled={{not this.canAddRelationship}}>
         Add relationship
       </AuButton>
     </Group>
@@ -26,7 +26,7 @@
                 <AuButton
                   @icon="external-link"
                   @skin="link"
-                  {{on "click" (fn this.goToNodeWithId prop.nodeId)}}
+                  {{on "click" (fn this.goToOutgoing prop)}}
                 >{{prop.predicate}}</AuButton>
                 <AuDropdown @icon="three-dots" role="menu" @alignment="left">
                   <AuButton
@@ -63,7 +63,7 @@
             <AuButton
               @icon="external-link"
               @skin="link"
-              {{on "click" (fn this.goToNodeWithId backlink.subjectId)}}
+              {{on "click" (fn this.goToBacklink backlink)}}
             >{{backlink.predicate}}</AuButton>
             <AuDropdown @icon="three-dots" role="menu" @alignment="left">
               <AuButton
