@@ -1,6 +1,6 @@
 import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
-  findNodeByRdfaId,
+  findNodesByResource,
   getBacklinks,
   getProperties,
   getRdfaId,
@@ -23,8 +23,9 @@ export function clearBacklinks({ position }: ClearBacklinksArgs): Command {
       const tr = state.tr;
       tr.setNodeAttribute(position, 'backlinks', []);
       backlinks.forEach((backlink) => {
-        const subjectNode = findNodeByRdfaId(tr.doc, backlink.subjectId);
-        if (subjectNode) {
+        // Update the properties of each inverse subject node
+        const subjectNodes = findNodesByResource(tr.doc, backlink.subject);
+        subjectNodes.forEach((subjectNode) => {
           const subjectNodeProperties = getProperties(subjectNode.value);
           if (subjectNodeProperties) {
             const filteredProperties = subjectNodeProperties.filter((prop) => {
@@ -39,7 +40,7 @@ export function clearBacklinks({ position }: ClearBacklinksArgs): Command {
               filteredProperties,
             );
           }
-        }
+        });
       });
       dispatch(tr);
     }
