@@ -124,6 +124,20 @@ export function findNodeByRdfaId(
   return result;
 }
 
+export function findNodesByResource(
+  doc: PNode,
+  resource: string,
+): ResolvedNode[] {
+  const result: ResolvedNode[] = [];
+  doc.descendants((node, pos) => {
+    if (node.attrs.resource === resource) {
+      result.push({ pos, value: node });
+    }
+    return true;
+  });
+  return result;
+}
+
 export function getRdfaId(node: PNode): string | undefined {
   return node.attrs['__rdfaId'] as string | undefined;
 }
