@@ -1,4 +1,9 @@
-import { PluginKey, ProsePlugin, Transaction } from '@lblod/ember-rdfa-editor';
+import {
+  EditorState,
+  PluginKey,
+  ProsePlugin,
+  Transaction,
+} from '@lblod/ember-rdfa-editor';
 import {
   IncomingProp,
   OutgoingProp,
@@ -48,4 +53,19 @@ export function rdfaPropertyStore(
       },
     },
   });
+}
+
+export function getProperties(state: EditorState, resource: string) {
+  const store = rdfaPropertyStoreKey.getState(state);
+  return store?.resourceToProperties.get(resource);
+}
+
+export function getResourceBacklinks(state: EditorState, resource: string) {
+  const store = rdfaPropertyStoreKey.getState(state);
+  return store?.resourceToBacklinks.get(resource);
+}
+
+export function getContentNodeBacklink(state: EditorState, rdfaId: string) {
+  const store = rdfaPropertyStoreKey.getState(state);
+  return store?.nodeToBacklink.get(rdfaId);
 }
