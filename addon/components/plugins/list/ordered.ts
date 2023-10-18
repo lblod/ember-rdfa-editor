@@ -27,6 +27,12 @@ export default class ListOrdered extends Component<Args> {
         ),
       },
       {
+        name: 'decimal-extended',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.decimal-extended'
+        ),
+      },
+      {
         name: 'lower-alpha',
         description: this.intl.t(
           'ember-rdfa-editor.ordered-list.styles.lower-alpha'
