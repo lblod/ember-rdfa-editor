@@ -244,6 +244,84 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       list-style-type: lower-alpha;
     }
 
+    &[data-list-style='decimal-extended'] {
+      &,
+      ol:not(
+        [data-list-style='decimal'],
+        [data-list-style='upper-roman'],
+        [data-list-style='lower-alpha']
+      ) {
+        &,
+        &[data-list-style='decimal-extended'] { // This is needed for nested lists
+          display: table;
+          list-style-type: none;
+          counter-reset: item;
+          margin: 0;
+          padding: 0 0 0 .75rem;
+
+          > li {
+            display: table-row;
+            counter-increment: item;
+
+            &:before {
+              display: table-cell;
+              min-width: 2.75ch;
+              content: counters(item, ".") ". ";
+              text-align: end;
+            }
+          }
+        }
+      }
+
+      ol:not(
+        [data-list-style='decimal'],
+        [data-list-style='upper-roman'],
+        [data-list-style='lower-alpha']
+      ) {
+        > li {
+          &:before {
+            min-width: auto;
+          }
+        }
+      }
+
+      ol {
+        &,
+        &[data-list-style='decimal'],
+        &[data-list-style='upper-roman'],
+        &[data-list-style='lower-alpha'] {
+          li {
+            display: list-item;
+            counter-increment: none;
+
+            &:before{
+              display: inline;
+              content: none;
+            }
+
+            ol:not([data-list-style]) {
+              display: block;
+              counter-reset: none;
+              padding: 0 0 0 3rem;
+              list-style-type: inherit;
+            }
+          }
+        }
+
+        &[data-list-style='decimal'] {
+          list-style-type: decimal;
+        }
+
+        &[data-list-style='upper-roman'] {
+          list-style-type: upper-roman;
+        }
+
+        &[data-list-style='lower-alpha'] {
+          list-style-type: lower-alpha;
+        }
+      }
+    }
+
     // Stop indenting
     ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
       margin-left: 0;
