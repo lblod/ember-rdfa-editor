@@ -15,6 +15,7 @@ ember-rdfa-editor:
     options-label: List styles
     styles:
       decimal: Numbers
+      decimal-extended: Numbers (extended)
       lower-alpha: Lowercase letters
       upper-roman: Roman Numbers
   unindent-list: List level higher

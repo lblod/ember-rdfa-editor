@@ -15,6 +15,7 @@ ember-rdfa-editor:
     options-label: Lijststijlen
     styles:
       decimal: Getallen
+      decimal-extended: Getallen (uitgebreid)
       lower-alpha: Letters
       upper-roman: Romeinse Cijfers
   unindent-list: Lijstniveau hoger
