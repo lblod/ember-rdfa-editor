@@ -1,34 +1,31 @@
 <DummyContainer>
   <:header>
-    <DebugTools @controller={{this.rdfaEditor}}/>
+    <DebugTools @controller={{this.rdfaEditor}} />
   </:header>
   <:content>
     <EditorContainer
       @editorOptions={{hash
-        showRdfa='true'
-        showRdfaHighlight='true'
-        showRdfaHover='true'
-        showPaper='true'
+        showRdfa="true"
+        showRdfaHighlight="true"
+        showRdfaHover="true"
+        showPaper="true"
         showToolbarBottom=null
       }}
       @showRdfaBlocks={{this.showRdfaBlocks}}
     >
       <:top>
-        <SampleToolbarResponsive @controller={{this.rdfaEditor}}/>
+        <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
       </:top>
       <:default>
         <Editor
           @plugins={{this.plugins}}
           @schema={{this.schema}}
           @nodeViews={{this.nodeViews}}
-          @rdfaEditorInit={{this.rdfaEditorInit}}/>
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+        />
       </:default>
       <:aside>
-        <Sidebar as |Sidebar|>
-          <Sidebar.Collapsible @title={{t "ember-rdfa-editor.insert"}}>
-            <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}}/>
-          </Sidebar.Collapsible>
-        </Sidebar>
+        <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}} />
       </:aside>
     </EditorContainer>
   </:content>
