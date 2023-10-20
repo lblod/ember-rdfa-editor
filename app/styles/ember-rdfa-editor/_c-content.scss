@@ -224,8 +224,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
-  ol,
-  ol.numbered-list {
+  ol {
     list-style-type: decimal;
 
     & > li > ol:not([data-list-style]) {
@@ -244,82 +243,71 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       list-style-type: lower-alpha;
     }
 
+    // Provides the general styling for the decimal-extended (multi-level) list type
+    // NOTE: This is limited to a certain levels deep because otherwise the styling keep overriding each other (`[data-list-style='decimal-extended']` and the rest of the ol/ul selectors)
+    @mixin decimal-extended-styling($levels, $current-level: 1) {
+      display: table;
+      list-style-type: none;
+      margin: 0;
+      padding: 0 0 0 .75rem;
+
+      > li {
+        display: table-row;
+
+        &:before {
+          display: table-cell;
+          min-width: 2.75ch;
+          text-align: end;
+        }
+
+        @if $current-level < $levels {
+          > ol:not([data-list-style]) {
+            @include decimal-extended-styling($levels, $current-level + 1);
+          }
+        }
+      }
+    }
+
     &[data-list-style='decimal-extended'] {
+      @include decimal-extended-styling(5, 1);
+    }
+
+    // Provides the counter values for the decimal-extended (multi-level) list type for each time it is nested
+    @mixin decimal-extended-numbering($total, $times-nested) {
       &,
-      ol:not(
-        [data-list-style='decimal'],
-        [data-list-style='upper-roman'],
-        [data-list-style='lower-alpha']
-      ) {
-        &,
-        &[data-list-style='decimal-extended'] { // This is needed for nested lists
-          display: table;
-          list-style-type: none;
-          counter-reset: item;
-          margin: 0;
-          padding: 0 0 0 .75rem;
-
-          > li {
-            display: table-row;
-            counter-increment: item;
-
-            &:before {
-              display: table-cell;
-              min-width: 2.75ch;
-              content: counters(item, ".") ". ";
-              text-align: end;
-            }
-          }
-        }
-      }
-
-      ol:not(
-        [data-list-style='decimal'],
-        [data-list-style='upper-roman'],
-        [data-list-style='lower-alpha']
-      ) {
-        > li {
-          &:before {
-            min-width: auto;
-          }
-        }
-      }
-
       ol {
-        &,
-        &[data-list-style='decimal'],
-        &[data-list-style='upper-roman'],
-        &[data-list-style='lower-alpha'] {
-          li {
-            display: list-item;
-            counter-increment: none;
+        counter-reset: nested-#{$times-nested};
 
-            &:before{
-              display: inline;
-              content: none;
-            }
+        li {
+          counter-increment: nested-#{$times-nested};
 
-            ol:not([data-list-style]) {
-              display: block;
-              counter-reset: none;
-              padding: 0 0 0 3rem;
-              list-style-type: inherit;
-            }
+          &:before {
+            content: counters(nested-#{$times-nested}, ".") ". ";
           }
         }
+      }
 
-        &[data-list-style='decimal'] {
-          list-style-type: decimal;
-        }
-
-        &[data-list-style='upper-roman'] {
-          list-style-type: upper-roman;
-        }
-
-        &[data-list-style='lower-alpha'] {
-          list-style-type: lower-alpha;
+      // NOTE: This needs to be reset each time it is nested (because it is the only visible value)
+      ul,
+      ol[data-list-style='decimal'],
+      ol[data-list-style='upper-roman'],
+      ol[data-list-style='lower-alpha'] {
+        li {
+          &:before {
+            content: none;
+          }
         }
       }
+
+      @if $times-nested < $total {
+        ol[data-list-style='decimal-extended'] {
+          @include decimal-extended-numbering($total, $times-nested + 1);
+       }
+     }
+    }
+
+    &[data-list-style='decimal-extended'] {
+      @include decimal-extended-numbering(5, 1);
     }
 
     // Stop indenting
