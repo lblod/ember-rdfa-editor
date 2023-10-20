@@ -34,16 +34,54 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
+export interface EmberInlineComponent extends Component, EmberNodeArgs {
+  appendTo(selector: string | Element): this;
+}
+
+export interface EmberNodeArgs {
+  getPos: () => number | undefined;
+  node: PNode;
+  updateAttribute: (attr: string, value: unknown) => void;
+  controller: SayController;
+  view: SayView;
+  selected: boolean;
+  contentDecorations?: DecorationSource;
+}
+
+function emberComponent(
+  owner: Owner,
+  name: string,
+  inline: boolean,
+  template: TemplateFactory,
+  props: EmberNodeArgs & {
+    atom: boolean;
+    component: ComponentLike;
+    contentDOM?: HTMLElement;
+  },
+): { node: HTMLElement; component: EmberInlineComponent } {
+  // const instance = window.__APPLICATION;
+  const componentName = `${name}-${uuidv4()}`;
+  owner.register(
+    `component:${componentName}`,
+    // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
+    Component.extend({
+      layout: template,
+      tagName: '',
+      ...props,
+    }),
+  );
+  const component = owner.lookup(
+    `component:${componentName}`,
+  ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const node = document.createElement(inline ? 'span' : 'div');
+  node.classList.add('ember-node');
+  component.appendTo(node);
+  return { node, component };
+}
+
 /**
  * An EmberNode is a node with a custom Node View defined by an ember template.
  * First define your EmberNodeConfig, which should contain the information for:
- * - Prosemirror NodeSpec
- * - Prosemirror NodeView e.g.:
- *   - `ignoreMutation`: Use this to avoid rerendering a component for every change.
- *        Already as a default implementation. Only override if you know what you are doing.
- *   - `stopEvent`: By default this will stop events which occur inside the ember-node but not inside it's content. Only override if you know what you are doing.
- * - Custom values for EmberNode, e.g.:
- *   - `componentPath`: path to the ember component to render as a Node View
  *
  * Afterwards use `createEmberNodeSpec(config)` and `createEmberNodeView(config)` to insert them in the schema.
  *
@@ -84,52 +122,6 @@ import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
  *     </div>
  *     ```
  */
-
-export interface EmberInlineComponent extends Component, EmberNodeArgs {
-  appendTo(selector: string | Element): this;
-}
-
-export interface EmberNodeArgs {
-  getPos: () => number | undefined;
-  node: PNode;
-  updateAttribute: (attr: string, value: unknown) => void;
-  controller: SayController;
-  view: SayView;
-  selected: boolean;
-  contentDecorations?: DecorationSource;
-}
-
-export function emberComponent(
-  owner: Owner,
-  name: string,
-  inline: boolean,
-  template: TemplateFactory,
-  props: EmberNodeArgs & {
-    atom: boolean;
-    component: ComponentLike<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-    contentDOM?: HTMLElement;
-  },
-): { node: HTMLElement; component: EmberInlineComponent } {
-  // const instance = window.__APPLICATION;
-  const componentName = `${name}-${uuidv4()}`;
-  owner.register(
-    `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
-    Component.extend({
-      layout: template,
-      tagName: '',
-      ...props,
-    }),
-  );
-  const component = owner.lookup(
-    `component:${componentName}`,
-  ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  const node = document.createElement(inline ? 'span' : 'div');
-  node.classList.add('ember-node');
-  component.appendTo(node);
-  return { node, component };
-}
-
 class EmberNodeView implements NodeView {
   node: PNode;
   dom: Element;
@@ -226,10 +218,7 @@ class EmberNodeView implements NodeView {
   }
 
   /**
-   *
-   * Prevents the editor view from handling events which are inside the ember-node but not inside it's editable content.
    * Based on https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#LL99C6-L99C6
-   * @param event The event to check
    */
   stopEvent(event: Event) {
     if (!this.dom) {
@@ -248,13 +237,7 @@ class EmberNodeView implements NodeView {
   }
 
   /**
-   *
-   * Determines whether a DOM mutation should be ignored by prosemirror.
-   * DOM mutations occuring inside the ember-node which are not inside it's editable content are ignored.
-   * Selections are always handled by prosemirror.
    * Taken from https://github.com/ueberdosis/tiptap/blob/d61a621186470ce286e2cecf8206837a1eec7338/packages/core/src/NodeView.ts#L195
-   * @param mutation
-   * @returns
    */
   ignoreMutation(
     mutation: MutationRecord | { type: 'selection'; target: Element },
@@ -292,43 +275,88 @@ class EmberNodeView implements NodeView {
   }
 }
 
+interface AtomConfig {
+  /** Is an atom if is not a leaf node */
+  atom: true;
+  /**
+   * ProseMissor content expression
+   * @see {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
+   */
+  content?: string;
+}
+interface NonAtomConfig {
+  /** Is an atom if is not a leaf node */
+  atom: false;
+  /**
+   * ProseMissor content expression
+   * @see {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
+   */
+  content: string;
+}
+
+// Maybe this should be split so that a different one exists for each of the 2 functions which takes
+// it as an argument
 export type EmberNodeConfig = {
   name: string;
-  component: ComponentLike<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  /** ember component to render as a Node View */
+  component: ComponentLike;
   inline: boolean;
+  /** ProseMirror 'group' property for the created node */
   group: string;
-  content?: string;
-  atom: boolean;
   draggable?: boolean;
+  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
+  /** Generate a new URI when pasting the node? */
   recreateUri?: boolean;
+  /** A list of attribute names which contain URIs to be regenerated on paste */
   uriAttributes?: string[];
+  /** A map of attributes to assign to this node */
   attrs?: {
     [name: string]: AttributeSpec & {
       serialize?: (node: PNode) => string;
       parse?: (element: HTMLElement) => unknown;
     };
   };
+  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
   parseDOM?: readonly ParseRule[];
+  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} */
   toDOM?: (node: PNode) => DOMOutputSpec;
+  /**
+   * Allows creating a serialized version based on the node itself
+   * @see {@link SayNodeSpec}
+   */
   serialize?: (node: PNode, state: EditorState) => DOMOutputSpec;
+  /**
+   * Prevents the editor view from handling events which are inside the ember-node but not inside it's editable content.
+   * By default this will stop events which occur inside the ember-node but not inside it's content.
+   * Only override if you know what you are doing.
+   * @param event The event to check
+   */
   stopEvent?: (event: Event) => boolean;
+  /**
+   * Determines whether a DOM mutation should be ignored by prosemirror.
+   * Use this to avoid rerendering a component for every change.
+   * DOM mutations occuring inside the ember-node which are not inside it's editable content are ignored.
+   * Selections are always handled by prosemirror.
+   * Already has a default implementation. Only override if you know what you are doing.
+   * @param mutation
+   * @returns whether to ignore the mutation
+   */
   ignoreMutation?: (
     mutation: MutationRecord | { type: 'selection'; target: Element },
   ) => boolean;
-} & (
-  | {
-      atom: true;
-    }
-  | {
-      atom: false;
-      content: string;
-    }
-) & {
-    // This is so we can use custom node config specs, like `needsFFKludge`
+  /** Do we need to workaround cursor problems on Firefox */
+  needsFFKludge?: boolean;
+  /** Do we need to workaround cursor problems on Chrome */
+  needsChromeCursorFix?: boolean;
+} & (AtomConfig | NonAtomConfig) & {
+    /** This is so we can use custom node config specs */
     [key: string]: unknown;
   };
 
+/**
+ * Generate the {@link SayNodeSpec} for the {@link EmberNodeView} with the passed config
+ */
 export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
   const {
     name,
@@ -405,6 +433,10 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
   };
 }
 
+/**
+ * Creates a constructor for EmberNodeViews according to the passed config
+ * @see {@link EmberNodeView}
+ */
 export function createEmberNodeView(config: EmberNodeConfig) {
   return function (controller: SayController): NodeViewConstructor {
     return function (node, view: SayView, getPos) {
