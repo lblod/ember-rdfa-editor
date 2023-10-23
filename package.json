@@ -104,7 +104,7 @@
     "@types/debug": "^4.1.7",
     "@types/dompurify": "^3.0.0",
     "@types/ember": "~4.0",
-    "@types/ember-resolver": "^5.0.11",
+    "@types/ember-resolver": "^9.0.0",
     "@types/ember__application": "~4.0",
     "@types/ember__array": "~4.0",
     "@types/ember__component": "~4.0",
