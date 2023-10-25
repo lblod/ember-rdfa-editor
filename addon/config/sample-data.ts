@@ -528,14 +528,16 @@ world
     Before the table​<table class="say-table"><tbody><tr><td>c1​</td><td>c2​</td></tr></tbody></table>​After the table
   `,
   RdfaTest: `
-  <div resource="http://test/1" typeof="besluit:Besluit">
-H
-  <div property="prov:value">
-  test
+  <div resource="http://test/1" typeof="ext:Decision">
+    <h3 property="ext:title">Decision title</h3>
+    random text, unlinked, to make it easier to get access to the toplevel decision node
+    we still need to add a good way to "go up" a level with the selection
 
-</div>
-
-</div>
-</div>
+    <div resource="http://articles/1" typeof="ext:Article" property="ext:article">
+      text
+      <h3 property="ext:title">Article title</h3>
+      <p property="ext:content">article content</p>
+    </div>
+  </div>
   `,
 };
