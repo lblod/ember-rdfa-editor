@@ -1,3 +1,6 @@
+/**
+ * test cases imported from https://www.w3.org/2006/07/SWD/RDFa/testsuite/
+ */
 const TEST_CASES = {
   '000002': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
