@@ -1,6 +1,5 @@
 import { oneLineTrim } from 'common-tags';
 import { module, test } from 'qunit';
-import Owner from '@ember/owner';
 import {
   block_rdfa,
   docWithConfig,
@@ -43,7 +42,6 @@ import {
   inputRules,
   PluginConfig,
   PNode,
-  SayController,
   Schema,
 } from '@lblod/ember-rdfa-editor';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
@@ -57,13 +55,12 @@ import {
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import sinon from 'sinon';
 import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
 import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { testEditor } from 'dummy/tests/utils/editor';
 
 const schema = new Schema({
   nodes: {
@@ -128,27 +125,6 @@ const plugins: PluginConfig = [
 const rdf = (suffix: string) =>
   `http://www.w3.org/1999/02/22-rdf-syntax-ns#${suffix}`;
 const prov = (suffix: string) => `http://www.w3.org/ns/prov#${suffix}`;
-
-function testEditor(
-  schema: Schema,
-  plugins: PluginConfig,
-): { editor: SayEditor; controller: SayController } {
-  const mockOwner: Owner = {
-    factoryFor: sinon.fake(),
-    lookup: sinon.fake(),
-    register: sinon.fake(),
-  };
-  const element = document.createElement('div');
-  const editor = new SayEditor({
-    owner: mockOwner,
-    target: element,
-    baseIRI: 'http://test.org',
-    schema,
-    plugins,
-  });
-  const controller = new SayController(editor);
-  return { editor, controller };
-}
 
 function findNodeById(doc: PNode, id: string): NodeWithPos {
   const result = findChildrenByAttr(

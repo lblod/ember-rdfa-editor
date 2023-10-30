@@ -1,3 +1,6 @@
+// eslint-disable-next-line n/no-unpublished-require
+const webpack = require('webpack');
+
 // This allows consumers to import the needed Webpack config without having to know what's in it.
 module.exports = {
   node: {
@@ -11,4 +14,9 @@ module.exports = {
       crypto: require.resolve('crypto-browserify'),
     },
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser.js',
+    }),
+  ],
 };
