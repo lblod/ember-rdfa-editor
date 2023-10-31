@@ -1,6 +1,9 @@
 import * as RDF from '@rdfjs/types';
 import {
   ModelQuad,
+  ModelQuadObject,
+  ModelQuadSubject,
+  ModelSubAndPred,
   quadHash,
   QuadNodes,
   RdfaParseConfig,
@@ -152,6 +155,9 @@ export default interface Datastore<N> {
    */
   asObjectNodes(): Generator<ObjectNodesResponse<N>>;
 
+  asResourceNodeMapping(): Map<N, ModelQuadSubject<N>>;
+  asContentNodeMapping(): Map<N, ModelSubAndPred<N>>;
+
   /**
    * @deprecated
    * Consumer Method.
@@ -175,6 +181,8 @@ interface DatastoreConfig<N> {
   nodeToObjects: Map<N, Set<ModelQuad<N>>>;
   quadToNodes: Map<string, QuadNodes<N>>;
   prefixMapping: Map<string, string>;
+  resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
+  contentNodeMapping: Map<N, ModelSubAndPred<N>>;
 }
 
 interface GenericDatastoreConfig<N> extends DatastoreConfig<N> {
@@ -193,6 +201,8 @@ export class EditorStore<N> implements Datastore<N> {
   protected _objectToNodes: Map<string, N[]>;
   protected _quadToNodes: Map<string, QuadNodes<N>>;
   protected _attributes: (node: N) => Record<string, string>;
+  protected _resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
+  protected _contentNodeMapping: Map<N, ModelSubAndPred<N>>;
 
   constructor({
     documentRoot,
@@ -206,6 +216,8 @@ export class EditorStore<N> implements Datastore<N> {
     objectToNodes,
     quadToNodes,
     attributes,
+    resourceNodeMapping,
+    contentNodeMapping,
   }: GenericDatastoreConfig<N>) {
     this._documentRoot = documentRoot;
     this._dataset = dataset;
@@ -218,6 +230,8 @@ export class EditorStore<N> implements Datastore<N> {
     this._objectToNodes = objectToNodes;
     this._quadToNodes = quadToNodes;
     this._attributes = attributes;
+    this._resourceNodeMapping = resourceNodeMapping;
+    this._contentNodeMapping = contentNodeMapping;
   }
 
   static empty<N>(
@@ -233,6 +247,8 @@ export class EditorStore<N> implements Datastore<N> {
     const nodeToObjects = new Map<N, Set<ModelQuad<N>>>();
     const objectToNodes = new Map<string, N[]>();
     const quadToNodes = new Map<string, QuadNodes<N>>();
+    const resourceNodeMapping = new Map<N, ModelQuadSubject<N>>();
+    const contentNodeMapping = new Map<N, ModelSubAndPred<N>>();
     return new EditorStore({
       documentRoot,
       dataset: new GraphyDataset(),
@@ -245,6 +261,8 @@ export class EditorStore<N> implements Datastore<N> {
       objectToNodes,
       predicateToNodes,
       attributes,
+      resourceNodeMapping,
+      contentNodeMapping,
     });
   }
 
@@ -259,6 +277,8 @@ export class EditorStore<N> implements Datastore<N> {
       nodeToPredicatesMapping,
       quadToNodesMapping,
       seenPrefixes,
+      resourceNodeMapping,
+      contentNodeMapping,
     } = RdfaParser.parse(config);
     const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
     for (const [key, value] of seenPrefixes.entries()) {
@@ -277,6 +297,8 @@ export class EditorStore<N> implements Datastore<N> {
       nodeToPredicates: nodeToPredicatesMapping,
       quadToNodes: quadToNodesMapping,
       attributes: config.attributes,
+      resourceNodeMapping,
+      contentNodeMapping,
     });
   }
 
@@ -465,6 +487,14 @@ export class EditorStore<N> implements Datastore<N> {
     }
   }
 
+  asResourceNodeMapping(): Map<N, ModelQuadSubject<N>> {
+    return this._resourceNodeMapping;
+  }
+
+  asContentNodeMapping(): Map<N, ModelSubAndPred<N>> {
+    return this._contentNodeMapping;
+  }
+
   transformDataset(
     action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset,
   ): this {
@@ -490,6 +520,8 @@ export class EditorStore<N> implements Datastore<N> {
       prefixMapping: this._prefixMapping,
       quadToNodes: this._quadToNodes,
       attributes: this._attributes,
+      resourceNodeMapping: this._resourceNodeMapping,
+      contentNodeMapping: this._contentNodeMapping,
     });
   }
 

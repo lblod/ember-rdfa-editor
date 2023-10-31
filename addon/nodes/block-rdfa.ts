@@ -14,6 +14,7 @@ export const block_rdfa: SayNodeSpec = {
     properties: { default: [] },
     backlinks: { default: [] },
     resource: { default: null },
+    rdfaNodeType: { default: null },
     __rdfaId: { default: null },
     __tag: { default: 'div' },
   },

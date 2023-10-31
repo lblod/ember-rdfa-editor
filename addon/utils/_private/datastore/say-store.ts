@@ -61,6 +61,8 @@ export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
     nodeToPredicatesMapping,
     quadToNodesMapping,
     seenPrefixes,
+    resourceNodeMapping,
+    contentNodeMapping
   } = RdfaParser.parse(config);
   const prefixMap = new Map<string, string>(Object.entries(defaultPrefixes));
   for (const [key, value] of seenPrefixes.entries()) {
@@ -79,5 +81,7 @@ export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
     nodeToPredicates: nodeToPredicatesMapping,
     quadToNodes: quadToNodesMapping,
     attributes: config.attributes,
+    resourceNodeMapping,
+    contentNodeMapping
   });
 }

@@ -11,12 +11,14 @@ export const rdfaAttrs = {
   properties: { default: [] },
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
+  rdfaNodeType: { default: undefined },
 };
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   resource: { default: null },
   __rdfaId: { default: undefined },
+  'data-rdfa-node-type': { default: undefined },
 };
 
 type RdfaAttrs = Record<string, string | OutgoingProp[] | IncomingProp[]>;
@@ -38,6 +40,9 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
       if (key === 'data-incoming-props') {
         const backlinks = JSON.parse(value) as IncomingProp[];
         attrs['backlinks'] = backlinks;
+      }
+      if (key === 'data-rdfa-node-type') {
+        attrs['rdfaNodeType'] = value;
       }
     }
   }
@@ -74,6 +79,7 @@ function wrapGetAttrs(
       const rdfaAttrs = getRdfaAttrs(node);
       if (rdfaAttrs) {
         result['__rdfaId'] = rdfaAttrs['__rdfaId'];
+        result['rdfaNodeType'] = rdfaAttrs['rdfaNodeType'];
         result['properties'] = rdfaAttrs['properties'];
         result['backlinks'] = rdfaAttrs['backlinks'];
         result['resource'] = rdfaAttrs['resource'];
@@ -94,7 +100,7 @@ export function renderProps(node: PNode, tag: string): DOMOutputSpec {
       propElements.push(['span', { property: predicate, content: object }, '']);
     }
   }
-  if (node.attrs.resource) {
+  if (node.attrs.rdfaNodeType === 'resource') {
     const backlinks = node.attrs.backlinks as IncomingProp[];
     for (const { predicate, subject } of backlinks) {
       propElements.push(['span', { rev: predicate, resource: subject }]);
@@ -108,7 +114,7 @@ export function renderProps(node: PNode, tag: string): DOMOutputSpec {
 }
 
 export function renderAttrs(node: PNode): Record<string, string> {
-  if (!node.attrs.resource) {
+  if (node.attrs.rdfaNodeType !== 'resource') {
     const backlinks = node.attrs.backlinks as IncomingProp[];
     if (backlinks.length > 1) {
       throw new Error('more than one backlink');

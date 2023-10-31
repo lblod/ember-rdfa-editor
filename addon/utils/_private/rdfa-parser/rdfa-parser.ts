@@ -75,6 +75,11 @@ export interface QuadNodes<N> {
   objectNodes: N[];
 }
 
+export interface ModelSubAndPred<N> {
+  subject: ModelQuadSubject<N>;
+  predicate: string;
+}
+
 export interface RdfaParseResponse<N> {
   dataset: RDF.Dataset;
 
@@ -89,6 +94,9 @@ export interface RdfaParseResponse<N> {
 
   quadToNodesMapping: Map<string, QuadNodes<N>>;
   seenPrefixes: Map<string, string>;
+
+  resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
+  contentNodeMapping: Map<N, ModelSubAndPred<N>>;
 }
 
 export class RdfaParser<N> {
@@ -119,6 +127,8 @@ export class RdfaParser<N> {
   private seenPredicateNodes: Map<RDF.Term, N>;
   private seenObjectNodes: Map<RDF.Term, N>;
   private globallySeenPrefixes: Map<string, string>;
+  private resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
+  private contentNodeMapping: Map<N, ModelSubAndPred<N>>;
 
   constructor(options: IRdfaParserOptions<N>) {
     this.options = options;
@@ -150,6 +160,8 @@ export class RdfaParser<N> {
     this.seenObjectNodes = new Map<RDF.Term, N>();
 
     this.quadToNodesMapping = new Map<string, QuadNodes<N>>();
+    this.resourceNodeMapping = new Map();
+    this.contentNodeMapping = new Map();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -203,6 +215,8 @@ export class RdfaParser<N> {
       objectToNodesMapping: parser.objectToNodesMapping,
       quadToNodesMapping: parser.quadToNodesMapping,
       seenPrefixes: parser.globallySeenPrefixes,
+      resourceNodeMapping: parser.resourceNodeMapping,
+      contentNodeMapping: parser.contentNodeMapping,
     };
   }
 
@@ -928,6 +942,117 @@ export class RdfaParser<N> {
     // 13: Save evaluation context into active tag
     activeTag.subject = newSubject || parentTag.subject;
     activeTag.object = currentObjectResource || newSubject;
+
+    this.collectNodeInfo(activeTag, attributes, isRootTag, typedResource);
+  }
+
+  public setContentNode(
+    node: N,
+    activeTag: IActiveTag<N>,
+    attributes: Record<string, string>,
+  ) {
+    this.contentNodeMapping.set(node, {
+      subject: this.util.getResourceOrBaseIri(
+        unwrap(activeTag.subject),
+        activeTag,
+      ),
+
+      predicate: this.util.createIri(
+        attributes.property,
+        activeTag,
+        true,
+        true,
+        false,
+      ).value,
+    });
+  }
+
+  setResourceNode(
+    node: N,
+    resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
+    activeTag: IActiveTag<N>,
+  ) {
+    this.resourceNodeMapping.set(
+      node,
+      this.util.getResourceOrBaseIri(resource, activeTag),
+    );
+  }
+
+  public collectNodeInfo(
+    activeTag: IActiveTag<N>,
+    attributes: Record<string, string>,
+    isRootTag: boolean,
+    typedResource: true | ModelBlankNode<N> | ModelNamedNode<N> | null,
+  ) {
+    const node = activeTag.node;
+    if (!activeTag.skipElement && node) {
+      // no rel or rev
+      if (!('rel' in attributes) && !('rev' in attributes)) {
+        if (
+          'property' in attributes &&
+          !('content' in attributes) &&
+          !('datatype' in attributes)
+        ) {
+          if ('about' in attributes) {
+            // content node
+            this.setContentNode(node, activeTag, attributes);
+          } else if (isRootTag) {
+            // root resource
+            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          } else {
+            if ('typeof' in attributes) {
+              this.setResourceNode(node, unwrap(typedResource), activeTag);
+            } else {
+              this.setContentNode(node, activeTag, attributes);
+            }
+            // no new resource
+          }
+
+          // content nodes
+        } else {
+          if (
+            'about' in attributes ||
+            'href' in attributes ||
+            'src' in attributes ||
+            'resource' in attributes
+          ) {
+            // resource nodes
+            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          } else if (isRootTag) {
+            // root resource node
+            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          } else if ('typeof' in attributes) {
+            // blank resource node
+            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          } else {
+            // no new resource
+            if (attributes.property && !('content' in attributes)) {
+              this.setContentNode(node, activeTag, attributes);
+            }
+          }
+        }
+      } else {
+        if ('about' in attributes) {
+          // content node
+
+          this.contentNodeMapping.set(node, {
+            subject: this.util.getResourceOrBaseIri(
+              unwrap(activeTag.subject),
+              activeTag,
+            ),
+            predicate: attributes.rel || attributes.rev,
+          });
+        } else if ('typeof' in attributes) {
+          //??
+          this.setResourceNode(node, unwrap(typedResource), activeTag);
+        } else if (isRootTag) {
+          // root resource node
+          this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+        } else {
+          // no new resource node
+        }
+      }
+    }
   }
 
   public onText(data: string) {
