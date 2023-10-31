@@ -45,7 +45,8 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     toDOM(node) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { interactive, placeholder, ...attrs } = node.attrs;
-      return ['a', attrs, 0];
+      const outputAttrs = { target: '_blank', ...attrs };
+      return ['a', outputAttrs, 0];
     },
   };
 };

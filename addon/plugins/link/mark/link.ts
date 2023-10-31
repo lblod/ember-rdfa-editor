@@ -19,7 +19,7 @@ export const link: MarkSpec = {
     },
   ],
   toDOM(mark) {
-    return ['a', mark.attrs, 0];
+    return ['a', { target: '_blank', ...mark.attrs }, 0];
   },
   hasRdfa: true,
   parseTag: 'a',
