@@ -11,7 +11,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command } from 'prosemirror-state';
 
-type AddPropertyArgs = {
+export type AddPropertyArgs = {
   /** The position of the node at which to add the property */
   position: number;
   /** Node or Attribute to add */

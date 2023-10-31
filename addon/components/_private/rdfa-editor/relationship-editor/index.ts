@@ -15,13 +15,13 @@ import {
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import { insertRelation } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/insert-relation';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import {
   findNodeByRdfaId,
   getAllRdfaIds,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
-import { v4 as uuidv4 } from 'uuid';
 
 type Args = {
   controller?: SayController;
@@ -117,23 +117,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
   };
 
-  // Most of this method should probably exist in a separate function instead of this controller
   addNode = (type: 'content' | 'resource', predicate: string) => {
-    if (type === 'resource') {
-      throw new NotImplementedError();
-    }
-    if (!this.controller) throw new Error('No Controller');
-    // Ideally this would be inside the transaction but it's not clear how to actually do that
-    const nodeish = this.controller.schema.nodes.block_rdfa.create(
-      { __rdfaId: uuidv4() },
-      this.controller.schema.text(predicate),
+    this.controller?.doCommand(
+      insertRelation({ position: this.args.node.pos, type, predicate }),
     );
-    this.relateNodes(this.args.node.value, predicate, nodeish);
-    this.controller.withTransaction((tr) => {
-      if (!this.controller) throw new Error('No Controller');
-      this.setAddRelationshipType(null);
-      return tr.replaceSelectionWith(nodeish).scrollIntoView();
-    });
+    this.addRelationshipType = undefined;
   };
 
   addBacklink = (_backlink: IncomingProp) => {
