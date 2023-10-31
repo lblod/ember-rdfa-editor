@@ -4,7 +4,12 @@
       <AuHeading @level="5" @skin="5">Relationships</AuHeading>
     </Group>
     <Group>
-      <AuButton @icon="plus" @skin="naked" @disabled={{not this.canAddRelationship}}>
+      <AuButton
+        @icon="plus"
+        @skin="naked"
+        @disabled={{not this.canAddRelationship}}
+        {{on "click" this.addRelationship}}
+      >
         Add relationship
       </AuButton>
     </Group>
@@ -84,3 +89,10 @@
     {{/if}}
   </div>
 </AuContent>
+
+<this.Modal
+  @rdfaIds={{this.allRdfaids}}
+  @addRelationshipType={{this.addRelationshipType}}
+  @setAddType={{this.setAddRelationshipType}}
+  @onSave={{this.saveNewRelationship}}
+/>

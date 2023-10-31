@@ -11,8 +11,10 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command } from 'prosemirror-state';
 
-type AddPropertyArgs = {
-  position: number; // The position of the node from which to remove the property
+export type AddPropertyArgs = {
+  /** The position of the node at which to add the property */
+  position: number;
+  /** Node or Attribute to add */
   property: OutgoingProp;
 };
 
