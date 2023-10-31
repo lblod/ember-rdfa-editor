@@ -12,7 +12,9 @@ import {
 import { Command } from 'prosemirror-state';
 
 type AddPropertyArgs = {
-  position: number; // The position of the node from which to remove the property
+  /** The position of the node at which to add the property */
+  position: number;
+  /** Node or Attribute to add */
   property: OutgoingProp;
 };
 

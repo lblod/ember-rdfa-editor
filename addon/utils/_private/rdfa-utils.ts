@@ -105,6 +105,16 @@ export function mapPositionFrom(
   return curPos;
 }
 
+/** This is called in a getter so should be efficient. doc is immutable, so should just memoize it. **/
+export function getAllRdfaIds(doc: PNode): string[] {
+  const ids: string[] = [];
+  doc.descendants((node) => {
+    const id = getRdfaId(node);
+    if (id) ids.push(id);
+  });
+  return ids;
+}
+
 export function findNodeByRdfaId(
   doc: PNode,
   rdfaId: string,
