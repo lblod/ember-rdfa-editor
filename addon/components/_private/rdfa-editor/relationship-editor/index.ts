@@ -21,6 +21,7 @@ import {
   getAllRdfaIds,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
+import { v4 as uuidv4 } from 'uuid';
 
 type Args = {
   controller?: SayController;
@@ -97,6 +98,48 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.addRelationshipType = type ?? undefined;
   };
 
+  saveNewRelationship = (predicate: string, rdfaid: string) => {
+    switch (this.addRelationshipType) {
+      case 'existing': {
+        const node = this.getNodeById(rdfaid);
+        if (!node) {
+          return false;
+        }
+        this.relateNodes(this.args.node.value, predicate, node.value);
+        this.addRelationshipType = undefined;
+        return true;
+      }
+      case 'content':
+      case 'resource':
+        return this.addNode(this.addRelationshipType, predicate);
+      default:
+        throw new NotImplementedError();
+    }
+  };
+
+  // Most of this method should probably exist in a separate function instead of this controller
+  addNode = (type: 'content' | 'resource', predicate: string) => {
+    if (type === 'resource') {
+      throw new NotImplementedError();
+    }
+    if (!this.controller) throw new Error('No Controller');
+    // Ideally this would be inside the transaction but it's not clear how to actually do that
+    const nodeish = this.controller.schema.nodes.block_rdfa.create(
+      { __rdfaId: uuidv4() },
+      this.controller.schema.text(predicate),
+    );
+    this.relateNodes(this.args.node.value, predicate, nodeish);
+    this.controller.withTransaction((tr) => {
+      if (!this.controller) throw new Error('No Controller');
+      this.setAddRelationshipType(null);
+      return tr.replaceSelectionWith(nodeish).scrollIntoView();
+    });
+  };
+
+  addBacklink = (_backlink: IncomingProp) => {
+    throw new NotImplementedError();
+  };
+
   relateNodes(sub: PNode, predicate: string, obj: PNode) {
     this.addProperty({
       type: 'node',
@@ -105,24 +148,6 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       nodeId: sub.attrs.__rdfaid as string,
     });
   }
-
-  saveNewRelationship = (predicate: string, rdfaid: string) => {
-    if (this.addRelationshipType === 'existing') {
-      const node = this.getNodeById(rdfaid);
-      if (!node) {
-        return false;
-      }
-      this.relateNodes(this.args.node.value, predicate, node.value);
-      this.addRelationshipType = undefined;
-      return true;
-    } else if (['content', 'resource'].includes(this.addRelationshipType)) {
-      throw new NotImplementedError();
-    }
-  }
-
-  addBacklink = (_backlink: IncomingProp) => {
-    throw new NotImplementedError();
-  };
 
   addProperty = (property: OutgoingNodeProp) => {
     this.controller?.doCommand(
