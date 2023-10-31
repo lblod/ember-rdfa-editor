@@ -12,6 +12,7 @@ export const rdfaAttrs = {
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
+  resource: { default: null },
 };
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },

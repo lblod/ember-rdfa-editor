@@ -39,7 +39,7 @@ export default class RdfaEditor extends Component<Args> {
   }
 
   get supportsRdfaTypeConversion() {
-    return !!this.args.node.value.type.spec.attrs?.['resource'];
+    return !!this.args.node.value.type.spec.attrs?.['rdfaNodeType'];
   }
 
   goToNodeWithId = (id: string) => {

@@ -44,9 +44,9 @@ export default class RdfaTypeConvertor extends Component<Args> {
     }
   }
 
-  setNewResource(event: InputEvent) {
+  setNewResource = (event: InputEvent) => {
     this.newResource = (event.target as HTMLInputElement).value;
-  }
+  };
 
   showConfirmationDialog = () => {
     this.showDialog = true;
@@ -68,7 +68,8 @@ export default class RdfaTypeConvertor extends Component<Args> {
 
   convertToContentNode = () => {
     this.args.controller.withTransaction((tr) => {
-      return tr.setNodeAttribute(this.node.pos, 'resource', null);
+      tr.setNodeAttribute(this.node.pos, 'resource', null);
+      return tr.setNodeAttribute(this.node.pos, 'rdfaNodeType', 'content');
     });
     this.controller.doCommand(clearBacklinks({ position: this.node.pos }));
     this.controller.doCommand(clearProperties({ position: this.node.pos }));
@@ -78,7 +79,8 @@ export default class RdfaTypeConvertor extends Component<Args> {
     const newResource =
       this.newResource?.trim() || `http://example.org/${uuidv4()}`;
     this.controller.withTransaction((tr) => {
-      return tr.setNodeAttribute(this.node.pos, 'resource', newResource);
+      tr.setNodeAttribute(this.node.pos, 'resource', newResource);
+      return tr.setNodeAttribute(this.node.pos, 'rdfaNodeType', 'resource');
     });
     this.controller.doCommand(clearBacklinks({ position: this.node.pos }));
     this.controller.doCommand(clearProperties({ position: this.node.pos }));

@@ -105,7 +105,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         if (!node) {
           return false;
         }
-        this.relateNodes(this.args.node.value, predicate, node.value);
+        this.relateNodes(predicate, node.value);
         this.addRelationshipType = undefined;
         return true;
       }
@@ -128,12 +128,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     throw new NotImplementedError();
   };
 
-  relateNodes(sub: PNode, predicate: string, obj: PNode) {
+  relateNodes(predicate: string, obj: PNode) {
     this.addProperty({
       type: 'node',
       predicate,
-      object: obj.attrs.__rdfaid as string,
-      nodeId: sub.attrs.__rdfaid as string,
+      object: obj.attrs.resource as string,
+      nodeId: obj.attrs.__rdfaId as string,
     });
   }
 
