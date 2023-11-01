@@ -1,7 +1,6 @@
 import * as RDF from '@rdfjs/types';
 import {
   ModelQuad,
-  ModelQuadSubject,
   quadHash,
   QuadNodes,
   RdfaParseConfig,
@@ -57,6 +56,7 @@ export function rdfaContentNodeMap<N>(init?: Iterable<[N, SubAndPred]>) {
   return TwoWayMap.withValueStringHashing<N, SubAndPred>({
     valueHasher: ({ subject, predicate }) =>
       `${subject.termType}-${subject.value}-${predicate.termType}-${predicate.value}`,
+    init,
   });
 }
 /**

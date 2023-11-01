@@ -16,8 +16,6 @@ import Datastore, {
   EditorStore,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
-import { SayStore } from '../plugins/datastore';
-import { ModelQuad } from '../utils/_private/rdfa-parser/rdfa-parser';
 import { Quad } from '@rdfjs/types';
 
 export interface OutgoingNodeProp {

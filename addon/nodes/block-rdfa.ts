@@ -3,11 +3,7 @@ import {
   isElement,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import {
-  renderRdfaAttrs,
-  renderInvisibleRdfa,
-  renderRdfaAware,
-} from '@lblod/ember-rdfa-editor/core/schema';
+import { renderRdfaAware } from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
 export const block_rdfa: SayNodeSpec = {

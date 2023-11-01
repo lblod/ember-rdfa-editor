@@ -10,7 +10,7 @@ export function hasGroups(node: PNode, ...groups: string[]) {
 }
 
 export function isResourceNode(node: PNode) {
-  return node.attrs.rdfaNodeType === "resource";
+  return node.attrs.rdfaNodeType === 'resource';
 }
 
 export function supportsAttribute(node: PNode, attribute: string) {

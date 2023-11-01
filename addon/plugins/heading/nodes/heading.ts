@@ -1,9 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
-import {
-  renderRdfaAttrs,
-  renderInvisibleRdfa,
-  renderRdfaAware,
-} from '@lblod/ember-rdfa-editor/core/schema';
+import { renderRdfaAware } from '@lblod/ember-rdfa-editor/core/schema';
 import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';

@@ -16,9 +16,7 @@ import {
   isElement,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import MapUtils, {
-  TwoWayMap,
-} from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/_private/datastore/graphy-dataset';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import {

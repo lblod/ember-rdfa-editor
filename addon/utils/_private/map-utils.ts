@@ -97,8 +97,8 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
     }
   }
   clear(): void {
-    this.keyToValue.clear;
-    this.valueToKey.clear;
+    this.keyToValue.clear();
+    this.valueToKey.clear();
   }
   delete(key: K): boolean {
     const hashedKey = this.keyHasher(key);
@@ -113,7 +113,7 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   }
   forEach(
     callbackfn: (value: V, key: K, map: Map<K, V>) => void,
-    thisArg?: any,
+    thisArg?: unknown,
   ): void {
     this.keyToValue.forEach((value) => {
       const key = unwrap(this.valueToKey.get(this.valueHasher(value)));
@@ -141,7 +141,8 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
     return this.keyToValue.size;
   }
   *entries(): IterableIterator<[K, V]> {
-    for (const [_hashedKey, value] of this.keyToValue.entries()) {
+    for (const entry of this.keyToValue.entries()) {
+      const value = entry[1];
       yield [unwrap(this.valueToKey.get(this.valueHasher(value))), value];
     }
   }

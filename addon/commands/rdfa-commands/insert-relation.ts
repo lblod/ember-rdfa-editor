@@ -1,14 +1,4 @@
-import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
-import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
-import {
-  findNodeByRdfaId,
-  getProperties,
-  getRdfaId,
-  getResource,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { getRdfaId } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import {
   AddPropertyArgs,
   addProperty,
