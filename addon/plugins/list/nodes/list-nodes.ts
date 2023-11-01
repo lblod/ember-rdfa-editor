@@ -2,8 +2,8 @@ import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrs,
-  renderAttrs,
-  renderProps,
+  renderRdfaAttrs,
+  renderInvisibleRdfa,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
@@ -36,7 +36,7 @@ export const ordered_list: NodeSpec = {
     return [
       'ol',
       {
-        ...renderAttrs(node),
+        ...renderRdfaAttrs(node),
         ...(order !== 1 && { start: order }),
         ...(style && { 'data-list-style': style }),
         ...attrs,
@@ -77,8 +77,8 @@ export const list_item: NodeSpec = {
   toDOM(node: PNode) {
     return [
       'li',
-      { ...renderAttrs(node), ...node.attrs },
-      renderProps(node, 'div'),
+      { ...renderRdfaAttrs(node), ...node.attrs },
+      renderInvisibleRdfa(node, 'div'),
       ['div', {}, 0],
     ];
   },

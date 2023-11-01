@@ -1,5 +1,9 @@
 import { Node as PNode } from 'prosemirror-model';
-import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  renderRdfaAttrs,
+  renderInvisibleRdfa,
+  renderRdfaAware,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
@@ -106,16 +110,17 @@ export const heading: SayNodeSpec = {
   ],
   toDOM(node: PNode) {
     const { level, indentationLevel, ...attrs } = node.attrs;
-    return [
-      `h${(level as number).toString()}`,
-      {
+    return renderRdfaAware({
+      tag: `h${(level as number).toString()}`,
+      renderable: node,
+      attrs: {
         'data-indentation-level': indentationLevel as number,
         class: 'say-editable',
         ...attrs,
-        ...renderAttrs(node),
       },
-      renderProps(node, 'span'),
-      ['span', {}, 0],
-    ];
+      rdfaContainerTag: 'span',
+      contentContainerTag: 'span',
+      content: 0,
+    });
   },
 };

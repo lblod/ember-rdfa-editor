@@ -3,7 +3,7 @@ import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
-import { Attrs, DOMOutputSpec, ParseRule } from 'prosemirror-model';
+import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 
@@ -64,6 +64,7 @@ export function enhanceRule(rule: ParseRule): ParseRule {
 
 type GetAttrs = (node: string | HTMLElement) => false | Attrs | null;
 
+type NodeOrMark = PNode | Mark;
 function wrapGetAttrs(
   getAttrs: Option<GetAttrs>,
   extraAttrs: Option<Record<string, unknown>>,
@@ -93,16 +94,20 @@ function wrapGetAttrs(
   };
 }
 
-export function renderProps(node: PNode, tag: string): DOMOutputSpec {
+export function renderInvisibleRdfa(
+  nodeOrMark: NodeOrMark,
+  tag: string,
+  attrs: Record<string, unknown> = {},
+): DOMOutputSpec {
   const propElements = [];
-  const properties = node.attrs.properties as OutgoingProp[];
+  const properties = nodeOrMark.attrs.properties as OutgoingProp[];
   for (const { type, predicate, object } of properties) {
     if (type === 'attr') {
       propElements.push(['span', { property: predicate, content: object }, '']);
     }
   }
-  if (node.attrs.rdfaNodeType === 'resource') {
-    const backlinks = node.attrs.backlinks as IncomingProp[];
+  if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingProp[];
     for (const { predicate, subject } of backlinks) {
       propElements.push(['span', { rev: predicate, resource: subject }]);
     }
@@ -114,9 +119,11 @@ export function renderProps(node: PNode, tag: string): DOMOutputSpec {
   ];
 }
 
-export function renderAttrs(node: PNode): Record<string, string> {
-  if (node.attrs.rdfaNodeType !== 'resource') {
-    const backlinks = node.attrs.backlinks as IncomingProp[];
+export function renderRdfaAttrs(
+  nodeOrMark: NodeOrMark,
+): Record<string, string> {
+  if (nodeOrMark.attrs.rdfaNodeType !== 'resource') {
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingProp[];
     if (backlinks.length > 1) {
       throw new Error('more than one backlink');
     }
@@ -132,6 +139,42 @@ export function renderAttrs(node: PNode): Record<string, string> {
   return {};
 }
 
+export interface RenderContentArgs {
+  tag: keyof HTMLElementTagNameMap;
+  extraAttrs?: Record<string, unknown>;
+  content: DOMOutputSpec;
+}
+export interface RdfaRenderArgs {
+  renderable: NodeOrMark;
+  tag: string;
+  attrs?: Record<string, unknown>;
+  rdfaContainerTag?: string;
+  rdfaContainerAttrs?: Record<string, unknown>;
+  contentContainerTag?: string;
+  contentContainerAttrs?: Record<string, unknown>;
+  content?: DOMOutputSpec | 0;
+}
+export function renderRdfaAware({
+  renderable,
+  tag,
+  attrs = {},
+  rdfaContainerTag = tag,
+  rdfaContainerAttrs,
+  contentContainerTag = tag,
+  contentContainerAttrs = {},
+  content,
+}: RdfaRenderArgs): DOMOutputSpec {
+  return [
+    tag,
+    { class: 'say-editable', ...attrs, ...renderRdfaAttrs(renderable) },
+    renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
+    [
+      contentContainerTag,
+      { 'data-content-container': true, ...contentContainerAttrs },
+      content,
+    ],
+  ];
+}
 function copy(obj: Record<string, unknown>) {
   const copy: Record<string, unknown> = {};
   for (const prop in obj) {

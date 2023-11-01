@@ -3,7 +3,11 @@ import {
   isElement,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { renderAttrs, renderProps } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  renderRdfaAttrs,
+  renderInvisibleRdfa,
+  renderRdfaAware,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
 export const block_rdfa: SayNodeSpec = {
@@ -40,11 +44,11 @@ export const block_rdfa: SayNodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [
-      'div',
-      { ...node.attrs, ...renderAttrs(node), class: 'say-editable' },
-      renderProps(node, 'div'),
-      ['div', { 'data-content-container': true }, 0],
-    ];
+    return renderRdfaAware({
+      renderable: node,
+      tag: 'div',
+      attrs: node.attrs,
+      content: 0,
+    });
   },
 };

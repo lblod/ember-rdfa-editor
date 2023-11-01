@@ -1,5 +1,6 @@
 import { Mark, MarkSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { renderRdfaAware } from '../core/schema';
 
 export const inline_rdfa: MarkSpec = {
   attrs: {
@@ -23,7 +24,12 @@ export const inline_rdfa: MarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
-    return ['span', mark.attrs, 0];
+    return renderRdfaAware({
+      renderable: mark,
+      tag: 'span',
+      attrs: mark.attrs,
+      content: 0,
+    });
   },
   hasRdfa: true,
   parseTag: 'span',
