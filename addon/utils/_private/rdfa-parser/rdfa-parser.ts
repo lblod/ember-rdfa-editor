@@ -16,9 +16,17 @@ import {
   isElement,
   isTextNode,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
+import MapUtils, {
+  TwoWayMap,
+} from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/_private/datastore/graphy-dataset';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  RdfaContentNodeMap,
+  RdfaResourceNodeMap,
+  rdfaContentNodeMap,
+  rdfaResourceNodeMap,
+} from '../datastore/datastore';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -75,9 +83,9 @@ export interface QuadNodes<N> {
   objectNodes: N[];
 }
 
-export interface ModelSubAndPred<N> {
-  subject: ModelQuadSubject<N>;
-  predicate: string;
+export interface SubAndPred {
+  subject: RDF.Quad_Subject;
+  predicate: RDF.Quad_Predicate;
 }
 
 export interface RdfaParseResponse<N> {
@@ -95,8 +103,8 @@ export interface RdfaParseResponse<N> {
   quadToNodesMapping: Map<string, QuadNodes<N>>;
   seenPrefixes: Map<string, string>;
 
-  resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
-  contentNodeMapping: Map<N, ModelSubAndPred<N>>;
+  resourceNodeMapping: RdfaResourceNodeMap<N>;
+  contentNodeMapping: RdfaContentNodeMap<N>;
 }
 
 export class RdfaParser<N> {
@@ -127,8 +135,8 @@ export class RdfaParser<N> {
   private seenPredicateNodes: Map<RDF.Term, N>;
   private seenObjectNodes: Map<RDF.Term, N>;
   private globallySeenPrefixes: Map<string, string>;
-  private resourceNodeMapping: Map<N, ModelQuadSubject<N>>;
-  private contentNodeMapping: Map<N, ModelSubAndPred<N>>;
+  private resourceNodeMapping: RdfaResourceNodeMap<N>;
+  private contentNodeMapping: RdfaContentNodeMap<N>;
 
   constructor(options: IRdfaParserOptions<N>) {
     this.options = options;
@@ -160,8 +168,8 @@ export class RdfaParser<N> {
     this.seenObjectNodes = new Map<RDF.Term, N>();
 
     this.quadToNodesMapping = new Map<string, QuadNodes<N>>();
-    this.resourceNodeMapping = new Map();
-    this.contentNodeMapping = new Map();
+    this.resourceNodeMapping = rdfaResourceNodeMap<N>();
+    this.contentNodeMapping = rdfaContentNodeMap<N>();
 
     this.activeTagStack.push({
       incompleteTriples: [],
@@ -950,6 +958,7 @@ export class RdfaParser<N> {
     node: N,
     activeTag: IActiveTag<N>,
     attributes: Record<string, string>,
+    predicateAttribute = 'property',
   ) {
     this.contentNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(
@@ -958,12 +967,12 @@ export class RdfaParser<N> {
       ),
 
       predicate: this.util.createIri(
-        attributes.property,
+        attributes[predicateAttribute],
         activeTag,
         true,
         true,
         false,
-      ).value,
+      ),
     });
   }
 
@@ -1035,13 +1044,12 @@ export class RdfaParser<N> {
         if ('about' in attributes) {
           // content node
 
-          this.contentNodeMapping.set(node, {
-            subject: this.util.getResourceOrBaseIri(
-              unwrap(activeTag.subject),
-              activeTag,
-            ),
-            predicate: attributes.rel || attributes.rev,
-          });
+          this.setContentNode(
+            node,
+            activeTag,
+            attributes,
+            attributes.rel ? 'rel' : 'rev',
+          );
         } else if ('typeof' in attributes) {
           //??
           this.setResourceNode(node, unwrap(typedResource), activeTag);
