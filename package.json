@@ -166,7 +166,7 @@
     "qunit-dom": "^2.0.0",
     "release-it": "^16.1.0",
     "sass": "^1.49.9",
-    "sinon": "^15.0.1",
+    "sinon": "^17.0.1",
     "typescript": "~5.2.2",
     "webpack": "^5.78.0"
   },
