@@ -7,19 +7,18 @@ import { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 import { OutgoingNodeProp } from '@lblod/ember-rdfa-editor/core/say-parser';
 
+export type InsertRelationDetails = {
+  /** The predicate describing the new relationship */
+  predicate: string;
+} & ({ type: 'content' } | { type: 'resource'; uriBase: string });
 type InsertRelationArgs = {
   /** The position of the node at which to add the property */
   position: number;
-  type: 'content' | 'resource';
-  /** The predicate describing the new relationship */
-  predicate: string;
-};
-export function insertRelation({
-  position,
-  type: _type,
-  predicate,
-}: InsertRelationArgs): Command {
+} & InsertRelationDetails;
+
+export function insertRelation(args: InsertRelationArgs): Command {
   return (state, dispatch) => {
+    const { position, type, predicate } = args;
     const node = state.doc.nodeAt(position);
 
     if (!node) {
@@ -46,8 +45,14 @@ export function insertRelation({
 
     if (dispatch) {
       const objectId = uuidv4();
+      const additionalAttrs =
+        type === 'resource' ? { resource: `${args.uriBase}${uuidv4()}` } : {};
       const createdObject = state.schema.nodes.block_rdfa.create(
-        { __rdfaId: objectId },
+        {
+          __rdfaId: objectId,
+          rdfaNodeType: type,
+          ...additionalAttrs,
+        },
         state.schema.node('paragraph', null, [
           state.schema.text(addPropArgs.property.object),
         ]),

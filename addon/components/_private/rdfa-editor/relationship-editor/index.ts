@@ -15,7 +15,10 @@ import {
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
-import { insertRelation } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/insert-relation';
+import {
+  insertRelation,
+  InsertRelationDetails,
+} from '@lblod/ember-rdfa-editor/commands/rdfa-commands/insert-relation';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import {
   findNodeByRdfaId,
@@ -98,28 +101,39 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.addRelationshipType = type ?? undefined;
   };
 
-  saveNewRelationship = (predicate: string, rdfaid: string) => {
-    switch (this.addRelationshipType) {
+  saveNewRelationship = (
+    details:
+      | {
+          type: 'existing';
+          predicate: string;
+          rdfaid: string;
+        }
+      | InsertRelationDetails,
+  ) => {
+    switch (details.type) {
       case 'existing': {
-        const node = this.getNodeById(rdfaid);
+        const node = this.getNodeById(details.rdfaid);
         if (!node) {
           return false;
         }
-        this.relateNodes(predicate, node.value);
+        this.relateNodes(details.predicate, node.value);
         this.addRelationshipType = undefined;
         return true;
       }
       case 'content':
       case 'resource':
-        return this.addNode(this.addRelationshipType, predicate);
+        return this.addNode(details);
       default:
         throw new NotImplementedError();
     }
   };
 
-  addNode = (type: 'content' | 'resource', predicate: string) => {
+  addNode = (details: InsertRelationDetails) => {
     this.controller?.doCommand(
-      insertRelation({ position: this.args.node.pos, type, predicate }),
+      insertRelation({
+        position: this.args.node.pos,
+        ...details,
+      }),
     );
     this.addRelationshipType = undefined;
   };
