@@ -1,33 +1,39 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
-import { ProsePlugin, ResolvedPos } from '@lblod/ember-rdfa-editor';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import {
   getRdfaId,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 class RdfaInfo {
   private state: EditorState;
-  private _rdfaIdMapping?: Map<string, ResolvedPos>;
-  private _resourceMapping?: Map<string, ResolvedPos[]>;
+  private _rdfaIdMapping?: Map<string, ResolvedPNode>;
+  private _resourceMapping?: Map<string, ResolvedPNode[]>;
   constructor(state: EditorState) {
     this.state = state;
   }
 
   private computeMappings() {
-    const rdfaIdMapping = new Map();
-    const resourceMapping = new Map();
+    const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
+    const resourceMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
     doc.descendants((node, pos) => {
-      const resolvedPos = doc.resolve(pos);
       const rdfaId = getRdfaId(node);
       const resource = getResource(node);
       if (rdfaId) {
-        rdfaIdMapping.set(rdfaId, resolvedPos);
+        rdfaIdMapping.set(rdfaId, {
+          pos,
+          value: node,
+        });
       }
       if (resource) {
-        MapUtils.setOrPush(resourceMapping, resource, resolvedPos);
+        MapUtils.setOrPush(resourceMapping, resource, {
+          pos,
+          value: node,
+        });
       }
       return true;
     });
@@ -69,10 +75,10 @@ export function rdfaInfoPlugin() {
   });
 }
 
-export function getPositionByRdfaId(state: EditorState, rdfaId: string) {
+export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);
 }
 
-export function getPositionsByResource(state: EditorState, resource: string) {
+export function getNodesByResource(state: EditorState, resource: string) {
   return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource);
 }

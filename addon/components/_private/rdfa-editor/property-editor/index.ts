@@ -3,13 +3,13 @@ import {
   OutgoingAttrProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
 import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type CreationStatus = {
   mode: 'creation';
@@ -22,7 +22,7 @@ type UpdateStatus = {
 type Status = CreationStatus | UpdateStatus;
 type Args = {
   controller?: SayController;
-  node: ResolvedNode;
+  node: ResolvedPNode;
 };
 export default class RdfaPropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;

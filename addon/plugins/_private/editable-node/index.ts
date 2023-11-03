@@ -3,21 +3,17 @@ import {
   DecorationSet,
   EditorState,
   NodeSelection,
-  PNode,
   PluginKey,
   ProsePlugin,
 } from '@lblod/ember-rdfa-editor';
 import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
-export type ResolvedNode = {
-  pos: number;
-  value: PNode;
-};
 type State = {
-  activeNode?: ResolvedNode;
+  activeNode?: ResolvedPNode;
 };
 
-const activeNode = (state: EditorState): ResolvedNode | undefined => {
+const activeNode = (state: EditorState): ResolvedPNode | undefined => {
   const { selection } = state;
   if (selection instanceof NodeSelection) {
     if (isEditable(selection.node)) {

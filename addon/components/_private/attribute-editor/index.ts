@@ -2,14 +2,14 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
 
 type Args = {
   controller: SayController;
-  node: ResolvedNode;
+  node: ResolvedPNode;
 };
 
 export default class AttributeEditor extends Component<Args> {

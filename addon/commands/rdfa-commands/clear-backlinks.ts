@@ -1,4 +1,4 @@
-import { getPositionsByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   getBacklinks,
@@ -24,14 +24,14 @@ export function clearBacklinks({ position }: ClearBacklinksArgs): Command {
       tr.setNodeAttribute(position, 'backlinks', []);
       backlinks.forEach((backlink) => {
         // Update the properties of each inverse subject node
-        const subjects = getPositionsByResource(state, backlink.subject);
+        const subjects = getNodesByResource(state, backlink.subject);
         subjects?.forEach((subject) => {
-          const subjectNodeProperties = getProperties(subject.node());
+          const subjectNodeProperties = getProperties(subject.value);
           if (subjectNodeProperties) {
             const filteredProperties = subjectNodeProperties.filter((prop) => {
               return !(
                 backlink.predicate === prop.predicate &&
-                backlink.subjectId === getRdfaId(subject.node())
+                backlink.subjectId === getRdfaId(subject.value)
               );
             });
             tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);

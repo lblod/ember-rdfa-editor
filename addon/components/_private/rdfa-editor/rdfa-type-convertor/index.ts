@@ -5,11 +5,11 @@ import {
   clearBacklinks,
   clearProperties,
 } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import { v4 as uuidv4 } from 'uuid';
 type Args = {
-  node: ResolvedNode;
+  node: ResolvedPNode;
   controller: SayController;
 };
 export default class RdfaTypeConvertor extends Component<Args> {

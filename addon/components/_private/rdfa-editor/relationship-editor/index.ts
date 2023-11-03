@@ -5,7 +5,6 @@ import {
   OutgoingNodeProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
@@ -19,11 +18,12 @@ import { insertRelation } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
-import { getPositionByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
   controller?: SayController;
-  node: ResolvedNode;
+  node: ResolvedPNode;
 };
 
 export default class RdfaRelationshipEditor extends Component<Args> {
@@ -99,7 +99,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   saveNewRelationship = (predicate: string, rdfaid: string) => {
     switch (this.addRelationshipType) {
       case 'existing': {
-        const node = this.getPosById(rdfaid)?.node();
+        const node = this.getNodeById(rdfaid)?.value;
         if (!node) {
           return false;
         }
@@ -141,10 +141,10 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     );
   };
 
-  getPosById = (rdfaid: string) => {
+  getNodeById = (rdfaid: string) => {
     if (!this.controller) {
       return;
     }
-    return getPositionByRdfaId(this.controller.mainEditorState, rdfaid);
+    return getNodeByRdfaId(this.controller.mainEditorState, rdfaid);
   };
 }

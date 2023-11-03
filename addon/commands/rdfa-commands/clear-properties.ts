@@ -1,4 +1,4 @@
-import { getPositionByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   getBacklinks,
@@ -29,9 +29,9 @@ export function clearProperties({ position }: ClearPropertiesArgs): Command {
            * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
            * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
            */
-          const target = getPositionByRdfaId(state, prop.nodeId);
+          const target = getNodeByRdfaId(state, prop.nodeId);
           if (target) {
-            const targetNodeBacklinks = getBacklinks(target.node());
+            const targetNodeBacklinks = getBacklinks(target.value);
             if (targetNodeBacklinks) {
               const filteredBacklinks = targetNodeBacklinks.filter(
                 (backlink) => {

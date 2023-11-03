@@ -2,7 +2,7 @@ import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
-import { getPositionByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   getProperties,
@@ -45,9 +45,9 @@ export function addProperty({ position, property }: AddPropertyArgs): Command {
          * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
          */
 
-        const target = getPositionByRdfaId(state, property.nodeId);
-        if (target && supportsAttribute(target.node(), 'backlinks')) {
-          const backlinks = target.node().attrs.backlinks as
+        const target = getNodeByRdfaId(state, property.nodeId);
+        if (target && supportsAttribute(target.value, 'backlinks')) {
+          const backlinks = target.value.attrs.backlinks as
             | IncomingProp[]
             | undefined;
           const newBacklink: IncomingProp = {
