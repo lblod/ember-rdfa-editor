@@ -9,16 +9,26 @@ import {
   getRdfaId,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command } from 'prosemirror-state';
+import { Command, Transaction } from 'prosemirror-state';
 
 export type AddPropertyArgs = {
   /** The position of the node at which to add the property */
   position: number;
   /** Node or Attribute to add */
   property: OutgoingProp;
+  /**
+    A transaction to use in place of getting a new one from state.tr
+    This can be used to call this command from within another, but care must be taken to not use
+    the passed transaction between passing it in and when the callback is called.
+  */
+  transaction?: Transaction;
 };
 
-export function addProperty({ position, property }: AddPropertyArgs): Command {
+export function addProperty({
+  position,
+  property,
+  transaction,
+}: AddPropertyArgs): Command {
   return (state, dispatch) => {
     const node = state.doc.nodeAt(position);
 
@@ -36,7 +46,7 @@ export function addProperty({ position, property }: AddPropertyArgs): Command {
       const updatedProperties = properties
         ? [...properties, property]
         : [property];
-      const tr = state.tr;
+      const tr = transaction ?? state.tr;
       tr.setNodeAttribute(position, 'properties', updatedProperties);
       if (property.type === 'node') {
         /**
