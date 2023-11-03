@@ -17,11 +17,9 @@ import {
 import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
 import { insertRelation } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/insert-relation';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import {
-  findNodeByRdfaId,
-  getAllRdfaIds,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
+import { getPositionByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 
 type Args = {
   controller?: SayController;
@@ -101,11 +99,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   saveNewRelationship = (predicate: string, rdfaid: string) => {
     switch (this.addRelationshipType) {
       case 'existing': {
-        const node = this.getNodeById(rdfaid);
+        const node = this.getPosById(rdfaid)?.node();
         if (!node) {
           return false;
         }
-        this.relateNodes(predicate, node.value);
+        this.relateNodes(predicate, node);
         this.addRelationshipType = undefined;
         return true;
       }
@@ -143,10 +141,10 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     );
   };
 
-  getNodeById = (rdfaid: string) => {
+  getPosById = (rdfaid: string) => {
     if (!this.controller) {
-      return false;
+      return;
     }
-    return findNodeByRdfaId(this.controller?.mainEditorState.doc, rdfaid);
+    return getPositionByRdfaId(this.controller.mainEditorState, rdfaid);
   };
 }
