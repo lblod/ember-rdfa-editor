@@ -1,58 +1,78 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
-import { PNode, ProsePlugin } from '@lblod/ember-rdfa-editor';
+import { ProsePlugin, ResolvedPos } from '@lblod/ember-rdfa-editor';
 import {
   getRdfaId,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
-export const rdfaInfoPluginKey = new PluginKey<RdfaInfoState>('rdfa_info');
+class RdfaInfo {
+  private state: EditorState;
+  private _rdfaIdMapping?: Map<string, ResolvedPos>;
+  private _resourceMapping?: Map<string, ResolvedPos[]>;
+  constructor(state: EditorState) {
+    this.state = state;
+  }
 
-export interface RdfaInfoState {
-  rdfaIdMapping: Map<string, number>;
-  resourceMapping: Map<string, Set<number>>;
+  private computeMappings() {
+    const rdfaIdMapping = new Map();
+    const resourceMapping = new Map();
+    const { doc } = this.state;
+    doc.descendants((node, pos) => {
+      const resolvedPos = doc.resolve(pos);
+      const rdfaId = getRdfaId(node);
+      const resource = getResource(node);
+      if (rdfaId) {
+        rdfaIdMapping.set(rdfaId, resolvedPos);
+      }
+      if (resource) {
+        MapUtils.setOrPush(resourceMapping, resource, resolvedPos);
+      }
+      return true;
+    });
+    this._rdfaIdMapping = rdfaIdMapping;
+    this._resourceMapping = resourceMapping;
+  }
+
+  get rdfaIdMapping() {
+    if (!this._rdfaIdMapping) {
+      this.computeMappings();
+    }
+    return unwrap(this._rdfaIdMapping);
+  }
+
+  get resourceMapping() {
+    if (!this._resourceMapping) {
+      this.computeMappings();
+    }
+    return unwrap(this._resourceMapping);
+  }
 }
 
-function computeRdfaInfo(doc: PNode): RdfaInfoState {
-  const result: RdfaInfoState = {
-    rdfaIdMapping: new Map(),
-    resourceMapping: new Map(),
-  };
-  doc.descendants((node, pos) => {
-    const rdfaId = getRdfaId(node);
-    const resource = getResource(node);
-    if (rdfaId) {
-      result.rdfaIdMapping.set(rdfaId, pos);
-    }
-    if (resource) {
-      MapUtils.setOrAdd(result.resourceMapping, resource, pos);
-    }
-    return true;
-  });
-  return result;
-}
+export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
 
 export function rdfaInfoPlugin() {
-  return new ProsePlugin<RdfaInfoState>({
+  return new ProsePlugin<RdfaInfo>({
     key: rdfaInfoPluginKey,
     state: {
       init(_config, state) {
-        return computeRdfaInfo(state.doc);
+        return new RdfaInfo(state);
       },
       apply(tr, oldInfo, _oldState, newState) {
         if (!tr.docChanged) {
           return oldInfo;
         }
-        return computeRdfaInfo(newState.doc);
+        return new RdfaInfo(newState);
       },
     },
   });
 }
 
-export function getPositionByRdfaId(rdfaId: string, state: EditorState) {
+export function getPositionByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);
 }
 
-export function getPositionsByResource(resource: string, state: EditorState) {
+export function getPositionsByResource(state: EditorState, resource: string) {
   return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource);
 }
