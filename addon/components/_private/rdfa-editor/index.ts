@@ -4,7 +4,6 @@ import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
-import RdfaTypeConvertor from './rdfa-type-convertor';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
@@ -14,7 +13,9 @@ type Args = {
 export default class RdfaEditor extends Component<Args> {
   PropertyEditor = RdfaPropertyEditor;
   RelationshipEditor = RdfaRelationshipEditor;
-  RdfaTypeConvertor = RdfaTypeConvertor;
+
+  // Disable the rdfa-type convertor for now
+  // RdfaTypeConvertor = RdfaTypeConvertor;
 
   @tracked collapsed = false;
 
@@ -38,9 +39,9 @@ export default class RdfaEditor extends Component<Args> {
     return this.isResourceNode;
   }
 
-  get supportsRdfaTypeConversion() {
-    return !!this.args.node.value.type.spec.attrs?.['rdfaNodeType'];
-  }
+  // get supportsRdfaTypeConversion() {
+  //   return !!this.args.node.value.type.spec.attrs?.['rdfaNodeType'];
+  // }
 
   goToNodeWithId = (id: string) => {
     if (this.controller) {
