@@ -60,9 +60,10 @@ interface TwoWayMapArgs<K, V, HK = K, HV = V> {
 }
 export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   private keyToValue: Map<HK, V>;
-  private valueToKey: Map<HV, K>;
+  private valueToKey: Map<HV, K[]>;
   private valueHasher: HashFunction<V, HV>;
   private keyHasher: HashFunction<K, HK>;
+  private keySet: Set<K>;
   static withIdentityHashing<K, V>({
     init = [],
   }: Pick<TwoWayMapArgs<K, V>, 'init'> = {}): TwoWayMap<K, V> {
@@ -90,6 +91,7 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   }: TwoWayMapArgs<K, V, HK, HV>) {
     this.keyToValue = new Map();
     this.valueToKey = new Map();
+    this.keySet = new Set();
     this.valueHasher = valueHasher;
     this.keyHasher = keyHasher;
     for (const [key, val] of init) {
@@ -99,13 +101,22 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   clear(): void {
     this.keyToValue.clear();
     this.valueToKey.clear();
+    this.keySet.clear();
   }
   delete(key: K): boolean {
     const hashedKey = this.keyHasher(key);
     const value = this.keyToValue.get(hashedKey);
     if (value) {
       this.keyToValue.delete(hashedKey);
-      this.valueToKey.delete(this.valueHasher(value));
+      const valueHash = this.valueHasher(value);
+      const values = unwrap(this.valueToKey.get(valueHash));
+      if (values.length <= 1) {
+        this.valueToKey.delete(valueHash);
+      } else {
+        const keyIndex = values.indexOf(key);
+        values.splice(keyIndex, 1);
+      }
+      this.keySet.delete(key);
       return true;
     } else {
       return false;
@@ -115,16 +126,19 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
     callbackfn: (value: V, key: K, map: Map<K, V>) => void,
     thisArg?: unknown,
   ): void {
-    this.keyToValue.forEach((value) => {
-      const key = unwrap(this.valueToKey.get(this.valueHasher(value)));
+    this.keySet.forEach((key) => {
+      const value = unwrap(this.keyToValue.get(this.keyHasher(key)));
       callbackfn(value, key, this);
     }, thisArg);
   }
   get(key: K): V | undefined {
     return this.keyToValue.get(this.keyHasher(key));
   }
-  getValue(val: V): K | undefined {
+  getValues(val: V): K[] | undefined {
     return this.valueToKey.get(this.valueHasher(val));
+  }
+  getFirstValue(val: V): K | undefined {
+    return this.valueToKey.get(this.valueHasher(val))?.[0];
   }
   has(key: K): boolean {
     return this.keyToValue.has(this.keyHasher(key));
@@ -133,21 +147,27 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
     return this.valueToKey.has(this.valueHasher(val));
   }
   set(key: K, value: V): this {
-    this.keyToValue.set(this.keyHasher(key), value);
-    this.valueToKey.set(this.valueHasher(value), key);
+    if (this.keySet.has(key)) {
+      this.delete(key);
+      this.keyToValue.set(this.keyHasher(key), value);
+      MapUtils.setOrPush(this.valueToKey, this.valueHasher(value), key);
+    } else {
+      this.keySet.add(key);
+      this.keyToValue.set(this.keyHasher(key), value);
+      MapUtils.setOrPush(this.valueToKey, this.valueHasher(value), key);
+    }
     return this;
   }
   get size() {
     return this.keyToValue.size;
   }
   *entries(): IterableIterator<[K, V]> {
-    for (const entry of this.keyToValue.entries()) {
-      const value = entry[1];
-      yield [unwrap(this.valueToKey.get(this.valueHasher(value))), value];
+    for (const key of this.keySet.values()) {
+      yield [key, unwrap(this.keyToValue.get(this.keyHasher(key)))];
     }
   }
   keys(): IterableIterator<K> {
-    return this.valueToKey.values();
+    return this.keySet.values();
   }
   values(): IterableIterator<V> {
     return this.keyToValue.values();

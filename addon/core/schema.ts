@@ -124,9 +124,6 @@ export function renderRdfaAttrs(
 ): Record<string, string> {
   if (nodeOrMark.attrs.rdfaNodeType !== 'resource') {
     const backlinks = nodeOrMark.attrs.backlinks as IncomingProp[];
-    if (backlinks.length > 1) {
-      throw new Error('more than one backlink');
-    }
     if (!backlinks.length) {
       return {};
     }
