@@ -1,10 +1,10 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import {
   IncomingProp,
   OutgoingProp,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { ResolvedPNode } from './types';
 
 export type RdfaAttr =
   | 'vocab'
@@ -118,8 +118,8 @@ export function getAllRdfaIds(doc: PNode): string[] {
 export function findNodeByRdfaId(
   doc: PNode,
   rdfaId: string,
-): ResolvedNode | undefined {
-  let result: ResolvedNode | undefined;
+): ResolvedPNode | undefined {
+  let result: ResolvedPNode | undefined;
   doc.descendants((node, pos) => {
     if (result) return false;
     if (node.attrs.__rdfaId === rdfaId) {
@@ -137,8 +137,8 @@ export function findNodeByRdfaId(
 export function findNodesByResource(
   doc: PNode,
   resource: string,
-): ResolvedNode[] {
-  const result: ResolvedNode[] = [];
+): ResolvedPNode[] {
+  const result: ResolvedPNode[] = [];
   doc.descendants((node, pos) => {
     if (node.attrs.resource === resource) {
       result.push({ pos, value: node });

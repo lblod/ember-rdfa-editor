@@ -1,15 +1,15 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
 import RdfaTypeConvertor from './rdfa-type-convertor';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
   controller?: SayController;
-  node: ResolvedNode;
+  node: ResolvedPNode;
 };
 export default class RdfaEditor extends Component<Args> {
   PropertyEditor = RdfaPropertyEditor;

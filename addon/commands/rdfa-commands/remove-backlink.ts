@@ -1,6 +1,6 @@
+import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
-  findNodesByResource,
   getBacklinks,
   getProperties,
   getRdfaId,
@@ -26,31 +26,23 @@ export function removeBacklink({
     if (!backlinkToRemove) {
       return false;
     }
-    console.log(backlinkToRemove);
     if (dispatch) {
       const updatedBacklinks = backlinks.slice();
       updatedBacklinks.splice(index, 1);
       const tr = state.tr;
       tr.setNodeAttribute(position, 'backlinks', updatedBacklinks);
       // Update the properties of each inverse subject node
-      const subjectNodes = findNodesByResource(
-        tr.doc,
-        backlinkToRemove.subject,
-      );
-      subjectNodes.forEach((subjectNode) => {
-        const subjectNodeProperties = getProperties(subjectNode.value);
+      const subjects = getNodesByResource(state, backlinkToRemove.subject);
+      subjects?.forEach((subject) => {
+        const subjectNodeProperties = getProperties(subject.value);
         if (subjectNodeProperties) {
           const filteredProperties = subjectNodeProperties.filter((prop) => {
             return !(
               backlinkToRemove.predicate === prop.predicate &&
-              backlinkToRemove.subjectId === getRdfaId(subjectNode.value)
+              backlinkToRemove.subjectId === getRdfaId(subject.value)
             );
           });
-          tr.setNodeAttribute(
-            subjectNode.pos,
-            'properties',
-            filteredProperties,
-          );
+          tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
         }
       });
       dispatch(tr);

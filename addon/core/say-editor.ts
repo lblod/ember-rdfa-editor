@@ -35,6 +35,7 @@ import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
+import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -107,6 +108,7 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
+        rdfaInfoPlugin(),
       ];
     }
 

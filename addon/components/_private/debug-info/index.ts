@@ -1,9 +1,9 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { ResolvedNode } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
-  node: ResolvedNode;
+  node: ResolvedPNode;
 };
 export default class DebugInfo extends Component<Args> {
   @tracked collapsed = false;

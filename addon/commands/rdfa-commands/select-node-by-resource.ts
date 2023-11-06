@@ -1,4 +1,4 @@
-import { findNodesByResource } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByResource = {
@@ -12,14 +12,14 @@ export function selectNodeByResource({
   resource,
 }: SelectNodeByResource): Command {
   return (state, dispatch) => {
-    const resolvedNode = findNodesByResource(state.doc, resource)[0];
-    if (!resolvedNode) {
+    const target = getNodesByResource(state, resource)?.[0];
+    if (!target) {
       return false;
     }
     if (dispatch) {
       const tr = state.tr;
       tr.setSelection(
-        new NodeSelection(tr.doc.resolve(resolvedNode.pos)),
+        new NodeSelection(tr.doc.resolve(target.pos)),
       ).scrollIntoView();
       dispatch(tr);
     }
