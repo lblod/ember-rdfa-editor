@@ -1,11 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
+import { Backlink, Property } from './say-parser';
 
 export const rdfaAttrs = {
   properties: { default: [] },
@@ -22,7 +19,7 @@ export const rdfaDomAttrs = {
   'data-rdfa-node-type': { default: undefined },
 };
 
-type RdfaAttrs = Record<string, string | OutgoingProp[] | IncomingProp[]>;
+type RdfaAttrs = Record<string, string | Property[] | Backlink[]>;
 
 export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   const attrs: RdfaAttrs = {};
@@ -35,11 +32,11 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
       hasAnyRdfaAttributes = true;
 
       if (key === 'data-outgoing-props') {
-        const properties = JSON.parse(value) as OutgoingProp[];
+        const properties = JSON.parse(value) as Property[];
         attrs['properties'] = properties;
       }
       if (key === 'data-incoming-props') {
-        const backlinks = JSON.parse(value) as IncomingProp[];
+        const backlinks = JSON.parse(value) as Backlink[];
         attrs['backlinks'] = backlinks;
       }
       if (key === 'data-rdfa-node-type') {
@@ -100,14 +97,14 @@ export function renderInvisibleRdfa(
   attrs: Record<string, unknown> = {},
 ): DOMOutputSpec {
   const propElements = [];
-  const properties = nodeOrMark.attrs.properties as OutgoingProp[];
+  const properties = nodeOrMark.attrs.properties as Property[];
   for (const { type, predicate, object } of properties) {
-    if (type === 'attr') {
+    if (type === 'attribute') {
       propElements.push(['span', { property: predicate, content: object }, '']);
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const backlinks = nodeOrMark.attrs.backlinks as IncomingProp[];
+    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
     for (const { predicate, subject } of backlinks) {
       propElements.push(['span', { rev: predicate, resource: subject }]);
     }
@@ -123,7 +120,7 @@ export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
 ): Record<string, string> {
   if (nodeOrMark.attrs.rdfaNodeType !== 'resource') {
-    const backlinks = nodeOrMark.attrs.backlinks as IncomingProp[];
+    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
     if (!backlinks.length) {
       return {};
     }

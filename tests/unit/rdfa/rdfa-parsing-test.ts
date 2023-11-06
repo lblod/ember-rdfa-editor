@@ -56,11 +56,8 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
-import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { testEditor } from 'dummy/tests/utils/editor';
+import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
 
 const schema = new Schema({
   nodes: {
@@ -174,26 +171,26 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as
-      | OutgoingProp[]
-      | undefined;
+    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
-      | IncomingProp[]
+      | Backlink[]
       | undefined;
-    const expectedProps: OutgoingProp[] = [
+    const expectedProps: Property[] = [
       {
         object: 'besluit:Besluit',
         predicate: rdf('type'),
-        type: 'attr',
+        type: 'attribute',
       },
       {
-        nodeId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        object: 'test',
+        type: 'external',
         predicate: prov('value'),
-        type: 'node',
+        object: {
+          type: 'literal',
+          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        },
       },
     ];
-    const expectedBacklinks: IncomingProp[] = [];
+    const expectedBacklinks: Backlink[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -202,14 +199,11 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as OutgoingProp[] | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as
-      | IncomingProp[]
-      | undefined;
-    const expectedValueProps: OutgoingProp[] = [];
-    const expectedValueBacklinks: IncomingProp[] = [
+    const valueProps = valueNode.attrs.properties as Property[] | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
+    const expectedValueProps: Property[] = [];
+    const expectedValueBacklinks: Backlink[] = [
       {
-        subjectId: '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
         subject: 'http://test/1',
         predicate: prov('value'),
       },
@@ -254,32 +248,32 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as
-      | OutgoingProp[]
-      | undefined;
+    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
-      | IncomingProp[]
+      | Backlink[]
       | undefined;
 
-    const expectedProps: OutgoingProp[] = [
+    const expectedProps: Property[] = [
       {
         object: 'ext:BesluitNieuweStijl',
         predicate: rdf('type'),
-        type: 'attr',
+        type: 'attribute',
       },
       {
         object: 'http://publications.europa.eu/resource/authority/language/NLD',
         predicate: 'eli:language',
-        type: 'attr',
+        type: 'attribute',
       },
       {
-        nodeId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        object: 'test',
+        object: {
+          type: 'literal',
+          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        },
         predicate: prov('value'),
-        type: 'node',
+        type: 'external',
       },
     ];
-    const expectedBacklinks: IncomingProp[] = [];
+    const expectedBacklinks: Backlink[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -288,14 +282,11 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as OutgoingProp[] | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as
-      | IncomingProp[]
-      | undefined;
-    const expectedValueProps: OutgoingProp[] = [];
-    const expectedValueBacklinks: IncomingProp[] = [
+    const valueProps = valueNode.attrs.properties as Property[] | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
+    const expectedValueProps: Property[] = [];
+    const expectedValueBacklinks: Backlink[] = [
       {
-        subjectId: '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
         subject: 'http://test/1',
         predicate: prov('value'),
       },

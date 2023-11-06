@@ -1,9 +1,9 @@
+import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
 import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
+  getNodeByRdfaId,
+  getNodesByResource,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getProperties,
   getRdfaId,
@@ -15,14 +15,14 @@ export type AddPropertyArgs = {
   /** The position of the node at which to add the property */
   position: number;
   /** Node or Attribute to add */
-  property: OutgoingProp;
+  property: Property;
 };
 
 export function addProperty({ position, property }: AddPropertyArgs): Command {
   return (state, dispatch) => {
     const node = state.doc.nodeAt(position);
 
-    if (!node || !supportsAttribute(node, 'properties')) {
+    if (!node) {
       return false;
     }
     const resource = getResource(node);
@@ -31,38 +31,47 @@ export function addProperty({ position, property }: AddPropertyArgs): Command {
     if (!resource || !rdfaId) {
       return false;
     }
-    const properties = getProperties(node);
-    if (dispatch) {
-      const updatedProperties = properties
-        ? [...properties, property]
-        : [property];
-      const tr = state.tr;
-      tr.setNodeAttribute(position, 'properties', updatedProperties);
-      if (property.type === 'node') {
-        /**
-         * TODO: we need two make two cases here
-         * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
-         * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
-         */
-
-        const target = getNodeByRdfaId(state, property.nodeId);
-        if (target && supportsAttribute(target.value, 'backlinks')) {
-          const backlinks = target.value.attrs.backlinks as
-            | IncomingProp[]
-            | undefined;
-          const newBacklink: IncomingProp = {
-            predicate: property.predicate,
-            subject: resource,
-            subjectId: rdfaId,
-          };
-          const newBacklinks = backlinks
-            ? [...backlinks, newBacklink]
-            : [newBacklink];
-          tr.setNodeAttribute(target.pos, 'backlinks', newBacklinks);
-        }
-      }
-      dispatch(tr);
+    if (!dispatch) {
+      return true;
     }
+
+    const properties = getProperties(node);
+    const updatedProperties = properties
+      ? [...properties, property]
+      : [property];
+    const tr = state.tr;
+    tr.setNodeAttribute(position, 'properties', updatedProperties);
+    if (property.type === 'external') {
+      const newBacklink: Backlink = {
+        subject: resource,
+        predicate: property.predicate,
+      };
+      const { object } = property;
+      let targets: ResolvedPNode[] | undefined;
+      /**
+       * We need two make two cases here
+       * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
+       * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
+       */
+      if (object.type === 'literal') {
+        const target = getNodeByRdfaId(state, object.rdfaId);
+        if (target) {
+          targets = [target];
+        }
+      } else {
+        targets = getNodesByResource(state, object.resource);
+      }
+      targets?.forEach((target) => {
+        const backlinks = target.value.attrs.backlinks as
+          | Backlink[]
+          | undefined;
+        const newBacklinks = backlinks
+          ? [...backlinks, newBacklink]
+          : [newBacklink];
+        tr.setNodeAttribute(target.pos, 'backlinks', newBacklinks);
+      });
+    }
+    dispatch(tr);
     return true;
   };
 }

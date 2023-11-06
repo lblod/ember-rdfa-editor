@@ -18,26 +18,31 @@ import Datastore, {
 import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
 import { Quad } from '@rdfjs/types';
 
-export interface OutgoingNodeProp {
-  type: 'node';
+export type ExternalProperty = {
+  type: 'external';
+  predicate: string;
+  object:
+    | {
+        type: 'literal';
+        rdfaId: string;
+      }
+    | {
+        type: 'resource';
+        resource: string;
+      };
+};
+
+export type AttributeProperty = {
+  type: 'attribute';
   predicate: string;
   object: string;
-  nodeId: string;
-}
+};
+export type Property = AttributeProperty | ExternalProperty;
 
-export interface OutgoingAttrProp {
-  type: 'attr';
-  predicate: string;
-  object: string;
-}
-
-export type OutgoingProp = OutgoingNodeProp | OutgoingAttrProp;
-
-export interface IncomingProp {
-  predicate: string;
+export type Backlink = {
   subject: string;
-  subjectId?: string;
-}
+  predicate: string;
+};
 
 export default class SayParser extends ProseParser {
   constructor(schema: Schema, rules: readonly ParseRule[]) {
@@ -73,68 +78,54 @@ export default class SayParser extends ProseParser {
 
     // every resource node
     for (const [node, subject] of datastore.getResourceNodeMap().entries()) {
-      const outgoingProps: OutgoingProp[] = [];
+      const properties: Property[] = [];
       // get all quads that have our subject
       const outgoingQuads = datastore.match(subject).asQuadResultSet();
       const seenLinks = new Set<string>();
       for (const quad of outgoingQuads) {
-        this.quadToOutgoing(datastore, quad).forEach((prop) => {
-        // skip duplicates
-          if (prop.type !== 'node' || !seenLinks.has(prop.nodeId)) {
-            if (prop.type === 'node') {
-              seenLinks.add(prop.nodeId);
+        this.quadToProperties(datastore, quad).forEach((prop) => {
+          if (prop.type === 'external' && prop.object.type === 'literal') {
+            if (!seenLinks.has(prop.object.rdfaId)) {
+              seenLinks.add(prop.object.rdfaId);
+              properties.push(prop);
             }
-            outgoingProps.push(prop);
+          } else {
+            properties.push(prop);
           }
         });
       }
 
-      const incomingProps: IncomingProp[] = [];
+      const incomingProps: Backlink[] = [];
       const incomingQuads = datastore.match(null, null, subject);
       for (const quad of incomingQuads.asQuadResultSet()) {
-        incomingProps.push(this.quadToIncoming(datastore, quad));
+        incomingProps.push(this.quadToBacklink(quad));
       }
 
       // write info to node
-      (node as HTMLElement).dataset.outgoingProps =
-        JSON.stringify(outgoingProps);
+      (node as HTMLElement).dataset.outgoingProps = JSON.stringify(properties);
       (node as HTMLElement).dataset.incomingProps =
         JSON.stringify(incomingProps);
       (node as HTMLElement).dataset.rdfaNodeType = 'resource';
     }
     // each content node
     for (const [node, object] of datastore.getContentNodeMap().entries()) {
-      const incomingProps: IncomingProp[] = [];
       const { subject, predicate } = object;
-      // find quads that refer to us
-      const quads = datastore.match(subject, predicate).asQuadResultSet();
-      const seenLinks = new Set<string>();
-      for (const quad of quads) {
-        const incominProp = this.quadToIncoming(datastore, quad);
-        const subjId = incominProp.subjectId;
-
-        // skip duplicates
-        if (!subjId || !seenLinks.has(subjId)) {
-          if (subjId) {
-            seenLinks.add(subjId);
-          }
-          incomingProps.push(this.quadToIncoming(datastore, quad));
-        }
-      }
+      const incomingProp: Backlink = {
+        subject: subject.value,
+        predicate: predicate.value,
+      };
       // write info to node
-      (node as HTMLElement).dataset.incomingProps =
-        JSON.stringify(incomingProps);
+      (node as HTMLElement).dataset.incomingProps = JSON.stringify([
+        incomingProp,
+      ]);
       (node as HTMLElement).dataset.rdfaNodeType = 'content';
     }
 
     return super.parse(dom, options);
   }
 
-  private quadToOutgoing(
-    datastore: Datastore<Node>,
-    quad: Quad,
-  ): OutgoingProp[] {
-    const result: OutgoingProp[] = [];
+  private quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
+    const result: Property[] = [];
     // check if quad refers to a contentNode
     const contentNodes = datastore
       .getContentNodeMap()
@@ -144,10 +135,12 @@ export default class SayParser extends ProseParser {
       for (const contentNode of contentNodes) {
         const contentId = ensureId(contentNode as HTMLElement);
         result.push({
-          type: 'node',
-          nodeId: contentId,
-          object: quad.object.value,
+          type: 'external',
           predicate: quad.predicate.value,
+          object: {
+            type: 'literal',
+            rdfaId: contentId,
+          },
         });
       }
       return result;
@@ -157,51 +150,39 @@ export default class SayParser extends ProseParser {
         quad.object.termType === 'BlankNode' ||
         quad.object.termType === 'NamedNode'
       ) {
-        const resourceNodes = datastore
+        const resourceNode = datastore
           .getResourceNodeMap()
-          .getValues(quad.object);
-        if (resourceNodes) {
-          for (const resourceNode of resourceNodes) {
-            const subjectId = ensureId(resourceNode as HTMLElement);
-            result.push({
-              type: 'node',
-              nodeId: subjectId,
-              object: quad.object.value,
+          .getFirstValue(quad.object);
+        if (resourceNode) {
+          return [
+            {
+              type: 'external',
               predicate: quad.predicate.value,
-            });
-          }
-          return result;
+              object: {
+                type: 'resource',
+                resource: quad.object.value,
+              },
+            },
+          ];
         }
       }
       // neither a content nor resource node, so just a plain attribute
       return [
         {
-          type: 'attr',
-          object: quad.object.value,
+          type: 'attribute',
           predicate: quad.predicate.value,
+          object: quad.object.value,
         },
       ];
     }
   }
 
-  private quadToIncoming(datastore: Datastore<Node>, quad: Quad): IncomingProp {
+  private quadToBacklink(quad: Quad): Backlink {
     // check if theres a resource node for the subject
-    const resourceNode = datastore
-      .getResourceNodeMap()
-      .getFirstValue(quad.subject);
-    if (resourceNode) {
-      const subjectId = ensureId(resourceNode as HTMLElement);
-      return {
-        subjectId,
-        subject: quad.subject.value,
-        predicate: quad.predicate.value,
-      };
-    } else {
-      return {
-        subject: quad.subject.value,
-        predicate: quad.predicate.value,
-      };
-    }
+    return {
+      subject: quad.subject.value,
+      predicate: quad.predicate.value,
+    };
   }
 
   parseSlice(dom: Node, options?: ParseOptions): Slice {

@@ -1,11 +1,11 @@
 import Component from '@glimmer/component';
-import { OutgoingAttrProp } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { AttributeProperty } from '@lblod/ember-rdfa-editor/core/say-parser';
 import { localCopy } from 'tracked-toolbox';
 
 type Args = {
-  property?: OutgoingAttrProp;
+  property?: AttributeProperty;
   onCancel: () => void;
-  onSave: (property: OutgoingAttrProp) => void;
+  onSave: (property: AttributeProperty) => void;
 };
 
 export default class PropertyEditorModal extends Component<Args> {
@@ -39,7 +39,7 @@ export default class PropertyEditorModal extends Component<Args> {
   save = () => {
     if (this.newPredicate && this.newObject) {
       this.args.onSave({
-        type: 'attr',
+        type: 'attribute',
         predicate: this.newPredicate,
         object: this.newObject,
       });

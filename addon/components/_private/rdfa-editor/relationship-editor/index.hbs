@@ -24,7 +24,7 @@
       {{#if this.hasOutgoing}}
         <AuList @divider={{true}} as |Item|>
           {{#each this.properties as |prop index|}}
-            {{#if (eq prop.type "node")}}
+            {{#if (eq prop.type "external")}}
               <Item
                 class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
               >

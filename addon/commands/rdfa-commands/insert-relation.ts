@@ -32,11 +32,13 @@ export function insertRelation({
     const addPropArgs: AddPropertyArgs = {
       position,
       property: {
-        type: 'node',
+        type: 'external',
         predicate,
         // Use a placeholder for applicability checks (i.e. !dispatcher)
-        object: 'placeholder',
-        nodeId: subjectId,
+        object: {
+          type: 'literal',
+          rdfaId: 'placeholder',
+        },
       },
     };
     if (!addProperty(addPropArgs)(state)) {
@@ -47,10 +49,13 @@ export function insertRelation({
       const objectId = uuidv4();
       const createdObject = state.schema.nodes.block_rdfa.create(
         { __rdfaId: objectId },
-        state.schema.text(predicate),
+        state.schema.nodes.paragraph.create(null, state.schema.text(predicate)),
       );
       // Replace the placeholder
-      addPropArgs.property.object = objectId;
+      addPropArgs.property.object = {
+        type: 'literal',
+        rdfaId: objectId,
+      };
 
       const addPropStatus = addProperty(addPropArgs)(state, (tr) => {
         tr.replaceSelectionWith(createdObject).scrollIntoView();

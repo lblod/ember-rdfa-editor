@@ -1,10 +1,7 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
-import {
-  IncomingProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { ResolvedPNode } from './types';
+import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
 
 export type RdfaAttr =
   | 'vocab'
@@ -156,12 +153,12 @@ export function getResource(node: PNode): string | undefined {
   return node.attrs.resource as string | undefined;
 }
 
-export function getProperties(node: PNode): OutgoingProp[] | undefined {
-  return node.attrs.properties as OutgoingProp[] | undefined;
+export function getProperties(node: PNode): Property[] | undefined {
+  return node.attrs.properties as Property[] | undefined;
 }
 
-export function getBacklinks(node: PNode): IncomingProp[] | undefined {
-  return node.attrs.backlinks as IncomingProp[] | undefined;
+export function getBacklinks(node: PNode): Backlink[] | undefined {
+  return node.attrs.backlinks as Backlink[] | undefined;
 }
 
 /**

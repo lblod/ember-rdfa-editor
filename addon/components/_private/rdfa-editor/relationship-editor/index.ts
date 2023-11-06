@@ -1,10 +1,5 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import {
-  IncomingProp,
-  OutgoingNodeProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
@@ -20,6 +15,11 @@ import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import {
+  Backlink,
+  ExternalProperty,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/say-parser';
 
 type Args = {
   controller?: SayController;
@@ -32,15 +32,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   Modal = RelationshipEditorModal;
 
   get backlinks() {
-    return this.args.node.value.attrs.backlinks as IncomingProp[] | undefined;
+    return this.args.node.value.attrs.backlinks as Backlink[] | undefined;
   }
 
   get properties() {
-    return this.args.node.value.attrs.properties as OutgoingProp[] | undefined;
+    return this.args.node.value.attrs.properties as Property[] | undefined;
   }
 
   get hasOutgoing() {
-    return this.properties?.some((prop) => prop.type === 'node');
+    return this.properties?.some((prop) => prop.type === 'external');
   }
 
   get controller() {
@@ -57,18 +57,24 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return getAllRdfaIds(this.controller.mainEditorState.doc);
   }
 
-  goToOutgoing = (outgoing: OutgoingNodeProp) => {
-    this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: outgoing.nodeId }));
+  goToOutgoing = (outgoing: ExternalProperty) => {
+    const { object } = outgoing;
+    if (object.type === 'literal') {
+      this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: object.rdfaId }));
+    } else {
+      this.controller?.doCommand(
+        selectNodeByResource({ resource: object.resource }),
+      );
+    }
   };
 
-  goToBacklink = (backlink: IncomingProp) => {
+  goToBacklink = (backlink: Backlink) => {
     this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
     );
   };
 
   removeBacklink = (index: number) => {
-    console.log('remove backlink');
     this.controller?.doCommand(
       removeBacklink({ position: this.args.node.pos, index }),
     );
@@ -122,20 +128,38 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.addRelationshipType = undefined;
   };
 
-  addBacklink = (_backlink: IncomingProp) => {
+  addBacklink = (_backlink: Backlink) => {
     throw new NotImplementedError();
   };
 
   relateNodes(predicate: string, obj: PNode) {
-    this.addProperty({
-      type: 'node',
-      predicate,
-      object: obj.attrs.resource as string,
-      nodeId: obj.attrs.__rdfaId as string,
-    });
+    const resource = obj.attrs.resource as string | undefined;
+    const rdfaId = obj.attrs.__rdfaId as string;
+    if (resource) {
+      console.log('TO RESOURCE');
+      this.addProperty({
+        type: 'external',
+        predicate,
+        object: {
+          type: 'resource',
+          resource: resource,
+        },
+      });
+    } else {
+      console.log('TO LITERAL');
+
+      this.addProperty({
+        type: 'external',
+        predicate,
+        object: {
+          type: 'literal',
+          rdfaId: rdfaId,
+        },
+      });
+    }
   }
 
-  addProperty = (property: OutgoingNodeProp) => {
+  addProperty = (property: Property) => {
     this.controller?.doCommand(
       addProperty({ position: this.args.node.pos, property }),
     );
