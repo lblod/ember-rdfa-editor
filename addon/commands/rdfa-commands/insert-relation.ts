@@ -1,36 +1,22 @@
-import { getRdfaId } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import {
-  AddPropertyArgs,
-  addProperty,
-} from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import { AddPropertyArgs, addProperty } from './add-property';
 import { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 
 type InsertRelationArgs = {
-  /** The position of the node at which to add the property */
-  position: number;
+  /** The subject to which to add the property */
+  subject: string;
   type: 'content' | 'resource';
   /** The predicate describing the new relationship */
   predicate: string;
 };
 export function insertRelation({
-  position,
+  subject,
   type: _type,
   predicate,
 }: InsertRelationArgs): Command {
   return (state, dispatch) => {
-    const node = state.doc.nodeAt(position);
-
-    if (!node) {
-      return false;
-    }
-    const subjectId = getRdfaId(node);
-    if (!subjectId) {
-      return false;
-    }
-
     const addPropArgs: AddPropertyArgs = {
-      position,
+      resource: subject,
       property: {
         type: 'external',
         predicate,

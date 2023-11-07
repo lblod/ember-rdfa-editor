@@ -19,6 +19,7 @@ import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   Backlink,
   ExternalProperty,
+  ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
 
@@ -138,10 +139,13 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   addNode = (type: 'content' | 'resource', predicate: string) => {
-    this.controller?.doCommand(
-      insertRelation({ position: this.args.node.pos, type, predicate }),
-    );
-    this.addRelationshipType = undefined;
+    // This function can only be called when the selected node defines a resource
+    if (this.currentResource) {
+      this.controller?.doCommand(
+        insertRelation({ subject: this.currentResource, type, predicate }),
+      );
+      this.addRelationshipType = undefined;
+    }
   };
 
   addBacklink = (_backlink: Backlink) => {
@@ -151,34 +155,32 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   relateNodes(predicate: string, obj: PNode) {
     const resource = obj.attrs.resource as string | undefined;
     const rdfaId = obj.attrs.__rdfaId as string;
+    let object: ExternalPropertyObject;
     if (resource) {
-      console.log('TO RESOURCE');
-      this.addProperty({
-        type: 'external',
-        predicate,
-        object: {
-          type: 'resource',
-          resource: resource,
-        },
-      });
+      object = {
+        type: 'resource',
+        resource,
+      };
     } else {
-      console.log('TO LITERAL');
-
-      this.addProperty({
-        type: 'external',
-        predicate,
-        object: {
-          type: 'literal',
-          rdfaId: rdfaId,
-        },
-      });
+      object = {
+        type: 'literal',
+        rdfaId,
+      };
     }
+    this.addProperty({
+      type: 'external',
+      predicate,
+      object,
+    });
   }
 
   addProperty = (property: Property) => {
-    this.controller?.doCommand(
-      addProperty({ position: this.args.node.pos, property }),
-    );
+    // This function can only be called when the selected node defines a resource
+    if (this.currentResource) {
+      this.controller?.doCommand(
+        addProperty({ resource: this.currentResource, property }),
+      );
+    }
   };
 
   getNodeById = (rdfaid: string) => {

@@ -3,8 +3,10 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
-import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
-import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import {
+  addProperty,
+  removeProperty,
+} from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   AttributeProperty,
@@ -66,7 +68,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   addProperty = (property: AttributeProperty) => {
     this.args.controller?.doCommand(
       addProperty({
-        position: this.args.node.pos,
+        resource: this.currentResource,
         property,
       }),
     );
