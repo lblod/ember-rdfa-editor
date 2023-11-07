@@ -61,9 +61,11 @@ export function insertRelation(args: InsertRelationArgs): Command {
       (addPropArgs.property as OutgoingNodeProp).nodeId = objectId;
       // Need to create the node before can call add property
       const tr = state.tr.replaceSelectionWith(createdObject).scrollIntoView();
+      // pass the state after this transaction to addProperty so the node exists
+      const newState = state.apply(tr);
 
       const addPropStatus = addProperty({ ...addPropArgs, transaction: tr })(
-        state,
+        newState,
         (transaction) => {
           dispatch(transaction);
         },
