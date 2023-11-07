@@ -3,6 +3,8 @@ import { tracked } from '@glimmer/tracking';
 
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { type SayController } from '@lblod/ember-rdfa-editor';
+import { clearBacklinks } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-backlinks';
+import { clearProperties } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-properties';
 
 type Args = {
   node: ResolvedPNode;
@@ -34,7 +36,12 @@ export default class RemoveNode extends Component<Args> {
   };
 
   deleteNode = () => {
-    this.args.controller.withTransaction((tr) => {
+    this.controller.doCommand(clearBacklinks({ position: this.args.node.pos }));
+    this.controller.doCommand(
+      clearProperties({ position: this.args.node.pos }),
+    );
+
+    this.controller.withTransaction((tr) => {
       return tr.deleteRange(
         this.node.pos,
         this.node.pos + this.node.value.nodeSize,
