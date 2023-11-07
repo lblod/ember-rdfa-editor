@@ -58,7 +58,6 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   }
 
   // Show underlines on annotation
-  [data-editor-highlight='true']:not([contenteditable='']),
   [property],
   [typeof]:not([typeof='foaf:Document']),
   [data-type],
@@ -80,8 +79,7 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   }
 
   // Making it easy to discover elements that need to be filled out / take action upon
-  [property^='ext:insert'],
-  [data-editor-highlight='true']:not([contenteditable='']) {
+  [property^='ext:insert'] {
     background-color: $say-editor-highlight-color;
     transition: background-color var(--au-transition);
 
@@ -184,7 +182,6 @@ $say-annotation-background-color: var(--au-gray-100) !default;
 
 // Show RDFA blocks
 .rdfa-annotations.show-rdfa-blocks {
-  [data-editor-highlight='true'],
   [property],
   [typeof]:not([typeof='foaf:Document']),
   [data-type],
@@ -220,8 +217,7 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   }
 
   // Add help text on highlights
-  .mark-highlight-manual:after,
-  [data-editor-highlight='true']:not([contenteditable='']):after {
+  .mark-highlight-manual:after {
     @include au-font-size($say-smallest-font-size, 1.2);
     font-family: var(--au-font);
     font-weight: var(--au-regular);
