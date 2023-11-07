@@ -85,7 +85,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
 
   removeProperty = (index: number) => {
     this.args.controller?.doCommand(
-      removeProperty({ position: this.args.node.pos, index }),
+      removeProperty({ resource: this.currentResource, index }),
     );
   };
 

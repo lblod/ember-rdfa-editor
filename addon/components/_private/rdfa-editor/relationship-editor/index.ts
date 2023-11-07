@@ -98,9 +98,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeProperty = (index: number) => {
-    this.controller?.doCommand(
-      removeProperty({ position: this.args.node.pos, index }),
-    );
+    // This function can only be called when the selected node defines a resource
+    if (this.currentResource) {
+      this.controller?.doCommand(
+        removeProperty({ resource: this.currentResource, index }),
+      );
+    }
   };
 
   get canAddRelationship() {
