@@ -45,6 +45,10 @@ export default class RdfaPropertyEditor extends Component<Args> {
     return this.status?.mode === 'update';
   }
 
+  get currentResource() {
+    return this.args.node.value.attrs.resource as string;
+  }
+
   startPropertyCreation = () => {
     this.status = {
       mode: 'creation',

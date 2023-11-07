@@ -3,13 +3,14 @@ import { tracked } from '@glimmer/tracking';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
-  removeBacklink,
+  addProperty,
+  insertRelation,
+  removeBacklinkFromLiteral,
+  removeBacklinkFromResource,
   removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
-import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
-import { insertRelation } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/insert-relation';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
@@ -51,6 +52,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return isResourceNode(this.args.node.value);
   }
 
+  get currentResource() {
+    return this.args.node.value.attrs.resource as string | undefined;
+  }
+
+  get currentRdfaId() {
+    return this.args.node.value.attrs.__rdfaId as string;
+  }
+
   // TODO this probably shouldn't be calculated every time
   get allRdfaids() {
     if (!this.controller) throw Error('No Controller');
@@ -75,9 +84,16 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
-    this.controller?.doCommand(
-      removeBacklink({ position: this.args.node.pos, index }),
-    );
+    if (this.currentResource) {
+      this.controller?.doCommand(
+        removeBacklinkFromResource({ resource: this.currentResource, index }),
+      );
+    } else {
+      // This is a content node, so there is only 1 backlink.
+      this.controller?.doCommand(
+        removeBacklinkFromLiteral({ rdfaId: this.currentRdfaId }),
+      );
+    }
   };
 
   removeProperty = (index: number) => {
