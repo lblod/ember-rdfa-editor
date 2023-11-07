@@ -18,18 +18,19 @@ import Datastore, {
 import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
 import { Quad } from '@rdfjs/types';
 
+export type ExternalPropertyObject =
+  | {
+      type: 'literal';
+      rdfaId: string;
+    }
+  | {
+      type: 'resource';
+      resource: string;
+    };
 export type ExternalProperty = {
   type: 'external';
   predicate: string;
-  object:
-    | {
-        type: 'literal';
-        rdfaId: string;
-      }
-    | {
-        type: 'resource';
-        resource: string;
-      };
+  object: ExternalPropertyObject;
 };
 
 export type AttributeProperty = {
