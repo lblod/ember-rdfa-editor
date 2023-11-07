@@ -1,42 +1,29 @@
-import { getRdfaId } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import {
-  AddPropertyArgs,
-  addProperty,
-} from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import { AddPropertyArgs, addProperty } from './add-property';
 import { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
-import { OutgoingNodeProp } from '@lblod/ember-rdfa-editor/core/say-parser';
 
 export type InsertRelationDetails = {
   /** The predicate describing the new relationship */
   predicate: string;
 } & ({ type: 'content' } | { type: 'resource'; uriBase: string });
 type InsertRelationArgs = {
-  /** The position of the node at which to add the property */
-  position: number;
+  /** The subject to which to add the property */
+  subject: string;
 } & InsertRelationDetails;
 
 export function insertRelation(args: InsertRelationArgs): Command {
   return (state, dispatch) => {
-    const { position, type, predicate } = args;
-    const node = state.doc.nodeAt(position);
-
-    if (!node) {
-      return false;
-    }
-    const subjectId = getRdfaId(node);
-    if (!subjectId) {
-      return false;
-    }
-
+    const { subject, type, predicate } = args;
     const addPropArgs: AddPropertyArgs = {
-      position,
+      resource: subject,
       property: {
-        type: 'node',
+        type: 'external',
         predicate,
         // Use a placeholder for applicability checks (i.e. !dispatcher)
-        object: predicate,
-        nodeId: 'placeholder',
+        object: {
+          type: 'literal',
+          rdfaId: 'placeholder',
+        },
       },
     };
     if (!addProperty(addPropArgs)(state)) {
@@ -54,11 +41,14 @@ export function insertRelation(args: InsertRelationArgs): Command {
           ...additionalAttrs,
         },
         state.schema.node('paragraph', null, [
-          state.schema.text(addPropArgs.property.object),
+          state.schema.text(addPropArgs.property.predicate),
         ]),
       );
       // Replace the placeholder
-      (addPropArgs.property as OutgoingNodeProp).nodeId = objectId;
+      addPropArgs.property.object = {
+        type: 'literal',
+        rdfaId: objectId,
+      };
       // Need to create the node before can call add property
       const tr = state.tr.replaceSelectionWith(createdObject).scrollIntoView();
       // pass the state after this transaction to addProperty so the node exists

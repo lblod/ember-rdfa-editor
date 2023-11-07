@@ -1,45 +1,51 @@
 import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { supportsAttribute } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   getBacklinks,
   getProperties,
-  getRdfaId,
+  getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command } from 'prosemirror-state';
 
-type RemoveBacklinkArgs = {
-  position: number; // The position of the node from which to remove the backlink
+type RemoveResourceBacklinkArgs = {
+  resource: string; // The resource from which to remove a backlink
   index: number; // The index of the property to be removed in the backlinks-array of the node
 };
 
-export function removeBacklink({
-  position,
+export function removeBacklinkFromResource({
+  resource,
   index,
-}: RemoveBacklinkArgs): Command {
+}: RemoveResourceBacklinkArgs): Command {
   return (state, dispatch) => {
-    const node = state.doc.nodeAt(position);
-    if (!node || !supportsAttribute(node, 'backlinks')) {
+    const nodes = getNodesByResource(state, resource);
+    if (!nodes?.length) {
       return false;
     }
-    const backlinks = getBacklinks(node);
+
+    const backlinks = getBacklinks(nodes[0].value);
     const backlinkToRemove = backlinks?.[index];
     if (!backlinkToRemove) {
       return false;
     }
+
     if (dispatch) {
       const updatedBacklinks = backlinks.slice();
       updatedBacklinks.splice(index, 1);
+
       const tr = state.tr;
-      tr.setNodeAttribute(position, 'backlinks', updatedBacklinks);
+      // Update the backlinks of each node defining the given resource
+      nodes.forEach((node) => {
+        tr.setNodeAttribute(node.pos, 'backlinks', updatedBacklinks);
+      });
+
       // Update the properties of each inverse subject node
       const subjects = getNodesByResource(state, backlinkToRemove.subject);
       subjects?.forEach((subject) => {
-        const subjectNodeProperties = getProperties(subject.value);
-        if (subjectNodeProperties) {
-          const filteredProperties = subjectNodeProperties.filter((prop) => {
+        const properties = getProperties(subject.value);
+        if (properties) {
+          const filteredProperties = properties.filter((prop) => {
             return !(
               backlinkToRemove.predicate === prop.predicate &&
-              backlinkToRemove.subjectId === getRdfaId(subject.value)
+              backlinkToRemove.subject === getResource(subject.value)
             );
           });
           tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
@@ -47,6 +53,7 @@ export function removeBacklink({
       });
       dispatch(tr);
     }
+
     return true;
   };
 }

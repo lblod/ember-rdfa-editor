@@ -1,15 +1,17 @@
 import Component from '@glimmer/component';
-import {
-  OutgoingAttrProp,
-  OutgoingProp,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
-import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
-import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property';
+import {
+  addProperty,
+  removeProperty,
+} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import {
+  AttributeProperty,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/say-parser';
 
 type CreationStatus = {
   mode: 'creation';
@@ -17,7 +19,7 @@ type CreationStatus = {
 type UpdateStatus = {
   mode: 'update';
   index: number;
-  property: OutgoingAttrProp;
+  property: AttributeProperty;
 };
 type Status = CreationStatus | UpdateStatus;
 type Args = {
@@ -30,11 +32,11 @@ export default class RdfaPropertyEditor extends Component<Args> {
   @tracked status?: Status;
 
   get properties() {
-    return this.args.node.value.attrs.properties as OutgoingProp[] | undefined;
+    return this.args.node.value.attrs.properties as Property[] | undefined;
   }
 
   get hasAttributeProperties() {
-    return this.properties?.some((prop) => prop.type === 'attr');
+    return this.properties?.some((prop) => prop.type === 'attribute');
   }
 
   get isCreating() {
@@ -43,6 +45,10 @@ export default class RdfaPropertyEditor extends Component<Args> {
 
   get isUpdating() {
     return this.status?.mode === 'update';
+  }
+
+  get currentResource() {
+    return this.args.node.value.attrs.resource as string;
   }
 
   startPropertyCreation = () => {
@@ -55,21 +61,21 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.status = {
       mode: 'update',
       index,
-      property: this.properties?.[index] as OutgoingAttrProp,
+      property: this.properties?.[index] as AttributeProperty,
     };
   };
 
-  addProperty = (property: OutgoingAttrProp) => {
+  addProperty = (property: AttributeProperty) => {
     this.args.controller?.doCommand(
       addProperty({
-        position: this.args.node.pos,
+        resource: this.currentResource,
         property,
       }),
     );
     this.status = undefined;
   };
 
-  updateProperty = (newProperty: OutgoingAttrProp) => {
+  updateProperty = (newProperty: AttributeProperty) => {
     const { index } = this.status as UpdateStatus;
     const newProperties = unwrap(this.properties).slice();
     newProperties[index] = newProperty;
@@ -79,11 +85,11 @@ export default class RdfaPropertyEditor extends Component<Args> {
 
   removeProperty = (index: number) => {
     this.args.controller?.doCommand(
-      removeProperty({ position: this.args.node.pos, index }),
+      removeProperty({ resource: this.currentResource, index }),
     );
   };
 
-  updatePropertiesAttribute = (newProperties: OutgoingProp[]) => {
+  updatePropertiesAttribute = (newProperties: Property[]) => {
     this.args.controller?.withTransaction((tr) => {
       return tr.setNodeAttribute(
         this.args.node.pos,

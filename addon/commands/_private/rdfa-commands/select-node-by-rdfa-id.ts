@@ -13,13 +13,15 @@ export function selectNodeByRdfaId({
     if (!target) {
       return false;
     }
-    if (dispatch) {
-      const tr = state.tr;
-      tr.setSelection(
-        new NodeSelection(tr.doc.resolve(target.pos)),
-      ).scrollIntoView();
-      dispatch(tr);
+    if (!dispatch) {
+      return true;
     }
+
+    const tr = state.tr;
+    tr.setSelection(
+      new NodeSelection(tr.doc.resolve(target.pos)),
+    ).scrollIntoView();
+    dispatch(tr);
     return true;
   };
 }

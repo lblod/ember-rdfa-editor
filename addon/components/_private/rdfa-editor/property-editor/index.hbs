@@ -16,7 +16,7 @@
   {{#if this.hasAttributeProperties}}
     <AuList @divider={{true}} as |Item|>
       {{#each this.properties as |prop index|}}
-        {{#if (eq prop.type "attr")}}
+        {{#if (eq prop.type "attribute")}}
           <Item
             class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
           >
