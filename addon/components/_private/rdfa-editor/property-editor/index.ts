@@ -6,7 +6,7 @@ import PropertyEditorModal from './modal';
 import {
   addProperty,
   removeProperty,
-} from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
+} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   AttributeProperty,

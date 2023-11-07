@@ -10,7 +10,7 @@ import {
   removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
-} from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
+} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
