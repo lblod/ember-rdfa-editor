@@ -8,17 +8,31 @@ import { Command } from 'prosemirror-state';
 
 type ClearBacklinksArgs = {
   position: number;
+  callDispatchOnEarlyReturn?: boolean;
 };
 
-export function clearBacklinks({ position }: ClearBacklinksArgs): Command {
+export function clearBacklinks({
+  position,
+  callDispatchOnEarlyReturn,
+}: ClearBacklinksArgs): Command {
   return function (state, dispatch) {
+    const callDispatch = () => {
+      const tr = state.tr;
+
+      if (dispatch && callDispatchOnEarlyReturn) {
+        dispatch(tr);
+      }
+    };
+
     const node = state.doc.nodeAt(position);
     if (!node) {
+      callDispatch();
       return false;
     }
 
     const backlinks = getBacklinks(node);
     if (!dispatch || !backlinks || backlinks.length === 0) {
+      callDispatch();
       return true;
     }
 

@@ -12,16 +12,30 @@ import { Command } from 'prosemirror-state';
 
 type ClearPropertiesArgs = {
   position: number;
+  callDispatchOnEarlyReturn?: boolean;
 };
 
-export function clearProperties({ position }: ClearPropertiesArgs): Command {
+export function clearProperties({
+  position,
+  callDispatchOnEarlyReturn,
+}: ClearPropertiesArgs): Command {
   return function (state, dispatch) {
+    const callDispatch = () => {
+      const tr = state.tr;
+
+      if (dispatch && callDispatchOnEarlyReturn) {
+        dispatch(tr);
+      }
+    };
+
     const node = state.doc.nodeAt(position);
     if (!node) {
+      callDispatch();
       return false;
     }
     const properties = getProperties(node);
     if (!dispatch || !properties) {
+      callDispatch();
       return true;
     }
 
