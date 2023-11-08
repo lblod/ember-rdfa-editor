@@ -1,11 +1,12 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 
+import { Command, PNode, type SayController } from '@lblod/ember-rdfa-editor';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { Command, type SayController } from '@lblod/ember-rdfa-editor';
 import { clearBacklinks } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-backlinks';
 import { clearProperties } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-properties';
 import { Transaction } from 'prosemirror-state';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 
 type Args = {
   node: ResolvedPNode;
@@ -36,6 +37,29 @@ export default class RemoveNode extends Component<Args> {
     this.closeConfirmationDialog();
   };
 
+  findAllRdfaNodeChildrenPositions = (node: PNode) => {
+    const resolvedChildrenPositions: number[] = [];
+
+    node.forEach((child) => {
+      if (child.type.spec.attrs?.['rdfaNodeType']) {
+        const resolvedPos = getNodeByRdfaId(
+          this.controller.activeEditorState,
+          child.attrs?.['__rdfaId'],
+        )?.pos;
+
+        if (resolvedPos) {
+          resolvedChildrenPositions.push(resolvedPos);
+        }
+
+        resolvedChildrenPositions.push(
+          ...this.findAllRdfaNodeChildrenPositions(child),
+        );
+      }
+    });
+
+    return resolvedChildrenPositions;
+  };
+
   addDeleteRangeTransaction = (tr: Transaction) => {
     return tr.deleteRange(
       this.node.pos,
@@ -43,18 +67,21 @@ export default class RemoveNode extends Component<Args> {
     );
   };
 
-  deleteNodeCommand = () => {
+  clearBacklinksAndPropertiesCommand = (
+    position: number,
+    applyExtraTransaction?: (tr: Transaction) => Transaction,
+  ): Command => {
     const clearBacklinksCommand = clearBacklinks({
-      position: this.args.node.pos,
+      position,
       callDispatchOnEarlyReturn: true,
     });
     const clearPropertiesCommand = clearProperties({
-      position: this.args.node.pos,
+      position,
       callDispatchOnEarlyReturn: true,
     });
 
     // I'm sure there is a better way to abstract this, but this will have to do for now
-    const combinedCommand: Command = (state, dispatch) => {
+    return (state, dispatch) => {
       return clearBacklinksCommand(state, (clearBacklinksTransaction) => {
         // Take the state after clear backlinks call
         const { state: stateAfterClearBacklinks } = state.applyTransaction(
@@ -73,22 +100,38 @@ export default class RemoveNode extends Component<Args> {
               clearBacklinksTransaction,
             );
 
+            if (applyExtraTransaction) {
+              applyExtraTransaction(clearPropertiesTransaction);
+            }
+
             if (dispatch) {
               dispatch(clearBacklinksTransaction);
-              dispatch(
-                // Add delete range call on top of clear properties call
-                this.addDeleteRangeTransaction(clearPropertiesTransaction),
-              );
+              dispatch(clearPropertiesTransaction);
             }
           },
         );
       });
     };
+  };
 
-    return combinedCommand;
+  deleteNodeCommand = (position: number): Command => {
+    return this.clearBacklinksAndPropertiesCommand(
+      position,
+      this.addDeleteRangeTransaction,
+    );
   };
 
   deleteNode = () => {
-    this.controller.doCommand(this.deleteNodeCommand());
+    const childNodePositions = this.findAllRdfaNodeChildrenPositions(
+      this.node.value,
+    );
+
+    childNodePositions.forEach((position) => {
+      this.controller.doCommand(
+        this.clearBacklinksAndPropertiesCommand(position),
+      );
+    });
+
+    this.controller.doCommand(this.deleteNodeCommand(this.node.pos));
   };
 }
