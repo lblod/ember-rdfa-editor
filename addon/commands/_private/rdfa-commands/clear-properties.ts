@@ -8,34 +8,20 @@ import {
   getProperties,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command } from 'prosemirror-state';
+import { Command, Transaction, EditorState } from 'prosemirror-state';
 
 type ClearPropertiesArgs = {
   position: number;
-  callDispatchOnEarlyReturn?: boolean;
 };
 
-export function clearProperties({
-  position,
-  callDispatchOnEarlyReturn,
-}: ClearPropertiesArgs): Command {
+export function clearProperties({ position }: ClearPropertiesArgs): Command {
   return function (state, dispatch) {
-    const callDispatch = () => {
-      const tr = state.tr;
-
-      if (dispatch && callDispatchOnEarlyReturn) {
-        dispatch(tr);
-      }
-    };
-
     const node = state.doc.nodeAt(position);
     if (!node) {
-      callDispatch();
       return false;
     }
     const properties = getProperties(node);
     if (!dispatch || !properties) {
-      callDispatch();
       return true;
     }
 
@@ -78,3 +64,54 @@ export function clearProperties({
     return true;
   };
 }
+
+// TODO: Check if this can be reused inside `clearProperties` command so we don't have to duplicate the logic
+export const clearPropertiesTransaction =
+  ({ state, position }: { state: EditorState; position: number }) =>
+  (tr: Transaction) => {
+    const node = state.doc.nodeAt(position);
+    if (!node) {
+      return;
+    }
+
+    const properties = getProperties(node);
+    if (!properties) {
+      return;
+    }
+
+    tr.setNodeAttribute(position, 'properties', []);
+    properties.forEach((prop) => {
+      if (prop.type === 'external') {
+        const object = prop.object;
+
+        let targets: ResolvedPNode[] | undefined;
+        /**
+         * We need two make two cases here
+         * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
+         * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
+         */
+        if (object.type === 'literal') {
+          const target = getNodeByRdfaId(state, object.rdfaId);
+          if (target) {
+            targets = [target];
+          }
+        } else {
+          targets = getNodesByResource(state, object.resource);
+        }
+        targets?.forEach((target) => {
+          const backlinks = getBacklinks(target.value);
+          if (backlinks) {
+            const filteredBacklinks = backlinks.filter((backlink) => {
+              return !(
+                backlink.predicate === prop.predicate &&
+                backlink.subject === getResource(node)
+              );
+            });
+            tr.setNodeAttribute(target.pos, 'backlinks', filteredBacklinks);
+          }
+        });
+      }
+    });
+
+    return;
+  };

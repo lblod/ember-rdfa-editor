@@ -1,11 +1,12 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 
-import { Command, PNode, type SayController } from '@lblod/ember-rdfa-editor';
-import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { clearBacklinks } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-backlinks';
-import { clearProperties } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-properties';
 import { Transaction } from 'prosemirror-state';
+
+import { PNode, type SayController } from '@lblod/ember-rdfa-editor';
+import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import { clearBacklinksTransaction } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-backlinks';
+import { clearPropertiesTransaction } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-properties';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 
 type Args = {
@@ -60,64 +61,41 @@ export default class RemoveNode extends Component<Args> {
     return resolvedChildrenPositions;
   };
 
-  addDeleteRangeTransaction = (tr: Transaction) => {
-    return tr.deleteRange(
+  clearBacklinksAndPropertiesTransaction = ({
+    position,
+    transaction,
+  }: {
+    position: number;
+    transaction: Transaction;
+  }) => {
+    clearPropertiesTransaction({
+      state: this.controller.activeEditorState,
+      position,
+    })(transaction);
+    clearBacklinksTransaction({
+      state: this.controller.activeEditorState,
+      position,
+    })(transaction);
+  };
+
+  deleteNodeTransaction = ({
+    position,
+    transaction,
+  }: {
+    position: number;
+    transaction: Transaction;
+  }) => {
+    this.clearBacklinksAndPropertiesTransaction({
+      position,
+      transaction,
+    });
+    this.deleteRangeTransaction(transaction);
+  };
+
+  deleteRangeTransaction = (transaction: Transaction) => {
+    return transaction.deleteRange(
       this.node.pos,
       this.node.pos + this.node.value.nodeSize,
-    );
-  };
-
-  clearBacklinksAndPropertiesCommand = (
-    position: number,
-    applyExtraTransaction?: (tr: Transaction) => Transaction,
-  ): Command => {
-    const clearBacklinksCommand = clearBacklinks({
-      position,
-      callDispatchOnEarlyReturn: true,
-    });
-    const clearPropertiesCommand = clearProperties({
-      position,
-      callDispatchOnEarlyReturn: true,
-    });
-
-    // I'm sure there is a better way to abstract this, but this will have to do for now
-    return (state, dispatch) => {
-      return clearBacklinksCommand(state, (clearBacklinksTransaction) => {
-        // Take the state after clear backlinks call
-        const { state: stateAfterClearBacklinks } = state.applyTransaction(
-          clearBacklinksTransaction,
-        );
-
-        clearPropertiesCommand(
-          // Provide the state after clear backlinks call to clear properties command
-          stateAfterClearBacklinks,
-          (clearPropertiesTransaction) => {
-            // Mark backlink transaction as appended to clear properties transaction
-            // So it will undo together with clear properties transaction
-            // https://github.com/ProseMirror/prosemirror-history/blob/1.3.2/src/history.ts#L265
-            clearPropertiesTransaction.setMeta(
-              'appendedTransaction',
-              clearBacklinksTransaction,
-            );
-
-            if (applyExtraTransaction) {
-              applyExtraTransaction(clearPropertiesTransaction);
-            }
-
-            if (dispatch) {
-              dispatch(clearBacklinksTransaction);
-              dispatch(clearPropertiesTransaction);
-            }
-          },
-        );
-      });
-    };
-  };
-
-  deleteNodeCommand = (position: number): Command => {
-    return this.clearBacklinksAndPropertiesCommand(
-      position,
-      this.addDeleteRangeTransaction,
     );
   };
 
@@ -126,12 +104,20 @@ export default class RemoveNode extends Component<Args> {
       this.node.value,
     );
 
-    childNodePositions.forEach((position) => {
-      this.controller.doCommand(
-        this.clearBacklinksAndPropertiesCommand(position),
-      );
-    });
+    this.controller.withTransaction((transaction) => {
+      childNodePositions.forEach((position) => {
+        this.clearBacklinksAndPropertiesTransaction({
+          position,
+          transaction,
+        });
+      });
 
-    this.controller.doCommand(this.deleteNodeCommand(this.node.pos));
+      this.deleteNodeTransaction({
+        position: this.node.pos,
+        transaction: transaction,
+      });
+
+      return transaction;
+    });
   };
 }
