@@ -11,6 +11,7 @@ import {
   removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
+  wrapLiteral,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
@@ -204,5 +205,17 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       return;
     }
     return getNodeByRdfaId(this.controller.mainEditorState, rdfaid);
+  };
+
+  get canWrapWithLiteral() {
+    const selection = this.controller?.activeEditorState.selection;
+    return (
+      selection &&
+      !selection.empty &&
+      this.controller?.checkCommand(wrapLiteral())
+    );
+  }
+  wrapWithLiteralNode = () => {
+    this.controller?.doCommand(wrapLiteral());
   };
 }

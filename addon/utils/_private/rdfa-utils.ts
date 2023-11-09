@@ -1,5 +1,5 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
+import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
 import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
 
@@ -167,5 +167,25 @@ export function getResources(node: PNode): Set<string> {
     }
     return true;
   });
+  return result;
+}
+
+export function findRdfaIdsInSelection(selection: Selection) {
+  const result = new Set<string>();
+  const range = selection.$from.blockRange(selection.$to);
+  if (!range) return result;
+  const commonParent = range.parent;
+
+  commonParent.nodesBetween(
+    range.$from.pos - range.start,
+    range.$to.pos - range.start,
+    (child) => {
+      const id = getRdfaId(child);
+      if (id) {
+        result.add(id);
+      }
+      return true;
+    },
+  );
   return result;
 }
