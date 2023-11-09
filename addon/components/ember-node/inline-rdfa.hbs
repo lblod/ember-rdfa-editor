@@ -1,0 +1,13 @@
+<span class='say-inline-rdfa'>
+  <EmberNode::EmbeddedEditor
+    @controller={{@controller}}
+    @node={{@node}}
+    @view={{@view}}
+    @getPos={{@getPos}}
+    @selected={{@selected}}
+    @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
+    @decorations={{@decorations}}
+    @contentDecorations={{@contentDecorations}}
+    {{leave-on-enter-key this.controller @getPos}}
+  />
+</span>
