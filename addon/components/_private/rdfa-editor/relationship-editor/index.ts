@@ -13,9 +13,11 @@ import {
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getNodeByRdfaId,
+  getRdfaIds,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   Backlink,
@@ -62,10 +64,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return this.args.node.value.attrs.__rdfaId as string;
   }
 
-  // TODO this probably shouldn't be calculated every time
   get allRdfaids() {
     if (!this.controller) throw Error('No Controller');
-    return getAllRdfaIds(this.controller.mainEditorState.doc);
+    return getRdfaIds(this.controller.mainEditorState);
   }
 
   goToOutgoing = (outgoing: ExternalProperty) => {
