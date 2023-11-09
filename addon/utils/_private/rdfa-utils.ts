@@ -203,7 +203,6 @@ export function getChildLiterals(node: PNode) {
     const id = getRdfaId(child);
     if (id) {
       const backlinks = getBacklinks(child);
-      console.log('got backlinks', backlinks);
       if (backlinks?.[0]) {
         result.add({
           type: 'external',

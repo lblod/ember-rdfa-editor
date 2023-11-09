@@ -14,30 +14,6 @@
       </AuButton>
     </Group>
   </AuToolbar>
-  {{#if this.canWrapWithResource}}
-    <AuToolbar as |Group|>
-      <Group>
-        <AuButton
-          @icon="plus"
-          @skin="naked"
-          {{on "click" this.wrapWithResource}}
-        >
-          Wrap With Resource
-        </AuButton>
-      </Group>
-      {{#if this.canWrapWithLiteral}}
-        <Group>
-          <AuButton
-            @icon="plus"
-            @skin="naked"
-            {{on "click" this.wrapWithLiteralNode}}
-          >
-            Wrap With Literal
-          </AuButton>
-        </Group>
-      {{/if}}
-    </AuToolbar>
-  {{/if}}
   {{#if this.showOutgoingSection}}
     <div>
       <AuHeading

@@ -4,6 +4,7 @@ import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
+import RdfaWrappingUtils from './wrapping-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
@@ -13,7 +14,7 @@ type Args = {
 export default class RdfaEditor extends Component<Args> {
   PropertyEditor = RdfaPropertyEditor;
   RelationshipEditor = RdfaRelationshipEditor;
-
+  WrappingUtils = RdfaWrappingUtils;
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
 
@@ -37,6 +38,11 @@ export default class RdfaEditor extends Component<Args> {
 
   get showPropertiesSection() {
     return this.isResourceNode;
+  }
+
+  get hasSelection() {
+    const selection = this.controller?.activeEditorState.selection;
+    return selection && !selection.empty;
   }
 
   // get supportsRdfaTypeConversion() {
