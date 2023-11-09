@@ -62,19 +62,19 @@ export default class RemoveNode extends Component<Args> {
   };
 
   clearBacklinksAndPropertiesTransaction = ({
-    position,
+    positions,
     transaction,
   }: {
-    position: number;
+    positions: number[];
     transaction: Transaction;
   }) => {
-    clearPropertiesTransaction({
-      state: this.controller.activeEditorState,
-      position,
-    })(transaction);
     clearBacklinksTransaction({
       state: this.controller.activeEditorState,
-      position,
+      positions,
+    })(transaction);
+    clearPropertiesTransaction({
+      state: this.controller.activeEditorState,
+      positions,
     })(transaction);
   };
 
@@ -86,7 +86,7 @@ export default class RemoveNode extends Component<Args> {
     transaction: Transaction;
   }) => {
     this.clearBacklinksAndPropertiesTransaction({
-      position,
+      positions: [position],
       transaction,
     });
     this.deleteRangeTransaction(transaction);
@@ -105,16 +105,14 @@ export default class RemoveNode extends Component<Args> {
     );
 
     this.controller.withTransaction((transaction) => {
-      childNodePositions.forEach((position) => {
-        this.clearBacklinksAndPropertiesTransaction({
-          position,
-          transaction,
-        });
+      this.clearBacklinksAndPropertiesTransaction({
+        positions: childNodePositions,
+        transaction,
       });
 
       this.deleteNodeTransaction({
         position: this.node.pos,
-        transaction: transaction,
+        transaction,
       });
 
       return transaction;
