@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -90,7 +90,7 @@
     "xml-formatter": "^3.2.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.4.2",
+    "@appuniversum/ember-appuniversum": "^2.16.0",
     "@babel/eslint-parser": "^7.21.3",
     "@babel/plugin-proposal-decorators": "^7.21.0",
     "@changesets/changelog-github": "^0.4.8",
@@ -107,6 +107,7 @@
     "@types/debug": "^4.1.7",
     "@types/dompurify": "^3.0.0",
     "@types/ember": "~4.0",
+    "@types/ember-resolver": "^9.0.0",
     "@types/ember__application": "~4.0",
     "@types/ember__array": "~4.0",
     "@types/ember__component": "~4.0",
@@ -124,7 +125,6 @@
     "@types/ember__template": "~4.0",
     "@types/ember__test": "~4.0",
     "@types/ember__utils": "~4.0",
-    "@types/ember-resolver": "^5.0.11",
     "@types/htmlbars-inline-precompile": "^3.0.0",
     "@types/prosemirror-dev-tools": "^3.0.3",
     "@types/qunit": "^2.19.3",
@@ -171,7 +171,7 @@
     "qunit-dom": "^2.0.0",
     "release-it": "^16.1.0",
     "sass": "^1.49.9",
-    "sinon": "^15.0.1",
+    "sinon": "^17.0.1",
     "typescript": "~5.2.2",
     "webpack": "^5.78.0"
   },

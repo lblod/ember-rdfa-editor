@@ -1,5 +1,23 @@
 # @lblod/ember-rdfa-editor
 
+## 6.3.0
+
+### Minor Changes
+
+- [#995](https://github.com/lblod/ember-rdfa-editor/pull/995) [`de9bf54a`](https://github.com/lblod/ember-rdfa-editor/commit/de9bf54a15aed90155bea1aa4238c92ef2f20399) Thanks [@elpoelma](https://github.com/elpoelma)! - Display new image icon if host app has `@appuniversum/ember-appuniversum` >= 2.16.0 installed
+
+### Patch Changes
+
+- whater
+
+- [#991](https://github.com/lblod/ember-rdfa-editor/pull/991) [`4a4b855f`](https://github.com/lblod/ember-rdfa-editor/commit/4a4b855f4510f8d2751e01f0aba012908fb74ef5) Thanks [@piemonkey](https://github.com/piemonkey)! - Improve types and documentation of EmberNode
+
+- [#993](https://github.com/lblod/ember-rdfa-editor/pull/993) [`d68f84c4`](https://github.com/lblod/ember-rdfa-editor/commit/d68f84c4304a9783270b8cbf1f717e017c1e2325) Thanks [@elpoelma](https://github.com/elpoelma)! - Update @appuniversum/ember-appuniversum dev-dependency to 2.16.0
+
+  Note: this does not mean that we only support `@appuniversum/ember-appuniversum` `2.16.0` and above. The `@appuniversum/ember-appuniversum` package will stay supported as low as version `2.4.2`.
+
+- [#1003](https://github.com/lblod/ember-rdfa-editor/pull/1003) [`fb57c719`](https://github.com/lblod/ember-rdfa-editor/commit/fb57c7198e616990ba0d0d0fe1c2f6091327bf13) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove unnecessary z-index: 1 css declaration from image resize-handles
+
 ## 6.2.0
 
 ### Minor Changes
