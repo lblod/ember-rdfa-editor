@@ -1,7 +1,11 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
-import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
+import {
+  Backlink,
+  ExternalProperty,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/say-parser';
 
 export type RdfaAttr =
   | 'vocab'
@@ -187,5 +191,30 @@ export function findRdfaIdsInSelection(selection: Selection) {
       return true;
     },
   );
+  return result;
+}
+
+/**
+ * Get all of the literal nodes which are children of the given node
+ */
+export function getChildLiterals(node: PNode) {
+  const result = new Set<ExternalProperty>();
+  node.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      const backlinks = getBacklinks(child);
+      console.log('got backlinks', backlinks);
+      if (backlinks?.[0]) {
+        result.add({
+          type: 'external',
+          predicate: backlinks[0].predicate,
+          object: { type: 'literal', rdfaId: id },
+        });
+      }
+      // Literals should not contain more rdfa aware nodes, so stop descending
+      return false;
+    }
+    return true;
+  });
   return result;
 }
