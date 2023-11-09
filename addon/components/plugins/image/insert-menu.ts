@@ -1,4 +1,5 @@
 import { action } from '@ember/object';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
 import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
@@ -39,6 +40,18 @@ export default class ImageInsertMenu extends Component<Args> {
       return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
     } catch (_) {
       return false;
+    }
+  }
+
+  get imageIcon() {
+    if (
+      macroCondition(
+        dependencySatisfies('@appuniversum/ember-appuniversum', '>=2.16.0'),
+      )
+    ) {
+      return 'image';
+    } else {
+      return 'website';
     }
   }
 
