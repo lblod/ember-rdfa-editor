@@ -39,16 +39,30 @@ export function removeBacklinkFromLiteral({
       tr.setNodeAttribute(node.pos, 'backlinks', []);
 
       // Update the properties of each inverse subject node
-      const subjects = getNodesByResource(state, backlink.subject);
+      const subjects = getNodesByResource(state, backlink.subject) ?? [];
+
       subjects?.forEach((subject) => {
         const properties = getProperties(subject.value);
         if (properties) {
           const filteredProperties = properties.filter((prop) => {
+            if (prop.type !== 'external') {
+              return true;
+            }
+
+            if (prop.object.type !== 'literal') {
+              return true;
+            }
+
+            if (prop.object.rdfaId !== rdfaId) {
+              return true;
+            }
+
             return !(
               backlink.predicate === prop.predicate &&
               backlink.subject === getResource(subject.value)
             );
           });
+
           tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
         }
       });
