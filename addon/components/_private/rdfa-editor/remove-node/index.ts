@@ -1,13 +1,9 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 
-import { Transaction } from 'prosemirror-state';
-
-import { PNode, type SayController } from '@lblod/ember-rdfa-editor';
+import { type SayController } from '@lblod/ember-rdfa-editor';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { clearBacklinksTransaction } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-backlinks';
-import { clearPropertiesTransaction } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/clear-properties';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { removeNodeWithChildNodes } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 
 type Args = {
   node: ResolvedPNode;
@@ -38,84 +34,7 @@ export default class RemoveNode extends Component<Args> {
     this.closeConfirmationDialog();
   };
 
-  findAllRdfaNodeChildrenPositions = (node: PNode) => {
-    const resolvedChildrenPositions: number[] = [];
-
-    node.forEach((child) => {
-      if (child.type.spec.attrs?.['rdfaNodeType']) {
-        const resolvedPos = getNodeByRdfaId(
-          this.controller.activeEditorState,
-          child.attrs?.['__rdfaId'],
-        )?.pos;
-
-        if (resolvedPos) {
-          resolvedChildrenPositions.push(resolvedPos);
-        }
-
-        resolvedChildrenPositions.push(
-          ...this.findAllRdfaNodeChildrenPositions(child),
-        );
-      }
-    });
-
-    return resolvedChildrenPositions;
-  };
-
-  clearBacklinksAndPropertiesTransaction = ({
-    positions,
-    transaction,
-  }: {
-    positions: number[];
-    transaction: Transaction;
-  }) => {
-    clearBacklinksTransaction({
-      state: this.controller.activeEditorState,
-      positions,
-    })(transaction);
-    clearPropertiesTransaction({
-      state: this.controller.activeEditorState,
-      positions,
-    })(transaction);
-  };
-
-  deleteNodeTransaction = ({
-    position,
-    transaction,
-  }: {
-    position: number;
-    transaction: Transaction;
-  }) => {
-    this.clearBacklinksAndPropertiesTransaction({
-      positions: [position],
-      transaction,
-    });
-    this.deleteRangeTransaction(transaction);
-  };
-
-  deleteRangeTransaction = (transaction: Transaction) => {
-    return transaction.deleteRange(
-      this.node.pos,
-      this.node.pos + this.node.value.nodeSize,
-    );
-  };
-
   deleteNode = () => {
-    const childNodePositions = this.findAllRdfaNodeChildrenPositions(
-      this.node.value,
-    );
-
-    this.controller.withTransaction((transaction) => {
-      this.clearBacklinksAndPropertiesTransaction({
-        positions: childNodePositions,
-        transaction,
-      });
-
-      this.deleteNodeTransaction({
-        position: this.node.pos,
-        transaction,
-      });
-
-      return transaction;
-    });
+    this.controller.doCommand(removeNodeWithChildNodes(this.node));
   };
 }

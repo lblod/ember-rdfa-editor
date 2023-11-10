@@ -5,3 +5,5 @@ export { addProperty } from './add-property';
 export { removeBacklinkFromLiteral } from './remove-literal-backlink';
 export { removeBacklinkFromResource } from './remove-resource-backlink';
 export { insertRelation } from './insert-relation';
+export { removeNodeWithChildNodes } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-node-with-properties';
+export { commandWrapper } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-node-with-properties';
