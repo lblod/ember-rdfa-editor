@@ -75,7 +75,7 @@ function arrow(axis: 'vert' | 'horiz', dir: number): Command {
       mustMove = false;
       $start = state.doc.resolve(dir > 0 ? $start.after() : $start.before());
     }
-    const found= GapCursor.findGapCursorFrom($start, dir, mustMove);
+    const found = GapCursor.findGapCursorFrom($start, dir, mustMove);
     if (!found) return false;
     if (dispatch) dispatch(state.tr.setSelection(found));
     return true;
@@ -97,10 +97,17 @@ function mousedown(view: EditorView, event: MouseEvent) {
   return true;
 }
 
-function resolvePosition(view: EditorView, { pos, inside}: { pos: number, inside: number}){
+/**
+ * Helper function which takes in the result of `view.posAtCoords` and returns a resolved-position in the current document.
+ * If the provided `pos` is not a direct child of the node at `inside`, this function tries to find a valid position that is a direct child of `inside`.
+ */
+function resolvePosition(
+  view: EditorView,
+  { pos, inside }: { pos: number; inside: number },
+) {
   let result = view.state.doc.resolve(pos);
   const parent = inside === -1 ? view.state.doc : view.state.doc.nodeAt(inside);
-  while(result.parent !== parent){
+  while (result.parent !== parent) {
     if (result.index() <= 0) {
       result = view.state.doc.resolve(result.before());
     } else if (result.index() >= result.parent.childCount - 1) {
