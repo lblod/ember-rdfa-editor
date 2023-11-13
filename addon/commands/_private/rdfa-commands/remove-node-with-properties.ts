@@ -1,7 +1,10 @@
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { PNode } from '@lblod/ember-rdfa-editor';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getNodeByRdfaId,
+  getNodesByResource,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import {
   getBacklinks,
   getProperties,
@@ -53,14 +56,19 @@ function removeNodeProperties({
   removeRelationshipStatus: boolean;
 }) {
   const resource = getResource(resolvedNode.value);
+  const resourceNodes = resource
+    ? getNodesByResource(newState, resource)
+    : undefined;
 
-  if (resource) {
+  // Only remove properties from a resource node if it is the only node defining the resource
+  if (resource && resourceNodes?.length === 1) {
     const properties = getProperties(resolvedNode.value) ?? [];
 
     properties.forEach((_property, index) => {
       const removePropertyCommand = removeProperty({
         resource,
-        index,
+        // Remove properties in reverse order to avoid index shifting
+        index: properties.length - index - 1,
         transaction: currentTransaction,
       });
 
@@ -76,30 +84,34 @@ function removeNodeProperties({
     });
   }
 
-  const backlinks = getBacklinks(resolvedNode.value) ?? [];
+  // Remove backlinks from a literal node, or from the last resource node
+  if (!resource || (resource && resourceNodes?.length === 1)) {
+    const backlinks = getBacklinks(resolvedNode.value) ?? [];
 
-  backlinks.forEach((_backlink, index) => {
-    const removeBacklinkCommand = resource
-      ? removeBacklinkFromResource({
-          resource,
-          index,
-          transaction: currentTransaction,
-        })
-      : removeBacklinkFromLiteral({
-          rdfaId: getRdfaId(resolvedNode.value) as string,
-          transaction: currentTransaction,
-        });
+    backlinks.forEach((_backlink, index) => {
+      const removeBacklinkCommand = resource
+        ? removeBacklinkFromResource({
+            resource,
+            // Remove properties in reverse order to avoid index shifting
+            index: backlinks.length - index - 1,
+            transaction: currentTransaction,
+          })
+        : removeBacklinkFromLiteral({
+            rdfaId: getRdfaId(resolvedNode.value) as string,
+            transaction: currentTransaction,
+          });
 
-    removeRelationshipStatus = removeBacklinkCommand(
-      newState,
-      (transaction) => {
-        // Use state, not newState to avoid re-applying transaction steps as each transaction is
-        // built from the last, so includes all steps
-        newState = state.apply(transaction);
-        currentTransaction = transaction;
-      },
-    );
-  });
+      removeRelationshipStatus = removeBacklinkCommand(
+        newState,
+        (transaction) => {
+          // Use state, not newState to avoid re-applying transaction steps as each transaction is
+          // built from the last, so includes all steps
+          newState = state.apply(transaction);
+          currentTransaction = transaction;
+        },
+      );
+    });
+  }
 
   return { currentTransaction, removeRelationshipStatus, newState };
 }
@@ -129,18 +141,27 @@ export function removeNodeWithChildNodes(node: ResolvedPNode): Command {
         newState = removeNodePropertiesResult.newState;
       });
 
-      const removeNodePropertiesResult = removeNodeProperties({
-        resolvedNode: node,
-        currentTransaction,
-        state,
-        newState,
-        removeRelationshipStatus,
-      });
+      // properties of the initial "parent" will most likely change as we update child node
+      // so we need to re-resolve the node
+      const newStateNode = newState.doc.resolve(node.pos).nodeAfter;
 
-      currentTransaction = removeNodePropertiesResult.currentTransaction;
-      removeRelationshipStatus =
-        removeNodePropertiesResult.removeRelationshipStatus;
-      newState = removeNodePropertiesResult.newState;
+      if (newStateNode) {
+        const removeNodePropertiesResult = removeNodeProperties({
+          resolvedNode: {
+            value: newStateNode,
+            pos: node.pos,
+          },
+          currentTransaction,
+          state,
+          newState,
+          removeRelationshipStatus,
+        });
+
+        currentTransaction = removeNodePropertiesResult.currentTransaction;
+        removeRelationshipStatus =
+          removeNodePropertiesResult.removeRelationshipStatus;
+        newState = removeNodePropertiesResult.newState;
+      }
 
       currentTransaction = currentTransaction.deleteRange(
         node.pos,
