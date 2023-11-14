@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { isSome } from '../utils/_private/option';
 
 export const rdfaAttrs = {
   vocab: { default: undefined },
@@ -27,7 +28,7 @@ export function getRdfaAttrs(node: Element): Record<string, string> | false {
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
-    if (value) {
+    if (isSome(value)) {
       attrs[key] = value;
       hasAnyRdfaAttributes = true;
     }
