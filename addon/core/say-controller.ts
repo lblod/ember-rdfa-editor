@@ -121,18 +121,7 @@ export default class SayController {
    * (e.g. `lang` attributes on the `doc` node are not parsed)
    */
   setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
-    const { shouldFocus = true } = options;
-    if (shouldFocus) {
-      this.focus();
-    }
-    const doc = htmlToDoc(content, {
-      schema: this.schema,
-      parser: this.editor.parser,
-    });
-    const tr = this.mainEditorState.tr;
-    tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
-    tr.setSelection(Selection.atEnd(tr.doc));
-    this.editor.mainView.dispatch(tr);
+    this.mainEditorView.setHtmlContent(content, options);
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
