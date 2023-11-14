@@ -4,6 +4,9 @@
 
 [data--language='en'] .rdfa-annotations:not(.show-rdfa-blocks),
 [lang='en'] .rdfa-annotations:not(.show-rdfa-blocks),
+[data--language='en']
+  .rdfa-annotations.show-rdfa-blocks
+  [data-editor-highlight='true'],
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks [property],
 [data--language='en']
   .rdfa-annotations.show-rdfa-blocks
@@ -11,6 +14,7 @@
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks [data-type],
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks.show-rdfa-blocks,
+[lang='en'] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight='true'],
 [lang='en'] .rdfa-annotations.show-rdfa-blocks [property],
 [lang='en']
   .rdfa-annotations.show-rdfa-blocks
@@ -310,6 +314,9 @@
   }
 }
 
+[data--language='en']
+  .rdfa-annotations.show-rdfa-blocks
+  [data-editor-highlight='true'],
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks [property],
 [data--language='en']
   .rdfa-annotations.show-rdfa-blocks
@@ -317,6 +324,7 @@
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks [data-type],
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks .mark-highlight-manual,
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks.show-rdfa-blocks,
+[lang='en'] .rdfa-annotations.show-rdfa-blocks [data-editor-highlight='true'],
 [lang='en'] .rdfa-annotations.show-rdfa-blocks [property],
 [lang='en']
   .rdfa-annotations.show-rdfa-blocks
@@ -326,7 +334,9 @@
 [lang='en'] .rdfa-annotations.show-rdfa-blocks {
   /* -------------------- Guiding tags ------------------------- */
 
-  [property^='ext:insert']:before {
+  [property^='ext:insert']:before,
+  [data-editor-highlight='true']:before,
+  [data-editor-highlight='true']:not([contenteditable='']):before {
     content: 'Select an option';
   }
 
@@ -664,7 +674,8 @@
 
 [data--language='en'] .rdfa-annotations.show-rdfa-blocks,
 [lang='en'] .rdfa-annotations.show-rdfa-blocks {
-  .mark-highlight-manual:after {
+  .mark-highlight-manual:after,
+  [data-editor-highlight='true']:not([contenteditable='']):after {
     content: 'Action required';
   }
 }
