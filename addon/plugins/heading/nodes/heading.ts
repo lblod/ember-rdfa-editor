@@ -105,14 +105,14 @@ export const heading: SayNodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    const { level, indentationLevel, ...attrs } = node.attrs;
+    const { level, indentationLevel, resource } = node.attrs;
     return renderRdfaAware({
       tag: `h${(level as number).toString()}`,
       renderable: node,
       attrs: {
         'data-indentation-level': indentationLevel as number,
         class: 'say-editable',
-        ...attrs,
+        resource: resource as string,
       },
       rdfaContainerTag: 'span',
       contentContainerTag: 'span',
