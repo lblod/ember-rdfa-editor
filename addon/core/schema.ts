@@ -160,7 +160,7 @@ export function renderRdfaAware({
 }: RdfaRenderArgs): DOMOutputSpec {
   return [
     tag,
-    { class: 'say-editable', ...attrs, ...renderRdfaAttrs(renderable) },
+    { ...attrs, ...renderRdfaAttrs(renderable) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,

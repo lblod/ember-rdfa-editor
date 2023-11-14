@@ -43,7 +43,10 @@ export const block_rdfa: SayNodeSpec = {
     return renderRdfaAware({
       renderable: node,
       tag: 'div',
-      attrs: node.attrs,
+      attrs: {
+        class: 'say-editable',
+        ...node.attrs,
+      },
       content: 0,
     });
   },
