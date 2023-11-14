@@ -3,7 +3,6 @@
 //   ================================== */
 
 .rdfa-annotations:not(.show-rdfa-blocks),
-.rdfa-annotations.show-rdfa-blocks [data-editor-highlight='true'],
 .rdfa-annotations.show-rdfa-blocks [property],
 .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof='foaf:Document']),
 .rdfa-annotations.show-rdfa-blocks [data-type],
@@ -301,7 +300,6 @@
   }
 }
 
-.rdfa-annotations.show-rdfa-blocks [data-editor-highlight='true'],
 .rdfa-annotations.show-rdfa-blocks [property],
 .rdfa-annotations.show-rdfa-blocks [typeof]:not([typeof='foaf:Document']),
 .rdfa-annotations.show-rdfa-blocks [data-type],
@@ -309,9 +307,7 @@
 .rdfa-annotations.show-rdfa-blocks {
   /* -------------------- Guiding tags ------------------------- */
 
-  [property^='ext:insert']:before,
-  [data-editor-highlight='true']:before,
-  [data-editor-highlight='true']:not([contenteditable='']):before {
+  [property^='ext:insert']:before {
     content: 'Selecteer de juiste optie';
   }
 
@@ -745,12 +741,6 @@
     content: 'Ondertekenaars';
   }
 
-  [property='ext:behandelt'] [data-editor-highlight='true'] {
-    &:before {
-      content: 'Selecteer de juiste optie';
-    }
-  }
-
   // rewind
   [typeof='besluit:Zitting'] {
     position: relative;
@@ -939,8 +929,7 @@
 }
 
 .rdfa-annotations.show-rdfa-blocks {
-  .mark-highlight-manual:after,
-  [data-editor-highlight='true']:not([contenteditable='']):after {
+  .mark-highlight-manual:after {
     content: 'Actie nodig';
   }
 }
