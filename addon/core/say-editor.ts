@@ -8,7 +8,6 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 import { v4 as uuidv4 } from 'uuid';
-import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import {
@@ -34,6 +33,8 @@ import {
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+import { gapCursor } from '../plugins/gap-cursor';
+
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
   owner: Owner;
