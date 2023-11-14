@@ -260,6 +260,7 @@ export default class HTMLInputParser {
     return DOMPurify.sanitize(rootNode.innerHTML, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
+      ALLOW_UNKNOWN_PROTOCOLS: true,
       IN_PLACE: true,
     });
   }
