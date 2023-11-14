@@ -1,5 +1,5 @@
 ---
-"@lblod/ember-rdfa-editor": minor
+"@lblod/ember-rdfa-editor": major
 ---
 
 GN-4130: Remove "data-editor-highlight" styled
