@@ -1,5 +1,21 @@
 # @lblod/ember-rdfa-editor
 
+## 6.4.0
+
+### Minor Changes
+
+- [#1028](https://github.com/lblod/ember-rdfa-editor/pull/1028) [`24cdfd2f`](https://github.com/lblod/ember-rdfa-editor/commit/24cdfd2ff9a52a4606f662f3c88d13e6911c8f23) Thanks [@elpoelma](https://github.com/elpoelma)! - Include exhaustive list of allowed attributes (partly sourced from https://github.com/cure53/DOMPurify/blob/1.0.8/src/attrs.js) used by the `rdfa-input-parser` implementation. This list also includes RDFa-specific attributes, in order to ensure these are not removed.
+
+- [#1028](https://github.com/lblod/ember-rdfa-editor/pull/1028) [`24cdfd2f`](https://github.com/lblod/ember-rdfa-editor/commit/24cdfd2ff9a52a4606f662f3c88d13e6911c8f23) Thanks [@elpoelma](https://github.com/elpoelma)! - Include exhaustive list of allowed tags (sourced from https://github.com/cure53/DOMPurify/blob/1.0.8/src/tags.js) that are allowed by `html-input-parser`
+
+### Patch Changes
+
+- [#1029](https://github.com/lblod/ember-rdfa-editor/pull/1029) [`982723d4`](https://github.com/lblod/ember-rdfa-editor/commit/982723d4a6db31aac005906b093afa1a563a9df0) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop `ember-scenarios` woodpecker pipeline
+
+- [#1023](https://github.com/lblod/ember-rdfa-editor/pull/1023) [`573d877e`](https://github.com/lblod/ember-rdfa-editor/commit/573d877ec861773a2eb069ff94b265ba328ce4fd) Thanks [@elpoelma](https://github.com/elpoelma)! - Hide caret when `ProseMirror-hideselection` class is applied
+
+- [#1028](https://github.com/lblod/ember-rdfa-editor/pull/1028) [`24cdfd2f`](https://github.com/lblod/ember-rdfa-editor/commit/24cdfd2ff9a52a4606f662f3c88d13e6911c8f23) Thanks [@elpoelma](https://github.com/elpoelma)! - Removal of unused lump tags reference in the `html-input-parser` implementation
+
 ## 6.3.0
 
 ### Minor Changes
