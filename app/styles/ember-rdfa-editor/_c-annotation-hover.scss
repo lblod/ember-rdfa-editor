@@ -34,6 +34,7 @@
   [property="say:hasPart"],
   [property="openbaar"],
   [property^="ext"]:not([property="ext:heeftAfwezigeBijAgendapunt"]):not(span),
+  [data-editor-highlight="true"]:not(ol):not(ul):not(li):not(span),
   [typeof="http://data.vlaanderen.be/ns/besluit#Besluit http://data.vlaanderen.be/ns/besluit#AanvullendReglement"],
   [typeof="besluit:Artikel"],
   [typeof="say:Article"],
@@ -53,7 +54,8 @@
   // Style before and after elements
   [typeof]:not([typeof='foaf:Document']),
   [property],
-  [data-type] {
+  [data-type],
+  [data-editor-highlight='true']:not([contenteditable='']) {
     &:hover {
       border-bottom-color: tint($au-gray-600, 20);
     }
@@ -153,7 +155,8 @@
     // Hide all hover annotations on small screens
     [typeof]:not([typeof='foaf:Document']),
     [property],
-    [data-type] {
+    [data-type],
+    [data-editor-highlight='true'] {
       &:before {
         display: none !important;
       }
