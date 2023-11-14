@@ -1,7 +1,10 @@
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
-import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
+import {
+  Backlink,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
 
 export type RdfaAttr =
   | 'vocab'
