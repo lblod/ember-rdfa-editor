@@ -1,0 +1,34 @@
+<AuButton
+  @width="block"
+  @alert={{true}}
+  {{on "click" this.showConfirmationDialog}}
+>
+  Remove node
+</AuButton>
+<AuModal
+  @title={{"Delete RDFA Node"}}
+  @modalOpen={{this.showDialog}}
+  @closeModal={{this.closeConfirmationDialog}}
+  as |Modal|
+>
+  <Modal.Body>
+    <AuAlert
+      @title="Delete RDFA node"
+      @skin="warning"
+      @icon="alert-triangle"
+    >
+      Are you sure you want to delete this RDFA node?
+    </AuAlert>
+  </Modal.Body>
+
+  <Modal.Footer>
+    <AuButtonGroup>
+      <AuButton {{on "click" this.confirmDelete}} @skin="primary">
+        Yes
+      </AuButton>
+      <AuButton {{on "click" this.closeConfirmationDialog}} @skin="secondary">
+        No
+      </AuButton>
+    </AuButtonGroup>
+  </Modal.Footer>
+</AuModal>
