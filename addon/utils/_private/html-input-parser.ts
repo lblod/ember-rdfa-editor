@@ -101,6 +101,19 @@ const DEFAULT_SAFE_ATTRIBUTES = [
   'xmlns',
 ];
 
+const DEFAULT_URI_SAFE_ATTRIBUTES = [
+  'about',
+  'content',
+  'datatype',
+  'prefix',
+  'property',
+  'rel',
+  'resource',
+  'rev',
+  'typeof',
+  'vocab',
+];
+
 const DEFAULT_SAFE_TAGS = [
   'a',
   'abbr',
@@ -222,6 +235,7 @@ const DEFAULT_SAFE_TAGS = [
 interface HTMLInputParserArguments {
   safeAttributes?: string[];
   safeTags?: string[];
+  uriSafeAttributes?: string[];
 }
 
 /**
@@ -238,12 +252,16 @@ export default class HTMLInputParser {
 
   private readonly safeTags: string[];
 
+  private readonly uriSafeAttributes: string[];
+
   constructor({
     safeAttributes = DEFAULT_SAFE_ATTRIBUTES,
     safeTags = DEFAULT_SAFE_TAGS,
+    uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
   }: HTMLInputParserArguments) {
     this.safeAttributes = safeAttributes;
     this.safeTags = safeTags;
+    this.uriSafeAttributes = uriSafeAttributes;
   }
 
   /**
@@ -260,7 +278,7 @@ export default class HTMLInputParser {
     return DOMPurify.sanitize(rootNode.innerHTML, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
-      ALLOW_UNKNOWN_PROTOCOLS: true,
+      ADD_URI_SAFE_ATTR: this.uriSafeAttributes,
       IN_PLACE: true,
     });
   }
