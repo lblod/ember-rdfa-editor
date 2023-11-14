@@ -7,24 +7,6 @@ module.exports = async function () {
   return {
     scenarios: [
       {
-        name: 'ember-lts-3.28',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.28.0',
-            'ember-resolver': '^8.0.0', // ember-resolver v11 doesn't support <4.8
-          },
-        },
-      },
-      {
-        name: 'ember-lts-4.4',
-        npm: {
-          devDependencies: {
-            'ember-source': '~4.4.0',
-            'ember-resolver': '^8.0.0', // ember-resolver v11 doesn't support <4.8
-          },
-        },
-      },
-      {
         name: 'ember-lts-4.8',
         npm: {
           devDependencies: {
