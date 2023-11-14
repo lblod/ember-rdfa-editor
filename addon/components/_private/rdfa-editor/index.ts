@@ -5,6 +5,7 @@ import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
+import RemoveNode from './remove-node';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
@@ -17,6 +18,7 @@ export default class RdfaEditor extends Component<Args> {
   WrappingUtils = RdfaWrappingUtils;
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
+  RemoveNode = RemoveNode;
 
   @tracked collapsed = false;
 

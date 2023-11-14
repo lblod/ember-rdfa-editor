@@ -24,10 +24,13 @@ export const inline_rdfa: MarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
+    const resource = mark.attrs.resource as string;
     return renderRdfaAware({
       renderable: mark,
       tag: 'span',
-      attrs: mark.attrs,
+      attrs: {
+        resource,
+      },
       content: 0,
     });
   },

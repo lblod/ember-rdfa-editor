@@ -3,6 +3,7 @@ import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { Backlink, Property } from './say-parser';
+import { isSome } from '../utils/_private/option';
 
 export const rdfaAttrs = {
   properties: { default: [] },
@@ -27,7 +28,7 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaDomAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
-    if (value) {
+    if (isSome(value)) {
       attrs[key] = value;
       hasAnyRdfaAttributes = true;
 
@@ -160,7 +161,7 @@ export function renderRdfaAware({
 }: RdfaRenderArgs): DOMOutputSpec {
   return [
     tag,
-    { class: 'say-editable', ...attrs, ...renderRdfaAttrs(renderable) },
+    { ...attrs, ...renderRdfaAttrs(renderable) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,

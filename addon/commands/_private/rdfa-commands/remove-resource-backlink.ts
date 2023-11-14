@@ -4,16 +4,23 @@ import {
   getProperties,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command } from 'prosemirror-state';
+import { Command, Transaction } from 'prosemirror-state';
 
 type RemoveResourceBacklinkArgs = {
   resource: string; // The resource from which to remove a backlink
   index: number; // The index of the property to be removed in the backlinks-array of the node
+  /**
+   A transaction to use in place of getting a new one from state.tr
+   This can be used to call this command from within another, but care must be taken to not use
+   the passed transaction between passing it in and when the callback is called.
+   */
+  transaction?: Transaction;
 };
 
 export function removeBacklinkFromResource({
   resource,
   index,
+  transaction,
 }: RemoveResourceBacklinkArgs): Command {
   return (state, dispatch) => {
     const nodes = getNodesByResource(state, resource);
@@ -31,7 +38,7 @@ export function removeBacklinkFromResource({
       const updatedBacklinks = backlinks.slice();
       updatedBacklinks.splice(index, 1);
 
-      const tr = state.tr;
+      const tr = transaction ?? state.tr;
       // Update the backlinks of each node defining the given resource
       nodes.forEach((node) => {
         tr.setNodeAttribute(node.pos, 'backlinks', updatedBacklinks);

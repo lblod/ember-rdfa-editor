@@ -423,4 +423,10 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
 .say-content {
   @include say-content();
+
+  &.ProseMirror-hideselection {
+    caret-color: transparent;
+  }
 }
+
+
