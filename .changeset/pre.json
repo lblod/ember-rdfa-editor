@@ -4,5 +4,10 @@
   "initialVersions": {
     "@lblod/ember-rdfa-editor": "6.4.0"
   },
-  "changesets": []
+  "changesets": [
+    "flat-onions-suffer",
+    "gold-toys-smoke",
+    "odd-falcons-jam",
+    "slow-trains-fix"
+  ]
 }

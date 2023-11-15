@@ -1,5 +1,27 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.0-next.0
+
+### Major Changes
+
+- [`951fe78e`](https://github.com/lblod/ember-rdfa-editor/commit/951fe78ee96a07ac9d4f83c5433788d66c1499a7) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4130: Remove "data-editor-highlight" styled
+
+  Removes styles that were affecting elements with the "data-editor-highlight" attribute.
+  Styles are moved to [ember-rdfa-editor-lblod-plugins](https://github.com/lblod/ember-rdfa-editor-lblod-plugins) and are
+  applied through the `citation-plugin`.
+
+### Minor Changes
+
+- [#1027](https://github.com/lblod/ember-rdfa-editor/pull/1027) [`8d310cf1`](https://github.com/lblod/ember-rdfa-editor/commit/8d310cf1a3421935a858ad8a9483c4f83c4d7f66) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a custom gap-cursor plugin containing several fixes compared to the original version:
+
+  - The click handler has been replaced by a mousedown handler in order to intercept a click event earlier
+  - The types of the GapCursor class have been fixed
+  - Addition of a fix when resolving the position returned by view.posAtCoords.
+
+- [#1022](https://github.com/lblod/ember-rdfa-editor/pull/1022) [`67d5edb4`](https://github.com/lblod/ember-rdfa-editor/commit/67d5edb49f940f205dbb23b2888c525d1a01c202) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4583: Allow to remove node via button with confirmation modal
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`9e6a5b9d`](https://github.com/lblod/ember-rdfa-editor/commit/9e6a5b9d7fb64eb6464368b8a83f6bcb8fe8c60c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add RDFa blackbox tests based on test cases from the [RDFa test suite](https://www.w3.org/2006/07/SWD/RDFa/testsuite/)
+
 ## 6.4.0
 
 ### Minor Changes
