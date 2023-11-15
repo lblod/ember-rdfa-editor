@@ -1,0 +1,30 @@
+<AuContent @skin="tiny">
+  <AuToolbar as |Group|>
+    <Group>
+      <AuButton
+        @icon="plus"
+        @skin="naked"
+        {{on "click" this.openModal}}
+      >
+        Wrap With Resource
+      </AuButton>
+    </Group>
+    {{#if this.canWrapWithLiteral}}
+      <Group>
+        <AuButton
+          @icon="plus"
+          @skin="naked"
+          {{on "click" this.wrapWithLiteralNode}}
+        >
+          Wrap With Literal
+        </AuButton>
+      </Group>
+    {{/if}}
+  </AuToolbar>
+</AuContent>
+
+<this.Modal
+  @modalOpen={{this.modalOpen}}
+  @closeModal={{this.closeModal}}
+  @wrapWithResource={{this.wrapWithResource}}
+/>

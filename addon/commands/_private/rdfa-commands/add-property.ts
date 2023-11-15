@@ -5,16 +5,26 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { getProperties } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command } from 'prosemirror-state';
+import { Command, Transaction } from 'prosemirror-state';
 
 export type AddPropertyArgs = {
   /** The resource to which to add a property */
   resource: string;
   /** Property to add */
   property: Property;
+  /**
+    A transaction to use in place of getting a new one from state.tr
+    This can be used to call this command from within another, but care must be taken to not use
+    the passed transaction between passing it in and when the callback is called.
+  */
+  transaction?: Transaction;
 };
 
-export function addProperty({ resource, property }: AddPropertyArgs): Command {
+export function addProperty({
+  resource,
+  property,
+  transaction,
+}: AddPropertyArgs): Command {
   return (state, dispatch) => {
     const resourceNodes = getNodesByResource(state, resource);
     if (!resourceNodes?.length) {
@@ -27,7 +37,7 @@ export function addProperty({ resource, property }: AddPropertyArgs): Command {
         ? [...properties, property]
         : [property];
 
-      const tr = state.tr;
+      const tr = transaction ?? state.tr;
       // Update the properties of each node that defines the given resource
       resourceNodes.forEach((node) => {
         tr.setNodeAttribute(node.pos, 'properties', updatedProperties);

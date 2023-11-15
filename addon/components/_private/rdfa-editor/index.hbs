@@ -23,6 +23,11 @@
     <Section>
       <this.RelationshipEditor @node={{@node}} @controller={{@controller}} />
     </Section>
+    {{#if this.hasSelection}}
+      <Section>
+        <this.WrappingUtils @node={{@node}} @controller={{@controller}} />
+      </Section>
+    {{/if}}
     <Section>
       <this.RemoveNode @node={{@node}} @controller={{@controller}} />
     </Section>
