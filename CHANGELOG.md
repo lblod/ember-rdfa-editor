@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.0-next.1
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`2d9fa6cc`](https://github.com/lblod/ember-rdfa-editor/commit/2d9fa6cc5a304af2d7d64afe109275163419163a) Thanks [@elpoelma](https://github.com/elpoelma)! - allow creating rdfa nodes from scratch
+
 ## 7.0.0-next.0
 
 ### Major Changes
