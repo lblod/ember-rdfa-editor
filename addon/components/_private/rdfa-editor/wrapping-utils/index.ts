@@ -41,7 +41,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.controller?.doCommand(wrapLiteral());
   };
 
-  wrapWithResource = (details: { uriBase: string }) => {
+  wrapWithResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapResource(details));
     this.closeModal();
   };

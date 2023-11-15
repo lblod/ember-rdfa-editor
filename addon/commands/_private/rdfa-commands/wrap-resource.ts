@@ -4,10 +4,13 @@ import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
 import {
   findNodeByRdfaId,
-  getChildLiterals,
+  generateNewUri,
+  getRdfaChildren,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 
-export function wrapResource({ uriBase }: { uriBase: string }): Command {
+export function wrapResource(
+  args: { uriBase: string } | { existingUri: string },
+): Command {
   return (state, dispatch) => {
     const attrs = {
       __rdfaId: 'placeholder',
@@ -22,25 +25,32 @@ export function wrapResource({ uriBase }: { uriBase: string }): Command {
       return false;
     }
     if (dispatch) {
-      const objectId = uuidv4();
-      const wrappingResource = `${uriBase}${uuidv4()}`;
-      attrs.__rdfaId = objectId;
-      attrs.resource = wrappingResource;
+      if ('existingUri' in args) {
+        attrs.__rdfaId = uuidv4();
+        attrs.resource = args.existingUri;
+      } else {
+        const { __rdfaId, resource } = generateNewUri(args.uriBase);
+        attrs.__rdfaId = __rdfaId;
+        attrs.resource = resource;
+      }
 
       const wrapStatus = wrapIn(...wrapArgs)(state, (tr) => {
         // pass the state after this transaction to addProperty so the node exists
         let newState = state.apply(tr);
-        const createdWrappingNode = findNodeByRdfaId(newState.doc, objectId);
+        const createdWrappingNode = findNodeByRdfaId(
+          newState.doc,
+          attrs.__rdfaId,
+        );
 
         if (!createdWrappingNode) {
           throw new Error('Unable to find node we just wrapped with');
         }
-        const childLiterals = getChildLiterals(createdWrappingNode.value);
+        const childLiterals = getRdfaChildren(createdWrappingNode.value);
         let currentTransaction = tr;
         let addPropStatus = false;
         childLiterals.forEach((child) => {
           const addCmd = addProperty({
-            resource: wrappingResource,
+            resource: attrs.resource,
             property: {
               type: 'external',
               predicate: child.predicate,

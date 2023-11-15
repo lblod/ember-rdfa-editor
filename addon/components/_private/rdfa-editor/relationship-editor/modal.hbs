@@ -15,7 +15,7 @@
             <AuInput
               id={{id}}
               required={{true}}
-              @value={{this.newPredicate}}
+              value={{this.newPredicate}}
               @width="block"
               {{on "input" this.updatePredicate}}
             />
@@ -30,13 +30,14 @@
               id={{id}}
               required={{true}}
               name="types"
-              @value={{@addRelationshipType}}
+              @selected={{@addRelationshipType}}
               @width="block"
               {{on "input" this.setAddType}}
               @alignment="inline"
+              as |Group|
             >
               {{#each this.types as |addType|}}
-                <AuRadio name="types" value={{addType}}>{{addType}}</AuRadio>
+                <Group.Radio name="types" value={{addType}}>{{addType}}</Group.Radio>
               {{/each}}
             </AuRadioGroup>
             {{#if this.errorMessage}}
@@ -77,7 +78,7 @@
               <AuInput
                 id={{id}}
                 required={{true}}
-                @value={{this.resourceUriBase}}
+                value={{this.resourceUriBase}}
                 @width="block"
                 placeholder="http://example.com/resource/"
                 {{on "input" this.updateUriBase}}

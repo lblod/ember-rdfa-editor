@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
@@ -195,25 +196,41 @@ export function findRdfaIdsInSelection(selection: Selection) {
 }
 
 /**
- * Get all of the literal nodes which are children of the given node
+ * Get the first external property of nodes which are children of the given node, without recursing
+ * into resource nodes
  */
-export function getChildLiterals(node: PNode) {
+export function getRdfaChildren(node: PNode) {
   const result = new Set<ExternalProperty>();
   node.descendants((child) => {
     const id = getRdfaId(child);
     if (id) {
       const backlinks = getBacklinks(child);
+      const resource = getResource(child);
       if (backlinks?.[0]) {
         result.add({
           type: 'external',
           predicate: backlinks[0].predicate,
-          object: { type: 'literal', rdfaId: id },
+          object: resource
+            ? { type: 'resource', resource }
+            : { type: 'literal', rdfaId: id },
         });
       }
-      // Literals should not contain more rdfa aware nodes, so stop descending
+      // We don't want to recurse, so stop descending
       return false;
     }
     return true;
   });
   return result;
+}
+
+/**
+ * Generate a new URI using the passed base (must include terminating / or #, etc).
+ * Also returns an rdfaId for convenience
+ */
+export function generateNewUri(uriBase: string) {
+  const __rdfaId = uuidv4();
+  return {
+    __rdfaId,
+    resource: `${uriBase}${__rdfaId}`,
+  };
 }
