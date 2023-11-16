@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.0-next.3
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
+
 ## 7.0.0-next.2
 
 ### Patch Changes
