@@ -17,6 +17,7 @@ import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import {
   getNodeByRdfaId,
   getRdfaIds,
+  rdfaInfoPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
@@ -25,6 +26,7 @@ import {
   ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/say-parser';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type Args = {
   controller?: SayController;
@@ -66,7 +68,24 @@ export default class RdfaRelationshipEditor extends Component<Args> {
 
   get allRdfaids() {
     if (!this.controller) throw Error('No Controller');
-    return getRdfaIds(this.controller.mainEditorState);
+    const pluginState = rdfaInfoPluginKey.getState(
+      this.controller.mainEditorState,
+    );
+
+    return pluginState
+      ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
+          const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
+          const resource = node.attrs.resource;
+          if (resource) {
+            return { key, label: `Resource: ${resource}` };
+          } else {
+            return {
+              key,
+              label: `Literal: ${key} - ${node.textContent.substring(0, 20)}...`,
+            };
+          }
+        })
+      : [];
   }
 
   goToOutgoing = (outgoing: ExternalProperty) => {

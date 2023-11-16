@@ -15,9 +15,9 @@ type Args = {
 export default class RelationshipEditorModal extends Component<Args> {
   types = typeChoices;
   @tracked newPredicate = '';
-  @tracked objectRdfaId = '';
   @tracked resourceUriBase = '';
   @tracked errorMessage = '';
+  @tracked objectRdfa: { key: string; label: string } | null = null;
 
   get isAddExisting() {
     return this.args.addRelationshipType === 'existing';
@@ -29,12 +29,15 @@ export default class RelationshipEditorModal extends Component<Args> {
   get rdfaIds() {
     return this.args.rdfaIds;
   }
+  get objectRdfaId(): string {
+    return this.objectRdfa?.key || '';
+  }
 
   updatePredicate = (event: InputEvent) => {
     this.newPredicate = (event.target as HTMLInputElement).value;
   };
-  updateObject = (rdfaId: string) => {
-    this.objectRdfaId = rdfaId;
+  updateObject = (rdfaObj: { key: string; label: string }) => {
+    this.objectRdfa = rdfaObj;
   };
   updateUriBase = (event: InputEvent) => {
     this.resourceUriBase = (event.target as HTMLInputElement).value;

@@ -37,11 +37,16 @@
               as |Group|
             >
               {{#each this.types as |addType|}}
-                <Group.Radio name="types" value={{addType}}>{{addType}}</Group.Radio>
+                <Group.Radio
+                  name="types"
+                  value={{addType}}
+                >{{addType}}</Group.Radio>
               {{/each}}
             </AuRadioGroup>
             {{#if this.errorMessage}}
-              <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
+              <AuHelpText @error={{true}}>{{t
+                  "ember-rdfa-editor.image.url-error"
+                }}</AuHelpText>
             {{/if}}
           {{/let}}
         </AuFormRow>
@@ -54,17 +59,20 @@
               <PowerSelect
                 id={{id}}
                 name="ids"
-                {{!-- For some reason need to manually set width --}}
+                {{! For some reason need to manually set width }}
                 class="au-u-1-2"
                 @searchEnabled={{false}}
                 @options={{@rdfaIds}}
-                @selected={{this.objectRdfaId}}
-                @onChange={{this.updateObject}} as |obj|
+                @selected={{this.objectRdfa}}
+                @onChange={{this.updateObject}}
+                as |obj|
               >
-                {{obj}}
+                {{obj.label}}
               </PowerSelect>
               {{#if this.errorMessage}}
-                <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
+                <AuHelpText @error={{true}}>{{t
+                    "ember-rdfa-editor.image.url-error"
+                  }}</AuHelpText>
               {{/if}}
             {{/let}}
           </AuFormRow>
