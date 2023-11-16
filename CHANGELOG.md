@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.0-next.2
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`ca418d90`](https://github.com/lblod/ember-rdfa-editor/commit/ca418d90e398411c106d5a985140583d262ac98d) Thanks [@elpoelma](https://github.com/elpoelma)! - make relationship selection list a bit nicer to use
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+
 ## 7.0.0-next.1
 
 ### Patch Changes

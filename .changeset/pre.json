@@ -5,10 +5,12 @@
     "@lblod/ember-rdfa-editor": "6.4.0"
   },
   "changesets": [
+    "five-dolls-double",
     "flat-onions-suffer",
     "gold-toys-smoke",
     "green-beans-sin",
     "odd-falcons-jam",
-    "slow-trains-fix"
+    "slow-trains-fix",
+    "twenty-cooks-grow"
   ]
 }
