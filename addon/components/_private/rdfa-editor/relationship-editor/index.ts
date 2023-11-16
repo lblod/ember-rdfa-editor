@@ -77,11 +77,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
           const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
           const resource = node.attrs.resource;
           if (resource) {
-            return { key, label: `Resource: ${resource}` };
+            return { key, label: `Resource: ${resource} - [${key}]` };
           } else {
             return {
               key,
-              label: `Literal: ${key} - ${node.textContent.substring(0, 20)}...`,
+              label: `Literal: ${node.textContent.substring(
+                0,
+                20,
+              )}... - [${key}]`,
             };
           }
         })
