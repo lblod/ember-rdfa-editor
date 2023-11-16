@@ -6,7 +6,7 @@ import {
   Backlink,
   ExternalProperty,
   Property,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export type RdfaAttr =
   | 'vocab'

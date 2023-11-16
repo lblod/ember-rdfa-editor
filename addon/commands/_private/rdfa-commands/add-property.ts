@@ -1,4 +1,7 @@
-import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
+import {
+  Backlink,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
   getNodesByResource,

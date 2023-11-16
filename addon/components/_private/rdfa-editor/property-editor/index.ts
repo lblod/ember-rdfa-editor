@@ -11,7 +11,7 @@ import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   AttributeProperty,
   Property,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 type CreationStatus = {
   mode: 'creation';

@@ -142,13 +142,7 @@ export default class SayEditor {
   }
 
   get htmlContent(): string {
-    const div = document.createElement('div');
-    const doc = this.serializer.serializeNode(
-      this.mainView.state.doc,
-      undefined,
-    );
-    div.appendChild(doc);
-    return div.innerHTML;
+    return this.mainView.htmlContent;
   }
 }
 

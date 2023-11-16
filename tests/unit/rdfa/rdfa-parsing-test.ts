@@ -57,7 +57,10 @@ import {
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
 import { testEditor } from 'dummy/tests/utils/editor';
-import { Backlink, Property } from '@lblod/ember-rdfa-editor/core/say-parser';
+import {
+  Backlink,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 const schema = new Schema({
   nodes: {

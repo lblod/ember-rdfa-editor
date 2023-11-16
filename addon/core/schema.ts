@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { Backlink, Property } from './say-parser';
 import { isSome } from '../utils/_private/option';
+import { Backlink, Property } from './rdfa-processor';
 
 export const rdfaAttrs = {
   properties: { default: [] },

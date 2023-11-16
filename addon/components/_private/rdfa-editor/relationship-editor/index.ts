@@ -16,7 +16,6 @@ import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/err
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import {
   getNodeByRdfaId,
-  getRdfaIds,
   rdfaInfoPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
@@ -25,7 +24,7 @@ import {
   ExternalProperty,
   ExternalPropertyObject,
   Property,
-} from '@lblod/ember-rdfa-editor/core/say-parser';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type Args = {
