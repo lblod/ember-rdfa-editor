@@ -3,3 +3,87 @@
   border: 2px dashed $au-green-500;
   display: inline-block;
 }
+.ember-node {
+  white-space: normal !important;
+  .say-inline-rdfa {
+    [contenteditable] {
+      white-space: break-spaces;
+      word-break: break-all;
+      word-wrap: break-word;
+      outline: 0px;
+      padding: 2px;
+    }
+    .label {
+      font-size: var(--au-base);
+      color: var(--au-blue-700);
+      user-select: none;
+      margin: 0.5rem;
+    }
+    .au-c-icon {
+      margin: 0;
+    }
+  }
+}
+
+.ember-node.ProseMirror-selectednode {
+  > .say-inline-rdfa {
+    &.atomic {
+      background-color: var(--au-blue-200);
+    }
+    outline: 2px solid var(--au-blue-500);
+
+    ::selection {
+      background-color: var(--au-blue-300);
+    }
+  }
+}
+
+.say-number-settings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+
+  .to {
+    display: flex;
+    justify-content: center;
+    color: var(--au-gray-900);
+
+    span {
+      position: relative;
+      top: 33px;
+    }
+  }
+
+  // AuInput @type='number' overrides width to be 100px, we have to override it again
+  input[type='number'] {
+    width: 100%;
+  }
+
+  .au-c-help-text {
+    grid-column: span 3
+  }
+}
+
+// show tooltips above everything else
+.say-tooltip {
+ z-index: 3;
+}
+
+.say-number-tooltip {
+  width: 200px;
+
+  // AuInput @type='number' overrides width to be 100px, we have to override it again
+  input[type='number'] {
+    width: 100%;
+  }
+
+  // we want to control the padding ourselves in the tooltip
+  .au-c-content * {
+    margin-top: 0;
+  }
+
+  // add top padding starting from second element
+  * :not(*:nth-child(1)) {
+    margin-top: 5px;
+  }
+}

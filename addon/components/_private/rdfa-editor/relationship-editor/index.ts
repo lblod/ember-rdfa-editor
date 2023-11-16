@@ -102,8 +102,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   goToBacklink = (backlink: Backlink) => {
+    this.controller?.setActiveView
     this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
+      {
+        view:
+          this.controller.activeEditorView.parent ||
+          this.controller.activeEditorView,
+      },
     );
   };
 

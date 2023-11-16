@@ -5,9 +5,7 @@
     @view={{@view}}
     @getPos={{@getPos}}
     @selected={{@selected}}
-    @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
-    @decorations={{@decorations}}
-    @contentDecorations={{@contentDecorations}}
+    @initEditor={{this.initEditor}}
     {{leave-on-enter-key this.controller @getPos}}
   />
 </span>

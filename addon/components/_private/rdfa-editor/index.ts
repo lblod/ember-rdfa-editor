@@ -20,7 +20,7 @@ export default class RdfaEditor extends Component<Args> {
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
   RemoveNode = RemoveNode;
-  Annotator = Annotator:
+  Annotator = Annotator;
 
   @tracked collapsed = false;
 

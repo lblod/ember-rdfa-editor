@@ -36,7 +36,6 @@ const emberNodeConfig: EmberNodeConfig = {
   atom: true,
   editable: true,
   draggable: false,
-  needsFFKludge: true,
   toDOM,
   parseDOM,
   attrs: {
