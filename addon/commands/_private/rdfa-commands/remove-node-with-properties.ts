@@ -15,15 +15,6 @@ import { removeProperty } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-
 import { removeBacklinkFromResource } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-resource-backlink';
 import { removeBacklinkFromLiteral } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-literal-backlink';
 
-const commandWrapper: Command = (state, dispatch) => {
-  const tr = state.tr;
-
-  if (dispatch) {
-    dispatch(tr);
-  }
-
-  return true;
-};
 const findAllRdfaNodeChildren = (node: PNode, state: EditorState) => {
   const resolvedChildrenPositions: ResolvedPNode[] = [];
 
@@ -116,15 +107,35 @@ function removeNodeProperties({
   return { currentTransaction, removeRelationshipStatus, newState };
 }
 
-export function removeNodeWithChildNodes(node: ResolvedPNode): Command {
+type RemoveNodeWithChildNodeArgs = {
+  nodes: ResolvedPNode[];
+  /**
+   A transaction to use in place of getting a new one from state.tr
+   This can be used to call this command from within another, but care must be taken to not use
+   the passed transaction between passing it in and when the callback is called.
+   */
+  transaction?: Transaction;
+  /**
+   * Should the command also delete the node from the document
+   * `true` by default
+   */
+  deleteRange?: boolean;
+};
+
+export function removeRdfaNodesWithProperties({
+  nodes,
+  deleteRange = true,
+  transaction,
+}: RemoveNodeWithChildNodeArgs): Command {
   return (state, dispatch) => {
-    const childNodes = findAllRdfaNodeChildren(node.value, state);
+    const tr = transaction ?? state.tr;
 
-    return commandWrapper(state, (tr) => {
-      let newState = state.apply(tr);
+    let newState = state.apply(tr);
+    let currentTransaction = tr;
+    let removeRelationshipStatus = false;
 
-      let currentTransaction = tr;
-      let removeRelationshipStatus = false;
+    nodes.forEach((node) => {
+      const childNodes = findAllRdfaNodeChildren(node.value, state);
 
       childNodes.forEach((child) => {
         const removeNodePropertiesResult = removeNodeProperties({
@@ -163,16 +174,18 @@ export function removeNodeWithChildNodes(node: ResolvedPNode): Command {
         newState = removeNodePropertiesResult.newState;
       }
 
-      currentTransaction = currentTransaction.deleteRange(
-        node.pos,
-        node.pos + node.value.nodeSize,
-      );
-
-      if (dispatch) {
-        dispatch(currentTransaction);
+      if (deleteRange) {
+        currentTransaction = currentTransaction.deleteRange(
+          node.pos,
+          node.pos + node.value.nodeSize,
+        );
       }
-
-      return removeRelationshipStatus;
     });
+
+    if (dispatch) {
+      dispatch(currentTransaction);
+    }
+
+    return removeRelationshipStatus;
   };
 }

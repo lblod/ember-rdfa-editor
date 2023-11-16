@@ -10,4 +10,5 @@ export { toggleMarkAddFirst } from './toggle-mark-add-first';
 export { addType, removeType } from './type-commands';
 export { indentNode } from './indent-node';
 export { reduceIndent } from './reduce-indent';
-export { selectBlockRdfaNode } from './select-block-rdfa';
+export { deleteRdfaNode } from './_private/rdfa-commands/delete-rdfa-node';
+export { deleteSelectionWithRdfaNodesInside } from './_private/rdfa-commands/delete-selection-with-rdfa-nodes-inside';

@@ -3,7 +3,10 @@ import {
   isElement,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { renderRdfaAware } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  renderRdfaAware,
+  sharedRdfaNodeSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
 export const block_rdfa: SayNodeSpec = {
@@ -19,7 +22,7 @@ export const block_rdfa: SayNodeSpec = {
     __tag: { default: 'div' },
   },
   defining: true,
-  isolating: true,
+  ...sharedRdfaNodeSpec,
   parseDOM: [
     {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,

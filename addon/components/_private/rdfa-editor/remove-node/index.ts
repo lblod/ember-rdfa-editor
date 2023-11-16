@@ -3,7 +3,7 @@ import { tracked } from '@glimmer/tracking';
 
 import { type SayController } from '@lblod/ember-rdfa-editor';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { removeNodeWithChildNodes } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+import { removeRdfaNodesWithProperties } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 
 type Args = {
   node: ResolvedPNode;
@@ -35,6 +35,8 @@ export default class RemoveNode extends Component<Args> {
   };
 
   deleteNode = () => {
-    this.controller.doCommand(removeNodeWithChildNodes(this.node));
+    this.controller.doCommand(
+      removeRdfaNodesWithProperties({ nodes: [this.node] }),
+    );
   };
 }
