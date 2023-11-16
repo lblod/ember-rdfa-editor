@@ -179,19 +179,13 @@ export function findRdfaIdsInSelection(selection: Selection) {
   const result = new Set<string>();
   const range = selection.$from.blockRange(selection.$to);
   if (!range) return result;
-  const commonParent = range.parent;
-
-  commonParent.nodesBetween(
-    range.$from.pos - range.start,
-    range.$to.pos - range.start,
-    (child) => {
-      const id = getRdfaId(child);
-      if (id) {
-        result.add(id);
-      }
-      return true;
-    },
-  );
+  selection.content().content.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      result.add(id);
+    }
+    return true;
+  });
   return result;
 }
 
