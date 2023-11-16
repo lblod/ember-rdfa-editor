@@ -1,7 +1,7 @@
 import { ProsePlugin, SayView, TextSelection } from '..';
 import { cleanDocx } from '../utils/_private/ce/paste-handler-helper-functions';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
-import { annotate } from './rdfa-annotator';
+import { preprocessRDFa } from './rdfa-processor';
 export const DEFAULT_SAFE_ATTRIBUTES = [
   'colspan',
   'rowspan',
@@ -106,8 +106,8 @@ export function pasteHandler(): ProsePlugin {
           const html = clipboardData.getData('text/html');
           if (html) {
             const parsed = domParser.parseFromString(html, 'text/html').body;
-            // annotate clipboard content with properties/backlinks
-            annotate(parsed);
+            // preprocess RDFa in clipboard content
+            preprocessRDFa(parsed);
             view.pasteHTML(parsed.outerHTML);
 
             // reload document content

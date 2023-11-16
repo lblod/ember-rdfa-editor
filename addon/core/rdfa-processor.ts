@@ -40,7 +40,7 @@ export type Backlink = {
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
  */
-export function annotate(dom: Node) {
+export function preprocessRDFa(dom: Node) {
   // parse the html
   const datastore = EditorStore.fromParse<Node>({
     parseRoot: true,

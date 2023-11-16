@@ -60,7 +60,7 @@ import { testEditor } from 'dummy/tests/utils/editor';
 import {
   Backlink,
   Property,
-} from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 const schema = new Schema({
   nodes: {

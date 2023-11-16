@@ -4,7 +4,7 @@ import { ResolvedPNode } from './types';
 import {
   Backlink,
   Property,
-} from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export type RdfaAttr =
   | 'vocab'

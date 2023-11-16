@@ -1,5 +1,5 @@
 import { PNode, ProseParser } from '@lblod/ember-rdfa-editor';
-import { annotate } from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
 
@@ -15,7 +15,7 @@ export function htmlToDoc(
   const documentDiv = parsed.querySelector('div[data-say-document="true"]');
   let doc: PNode;
   if (documentDiv) {
-    annotate(documentDiv);
+    preprocessRDFa(documentDiv);
     doc = parser.parse(documentDiv, {
       preserveWhitespace: true,
       topNode: schema.nodes.doc.create({
@@ -30,7 +30,7 @@ export function htmlToDoc(
       }),
     });
   } else {
-    annotate(parsed);
+    preprocessRDFa(parsed);
     doc = parser.parse(parsed, {
       preserveWhitespace: true,
     });

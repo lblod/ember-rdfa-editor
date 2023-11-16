@@ -3,7 +3,7 @@ import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
 import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
-import { Backlink, Property } from './rdfa-annotator';
+import { Backlink, Property } from './rdfa-processor';
 
 export const rdfaAttrs = {
   properties: { default: [] },

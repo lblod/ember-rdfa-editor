@@ -21,7 +21,7 @@ import {
   ExternalProperty,
   ExternalPropertyObject,
   Property,
-} from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 type Args = {
   controller?: SayController;

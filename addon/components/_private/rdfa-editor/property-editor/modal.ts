@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { AttributeProperty } from '@lblod/ember-rdfa-editor/core/rdfa-annotator';
+import { AttributeProperty } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { localCopy } from 'tracked-toolbox';
 
 type Args = {
