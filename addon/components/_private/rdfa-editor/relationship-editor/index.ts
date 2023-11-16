@@ -5,6 +5,7 @@ import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   addProperty,
   insertRelation,
+  InsertRelationDetails,
   removeBacklinkFromLiteral,
   removeBacklinkFromResource,
   removeProperty,
@@ -12,9 +13,11 @@ import {
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import { getAllRdfaIds } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getNodeByRdfaId,
+  rdfaInfoPluginKey,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   Backlink,
@@ -22,6 +25,7 @@ import {
   ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type Args = {
   controller?: SayController;
@@ -61,10 +65,29 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return this.args.node.value.attrs.__rdfaId as string;
   }
 
-  // TODO this probably shouldn't be calculated every time
   get allRdfaids() {
     if (!this.controller) throw Error('No Controller');
-    return getAllRdfaIds(this.controller.mainEditorState.doc);
+    const pluginState = rdfaInfoPluginKey.getState(
+      this.controller.mainEditorState,
+    );
+
+    return pluginState
+      ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
+          const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
+          const resource = node.attrs.resource;
+          if (resource) {
+            return { key, label: `Resource: ${resource} - [${key}]` };
+          } else {
+            return {
+              key,
+              label: `Literal: ${node.textContent.substring(
+                0,
+                20,
+              )}... - [${key}]`,
+            };
+          }
+        })
+      : [];
   }
 
   goToOutgoing = (outgoing: ExternalProperty) => {
@@ -122,30 +145,41 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.addRelationshipType = type ?? undefined;
   };
 
-  saveNewRelationship = (predicate: string, rdfaid: string) => {
-    switch (this.addRelationshipType) {
+  saveNewRelationship = (
+    details:
+      | {
+          type: 'existing';
+          predicate: string;
+          rdfaid: string;
+        }
+      | InsertRelationDetails,
+  ) => {
+    switch (details.type) {
       case 'existing': {
-        const node = this.getNodeById(rdfaid)?.value;
+        const node = this.getNodeById(details.rdfaid)?.value;
         if (!node) {
           return false;
         }
-        this.relateNodes(predicate, node);
+        this.relateNodes(details.predicate, node);
         this.addRelationshipType = undefined;
         return true;
       }
       case 'content':
       case 'resource':
-        return this.addNode(this.addRelationshipType, predicate);
+        return this.addNode(details);
       default:
         throw new NotImplementedError();
     }
   };
 
-  addNode = (type: 'content' | 'resource', predicate: string) => {
+  addNode = (details: InsertRelationDetails) => {
     // This function can only be called when the selected node defines a resource
     if (this.currentResource) {
       this.controller?.doCommand(
-        insertRelation({ subject: this.currentResource, type, predicate }),
+        insertRelation({
+          subject: this.currentResource,
+          ...details,
+        }),
       );
       this.addRelationshipType = undefined;
     }

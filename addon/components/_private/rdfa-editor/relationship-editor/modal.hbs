@@ -15,7 +15,7 @@
             <AuInput
               id={{id}}
               required={{true}}
-              @value={{this.newPredicate}}
+              value={{this.newPredicate}}
               @width="block"
               {{on "input" this.updatePredicate}}
             />
@@ -30,17 +30,23 @@
               id={{id}}
               required={{true}}
               name="types"
-              @value={{@addRelationshipType}}
+              @selected={{@addRelationshipType}}
               @width="block"
               {{on "input" this.setAddType}}
               @alignment="inline"
+              as |Group|
             >
               {{#each this.types as |addType|}}
-                <AuRadio name="types" value={{addType}}>{{addType}}</AuRadio>
+                <Group.Radio
+                  name="types"
+                  value={{addType}}
+                >{{addType}}</Group.Radio>
               {{/each}}
             </AuRadioGroup>
             {{#if this.errorMessage}}
-              <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
+              <AuHelpText @error={{true}}>{{t
+                  "ember-rdfa-editor.image.url-error"
+                }}</AuHelpText>
             {{/if}}
           {{/let}}
         </AuFormRow>
@@ -53,18 +59,38 @@
               <PowerSelect
                 id={{id}}
                 name="ids"
-                {{!-- For some reason need to manually set width --}}
+                {{! For some reason need to manually set width }}
                 class="au-u-1-2"
                 @searchEnabled={{false}}
                 @options={{@rdfaIds}}
-                @selected={{this.objectRdfaId}}
-                @onChange={{this.updateObject}} as |obj|
+                @selected={{this.objectRdfa}}
+                @onChange={{this.updateObject}}
+                as |obj|
               >
-                {{obj}}
+                {{obj.label}}
               </PowerSelect>
               {{#if this.errorMessage}}
-                <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
+                <AuHelpText @error={{true}}>{{t
+                    "ember-rdfa-editor.image.url-error"
+                  }}</AuHelpText>
               {{/if}}
+            {{/let}}
+          </AuFormRow>
+        {{/if}}
+        {{#if this.isAddResource}}
+          <AuFormRow @alignment="default">
+            {{#let (unique-id) as |id|}}
+              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
+                URI base
+              </AuLabel>
+              <AuInput
+                id={{id}}
+                required={{true}}
+                value={{this.resourceUriBase}}
+                @width="block"
+                placeholder="http://example.com/resource/"
+                {{on "input" this.updateUriBase}}
+              />
             {{/let}}
           </AuFormRow>
         {{/if}}

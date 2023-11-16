@@ -27,11 +27,11 @@
       <:aside>
         <Sidebar>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
-          {{#if this.activeNode}}
             <this.RdfaEditor
               @node={{this.activeNode}}
               @controller={{this.rdfaEditor}}
             />
+          {{#if this.activeNode}}
             <this.DebugInfo @node={{this.activeNode}} />
             <this.AttributeEditor
               @node={{this.activeNode}}

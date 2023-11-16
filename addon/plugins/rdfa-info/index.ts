@@ -79,12 +79,18 @@ export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);
 }
 
+/**
+ * In RDFA, many nodes can define the same resource, find all of those nodes
+ * @param state
+ * @param resource - Resource URI
+ */
 export function getNodesByResource(state: EditorState, resource: string) {
   return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource);
 }
 
 export function getRdfaIds(state: EditorState) {
-  return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.keys();
+  const pluginState = rdfaInfoPluginKey.getState(state);
+  return pluginState ? [...pluginState.rdfaIdMapping.keys()] : [];
 }
 
 export function getResources(state: EditorState) {

@@ -1,8 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
+import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
 import {
   Backlink,
+  ExternalProperty,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
@@ -105,16 +107,6 @@ export function mapPositionFrom(
   return curPos;
 }
 
-/** This is called in a getter so should be efficient. doc is immutable, so should just memoize it. **/
-export function getAllRdfaIds(doc: PNode): string[] {
-  const ids: string[] = [];
-  doc.descendants((node) => {
-    const id = getRdfaId(node);
-    if (id) ids.push(id);
-  });
-  return ids;
-}
-
 export function findNodeByRdfaId(
   doc: PNode,
   rdfaId: string,
@@ -181,4 +173,58 @@ export function getResources(node: PNode): Set<string> {
     return true;
   });
   return result;
+}
+
+export function findRdfaIdsInSelection(selection: Selection) {
+  const result = new Set<string>();
+  const range = selection.$from.blockRange(selection.$to);
+  if (!range) return result;
+  selection.content().content.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      result.add(id);
+    }
+    return true;
+  });
+  return result;
+}
+
+/**
+ * Get the first external property of nodes which are children of the given node, without recursing
+ * into resource nodes
+ */
+export function getRdfaChildren(node: PNode) {
+  const result = new Set<ExternalProperty>();
+  node.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      const backlinks = getBacklinks(child);
+      const resource = getResource(child);
+      if (backlinks?.[0]) {
+        result.add({
+          type: 'external',
+          predicate: backlinks[0].predicate,
+          object: resource
+            ? { type: 'resource', resource }
+            : { type: 'literal', rdfaId: id },
+        });
+      }
+      // We don't want to recurse, so stop descending
+      return false;
+    }
+    return true;
+  });
+  return result;
+}
+
+/**
+ * Generate a new URI using the passed base (must include terminating / or #, etc).
+ * Also returns an rdfaId for convenience
+ */
+export function generateNewUri(uriBase: string) {
+  const __rdfaId = uuidv4();
+  return {
+    __rdfaId,
+    resource: `${uriBase}${__rdfaId}`,
+  };
 }

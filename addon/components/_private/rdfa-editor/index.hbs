@@ -4,24 +4,38 @@
       <Group>
         <AuHeading @level="4" @skin="4">RDFa</AuHeading>
       </Group>
-      <Group>
-        <AuPill>{{this.type}}</AuPill>
-        <AuButton
-          @skin="naked"
-          @icon={{if this.collapsed "chevron-down" "chevron-up"}}
-          {{on "click" this.toggleSection}}
-        />
-      </Group>
+      {{#if @node}}
+        <Group>
+          <AuPill>{{this.type}}</AuPill>
+          <AuButton
+            @skin="naked"
+            @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+            {{on "click" this.toggleSection}}
+          />
+        </Group>
+      {{/if}}
     </AuToolbar>
   </Section>
-  {{#unless this.collapsed}}
-    {{#if this.showPropertiesSection}}
+  {{#if @node}}
+    {{#unless this.collapsed}}
+      {{#if this.showPropertiesSection}}
+        <Section>
+          <this.PropertyEditor @node={{@node}} @controller={{@controller}} />
+        </Section>
+      {{/if}}
       <Section>
-        <this.PropertyEditor @node={{@node}} @controller={{@controller}} />
+        <this.RelationshipEditor @node={{@node}} @controller={{@controller}} />
       </Section>
-    {{/if}}
+      <Section>
+        <this.WrappingUtils @node={{@node}} @controller={{@controller}} />
+      </Section>
+      <Section>
+        <this.RemoveNode @node={{@node}} @controller={{@controller}} />
+      </Section>
+    {{/unless}}
+  {{else}}
     <Section>
-      <this.RelationshipEditor @node={{@node}} @controller={{@controller}} />
+      <this.WrappingUtils @node={{@node}} @controller={{@controller}} />
     </Section>
-  {{/unless}}
+  {{/if}}
 </AuPanel>

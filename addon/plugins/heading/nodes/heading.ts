@@ -21,6 +21,7 @@ export const heading: SayNodeSpec = {
     ...rdfaAttrs,
   },
   content: 'inline*',
+  isolating: true,
   group: 'block',
   editable: true,
   defining: true,

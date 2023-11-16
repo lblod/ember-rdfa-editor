@@ -15,23 +15,32 @@ type Args = {
 export default class RelationshipEditorModal extends Component<Args> {
   types = typeChoices;
   @tracked newPredicate = '';
-  @tracked objectRdfaId = '';
+  @tracked resourceUriBase = '';
   @tracked errorMessage = '';
+  @tracked objectRdfa: { key: string; label: string } | null = null;
 
   get isAddExisting() {
     return this.args.addRelationshipType === 'existing';
+  }
+  get isAddResource() {
+    return this.args.addRelationshipType === 'resource';
   }
 
   get rdfaIds() {
     return this.args.rdfaIds;
   }
+  get objectRdfaId(): string {
+    return this.objectRdfa?.key || '';
+  }
 
   updatePredicate = (event: InputEvent) => {
     this.newPredicate = (event.target as HTMLInputElement).value;
   };
-
-  updateObject = (rdfaId: string) => {
-    this.objectRdfaId = rdfaId;
+  updateObject = (rdfaObj: { key: string; label: string }) => {
+    this.objectRdfa = rdfaObj;
+  };
+  updateUriBase = (event: InputEvent) => {
+    this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
 
   setAddType = (event: InputEvent) => {
@@ -46,8 +55,24 @@ export default class RelationshipEditorModal extends Component<Args> {
 
   save = (event: Event) => {
     event.preventDefault();
-    if (this.canSave) {
-      this.args.onSave(this.newPredicate, this.objectRdfaId);
+    if (
+      this.canSave &&
+      this.args.addRelationshipType &&
+      this.args.addRelationshipType !== 'unspecified'
+    ) {
+      if (this.args.addRelationshipType === 'existing') {
+        this.args.onSave({
+          type: this.args.addRelationshipType,
+          predicate: this.newPredicate,
+          rdfaid: this.objectRdfaId,
+        });
+      } else {
+        this.args.onSave({
+          type: this.args.addRelationshipType,
+          predicate: this.newPredicate,
+          uriBase: this.resourceUriBase,
+        });
+      }
     }
   };
 
@@ -57,6 +82,7 @@ export default class RelationshipEditorModal extends Component<Args> {
       case 'existing':
         return !!this.objectRdfaId;
       case 'resource':
+        return !!this.resourceUriBase;
       case 'content':
         return true;
       case 'unspecified':
