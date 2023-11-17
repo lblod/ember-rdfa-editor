@@ -5,13 +5,15 @@ import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import { Backlink, Property } from './rdfa-processor';
 
-export const rdfaAttrs = {
+export const rdfaAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   resource: { default: null },
 };
+/** @deprecated Renamed to rdfaAttrSpec */
+export const rdfaAttrs = rdfaAttrSpec;
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },

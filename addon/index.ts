@@ -1,7 +1,11 @@
 export * from 'prosemirror-keymap';
 import { Decoration } from 'prosemirror-view';
 
-export { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
+export {
+  getRdfaAttrs,
+  rdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 
 export {
   default as ProseMirror,
