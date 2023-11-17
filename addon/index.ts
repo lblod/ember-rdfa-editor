@@ -3,6 +3,7 @@ import { Decoration } from 'prosemirror-view';
 
 export {
   getRdfaAttrs,
+  RdfaAttrs,
   rdfaAttrs,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
