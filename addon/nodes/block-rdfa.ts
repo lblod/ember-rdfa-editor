@@ -3,7 +3,10 @@ import {
   isElement,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { renderRdfaAware } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  getRdfaAttrs,
+  renderRdfaAware,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
 export const block_rdfa: SayNodeSpec = {
@@ -23,7 +26,12 @@ export const block_rdfa: SayNodeSpec = {
   parseDOM: [
     {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
+      // Default priority is 50, so this means a more specific definition matches before this one
+      priority: 40,
       getAttrs(node: HTMLElement) {
+        if (!getRdfaAttrs(node)) {
+          return false;
+        }
         return { __tag: tagName(node) };
       },
       contentElement(node: Node) {

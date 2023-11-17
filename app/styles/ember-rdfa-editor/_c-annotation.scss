@@ -62,8 +62,6 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   [typeof]:not([typeof='foaf:Document']),
   [data-type],
   .mark-highlight-manual {
-    border-bottom: 0.2rem dotted var(--au-gray-300);
-    padding-bottom: 0.2rem;
     transition: border var(--au-transition);
 
     // Hide certain underlines
