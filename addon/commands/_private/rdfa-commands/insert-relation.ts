@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type InsertRelationDetails = {
   /** The predicate describing the new relationship */
   predicate: string;
-} & ({ type: 'content' } | { type: 'resource'; uriBase: string });
+} & ({ type: 'literal' } | { type: 'resource'; uriBase: string });
 type InsertRelationArgs = {
   /** The subject to which to add the property */
   subject: string;

@@ -164,7 +164,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         this.addRelationshipType = undefined;
         return true;
       }
-      case 'content':
+      case 'literal':
       case 'resource':
         return this.addNode(details);
       default:

@@ -17,7 +17,7 @@ export function wrapLiteral(): Command {
       const objectId = uuidv4();
       const wrapStatus = wrapIn(state.schema.nodes.block_rdfa, {
         __rdfaId: objectId,
-        rdfaNodeType: 'content',
+        rdfaNodeType: 'literal',
       })(state, dispatch);
 
       return wrapStatus;
