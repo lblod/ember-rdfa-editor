@@ -27,10 +27,12 @@ export function firefoxCursorFix(): ProsePlugin {
           }
           // The problematic position is reached AFTER we backspace the char right after the problematic node
           // so we have to check one position in advance
-          const $posToCheck = $from.parent.resolve($from.parentOffset - 1);
+          const $posToCheck = view.state.doc.resolve($from.pos - 1);
           const nodeBefore = $posToCheck.nodeBefore;
           if (nodeBefore && nodeBefore.type.spec.needsFFKludge) {
-            view.dispatch(view.state.tr.deleteRange($posToCheck.pos, from));
+            const tr = view.state.tr;
+            tr.deleteRange($posToCheck.pos, from);
+            view.dispatch(tr);
             return true;
           }
         }
