@@ -35,6 +35,21 @@ export function firefoxCursorFix(): ProsePlugin {
             view.dispatch(tr);
             return true;
           }
+        } else if (event.key === 'Delete') {
+          const { $from, from, to } = view.state.selection;
+          if (from !== to) {
+            return false;
+          }
+          // The problem with deleting only occurs if we're at the start of the parent node
+          if ($from.parentOffset !== 0) {
+            return false;
+          }
+          const $posToCheck = view.state.doc.resolve($from.pos + 1);
+          const nodeAfter = $posToCheck.nodeAfter;
+          if (nodeAfter && nodeAfter.type.spec.needsFFKludge) {
+            view.dispatch(view.state.tr.deleteRange(from, $posToCheck.pos));
+            return true;
+          }
         }
         return false;
       },
