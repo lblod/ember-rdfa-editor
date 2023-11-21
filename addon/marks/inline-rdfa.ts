@@ -1,10 +1,12 @@
 import { Mark, MarkSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { v4 as uuidv4 } from 'uuid';
 
 export const inline_rdfa: MarkSpec = {
   attrs: {
     ...rdfaAttrs,
     __tag: { default: 'span' },
+    _guid: { default: null },
   },
   group: 'rdfa',
   excludes: '',
@@ -16,14 +18,16 @@ export const inline_rdfa: MarkSpec = {
       getAttrs(node: HTMLElement) {
         const attrs = getRdfaAttrs(node);
         if (attrs) {
-          return attrs;
+          return { ...attrs, _guid: uuidv4() };
         }
         return false;
       },
     },
   ],
   toDOM(mark: Mark) {
-    return ['span', mark.attrs, 0];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _guid, ...rdfaAttrs } = mark.attrs;
+    return ['span', rdfaAttrs, 0];
   },
   hasRdfa: true,
   parseTag: 'span',
