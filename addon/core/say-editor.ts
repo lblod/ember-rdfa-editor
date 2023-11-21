@@ -33,6 +33,7 @@ import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -102,6 +103,7 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
+        removePropertiesOfDeletedNodes(),
         rdfaInfoPlugin(),
       ];
     }
