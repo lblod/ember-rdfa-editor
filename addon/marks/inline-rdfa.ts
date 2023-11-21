@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 export const inline_rdfa: MarkSpec = {
   attrs: {
     ...rdfaAttrs,
-    __tag: { default: 'span' },
     _guid: { default: null },
   },
   group: 'rdfa',
