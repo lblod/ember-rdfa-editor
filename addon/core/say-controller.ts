@@ -13,7 +13,6 @@ import {
   Selection,
   Transaction,
 } from 'prosemirror-state';
-import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 export default class SayController {
@@ -27,28 +26,6 @@ export default class SayController {
   get externalContextStore(): SayStore {
     return unwrap(datastoreKey.getState(this.editor.mainView.state))
       .contextStore;
-  }
-
-  get datastore(): SayStore {
-    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
-  }
-
-  get schema(): Schema {
-    return this.mainEditorState.schema;
-  }
-
-  get owner(): Owner {
-    return this.editor.owner;
-  }
-
-  get documentLanguage() {
-    return this.getDocumentAttribute('lang');
-  }
-
-  set documentLanguage(language: string) {
-    this.withTransaction((tr) => {
-      return tr.step(new SetDocAttributeStep('lang', language));
-    });
   }
 
   get showRdfaBlocks() {
@@ -157,9 +134,29 @@ export default class SayController {
     }
   }
 
+  get datastore(): SayStore {
+    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
+  }
+
+  get schema(): Schema {
+    return this.mainEditorState.schema;
+  }
+
+  get owner(): Owner {
+    return this.editor.owner;
+  }
+
+  get documentLanguage() {
+    return this.getDocumentAttribute('lang');
+  }
+
+  set documentLanguage(language: string) {
+    this.setDocumentAttribute('lang', language);
+  }
+
   setDocumentAttribute(key: string, value: unknown) {
     this.withTransaction((tr) => {
-      return tr.step(new SetDocAttributeStep(key, value));
+      return tr.setDocAttribute(key, value);
     });
   }
 
