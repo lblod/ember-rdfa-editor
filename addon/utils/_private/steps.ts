@@ -2,6 +2,10 @@ import { Node, Schema } from 'prosemirror-model';
 import { Step, StepResult } from 'prosemirror-transform';
 
 //Based on https://discuss.prosemirror.net/t/changing-doc-attrs/784/22
+/**
+ * @deprecated
+ * Use the native `DocAttrStep` instead or use the `setDocAttribute` method of the `Transform` class.
+ */
 export class SetDocAttributeStep extends Step {
   private prevValue: unknown;
   static ID = 'setDocAttribute';
