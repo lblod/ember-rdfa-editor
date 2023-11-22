@@ -29,7 +29,6 @@ export const rdfaNodeTypes = ['resource', 'literal'] as const;
 export interface RdfaAwareAttrs {
   __rdfaId: string;
   rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  properties: Property[];
   backlinks: Backlink[];
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
@@ -38,12 +37,17 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
   resource: string;
+  properties: Property[];
 }
 export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
   Record<string, string | number | Property[] | Backlink[]>;
 
 export function getRdfaAttrs(node: Element): RdfaAttrs | false {
-  const attrs: Partial<RdfaAttrs> = {};
+  let attrs: RdfaAttrs = {
+    __rdfaId: '',
+    rdfaNodeType: 'literal',
+    backlinks: [],
+  };
 
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaDomAttrs)) {
@@ -65,7 +69,20 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
         if (!rdfaNodeTypes.includes(type)) {
           logger('rdfaNodeType is not a valid type', value, node);
         }
-        attrs['rdfaNodeType'] = type as RdfaAttrs['rdfaNodeType'];
+        if (type === 'resource') {
+          attrs = {
+            ...attrs,
+            rdfaNodeType: type,
+            resource:
+              attrs.resource && typeof attrs.resource === 'string'
+                ? attrs.resource
+                : '',
+            properties:
+              attrs.properties && attrs.properties instanceof Array
+                ? (attrs.properties as Property[])
+                : [],
+          };
+        }
       }
     }
   }
@@ -74,7 +91,7 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
       attrs['__rdfaId'] = uuidv4();
       logger('No rdfaId found, generating one', attrs['__rdfaId'], attrs);
     }
-    return attrs as RdfaAttrs;
+    return attrs;
   }
   return false;
 }

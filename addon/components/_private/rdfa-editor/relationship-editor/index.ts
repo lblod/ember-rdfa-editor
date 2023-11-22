@@ -74,7 +74,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return pluginState
       ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
           const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
-          const resource = node.attrs.resource;
+          const resource = node.attrs.resource as string;
           if (resource) {
             return { key, label: `Resource: ${resource} - [${key}]` };
           } else {
