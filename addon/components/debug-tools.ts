@@ -137,7 +137,9 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   showExportPreview() {
     const wnd = window.open('about:blank', '', '_blank');
     if (wnd) {
-      wnd.document.write(this.controller?.htmlContent || '');
+      wnd.document.write(
+        `<!DOCTYPE html>\n${this.controller?.htmlContent || ''}`,
+      );
     }
   }
 
