@@ -172,6 +172,7 @@ export const embeddedEditorBaseKeymap: Keymap = (schema) => {
       splitBlock,
       insertHardBreak,
     ),
+    'Shift-Enter': chainCommands(exitCode, insertHardBreak),
   };
 };
 

@@ -114,7 +114,7 @@ export default class EmbeddedEditor extends Component<Args> {
         ...undoRedoMap,
       };
     } else {
-      return { ...embeddedEditorBaseKeymap, ...undoRedoMap };
+      return { ...embeddedEditorBaseKeymap(this.schema), ...undoRedoMap };
     }
   }
 
