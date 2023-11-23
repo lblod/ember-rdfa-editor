@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { isSome } from '../utils/_private/option';
 
 export const rdfaAttrs = {
@@ -20,7 +19,6 @@ export const rdfaAttrs = {
   role: { default: undefined },
   inlist: { default: undefined },
   datetime: { default: undefined },
-  __rdfaId: { default: undefined },
 };
 
 export function getRdfaAttrs(node: Element): Record<string, string> | false {
@@ -34,9 +32,6 @@ export function getRdfaAttrs(node: Element): Record<string, string> | false {
     }
   }
   if (hasAnyRdfaAttributes) {
-    if (!attrs['__rdfaId']) {
-      attrs['__rdfaId'] = uuidv4();
-    }
     return attrs;
   }
   return false;
