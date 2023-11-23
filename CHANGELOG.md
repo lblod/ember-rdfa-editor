@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.1
+
+### Patch Changes
+
+- [#1045](https://github.com/lblod/ember-rdfa-editor/pull/1045) [`af593913`](https://github.com/lblod/ember-rdfa-editor/commit/af593913abc2be7d9386b224bd5b68469da60dbe) Thanks [@abeforgit](https://github.com/abeforgit)! - fix placeholders no longer being selectable with mouse
+
 ## 7.0.0
 
 ### Major Changes
