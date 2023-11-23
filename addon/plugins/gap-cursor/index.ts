@@ -83,7 +83,6 @@ function arrow(axis: 'vert' | 'horiz', dir: number): Command {
 }
 
 function mousedown(view: EditorView, event: MouseEvent) {
-  console.log('mousedown');
   const clickPos = view.posAtCoords({
     left: event.clientX,
     top: event.clientY,
@@ -111,19 +110,11 @@ function resolvePosition(
   if (parent?.isAtom) {
     return result;
   }
-  while (result.parent !== parent) {
+  while (result.depth > 0 && result.parent !== parent) {
     if (result.index() <= 0) {
       result = view.state.doc.resolve(result.before());
     } else if (result.index() >= result.parent.childCount - 1) {
-      // result.after errors if you call it on a postion at depth 0
-      if (result.depth > 0) {
-        result = view.state.doc.resolve(result.after());
-      } else {
-        console.warn(
-          'GapCursor tried but failed to find a sensible position, returning best guess',
-        );
-        break;
-      }
+      result = view.state.doc.resolve(result.after());
     } else {
       break;
     }
