@@ -1,6 +1,6 @@
 import { keydownHandler } from 'prosemirror-keymap';
 import { TextSelection, Plugin, Command, EditorState } from 'prosemirror-state';
-import { Fragment, Slice } from 'prosemirror-model';
+import { Fragment, ResolvedPos, Slice } from 'prosemirror-model';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { GapCursor } from './gap-cursor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
@@ -104,10 +104,13 @@ function mousedown(view: EditorView, event: MouseEvent) {
 function resolvePosition(
   view: EditorView,
   { pos, inside }: { pos: number; inside: number },
-) {
+): ResolvedPos {
   let result = view.state.doc.resolve(pos);
   const parent = inside === -1 ? view.state.doc : view.state.doc.nodeAt(inside);
-  while (result.parent !== parent) {
+  if (parent?.isAtom) {
+    return result;
+  }
+  while (result.depth > 0 && result.parent !== parent) {
     if (result.index() <= 0) {
       result = view.state.doc.resolve(result.before());
     } else if (result.index() >= result.parent.childCount - 1) {
