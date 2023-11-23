@@ -6,7 +6,6 @@ export const block_rdfa: NodeSpec = {
   group: 'block',
   attrs: {
     ...rdfaAttrs,
-    __tag: { default: 'div' },
   },
   defining: true,
   parseDOM: [
@@ -18,6 +17,6 @@ export const block_rdfa: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [node.attrs.__tag, node.attrs, 0];
+    return ['div', node.attrs, 0];
   },
 };
