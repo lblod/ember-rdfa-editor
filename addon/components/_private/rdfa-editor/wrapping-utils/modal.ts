@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import type RdfaWrappingUtils from './index';
 
 type Args = {
-  openModal: () => void;
   closeModal: () => void;
   wrapWithResource: RdfaWrappingUtils['wrapWithResource'];
 };
