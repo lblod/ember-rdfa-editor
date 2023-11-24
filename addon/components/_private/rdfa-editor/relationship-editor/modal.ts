@@ -43,10 +43,8 @@ export default class RelationshipEditorModal extends Component<Args> {
     this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
 
-  setAddType = (event: InputEvent) => {
-    this.args.setAddType(
-      (event.target as HTMLInputElement).value as AddRelationshipType,
-    );
+  setAddType = (value: AddRelationshipType) => {
+    this.args.setAddType(value);
   };
 
   cancel = () => {

@@ -15,15 +15,15 @@
             <AuRadioGroup
               id={{id}}
               required={{true}}
-              name="isNew"
+              @name="isNew"
               @selected={{this.generateNewUri}}
               @width="block"
-              {{on "input" this.shouldGenerateNewUri}}
+              @onChange={{this.shouldGenerateNewUri}}
               @alignment="inline"
               as |Group|
             >
-              <Group.Radio name="isNew" @value="yes">Yes</Group.Radio>
-              <Group.Radio name="isNew" @value="no">No</Group.Radio>
+              <Group.Radio @value="yes">Yes</Group.Radio>
+              <Group.Radio @value="no">No</Group.Radio>
             </AuRadioGroup>
           {{/let}}
         </AuFormRow>

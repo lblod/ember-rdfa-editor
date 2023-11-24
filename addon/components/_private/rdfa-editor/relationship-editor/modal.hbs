@@ -29,17 +29,16 @@
             <AuRadioGroup
               id={{id}}
               required={{true}}
-              name="types"
+              @name="types"
               @selected={{@addRelationshipType}}
               @width="block"
-              {{on "input" this.setAddType}}
+              @onChange={{this.setAddType}}
               @alignment="inline"
               as |Group|
             >
               {{#each this.types as |addType|}}
                 <Group.Radio
-                  name="types"
-                  value={{addType}}
+                  @value={{addType}}
                 >{{addType}}</Group.Radio>
               {{/each}}
             </AuRadioGroup>
