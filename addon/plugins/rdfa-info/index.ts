@@ -94,5 +94,6 @@ export function getRdfaIds(state: EditorState) {
 }
 
 export function getResources(state: EditorState) {
-  return rdfaInfoPluginKey.getState(state)?.resourceMapping.keys();
+  const pluginState = rdfaInfoPluginKey.getState(state);
+  return pluginState ? [...pluginState.resourceMapping.keys()] : [];
 }

@@ -1,9 +1,5 @@
 {{#let (unique-id) as |formId|}}
-  <AuModal
-    @modalOpen={{true}}
-    @closable={{true}}
-    @closeModal={{@onCancel}}
-  >
+  <AuModal @modalOpen={{true}} @closable={{true}} @closeModal={{@onCancel}}>
     <:title>Add Relationship</:title>
     <:body>
       <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
@@ -24,75 +20,75 @@
         <AuFormRow @alignment="default">
           {{#let (unique-id) as |id|}}
             <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-              Add Type
+              Object type
             </AuLabel>
             <AuRadioGroup
               id={{id}}
               required={{true}}
-              @name="types"
-              @selected={{this.addRelationshipType}}
+              @name="object-type"
+              @selected={{this.selectedObjectType}}
               @width="block"
-              @onChange={{this.setAddType}}
+              @onChange={{this.setObjectType}}
               @alignment="inline"
               as |Group|
             >
-              {{#each this.types as |addType|}}
-                <Group.Radio
-                  @value={{addType}}
-                >{{addType}}</Group.Radio>
+              {{#each this.objectTypes as |type|}}
+                <Group.Radio @value={{type}}>
+                  {{type}}
+                </Group.Radio>
               {{/each}}
             </AuRadioGroup>
-            {{#if this.errorMessage}}
-              <AuHelpText @error={{true}}>{{t
-                  "ember-rdfa-editor.image.url-error"
-                }}</AuHelpText>
-            {{/if}}
           {{/let}}
         </AuFormRow>
-        {{#if this.isAddExisting}}
-          <AuFormRow @alignment="default">
-            {{#let (unique-id) as |id|}}
-              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-                Object
-              </AuLabel>
-              <PowerSelect
-                id={{id}}
-                name="ids"
-                {{! For some reason need to manually set width }}
-                class="au-u-1-2"
-                @searchEnabled={{false}}
-                @options={{this.rdfaIds}}
-                @selected={{this.objectRdfa}}
-                @onChange={{this.updateObject}}
-                as |obj|
-              >
-                {{obj.label}}
-              </PowerSelect>
-              {{#if this.errorMessage}}
-                <AuHelpText @error={{true}}>{{t
-                    "ember-rdfa-editor.image.url-error"
-                  }}</AuHelpText>
-              {{/if}}
-            {{/let}}
-          </AuFormRow>
-        {{/if}}
-        {{#if this.isAddResource}}
-          <AuFormRow @alignment="default">
-            {{#let (unique-id) as |id|}}
-              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-                URI base
-              </AuLabel>
-              <AuInput
-                id={{id}}
-                required={{true}}
-                value={{this.resourceUriBase}}
-                @width="block"
-                placeholder="http://example.com/resource/"
-                {{on "input" this.updateUriBase}}
-              />
-            {{/let}}
-          </AuFormRow>
-        {{/if}}
+        <AuFormRow @alignment="default">
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}}>
+              Object
+              <AuPill>Optional</AuPill>
+            </AuLabel>
+            <PowerSelect
+              id={{id}}
+              {{! For some reason need to manually set width }}
+              class="au-u-1-1"
+              @searchEnabled={{false}}
+              @options={{if
+                (eq this.selectedObjectType "resource")
+                this.resources
+                this.literals
+              }}
+              @selected={{this.objectRdfa}}
+              @onChange={{this.updateObject}}
+              @allowClear={{true}}
+              @placeholder={{this.dropdownPlaceholder}}
+              as |obj|
+            >
+              {{this.label obj}}
+            </PowerSelect>
+          {{/let}}
+        </AuFormRow>
+        {{#unless this.objectRdfa}}
+          {{#if (eq this.selectedObjectType "resource")}}
+            <AuFormRow @alignment="default">
+              {{#let (unique-id) as |id|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >
+                  URI base
+                </AuLabel>
+                <AuInput
+                  id={{id}}
+                  required={{true}}
+                  value={{this.resourceUriBase}}
+                  @width="block"
+                  placeholder="http://example.com/resource/"
+                  {{on "input" this.updateUriBase}}
+                />
+              {{/let}}
+            </AuFormRow>
+          {{/if}}
+        {{/unless}}
       </form>
     </:body>
     <:footer>
