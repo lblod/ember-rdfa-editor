@@ -1,42 +1,69 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type RdfaRelationshipEditor from './index';
+import { SayController } from '@lblod/ember-rdfa-editor';
+import { rdfaInfoPluginKey } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { ExternalPropertyObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 const typeChoices = ['existing', 'literal', 'resource'] as const;
-export type AddRelationshipType = 'unspecified' | (typeof typeChoices)[number];
+export type AddRelationshipType = (typeof typeChoices)[number];
 
 type Args = {
-  addRelationshipType?: AddRelationshipType;
-  setAddType: (type: null | AddRelationshipType) => void;
   onSave: RdfaRelationshipEditor['saveNewRelationship'];
-  rdfaIds: string[];
+  controller?: SayController;
 };
 
 export default class RelationshipEditorModal extends Component<Args> {
   types = typeChoices;
+
+  @tracked addRelationshipType: AddRelationshipType = this.types[0];
+
   @tracked newPredicate = '';
   @tracked resourceUriBase = '';
-  @tracked errorMessage = '';
-  @tracked objectRdfa: { key: string; label: string } | null = null;
+  @tracked objectRdfa?: ExternalPropertyObject;
+
+  get controller() {
+    return this.args.controller;
+  }
 
   get isAddExisting() {
-    return this.args.addRelationshipType === 'existing';
+    return this.addRelationshipType === 'existing';
   }
+
   get isAddResource() {
-    return this.args.addRelationshipType === 'resource';
+    return this.addRelationshipType === 'resource';
   }
 
   get rdfaIds() {
-    return this.args.rdfaIds;
-  }
-  get objectRdfaId(): string {
-    return this.objectRdfa?.key || '';
+    if (!this.controller) throw Error('No Controller');
+    const pluginState = rdfaInfoPluginKey.getState(
+      this.controller.mainEditorState,
+    );
+
+    return pluginState
+      ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
+          const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
+          const resource = node.attrs.resource as string;
+          if (resource) {
+            return { key, label: `Resource: ${resource} - [${key}]` };
+          } else {
+            return {
+              key,
+              label: `Literal: ${node.textContent.substring(
+                0,
+                20,
+              )}... - [${key}]`,
+            };
+          }
+        })
+      : [];
   }
 
   updatePredicate = (event: InputEvent) => {
     this.newPredicate = (event.target as HTMLInputElement).value;
   };
-  updateObject = (rdfaObj: { key: string; label: string }) => {
+  updateObject = (rdfaObj: ExternalPropertyObject) => {
     this.objectRdfa = rdfaObj;
   };
   updateUriBase = (event: InputEvent) => {
@@ -44,29 +71,21 @@ export default class RelationshipEditorModal extends Component<Args> {
   };
 
   setAddType = (value: AddRelationshipType) => {
-    this.args.setAddType(value);
-  };
-
-  cancel = () => {
-    this.args.setAddType(null);
+    this.addRelationshipType = value;
   };
 
   save = (event: Event) => {
     event.preventDefault();
-    if (
-      this.canSave &&
-      this.args.addRelationshipType &&
-      this.args.addRelationshipType !== 'unspecified'
-    ) {
-      if (this.args.addRelationshipType === 'existing') {
+    if (this.canSave) {
+      if (this.addRelationshipType === 'existing') {
         this.args.onSave({
-          type: this.args.addRelationshipType,
+          type: this.addRelationshipType,
           predicate: this.newPredicate,
-          rdfaid: this.objectRdfaId,
+          object: unwrap(this.objectRdfa),
         });
       } else {
         this.args.onSave({
-          type: this.args.addRelationshipType,
+          type: this.addRelationshipType,
           predicate: this.newPredicate,
           uriBase: this.resourceUriBase,
         });
@@ -76,14 +95,13 @@ export default class RelationshipEditorModal extends Component<Args> {
 
   get canSave() {
     if (!this.newPredicate) return false;
-    switch (this.args.addRelationshipType) {
+    switch (this.addRelationshipType) {
       case 'existing':
-        return !!this.objectRdfaId;
+        return !!this.objectRdfa;
       case 'resource':
         return !!this.resourceUriBase;
       case 'literal':
         return true;
-      case 'unspecified':
       default:
         return false;
     }

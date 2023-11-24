@@ -1,8 +1,8 @@
 {{#let (unique-id) as |formId|}}
   <AuModal
-    @modalOpen={{@addRelationshipType}}
+    @modalOpen={{true}}
     @closable={{true}}
-    @closeModal={{this.cancel}}
+    @closeModal={{@onCancel}}
   >
     <:title>Add Relationship</:title>
     <:body>
@@ -30,7 +30,7 @@
               id={{id}}
               required={{true}}
               @name="types"
-              @selected={{@addRelationshipType}}
+              @selected={{this.addRelationshipType}}
               @width="block"
               @onChange={{this.setAddType}}
               @alignment="inline"
@@ -61,7 +61,7 @@
                 {{! For some reason need to manually set width }}
                 class="au-u-1-2"
                 @searchEnabled={{false}}
-                @options={{@rdfaIds}}
+                @options={{this.rdfaIds}}
                 @selected={{this.objectRdfa}}
                 @onChange={{this.updateObject}}
                 as |obj|
@@ -102,7 +102,7 @@
           type="submit"
           @disabled={{not this.canSave}}
         >Save</AuButton>
-        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+        <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

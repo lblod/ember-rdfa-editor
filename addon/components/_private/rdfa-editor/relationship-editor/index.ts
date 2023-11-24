@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { PNode, SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   addProperty,
@@ -13,11 +13,8 @@ import {
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
-import RelationshipEditorModal, { AddRelationshipType } from './modal';
-import {
-  getNodeByRdfaId,
-  rdfaInfoPluginKey,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import RelationshipEditorModal from './modal';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   Backlink,
@@ -25,7 +22,6 @@ import {
   ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 type Args = {
   controller?: SayController;
@@ -33,7 +29,7 @@ type Args = {
 };
 
 export default class RdfaRelationshipEditor extends Component<Args> {
-  @tracked addRelationshipType?: AddRelationshipType;
+  @tracked modalOpen = false;
 
   Modal = RelationshipEditorModal;
 
@@ -63,31 +59,6 @@ export default class RdfaRelationshipEditor extends Component<Args> {
 
   get currentRdfaId() {
     return this.args.node.value.attrs.__rdfaId as string;
-  }
-
-  get allRdfaids() {
-    if (!this.controller) throw Error('No Controller');
-    const pluginState = rdfaInfoPluginKey.getState(
-      this.controller.mainEditorState,
-    );
-
-    return pluginState
-      ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
-          const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
-          const resource = node.attrs.resource as string;
-          if (resource) {
-            return { key, label: `Resource: ${resource} - [${key}]` };
-          } else {
-            return {
-              key,
-              label: `Literal: ${node.textContent.substring(
-                0,
-                20,
-              )}... - [${key}]`,
-            };
-          }
-        })
-      : [];
   }
 
   goToOutgoing = (outgoing: ExternalProperty) => {
@@ -139,10 +110,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   addRelationship = () => {
-    this.addRelationshipType = 'unspecified';
-  };
-  setAddRelationshipType = (type: AddRelationshipType | null) => {
-    this.addRelationshipType = type ?? undefined;
+    this.modalOpen = true;
   };
 
   saveNewRelationship = (
@@ -150,29 +118,34 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       | {
           type: 'existing';
           predicate: string;
-          rdfaid: string;
+          object: ExternalPropertyObject;
         }
       | InsertRelationDetails,
   ) => {
     switch (details.type) {
       case 'existing': {
-        const node = this.getNodeById(details.rdfaid)?.value;
-        if (!node) {
-          return false;
-        }
-        this.relateNodes(details.predicate, node);
-        this.addRelationshipType = undefined;
-        return true;
+        this.addProperty({
+          type: 'external',
+          predicate: details.predicate,
+          object: details.object,
+        });
+        break;
       }
       case 'literal':
       case 'resource':
-        return this.addNode(details);
+        this.addNew(details);
+        break;
       default:
         throw new NotImplementedError();
     }
+    this.modalOpen = false;
   };
 
-  addNode = (details: InsertRelationDetails) => {
+  cancel = () => {
+    this.modalOpen = false;
+  };
+
+  addNew = (details: InsertRelationDetails) => {
     // This function can only be called when the selected node defines a resource
     if (this.currentResource) {
       this.controller?.doCommand(
@@ -181,35 +154,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
           ...details,
         }),
       );
-      this.addRelationshipType = undefined;
     }
   };
 
   addBacklink = (_backlink: Backlink) => {
     throw new NotImplementedError();
   };
-
-  relateNodes(predicate: string, obj: PNode) {
-    const resource = obj.attrs.resource as string | undefined;
-    const rdfaId = obj.attrs.__rdfaId as string;
-    let object: ExternalPropertyObject;
-    if (resource) {
-      object = {
-        type: 'resource',
-        resource,
-      };
-    } else {
-      object = {
-        type: 'literal',
-        rdfaId,
-      };
-    }
-    this.addProperty({
-      type: 'external',
-      predicate,
-      object,
-    });
-  }
 
   addProperty = (property: Property) => {
     // This function can only be called when the selected node defines a resource
