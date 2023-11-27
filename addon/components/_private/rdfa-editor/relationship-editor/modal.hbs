@@ -42,9 +42,8 @@
         </AuFormRow>
         <AuFormRow @alignment="default">
           {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}}>
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
               Object
-              <AuPill>Optional</AuPill>
             </AuLabel>
             <PowerSelect
               id={{id}}
@@ -66,29 +65,6 @@
             </PowerSelect>
           {{/let}}
         </AuFormRow>
-        {{#unless this.objectRdfa}}
-          {{#if (eq this.selectedObjectType "resource")}}
-            <AuFormRow @alignment="default">
-              {{#let (unique-id) as |id|}}
-                <AuLabel
-                  for={{id}}
-                  @required={{true}}
-                  @requiredLabel="Required"
-                >
-                  URI base
-                </AuLabel>
-                <AuInput
-                  id={{id}}
-                  required={{true}}
-                  value={{this.resourceUriBase}}
-                  @width="block"
-                  placeholder="http://example.com/resource/"
-                  {{on "input" this.updateUriBase}}
-                />
-              {{/let}}
-            </AuFormRow>
-          {{/if}}
-        {{/unless}}
       </form>
     </:body>
     <:footer>

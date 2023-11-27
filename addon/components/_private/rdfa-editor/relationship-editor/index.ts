@@ -4,8 +4,6 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   addProperty,
-  insertRelation,
-  InsertRelationDetails,
   removeBacklinkFromLiteral,
   removeBacklinkFromResource,
   removeProperty,
@@ -113,48 +111,20 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.modalOpen = true;
   };
 
-  saveNewRelationship = (
-    details:
-      | {
-          type: 'existing';
-          predicate: string;
-          object: ExternalPropertyObject;
-        }
-      | InsertRelationDetails,
-  ) => {
-    switch (details.type) {
-      case 'existing': {
-        this.addProperty({
-          type: 'external',
-          predicate: details.predicate,
-          object: details.object,
-        });
-        break;
-      }
-      case 'literal':
-      case 'resource':
-        this.addNew(details);
-        break;
-      default:
-        throw new NotImplementedError();
-    }
+  saveNewRelationship = (details: {
+    predicate: string;
+    object: ExternalPropertyObject;
+  }) => {
+    this.addProperty({
+      type: 'external',
+      predicate: details.predicate,
+      object: details.object,
+    });
     this.modalOpen = false;
   };
 
   cancel = () => {
     this.modalOpen = false;
-  };
-
-  addNew = (details: InsertRelationDetails) => {
-    // This function can only be called when the selected node defines a resource
-    if (this.currentResource) {
-      this.controller?.doCommand(
-        insertRelation({
-          subject: this.currentResource,
-          ...details,
-        }),
-      );
-    }
   };
 
   addBacklink = (_backlink: Backlink) => {

@@ -24,7 +24,6 @@ export default class RelationshipEditorModal extends Component<Args> {
   @tracked selectedObjectType: ObjectType = this.objectTypes[0];
 
   @tracked newPredicate = '';
-  @tracked resourceUriBase = '';
   @tracked objectRdfa?: ExternalPropertyObject;
 
   get controller() {
@@ -33,35 +32,10 @@ export default class RelationshipEditorModal extends Component<Args> {
 
   get dropdownPlaceholder() {
     if (this.selectedObjectType === 'resource') {
-      return 'Select an existing resource or create a new one';
+      return 'Select a resource';
     } else {
-      return 'Select an existing literal or create a new one';
+      return 'Select a literal';
     }
-  }
-
-  get rdfaIds() {
-    if (!this.controller) throw Error('No Controller');
-    const pluginState = rdfaInfoPluginKey.getState(
-      this.controller.mainEditorState,
-    );
-
-    return pluginState
-      ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
-          const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
-          const resource = node.attrs.resource as string;
-          if (resource) {
-            return { key, label: `Resource: ${resource} - [${key}]` };
-          } else {
-            return {
-              key,
-              label: `Literal: ${node.textContent.substring(
-                0,
-                20,
-              )}... - [${key}]`,
-            };
-          }
-        })
-      : [];
   }
 
   get literals(): ExternalPropertyObject[] {
@@ -116,9 +90,6 @@ export default class RelationshipEditorModal extends Component<Args> {
   updateObject = (rdfaObj?: ExternalPropertyObject) => {
     this.objectRdfa = rdfaObj;
   };
-  updateUriBase = (event: InputEvent) => {
-    this.resourceUriBase = (event.target as HTMLInputElement).value;
-  };
 
   setObjectType = (value: ObjectType) => {
     this.selectedObjectType = value;
@@ -128,31 +99,14 @@ export default class RelationshipEditorModal extends Component<Args> {
   save = (event: Event) => {
     event.preventDefault();
     if (this.canSave) {
-      if (this.objectRdfa) {
-        this.args.onSave({
-          type: 'existing',
-          predicate: this.newPredicate,
-          object: unwrap(this.objectRdfa),
-        });
-      } else {
-        this.args.onSave({
-          type: this.selectedObjectType,
-          predicate: this.newPredicate,
-          uriBase: this.resourceUriBase,
-        });
-      }
+      this.args.onSave({
+        predicate: this.newPredicate,
+        object: unwrap(this.objectRdfa),
+      });
     }
   };
 
   get canSave() {
-    if (!this.newPredicate) return false;
-    switch (this.selectedObjectType) {
-      case 'literal':
-        return true;
-      case 'resource':
-        return this.objectRdfa || this.resourceUriBase;
-      default:
-        return false;
-    }
+    return this.newPredicate && this.objectRdfa;
   }
 }
