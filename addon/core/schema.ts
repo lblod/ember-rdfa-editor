@@ -42,6 +42,11 @@ export interface RdfaResourceAttrs extends RdfaAwareAttrs {
 export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
   Record<string, string | number | Property[] | Backlink[]>;
 
+export const sharedRdfaNodeSpec = {
+  isolating: true,
+  selectable: true,
+};
+
 export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   let attrs: RdfaAttrs = {
     __rdfaId: '',

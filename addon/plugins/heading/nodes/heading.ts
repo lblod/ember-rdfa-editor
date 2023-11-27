@@ -1,6 +1,9 @@
 import { Node as PNode } from 'prosemirror-model';
-import { renderRdfaAware } from '@lblod/ember-rdfa-editor/core/schema';
 import { rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
+import {
+  renderRdfaAware,
+  sharedRdfaNodeSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import NumberEditor from '@lblod/ember-rdfa-editor/components/_private/number-editor';
@@ -21,10 +24,10 @@ export const heading: SayNodeSpec = {
     ...rdfaAttrSpec,
   },
   content: 'inline*',
-  isolating: true,
   group: 'block',
   editable: true,
   defining: true,
+  ...sharedRdfaNodeSpec,
   parseDOM: [
     {
       tag: 'h1',

@@ -6,6 +6,7 @@ import {
 import {
   getRdfaAttrs,
   renderRdfaAware,
+  sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
 
@@ -22,7 +23,7 @@ export const block_rdfa: SayNodeSpec = {
     __tag: { default: 'div' },
   },
   defining: true,
-  isolating: true,
+  ...sharedRdfaNodeSpec,
   parseDOM: [
     {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
