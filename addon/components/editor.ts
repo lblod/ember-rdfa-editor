@@ -14,7 +14,6 @@ import { getOwner } from '@ember/application';
 import Owner from '@ember/owner';
 import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
 
 export interface RdfaEditorArgs {
   /**
@@ -33,7 +32,6 @@ export interface RdfaEditorArgs {
     [node: string]: NodeViewConstructor;
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
-  keyMapOptions?: KeymapOptions;
 }
 
 /**
@@ -93,7 +91,6 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
       defaultAttrGenerators: this.args.defaultAttrGenerators,
-      keyMapOptions: this.args.keyMapOptions,
     });
     window.__PM = this.prosemirror;
     window.__PC = new SayController(this.prosemirror);

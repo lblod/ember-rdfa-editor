@@ -10,10 +10,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import {
-  baseKeymap,
-  KeymapOptions,
-} from '@lblod/ember-rdfa-editor/core/keymap';
+import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, Logger } from '../utils/_private/logging-utils';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
@@ -36,6 +33,7 @@ import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -45,8 +43,6 @@ interface SayEditorArgs {
   schema: Schema;
   baseIRI: string;
   plugins?: PluginConfig;
-
-  keyMapOptions?: KeymapOptions;
   nodeViews?: (
     controller: SayController,
   ) => Record<string, NodeViewConstructor>;
@@ -77,7 +73,6 @@ export default class SayEditor {
       return {};
     },
     defaultAttrGenerators = [],
-    keyMapOptions,
   }: SayEditorArgs) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -96,7 +91,7 @@ export default class SayEditor {
         pasteHandler(),
         dropCursor(),
         gapCursor(),
-        keymap(baseKeymap(schema, keyMapOptions)),
+        keymap(baseKeymap(schema)),
         history(),
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
@@ -108,6 +103,7 @@ export default class SayEditor {
           },
           ...defaultAttrGenerators,
         ]),
+        removePropertiesOfDeletedNodes(),
         rdfaInfoPlugin(),
       ];
     }
