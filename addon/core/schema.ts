@@ -20,6 +20,11 @@ export const rdfaDomAttrs = {
   'data-rdfa-node-type': { default: undefined },
 };
 
+export const sharedRdfaNodeSpec = {
+  isolating: true,
+  selectable: true,
+};
+
 type RdfaAttrs = Record<string, string | Property[] | Backlink[]>;
 
 export function getRdfaAttrs(node: Element): RdfaAttrs | false {
