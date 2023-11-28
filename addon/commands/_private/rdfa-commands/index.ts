@@ -6,4 +6,3 @@ export { removeBacklinkFromResource } from './remove-resource-backlink';
 export * from './insert-relation';
 export * from './wrap-resource';
 export * from './wrap-literal';
-export { removeNodeWithChildNodes } from './remove-node-with-properties';
