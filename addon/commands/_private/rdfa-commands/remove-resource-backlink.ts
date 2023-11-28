@@ -50,9 +50,16 @@ export function removeBacklinkFromResource({
         const properties = getProperties(subject.value);
         if (properties) {
           const filteredProperties = properties.filter((prop) => {
+            if (prop.type !== 'external') {
+              return true;
+            }
+            if (prop.object.type !== 'resource') {
+              return true;
+            }
             return !(
               backlinkToRemove.predicate === prop.predicate &&
-              backlinkToRemove.subject === getResource(subject.value)
+              backlinkToRemove.subject === getResource(subject.value) &&
+              prop.object.resource === resource
             );
           });
           tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
