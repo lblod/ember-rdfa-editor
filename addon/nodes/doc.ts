@@ -1,4 +1,7 @@
-import { AttributeSpec, NodeSpec } from 'prosemirror-model';
+import { AttributeSpec } from 'prosemirror-model';
+import SayNodeSpec from '../core/say-node-spec';
+import { isElement } from '../utils/_private/dom-helpers';
+import { renderRdfaAware } from '../core/schema';
 
 interface DocumentConfig {
   defaultLanguage?: string;
@@ -11,32 +14,68 @@ interface DocumentConfig {
 export const docWithConfig = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
-  extraAttributes = {},
-}: DocumentConfig = {}): NodeSpec => {
-  const attrs: NodeSpec['attrs'] = {
+}: DocumentConfig = {}): SayNodeSpec => {
+  const attrs: SayNodeSpec['attrs'] = {
     lang: {
       default: defaultLanguage,
+      editable: true,
     },
+    properties: {
+      default: [],
+    },
+    backlinks: {
+      default: [],
+    },
+    resource: {
+      default: null,
+      editable: true,
+    },
+    rdfaNodeType: {
+      default: null,
+    },
+    __rdfaId: { default: null },
   };
-
-  Object.entries(extraAttributes).forEach(([attributeName, value]) => {
-    attrs[attributeName] = value;
-  });
 
   return {
     content,
     attrs,
+    editable: true,
+    parseDOM: [
+      {
+        tag: 'div',
+        getAttrs(node: HTMLElement) {
+          if (node.dataset.sayDocument) {
+            return {
+              lang: node.getAttribute('lang'),
+            };
+          } else {
+            return false;
+          }
+        },
+        contentElement(node: Node) {
+          if (!isElement(node)) {
+            throw new Error('node is not an element');
+          }
+          const result: HTMLElement =
+            node.querySelector('[data-content-container="true"]') ?? node;
+          console.log(result);
+          return result;
+        },
+      },
+    ],
     toDOM(node) {
-      const toDOMAttributes: Record<string, unknown> = {
-        lang: node.attrs.lang as string,
-        'data-say-document': true,
-      };
-
-      Object.keys(extraAttributes).forEach((attr) => {
-        toDOMAttributes[attr] = node.attrs[attr];
+      const resource = node.attrs.resource as string;
+      const lang = node.attrs.lang as string;
+      return renderRdfaAware({
+        renderable: node,
+        tag: 'div',
+        attrs: {
+          lang,
+          'data-say-document': true,
+          resource,
+        },
+        content: 0,
       });
-
-      return ['div', toDOMAttributes, 0];
     },
   };
 };
