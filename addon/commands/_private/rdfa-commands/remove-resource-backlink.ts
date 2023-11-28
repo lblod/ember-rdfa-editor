@@ -1,4 +1,5 @@
 import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import {
   getBacklinks,
   getProperties,
@@ -41,7 +42,12 @@ export function removeBacklinkFromResource({
       const tr = transaction ?? state.tr;
       // Update the backlinks of each node defining the given resource
       nodes.forEach((node) => {
-        tr.setNodeAttribute(node.pos, 'backlinks', updatedBacklinks);
+        TransformUtils.setAttribute(
+          tr,
+          node.pos,
+          'backlinks',
+          updatedBacklinks,
+        );
       });
 
       // Update the properties of each inverse subject node
@@ -55,7 +61,12 @@ export function removeBacklinkFromResource({
               backlinkToRemove.subject === getResource(subject.value)
             );
           });
-          tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
+          TransformUtils.setAttribute(
+            tr,
+            subject.pos,
+            'properties',
+            filteredProperties,
+          );
         }
       });
       dispatch(tr);

@@ -2,6 +2,7 @@ import {
   getNodeByRdfaId,
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import {
   getBacklinks,
   getProperties,
@@ -36,7 +37,7 @@ export function removeBacklinkFromLiteral({
     if (dispatch) {
       const tr = transaction ?? state.tr;
       // Remove the backlink from the literal/content node (drop all the backlinks)
-      tr.setNodeAttribute(node.pos, 'backlinks', []);
+      TransformUtils.setAttribute(tr, node.pos, 'backlinks', []);
 
       // Update the properties of each inverse subject node
       const subjects = getNodesByResource(state, backlink.subject) ?? [];
@@ -62,8 +63,12 @@ export function removeBacklinkFromLiteral({
               backlink.subject === getResource(subject.value)
             );
           });
-
-          tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
+          TransformUtils.setAttribute(
+            tr,
+            subject.pos,
+            'properties',
+            filteredProperties,
+          );
         }
       });
       dispatch(tr);

@@ -6,6 +6,7 @@ import {
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { getBacklinks } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 type Args = {
   property: Property;
@@ -52,7 +53,12 @@ export const removeBacklinksTargetingResourceProperty = ({
                 backlink.subject === resource
               );
             });
-            tr.setNodeAttribute(target.pos, 'backlinks', filteredBacklinks);
+            TransformUtils.setAttribute(
+              tr,
+              target.pos,
+              'backlinks',
+              filteredBacklinks,
+            );
           }
         });
       }

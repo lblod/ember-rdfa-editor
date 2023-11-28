@@ -5,6 +5,7 @@ import {
   getProperties,
   getResource,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 export const removePropertiesTargetingBacklinks = ({
   backlink,
@@ -44,8 +45,8 @@ export const removePropertiesTargetingBacklinks = ({
               backlink.subject === getResource(subject.value)
             );
           });
-
-          transaction.setNodeAttribute(
+          TransformUtils.setAttribute(
+            tr,
             subject.pos,
             'properties',
             filteredProperties,
