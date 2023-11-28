@@ -3,6 +3,7 @@ import { DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc } from '../utils/_private/html-utils';
 import { DOMSerializer, ProseParser } from '..';
+import { SetDocAttributesStep } from '../utils/steps';
 
 export default class SayView extends EditorView {
   @tracked declare state: EditorState;
@@ -42,6 +43,7 @@ export default class SayView extends EditorView {
       parser: parser,
     });
     const tr = this.state.tr;
+    tr.step(new SetDocAttributesStep(doc.attrs));
     tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));
     this.dispatch(tr);
