@@ -1,4 +1,4 @@
-import { AddPropertyArgs, addProperty } from './add-property';
+import { AddPropertyArgs, addProperty } from '../../rdfa-commands/add-property';
 import { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 
