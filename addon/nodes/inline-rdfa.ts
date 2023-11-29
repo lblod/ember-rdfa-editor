@@ -7,6 +7,7 @@ import {
 } from '../utils/ember-node';
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa';
 import { ComponentLike } from '@glint/template';
+import { isElement } from '../utils/_private/dom-helpers';
 
 const parseDOM = [
   {
@@ -19,6 +20,19 @@ const parseDOM = [
         return attrs;
       }
       return false;
+    },
+
+    contentElement(node: Node) {
+      if (!isElement(node)) {
+        throw new Error('node is not an element');
+      }
+      for (const child of node.children) {
+        if ((child as HTMLElement).dataset.contentContainer) {
+          console.log('found child', child, 'for node', node);
+          return child as HTMLElement;
+        }
+      }
+      return node;
     },
   },
 ];
