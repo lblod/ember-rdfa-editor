@@ -7,7 +7,6 @@ import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
 import RemoveNode from './remove-node';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import Annotator from './annotator';
 
 type Args = {
   controller?: SayController;
@@ -20,7 +19,6 @@ export default class RdfaEditor extends Component<Args> {
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
   RemoveNode = RemoveNode;
-  Annotator = Annotator;
 
   @tracked collapsed = false;
 

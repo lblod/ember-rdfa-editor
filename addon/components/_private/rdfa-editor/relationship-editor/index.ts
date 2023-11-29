@@ -93,22 +93,23 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   goToOutgoing = (outgoing: ExternalProperty) => {
     const { object } = outgoing;
     if (object.type === 'literal') {
-      this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: object.rdfaId }));
+      this.controller?.doCommand(
+        selectNodeByRdfaId({ rdfaId: object.rdfaId }),
+        { view: this.controller.mainEditorView },
+      );
     } else {
       this.controller?.doCommand(
         selectNodeByResource({ resource: object.resource }),
+        { view: this.controller.mainEditorView },
       );
     }
   };
 
   goToBacklink = (backlink: Backlink) => {
-    this.controller?.setActiveView
     this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
       {
-        view:
-          this.controller.activeEditorView.parent ||
-          this.controller.activeEditorView,
+        view: this.controller.mainEditorView,
       },
     );
   };
@@ -186,6 +187,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
           subject: this.currentResource,
           ...details,
         }),
+        { view: this.controller.mainEditorView },
       );
       this.addRelationshipType = undefined;
     }
@@ -222,6 +224,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     if (this.currentResource) {
       this.controller?.doCommand(
         addProperty({ resource: this.currentResource, property }),
+        { view: this.controller.mainEditorView },
       );
     }
   };
