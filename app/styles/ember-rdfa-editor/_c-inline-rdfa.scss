@@ -1,7 +1,12 @@
 .say-inline-rdfa {
 
-  border: 2px dashed $au-green-500;
   display: inline-block;
+  border-color: green;
+  border-style: dashed;
+  border-width: 1px;
+  &.say-active {
+    outline: 0.2rem solid var(--au-blue-500);
+  }
 }
 .ember-node {
   white-space: normal !important;
@@ -30,7 +35,7 @@
     &.atomic {
       background-color: var(--au-blue-200);
     }
-    outline: 2px solid var(--au-blue-500);
+    outline: 1px solid var(--au-blue-500);
 
     ::selection {
       background-color: var(--au-blue-300);
