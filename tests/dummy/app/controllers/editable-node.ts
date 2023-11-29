@@ -163,9 +163,7 @@ export default class EditableBlockController extends Controller {
 
   get activeNode() {
     if (this.rdfaEditor) {
-      console.log('calcing node in controller');
       const result= getActiveEditableNode(this.rdfaEditor.activeEditorState);
-      console.log('found', result)
       return result
     }
     return;

@@ -28,7 +28,6 @@ const parseDOM = [
       }
       for (const child of node.children) {
         if ((child as HTMLElement).dataset.contentContainer) {
-          console.log('found child', child, 'for node', node);
           return child as HTMLElement;
         }
       }

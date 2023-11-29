@@ -218,7 +218,6 @@ export default class EmbeddedEditor extends Component<Args> {
   onNodeUpdate() {
     if (this.innerView) {
       const state = this.innerView.state;
-      console.log('in innerview nodeupdate', this.node, state.doc);
       const start = this.node.content.findDiffStart(state.doc.content);
       const end = this.node.content.findDiffEnd(state.doc.content);
       const tr = state.tr;
@@ -236,10 +235,9 @@ export default class EmbeddedEditor extends Component<Args> {
         );
         trChanged = true;
       }
+      // check if our top node has new attributes, and update the state
+      // if so
       if (!this.node.hasMarkup(state.doc.type, state.doc.attrs)) {
-        console.log('setting node attrs');
-        console.log('node', this.node);
-        console.log('doc', state.doc);
 
         for (const [key, val] of Object.entries(this.node.attrs)) {
           tr.setDocAttribute(key, val);

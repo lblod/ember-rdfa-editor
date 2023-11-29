@@ -19,7 +19,6 @@ const activeNode = (
   state: EditorState,
   getPos?: () => number | undefined,
 ): ResolvedPNode | undefined => {
-  console.log('recalcing activeNode');
   const { selection } = state;
   if (selection instanceof NodeSelection) {
     if (isEditable(selection.node)) {
