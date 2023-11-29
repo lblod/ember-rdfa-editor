@@ -4,16 +4,22 @@ import {
   EditorState,
   NodeSelection,
   PluginKey,
+  PluginView,
   ProsePlugin,
 } from '@lblod/ember-rdfa-editor';
 import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import { isSome } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type State = {
   activeNode?: ResolvedPNode;
 };
 
-const activeNode = (state: EditorState): ResolvedPNode | undefined => {
+const activeNode = (
+  state: EditorState,
+  getPos?: () => number | undefined,
+): ResolvedPNode | undefined => {
+  console.log('recalcing activeNode');
   const { selection } = state;
   if (selection instanceof NodeSelection) {
     if (isEditable(selection.node)) {
@@ -34,41 +40,55 @@ const activeNode = (state: EditorState): ResolvedPNode | undefined => {
       };
     }
   }
+  if (getPos) {
+    const basePos = getPos();
+    if (isSome(basePos) && isEditable(state.doc)) {
+      return { pos: basePos, value: state.doc };
+    }
+  }
   return;
 };
 
 export const editableNodePluginKey = new PluginKey<State>(
   'EDITABLE_BLOCK_NODE',
 );
-export const editableNodePlugin = new ProsePlugin<State>({
-  key: editableNodePluginKey,
-  props: {
-    decorations(state) {
-      const pluginState = this.getState(state);
-      if (pluginState?.activeNode) {
-        const { value, pos } = pluginState.activeNode;
-        const deco = Decoration.node(pos, pos + value.nodeSize, {
-          class: 'say-active',
-        });
-        return DecorationSet.create(state.doc, [deco]);
-      } else {
-        return;
-      }
+export const editableNodePlugin = (getPos?: () => number | undefined) =>
+  new ProsePlugin<State>({
+    key: editableNodePluginKey,
+    props: {
+      decorations(state) {
+        const pluginState = this.getState(state);
+        if (pluginState?.activeNode) {
+          const { value, pos } = pluginState.activeNode;
+          const deco = Decoration.node(pos, pos + value.nodeSize, {
+            class: 'say-active',
+          });
+          return DecorationSet.create(state.doc, [deco]);
+        } else {
+          return;
+        }
+      },
     },
-  },
-  state: {
-    init(_, state) {
+    state: {
+      init(_, state) {
+        return {
+          activeNode: activeNode(state, getPos),
+        };
+      },
+      apply(_tr, _value, _oldState, newState) {
+        return {
+          activeNode: activeNode(newState, getPos),
+        };
+      },
+    },
+
+    view(view): PluginView {
       return {
-        activeNode: activeNode(state),
+        update(view, prevState) {},
+        destroy() {},
       };
     },
-    apply(_tr, _value, _oldState, newState) {
-      return {
-        activeNode: activeNode(newState),
-      };
-    },
-  },
-});
+  });
 
 export function getActiveEditableNode(state: EditorState) {
   return editableNodePluginKey.getState(state)?.activeNode;

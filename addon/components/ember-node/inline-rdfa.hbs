@@ -1,4 +1,4 @@
-<span class='say-inline-rdfa'>
+<span data-inline-rdfa class="say-inline-rdfa say-editable">
   <EmberNode::EmbeddedEditor
     @controller={{@controller}}
     @node={{@node}}
@@ -6,6 +6,9 @@
     @getPos={{@getPos}}
     @selected={{@selected}}
     @initEditor={{this.initEditor}}
+    @decorations={{@decorations}}
+    @contentDecorations={{@contentDecorations}}
+    @plugins={{this.plugins}}
     {{leave-on-enter-key this.controller @getPos}}
   />
 </span>

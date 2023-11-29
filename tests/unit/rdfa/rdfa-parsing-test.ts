@@ -120,7 +120,7 @@ const plugins: PluginConfig = [
       ordered_list_input_rule(schema.nodes.ordered_list),
     ],
   }),
-  editableNodePlugin,
+  editableNodePlugin(),
 ];
 const rdf = (suffix: string) =>
   `http://www.w3.org/1999/02/22-rdf-syntax-ns#${suffix}`;

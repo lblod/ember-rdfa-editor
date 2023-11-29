@@ -70,7 +70,10 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
-import { inlineRdfaView, inline_rdfa } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import {
+  inlineRdfaView,
+  inline_rdfa,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -147,20 +150,23 @@ export default class EditableBlockController extends Controller {
       ],
     }),
     emberApplication({ application: getOwner(this) }),
-    editableNodePlugin,
+    editableNodePlugin(),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
-      inline_rdfa: inlineRdfaView(controller)
+      inline_rdfa: inlineRdfaView(controller),
     };
   };
 
   get activeNode() {
     if (this.rdfaEditor) {
-      return getActiveEditableNode(this.rdfaEditor.mainEditorState);
+      console.log('calcing node in controller');
+      const result= getActiveEditableNode(this.rdfaEditor.activeEditorState);
+      console.log('found', result)
+      return result
     }
     return;
   }
