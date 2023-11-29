@@ -60,6 +60,9 @@ export const editableNodePlugin = (getPos?: () => number | undefined) =>
         const pluginState = this.getState(state);
         if (pluginState?.activeNode) {
           const { value, pos } = pluginState.activeNode;
+          if (value === state.doc) {
+            return;
+          }
           const deco = Decoration.node(pos, pos + value.nodeSize, {
             class: 'say-active',
           });
