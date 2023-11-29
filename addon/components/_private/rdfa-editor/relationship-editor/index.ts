@@ -103,6 +103,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         { view: this.controller.mainEditorView },
       );
     }
+    this.controller?.focus();
   };
 
   goToBacklink = (backlink: Backlink) => {
@@ -112,6 +113,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         view: this.controller.mainEditorView,
       },
     );
+    this.controller?.focus();
   };
 
   removeBacklink = (index: number) => {
