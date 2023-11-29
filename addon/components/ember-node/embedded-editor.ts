@@ -218,8 +218,11 @@ export default class EmbeddedEditor extends Component<Args> {
   onNodeUpdate() {
     if (this.innerView) {
       const state = this.innerView.state;
+      console.log('in innerview nodeupdate', this.node, state.doc);
       const start = this.node.content.findDiffStart(state.doc.content);
       const end = this.node.content.findDiffEnd(state.doc.content);
+      const tr = state.tr;
+      let trChanged = false;
       if (isSome(start) && isSome(end)) {
         let { a: endA, b: endB } = end;
         const overlap = start - Math.min(endA, endB);
@@ -227,11 +230,26 @@ export default class EmbeddedEditor extends Component<Args> {
           endA += overlap;
           endB += overlap;
         }
-        this.innerView.dispatch(
-          state.tr
-            .replace(start, endB, this.node.slice(start, endA))
-            .setMeta('fromOutside', this.editorId),
+        tr.replace(start, endB, this.node.slice(start, endA)).setMeta(
+          'fromOutside',
+          this.editorId,
         );
+        trChanged = true;
+      }
+      if (!this.node.hasMarkup(state.doc.type, state.doc.attrs)) {
+        console.log('setting node attrs');
+        console.log('node', this.node);
+        console.log('doc', state.doc);
+
+        for (const [key, val] of Object.entries(this.node.attrs)) {
+          tr.setDocAttribute(key, val);
+        }
+
+        tr.setMeta('fromOutside', this.editorId);
+        trChanged = true;
+      }
+      if (trChanged) {
+        this.innerView.dispatch(tr);
       }
     }
   }
