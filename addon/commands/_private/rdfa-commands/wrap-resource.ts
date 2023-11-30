@@ -1,4 +1,4 @@
-import { addProperty } from './add-property';
+import { addProperty } from '../../rdfa-commands/add-property';
 import { Command } from 'prosemirror-state';
 import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
