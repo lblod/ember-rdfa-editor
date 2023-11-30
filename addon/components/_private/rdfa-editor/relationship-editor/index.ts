@@ -5,8 +5,7 @@ import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   insertRelation,
   InsertRelationDetails,
-  removeBacklinkFromLiteral,
-  removeBacklinkFromResource,
+  removeBacklink,
   removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
@@ -74,7 +73,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return pluginState
       ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
           const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
-          const resource = node.attrs.resource as string;
+          const resource = node.attrs.resource as string | undefined;
           if (resource) {
             return { key, label: `Resource: ${resource} - [${key}]` };
           } else {
@@ -108,16 +107,19 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
+    let target: ExternalPropertyObject;
     if (this.currentResource) {
-      this.controller?.doCommand(
-        removeBacklinkFromResource({ resource: this.currentResource, index }),
-      );
+      target = {
+        type: 'resource',
+        resource: this.currentResource,
+      };
     } else {
-      // This is a content node, so there is only 1 backlink.
-      this.controller?.doCommand(
-        removeBacklinkFromLiteral({ rdfaId: this.currentRdfaId }),
-      );
+      target = {
+        type: 'literal',
+        rdfaId: this.currentRdfaId,
+      };
     }
+    this.controller?.doCommand(removeBacklink({ target, index }));
   };
 
   removeProperty = (index: number) => {
