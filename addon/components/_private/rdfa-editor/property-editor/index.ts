@@ -3,10 +3,8 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
-import {
-  addProperty,
-  removeProperty,
-} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+import { removeProperty } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   AttributeProperty,

@@ -1,4 +1,4 @@
-import { getRdfaAttrs, rdfaAttrs } from '../../../core/schema';
+import { getRdfaAttrs, rdfaAttrSpec } from '../../../core/schema';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
@@ -25,7 +25,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     defining: true,
     draggable: false,
     attrs: {
-      ...rdfaAttrs,
+      ...rdfaAttrSpec,
       interactive: {
         default: interactive,
       },

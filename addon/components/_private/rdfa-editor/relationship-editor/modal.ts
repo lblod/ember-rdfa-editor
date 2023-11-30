@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type RdfaRelationshipEditor from './index';
 
-const typeChoices = ['existing', 'content', 'resource'] as const;
+const typeChoices = ['existing', 'literal', 'resource'] as const;
 export type AddRelationshipType = 'unspecified' | (typeof typeChoices)[number];
 
 type Args = {
@@ -83,7 +83,7 @@ export default class RelationshipEditorModal extends Component<Args> {
         return !!this.objectRdfaId;
       case 'resource':
         return !!this.resourceUriBase;
-      case 'content':
+      case 'literal':
         return true;
       case 'unspecified':
       default:

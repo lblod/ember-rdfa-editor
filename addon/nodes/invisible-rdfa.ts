@@ -2,7 +2,7 @@ import {
   getRdfaAttrs,
   NodeSpec,
   PNode,
-  rdfaAttrs,
+  rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
@@ -13,7 +13,7 @@ export const invisible_rdfa: NodeSpec = {
   defining: true,
   isolating: true,
   attrs: {
-    ...rdfaAttrs,
+    ...rdfaAttrSpec,
     __tag: { default: 'span' },
   },
   parseDOM: [

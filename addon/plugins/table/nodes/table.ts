@@ -1,7 +1,10 @@
 // Helper for creating a schema that supports tables.
 
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
+import {
+  getRdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 
 interface ExtraAttribute {
   default: unknown;
@@ -59,7 +62,7 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
       setter(node.attrs[key], attrs);
     }
   }
-  for (const key of Object.keys(rdfaAttrs)) {
+  for (const key of Object.keys(rdfaAttrSpec)) {
     attrs[key] = node.attrs[key];
   }
   return attrs;
@@ -94,7 +97,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
-      attrs: { ...rdfaAttrs, class: { default: 'say-table' } },
+      attrs: { ...rdfaAttrSpec, class: { default: 'say-table' } },
       group: options.tableGroup,
       allowGapCursor: false,
       parseDOM: [
@@ -117,7 +120,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
-      attrs: { ...rdfaAttrs },
+      attrs: { ...rdfaAttrSpec },
       allowGapCursor: false,
       parseDOM: [
         {
@@ -138,7 +141,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_cell: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrs, ...cellAttrs },
+      attrs: { ...rdfaAttrSpec, ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
       allowGapCursor: false,
@@ -154,7 +157,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_header: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrs, ...cellAttrs },
+      attrs: { ...rdfaAttrSpec, ...cellAttrs },
       tableRole: 'header_cell',
       isolating: true,
       parseDOM: [
