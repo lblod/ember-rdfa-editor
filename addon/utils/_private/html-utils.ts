@@ -3,6 +3,7 @@ import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
 import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
+import { tagName } from './dom-helpers';
 
 export function htmlToDoc(
   html: string,
@@ -43,36 +44,40 @@ function matchTopNode(
     for (const parseRule of topNodeSpec.parseDOM) {
       const enhancedRule = enhanceRule(parseRule);
       let attrs: Attrs | null | undefined | false;
+      if (enhancedRule.tag && tagName(node) !== enhancedRule.tag) {
+        continue;
+      }
       if (enhancedRule.getAttrs) {
         attrs = enhancedRule.getAttrs(node);
       } else if (enhancedRule.attrs) {
         attrs = enhancedRule.attrs;
       }
-      if (attrs) {
-        const { contentElement: contentElementSelector } = enhancedRule;
-        let contentElement: HTMLElement | undefined | null;
-        if (enhancedRule.contentElement) {
-          switch (typeof contentElementSelector) {
-            case 'string':
-              contentElement = node.querySelector<HTMLElement>(
-                contentElementSelector,
-              );
-              break;
-            case 'function':
-              contentElement = contentElementSelector(node);
-              break;
-            default:
-              contentElement = contentElementSelector;
-          }
-        } else {
-          contentElement = node;
+      if (!attrs) {
+        continue;
+      }
+      const { contentElement: contentElementSelector } = enhancedRule;
+      let contentElement: HTMLElement | undefined | null;
+      if (enhancedRule.contentElement) {
+        switch (typeof contentElementSelector) {
+          case 'string':
+            contentElement = node.querySelector<HTMLElement>(
+              contentElementSelector,
+            );
+            break;
+          case 'function':
+            contentElement = contentElementSelector(node);
+            break;
+          default:
+            contentElement = contentElementSelector;
         }
-        if (contentElement) {
-          return {
-            topNode: schema.topNodeType.create(attrs),
-            contentElement,
-          };
-        }
+      } else {
+        contentElement = node;
+      }
+      if (contentElement) {
+        return {
+          topNode: schema.topNodeType.create(attrs),
+          contentElement,
+        };
       }
     }
     for (const child of node.children) {
