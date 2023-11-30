@@ -54,7 +54,7 @@ const emberNodeConfig: EmberNodeConfig = {
   editable: true,
   draggable: false,
   selectable: true,
-  isolating: true,
+  // isolating: true,
   toDOM,
   parseDOM,
   attrs: {

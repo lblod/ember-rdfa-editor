@@ -10,6 +10,9 @@
 }
 .ember-node {
   white-space: normal !important;
+  &.say-active {
+    outline: 0.2rem solid var(--au-blue-500);
+  }
   .say-inline-rdfa {
     [contenteditable] {
       white-space: break-spaces;
