@@ -1,5 +1,5 @@
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { Command, NodeSelection, Selection } from 'prosemirror-state';
+import { AllSelection, Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByRdfaIdArgs = {
   rdfaId: string;
@@ -19,7 +19,7 @@ export function selectNodeByRdfaId({
 
     const tr = state.tr;
     if (target.pos === -1) {
-      tr.setSelection(Selection.atStart(tr.doc));
+      tr.setSelection(new AllSelection(tr.doc));
     } else {
       tr.setSelection(new NodeSelection(tr.doc.resolve(target.pos)));
     }
