@@ -75,6 +75,8 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
           logger('rdfaNodeType is not a valid type', value, node);
         }
         if (type === 'resource') {
+          // Attrs of resource nodeTypes have non-optional resource and properties fields, so
+          // ensure that they're set, either to the already parsed values or []/''
           attrs = {
             ...attrs,
             rdfaNodeType: type,
