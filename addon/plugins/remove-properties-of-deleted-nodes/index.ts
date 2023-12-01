@@ -1,14 +1,21 @@
 import { EditorState, Plugin } from 'prosemirror-state';
 import { PNode } from '@lblod/ember-rdfa-editor';
-import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getNodeByRdfaId,
+  getNodesByResource,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/_private/node-utils';
 import {
   getBacklinks,
   getProperties,
   getRdfaId,
+  getResource,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
-import { removeBacklinksTargetingResourceProperty } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-backlinks-targeting-resource-property';
-import { removePropertiesTargetingBacklinks } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/remove-properties-targeting-backlinks';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type {
+  Backlink,
+  Property,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 /**
  * Returns nodes from the oldState that are not in the newState
@@ -41,6 +48,18 @@ function getDeletedNodes(oldState: EditorState, newState: EditorState) {
   return deletedNodes;
 }
 
+const setOrPush = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
+  if (!map.has(key)) {
+    map.set(key, []);
+  }
+
+  const existing = map.get(key);
+
+  if (existing) {
+    existing.push(value);
+  }
+};
+
 export function removePropertiesOfDeletedNodes() {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
@@ -54,10 +73,15 @@ export function removePropertiesOfDeletedNodes() {
         return null;
       }
 
-      const tr = newState.tr;
+      const targetsWithBacklinks = new Map<
+        ResolvedPNode,
+        Array<{ property: Property; resource: string }>
+      >();
 
-      let nextState = newState.apply(tr);
-      let sharedTransaction = tr;
+      const targetsWithProperties = new Map<
+        ResolvedPNode,
+        Array<{ backlink: Backlink; rdfaId?: string }>
+      >();
 
       deletedNodes.forEach((node) => {
         const isResource = isResourceNode(node);
@@ -66,7 +90,6 @@ export function removePropertiesOfDeletedNodes() {
           const resource = node.attrs.resource as string;
           const resourceNodes = getNodesByResource(newState, resource);
 
-          // Resource nodes of same resource still remain in the document, take no action
           if (resourceNodes && resourceNodes.length >= 1) {
             return;
           }
@@ -74,35 +97,37 @@ export function removePropertiesOfDeletedNodes() {
           const properties = getProperties(node) ?? [];
 
           properties.forEach((property) => {
-            const removeBacklinksCommand =
-              removeBacklinksTargetingResourceProperty({
-                resource,
-                property,
-                transaction: sharedTransaction,
-              });
+            if (property.type === 'external') {
+              const { object } = property;
 
-            removeBacklinksCommand(nextState, (transaction) => {
-              nextState = newState.apply(transaction);
-              sharedTransaction = transaction;
-            });
+              if (object.type === 'literal') {
+                const node = getNodeByRdfaId(newState, object.rdfaId);
+
+                if (node) {
+                  setOrPush(targetsWithBacklinks, node, { property, resource });
+                }
+              } else {
+                const nodes = getNodesByResource(newState, object.resource);
+
+                nodes?.forEach((node) => {
+                  setOrPush(targetsWithBacklinks, node, { property, resource });
+                });
+              }
+            }
           });
 
           const backlinks = getBacklinks(node) ?? [];
 
           backlinks.forEach((backlink) => {
-            const removePropertiesCommand = removePropertiesTargetingBacklinks({
-              backlink,
-              transaction: sharedTransaction,
-            });
+            const subject = backlink.subject;
+            const nodes = getNodesByResource(newState, subject);
 
-            removePropertiesCommand(nextState, (transaction) => {
-              nextState = newState.apply(transaction);
-              sharedTransaction = transaction;
+            nodes?.forEach((node) => {
+              setOrPush(targetsWithProperties, node, {
+                backlink,
+              });
             });
           });
-
-          // Resource node processed, take no further action
-          return;
         }
 
         const rdfaId = getRdfaId(node);
@@ -111,17 +136,71 @@ export function removePropertiesOfDeletedNodes() {
           const backlinks = getBacklinks(node) ?? [];
 
           backlinks.forEach((backlink) => {
-            const removePropertiesCommand = removePropertiesTargetingBacklinks({
-              backlink,
-              transaction: sharedTransaction,
-              rdfaId,
-            });
+            const subject = backlink.subject;
+            const nodes = getNodesByResource(newState, subject);
 
-            removePropertiesCommand(nextState, (transaction) => {
-              nextState = newState.apply(transaction);
-              sharedTransaction = transaction;
+            nodes?.forEach((node) => {
+              setOrPush(targetsWithProperties, node, {
+                backlink,
+                rdfaId,
+              });
             });
           });
+        }
+      });
+
+      if (targetsWithBacklinks.size === 0 && targetsWithProperties.size === 0) {
+        return null;
+      }
+
+      const tr = newState.tr;
+
+      targetsWithBacklinks.forEach((meta, target) => {
+        const backlinks = getBacklinks(target.value);
+
+        if (backlinks) {
+          const filteredBacklinks = backlinks.filter(
+            (backlink) =>
+              !meta.some(
+                (meta) =>
+                  backlink.predicate === meta.property.predicate &&
+                  backlink.subject === meta.resource,
+              ),
+          );
+
+          tr.setNodeAttribute(target.pos, 'backlinks', filteredBacklinks);
+        }
+      });
+
+      targetsWithProperties.forEach((meta, target) => {
+        const properties = getProperties(target.value);
+
+        if (properties) {
+          const filteredProperties = properties.filter(
+            (property) =>
+              !meta.some(({ backlink, rdfaId }) => {
+                if (rdfaId) {
+                  if (property.type !== 'external') {
+                    return false;
+                  }
+
+                  if (property.object.type !== 'literal') {
+                    return false;
+                  }
+
+                  if (property.object.rdfaId !== rdfaId) {
+                    return false;
+                  }
+                }
+
+                return (
+                  backlink.predicate === property.predicate &&
+                  backlink.subject === getResource(target.value)
+                );
+              }),
+          );
+
+          tr.setNodeAttribute(target.pos, 'properties', filteredProperties);
         }
       });
 
