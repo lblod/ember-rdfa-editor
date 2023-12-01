@@ -40,51 +40,52 @@ function matchTopNode(
   | undefined {
   const { schema } = options;
   const topNodeSpec = schema.topNodeType.spec;
-  if (topNodeSpec.parseDOM?.length) {
-    for (const parseRule of topNodeSpec.parseDOM) {
-      const enhancedRule = enhanceRule(parseRule);
-      let attrs: Attrs | null | undefined | false;
-      if (enhancedRule.tag && tagName(node) !== enhancedRule.tag) {
-        continue;
-      }
-      if (enhancedRule.getAttrs) {
-        attrs = enhancedRule.getAttrs(node);
-      } else if (enhancedRule.attrs) {
-        attrs = enhancedRule.attrs;
-      }
-      if (!attrs) {
-        continue;
-      }
-      const { contentElement: contentElementSelector } = enhancedRule;
-      let contentElement: HTMLElement | undefined | null;
-      if (enhancedRule.contentElement) {
-        switch (typeof contentElementSelector) {
-          case 'string':
-            contentElement = node.querySelector<HTMLElement>(
-              contentElementSelector,
-            );
-            break;
-          case 'function':
-            contentElement = contentElementSelector(node);
-            break;
-          default:
-            contentElement = contentElementSelector;
-        }
-      } else {
-        contentElement = node;
-      }
-      if (contentElement) {
-        return {
-          topNode: schema.topNodeType.create(attrs),
-          contentElement,
-        };
-      }
+  if (!topNodeSpec.parseDOM?.length) {
+    return;
+  }
+  for (const parseRule of topNodeSpec.parseDOM) {
+    const enhancedRule = enhanceRule(parseRule);
+    let attrs: Attrs | null | undefined | false;
+    if (enhancedRule.tag && tagName(node) !== enhancedRule.tag) {
+      continue;
     }
-    for (const child of node.children) {
-      const recResult = matchTopNode(child as HTMLElement, options);
-      if (recResult) {
-        return recResult;
+    if (enhancedRule.getAttrs) {
+      attrs = enhancedRule.getAttrs(node);
+    } else if (enhancedRule.attrs) {
+      attrs = enhancedRule.attrs;
+    }
+    if (!attrs) {
+      continue;
+    }
+    const { contentElement: contentElementSelector } = enhancedRule;
+    let contentElement: HTMLElement | undefined | null;
+    if (enhancedRule.contentElement) {
+      switch (typeof contentElementSelector) {
+        case 'string':
+          contentElement = node.querySelector<HTMLElement>(
+            contentElementSelector,
+          );
+          break;
+        case 'function':
+          contentElement = contentElementSelector(node);
+          break;
+        default:
+          contentElement = contentElementSelector;
       }
+    } else {
+      contentElement = node;
+    }
+    if (contentElement) {
+      return {
+        topNode: schema.topNodeType.create(attrs),
+        contentElement,
+      };
+    }
+  }
+  for (const child of node.children) {
+    const recResult = matchTopNode(child as HTMLElement, options);
+    if (recResult) {
+      return recResult;
     }
   }
   return;
