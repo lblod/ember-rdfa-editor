@@ -26,8 +26,7 @@ export type RdfaAttr =
   | 'id'
   | 'role'
   | 'inlist'
-  | 'datetime'
-  | '__rdfaId';
+  | 'datetime';
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
  * NOTE: it adds the active vocab as a prefix with an empty string as key, which makes it a bit easier to pass down

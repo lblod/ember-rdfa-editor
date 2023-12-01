@@ -426,6 +426,14 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   &.ProseMirror-hideselection {
     caret-color: transparent;
+
+    *::selection {
+      background: transparent;
+    }
+
+    .selectedCell {
+      background-color: var(--au-blue-100);
+    }
   }
 }
 
