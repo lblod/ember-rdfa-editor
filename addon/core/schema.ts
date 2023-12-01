@@ -4,14 +4,19 @@ import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import { Backlink, Property } from './rdfa-processor';
+import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 
-export const rdfaAttrs = {
+const logger = createLogger('core/schema');
+
+export const rdfaAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   resource: { default: null },
 };
+/** @deprecated Renamed to rdfaAttrSpec */
+export const rdfaAttrs = rdfaAttrSpec;
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
@@ -20,15 +25,34 @@ export const rdfaDomAttrs = {
   'data-rdfa-node-type': { default: undefined },
 };
 
+export const rdfaNodeTypes = ['resource', 'literal'] as const;
+export interface RdfaAwareAttrs {
+  __rdfaId: string;
+  rdfaNodeType: (typeof rdfaNodeTypes)[number];
+  backlinks: Backlink[];
+}
+export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'literal';
+}
+export interface RdfaResourceAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'resource';
+  resource: string;
+  properties: Property[];
+}
+export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
+  Record<string, string | number | Property[] | Backlink[]>;
+
 export const sharedRdfaNodeSpec = {
   isolating: true,
   selectable: true,
 };
 
-type RdfaAttrs = Record<string, string | Property[] | Backlink[]>;
-
 export function getRdfaAttrs(node: Element): RdfaAttrs | false {
-  const attrs: RdfaAttrs = {};
+  let attrs: RdfaAttrs = {
+    __rdfaId: '',
+    rdfaNodeType: 'literal',
+    backlinks: [],
+  };
 
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(rdfaDomAttrs)) {
@@ -46,13 +70,31 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
         attrs['backlinks'] = backlinks;
       }
       if (key === 'data-rdfa-node-type') {
-        attrs['rdfaNodeType'] = value;
+        const type = value as unknown as RdfaAttrs['rdfaNodeType'];
+        if (!rdfaNodeTypes.includes(type)) {
+          logger('rdfaNodeType is not a valid type', value, node);
+        }
+        if (type === 'resource') {
+          attrs = {
+            ...attrs,
+            rdfaNodeType: type,
+            resource:
+              attrs.resource && typeof attrs.resource === 'string'
+                ? attrs.resource
+                : '',
+            properties:
+              attrs.properties && attrs.properties instanceof Array
+                ? (attrs.properties as Property[])
+                : [],
+          };
+        }
       }
     }
   }
   if (hasAnyRdfaAttributes) {
     if (!attrs['__rdfaId']) {
       attrs['__rdfaId'] = uuidv4();
+      logger('No rdfaId found, generating one', attrs['__rdfaId'], attrs);
     }
     return attrs;
   }
@@ -144,7 +186,7 @@ export interface RenderContentArgs {
   extraAttrs?: Record<string, unknown>;
   content: DOMOutputSpec;
 }
-export interface RdfaRenderArgs {
+export type RdfaRenderArgs = {
   renderable: NodeOrMark;
   tag: string;
   attrs?: Record<string, unknown>;
@@ -152,8 +194,7 @@ export interface RdfaRenderArgs {
   rdfaContainerAttrs?: Record<string, unknown>;
   contentContainerTag?: string;
   contentContainerAttrs?: Record<string, unknown>;
-  content?: DOMOutputSpec | 0;
-}
+} & ({ content: DOMOutputSpec | 0 } | { contentArray: unknown[] });
 export function renderRdfaAware({
   renderable,
   tag,
@@ -162,7 +203,7 @@ export function renderRdfaAware({
   rdfaContainerAttrs,
   contentContainerTag = tag,
   contentContainerAttrs = {},
-  content,
+  ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
   return [
     tag,
@@ -171,7 +212,7 @@ export function renderRdfaAware({
     [
       contentContainerTag,
       { 'data-content-container': true, ...contentContainerAttrs },
-      content,
+      ...('contentArray' in rest ? rest.contentArray : [rest.content]),
     ],
   ];
 }

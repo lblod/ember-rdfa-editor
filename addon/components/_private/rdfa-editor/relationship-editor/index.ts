@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
-  addProperty,
   insertRelation,
   InsertRelationDetails,
   removeBacklink,
@@ -11,6 +10,7 @@ import {
   selectNodeByRdfaId,
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import {
@@ -166,7 +166,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         this.addRelationshipType = undefined;
         return true;
       }
-      case 'content':
+      case 'literal':
       case 'resource':
         return this.addNode(details);
       default:

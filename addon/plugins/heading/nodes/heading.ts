@@ -3,7 +3,7 @@ import {
   renderRdfaAware,
   sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
-import { rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import NumberEditor from '@lblod/ember-rdfa-editor/components/_private/number-editor';
@@ -21,7 +21,7 @@ export const heading: SayNodeSpec = {
       editable: true,
       editor: NumberEditor as unknown as ComponentLike,
     },
-    ...rdfaAttrs,
+    ...rdfaAttrSpec,
   },
   content: 'inline*',
   group: 'block',

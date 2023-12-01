@@ -108,7 +108,7 @@ export function preprocessRDFa(dom: Node) {
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
       incomingProp,
     ]);
-    (node as HTMLElement).dataset.rdfaNodeType = 'content';
+    (node as HTMLElement).dataset.rdfaNodeType = 'literal';
   }
 }
 

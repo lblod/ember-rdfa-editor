@@ -31,7 +31,7 @@ export default class RdfaEditor extends Component<Args> {
   }
 
   get type() {
-    return this.isResourceNode ? 'resource' : 'content';
+    return this.isResourceNode ? 'resource' : 'literal';
   }
 
   get controller() {
