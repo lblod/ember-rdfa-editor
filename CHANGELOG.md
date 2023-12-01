@@ -1,5 +1,14 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.2
+
+### Patch Changes
+
+- [#1053](https://github.com/lblod/ember-rdfa-editor/pull/1053) [`c2e4e2a1`](https://github.com/lblod/ember-rdfa-editor/commit/c2e4e2a1e13c35ff99646f01eab0e236c68a4867) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4621: Add styling for selected table cell
+
+  - `.selectedCell` to style the cell that is selected. `.selectedCell` comes from the `prosemirror-tables` plugin.
+  - `::selection` to hide the selection on the text inside the cell.
+
 ## 7.0.1
 
 ### Patch Changes
