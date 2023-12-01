@@ -4,5 +4,13 @@
   "initialVersions": {
     "@lblod/ember-rdfa-editor": "7.0.2"
   },
-  "changesets": []
+  "changesets": [
+    "five-dolls-double",
+    "green-beans-sin",
+    "many-poets-crash",
+    "odd-falcons-jam",
+    "slow-trains-fix",
+    "thin-moles-poke",
+    "twenty-cooks-grow"
+  ]
 }
