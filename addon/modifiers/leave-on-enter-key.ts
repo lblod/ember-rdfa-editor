@@ -9,7 +9,14 @@ export default modifier(
   ) {
     const leaveOnEnter = (event: KeyboardEvent) => {
       const startPosNode = getPos();
-      if (event.key !== 'Enter' || startPosNode === undefined) return;
+      const modifierKeyPressed =
+        event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
+      if (
+        modifierKeyPressed ||
+        event.key !== 'Enter' ||
+        startPosNode === undefined
+      )
+        return;
 
       const state = controller.mainEditorState;
       const node = state.doc.resolve(startPosNode).nodeAfter;

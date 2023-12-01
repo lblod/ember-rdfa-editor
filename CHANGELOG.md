@@ -1,5 +1,62 @@
 # @lblod/ember-rdfa-editor
 
+## 7.0.1
+
+### Patch Changes
+
+- [#1045](https://github.com/lblod/ember-rdfa-editor/pull/1045) [`af593913`](https://github.com/lblod/ember-rdfa-editor/commit/af593913abc2be7d9386b224bd5b68469da60dbe) Thanks [@abeforgit](https://github.com/abeforgit)! - fix placeholders no longer being selectable with mouse
+
+## 7.0.0
+
+### Major Changes
+
+- [`951fe78e`](https://github.com/lblod/ember-rdfa-editor/commit/951fe78ee96a07ac9d4f83c5433788d66c1499a7) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4130: Remove "data-editor-highlight" styled
+
+  Removes styles that were affecting elements with the "data-editor-highlight" attribute.
+  Styles are moved to [ember-rdfa-editor-lblod-plugins](https://github.com/lblod/ember-rdfa-editor-lblod-plugins) and are
+  applied through the `citation-plugin`.
+
+### Minor Changes
+
+- [#1044](https://github.com/lblod/ember-rdfa-editor/pull/1044) [`0a2472c1`](https://github.com/lblod/ember-rdfa-editor/commit/0a2472c1e459091f10cb5cffdbe44e7b14bd2df3) Thanks [@elpoelma](https://github.com/elpoelma)! - Add shift+enter handler to `embeddedEditorBaseKeymap`
+
+- [#1027](https://github.com/lblod/ember-rdfa-editor/pull/1027) [`8d310cf1`](https://github.com/lblod/ember-rdfa-editor/commit/8d310cf1a3421935a858ad8a9483c4f83c4d7f66) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a custom gap-cursor plugin containing several fixes compared to the original version:
+
+  - The click handler has been replaced by a mousedown handler in order to intercept a click event earlier
+  - The types of the GapCursor class have been fixed
+  - Addition of a fix when resolving the position returned by view.posAtCoords.
+
+- [#1042](https://github.com/lblod/ember-rdfa-editor/pull/1042) [`1f9dbf13`](https://github.com/lblod/ember-rdfa-editor/commit/1f9dbf1384d0a49b010877637799728cdc7bceb7) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of `_guid` attribute on inline-rdfa markspec
+
+- [#1040](https://github.com/lblod/ember-rdfa-editor/pull/1040) [`5ebcbedb`](https://github.com/lblod/ember-rdfa-editor/commit/5ebcbedbcbeac84697c60ee323f6542cc8870d11) Thanks [@elpoelma](https://github.com/elpoelma)! - Deprecate usage of `SetDocAttributeStep` in favour of native `DocAttrStep` or `setDocAttribute` method of the `Transform` class
+
+- [#1042](https://github.com/lblod/ember-rdfa-editor/pull/1042) [`4d7f9acc`](https://github.com/lblod/ember-rdfa-editor/commit/4d7f9accbfa80fb6eb6445da8ea8b4fa15e8606b) Thanks [@elpoelma](https://github.com/elpoelma)! - Removal of obsolete `__tag` attribute from inline-rdfa markspec and block-rdfa nodespec
+
+- [#1040](https://github.com/lblod/ember-rdfa-editor/pull/1040) [`56a5f4ac`](https://github.com/lblod/ember-rdfa-editor/commit/56a5f4ac04c70213e1a67fb48268116ec160cb32) Thanks [@elpoelma](https://github.com/elpoelma)! - Use native `setDocAttribute` method of the `Transform` class to update attributes of the doc node
+
+- [#1042](https://github.com/lblod/ember-rdfa-editor/pull/1042) [`1f9dbf13`](https://github.com/lblod/ember-rdfa-editor/commit/1f9dbf1384d0a49b010877637799728cdc7bceb7) Thanks [@elpoelma](https://github.com/elpoelma)! - Removal of obsolete `__rdfaId` node and mark attribute
+
+### Patch Changes
+
+- [#1032](https://github.com/lblod/ember-rdfa-editor/pull/1032) [`c830cfb2`](https://github.com/lblod/ember-rdfa-editor/commit/c830cfb22490b410a049043323cd446a0e366742) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-transform` to 1.8.0
+
+- [#1044](https://github.com/lblod/ember-rdfa-editor/pull/1044) [`7f953ce6`](https://github.com/lblod/ember-rdfa-editor/commit/7f953ce6d2f82d1f9b72c1952d2bcb3aec80b4e3) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix issue with setting keymap of embedded editor
+
+- [#1033](https://github.com/lblod/ember-rdfa-editor/pull/1033) [`419b26aa`](https://github.com/lblod/ember-rdfa-editor/commit/419b26aaabfa8842092c1c2b55780ec968d4bdae) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix issue in firefox with backspacing after inline ember-nodes
+
+- [#1032](https://github.com/lblod/ember-rdfa-editor/pull/1032) [`1d8a1ed3`](https://github.com/lblod/ember-rdfa-editor/commit/1d8a1ed3df1a3422ac2dca8c0510ed5972bbd92a) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-inputrules` to 1.3.0
+
+- [#1032](https://github.com/lblod/ember-rdfa-editor/pull/1032) [`fdadd1b8`](https://github.com/lblod/ember-rdfa-editor/commit/fdadd1b827bf70b1112108efe3250c441001841a) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove obsolete `prosemirror-gapcursor` package
+
+- [#1034](https://github.com/lblod/ember-rdfa-editor/pull/1034) [`f94178f8`](https://github.com/lblod/ember-rdfa-editor/commit/f94178f8f5b0401037eb9c66ff065cb3b05ba270) Thanks [@elpoelma](https://github.com/elpoelma)! - Update firefoxCursorFix plugin to add workaround for pressing the delete-key around inline ember-nodes
+
+- [#1034](https://github.com/lblod/ember-rdfa-editor/pull/1034) [`f94178f8`](https://github.com/lblod/ember-rdfa-editor/commit/f94178f8f5b0401037eb9c66ff065cb3b05ba270) Thanks [@elpoelma](https://github.com/elpoelma)! - Update chromeHacks plugin to add workaround for pressing the delete-key around inline ember-nodes
+
+- [#1044](https://github.com/lblod/ember-rdfa-editor/pull/1044) [`6d75850a`](https://github.com/lblod/ember-rdfa-editor/commit/6d75850a449928b99d17dc3b22d269d89961593e) Thanks [@elpoelma](https://github.com/elpoelma)! - Only run `leave-on-enter` modifier when `Enter` has been pressed without modifier keys
+
+- [#1032](https://github.com/lblod/ember-rdfa-editor/pull/1032) [`f31699aa`](https://github.com/lblod/ember-rdfa-editor/commit/f31699aacf91d240ff744a60d5696463ca96f15e) Thanks [@elpoelma](https://github.com/elpoelma)! - Update prosemirror-view to 1.32.4
+
+
 ## 7.0.0-next.3
 
 ### Patch Changes
