@@ -55,9 +55,6 @@ type Args = EmberNodeArgs & {
   keymap?: { [key: string]: Command };
   /* editor plugins to add */
   plugins?: Plugin[];
-  nodeViews?: {
-    [node: string]: NodeViewConstructor;
-  };
 };
 
 /**
@@ -116,6 +113,10 @@ export default class EmbeddedEditor extends Component<Args> {
     } else {
       return { ...embeddedEditorBaseKeymap, ...undoRedoMap };
     }
+  }
+
+  get nodeViews() {
+    return this.outerView.props.nodeViews;
   }
 
   @action
@@ -177,7 +178,7 @@ export default class EmbeddedEditor extends Component<Args> {
             }
           }
         },
-        nodeViews: this.args.nodeViews,
+        nodeViews: this.nodeViews,
       },
       this.outerView,
     );
@@ -238,7 +239,6 @@ export default class EmbeddedEditor extends Component<Args> {
       // check if our top node has new attributes, and update the state
       // if so
       if (!this.node.hasMarkup(state.doc.type, state.doc.attrs)) {
-
         for (const [key, val] of Object.entries(this.node.attrs)) {
           tr.setDocAttribute(key, val);
         }
