@@ -1,9 +1,9 @@
 import { MarkSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 
 export const link: MarkSpec = {
   attrs: {
-    ...rdfaAttrs,
+    ...rdfaAttrSpec,
   },
   excludes: '',
   group: 'rdfa linkmarks',

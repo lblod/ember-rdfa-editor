@@ -1,11 +1,11 @@
 import { DOMOutputSpec, Node as PNode, NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 
 export const repaired_block: NodeSpec = {
   inline: true,
   content: 'inline*',
   group: 'inline',
-  attrs: { ...rdfaAttrs },
+  attrs: { ...rdfaAttrSpec },
   // defining: true,
   parseDOM: [
     {

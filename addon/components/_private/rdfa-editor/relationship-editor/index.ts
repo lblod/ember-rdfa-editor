@@ -3,15 +3,14 @@ import { tracked } from '@glimmer/tracking';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
-  addProperty,
   insertRelation,
   InsertRelationDetails,
-  removeBacklinkFromLiteral,
-  removeBacklinkFromResource,
+  removeBacklink,
   removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import {
@@ -74,7 +73,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return pluginState
       ? [...pluginState.rdfaIdMapping.keys()].map((key) => {
           const node = unwrap(pluginState.rdfaIdMapping.get(key)?.value);
-          const resource = node.attrs.resource;
+          const resource = node.attrs.resource as string | undefined;
           if (resource) {
             return { key, label: `Resource: ${resource} - [${key}]` };
           } else {
@@ -117,16 +116,19 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
+    let target: ExternalPropertyObject;
     if (this.currentResource) {
-      this.controller?.doCommand(
-        removeBacklinkFromResource({ resource: this.currentResource, index }),
-      );
+      target = {
+        type: 'resource',
+        resource: this.currentResource,
+      };
     } else {
-      // This is a content node, so there is only 1 backlink.
-      this.controller?.doCommand(
-        removeBacklinkFromLiteral({ rdfaId: this.currentRdfaId }),
-      );
+      target = {
+        type: 'literal',
+        rdfaId: this.currentRdfaId,
+      };
     }
+    this.controller?.doCommand(removeBacklink({ target, index }));
   };
 
   removeProperty = (index: number) => {
@@ -173,7 +175,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         this.addRelationshipType = undefined;
         return true;
       }
-      case 'content':
+      case 'literal':
       case 'resource':
         return this.addNode(details);
       default:

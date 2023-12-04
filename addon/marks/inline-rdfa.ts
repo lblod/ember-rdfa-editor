@@ -1,11 +1,10 @@
 import { Mark, MarkSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { renderRdfaAware } from '../core/schema';
 
 export const inline_rdfa: MarkSpec = {
   attrs: {
-    ...rdfaAttrs,
-    __tag: { default: 'span' },
+    ...rdfaAttrSpec,
   },
   group: 'rdfa',
   excludes: '',

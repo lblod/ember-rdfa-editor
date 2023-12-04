@@ -85,7 +85,7 @@ export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
  * @param resource - Resource URI
  */
 export function getNodesByResource(state: EditorState, resource: string) {
-  return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource);
+  return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource) ?? [];
 }
 
 export function getRdfaIds(state: EditorState) {

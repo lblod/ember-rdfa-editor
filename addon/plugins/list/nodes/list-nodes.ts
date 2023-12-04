@@ -1,7 +1,7 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
-  rdfaAttrs,
+  rdfaAttrSpec,
   renderRdfaAttrs,
   renderInvisibleRdfa,
 } from '@lblod/ember-rdfa-editor/core/schema';
@@ -9,13 +9,13 @@ import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
 
-type OrderedListAttrs = typeof rdfaAttrs & {
+type OrderedListAttrs = typeof rdfaAttrSpec & {
   order: number;
   style?: OrderListStyle;
 };
 
 export const ordered_list: NodeSpec = {
-  attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrs },
+  attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrSpec },
   content: 'list_item+',
   group: 'block list',
   parseDOM: [
@@ -48,7 +48,7 @@ export const ordered_list: NodeSpec = {
 export const bullet_list: NodeSpec = {
   content: 'list_item+',
   group: 'block list',
-  attrs: { ...rdfaAttrs },
+  attrs: { ...rdfaAttrSpec },
   parseDOM: [
     {
       tag: 'ul',
@@ -68,7 +68,7 @@ export const bullet_list: NodeSpec = {
 export const list_item: NodeSpec = {
   content: 'paragraphGroup+ block*',
   defining: true,
-  attrs: { ...rdfaAttrs },
+  attrs: { ...rdfaAttrSpec },
   parseDOM: [
     {
       tag: 'li',
