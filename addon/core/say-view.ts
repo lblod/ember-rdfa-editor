@@ -1,4 +1,9 @@
-import { EditorState, Selection } from 'prosemirror-state';
+import {
+  AllSelection,
+  EditorState,
+  Selection,
+  Transaction,
+} from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc } from '../utils/_private/html-utils';
@@ -57,5 +62,14 @@ export default class SayView extends EditorView {
     const doc = serializer.serializeNode(this.state.doc, undefined);
     div.appendChild(doc);
     return div.innerHTML;
+  }
+
+  updateState(state: EditorState): void {
+    super.updateState(state);
+    const { selection } = state;
+    this.dom.classList.toggle(
+      'say-selection-all',
+      selection instanceof AllSelection,
+    );
   }
 }
