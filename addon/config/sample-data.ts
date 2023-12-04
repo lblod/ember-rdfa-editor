@@ -560,7 +560,7 @@ world
     <span property="dct:conformsTo" content="http://datamodel/1"/>
     <span property="ext:anotherPredicate" content="test"/>
     <div data-content-container="true">
-      <div resource="http://test/1" typeof="ext:Decision">
+      <div property="ext:hasDecision" resource="http://test/1" typeof="ext:Decision">
         <h3 property="ext:title">Decision title</h3>
         random text, unlinked, to make it easier to get access to the toplevel decision node
         we still need to add a good way to "go up" a level with the selection
