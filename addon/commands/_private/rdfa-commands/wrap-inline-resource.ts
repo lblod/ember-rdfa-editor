@@ -1,5 +1,3 @@
-
-import { addProperty } from './add-property';
 import { Command } from 'prosemirror-state';
 import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +7,7 @@ import {
   getRdfaChildren,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { wrapSelection } from '../../wrap-selection';
+import { addProperty } from '../../rdfa-commands/add-property';
 
 export function wrapInlineResource(
   args: { uriBase: string } | { existingUri: string },
