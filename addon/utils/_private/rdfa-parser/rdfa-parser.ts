@@ -995,11 +995,7 @@ export class RdfaParser<N> {
     if (!activeTag.skipElement && node) {
       // no rel or rev
       if (!('rel' in attributes) && !('rev' in attributes)) {
-        if (
-          'property' in attributes &&
-          !('content' in attributes) &&
-          !('datatype' in attributes)
-        ) {
+        if ('property' in attributes && !('content' in attributes)) {
           if ('about' in attributes) {
             // content node
             this.setContentNode(node, activeTag, attributes);
