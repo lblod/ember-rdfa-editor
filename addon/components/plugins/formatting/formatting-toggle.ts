@@ -7,7 +7,7 @@ type Args = {
   controller?: SayController;
 };
 
-export default class RdfaBlocksToggleComponent extends Component<Args> {
+export default class FormattingToggleComponent extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
