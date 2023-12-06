@@ -43,11 +43,10 @@ export function gapCursor(): Plugin {
           : null;
       },
 
-      // handleClick,
       handleKeyDown,
       handleDOMEvents: {
         beforeinput,
-        mousedown: mousedown,
+        mousedown,
       },
     },
   });
@@ -83,6 +82,10 @@ function arrow(axis: 'vert' | 'horiz', dir: number): Command {
 }
 
 function mousedown(view: EditorView, event: MouseEvent) {
+  // Only handle the event in the main mouse button is pressed
+  if (event.button !== 0) {
+    return false;
+  }
   const clickPos = view.posAtCoords({
     left: event.clientX,
     top: event.clientY,
@@ -94,6 +97,7 @@ function mousedown(view: EditorView, event: MouseEvent) {
   if (!GapCursor.valid($pos)) return false;
   event.preventDefault();
   view.dispatch(view.state.tr.setSelection(new GapCursor($pos)));
+  view.focus();
   return true;
 }
 

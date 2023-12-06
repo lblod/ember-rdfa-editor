@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { commands } from '@guardian/prosemirror-invisibles';
+import { commands, selectActiveState } from '@guardian/prosemirror-invisibles';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
@@ -10,6 +10,14 @@ type Args = {
 export default class FormattingToggleComponent extends Component<Args> {
   get controller() {
     return this.args.controller;
+  }
+
+  get isActive() {
+    if (this.controller) {
+      return selectActiveState(this.controller.mainEditorState);
+    } else {
+      return false;
+    }
   }
   @action
   toggle() {
