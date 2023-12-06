@@ -1,15 +1,18 @@
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
+import { Node } from 'prosemirror-model';
 
 import {
   addRow,
   CellSelection,
+  columnResizing,
   goToNextCell,
   isInTable,
   moveCellForward,
   selectedRect,
   tableEditing,
+  TableView as PluginTableView,
 } from 'prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
 
@@ -19,6 +22,27 @@ export { insertTable } from './commands/insertTable';
 export const tablePlugin: Plugin = tableEditing({
   allowTableNodeSelection: true,
 });
+
+export class TableView extends PluginTableView {
+  constructor(
+    public node: Node,
+    public cellMinWidth: number,
+  ) {
+    super(node, cellMinWidth);
+
+    const nodeClasses = node.attrs.class as string | undefined;
+    if (typeof nodeClasses === 'string') {
+      this.table.classList.add(...nodeClasses.split(' '));
+    }
+  }
+}
+
+export const tableColumnResizingPlugin: Plugin = columnResizing({
+  View: TableView,
+  lastColumnResizable: false,
+});
+
+export const tablePlugins: Plugin[] = [tableColumnResizingPlugin, tablePlugin];
 
 export const tableKeymap = keymap({
   Tab: (state, dispatch) => {

@@ -25,7 +25,7 @@ import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
-  tablePlugin,
+  tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -132,7 +132,7 @@ export default class BackspaceController extends Controller {
   @tracked plugins: PluginConfig = [
     firefoxCursorFix(),
     lastKeyPressedPlugin,
-    tablePlugin,
+    ...tablePlugins,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
     createInvisiblesPlugin(

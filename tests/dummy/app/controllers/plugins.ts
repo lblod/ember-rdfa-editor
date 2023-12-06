@@ -27,7 +27,7 @@ import {
 import {
   tableKeymap,
   tableNodes,
-  tablePlugin,
+  tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -142,7 +142,7 @@ export default class IndexController extends Controller {
     firefoxCursorFix(),
     chromeHacksPlugin(),
     highlightPlugin({ testKey: 'yeet' }),
-    tablePlugin,
+    ...tablePlugins,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
     createInvisiblesPlugin(
