@@ -10,9 +10,10 @@ export default class Link extends Component<EmberNodeArgs> {
     return this.args.node.attrs.href as string;
   }
 
-  set href(value: string) {
-    this.args.updateAttribute('href', value);
-  }
+  updateHref = (event: InputEvent) => {
+    const href = (event.target as HTMLInputElement).value;
+    this.args.updateAttribute('href', href);
+  };
 
   get controller() {
     return this.args.controller;

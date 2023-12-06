@@ -45,6 +45,12 @@ const activeNode = (
       return { pos: basePos, value: state.doc };
     }
   }
+  if (isEditable(state.doc)) {
+    return {
+      pos: -1,
+      value: state.doc,
+    };
+  }
   return;
 };
 

@@ -7,6 +7,7 @@ import {
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { getProperties } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
@@ -45,8 +46,12 @@ export function addProperty({
       const tr = transaction ?? state.tr;
       // Update the properties of each node that defines the given resource
       resourceNodes.forEach((node) => {
-        logger('setting rel on resource', node.value.attrs.resource, node);
-        tr.setNodeAttribute(node.pos, 'properties', updatedProperties);
+        TransformUtils.setAttribute(
+          tr,
+          node.pos,
+          'properties',
+          updatedProperties,
+        );
       });
 
       if (property.type === 'external') {
@@ -76,12 +81,12 @@ export function addProperty({
           const newBacklinks = backlinks
             ? [...backlinks, newBacklink]
             : [newBacklink];
-          logger(
-            'setting backlink on target',
-            target.value.attrs.resource ?? target.value.textContent,
-            target,
+          TransformUtils.setAttribute(
+            tr,
+            target.pos,
+            'backlinks',
+            newBacklinks,
           );
-          tr.setNodeAttribute(target.pos, 'backlinks', newBacklinks);
         });
       }
       dispatch(tr);

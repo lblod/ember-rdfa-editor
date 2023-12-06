@@ -26,6 +26,9 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     draggable: false,
     attrs: {
       ...rdfaAttrSpec,
+      href: {
+        default: null,
+      },
       interactive: {
         default: interactive,
       },
@@ -38,6 +41,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
         getAttrs(dom: HTMLElement) {
           return {
             ...getRdfaAttrs(dom),
+            href: dom.getAttribute('href'),
           };
         },
       },

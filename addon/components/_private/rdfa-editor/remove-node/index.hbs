@@ -2,6 +2,7 @@
   @width="block"
   @alert={{true}}
   {{on "click" this.showConfirmationDialog}}
+  @disabled={{not this.enabled}}
 >
   Remove node
 </AuButton>

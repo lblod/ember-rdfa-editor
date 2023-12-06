@@ -2,6 +2,7 @@ import {
   getNodeByRdfaId,
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getBacklinks,
@@ -44,7 +45,12 @@ export function removeProperty({
       const tr = transaction ?? state.tr;
       // Update the properties of all nodes defining the given resource
       resourceNodes.forEach((node) => {
-        tr.setNodeAttribute(node.pos, 'properties', updatedProperties);
+        TransformUtils.setAttribute(
+          tr,
+          node.pos,
+          'properties',
+          updatedProperties,
+        );
       });
 
       if (propertyToRemove.type === 'external') {
@@ -72,7 +78,12 @@ export function removeProperty({
                 backlink.subject === resource
               );
             });
-            tr.setNodeAttribute(target.pos, 'backlinks', filteredBacklinks);
+            TransformUtils.setAttribute(
+              tr,
+              target.pos,
+              'backlinks',
+              filteredBacklinks,
+            );
           }
         });
       }

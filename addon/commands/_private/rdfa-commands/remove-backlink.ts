@@ -3,6 +3,7 @@ import {
   getNodeByRdfaId,
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getBacklinks,
@@ -52,7 +53,12 @@ export function removeBacklink({
       updatedBacklinks.splice(index, 1);
       const tr = transaction ?? state.tr;
       nodes.forEach((node) => {
-        tr.setNodeAttribute(node.pos, 'backlinks', updatedBacklinks);
+        TransformUtils.setAttribute(
+          tr,
+          node.pos,
+          'backlinks',
+          updatedBacklinks,
+        );
       });
       const subjects = getNodesByResource(state, backlinkToRemove.subject);
       subjects?.forEach((subject) => {
@@ -82,8 +88,12 @@ export function removeBacklink({
               return true;
             }
           });
-
-          tr.setNodeAttribute(subject.pos, 'properties', filteredProperties);
+          TransformUtils.setAttribute(
+            tr,
+            subject.pos,
+            'properties',
+            filteredProperties,
+          );
         }
       });
       dispatch(tr);
