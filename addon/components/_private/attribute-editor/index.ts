@@ -3,6 +3,7 @@ import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
@@ -61,7 +62,7 @@ export default class AttributeEditor extends Component<Args> {
   saveChanges = () => {
     this.controller?.withTransaction((tr) => {
       for (const { key, value } of unwrap(this.changeset).changes) {
-        tr.setNodeAttribute(this.node.pos, key, value);
+        TransformUtils.setAttribute(tr, this.node.pos, key, value);
       }
       return tr;
     });

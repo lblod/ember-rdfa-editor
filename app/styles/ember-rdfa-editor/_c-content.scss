@@ -435,6 +435,10 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       background-color: var(--au-blue-100);
     }
   }
+
+  &.say-selection-all {
+    background-color: var(--au-blue-200);
+  }
 }
 
 

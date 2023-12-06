@@ -10,6 +10,7 @@ import {
   AttributeProperty,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 type CreationStatus = {
   mode: 'creation';
@@ -89,7 +90,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
 
   updatePropertiesAttribute = (newProperties: Property[]) => {
     this.args.controller?.withTransaction((tr) => {
-      return tr.setNodeAttribute(
+      return TransformUtils.setAttribute(
+        tr,
         this.args.node.pos,
         'properties',
         newProperties,

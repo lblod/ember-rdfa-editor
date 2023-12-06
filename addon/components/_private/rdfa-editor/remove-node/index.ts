@@ -41,4 +41,8 @@ export default class RemoveNode extends Component<Args> {
       );
     });
   };
+
+  get enabled() {
+    return this.args.node.pos !== -1;
+  }
 }

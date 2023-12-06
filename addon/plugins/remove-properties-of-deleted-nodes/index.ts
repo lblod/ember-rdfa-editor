@@ -16,6 +16,7 @@ import type {
   Backlink,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 /**
  * Returns nodes from the oldState that are not in the newState
@@ -167,8 +168,12 @@ export function removePropertiesOfDeletedNodes() {
                   backlink.subject === meta.resource,
               ),
           );
-
-          tr.setNodeAttribute(target.pos, 'backlinks', filteredBacklinks);
+          TransformUtils.setAttribute(
+            tr,
+            target.pos,
+            'backlinks',
+            filteredBacklinks,
+          );
         }
       });
 
@@ -199,8 +204,12 @@ export function removePropertiesOfDeletedNodes() {
                 );
               }),
           );
-
-          tr.setNodeAttribute(target.pos, 'properties', filteredProperties);
+          TransformUtils.setAttribute(
+            tr,
+            target.pos,
+            'properties',
+            filteredProperties,
+          );
         }
       });
 
