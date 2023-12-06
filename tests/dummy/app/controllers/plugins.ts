@@ -57,7 +57,6 @@ import {
 import {
   createInvisiblesPlugin,
   hardBreak,
-  space,
   paragraph as paragraphInvisible,
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
@@ -145,12 +144,9 @@ export default class IndexController extends Controller {
     tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin(
-      [space, hardBreak, paragraphInvisible, headingInvisible],
-      {
-        shouldShowInvisibles: false,
-      },
-    ),
+    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
+      shouldShowInvisibles: false,
+    }),
     inputRules({
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
