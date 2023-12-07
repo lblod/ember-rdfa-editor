@@ -22,6 +22,8 @@
     padding: $au-unit-small $au-unit-small;
     min-height: $au-unit-large;
     position: relative;
+    // Fixes Firefox bug - https://bugzilla.mozilla.org/show_bug.cgi?id=688556
+    background-clip: padding-box;
   }
 
   th {
