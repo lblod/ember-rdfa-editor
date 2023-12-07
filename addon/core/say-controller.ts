@@ -46,7 +46,10 @@ export default class SayController {
    * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
    */
   initialize(html: string, { shouldFocus = true } = {}) {
-    const doc = htmlToDoc(html, { schema: this.schema });
+    const doc = htmlToDoc(html, {
+      schema: this.schema,
+      editorView: this.editor.mainView,
+    });
 
     this.editor.mainView.updateState(
       EditorState.create({
@@ -71,7 +74,10 @@ export default class SayController {
     if (shouldFocus) {
       this.focus();
     }
-    const doc = htmlToDoc(content, { schema: this.schema });
+    const doc = htmlToDoc(content, {
+      schema: this.schema,
+      editorView: this.mainEditorView,
+    });
     const tr = this.mainEditorState.tr;
     tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));
