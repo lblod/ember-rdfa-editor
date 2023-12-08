@@ -6,11 +6,10 @@ import {
   insertRelation,
   InsertRelationDetails,
   removeBacklink,
-  removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
-import { addProperty } from '@lblod/ember-rdfa-editor/commands';
+import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal, { AddRelationshipType } from './modal';
 import {

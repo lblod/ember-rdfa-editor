@@ -12,3 +12,4 @@ export { indentNode } from './indent-node';
 export { reduceIndent } from './reduce-indent';
 export { selectBlockRdfaNode } from './select-block-rdfa';
 export { addProperty } from './rdfa-commands/add-property';
+export { removeProperty } from './rdfa-commands/remove-property';
