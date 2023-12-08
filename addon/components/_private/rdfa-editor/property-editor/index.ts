@@ -70,6 +70,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
         resource: this.currentResource,
         property,
       }),
+      { view: this.args.controller.mainEditorView },
     );
     this.status = undefined;
   };
@@ -85,18 +86,22 @@ export default class RdfaPropertyEditor extends Component<Args> {
   removeProperty = (index: number) => {
     this.args.controller?.doCommand(
       removeProperty({ resource: this.currentResource, index }),
+      { view: this.args.controller.mainEditorView },
     );
   };
 
   updatePropertiesAttribute = (newProperties: Property[]) => {
-    this.args.controller?.withTransaction((tr) => {
-      return TransformUtils.setAttribute(
-        tr,
-        this.args.node.pos,
-        'properties',
-        newProperties,
-      );
-    });
+    this.args.controller?.withTransaction(
+      (tr) => {
+        return TransformUtils.setAttribute(
+          tr,
+          this.args.node.pos,
+          'properties',
+          newProperties,
+        );
+      },
+      { view: this.args.controller.mainEditorView },
+    );
   };
 
   cancel = () => {

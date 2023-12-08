@@ -128,7 +128,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         rdfaId: this.currentRdfaId,
       };
     }
-    this.controller?.doCommand(removeBacklink({ target, index }));
+    this.controller?.doCommand(removeBacklink({ target, index }), {
+      view: this.controller.mainEditorView,
+    });
   };
 
   removeProperty = (index: number) => {
@@ -136,6 +138,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     if (this.currentResource) {
       this.controller?.doCommand(
         removeProperty({ resource: this.currentResource, index }),
+        { view: this.controller.mainEditorView },
       );
     }
   };
