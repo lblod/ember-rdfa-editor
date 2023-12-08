@@ -4,11 +4,10 @@ import { SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   removeBacklink,
-  removeProperty,
   selectNodeByRdfaId,
   selectNodeByResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
-import { addProperty } from '@lblod/ember-rdfa-editor/commands';
+import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal from './modal';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';

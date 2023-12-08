@@ -2,13 +2,12 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@lblod/ember-rdfa-editor": "6.4.0"
+    "@lblod/ember-rdfa-editor": "7.0.2"
   },
   "changesets": [
     "five-dolls-double",
-    "flat-onions-suffer",
-    "gold-toys-smoke",
     "green-beans-sin",
+    "many-poets-crash",
     "odd-falcons-jam",
     "slow-trains-fix",
     "thin-moles-poke",

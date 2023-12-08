@@ -5,7 +5,6 @@ import { renderRdfaAware } from '../core/schema';
 export const inline_rdfa: MarkSpec = {
   attrs: {
     ...rdfaAttrSpec,
-    __tag: { default: 'span' },
   },
   group: 'rdfa',
   excludes: '',

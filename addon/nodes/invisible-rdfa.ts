@@ -34,11 +34,7 @@ export const invisible_rdfa: NodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    return [
-      node.attrs.__tag,
-      {
-        ...node.attrs,
-      },
-    ];
+    const { __tag, ...attrs } = node.attrs;
+    return [__tag, attrs];
   },
 };

@@ -34,6 +34,12 @@ const activeNode = (state: EditorState): ResolvedPNode | undefined => {
       };
     }
   }
+  if (isEditable(state.doc)) {
+    return {
+      pos: -1,
+      value: state.doc,
+    };
+  }
   return;
 };
 
@@ -47,6 +53,9 @@ export const editableNodePlugin = new ProsePlugin<State>({
       const pluginState = this.getState(state);
       if (pluginState?.activeNode) {
         const { value, pos } = pluginState.activeNode;
+        if (pos === -1) {
+          return;
+        }
         const deco = Decoration.node(pos, pos + value.nodeSize, {
           class: 'say-active',
         });

@@ -42,10 +42,10 @@
   </:main>
   <:side as |Tb|>
     <Tb.Group>
-      <Plugins::Formatting::FormattingToggle @controller={{@controller}}/>
-    </Tb.Group>
-    <Tb.Group>
-      <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}}/>
+      <this.DocumentLanguagePill @controller={{@controller}} />
+      <this.DocumentInfoPill @controller={{@controller}}/>
+      <Plugins::Formatting::FormattingToggle @controller={{@controller}} />
+      <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}} />
     </Tb.Group>
   </:side>
 </ResponsiveToolbar>

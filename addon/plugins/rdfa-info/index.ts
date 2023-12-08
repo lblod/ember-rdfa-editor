@@ -37,6 +37,14 @@ class RdfaInfo {
       }
       return true;
     });
+    const rdfaId = getRdfaId(doc);
+    const resource = getResource(doc);
+    if (rdfaId) {
+      rdfaIdMapping.set(rdfaId, { pos: -1, value: doc });
+    }
+    if (resource) {
+      MapUtils.setOrPush(resourceMapping, resource, { pos: -1, value: doc });
+    }
     this._rdfaIdMapping = rdfaIdMapping;
     this._resourceMapping = resourceMapping;
   }

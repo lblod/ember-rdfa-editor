@@ -20,7 +20,6 @@ export const block_rdfa: SayNodeSpec = {
     resource: { default: null },
     rdfaNodeType: { default: null },
     __rdfaId: { default: null },
-    __tag: { default: 'div' },
   },
   defining: true,
   ...sharedRdfaNodeSpec,
@@ -33,7 +32,7 @@ export const block_rdfa: SayNodeSpec = {
         if (!getRdfaAttrs(node)) {
           return false;
         }
-        return { __tag: tagName(node) };
+        return {};
       },
       contentElement(node: Node) {
         if (!isElement(node)) {

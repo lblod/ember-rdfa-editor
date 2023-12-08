@@ -5,6 +5,7 @@ import { ResolvedPNode } from './types';
 import {
   Backlink,
   ExternalProperty,
+  ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
@@ -26,8 +27,7 @@ export type RdfaAttr =
   | 'id'
   | 'role'
   | 'inlist'
-  | 'datetime'
-  | '__rdfaId';
+  | 'datetime';
 /**
  * this is used when reading the full editor document to fetch any prefixes defined above the editor
  * NOTE: it adds the active vocab as a prefix with an empty string as key, which makes it a bit easier to pass down
@@ -227,4 +227,17 @@ export function generateNewUri(uriBase: string) {
     __rdfaId,
     resource: `${uriBase}${__rdfaId}`,
   };
+}
+
+export function deepEqualProperty(a: Property, b: Property) {
+  if (a.type === b.type && a.predicate === b.predicate) {
+    if (a.type === 'attribute' || b.type === 'attribute') {
+      return a.object === b.object;
+    } else {
+      return Object.keys(a.object).every(
+        (key: keyof ExternalPropertyObject) => a.object[key] === b.object[key],
+      );
+    }
+  }
+  return false;
 }
