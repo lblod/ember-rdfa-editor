@@ -26,6 +26,7 @@ export const ordered_list: NodeSpec = {
         return {
           order: optionMapOr(1, (val) => Number(val), start),
           style: dom.dataset.listStyle,
+          ...getRdfaAttrs(dom),
         };
       },
       consuming: false,

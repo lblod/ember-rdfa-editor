@@ -1,5 +1,6 @@
 import { Node as PNode } from 'prosemirror-model';
 import {
+  getRdfaAttrs,
   renderRdfaAware,
   sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
@@ -39,6 +40,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },
@@ -52,6 +54,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },
@@ -65,6 +68,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },
@@ -78,6 +82,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },
@@ -91,6 +96,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },
@@ -104,6 +110,7 @@ export const heading: SayNodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          ...getRdfaAttrs(node),
         };
       },
     },

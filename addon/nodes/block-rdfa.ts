@@ -1,8 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
-import {
-  isElement,
-  tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import {
   getRdfaAttrs,
   renderRdfaAware,
@@ -29,10 +26,11 @@ export const block_rdfa: SayNodeSpec = {
       // Default priority is 50, so this means a more specific definition matches before this one
       priority: 40,
       getAttrs(node: HTMLElement) {
-        if (!getRdfaAttrs(node)) {
-          return false;
+        const attrs = getRdfaAttrs(node);
+        if (attrs) {
+          return attrs;
         }
-        return {};
+        return false;
       },
       contentElement(node: Node) {
         if (!isElement(node)) {

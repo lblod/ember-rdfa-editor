@@ -1,7 +1,7 @@
 import { AttributeSpec } from 'prosemirror-model';
 import SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
-import { renderRdfaAware } from '../core/schema';
+import { getRdfaAttrs, renderRdfaAware } from '../core/schema';
 
 interface DocumentConfig {
   defaultLanguage?: string;
@@ -47,6 +47,7 @@ export const docWithConfig = ({
           if (node.dataset.sayDocument) {
             return {
               lang: node.getAttribute('lang'),
+              ...getRdfaAttrs(node),
             };
           } else {
             return false;

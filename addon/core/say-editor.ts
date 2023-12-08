@@ -30,10 +30,10 @@ import {
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
-import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
 import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import { ProseParser } from '..';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -61,7 +61,7 @@ export default class SayEditor {
   serializer: SaySerializer;
 
   private logger: Logger;
-  parser: SayParser;
+  parser: ProseParser;
 
   constructor({
     owner,
@@ -108,7 +108,7 @@ export default class SayEditor {
       ];
     }
 
-    this.parser = SayParser.fromSchema(this.schema);
+    this.parser = ProseParser.fromSchema(this.schema);
     const state = EditorState.create({
       doc: this.parser.parse(target),
       plugins: pluginConf,
