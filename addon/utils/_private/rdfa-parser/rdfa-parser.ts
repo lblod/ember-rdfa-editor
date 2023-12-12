@@ -995,23 +995,27 @@ export class RdfaParser<N> {
     if (!activeTag.skipElement && node) {
       // no rel or rev
       if (!('rel' in attributes) && !('rev' in attributes)) {
-        if ('property' in attributes && !('content' in attributes)) {
+        if (
+          'property' in attributes &&
+          !('content' in attributes) &&
+          !('datatype' in attributes)
+        ) {
           if ('about' in attributes) {
-            // content node
+            // !! content node
+            // this combo BOTH sets a new subject, AND sets the value of the triple to its textcontent.
+            // we choose to interpret as a literal rather than a resource
             this.setContentNode(node, activeTag, attributes);
+            return;
           } else if (isRootTag) {
             // root resource
             this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+            return;
           } else {
             if ('typeof' in attributes) {
               this.setResourceNode(node, unwrap(typedResource), activeTag);
-            } else {
-              this.setContentNode(node, activeTag, attributes);
+              return;
             }
-            // no new resource
           }
-
-          // content nodes
         } else {
           if (
             'about' in attributes ||
@@ -1019,39 +1023,59 @@ export class RdfaParser<N> {
             'src' in attributes ||
             'resource' in attributes
           ) {
-            // resource nodes
             this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+            return;
           } else if (isRootTag) {
             // root resource node
             this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+            return;
           } else if ('typeof' in attributes) {
             // blank resource node
             this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          } else {
-            // no new resource
-            if (attributes.property && !('content' in attributes)) {
-              this.setContentNode(node, activeTag, attributes);
-            }
+            return;
+          } else if (activeTag.object) {
+            // intentionally empty, to preserve structure from algorithm in spec
           }
         }
       } else {
         if ('about' in attributes) {
-          // content node
-
-          this.setContentNode(
-            node,
-            activeTag,
-            attributes,
-            attributes.rel ? 'rel' : 'rev',
-          );
+          this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          return;
         } else if ('typeof' in attributes) {
-          //??
           this.setResourceNode(node, unwrap(typedResource), activeTag);
+          return;
         } else if (isRootTag) {
           // root resource node
           this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+          return;
+        } else if (activeTag.object) {
+          // intentionally empty, to preserve structure from algorithm in spec
+        }
+      }
+
+      // no-op returns are intentional
+      if ('property' in attributes) {
+        if ('datatype' in attributes) {
+          if (!('content' in attributes)) {
+            this.setContentNode(node, activeTag, attributes);
+            return;
+          }
+        } else if ('content' in attributes) {
+          return;
+        } else if (
+          !('rel' in attributes) &&
+          !('rev' in attributes) &&
+          !('content' in attributes) &&
+          ('resource' in attributes ||
+            'href' in attributes ||
+            'src' in attributes)
+        ) {
+          return;
+        } else if ('typeof' in attributes && !('about' in attributes)) {
+          return;
         } else {
-          // no new resource node
+          this.setContentNode(node, activeTag, attributes);
+          return;
         }
       }
     }

@@ -55,6 +55,9 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   };
 
   let hasAnyRdfaAttributes = false;
+  if (!node.hasAttribute('data-rdfa-node-type')) {
+    return false;
+  }
   for (const key of Object.keys(rdfaDomAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
     if (isSome(value)) {
