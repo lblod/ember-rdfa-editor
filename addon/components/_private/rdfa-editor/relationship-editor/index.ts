@@ -30,17 +30,29 @@ type Args = {
   node: ResolvedPNode;
 };
 
+interface StatusMessage {
+  message: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+}
+interface StatusMessageForNode extends StatusMessage {
+  node: PNode;
+}
+
 export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked addRelationshipType?: AddRelationshipType;
+  @tracked _statusMessage: StatusMessageForNode | null = null;
 
   Modal = RelationshipEditorModal;
+  get node(): PNode {
+    return this.args.node.value;
+  }
 
   get backlinks() {
-    return this.args.node.value.attrs.backlinks as Backlink[] | undefined;
+    return this.node.attrs.backlinks as Backlink[] | undefined;
   }
 
   get properties() {
-    return this.args.node.value.attrs.properties as Property[] | undefined;
+    return this.node.attrs.properties as Property[] | undefined;
   }
 
   get hasOutgoing() {
@@ -52,15 +64,29 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get showOutgoingSection() {
-    return isResourceNode(this.args.node.value);
+    return isResourceNode(this.node);
   }
 
   get currentResource() {
-    return this.args.node.value.attrs.resource as string | undefined;
+    return this.node.attrs.resource as string | undefined;
   }
 
   get currentRdfaId() {
-    return this.args.node.value.attrs.__rdfaId as string;
+    return this.node.attrs.__rdfaId as string;
+  }
+  get statusMessage(): StatusMessage | null {
+    // show only if a message is relevant for the current node
+    if (this._statusMessage && this.node === this._statusMessage.node) {
+      return this._statusMessage;
+    }
+    return null;
+  }
+  set statusMessage(val: StatusMessage | null) {
+    if (val) {
+      this._statusMessage = { ...val, node: this.node };
+    } else {
+      this._statusMessage = val;
+    }
   }
 
   get allRdfaids() {
@@ -87,22 +113,47 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         })
       : [];
   }
+  closeStatusMessage = () => {
+    this.statusMessage = null;
+  };
 
   goToOutgoing = (outgoing: ExternalProperty) => {
+    this.closeStatusMessage();
     const { object } = outgoing;
     if (object.type === 'literal') {
-      this.controller?.doCommand(selectNodeByRdfaId({ rdfaId: object.rdfaId }));
+      const result = this.controller?.doCommand(
+        selectNodeByRdfaId({ rdfaId: object.rdfaId }),
+      );
+      if (!result) {
+        this.statusMessage = {
+          message: `No literal node found for id ${object.rdfaId}.`,
+          type: 'error',
+        };
+      }
     } else {
-      this.controller?.doCommand(
+      const result = this.controller?.doCommand(
         selectNodeByResource({ resource: object.resource }),
       );
+      if (!result) {
+        this.statusMessage = {
+          message: `No resource node found for ${object.resource}.`,
+          type: 'info',
+        };
+      }
     }
   };
 
   goToBacklink = (backlink: Backlink) => {
-    this.controller?.doCommand(
+    this.closeStatusMessage();
+    const result = this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
     );
+    if (!result) {
+      this.statusMessage = {
+        message: `No resource node found for ${backlink.subject}.`,
+        type: 'info',
+      };
+    }
   };
 
   removeBacklink = (index: number) => {
@@ -131,7 +182,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   get canAddRelationship() {
-    if (isResourceNode(this.args.node.value)) {
+    if (isResourceNode(this.node)) {
       return true;
     } else {
       // Content nodes may only have 1 backlink
