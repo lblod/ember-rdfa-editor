@@ -21,6 +21,7 @@ export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   resource: { default: null },
+  about: { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
 };
@@ -86,6 +87,8 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
             resource:
               attrs.resource && typeof attrs.resource === 'string'
                 ? attrs.resource
+                : attrs.about && typeof attrs.about === 'string'
+                ? attrs.about
                 : '',
             properties:
               attrs.properties && attrs.properties instanceof Array
