@@ -1,8 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
-import {
-  isElement,
-  tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import {
   getRdfaAttrs,
   renderRdfaAware,
