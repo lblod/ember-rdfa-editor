@@ -6,7 +6,6 @@ import * as DOMPurify from 'dompurify';
 import { EditorState } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 
-import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 import { SayView } from '@lblod/ember-rdfa-editor';
 import { docWithConfig, paragraph, text } from '@lblod/ember-rdfa-editor/nodes';
@@ -30,8 +29,48 @@ const editorView = new SayView(document.createElement('div'), {
 
 sinon.stub(editorView, 'dom').get(() => editorContainerMock);
 
-module('Utils | CS | paste-handler | convertMsWordHtml', function () {
-  test('It should handle rtf -> html correctly', function (assert) {
+module('Utils | CS | HTMLInputParser', function () {
+  test('It should not change simple html', function (assert) {
+    const expectedHtml = oneLineTrim`<span>Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span>Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should not remove inline styles', function (assert) {
+    const expectedHtml = oneLineTrim`<span style="color:green">Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span style="color:green">Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should remove unsafe url schemes', function (assert) {
+    const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`<a href="javascript:console.log('this should not work')" style="color:green">Lorem Ipsum</a>`;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should remove src tags', function (assert) {
+    const expectedHtml = oneLineTrim`console.log('test')`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`<src>console.log('test')</src>`;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should handle Microsoft HTML correctly', function (assert) {
     const expectedHtml = oneLineTrim`<span style="font-size:14.0pt;font-family:&quot;Calibri&quot;,sans-serif; mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font: minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:&quot;Times New Roman&quot;; mso-bidi-theme-font:minor-bidi;mso-ansi-language:#0C00;mso-fareast-language: EN-US;mso-bidi-language:AR-SA">Lorem Ipsum</span>`;
     const htmlContent = oneLineTrim`
      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -48,7 +87,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     `;
 
     const inputParser = new HTMLInputParser({ editorView });
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
 
     assert.strictEqual(actualHtml, expectedHtml);
   });
@@ -95,7 +134,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
@@ -610,7 +649,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
 </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
@@ -1147,7 +1186,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
 </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
   test('It should display formatted table as HTML', function (assert) {
@@ -1309,7 +1348,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       // strip attrs to make test less flaky
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
@@ -1345,7 +1384,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
@@ -1377,7 +1416,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
@@ -1409,7 +1448,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
@@ -1553,7 +1592,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
       expectedHtml,
@@ -1670,7 +1709,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
       expectedHtml,
