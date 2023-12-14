@@ -1,93 +1,112 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type RdfaRelationshipEditor from './index';
+import { SayController } from '@lblod/ember-rdfa-editor';
+import {
+  getNodeByRdfaId,
+  getResources,
+  rdfaInfoPluginKey,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { ExternalPropertyObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
-const typeChoices = ['existing', 'literal', 'resource'] as const;
-export type AddRelationshipType = 'unspecified' | (typeof typeChoices)[number];
+const objectTypes = ['resource', 'literal'] as const;
+type ObjectType = (typeof objectTypes)[number];
 
 type Args = {
-  addRelationshipType?: AddRelationshipType;
-  setAddType: (type: null | AddRelationshipType) => void;
   onSave: RdfaRelationshipEditor['saveNewRelationship'];
-  rdfaIds: string[];
+  controller?: SayController;
 };
 
 export default class RelationshipEditorModal extends Component<Args> {
-  types = typeChoices;
+  objectTypes = objectTypes;
+
+  @tracked selectedObjectType: ObjectType = this.objectTypes[0];
+
   @tracked newPredicate = '';
-  @tracked resourceUriBase = '';
-  @tracked errorMessage = '';
-  @tracked objectRdfa: { key: string; label: string } | null = null;
+  @tracked objectRdfa?: ExternalPropertyObject;
 
-  get isAddExisting() {
-    return this.args.addRelationshipType === 'existing';
-  }
-  get isAddResource() {
-    return this.args.addRelationshipType === 'resource';
+  get controller() {
+    return this.args.controller;
   }
 
-  get rdfaIds() {
-    return this.args.rdfaIds;
+  get dropdownPlaceholder() {
+    if (this.selectedObjectType === 'resource') {
+      return 'Select a resource';
+    } else {
+      return 'Select a literal';
+    }
   }
-  get objectRdfaId(): string {
-    return this.objectRdfa?.key || '';
+
+  get literals(): ExternalPropertyObject[] {
+    if (!this.controller) throw Error('No Controller');
+    const rdfaIdMapping = rdfaInfoPluginKey.getState(
+      this.controller.mainEditorState,
+    )?.rdfaIdMapping;
+    if (!rdfaIdMapping) {
+      return [];
+    }
+    const result: ExternalPropertyObject[] = [];
+    rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
+      if (resolvedNode.value.attrs.rdfaNodeType === 'literal') {
+        result.push({
+          type: 'literal',
+          rdfaId,
+        });
+      }
+    });
+    return result;
   }
+
+  get resources(): ExternalPropertyObject[] {
+    if (!this.controller) throw Error('No Controller');
+    return getResources(this.controller.mainEditorState).map((resource) => {
+      return {
+        type: 'resource',
+        resource,
+      };
+    });
+  }
+
+  label = (rdfaObject: ExternalPropertyObject) => {
+    if (!this.controller) throw Error('No Controller');
+    console.log(rdfaObject);
+    if (rdfaObject.type === 'resource') {
+      return rdfaObject.resource;
+    } else {
+      const node = unwrap(
+        getNodeByRdfaId(this.controller.mainEditorState, rdfaObject.rdfaId),
+      );
+      const content = node.value.textContent;
+      const truncatedContent =
+        content.length <= 20 ? content : `${content.substring(0, 20)}...`;
+      return `${truncatedContent} (${rdfaObject.rdfaId})`;
+    }
+  };
 
   updatePredicate = (event: InputEvent) => {
     this.newPredicate = (event.target as HTMLInputElement).value;
   };
-  updateObject = (rdfaObj: { key: string; label: string }) => {
+  updateObject = (rdfaObj?: ExternalPropertyObject) => {
     this.objectRdfa = rdfaObj;
   };
-  updateUriBase = (event: InputEvent) => {
-    this.resourceUriBase = (event.target as HTMLInputElement).value;
-  };
 
-  setAddType = (event: InputEvent) => {
-    this.args.setAddType(
-      (event.target as HTMLInputElement).value as AddRelationshipType,
-    );
-  };
-
-  cancel = () => {
-    this.args.setAddType(null);
+  setObjectType = (value: ObjectType) => {
+    this.selectedObjectType = value;
+    this.objectRdfa = undefined;
   };
 
   save = (event: Event) => {
     event.preventDefault();
-    if (
-      this.canSave &&
-      this.args.addRelationshipType &&
-      this.args.addRelationshipType !== 'unspecified'
-    ) {
-      if (this.args.addRelationshipType === 'existing') {
-        this.args.onSave({
-          type: this.args.addRelationshipType,
-          predicate: this.newPredicate,
-          rdfaid: this.objectRdfaId,
-        });
-      } else {
-        this.args.onSave({
-          type: this.args.addRelationshipType,
-          predicate: this.newPredicate,
-          uriBase: this.resourceUriBase,
-        });
-      }
+    if (this.canSave) {
+      this.args.onSave({
+        predicate: this.newPredicate,
+        object: unwrap(this.objectRdfa),
+      });
     }
   };
 
   get canSave() {
-    if (!this.newPredicate) return false;
-    switch (this.args.addRelationshipType) {
-      case 'existing':
-        return !!this.objectRdfaId;
-      case 'resource':
-        return !!this.resourceUriBase;
-      case 'literal':
-        return true;
-      case 'unspecified':
-      default:
-        return false;
-    }
+    return this.newPredicate && this.objectRdfa;
   }
 }

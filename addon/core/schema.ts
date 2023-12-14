@@ -20,6 +20,7 @@ export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   resource: { default: null },
+  about: { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
 };
@@ -54,6 +55,9 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   };
 
   let hasAnyRdfaAttributes = false;
+  if (!node.hasAttribute('data-rdfa-node-type')) {
+    return false;
+  }
   for (const key of Object.keys(rdfaDomAttrs)) {
     const value = node.attributes.getNamedItem(key)?.value;
     if (isSome(value)) {
@@ -82,6 +86,8 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
             resource:
               attrs.resource && typeof attrs.resource === 'string'
                 ? attrs.resource
+                : attrs.about && typeof attrs.about === 'string'
+                ? attrs.about
                 : '',
             properties:
               attrs.properties && attrs.properties instanceof Array
