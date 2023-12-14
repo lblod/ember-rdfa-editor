@@ -1,10 +1,14 @@
 import { PNode, ProseParser } from '@lblod/ember-rdfa-editor';
 import { Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
+import { EditorView } from 'prosemirror-view';
 
-export function htmlToDoc(html: string, options: { schema: Schema }) {
-  const htmlCleaner = new HTMLInputParser({});
-  const cleanedHTML = htmlCleaner.cleanupHTML(html);
+export function htmlToDoc(
+  html: string,
+  options: { schema: Schema; editorView: EditorView },
+) {
+  const htmlCleaner = new HTMLInputParser({ editorView: options.editorView });
+  const cleanedHTML = htmlCleaner.prepareHTML(html);
   const { schema } = options;
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;

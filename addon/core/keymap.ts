@@ -17,8 +17,6 @@ import {
   liftEmptyBlock,
   newlineInCode,
   selectAll,
-  selectNodeBackward,
-  selectNodeForward,
   selectTextblockEnd,
   selectTextblockStart,
   splitBlock,
@@ -28,6 +26,8 @@ import {
   reduceIndent,
   liftEmptyBlockChecked,
   selectBlockRdfaNode,
+  selectNodeBackward,
+  selectNodeForward,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';

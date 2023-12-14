@@ -6,12 +6,12 @@ export function convertMsWordHtml(
   inputParser: HTMLInputParser,
 ): string {
   const cleanHtmlFromRTF = cleanDocx(htmlPaste);
-  return inputParser.cleanupHTML(cleanHtmlFromRTF);
+  return inputParser.prepareHTML(cleanHtmlFromRTF);
 }
 
 export function convertGenericHtml(
   htmlPaste: string,
   inputParser: HTMLInputParser,
 ): string {
-  return inputParser.cleanupHTML(htmlPaste);
+  return inputParser.prepareHTML(htmlPaste);
 }

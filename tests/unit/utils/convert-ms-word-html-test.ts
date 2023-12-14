@@ -1,8 +1,34 @@
 import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
+import sinon from 'sinon';
+import * as DOMPurify from 'dompurify';
+
+import { EditorState } from 'prosemirror-state';
+import { Schema } from 'prosemirror-model';
+
 import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
-import * as DOMPurify from 'dompurify';
+import { SayView } from '@lblod/ember-rdfa-editor';
+import { docWithConfig, paragraph, text } from '@lblod/ember-rdfa-editor/nodes';
+
+const editorContainerMock = document.createElement('div');
+sinon.stub(editorContainerMock, 'clientWidth').get(() => 800);
+
+const editorView = new SayView(document.createElement('div'), {
+  state: EditorState.create({
+    schema: new Schema({
+      nodes: {
+        doc: docWithConfig({
+          defaultLanguage: 'nl-BE',
+        }),
+        paragraph,
+        text,
+      },
+    }),
+  }),
+});
+
+sinon.stub(editorView, 'dom').get(() => editorContainerMock);
 
 module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   test('It should handle rtf -> html correctly', function (assert) {
@@ -21,14 +47,14 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const actualHtml = convertMsWordHtml(htmlContent, inputParser);
 
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
      <ul>
        <li>
@@ -74,7 +100,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
        <ol>
          <li>
@@ -589,7 +615,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display a complex nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`<ol>
     <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
         <ol>
@@ -1125,9 +1151,9 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     assert.strictEqual(actualHtml, expectedHtml);
   });
   test('It should display formatted table as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
 
@@ -1292,7 +1318,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display bold text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><b><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></b></p>
     `;
@@ -1324,7 +1350,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display italic text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><i><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></i></p>
     `;
@@ -1356,7 +1382,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display underlined text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><u><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></u></p>
     `;
@@ -1388,9 +1414,9 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display formatted list in a table', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1535,9 +1561,9 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display table in a list', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
+<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
     `;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
