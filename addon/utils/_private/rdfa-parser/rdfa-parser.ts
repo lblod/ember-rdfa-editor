@@ -1017,8 +1017,16 @@ export class RdfaParser<N> {
             }
           }
         } else {
-          if (
-            'about' in attributes ||
+          if ('about' in attributes) {
+            // same exception as above, we always interpret (property +about -content) cases as literal nodes
+            if ('property' in attributes && !('content' in attributes)) {
+              this.setContentNode(node, activeTag, attributes);
+              return;
+            } else {
+              this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
+              return;
+            }
+          } else if (
             'href' in attributes ||
             'src' in attributes ||
             'resource' in attributes
