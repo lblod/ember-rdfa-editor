@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import type RdfaWrappingUtils from './index';
 
 type Args = {
-  openModal: () => void;
   closeModal: () => void;
   wrapWithResource: RdfaWrappingUtils['wrapWithResource'];
 };
@@ -15,8 +14,8 @@ export default class RelationshipEditorModal extends Component<Args> {
   updateUriBase = (event: InputEvent) => {
     this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
-  shouldGenerateNewUri = (event: InputEvent) => {
-    this.generateNewUri = (event.target as HTMLInputElement).value;
+  shouldGenerateNewUri = (value: 'yes' | 'no') => {
+    this.generateNewUri = value;
   };
 
   save = (event: Event) => {
