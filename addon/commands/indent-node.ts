@@ -25,7 +25,7 @@ export function indentNode({
     const applicableNodes: { node: PNode; pos: number }[] = [];
     state.doc.nodesBetween(from, to, (node, pos, parent) => {
       if (
-        node.attrs.indentationLevel !== undefined &&
+        'indentationLevel' in node.attrs &&
         predicate(node, pos, parent) &&
         ((direction === -1 && node.attrs.indentationLevel > 0) ||
           (direction === 1 && node.attrs.indentationLevel < maxLevel))

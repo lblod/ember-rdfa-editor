@@ -32,6 +32,7 @@ import {
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
+import { setAlignment } from '../plugins/alignment/commands';
 
 export type KeymapOptions = {
   backspace?: {
@@ -136,6 +137,11 @@ export const pcBaseKeymap: Keymap = (schema, options) => ({
   'Mod-a': selectAll,
   Tab: sinkListItem(schema.nodes.list_item),
   'Shift-Tab': liftListItem(schema.nodes.list_item),
+  // Alignment shortcuts
+  'Mod-Shift-L': setAlignment({ option: 'left' }),
+  'Mod-Shift-E': setAlignment({ option: 'center' }),
+  'Mod-Shift-R': setAlignment({ option: 'right' }),
+  'Mod-Shift-J': setAlignment({ option: 'justify' }),
 });
 
 /// A copy of `pcBaseKeymap` that also binds **Ctrl-h** like Backspace,

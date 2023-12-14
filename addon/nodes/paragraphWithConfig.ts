@@ -2,6 +2,7 @@ import { NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
+import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment';
 
 export type ParagraphDataAttributes = {
   'data-indentation-level': number;
@@ -45,6 +46,9 @@ export const paragraphWithConfig: (
     group: config?.group || 'block paragraphGroup',
     subType: config.subType,
     attrs: {
+      alignment: {
+        default: DEFAULT_ALIGNMENT,
+      },
       indentationLevel: {
         default: 0,
       },
@@ -61,6 +65,7 @@ export const paragraphWithConfig: (
                 parseInt,
                 node.dataset.indentationLevel,
               ),
+              alignment: getAlignment(node),
             };
           }
           return false;
@@ -83,20 +88,26 @@ export const paragraphWithConfig: (
               parseInt,
               node.dataset.indentationLevel,
             ),
+            alignment: getAlignment(node),
           };
         },
         consuming: false,
       },
     ],
     toDOM(node) {
+      const { alignment, indentationLevel } = node.attrs;
+      let style = '';
+      if (alignment && alignment !== DEFAULT_ALIGNMENT) {
+        style += `text-align: ${alignment}`;
+      }
       const attrs: ParagraphDataAttributes = {
-        'data-indentation-level': node.attrs.indentationLevel as number,
+        'data-indentation-level': indentationLevel as number,
       };
       const subType = (node.type.spec as ParagraphNodeSpec).subType;
       if (subType) {
         attrs['data-sub-type'] = subType;
       }
-      return ['p', attrs, 0];
+      return ['p', { ...attrs, style }, 0];
     },
   };
 };

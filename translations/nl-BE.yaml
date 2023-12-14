@@ -67,5 +67,10 @@ ember-rdfa-editor:
   dummy:
     counter:
       label: Teller
-
-
+  alignment:
+    label: Uitlijning
+    options:
+      left: Links uitlijnen
+      center: Centreren
+      right: Rechts uitlijnen
+      justify: Uitvullen
