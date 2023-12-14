@@ -186,19 +186,6 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.modalOpen = false;
   };
 
-  addNode = (details: InsertRelationDetails) => {
-    // This function can only be called when the selected node defines a resource
-    if (this.currentResource) {
-      this.controller?.doCommand(
-        insertRelation({
-          subject: this.currentResource,
-          ...details,
-        }),
-        { view: this.controller.mainEditorView },
-      );
-      this.addRelationshipType = undefined;
-    }
-  };
   cancel = () => {
     this.modalOpen = false;
   };
