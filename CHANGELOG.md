@@ -1,5 +1,72 @@
 # @lblod/ember-rdfa-editor
 
+## 8.0.0
+
+### Major Changes
+
+- [#1058](https://github.com/lblod/ember-rdfa-editor/pull/1058) [`f6ff0925`](https://github.com/lblod/ember-rdfa-editor/commit/f6ff0925d2d64b9d46e04908f9a77ede18595202) Thanks [@elpoelma](https://github.com/elpoelma)! - Update logic of entering embedded-editor with arrow-keys
+
+- [#1058](https://github.com/lblod/ember-rdfa-editor/pull/1058) [`30ff1dbc`](https://github.com/lblod/ember-rdfa-editor/commit/30ff1dbcce1524395e37996fdd3eae6710580c28) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduce custom `select-node-forward` and `select-node-backward` commands with included support for atomic inline nodes. The commands are adapted from the [prosemirror-commands](https://github.com/ProseMirror/prosemirror-commands) package.
+
+  These commands are tied to the `delete` and `backspace` keys respectively.
+
+### Minor Changes
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`6981d967`](https://github.com/lblod/ember-rdfa-editor/commit/6981d967367354c26ba33c851e5e6dc36b032e59) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `alignment` attribute to the `heading` and `paragraph` node-specs
+
+- [#1068](https://github.com/lblod/ember-rdfa-editor/pull/1068) [`fe867d5b`](https://github.com/lblod/ember-rdfa-editor/commit/fe867d5b67893dcd49ff5d3123c40bbb6491d8b7) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4612: Always clean Word specific elements on paste
+
+  Don't rely on presence of `text/rtf` data in `ClipboardEvent` to determine
+  whether the paste is coming from Word, always apply the cleaning.
+
+- [#1061](https://github.com/lblod/ember-rdfa-editor/pull/1061) [`8d2b4717`](https://github.com/lblod/ember-rdfa-editor/commit/8d2b471793a83e3a474afdcf03edbb399124539c) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4622: Pasting table now applies column widths proportionally
+
+  When pasting a table column widths of the source table are now proportionally applied to the resulting table in the editor.
+
+- [#1060](https://github.com/lblod/ember-rdfa-editor/pull/1060) [`c2fbc40a`](https://github.com/lblod/ember-rdfa-editor/commit/c2fbc40a424c9b46a5a429c6960d179f1a37dd63) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4622: Introduce column resizing for tables
+
+  If upgrading from previous version you have to either:
+
+  Import `tableColumnResizingPlugin` from `@lblod/ember-rdfa-editor/plugins/table` and add it to the list of plugins
+  before the `tablePlugin` (see example below)
+
+  ```ts
+  import { tableColumnResizingPlugin, tablePlugin } from "@lblod/ember-rdfa-editor/plugins/table";
+
+  get plugins() {
+    return [tableColumnResizingPlugin, tablePlugin, tableKeymap];
+  }
+  ```
+
+  **OR**
+
+  Import `tablePlugins` from `@lblod/ember-rdfa-editor/plugins/table` and spread it into plugins array instead of `tablePlugin`
+
+  ```ts
+  import { tablePlugins } from "@lblod/ember-rdfa-editor/plugins/table";
+
+  get plugins() {
+    return [...tablePlugins, tableKeymap];
+  }
+  ```
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`35c4ca44`](https://github.com/lblod/ember-rdfa-editor/commit/35c4ca44d0d71a98c31ecebd9019174457970e87) Thanks [@elpoelma](https://github.com/elpoelma)! - Add shortcuts for setting the alignment of paragraphs/headers:
+
+  - `Ctrl`+`Shift`+`L`: left align
+  - `Ctrl`+`Shift`+`E`: center align
+  - `Ctrl`+`Shift`+`R`: right align
+  - `Ctrl`+`Shift`+`J`: justify
+
+- [#1057](https://github.com/lblod/ember-rdfa-editor/pull/1057) [`ebd8b2eb`](https://github.com/lblod/ember-rdfa-editor/commit/ebd8b2eb6a70a010e8130a553e6bb09d55650d22) Thanks [@elpoelma](https://github.com/elpoelma)! - update formatting-toggle to use custom `au-native-toggle` component
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`95ff9b67`](https://github.com/lblod/ember-rdfa-editor/commit/95ff9b673fa08e39b8f3cdd0090ac28a1045143d) Thanks [@elpoelma](https://github.com/elpoelma)! - Add toolbar dropdown which allows users to modify the `alignment` of their current selection
+
+### Patch Changes
+
+- [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Limit `mousedown` handling in gap-cursor plugin to main mouse-button
+
+- [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Focus editor-view explicitely in `mousedown` handler of gap-cursor plugin
+
 ## 7.0.2
 
 ### Patch Changes
