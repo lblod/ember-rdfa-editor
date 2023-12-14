@@ -77,7 +77,7 @@ import {
   tableKeymap,
   tableMenu,
   tableNodes,
-  tablePlugin,
+  tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { Schema } from 'prosemirror-model';
@@ -112,7 +112,7 @@ export default class EditorComponent extends Component {
 
   get plugins(){
     // A list of prosemirror plugins you want to enable. More information about prosemirror plugins can be found on https://prosemirror.net/docs/guide/#state.plugins.
-    return [tablePlugin, tableKeymap];
+    return [...tablePlugins, tableKeymap];
   }
 
   @action

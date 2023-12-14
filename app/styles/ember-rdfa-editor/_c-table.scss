@@ -21,6 +21,9 @@
     text-align: left;
     padding: $au-unit-small $au-unit-small;
     min-height: $au-unit-large;
+    position: relative;
+    // Fixes Firefox bug - https://bugzilla.mozilla.org/show_bug.cgi?id=688556
+    background-clip: padding-box;
   }
 
   th {
@@ -48,10 +51,33 @@
     outline: none;
   }
 
+  // Element with a class that columnResizing plugin adds
+  .column-resize-handle {
+    position: absolute !important;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    z-index: 20;
+    background-color: #adf;
+    pointer-events: none;
+    margin-top: 0;
+  }
 }
 
-table.ProseMirror-selectednode {
+.tableWrapper {
+  overflow-y: hidden;
+}
+
+table.ProseMirror-selectednode,
+// `tableWrapper` is a class that columnResizing plugin adds
+.tableWrapper.ProseMirror-selectednode {
   background-color: var(--au-blue-200);
   outline: 2px solid var(--au-blue-500);
   color: var(--au-black);
+}
+
+// Class that columnResizing plugin adds
+.resize-cursor {
+  cursor: col-resize;
 }

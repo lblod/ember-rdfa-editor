@@ -25,7 +25,7 @@ import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
-  tablePlugins,
+  tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -51,6 +51,7 @@ import {
   hardBreak,
   heading as headingInvisible,
   paragraph as paragraphInvisible,
+  space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
@@ -66,7 +67,7 @@ import { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
 
-export default class IndexController extends Controller {
+export default class SpaceInvisibleController extends Controller {
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
   schema = new Schema({
@@ -122,12 +123,15 @@ export default class IndexController extends Controller {
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,
-    ...tablePlugins,
+    tablePlugin,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
-      shouldShowInvisibles: false,
-    }),
+    createInvisiblesPlugin(
+      [hardBreak, paragraphInvisible, headingInvisible, space],
+      {
+        shouldShowInvisibles: false,
+      },
+    ),
     inputRules({
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),

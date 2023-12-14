@@ -68,3 +68,10 @@ ember-rdfa-editor:
   dummy:
     counter:
       label: Counter
+  alignment:
+    label: Alignment
+    options:
+      left: Left align
+      center: Center align
+      right: Right align
+      justify: Justify

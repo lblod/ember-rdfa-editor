@@ -3,14 +3,15 @@ import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
 import { tagName } from './dom-helpers';
+import { EditorView } from 'prosemirror-view';
 
 export function htmlToDoc(
   html: string,
-  options: { schema: Schema; parser: ProseParser },
+  options: { schema: Schema; parser: ProseParser, editorView: EditorView },
 ) {
   const { parser } = options;
-  const htmlCleaner = new HTMLInputParser({});
-  const cleanedHTML = htmlCleaner.cleanupHTML(html);
+const htmlCleaner = new HTMLInputParser({editorView: options.editorView});
+  const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
   preprocessRDFa(parsed);
