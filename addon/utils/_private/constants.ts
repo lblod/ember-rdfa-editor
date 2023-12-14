@@ -110,3 +110,19 @@ export const LUMP_NODE_PROPERTY =
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';
+export const RDFA_ATTRIBUTES = [
+  'resource',
+  'about',
+  'rel',
+  'rev',
+  'content',
+  'datatype',
+  'property',
+  'href',
+  'src',
+  'inlist',
+  'prefix',
+  'vocab',
+  'typeof',
+  'lang',
+];
