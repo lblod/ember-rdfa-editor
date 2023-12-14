@@ -2,7 +2,6 @@ import {
   AllSelection,
   EditorState,
   Selection,
-  Transaction,
 } from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';

@@ -25,6 +25,7 @@ import {
   rdfaContentNodeMap,
   rdfaResourceNodeMap,
 } from '../datastore/datastore';
+import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -949,15 +950,22 @@ export class RdfaParser<N> {
     activeTag.subject = newSubject || parentTag.subject;
     activeTag.object = currentObjectResource || newSubject;
 
-    this.collectNodeInfo(activeTag, attributes, isRootTag, typedResource);
+    postProcessTagAsRdfaNode({
+      activeTag,
+      attributes,
+      isRootTag,
+      typedResource,
+      markAsLiteralNode: this.markAsLiteralNode,
+      markAsResourceNode: this.markAsResourceNode,
+    });
   }
 
-  public setContentNode(
+  markAsLiteralNode = (
     node: N,
     activeTag: IActiveTag<N>,
     attributes: Record<string, string>,
     predicateAttribute = 'property',
-  ) {
+  ) => {
     this.contentNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(
         unwrap(activeTag.subject),
@@ -972,90 +980,18 @@ export class RdfaParser<N> {
         false,
       ),
     });
-  }
+  };
 
-  setResourceNode(
+  markAsResourceNode = (
     node: N,
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
-  ) {
+  ) => {
     this.resourceNodeMapping.set(
       node,
       this.util.getResourceOrBaseIri(resource, activeTag),
     );
-  }
-
-  public collectNodeInfo(
-    activeTag: IActiveTag<N>,
-    attributes: Record<string, string>,
-    isRootTag: boolean,
-    typedResource: true | ModelBlankNode<N> | ModelNamedNode<N> | null,
-  ) {
-    const node = activeTag.node;
-    if (!activeTag.skipElement && node) {
-      // no rel or rev
-      if (!('rel' in attributes) && !('rev' in attributes)) {
-        if ('property' in attributes && !('content' in attributes)) {
-          if ('about' in attributes) {
-            // content node
-            this.setContentNode(node, activeTag, attributes);
-          } else if (isRootTag) {
-            // root resource
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          } else {
-            if ('typeof' in attributes) {
-              this.setResourceNode(node, unwrap(typedResource), activeTag);
-            } else {
-              this.setContentNode(node, activeTag, attributes);
-            }
-            // no new resource
-          }
-
-          // content nodes
-        } else {
-          if (
-            'about' in attributes ||
-            'href' in attributes ||
-            'src' in attributes ||
-            'resource' in attributes
-          ) {
-            // resource nodes
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          } else if (isRootTag) {
-            // root resource node
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          } else if ('typeof' in attributes) {
-            // blank resource node
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          } else {
-            // no new resource
-            if (attributes.property && !('content' in attributes)) {
-              this.setContentNode(node, activeTag, attributes);
-            }
-          }
-        }
-      } else {
-        if ('about' in attributes) {
-          // content node
-
-          this.setContentNode(
-            node,
-            activeTag,
-            attributes,
-            attributes.rel ? 'rel' : 'rev',
-          );
-        } else if ('typeof' in attributes) {
-          //??
-          this.setResourceNode(node, unwrap(typedResource), activeTag);
-        } else if (isRootTag) {
-          // root resource node
-          this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-        } else {
-          // no new resource node
-        }
-      }
-    }
-  }
+  };
 
   public onText(data: string) {
     const activeTag: IActiveTag<N> =
