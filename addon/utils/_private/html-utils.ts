@@ -2,7 +2,6 @@ import { PNode, ProseParser } from '@lblod/ember-rdfa-editor';
 import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
-import { enhanceRule } from '@lblod/ember-rdfa-editor/core/schema';
 import { tagName } from './dom-helpers';
 import { EditorView } from 'prosemirror-view';
 
@@ -45,22 +44,21 @@ function matchTopNode(
     return;
   }
   for (const parseRule of topNodeSpec.parseDOM) {
-    const enhancedRule = enhanceRule(parseRule);
     let attrs: Attrs | null | undefined | false;
-    if (enhancedRule.tag && tagName(node) !== enhancedRule.tag) {
+    if (parseRule.tag && tagName(node) !== parseRule.tag) {
       continue;
     }
-    if (enhancedRule.getAttrs) {
-      attrs = enhancedRule.getAttrs(node);
-    } else if (enhancedRule.attrs) {
-      attrs = enhancedRule.attrs;
+    if (parseRule.getAttrs) {
+      attrs = parseRule.getAttrs(node);
+    } else if (parseRule.attrs) {
+      attrs = parseRule.attrs;
     }
     if (!attrs) {
       continue;
     }
-    const { contentElement: contentElementSelector } = enhancedRule;
+    const { contentElement: contentElementSelector } = parseRule;
     let contentElement: HTMLElement | undefined | null;
-    if (enhancedRule.contentElement) {
+    if (parseRule.contentElement) {
       switch (typeof contentElementSelector) {
         case 'string':
           contentElement = node.querySelector<HTMLElement>(
