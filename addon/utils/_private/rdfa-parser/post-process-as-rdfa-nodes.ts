@@ -101,7 +101,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           return;
         } else {
           if ('typeof' in attributes) {
-            this.setResourceNode(node, unwrap(typedResource), activeTag);
+            markAsResourceNode(node, unwrap(typedResource), activeTag);
             return;
           }
         }
