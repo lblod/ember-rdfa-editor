@@ -1,4 +1,7 @@
 import DOMPurify from 'dompurify';
+import { EditorView } from 'prosemirror-view';
+import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx';
+import { preCleanHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',
@@ -235,6 +238,7 @@ const DEFAULT_SAFE_TAGS = [
 ];
 
 interface HTMLInputParserArguments {
+  editorView: EditorView;
   safeAttributes?: string[];
   safeTags?: string[];
   uriSafeAttributes?: string[];
@@ -250,6 +254,8 @@ interface HTMLInputParserArguments {
  * @class HTMLInputParser
  */
 export default class HTMLInputParser {
+  private readonly editorViewWidth: number;
+
   private readonly safeAttributes: string[];
 
   private readonly safeTags: string[];
@@ -257,10 +263,12 @@ export default class HTMLInputParser {
   private readonly uriSafeAttributes: string[];
 
   constructor({
+    editorView,
     safeAttributes = DEFAULT_SAFE_ATTRIBUTES,
     safeTags = DEFAULT_SAFE_TAGS,
     uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
   }: HTMLInputParserArguments) {
+    this.editorViewWidth = this.getEditorViewWidth(editorView);
     this.safeAttributes = safeAttributes;
     this.safeTags = safeTags;
     this.uriSafeAttributes = uriSafeAttributes;
@@ -268,20 +276,150 @@ export default class HTMLInputParser {
 
   /**
    * Takes an html string, preprocesses its nodes and sanitizes the result.
-   * Returns the cleaned html string.
+   * Returns the cleaned html string with any extra attributes we need.
    *
-   * @method cleanupHTML
+   * @method prepareHTML
+   * @param htmlString {string}
    */
-  cleanupHTML(htmlString: string): string {
+  prepareHTML(htmlString: string): string {
     const parser = new DOMParser();
-    const document = parser.parseFromString(htmlString, 'text/html');
-    const rootNode = document.body;
 
-    return DOMPurify.sanitize(rootNode.innerHTML, {
+    const document = parser.parseFromString(
+      this.preCleanHtml(htmlString),
+      'text/html',
+    );
+
+    const bodyElement = document.body;
+
+    this.cleanDocx({ element: bodyElement });
+    this.setTableColWidthDataset({ element: bodyElement });
+    this.sanitizeHTML({ element: bodyElement });
+
+    return bodyElement.innerHTML;
+  }
+
+  /**
+   * Takes an HTML string and sanitize it.
+   * Returns the sanitized HTML string.
+   *
+   * @method sanitizeHTML
+   * @param element {HTMLElement}
+   */
+  private sanitizeHTML({ element }: { element: HTMLElement }): string {
+    return DOMPurify.sanitize(element, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
       ADD_URI_SAFE_ATTR: this.uriSafeAttributes,
       IN_PLACE: true,
     });
+  }
+
+  private preCleanHtml(html: string): string {
+    return preCleanHtml(html);
+  }
+
+  private cleanDocx({ element }: { element: HTMLElement }): string {
+    return cleanDocx(element);
+  }
+
+  /**
+   * Sets the `data-colwidth` attribute on `td` elements of first row of each table.
+   * This is used by `tableColumnResizingPlugin` to set the initial column widths.
+   *
+   * Changes are done in place.
+   *
+   * @param element {HTMLElement}
+   */
+  private setTableColWidthDataset({ element }: { element: HTMLElement }) {
+    // Get all the `tables` elements that have at least one `tr` element.
+    const tableElements = Array.from(
+      element.getElementsByTagName('table'),
+    ).filter(
+      (tableElement) => tableElement.getElementsByTagName('tr').length > 0,
+    );
+
+    if (!tableElements.length) {
+      return;
+    }
+
+    tableElements.forEach((tableElement) => {
+      const firstTableRowElementWithCells = Array.from(
+        tableElement.getElementsByTagName('tr'),
+      ).find((trTag) => trTag.getElementsByTagName('td').length > 0);
+
+      if (!firstTableRowElementWithCells) {
+        return;
+      }
+
+      const cellElements =
+        firstTableRowElementWithCells.getElementsByTagName('td');
+
+      const cellWidths = Array.from(cellElements).map((tdTag) =>
+        this.getElementWidth(tdTag),
+      );
+
+      const totalWidth = cellWidths.reduce((acc, width) => acc + width, 0);
+      const scaleFactor = this.editorViewWidth / totalWidth;
+
+      for (let i = 0; i < cellWidths.length; i++) {
+        cellWidths[i] = Math.round(cellWidths[i] * scaleFactor);
+      }
+
+      for (let i = 0; i < cellElements.length; i++) {
+        cellElements[i].dataset.colwidth = `${cellWidths[i]}`;
+      }
+    });
+
+    return;
+  }
+
+  /**
+   * Returns the width of the element without the unit.
+   * This works for us because we need proportional widths, so we can ignore the unit.
+   */
+  private getElementWidth(element: HTMLElement): number {
+    const attributeWidth = element.getAttribute('width');
+
+    if (attributeWidth) {
+      return parseInt(attributeWidth, 10);
+    }
+
+    const style = element.getAttribute('style');
+
+    if (style) {
+      const width = style.split(';').find((style) => style.includes('width'));
+      if (width) {
+        return parseInt(width.split(':')[1].trim(), 10);
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * An extra hack width to make sure the editor doesn't overflow.
+   */
+  private static ADDITIONAL_WIDTH_MARGIN = 5;
+
+  /**
+   * Returns the width of the editor view minus the padding
+   */
+  private getEditorViewWidth(view: EditorView): number {
+    const computedStyle = window.getComputedStyle(view.dom);
+    const paddingLeft = computedStyle.paddingLeft
+      ? parseInt(computedStyle.paddingLeft, 10)
+      : 0;
+    const paddingRight = computedStyle.paddingRight
+      ? parseInt(computedStyle.paddingRight, 10)
+      : 0;
+
+    const clientWidthWithoutPadding =
+      view.dom.clientWidth - paddingLeft - paddingRight;
+
+    if (!clientWidthWithoutPadding) {
+      return 0;
+    }
+
+    return clientWidthWithoutPadding - HTMLInputParser.ADDITIONAL_WIDTH_MARGIN;
   }
 }

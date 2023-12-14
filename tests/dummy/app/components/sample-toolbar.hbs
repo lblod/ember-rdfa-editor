@@ -1,16 +1,16 @@
 <Toolbar as |Tb|>
   <Tb.Group>
-    <Plugins::History::Undo @controller={{@controller}}/>
-    <Plugins::History::Redo @controller={{@controller}}/>
+    <Plugins::History::Undo @controller={{@controller}} />
+    <Plugins::History::Redo @controller={{@controller}} />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::TextStyle::Bold @controller={{@controller}}/>
-    <Plugins::TextStyle::Italic @controller={{@controller}}/>
-    <Plugins::TextStyle::Strikethrough @controller={{@controller}}/>
-    <Plugins::TextStyle::Underline @controller={{@controller}}/>
-    <Plugins::TextStyle::Subscript @controller={{@controller}}/>
-    <Plugins::TextStyle::Superscript @controller={{@controller}}/>
-    <CodeMark::ToolbarButton @controller={{@controller}}/>
+    <Plugins::TextStyle::Bold @controller={{@controller}} />
+    <Plugins::TextStyle::Italic @controller={{@controller}} />
+    <Plugins::TextStyle::Strikethrough @controller={{@controller}} />
+    <Plugins::TextStyle::Underline @controller={{@controller}} />
+    <Plugins::TextStyle::Subscript @controller={{@controller}} />
+    <Plugins::TextStyle::Superscript @controller={{@controller}} />
+    <CodeMark::ToolbarButton @controller={{@controller}} />
     <Plugins::TextStyle::Highlight
       @controller={{@controller}}
       @defaultColor="#FFEA00"
@@ -21,24 +21,27 @@
     />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::List::Unordered @controller={{@controller}}/>
-    <Plugins::List::Ordered @controller={{@controller}}/>
+    <Plugins::List::Unordered @controller={{@controller}} />
+    <Plugins::List::Ordered @controller={{@controller}} />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::Indentation::IndentationMenu @controller={{@controller}}/>
+    <Plugins::Indentation::IndentationMenu @controller={{@controller}} />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::Link::LinkMenu @controller={{@controller}}/>
+    <Plugins::Link::LinkMenu @controller={{@controller}} />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::Table::TableMenu @controller={{@controller}}/>
+    <Plugins::Table::TableMenu @controller={{@controller}} />
   </Tb.Group>
   <Tb.Group>
-    <Plugins::Heading::HeadingMenu @controller={{@controller}}/>
+    <Plugins::Heading::HeadingMenu @controller={{@controller}} />
+  </Tb.Group>
+  <Tb.Group>
+    <Plugins::Alignment::AlignmentMenu @controller={{@controller}} />
   </Tb.Group>
   <Tb.Spacer />
   <Tb.Group>
-    <Plugins::Formatting::FormattingToggle @controller={{@controller}}/>
-    <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}}/>
+    <Plugins::Formatting::FormattingToggle @controller={{@controller}} />
+    <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}} />
   </Tb.Group>
 </Toolbar>

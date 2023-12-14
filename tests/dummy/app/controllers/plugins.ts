@@ -27,7 +27,7 @@ import {
 import {
   tableKeymap,
   tableNodes,
-  tablePlugin,
+  tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -57,7 +57,6 @@ import {
 import {
   createInvisiblesPlugin,
   hardBreak,
-  space,
   paragraph as paragraphInvisible,
   heading as headingInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
@@ -142,15 +141,12 @@ export default class IndexController extends Controller {
     firefoxCursorFix(),
     chromeHacksPlugin(),
     highlightPlugin({ testKey: 'yeet' }),
-    tablePlugin,
+    ...tablePlugins,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin(
-      [space, hardBreak, paragraphInvisible, headingInvisible],
-      {
-        shouldShowInvisibles: false,
-      },
-    ),
+    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
+      shouldShowInvisibles: false,
+    }),
     inputRules({
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),

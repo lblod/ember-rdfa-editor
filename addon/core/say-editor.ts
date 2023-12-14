@@ -19,7 +19,6 @@ import {
   isElementPNode,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
@@ -34,6 +33,7 @@ import SayParser from '@lblod/ember-rdfa-editor/core/say-parser';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
 import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -88,7 +88,6 @@ export default class SayEditor {
       pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
         ...pluginArr,
-        pasteHandler(),
         dropCursor(),
         gapCursor(),
         keymap(baseKeymap(schema)),
@@ -128,6 +127,11 @@ export default class SayEditor {
         },
       },
       domParser: this.parser,
+      transformPastedHTML: (html, editorView) => {
+        const htmlCleaner = new HTMLInputParser({ editorView });
+
+        return htmlCleaner.prepareHTML(html);
+      },
       clipboardSerializer: this.serializer,
     });
     this.activeView = this.mainView;

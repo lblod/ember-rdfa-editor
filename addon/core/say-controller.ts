@@ -76,6 +76,7 @@ export default class SayController {
   initialize(html: string, { shouldFocus = true } = {}) {
     const doc = htmlToDoc(html, {
       schema: this.schema,
+      editorView: this.editor.mainView,
       parser: this.editor.parser,
     });
 
