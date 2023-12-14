@@ -25,6 +25,7 @@ import {
   rdfaContentNodeMap,
   rdfaResourceNodeMap,
 } from '../datastore/datastore';
+import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -949,15 +950,22 @@ export class RdfaParser<N> {
     activeTag.subject = newSubject || parentTag.subject;
     activeTag.object = currentObjectResource || newSubject;
 
-    this.collectNodeInfo(activeTag, attributes, isRootTag, typedResource);
+    postProcessTagAsRdfaNode({
+      activeTag,
+      attributes,
+      isRootTag,
+      typedResource,
+      markAsLiteralNode: this.markAsLiteralNode,
+      markAsResourceNode: this.markAsResourceNode,
+    });
   }
 
-  public setContentNode(
+  markAsLiteralNode = (
     node: N,
     activeTag: IActiveTag<N>,
     attributes: Record<string, string>,
     predicateAttribute = 'property',
-  ) {
+  ) => {
     this.contentNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(
         unwrap(activeTag.subject),
@@ -972,122 +980,18 @@ export class RdfaParser<N> {
         false,
       ),
     });
-  }
+  };
 
-  setResourceNode(
+  markAsResourceNode = (
     node: N,
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
-  ) {
+  ) => {
     this.resourceNodeMapping.set(
       node,
       this.util.getResourceOrBaseIri(resource, activeTag),
     );
-  }
-
-  public collectNodeInfo(
-    activeTag: IActiveTag<N>,
-    attributes: Record<string, string>,
-    isRootTag: boolean,
-    typedResource: true | ModelBlankNode<N> | ModelNamedNode<N> | null,
-  ) {
-    const node = activeTag.node;
-    if (!activeTag.skipElement && node) {
-      // no rel or rev
-      if (!('rel' in attributes) && !('rev' in attributes)) {
-        if (
-          'property' in attributes &&
-          !('content' in attributes) &&
-          !('datatype' in attributes)
-        ) {
-          if ('about' in attributes) {
-            // !! content node
-            // this combo BOTH sets a new subject, AND sets the value of the triple to its textcontent.
-            // we choose to interpret as a literal rather than a resource
-            this.setContentNode(node, activeTag, attributes);
-            return;
-          } else if (isRootTag) {
-            // root resource
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-            return;
-          } else {
-            if ('typeof' in attributes) {
-              this.setResourceNode(node, unwrap(typedResource), activeTag);
-              return;
-            }
-          }
-        } else {
-          if ('about' in attributes) {
-            // same exception as above, we always interpret (property +about -content) cases as literal nodes
-            if ('property' in attributes && !('content' in attributes)) {
-              this.setContentNode(node, activeTag, attributes);
-              return;
-            } else {
-              this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-              return;
-            }
-          } else if (
-            'href' in attributes ||
-            'src' in attributes ||
-            'resource' in attributes
-          ) {
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-            return;
-          } else if (isRootTag) {
-            // root resource node
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-            return;
-          } else if ('typeof' in attributes) {
-            // blank resource node
-            this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-            return;
-          } else if (activeTag.object) {
-            // intentionally empty, to preserve structure from algorithm in spec
-          }
-        }
-      } else {
-        if ('about' in attributes) {
-          this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          return;
-        } else if ('typeof' in attributes) {
-          this.setResourceNode(node, unwrap(typedResource), activeTag);
-          return;
-        } else if (isRootTag) {
-          // root resource node
-          this.setResourceNode(node, unwrap(activeTag.subject), activeTag);
-          return;
-        } else if (activeTag.object) {
-          // intentionally empty, to preserve structure from algorithm in spec
-        }
-      }
-
-      // no-op returns are intentional
-      if ('property' in attributes) {
-        if ('datatype' in attributes) {
-          if (!('content' in attributes)) {
-            this.setContentNode(node, activeTag, attributes);
-            return;
-          }
-        } else if ('content' in attributes) {
-          return;
-        } else if (
-          !('rel' in attributes) &&
-          !('rev' in attributes) &&
-          !('content' in attributes) &&
-          ('resource' in attributes ||
-            'href' in attributes ||
-            'src' in attributes)
-        ) {
-          return;
-        } else if ('typeof' in attributes && !('about' in attributes)) {
-          return;
-        } else {
-          this.setContentNode(node, activeTag, attributes);
-          return;
-        }
-      }
-    }
-  }
+  };
 
   public onText(data: string) {
     const activeTag: IActiveTag<N> =
