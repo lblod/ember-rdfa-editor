@@ -1,6 +1,5 @@
 <div class="say-rdfa-toggle">
-  <AuToggleSwitch
-    {{on 'click' this.toggle}}
-    @label={{ t 'ember-rdfa-editor.show-formatting-marks'}}
-  />
+  <AuNativeToggle {{on "change" this.toggle}} checked={{this.isActive}}>
+    {{t "ember-rdfa-editor.show-formatting-marks"}}
+  </AuNativeToggle>
 </div>

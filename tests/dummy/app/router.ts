@@ -10,4 +10,5 @@ Router.map(function () {
   this.route('vendors');
   this.route('backspace');
   this.route('editable-node');
+  this.route('space-invisible');
 });

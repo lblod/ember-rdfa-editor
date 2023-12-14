@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Attrs, DOMOutputSpec, Mark, ParseRule } from 'prosemirror-model';
-import { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import { Backlink, Property } from './rdfa-processor';
@@ -109,43 +108,7 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   return false;
 }
 
-export function enhanceRule(rule: ParseRule): ParseRule {
-  const newRule = copy(rule as Record<string, unknown>) as ParseRule;
-  newRule.getAttrs = wrapGetAttrs(newRule.getAttrs, newRule.attrs);
-  return newRule;
-}
-
-type GetAttrs = (node: string | HTMLElement) => false | Attrs | null;
-
 type NodeOrMark = PNode | Mark;
-function wrapGetAttrs(
-  getAttrs: Option<GetAttrs>,
-  extraAttrs: Option<Record<string, unknown>>,
-): GetAttrs {
-  return function (node: string | HTMLElement) {
-    const originalAttrs: Record<string, unknown> | false | null = getAttrs
-      ? getAttrs(node)
-      : {};
-    if (originalAttrs === false) {
-      return originalAttrs;
-    }
-    const result = originalAttrs ?? {};
-    if (typeof node !== 'string' && typeof result === 'object') {
-      const rdfaAttrs = getRdfaAttrs(node);
-      if (rdfaAttrs) {
-        result['__rdfaId'] = rdfaAttrs['__rdfaId'];
-        result['rdfaNodeType'] = rdfaAttrs['rdfaNodeType'];
-        result['properties'] = rdfaAttrs['properties'];
-        result['backlinks'] = rdfaAttrs['backlinks'];
-        result['resource'] = rdfaAttrs['resource'];
-      }
-    }
-    if (extraAttrs) {
-      return { ...result, ...extraAttrs };
-    }
-    return result;
-  };
-}
 
 export function renderInvisibleRdfa(
   nodeOrMark: NodeOrMark,

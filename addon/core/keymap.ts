@@ -17,8 +17,6 @@ import {
   liftEmptyBlock,
   newlineInCode,
   selectAll,
-  selectNodeBackward,
-  selectNodeForward,
   selectTextblockEnd,
   selectTextblockStart,
   splitBlock,
@@ -27,10 +25,14 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
+  selectBlockRdfaNode,
+  selectNodeBackward,
+  selectNodeForward,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
+import { setAlignment } from '../plugins/alignment/commands';
 
 export type Keymap = (schema: Schema) => Record<string, Command>;
 
@@ -112,6 +114,11 @@ export const pcBaseKeymap: Keymap = (schema) => ({
   'Mod-a': selectAll,
   Tab: sinkListItem(schema.nodes.list_item),
   'Shift-Tab': liftListItem(schema.nodes.list_item),
+  // Alignment shortcuts
+  'Mod-Shift-L': setAlignment({ option: 'left' }),
+  'Mod-Shift-E': setAlignment({ option: 'center' }),
+  'Mod-Shift-R': setAlignment({ option: 'right' }),
+  'Mod-Shift-J': setAlignment({ option: 'justify' }),
 });
 
 /// A copy of `pcBaseKeymap` that also binds **Ctrl-h** like Backspace,

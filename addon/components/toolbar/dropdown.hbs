@@ -8,7 +8,6 @@
       aria-expanded='{{if this.dropdownOpen "true" "false"}}'
       type='button'
       {{on 'click' this.toggleDropdown}}
-      title={{@label}}
       disabled={{@disabled}}
       {{velcro.hook}}
     >
@@ -30,8 +29,8 @@
         tabindex="-1"
         {{velcro.loop}}
       >
-        {{yield 
-          (hash 
+        {{yield
+          (hash
             Item=(component 'toolbar/dropdown-item' onActivate=this.closeDropdown)
           )
         }}

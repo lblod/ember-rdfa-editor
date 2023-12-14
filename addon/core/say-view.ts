@@ -45,6 +45,7 @@ export default class SayView extends EditorView {
     const doc = htmlToDoc(content, {
       schema: this.state.schema,
       parser: parser,
+      editorView: this,
     });
     const tr = this.state.tr;
     tr.step(new SetDocAttributesStep(doc.attrs));
