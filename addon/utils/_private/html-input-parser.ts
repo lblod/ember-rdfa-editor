@@ -1,5 +1,7 @@
 import DOMPurify from 'dompurify';
 import { EditorView } from 'prosemirror-view';
+import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx';
+import { preCleanHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',
@@ -279,25 +281,32 @@ export default class HTMLInputParser {
    * @method prepareHTML
    * @param htmlString {string}
    */
-  prepareHTML(htmlString: string) {
+  prepareHTML(htmlString: string): string {
     const parser = new DOMParser();
-    const document = parser.parseFromString(htmlString, 'text/html');
+
+    const document = parser.parseFromString(
+      this.preCleanHtml(htmlString),
+      'text/html',
+    );
+
     const bodyElement = document.body;
 
+    this.cleanDocx({ element: bodyElement });
     this.setTableColWidthDataset({ element: bodyElement });
+    this.sanitizeHTML({ element: bodyElement });
 
-    return this.cleanupHTML({ element: bodyElement });
+    return bodyElement.innerHTML;
   }
 
   /**
-   * Takes an html string, preprocesses its nodes and sanitizes the result.
-   * Returns the cleaned html string.
+   * Takes an HTML string and sanitize it.
+   * Returns the sanitized HTML string.
    *
-   * @method cleanupHTML
+   * @method sanitizeHTML
    * @param element {HTMLElement}
    */
-  private cleanupHTML({ element }: { element: HTMLElement }): string {
-    return DOMPurify.sanitize(element.innerHTML, {
+  private sanitizeHTML({ element }: { element: HTMLElement }): string {
+    return DOMPurify.sanitize(element, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
       ADD_URI_SAFE_ATTR: this.uriSafeAttributes,
@@ -305,9 +314,19 @@ export default class HTMLInputParser {
     });
   }
 
+  private preCleanHtml(html: string): string {
+    return preCleanHtml(html);
+  }
+
+  private cleanDocx({ element }: { element: HTMLElement }): string {
+    return cleanDocx(element);
+  }
+
   /**
    * Sets the `data-colwidth` attribute on `td` elements of first row of each table.
    * This is used by `tableColumnResizingPlugin` to set the initial column widths.
+   *
+   * Changes are done in place.
    *
    * @param element {HTMLElement}
    */
