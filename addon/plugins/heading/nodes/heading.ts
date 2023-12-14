@@ -1,11 +1,13 @@
 import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment';
 
 export const heading: NodeSpec = {
   attrs: {
     level: { default: 1 },
     indentationLevel: { default: 0 },
+    alignment: { default: DEFAULT_ALIGNMENT },
     ...rdfaAttrs,
   },
   content: 'inline*',
@@ -22,6 +24,7 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
@@ -36,6 +39,7 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
@@ -50,6 +54,7 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
@@ -64,6 +69,7 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
@@ -78,6 +84,7 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
@@ -92,16 +99,21 @@ export const heading: NodeSpec = {
             parseInt,
             node.dataset.indentationLevel,
           ),
+          alignment: getAlignment(node),
           ...getRdfaAttrs(node),
         };
       },
     },
   ],
   toDOM(node: PNode) {
-    const { level, indentationLevel, ...attrs } = node.attrs;
+    const { level, indentationLevel, alignment, ...attrs } = node.attrs;
+    let style = '';
+    if (alignment && alignment !== DEFAULT_ALIGNMENT) {
+      style += `text-align: ${alignment}`;
+    }
     return [
       `h${(level as number).toString()}`,
-      { 'data-indentation-level': indentationLevel as number, ...attrs },
+      { 'data-indentation-level': indentationLevel as number, style, ...attrs },
       0,
     ];
   },
