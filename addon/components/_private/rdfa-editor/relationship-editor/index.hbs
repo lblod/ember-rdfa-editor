@@ -101,9 +101,10 @@
   {{/if}}
 </AuContent>
 
-<this.Modal
-  @rdfaIds={{this.allRdfaids}}
-  @addRelationshipType={{this.addRelationshipType}}
-  @setAddType={{this.setAddRelationshipType}}
-  @onSave={{this.saveNewRelationship}}
-/>
+{{#if this.modalOpen}}
+  <this.Modal
+    @controller={{@controller}}
+    @onSave={{this.saveNewRelationship}}
+    @onCancel={{this.cancel}}
+  />
+{{/if}}
