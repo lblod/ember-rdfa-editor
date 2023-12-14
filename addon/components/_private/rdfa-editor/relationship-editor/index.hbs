@@ -88,6 +88,17 @@
       <p>This node does not have any backlinks</p>
     {{/if}}
   </div>
+  {{#if this.statusMessage}}
+  <div>
+    <AuAlert
+      @skin={{this.statusMessage.type}}
+      @closable={{true}}
+      @onClose={{this.closeStatusMessage}}
+    >
+      {{this.statusMessage.message}}
+    </AuAlert>
+  </div>
+  {{/if}}
 </AuContent>
 
 {{#if this.modalOpen}}
