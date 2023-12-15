@@ -52,6 +52,17 @@ module('Utils | CS | HTMLInputParser', function () {
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
+  test('it should not remove empty element with rdfa attributes', function (assert) {
+    const expectedHtml = oneLineTrim`<span property="schema:name"></span><br><span>Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span property="schema:name"></span><br/><span>Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
   test('It should remove unsafe url schemes', function (assert) {
     const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
     const inputParser = new HTMLInputParser({ editorView });
@@ -100,11 +111,13 @@ module('Utils | CS | HTMLInputParser', function () {
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">1</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
       <li>
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">2</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
     </ul>`;
     const htmlContent = oneLineTrim`
