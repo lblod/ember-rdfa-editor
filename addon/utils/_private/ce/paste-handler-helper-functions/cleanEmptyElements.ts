@@ -1,7 +1,7 @@
 import { traverseElements } from './traverseElements';
 import { RDFA_ATTRIBUTES } from '../../constants';
 
-const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG'];
+const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG', 'TR', 'TD'];
 const NOTRIM_ELEMENTS = ['SPAN'];
 
 function hasRdfaAttributes(element: Element) {
