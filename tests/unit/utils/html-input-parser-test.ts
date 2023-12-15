@@ -111,11 +111,13 @@ module('Utils | CS | HTMLInputParser', function () {
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">1</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
       <li>
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">2</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
     </ul>`;
     const htmlContent = oneLineTrim`
