@@ -35,8 +35,9 @@
         title='Link openen'
       />
       <AuInput
-        @value={{this.href}}
+        value={{this.href}}
         placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
+        {{on 'change' this.setHref}}
         {{on 'focus' this.selectHref}}
         {{leave-on-enter-key this.controller @getPos}}
       />

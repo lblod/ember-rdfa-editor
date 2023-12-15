@@ -1,6 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
 
 export default class Link extends Component<EmberNodeArgs> {
@@ -28,6 +29,13 @@ export default class Link extends Component<EmberNodeArgs> {
 
   get interactive() {
     return this.node.attrs.interactive as boolean;
+  }
+
+  @action
+  setHref(event: InputEvent) {
+    const text = (event.target as HTMLInputElement).value;
+    const href = linkToHref(text);
+    this.href = href || text;
   }
 
   @action

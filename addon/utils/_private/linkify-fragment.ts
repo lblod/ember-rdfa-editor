@@ -1,6 +1,6 @@
 import { PNode } from '@lblod/ember-rdfa-editor';
 import { Fragment, MarkType, NodeType, Schema } from 'prosemirror-model';
-import * as linkify from 'linkifyjs';
+import { find as linkifyFind } from 'linkifyjs';
 
 /**
  *
@@ -36,7 +36,7 @@ export default function linkifyFragment(
   const transformedContent: PNode[] = [];
   fragment.forEach((child) => {
     if (child.isText && child.text) {
-      const links = linkify.find(child.text);
+      const links = linkifyFind(child.text);
       let pos = 0;
       for (const link of links) {
         if (pos < link.start) {

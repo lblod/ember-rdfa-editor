@@ -2,6 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import { SayController } from '@lblod/ember-rdfa-editor';
+import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 
 type Args = {
   controller?: SayController;
@@ -22,6 +23,13 @@ export default class LinkEditor extends Component<Args> {
         return tr.setNodeAttribute(pos, 'href', value);
       });
     }
+  }
+
+  @action
+  setHref(event: InputEvent) {
+    const text = (event.target as HTMLInputElement).value;
+    const href = linkToHref(text);
+    this.href = href || text;
   }
 
   @action
