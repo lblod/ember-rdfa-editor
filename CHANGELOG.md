@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 8.0.2
+
+### Patch Changes
+
+- [#1070](https://github.com/lblod/ember-rdfa-editor/pull/1070) [`a8b79006`](https://github.com/lblod/ember-rdfa-editor/commit/a8b790065948153fb20e6afae653b8f4e05ca5a1) Thanks [@dkozickis](https://github.com/dkozickis)! - `HTMLInputParser` - Do not remove empty table cells and rows
+
 ## 8.0.1
 
 ### Patch Changes
