@@ -63,6 +63,17 @@ module('Utils | CS | HTMLInputParser', function () {
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
+  test('it should not remove empty table cells and rows', function (assert) {
+    const expectedHtml = oneLineTrim`<table><tbody><tr><td></td></tr></tbody></table>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><table><tbody><tr><td></td></tr></tbody></table><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
   test('It should remove unsafe url schemes', function (assert) {
     const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
     const inputParser = new HTMLInputParser({ editorView });
