@@ -52,6 +52,17 @@ module('Utils | CS | HTMLInputParser', function () {
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
+  test('it should not remove empty element with rdfa attributes', function (assert) {
+    const expectedHtml = oneLineTrim`<span property="schema:name"></span><br><span>Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span property="schema:name"></span><br/><span>Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
   test('It should remove unsafe url schemes', function (assert) {
     const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
     const inputParser = new HTMLInputParser({ editorView });
