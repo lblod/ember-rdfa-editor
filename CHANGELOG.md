@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 8.0.1
+
+### Patch Changes
+
+- [#1069](https://github.com/lblod/ember-rdfa-editor/pull/1069) [`f5625c04`](https://github.com/lblod/ember-rdfa-editor/commit/f5625c040c5ee8b8de423c9f2b9ec2b9cb0b22b7) Thanks [@abeforgit](https://github.com/abeforgit)! - don't clean empty elements if they have rdfa
+
 ## 8.0.0
 
 ### Major Changes
