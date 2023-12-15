@@ -136,8 +136,30 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   @action
   showExportPreview() {
     const wnd = window.open('about:blank', '', '_blank');
+
     if (wnd) {
-      wnd.document.write(this.controller?.htmlContent || '');
+      const styles = Array.from(document.styleSheets);
+      styles.forEach((style) => {
+        if (style.href) {
+          const link = wnd.document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = style.href;
+          link.type = 'text/css';
+          wnd.document.head.appendChild(link);
+        }
+      });
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(
+        this.controller?.htmlContent || '',
+        'text/html',
+      );
+
+      if (doc.body.firstChild) {
+        wnd.document.body.appendChild(doc.body.firstChild);
+      }
+
+      wnd.document.body.classList.add('say-content');
     }
   }
 
