@@ -359,6 +359,11 @@ export default class HTMLInputParser {
       );
 
       const totalWidth = cellWidths.reduce((acc, width) => acc + width, 0);
+
+      if (!totalWidth) {
+        return;
+      }
+
       const scaleFactor = this.editorViewWidth / totalWidth;
 
       for (let i = 0; i < cellWidths.length; i++) {
