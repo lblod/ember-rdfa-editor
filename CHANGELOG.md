@@ -1,5 +1,34 @@
 # @lblod/ember-rdfa-editor
 
+## 9.0.0-next.0
+
+### Major Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
+
+  - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+  - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
+    - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
+    - If a node is not found: a default `topNode` node is created. The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove `extraAttributes` parameter/option of `doc` node-spec. The `doc` node-spec can be easily extended/overriden using spread operators/custom `node-specs`.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - When using the `setHTMLContent` method to also update the attributes of the topNode correctly. This should make `setHTMLContent` more-or-less equivalent with the `initialize` method. The main difference is that `initialize` creates a new state and `setHTMLContent` does not.
+
+### Minor Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update rdfa components and attribute-editor to take the `topNode` node into account.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `rdfa-commands` to take document attributes into account
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a `document-info` toolbar pill. It opens a modal in which it is possible to edit the attributes of the `topNode` node.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a POC `document-language` pill to the editor toolbar. It opens a modal in which it is possible to select the document language.
+
+### Patch Changes
+
+- [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
+
 ## 8.0.0-next.0
 
 ### Major Changes
