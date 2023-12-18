@@ -4,3 +4,5 @@ export { removeBacklink } from './remove-backlink';
 export * from './insert-relation';
 export * from './wrap-resource';
 export * from './wrap-literal';
+export * from './wrap-inline-literal';
+export * from './wrap-inline-resource';

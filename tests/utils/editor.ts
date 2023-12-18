@@ -115,7 +115,7 @@ export const SAMPLE_PLUGINS: PluginConfig = [
       ordered_list_input_rule(SAMPLE_SCHEMA.nodes.ordered_list),
     ],
   }),
-  editableNodePlugin,
+  editableNodePlugin(),
 ];
 
 export function testEditor(

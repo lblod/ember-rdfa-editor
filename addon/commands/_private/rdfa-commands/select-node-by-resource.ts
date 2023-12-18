@@ -11,7 +11,7 @@ type SelectNodeByResourceArgs = {
 export function selectNodeByResource({
   resource,
 }: SelectNodeByResourceArgs): Command {
-  return (state, dispatch) => {
+  return (state, dispatch, view) => {
     const target = getNodesByResource(state, resource)?.[0];
     if (!target) {
       return false;

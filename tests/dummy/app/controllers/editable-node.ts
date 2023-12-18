@@ -36,7 +36,6 @@ import {
   ordered_list,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   link,
@@ -70,6 +69,10 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
+import {
+  inlineRdfaView,
+  inline_rdfa,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -104,10 +107,10 @@ export default class EditableBlockController extends Controller {
 
       hard_break,
       block_rdfa,
+      inline_rdfa,
       link: link(this.linkOptions),
     },
     marks: {
-      inline_rdfa,
       code,
       em,
       strong,
@@ -143,19 +146,21 @@ export default class EditableBlockController extends Controller {
       ],
     }),
     emberApplication({ application: getOwner(this) }),
-    editableNodePlugin,
+    editableNodePlugin(),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
+      inline_rdfa: inlineRdfaView(controller),
     };
   };
 
   get activeNode() {
     if (this.rdfaEditor) {
-      return getActiveEditableNode(this.rdfaEditor.activeEditorState);
+      const result= getActiveEditableNode(this.rdfaEditor.activeEditorState);
+      return result
     }
     return;
   }

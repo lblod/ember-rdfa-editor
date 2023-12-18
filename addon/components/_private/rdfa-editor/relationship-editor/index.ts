@@ -93,6 +93,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     if (object.type === 'literal') {
       const result = this.controller?.doCommand(
         selectNodeByRdfaId({ rdfaId: object.rdfaId }),
+        { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
@@ -103,6 +104,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     } else {
       const result = this.controller?.doCommand(
         selectNodeByResource({ resource: object.resource }),
+        { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
@@ -111,12 +113,16 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         };
       }
     }
+    this.controller?.focus();
   };
 
   goToBacklink = (backlink: Backlink) => {
     this.closeStatusMessage();
     const result = this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
+      {
+        view: this.controller.mainEditorView,
+      },
     );
     if (!result) {
       this.statusMessage = {
@@ -124,6 +130,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         type: 'info',
       };
     }
+    this.controller?.focus();
   };
 
   removeBacklink = (index: number) => {
@@ -139,7 +146,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         rdfaId: this.currentRdfaId,
       };
     }
-    this.controller?.doCommand(removeBacklink({ target, index }));
+    this.controller?.doCommand(removeBacklink({ target, index }), {
+      view: this.controller.mainEditorView,
+    });
   };
 
   removeProperty = (index: number) => {
@@ -147,6 +156,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     if (this.currentResource) {
       this.controller?.doCommand(
         removeProperty({ resource: this.currentResource, index }),
+        { view: this.controller.mainEditorView },
       );
     }
   };
@@ -189,6 +199,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     if (this.currentResource) {
       this.controller?.doCommand(
         addProperty({ resource: this.currentResource, property }),
+        { view: this.controller.mainEditorView },
       );
     }
   };
