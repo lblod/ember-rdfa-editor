@@ -32,7 +32,7 @@
         href={{this.href}}
         @skin='naked'
         @icon='link-external'
-        title='Link openen'
+        title={{t "ember-rdfa-editor.link.open"}}
       />
       <AuInput
         value={{this.href}}
@@ -46,7 +46,7 @@
         @skin='naked'
         @size='small'
         {{on 'click' this.remove}}
-        title='Link ontkoppelen'
+        title={{t "ember-rdfa-editor.link.edit.uncouple"}}
       />
     </Pill>
   {{/if}}
