@@ -1,10 +1,22 @@
 import { traverseElements } from './traverseElements';
+import { RDFA_ATTRIBUTES } from '../../constants';
 
-const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG'];
+const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG', 'TR', 'TD'];
 const NOTRIM_ELEMENTS = ['SPAN'];
 
+function hasRdfaAttributes(element: Element) {
+  for (const attr of RDFA_ATTRIBUTES) {
+    if (element.hasAttribute(attr)) {
+      return true;
+    }
+  }
+  return false;
+}
 function isEmpty(element: Element): boolean {
   if (ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName)) {
+    return false;
+  }
+  if (hasRdfaAttributes(element)) {
     return false;
   }
   let content;

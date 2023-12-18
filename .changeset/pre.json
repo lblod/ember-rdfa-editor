@@ -5,12 +5,20 @@
     "@lblod/ember-rdfa-editor": "7.0.2"
   },
   "changesets": [
+    "clever-walls-yawn",
     "five-dolls-double",
     "green-beans-sin",
+    "lucky-llamas-wash",
     "many-poets-crash",
     "odd-falcons-jam",
+    "olive-moose-dance",
+    "proud-balloons-complain",
+    "silent-timers-hammer",
+    "slimy-clocks-end",
     "slow-trains-fix",
     "thin-moles-poke",
-    "twenty-cooks-grow"
+    "tiny-cows-guess",
+    "twenty-cooks-grow",
+    "weak-panthers-obey"
   ]
 }

@@ -1,5 +1,34 @@
 # @lblod/ember-rdfa-editor
 
+## 9.0.0-next.0
+
+### Major Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
+
+  - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+  - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
+    - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
+    - If a node is not found: a default `topNode` node is created. The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove `extraAttributes` parameter/option of `doc` node-spec. The `doc` node-spec can be easily extended/overriden using spread operators/custom `node-specs`.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - When using the `setHTMLContent` method to also update the attributes of the topNode correctly. This should make `setHTMLContent` more-or-less equivalent with the `initialize` method. The main difference is that `initialize` creates a new state and `setHTMLContent` does not.
+
+### Minor Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update rdfa components and attribute-editor to take the `topNode` node into account.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `rdfa-commands` to take document attributes into account
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a `document-info` toolbar pill. It opens a modal in which it is possible to edit the attributes of the `topNode` node.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a POC `document-language` pill to the editor toolbar. It opens a modal in which it is possible to select the document language.
+
+### Patch Changes
+
+- [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
+
 ## 8.0.0-next.0
 
 ### Major Changes
@@ -21,6 +50,85 @@
 - [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
 
 - [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+
+## 8.0.2
+
+### Patch Changes
+
+- [#1070](https://github.com/lblod/ember-rdfa-editor/pull/1070) [`a8b79006`](https://github.com/lblod/ember-rdfa-editor/commit/a8b790065948153fb20e6afae653b8f4e05ca5a1) Thanks [@dkozickis](https://github.com/dkozickis)! - `HTMLInputParser` - Do not remove empty table cells and rows
+
+## 8.0.1
+
+### Patch Changes
+
+- [#1069](https://github.com/lblod/ember-rdfa-editor/pull/1069) [`f5625c04`](https://github.com/lblod/ember-rdfa-editor/commit/f5625c040c5ee8b8de423c9f2b9ec2b9cb0b22b7) Thanks [@abeforgit](https://github.com/abeforgit)! - don't clean empty elements if they have rdfa
+
+## 8.0.0
+
+### Major Changes
+
+- [#1058](https://github.com/lblod/ember-rdfa-editor/pull/1058) [`f6ff0925`](https://github.com/lblod/ember-rdfa-editor/commit/f6ff0925d2d64b9d46e04908f9a77ede18595202) Thanks [@elpoelma](https://github.com/elpoelma)! - Update logic of entering embedded-editor with arrow-keys
+
+- [#1058](https://github.com/lblod/ember-rdfa-editor/pull/1058) [`30ff1dbc`](https://github.com/lblod/ember-rdfa-editor/commit/30ff1dbcce1524395e37996fdd3eae6710580c28) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduce custom `select-node-forward` and `select-node-backward` commands with included support for atomic inline nodes. The commands are adapted from the [prosemirror-commands](https://github.com/ProseMirror/prosemirror-commands) package.
+
+  These commands are tied to the `delete` and `backspace` keys respectively.
+
+### Minor Changes
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`6981d967`](https://github.com/lblod/ember-rdfa-editor/commit/6981d967367354c26ba33c851e5e6dc36b032e59) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `alignment` attribute to the `heading` and `paragraph` node-specs
+
+- [#1068](https://github.com/lblod/ember-rdfa-editor/pull/1068) [`fe867d5b`](https://github.com/lblod/ember-rdfa-editor/commit/fe867d5b67893dcd49ff5d3123c40bbb6491d8b7) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4612: Always clean Word specific elements on paste
+
+  Don't rely on presence of `text/rtf` data in `ClipboardEvent` to determine
+  whether the paste is coming from Word, always apply the cleaning.
+
+- [#1061](https://github.com/lblod/ember-rdfa-editor/pull/1061) [`8d2b4717`](https://github.com/lblod/ember-rdfa-editor/commit/8d2b471793a83e3a474afdcf03edbb399124539c) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4622: Pasting table now applies column widths proportionally
+
+  When pasting a table column widths of the source table are now proportionally applied to the resulting table in the editor.
+
+- [#1060](https://github.com/lblod/ember-rdfa-editor/pull/1060) [`c2fbc40a`](https://github.com/lblod/ember-rdfa-editor/commit/c2fbc40a424c9b46a5a429c6960d179f1a37dd63) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4622: Introduce column resizing for tables
+
+  If upgrading from previous version you have to either:
+
+  Import `tableColumnResizingPlugin` from `@lblod/ember-rdfa-editor/plugins/table` and add it to the list of plugins
+  before the `tablePlugin` (see example below)
+
+  ```ts
+  import { tableColumnResizingPlugin, tablePlugin } from "@lblod/ember-rdfa-editor/plugins/table";
+
+  get plugins() {
+    return [tableColumnResizingPlugin, tablePlugin, tableKeymap];
+  }
+  ```
+
+  **OR**
+
+  Import `tablePlugins` from `@lblod/ember-rdfa-editor/plugins/table` and spread it into plugins array instead of `tablePlugin`
+
+  ```ts
+  import { tablePlugins } from "@lblod/ember-rdfa-editor/plugins/table";
+
+  get plugins() {
+    return [...tablePlugins, tableKeymap];
+  }
+  ```
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`35c4ca44`](https://github.com/lblod/ember-rdfa-editor/commit/35c4ca44d0d71a98c31ecebd9019174457970e87) Thanks [@elpoelma](https://github.com/elpoelma)! - Add shortcuts for setting the alignment of paragraphs/headers:
+
+  - `Ctrl`+`Shift`+`L`: left align
+  - `Ctrl`+`Shift`+`E`: center align
+  - `Ctrl`+`Shift`+`R`: right align
+  - `Ctrl`+`Shift`+`J`: justify
+
+- [#1057](https://github.com/lblod/ember-rdfa-editor/pull/1057) [`ebd8b2eb`](https://github.com/lblod/ember-rdfa-editor/commit/ebd8b2eb6a70a010e8130a553e6bb09d55650d22) Thanks [@elpoelma](https://github.com/elpoelma)! - update formatting-toggle to use custom `au-native-toggle` component
+
+- [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`95ff9b67`](https://github.com/lblod/ember-rdfa-editor/commit/95ff9b673fa08e39b8f3cdd0090ac28a1045143d) Thanks [@elpoelma](https://github.com/elpoelma)! - Add toolbar dropdown which allows users to modify the `alignment` of their current selection
+
+### Patch Changes
+
+- [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Limit `mousedown` handling in gap-cursor plugin to main mouse-button
+
+- [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Focus editor-view explicitely in `mousedown` handler of gap-cursor plugin
 
 ## 7.0.2
 
