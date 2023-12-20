@@ -58,7 +58,6 @@
     "ember-cli-typescript": "^5.1.0",
     "ember-focus-trap": "~1.0.1",
     "ember-functions-as-helper-polyfill": "^2.1.2",
-    "ember-intl": "^5.7.2",
     "ember-truth-helpers": "^3.0.0",
     "ember-unique-id-helper-polyfill": "^1.2.2",
     "ember-velcro": "^2.1.0",
@@ -172,22 +171,24 @@
     "sass": "^1.49.9",
     "sinon": "^17.0.1",
     "typescript": "~5.2.2",
-    "webpack": "^5.78.0"
+    "webpack": "^5.78.0",
+    "ember-intl": "^6.4.0"
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^2.4.2",
     "@glint/template": "^1.1.0",
     "ember-cli-sass": "^11.0.1",
     "ember-modifier": "^3.2.7",
-    "ember-source": "^3.28.0 || ^4.0.0"
+    "ember-source": "^3.28.0 || ^4.0.0",
+    "ember-intl": "^5.7.2 || ^6.1.0"
   },
   "overrides": {
-    "ember-intl": {
-      "typescript": "^5.0.0"
+    "ember-intl@^5.7.2": {
+      "typescript": "$typescript"
     }
   },
   "engines": {
-    "node": "14.* || 16.* || >= 18"
+    "node": "16.* || >= 18"
   },
   "ember": {
     "edition": "octane"

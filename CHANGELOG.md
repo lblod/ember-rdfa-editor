@@ -29,27 +29,12 @@
 
 - [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
 
-## 8.0.0-next.0
 
-### Major Changes
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`70be7734`](https://github.com/lblod/ember-rdfa-editor/commit/70be77349c45e369a57de7ab1404f947057dd6f8) Thanks [@elpoelma](https://github.com/elpoelma)! - RDFa UI/logic improvements
+## 8.1.0
 
 ### Minor Changes
 
-- [#1022](https://github.com/lblod/ember-rdfa-editor/pull/1022) [`67d5edb4`](https://github.com/lblod/ember-rdfa-editor/commit/67d5edb49f940f205dbb23b2888c525d1a01c202) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4583: Allow to remove node via button with confirmation modal
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`9e6a5b9d`](https://github.com/lblod/ember-rdfa-editor/commit/9e6a5b9d7fb64eb6464368b8a83f6bcb8fe8c60c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add RDFa blackbox tests based on test cases from the [RDFa test suite](https://www.w3.org/2006/07/SWD/RDFa/testsuite/)
-
-### Patch Changes
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`ca418d90`](https://github.com/lblod/ember-rdfa-editor/commit/ca418d90e398411c106d5a985140583d262ac98d) Thanks [@elpoelma](https://github.com/elpoelma)! - make relationship selection list a bit nicer to use
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`2d9fa6cc`](https://github.com/lblod/ember-rdfa-editor/commit/2d9fa6cc5a304af2d7d64afe109275163419163a) Thanks [@elpoelma](https://github.com/elpoelma)! - allow creating rdfa nodes from scratch
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
-
-- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+- [`834216ab`](https://github.com/lblod/ember-rdfa-editor/commit/834216abf36046797dadee909de49d986c71a405) Thanks [@abeforgit](https://github.com/abeforgit)! - support ember-intl v6.1 and up
 
 ## 8.0.2
 
@@ -130,6 +115,27 @@
 
 - [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Focus editor-view explicitely in `mousedown` handler of gap-cursor plugin
 
+## 8.0.0-next.0
+
+### Major Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`70be7734`](https://github.com/lblod/ember-rdfa-editor/commit/70be77349c45e369a57de7ab1404f947057dd6f8) Thanks [@elpoelma](https://github.com/elpoelma)! - RDFa UI/logic improvements
+
+### Minor Changes
+
+- [#1022](https://github.com/lblod/ember-rdfa-editor/pull/1022) [`67d5edb4`](https://github.com/lblod/ember-rdfa-editor/commit/67d5edb49f940f205dbb23b2888c525d1a01c202) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4583: Allow to remove node via button with confirmation modal
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`9e6a5b9d`](https://github.com/lblod/ember-rdfa-editor/commit/9e6a5b9d7fb64eb6464368b8a83f6bcb8fe8c60c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add RDFa blackbox tests based on test cases from the [RDFa test suite](https://www.w3.org/2006/07/SWD/RDFa/testsuite/)
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`ca418d90`](https://github.com/lblod/ember-rdfa-editor/commit/ca418d90e398411c106d5a985140583d262ac98d) Thanks [@elpoelma](https://github.com/elpoelma)! - make relationship selection list a bit nicer to use
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`2d9fa6cc`](https://github.com/lblod/ember-rdfa-editor/commit/2d9fa6cc5a304af2d7d64afe109275163419163a) Thanks [@elpoelma](https://github.com/elpoelma)! - allow creating rdfa nodes from scratch
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
 ## 7.0.2
 
 ### Patch Changes
