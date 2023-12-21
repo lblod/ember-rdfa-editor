@@ -52,6 +52,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   get hasOutgoing() {
     return this.properties?.some((prop) => prop.type === 'external');
   }
+  get hasContentPredicate() {
+    return this.properties?.some((prop) => prop.type === 'content');
+  }
 
   get controller() {
     return this.args.controller;
