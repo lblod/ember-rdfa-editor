@@ -1,5 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs, renderRdfaAware } from '../core/schema';
+import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
 import {
   EmberNodeConfig,
   createEmberNodeSpec,
@@ -58,7 +58,7 @@ const emberNodeConfig: EmberNodeConfig = {
   toDOM,
   parseDOM,
   attrs: {
-    ...rdfaAttrs,
+    ...rdfaAttrSpec,
   },
 };
 export const inline_rdfa = createEmberNodeSpec(emberNodeConfig);
