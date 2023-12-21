@@ -101,7 +101,6 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   if (hasAnyRdfaAttributes) {
     if (!attrs['__rdfaId']) {
       attrs['__rdfaId'] = uuidv4();
-      logger('No rdfaId found, generating one', attrs['__rdfaId'], attrs);
     }
     return attrs;
   }
