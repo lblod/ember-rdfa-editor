@@ -13,6 +13,12 @@ function hasRdfaAttributes(element: Element) {
   return false;
 }
 function isEmpty(element: Element): boolean {
+  if (
+    element.hasAttribute('data-content-container') ||
+    element.hasAttribute('data-rdfa-container')
+  ) {
+    return false;
+  }
   if (ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName)) {
     return false;
   }
