@@ -1,5 +1,10 @@
 import { Node as PNode } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs, renderRdfaAware } from '../core/schema';
+import {
+  getRdfaAttrs,
+  getRdfaContentElement,
+  rdfaAttrSpec,
+  renderRdfaAware,
+} from '../core/schema';
 import {
   EmberNodeConfig,
   createEmberNodeSpec,
@@ -7,7 +12,6 @@ import {
 } from '../utils/ember-node';
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa';
 import { ComponentLike } from '@glint/template';
-import { isElement } from '../utils/_private/dom-helpers';
 
 const parseDOM = [
   {
@@ -21,18 +25,7 @@ const parseDOM = [
       }
       return false;
     },
-
-    contentElement(node: Node) {
-      if (!isElement(node)) {
-        throw new Error('node is not an element');
-      }
-      for (const child of node.children) {
-        if ((child as HTMLElement).dataset.contentContainer) {
-          return child as HTMLElement;
-        }
-      }
-      return node;
-    },
+    contentElement: getRdfaContentElement,
   },
 ];
 const toDOM = (node: PNode) => {
@@ -58,7 +51,7 @@ const emberNodeConfig: EmberNodeConfig = {
   toDOM,
   parseDOM,
   attrs: {
-    ...rdfaAttrs,
+    ...rdfaAttrSpec,
   },
 };
 export const inline_rdfa = createEmberNodeSpec(emberNodeConfig);

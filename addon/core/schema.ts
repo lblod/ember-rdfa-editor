@@ -4,6 +4,7 @@ import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import { Backlink, Property } from './rdfa-processor';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 const logger = createLogger('core/schema');
 
@@ -186,10 +187,15 @@ export function renderRdfaAware({
     ],
   ];
 }
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
+
+export const getRdfaContentElement = (node: Node) => {
+  if (!isElement(node)) {
+    throw new Error('node is not an element');
   }
-  return copy;
-}
+  for (const child of node.children) {
+    if ((child as HTMLElement).dataset.contentContainer) {
+      return child as HTMLElement;
+    }
+  }
+  return node;
+};
