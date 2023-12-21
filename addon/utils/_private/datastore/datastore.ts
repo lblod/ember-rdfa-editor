@@ -40,15 +40,19 @@ interface PredicateNodesResponse<N> extends TermNodesResponse<N> {
 interface ObjectNodesResponse<N> extends TermNodesResponse<N> {
   object: RDF.Quad_Object;
 }
+export interface SubAndContentPred {
+  subject: RDF.Quad_Subject;
+  contentPredicate?: RDF.Quad_Predicate;
+}
 
 export type WhichTerm = 'subject' | 'predicate' | 'object';
-export type RdfaResourceNodeMap<N> = TwoWayMap<N, RDF.Quad_Subject, N, string>;
+export type RdfaResourceNodeMap<N> = TwoWayMap<N, SubAndContentPred, N, string>;
 export type RdfaContentNodeMap<N> = TwoWayMap<N, SubAndPred, N, string>;
 export function rdfaResourceNodeMap<N>(
-  init?: Iterable<[N, RDF.Quad_Subject]>,
+  init?: Iterable<[N, SubAndContentPred]>,
 ): RdfaResourceNodeMap<N> {
-  return TwoWayMap.withValueStringHashing<N, RDF.Quad_Subject>({
-    valueHasher: (subj) => `${subj.termType}-${subj.value}`,
+  return TwoWayMap.withValueStringHashing<N, SubAndContentPred>({
+    valueHasher: (item) => `${item.subject.termType}-${item.subject.value}`,
     init,
   });
 }

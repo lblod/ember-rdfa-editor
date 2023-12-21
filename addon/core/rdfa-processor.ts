@@ -29,7 +29,11 @@ export type AttributeProperty = {
   predicate: string;
   object: string;
 };
-export type Property = AttributeProperty | ExternalProperty;
+export type ContentProperty = {
+  type: 'content';
+  predicate: string;
+};
+export type Property = AttributeProperty | ExternalProperty | ContentProperty;
 
 export type Backlink = {
   subject: string;
@@ -68,13 +72,13 @@ export function preprocessRDFa(dom: Node) {
   });
 
   // every resource node
-  for (const [node, subject] of datastore.getResourceNodeMap().entries()) {
+  for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
     const properties: Property[] = [];
     // get all quads that have our subject
-    const outgoingQuads = datastore.match(subject).asQuadResultSet();
+    const outgoingQuads = datastore.match(entry.subject).asQuadResultSet();
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
-      quadToProperties(datastore, quad).forEach((prop) => {
+      quadToProperties(datastore, quad, node).forEach((prop) => {
         if (prop.type === 'external' && prop.object.type === 'literal') {
           if (!seenLinks.has(prop.object.rdfaId)) {
             seenLinks.add(prop.object.rdfaId);
@@ -85,9 +89,16 @@ export function preprocessRDFa(dom: Node) {
         }
       });
     }
+    console.log('entry', entry)
+    if (entry.contentPredicate) {
+      properties.push({
+        type: 'content',
+        predicate: entry.contentPredicate.value,
+      });
+    }
 
     const incomingProps: Backlink[] = [];
-    const incomingQuads = datastore.match(null, null, subject);
+    const incomingQuads = datastore.match(null, null, entry.subject);
     for (const quad of incomingQuads.asQuadResultSet()) {
       incomingProps.push(quadToBacklink(quad));
     }
@@ -96,6 +107,7 @@ export function preprocessRDFa(dom: Node) {
     (node as HTMLElement).dataset.outgoingProps = JSON.stringify(properties);
     (node as HTMLElement).dataset.incomingProps = JSON.stringify(incomingProps);
     (node as HTMLElement).dataset.rdfaNodeType = 'resource';
+    (node as HTMLElement).dataset.subject = entry.subject.value;
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
@@ -112,8 +124,13 @@ export function preprocessRDFa(dom: Node) {
   }
 }
 
-function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
+function quadToProperties(
+  datastore: Datastore<Node>,
+  quad: Quad,
+  node: Node,
+): Property[] {
   const result: Property[] = [];
+  const element = node as HTMLElement;
   // check if quad refers to a contentNode
   const contentNodes = datastore
     .getContentNodeMap()
@@ -139,7 +156,7 @@ function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
     ) {
       const resourceNode = datastore
         .getResourceNodeMap()
-        .getFirstValue(quad.object);
+        .getFirstValue({ subject: quad.object });
       if (resourceNode) {
         return [
           {

@@ -986,11 +986,14 @@ export class RdfaParser<N> {
     node: N,
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
+    contentPredicate?: ModelNamedNode<N>,
   ) => {
-    this.resourceNodeMapping.set(
-      node,
-      this.util.getResourceOrBaseIri(resource, activeTag),
-    );
+    this.resourceNodeMapping.set(node, {
+      subject: this.util.getResourceOrBaseIri(resource, activeTag),
+      contentPredicate: contentPredicate
+        ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
+        : undefined,
+    });
   };
 
   public onText(data: string) {
