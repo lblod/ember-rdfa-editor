@@ -18,6 +18,7 @@ import {
   ExternalPropertyObject,
   Property,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import ContentPredicateListComponent from './content-predicate-list';
 
 type Args = {
   controller?: SayController;
@@ -37,6 +38,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
 
   Modal = RelationshipEditorModal;
+  ContentPredicateList = ContentPredicateListComponent;
   get node(): PNode {
     return this.args.node.value;
   }
@@ -65,7 +67,13 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return this.node.attrs.resource as string | undefined;
+    return this.node.attrs.subject as string | undefined;
+  }
+  get type(): 'resource' | 'literal' {
+    return this.node.attrs.rdfaNodeType;
+  }
+  get isResource() {
+    return this.type === 'resource';
   }
 
   get currentRdfaId() {
