@@ -28,6 +28,7 @@ export type AttributeProperty = {
   type: 'attribute';
   predicate: string;
   object: string;
+  datatype?: string;
 };
 export type Property = AttributeProperty | ExternalProperty;
 
@@ -159,6 +160,8 @@ function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
         type: 'attribute',
         predicate: quad.predicate.value,
         object: quad.object.value,
+        datatype:
+          'datatype' in quad.object ? quad.object.datatype.value : undefined,
       },
     ];
   }

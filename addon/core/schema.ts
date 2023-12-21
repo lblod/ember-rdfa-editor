@@ -117,9 +117,13 @@ export function renderInvisibleRdfa(
 ): DOMOutputSpec {
   const propElements = [];
   const properties = nodeOrMark.attrs.properties as Property[];
-  for (const { type, predicate, object } of properties) {
+  for (const { type, predicate, object, ...rest } of properties) {
     if (type === 'attribute') {
-      propElements.push(['span', { property: predicate, content: object }, '']);
+      propElements.push([
+        'span',
+        { property: predicate, content: object, ...rest },
+        '',
+      ]);
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
