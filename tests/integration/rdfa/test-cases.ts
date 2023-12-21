@@ -655,7 +655,10 @@ const TEST_CASES = {
   x0005: `
   <div lang="nl-BE" resource="http://test.com/1" typeof="ext:Type" ><span property="ext:foo">test</span></div>
 `,
-  x0006: oneLineTrim`
+  // this one seems correct according to rdfa.info/play, but our the parser lib we use
+  // might have a bug
+  // https://github.com/rubensworks/rdfa-streaming-parser.js/issues/58
+  x0006_parser_bug: oneLineTrim`
 <div lang="nl-BE"
      about="http://test.com/1"
      property="http://test.com/content">
