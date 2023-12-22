@@ -126,7 +126,7 @@ export function renderInvisibleRdfa(
   for (const prop of properties) {
     const { type, predicate } = prop;
     if (type === 'attribute') {
-      if (isFullUri(prop.object) || isPrefixedUri(prop.object)) {
+      if (prop.object && (isFullUri(prop.object) || isPrefixedUri(prop.object))) {
         propElements.push([
           'span',
           { property: predicate, resource: prop.object },

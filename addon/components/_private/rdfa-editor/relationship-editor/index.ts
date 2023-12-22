@@ -67,7 +67,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return this.node.attrs.subject as string | undefined;
+    return (
+      this.node.attrs.subject ||
+      this.node.attrs.about ||
+      (this.node.attrs.resource as string | undefined)
+    );
   }
   get type() {
     return this.node.attrs.rdfaNodeType as 'resource' | 'literal';
