@@ -16,6 +16,7 @@ export interface PostProcessArgs<N> {
     node: N,
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
+    contentPredicate?: ModelNamedNode<N>,
   ) => void;
 }
 
@@ -81,19 +82,24 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
   if (!activeTag.skipElement && node) {
     // no rel or rev
     if (!('rel' in attributes) && !('rev' in attributes)) {
-      /* asdf*/
-      /**/
-      /**/
       if (
         'property' in attributes &&
         !('content' in attributes) &&
         !('datatype' in attributes)
       ) {
-        if ('about' in attributes) {
+        if ('about' in attributes && !('data-literal-node' in attributes)) {
+          console.log('activetag 1', activeTag.predicates);
           // !! content node
           // this combo BOTH sets a new subject, AND sets the value of the triple to its textcontent.
           // we choose to interpret as a literal rather than a resource
-          markAsLiteralNode(node, activeTag, attributes);
+          markAsResourceNode(
+            node,
+            unwrap(activeTag.subject),
+            activeTag,
+            activeTag.predicates?.find(
+              (pred) => pred.value === attributes['property'],
+            ),
+          );
           return;
         } else if (isRootTag) {
           // root resource
@@ -106,15 +112,18 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           }
         }
       } else {
-        if ('about' in attributes) {
+        if ('about' in attributes && !('data-literal-node' in attributes)) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
-          if ('property' in attributes && !('content' in attributes)) {
-            markAsLiteralNode(node, activeTag, attributes);
-            return;
-          } else {
-            markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
-            return;
-          }
+          console.log('activetag 2', activeTag.predicates);
+          markAsResourceNode(
+            node,
+            unwrap(activeTag.subject),
+            activeTag,
+            activeTag.predicates?.find(
+              (pred) => pred.value === attributes['property'],
+            ),
+          );
+          return;
         } else if (
           'href' in attributes ||
           'src' in attributes ||
@@ -167,6 +176,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           'href' in attributes ||
           'src' in attributes)
       ) {
+        markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
         return;
       } else if ('typeof' in attributes && !('about' in attributes)) {
         return;

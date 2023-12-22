@@ -1,8 +1,4 @@
-import {
-  AllSelection,
-  EditorState,
-  Selection,
-} from 'prosemirror-state';
+import { AllSelection, EditorState, Selection } from 'prosemirror-state';
 import { DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc } from '../utils/_private/html-utils';

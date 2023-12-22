@@ -1,1 +1,1 @@
-export * from "../_private/editable-node";
+export * from '../_private/editable-node';

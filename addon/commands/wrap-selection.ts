@@ -2,7 +2,10 @@ import { NodeRange, NodeType } from 'prosemirror-model';
 import { Command, NodeSelection } from 'prosemirror-state';
 import { findWrapping } from 'prosemirror-transform';
 
-export function wrapSelection(nodeType: NodeType, attrs?: Record<string, unknown> | null): Command {
+export function wrapSelection(
+  nodeType: NodeType,
+  attrs?: Record<string, unknown> | null,
+): Command {
   return function (state, dispatch) {
     if (state.selection.empty) {
       if (dispatch) {

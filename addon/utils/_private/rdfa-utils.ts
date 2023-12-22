@@ -231,12 +231,14 @@ export function generateNewUri(uriBase: string) {
 
 export function deepEqualProperty(a: Property, b: Property) {
   if (a.type === b.type && a.predicate === b.predicate) {
-    if (a.type === 'attribute' || b.type === 'attribute') {
+    if (a.type === 'attribute' && b.type === 'attribute') {
       return a.object === b.object;
-    } else {
+    } else if (a.type === 'external' && b.type === 'external') {
       return Object.keys(a.object).every(
         (key: keyof ExternalPropertyObject) => a.object[key] === b.object[key],
       );
+    } else {
+      return a.predicate === b.predicate;
     }
   }
   return false;

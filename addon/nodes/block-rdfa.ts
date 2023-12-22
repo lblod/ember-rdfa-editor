@@ -2,6 +2,7 @@ import { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
+  rdfaAttrSpec,
   renderRdfaAware,
   sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
@@ -12,11 +13,7 @@ export const block_rdfa: SayNodeSpec = {
   editable: true,
   group: 'block',
   attrs: {
-    properties: { default: [] },
-    backlinks: { default: [] },
-    resource: { default: null },
-    rdfaNodeType: { default: null },
-    __rdfaId: { default: null },
+    ...rdfaAttrSpec,
   },
   defining: true,
   ...sharedRdfaNodeSpec,
