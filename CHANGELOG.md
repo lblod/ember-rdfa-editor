@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 8.1.0
+
+### Minor Changes
+
+- [`834216ab`](https://github.com/lblod/ember-rdfa-editor/commit/834216abf36046797dadee909de49d986c71a405) Thanks [@abeforgit](https://github.com/abeforgit)! - support ember-intl v6.1 and up
+
 ## 8.0.2
 
 ### Patch Changes
