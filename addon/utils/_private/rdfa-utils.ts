@@ -145,7 +145,11 @@ export function getRdfaId(node: PNode): string | undefined {
 }
 
 export function getResource(node: PNode): string | undefined {
-  return node.attrs.resource as string | undefined;
+  return (
+    node.attrs.subject ??
+    node.attrs.about ??
+    (node.attrs.resource as string | undefined)
+  );
 }
 
 export function getProperties(node: PNode): Property[] | undefined {

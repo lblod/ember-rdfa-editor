@@ -17,6 +17,7 @@ class RdfaInfo {
   }
 
   private computeMappings() {
+    console.log("computing")
     const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
     const resourceMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
