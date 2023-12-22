@@ -1,4 +1,4 @@
-import { oneLineTrim } from "common-tags";
+import { oneLineTrim } from 'common-tags';
 
 /**
  * test cases imported from https://www.w3.org/2006/07/SWD/RDFa/testsuite/

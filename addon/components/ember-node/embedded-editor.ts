@@ -31,7 +31,6 @@ import {
   EditorState,
   keymap,
   NodeSelection,
-  NodeViewConstructor,
   SayView,
   Selection,
   Step,

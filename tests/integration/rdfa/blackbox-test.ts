@@ -83,7 +83,7 @@ module('Integration | RDFa blackbox test ', function () {
       controller.initialize(outputHTML);
 
       const finalHTML = controller.htmlContent;
-      assert.equal(outputHTML, finalHTML);
+      assert.strictEqual(outputHTML, finalHTML);
       const resultingDataset = calculateDataset(finalHTML);
       const isEqual = initialDataset.equals(resultingDataset);
       const initialTurtle = (await toTurtle(initialDataset)).trim();

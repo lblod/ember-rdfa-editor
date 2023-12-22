@@ -7,10 +7,10 @@ import { EditorView } from 'prosemirror-view';
 
 export function htmlToDoc(
   html: string,
-  options: { schema: Schema; parser: ProseParser, editorView: EditorView },
+  options: { schema: Schema; parser: ProseParser; editorView: EditorView },
 ) {
   const { parser } = options;
-const htmlCleaner = new HTMLInputParser({editorView: options.editorView});
+  const htmlCleaner = new HTMLInputParser({ editorView: options.editorView });
   const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;

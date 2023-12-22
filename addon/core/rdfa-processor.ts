@@ -89,7 +89,7 @@ export function preprocessRDFa(dom: Node) {
         }
       });
     }
-    console.log('entry', entry)
+
     if (entry.contentPredicate) {
       properties.push({
         type: 'content',
@@ -124,13 +124,8 @@ export function preprocessRDFa(dom: Node) {
   }
 }
 
-function quadToProperties(
-  datastore: Datastore<Node>,
-  quad: Quad,
-  node: Node,
-): Property[] {
+function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
   const result: Property[] = [];
-  const element = node as HTMLElement;
   // check if quad refers to a contentNode
   const contentNodes = datastore
     .getContentNodeMap()

@@ -156,25 +156,23 @@ export function renderInvisibleRdfa(
 
 export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
-): Record<string, string> {
+): Record<string, string | null> {
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
     const contentPred = (nodeOrMark.attrs.properties as Property[]).find(
       (prop) => prop.type === 'content',
     );
     return contentPred
       ? {
-          about:
-            nodeOrMark.attrs.subject ||
+          about: (nodeOrMark.attrs.subject ||
             nodeOrMark.attrs.about ||
-            nodeOrMark.attrs.resource,
+            nodeOrMark.attrs.resource) as string,
           property: contentPred.predicate,
           resource: null,
         }
       : {
-          about:
-            nodeOrMark.attrs.subject ||
+          about: (nodeOrMark.attrs.subject ||
             nodeOrMark.attrs.about ||
-            nodeOrMark.attrs.resource,
+            nodeOrMark.attrs.resource) as string,
           resource: null,
         };
   } else {
@@ -232,11 +230,4 @@ export function renderRdfaAware({
       ...('contentArray' in rest ? rest.contentArray : [rest.content]),
     ],
   ];
-}
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
-  }
-  return copy;
 }

@@ -10,7 +10,7 @@ interface Args {
 }
 export default class ContentPredicateListComponent extends Component<Args> {
   @tracked
-  newPredicate: string = '';
+  newPredicate = '';
   get contentPredicates() {
     return this.args.properties
       .map((prop, index) => ({ prop, index }))

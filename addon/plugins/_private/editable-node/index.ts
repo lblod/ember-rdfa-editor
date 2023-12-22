@@ -90,9 +90,14 @@ export const editableNodePlugin = (getPos?: () => number | undefined) =>
       },
     },
 
-    view(view): PluginView {
+    // TODO Maybe delete this method? I didn't as perhaps overriding it enables something, in which
+    // case there should be a comment explaining. I left it as I was just fixing linting errors.
+    // - Rich
+    view(): PluginView {
       return {
-        update(view, prevState) {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        update() {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         destroy() {},
       };
     },
