@@ -16,6 +16,7 @@ export const rdfaAttrSpec = {
   rdfaNodeType: { default: undefined },
   resource: { default: null },
   subject: { default: null },
+  datatype: { default: null },
 };
 /** @deprecated Renamed to rdfaAttrSpec */
 export const rdfaAttrs = rdfaAttrSpec;
@@ -27,6 +28,7 @@ export const rdfaDomAttrs = {
   about: { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
+  datatype: { default: null },
 };
 
 export const rdfaNodeTypes = ['resource', 'literal'] as const;
@@ -126,7 +128,10 @@ export function renderInvisibleRdfa(
   for (const prop of properties) {
     const { type, predicate } = prop;
     if (type === 'attribute') {
-      if (prop.object && (isFullUri(prop.object) || isPrefixedUri(prop.object))) {
+      if (
+        prop.object &&
+        (isFullUri(prop.object) || isPrefixedUri(prop.object))
+      ) {
         propElements.push([
           'span',
           { property: predicate, resource: prop.object },
@@ -172,6 +177,7 @@ export function renderRdfaAttrs(
             nodeOrMark.attrs.resource) as string,
           property: contentPred.predicate,
           resource: null,
+          datatype: (nodeOrMark.attrs.datatype as string) ?? null,
         }
       : {
           about: (nodeOrMark.attrs.subject ||
@@ -189,6 +195,7 @@ export function renderRdfaAttrs(
       about: backlinks[0].subject,
       property: backlinks[0].predicate,
       'data-literal-node': 'true',
+      datatype: (nodeOrMark.attrs.datatype as string) ?? null,
     };
   }
 }
