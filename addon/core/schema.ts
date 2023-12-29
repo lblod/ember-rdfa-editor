@@ -231,9 +231,19 @@ export function renderRdfaAware({
   delete clone.resource;
   delete clone.__rdfaId;
   delete clone.rdfaNodeType;
+  const renderAttrs = renderRdfaAttrs(renderable);
+  let { property } = renderAttrs;
+  if (renderable.attrs.datatype === 'rdf:XMLLiteral') {
+    contentContainerAttrs = {
+      ...contentContainerAttrs,
+      datatype: renderable.attrs.datatype,
+      property,
+    };
+    property = null;
+  }
   return [
     tag,
-    { ...clone, ...renderRdfaAttrs(renderable) },
+    { ...clone, ...renderAttrs, property },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,
