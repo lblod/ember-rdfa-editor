@@ -83,12 +83,16 @@ module('Integration | RDFa blackbox test ', function () {
       controller.initialize(outputHTML);
 
       const finalHTML = controller.htmlContent;
-      assert.strictEqual(outputHTML, finalHTML);
+      assert.strictEqual(finalHTML, outputHTML);
       const resultingDataset = calculateDataset(finalHTML);
       const isEqual = initialDataset.equals(resultingDataset);
       const initialTurtle = (await toTurtle(initialDataset)).trim();
       const resultingTurtle = (await toTurtle(resultingDataset)).trim();
       const message = `
+        In initial dataset but not in result:
+        ${(await toTurtle(initialDataset.minus(resultingDataset))) || '<empty>'}
+        In resulting dataset but not in initial data:
+        ${(await toTurtle(resultingDataset.minus(initialDataset))) || '<empty>'}
         Before:
         ${initialTurtle || '<empty>'}
         After:
