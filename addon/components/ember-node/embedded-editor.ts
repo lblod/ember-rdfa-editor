@@ -58,8 +58,6 @@ type Args = EmberNodeArgs & {
   nodeViews?: {
     [node: string]: NodeViewConstructor;
   };
-  /** Should we call the internal onSelected callback when there is no lastKeyPressed? */
-  selectInnerOnCreation?: boolean;
 };
 
 /**
@@ -196,14 +194,10 @@ export default class EmbeddedEditor extends Component<Args> {
       );
 
       const lastKeyPressed = lastKeyPressedPluginState?.lastKeyPressed;
-      if (
-        lastKeyPressed === 'ArrowLeft' ||
-        lastKeyPressed === 'ArrowRight' ||
-        (!lastKeyPressed && this.args.selectInnerOnCreation)
-      ) {
+      if (!this.innerView.hasFocus()) {
         this.innerView.dispatch(
           this.innerView.state.tr.setSelection(
-            Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
+            Selection[lastKeyPressed === 'ArrowLeft' ? 'atEnd' : 'atStart'](
               this.innerView.state.doc,
             ),
           ),
