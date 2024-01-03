@@ -1,11 +1,13 @@
-import { INVISIBLE_SPACE } from './constants';
+import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
 
-export default class StringUtils {
-  static isAllWhiteSpace(text: string): boolean {
-    return !/[^\t\n\r \u00A0]/.test(text);
+/**
+ * If passed a link *and just a link* (ignoring leading and trailing whitespace), return the href
+ * for that link, including mailto: for email addresses (using linkify.js).
+ */
+export function linkToHref(text: string) {
+  if (!linkifyTest(text.trim())) {
+    // Either isn't a link or contains additional text
+    return '';
   }
-
-  static getInvisibleSpaceCount(text: string): number {
-    return text.split('').filter((c) => c === INVISIBLE_SPACE).length;
-  }
+  return linkifyFind(text)?.[0]?.href;
 }

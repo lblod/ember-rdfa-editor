@@ -2,6 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import { SayController } from '@lblod/ember-rdfa-editor';
+import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 
 type Args = {
   controller?: SayController;
@@ -18,10 +19,19 @@ export default class LinkEditor extends Component<Args> {
   set href(value: string | undefined) {
     if (this.link && this.controller) {
       const { pos } = this.link;
-      this.controller.withTransaction((tr) => {
-        return tr.setNodeAttribute(pos, 'href', value);
-      });
+      this.controller.withTransaction(
+        (tr) => tr.setNodeAttribute(pos, 'href', value),
+        // After reload the default (activeEditorView) is just the link text, so use the main view
+        { view: this.controller.mainEditorView },
+      );
     }
+  }
+
+  @action
+  setHref(event: InputEvent) {
+    const text = (event.target as HTMLInputElement).value;
+    const href = linkToHref(text);
+    this.href = href || text;
   }
 
   @action
