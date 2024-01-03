@@ -168,15 +168,19 @@ module('Utils | CS | HTMLInputParser', function () {
        <ol>
          <li>
            <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test1</span>
+           <span style=\"font-size:18.0pt\"></span>
            <ol>
              <li>
                <span style=\"font-size:18.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Subtest1</span>
+               <span style=\"font-size:18.0pt\"></span>
                <ol>
                  <li>
                    <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Subsubset1.1</span>
+                   <span style=\"font-size:18.0pt\"></span>
                    <ol>
                      <li>
                        <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Sub-sub-subet1.1</span>
+                       <span style=\"font-size:18.0pt\"></span>
                      </li>
                    </ol>
                  </li>
@@ -186,6 +190,7 @@ module('Utils | CS | HTMLInputParser', function () {
          </li>
          <li>
            <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test 2</span>
+           <span style=\"font-size:18.0pt\"></span>
          </li>
        </ol>`;
     const htmlContent = oneLineTrim`
@@ -680,23 +685,44 @@ module('Utils | CS | HTMLInputParser', function () {
   test('It should display a complex nested list correctly as HTML', function (assert) {
     const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`<ol>
-    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
+    <li>
+        <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
+        <span style=\"font-size:18.0pt\"></span>
         <ol>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.1</span></li>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.2</span>
-                <ol>
-                    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1</span>
-                        <ol>
-                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.1</span></li>
-                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.2</span></li>
-                        </ol>
-                    </li>
-                </ol>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.1</span>
+              <span style=\"font-size:18.0pt\"></span>
             </li>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.3</span></li>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.2</span>
+              <span style=\"font-size:18.0pt\"></span>
+              <ol>
+                <li>
+                  <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1</span>
+                  <span style=\"font-size:18.0pt\"></span>
+                  <ol>
+                    <li>
+                      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.1</span>
+                      <span style=\"font-size:18.0pt\"></span>
+                    </li>
+                    <li>
+                      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.2</span>
+                      <span style=\"font-size:18.0pt\"></span>
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.3</span>
+              <span style=\"font-size:18.0pt\"></span>
+            </li>
         </ol>
     </li>
-    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">2</span></li>
+    <li>
+      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">2</span>
+      <span style=\"font-size:18.0pt\"></span>
+    </li>
 </ol>
     `;
     const htmlContent = oneLineTrim`
