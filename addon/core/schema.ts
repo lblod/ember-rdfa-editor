@@ -177,7 +177,7 @@ export function renderRdfaAttrs(
             nodeOrMark.attrs.resource) as string,
           property: contentPred.predicate,
           resource: null,
-          datatype: (nodeOrMark.attrs.datatype as string) ?? null,
+          datatype: nodeOrMark.attrs.datatype as string,
         }
       : {
           about: (nodeOrMark.attrs.subject ||
@@ -195,7 +195,7 @@ export function renderRdfaAttrs(
       about: backlinks[0].subject,
       property: backlinks[0].predicate,
       'data-literal-node': 'true',
-      datatype: (nodeOrMark.attrs.datatype as string) ?? null,
+      datatype: nodeOrMark.attrs.datatype as string,
     };
   }
 }
@@ -231,19 +231,21 @@ export function renderRdfaAware({
   delete clone.resource;
   delete clone.__rdfaId;
   delete clone.rdfaNodeType;
-  const renderAttrs = renderRdfaAttrs(renderable);
+  const renderAttrs = { ...clone, ...renderRdfaAttrs(renderable) };
   let { property } = renderAttrs;
-  if (renderable.attrs.datatype === 'rdf:XMLLiteral') {
+  let datatype = renderAttrs.datatype || clone.datatype;
+  if (datatype === 'rdf:XMLLiteral') {
     contentContainerAttrs = {
       ...contentContainerAttrs,
-      datatype: renderable.attrs.datatype,
+      datatype,
       property,
     };
     property = null;
+    datatype = null;
   }
   return [
     tag,
-    { ...clone, ...renderAttrs, property },
+    { ...renderAttrs, property, datatype },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,
