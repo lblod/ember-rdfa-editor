@@ -22,7 +22,7 @@ export function rangeHasMarkEverywhere(
       if (node.isText && keepSearching) {
         const mark = markType.isInSet(node.marks);
         const hasMark =
-          !markAttrs || !mark ? !!mark : shallowEqual(mark.attrs, markAttrs);
+          !!mark && (!markAttrs || shallowEqual(markAttrs, mark.attrs));
         found = hasMark;
         if (!hasMark) {
           keepSearching = false;
