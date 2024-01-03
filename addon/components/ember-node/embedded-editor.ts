@@ -194,10 +194,10 @@ export default class EmbeddedEditor extends Component<Args> {
       );
 
       const lastKeyPressed = lastKeyPressedPluginState?.lastKeyPressed;
-      if (lastKeyPressed === 'ArrowLeft' || lastKeyPressed === 'ArrowRight') {
+      if (!this.innerView.hasFocus()) {
         this.innerView.dispatch(
           this.innerView.state.tr.setSelection(
-            Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
+            Selection[lastKeyPressed === 'ArrowLeft' ? 'atEnd' : 'atStart'](
               this.innerView.state.doc,
             ),
           ),
