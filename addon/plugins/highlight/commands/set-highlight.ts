@@ -1,16 +1,19 @@
-import { Command, Selection } from 'prosemirror-state';
+import { Command } from 'prosemirror-state';
+import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 
 export function setHighlight(color: string): Command {
   return function (state, dispatch) {
     if (dispatch) {
       const { schema, selection } = state;
-      const mark = schema.marks.highlight.create({ value: color });
+      const markAttrs = { value: color };
       const tr = state.tr;
       if (selection.empty) {
+        const mark = schema.marks.highlight.create(markAttrs);
         tr.addStoredMark(mark);
       } else {
-        tr.addMark(tr.selection.from, tr.selection.to, mark).setSelection(
-          Selection.near(tr.selection.$to),
+        return toggleMarkAddFirst(schema.marks.highlight, markAttrs)(
+          state,
+          dispatch,
         );
       }
       dispatch(tr);
