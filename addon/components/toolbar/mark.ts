@@ -7,7 +7,7 @@ type Args = {
   controller: SayController;
   mark: string;
 };
-export default class BoldComponent extends Component<Args> {
+export default class MarkComponent extends Component<Args> {
   get controller() {
     return this.args.controller;
   }

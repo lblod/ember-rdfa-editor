@@ -2,19 +2,27 @@ import { PNode } from '@lblod/ember-rdfa-editor';
 import { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
 import { Command, SelectionRange, TextSelection } from 'prosemirror-state';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 
+/**
+ * Check that between 2 positions in a Node the same mark is set. Optionally only consider marks
+ * equal if they have the same attributes.
+ **/
 export function rangeHasMarkEverywhere(
   root: PNode,
   from: number,
   to: number,
   markType: MarkType,
+  markAttrs?: Attrs | null,
 ) {
   let found = false;
   let keepSearching = true;
   if (to > from) {
     root.nodesBetween(from, to, (node) => {
       if (node.isText && keepSearching) {
-        const hasMark = !!markType.isInSet(node.marks);
+        const mark = markType.isInSet(node.marks);
+        const hasMark =
+          !!mark && (!markAttrs || shallowEqual(markAttrs, mark.attrs));
         found = hasMark;
         if (!hasMark) {
           keepSearching = false;
@@ -51,8 +59,10 @@ function markApplies(
   return false;
 }
 
-/* return { from, to } with the positions adjusted so any starting or ending spaces
- are not part of the range anymore. */
+/**
+ * return { from, to } with the positions adjusted so any starting or ending spaces
+ * are not part of the range anymore.
+ **/
 function fromToWithoutEdgeSpaces(
   $from: ResolvedPos,
   $to: ResolvedPos,
@@ -98,20 +108,22 @@ export function toggleMarkAddFirst(
     }
     if (dispatch) {
       if ($cursor) {
-        if (markType.isInSet(state.storedMarks || $cursor.marks())) {
+        const mark = markType.isInSet(state.storedMarks || $cursor.marks());
+        if (mark && (!attrs || shallowEqual(attrs, mark.attrs))) {
           dispatch(state.tr.removeStoredMark(markType));
         } else {
           dispatch(state.tr.addStoredMark(markType.create(attrs)));
         }
       } else {
-        let has = false;
+        // 'has' will remain true only if all of the ranges have the mark everywhere
+        let has = true;
         const tr = state.tr;
-        for (let i = 0; !has && i < ranges.length; i++) {
+        for (let i = 0; has && i < ranges.length; i++) {
           const { $from, $to } = ranges[i];
           // don't check the spaces before and after, as these might not contain the mark
           // as expected because of the special `space logic` below.
           const { from, to } = fromToWithoutEdgeSpaces($from, $to);
-          has = rangeHasMarkEverywhere(state.doc, from, to, markType);
+          has = rangeHasMarkEverywhere(state.doc, from, to, markType, attrs);
         }
         for (let i = 0; i < ranges.length; i++) {
           const { $from, $to } = ranges[i];
