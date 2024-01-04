@@ -3,7 +3,7 @@ import Owner from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
@@ -99,12 +99,17 @@ export default class SayController {
 
   isMarkActive(markType: MarkType, attrs?: Attrs) {
     const state = this.activeEditorState;
-    const { from, $from, to, empty } = state.selection;
+    const { $from, empty } = state.selection;
     if (empty) {
       const mark = markType.isInSet(state.storedMarks || $from.marks());
       return !!mark && (!attrs || shallowEqual(attrs, mark.attrs));
     } else {
-      return rangeHasMarkEverywhere(state.doc, from, to, markType, attrs);
+      return selectionHasMarkEverywhere(
+        state.doc,
+        state.selection,
+        markType,
+        attrs,
+      );
     }
   }
 
