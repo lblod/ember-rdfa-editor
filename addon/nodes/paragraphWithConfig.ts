@@ -69,6 +69,10 @@ export const paragraphWithConfig: (
         // If this rule matches (a paragraph with block node content),
         // the paragraph itself is skipped (but it's content is still parsed).
         // Paragraphs with block content are not allowed in the HTML spec.
+        //
+        // This rule is mainly added in order to support older document which might contain
+        // important block-node information inside `p` tags.
+        // If this rule is not present, the block content of these paragraphs may not be parsed correctly (it would just be parsed as flat text).
         skip: true,
       },
       {
