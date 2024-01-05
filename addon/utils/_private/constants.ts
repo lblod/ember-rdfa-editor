@@ -1,6 +1,8 @@
-// based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
-// we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
-// we've removed br from the list to be inline with editor behaviour, which treats it as a block
+/**
+ * based on https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#phrasing_content
+ * we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
+ * we've removed br from the list to be inline with editor behaviour, which treats it as a block
+ **/
 export const PHRASING_CONTENT = [
   'a',
   'abbr',
@@ -52,7 +54,13 @@ export const PHRASING_CONTENT = [
   'video',
   'wbr',
 ];
-export const NON_BLOCK_NODES = new Set(PHRASING_CONTENT);
+/**
+ * List of element types which can be used in non-block (phrasing) context.
+ * Unlike PHRASING_CONTENT also includes br tag as while it's normally handled as a block by the
+ * editor, it's also used for 'soft breaks' (when adding a newline with shift-enter), so we include
+ * it here.
+ **/
+export const NON_BLOCK_NODES = [...PHRASING_CONTENT, 'br'];
 export const LIST_TYPES = new Set(['li', 'ul', 'ol']);
 export const LIST_CONTAINERS = new Set(['ul', 'ol']);
 export const TABLE_TYPES = new Set([
