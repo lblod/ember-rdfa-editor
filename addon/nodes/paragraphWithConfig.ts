@@ -11,14 +11,7 @@ export type ParagraphDataAttributes = {
 
 export type ParagraphNodeSpec = NodeSpec & { subType: string };
 
-let BLOCK_SELECTOR = '';
-NON_BLOCK_NODES.forEach(
-  (tag) => (BLOCK_SELECTOR = `${BLOCK_SELECTOR}${tag}, `),
-);
-// Also include br tag as while it's normally handled as a block by the editor, it's also used for
-// 'soft breaks' (when adding a newline with shift-enter), so we need to include it here.
-BLOCK_SELECTOR = `:not(${BLOCK_SELECTOR} br)`;
-
+const BLOCK_SELECTOR = `:not(${NON_BLOCK_NODES.join(', ')})`;
 const BASE_PARAGRAPH_TYPE = 'paragraph';
 const matchingSubType = (node: HTMLElement, subType: string) => {
   // basic paragraph has no subtype in its dataset and an empty subType
@@ -56,23 +49,23 @@ export const paragraphWithConfig: (
       {
         tag: 'p',
         getAttrs(node: HTMLElement) {
-          const nonBlockNode = node.querySelector(BLOCK_SELECTOR);
-          if (nonBlockNode && matchingSubType(node, config.subType)) {
+          const blockNode = node.querySelector(BLOCK_SELECTOR);
+          if (blockNode && matchingSubType(node, config.subType)) {
             // NOTE This parse rule is used to avoid parsing `<p>` tags which contain block tags,
             // hence the `skip: true` option. It's therefore not necessary to actually return
             // anything but an empty object.
-            // It's unclear whether skipping these is still relevant - Rich
             return {};
           }
           return false;
         },
         // If this rule matches (a paragraph with block node content),
-        // the paragraph itself is skipped (but it's content is still parsed).
+        // the paragraph element itself is skipped (but it's content is still parsed).
         // Paragraphs with block content are not allowed in the HTML spec.
         //
         // This rule is mainly added in order to support older document which might contain
         // important block-node information inside `p` tags.
-        // If this rule is not present, the block content of these paragraphs may not be parsed correctly (it would just be parsed as flat text).
+        // If this rule is not present, the block content of these paragraphs may not be parsed
+        // correctly (it would just be parsed as flat text).
         skip: true,
       },
       {
