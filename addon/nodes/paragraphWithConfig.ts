@@ -12,6 +12,7 @@ export type ParagraphDataAttributes = {
 
 export type ParagraphNodeSpec = NodeSpec & { subType: string };
 
+const DEFAULT_INDENTATION = 0;
 const BLOCK_SELECTOR = `:not(${NON_BLOCK_NODES.join(', ')})`;
 const BASE_PARAGRAPH_TYPE = 'paragraph';
 const matchingSubType = (node: HTMLElement, subType: string) => {
@@ -43,7 +44,7 @@ export const paragraphWithConfig: (
         default: DEFAULT_ALIGNMENT,
       },
       indentationLevel: {
-        default: null,
+        default: DEFAULT_INDENTATION,
       },
     },
     parseDOM: [
@@ -81,7 +82,7 @@ export const paragraphWithConfig: (
 
           return {
             indentationLevel: optionMapOr(
-              null,
+              DEFAULT_INDENTATION,
               parseInt,
               node.dataset.indentationLevel,
             ),
@@ -97,7 +98,10 @@ export const paragraphWithConfig: (
       if (alignment && alignment !== DEFAULT_ALIGNMENT) {
         attrs.style = `text-align: ${alignment}`;
       }
-      if (Number.isInteger(indentationLevel)) {
+      if (
+        Number.isInteger(indentationLevel) &&
+        indentationLevel !== DEFAULT_INDENTATION
+      ) {
         attrs['data-indentation-level'] = indentationLevel as number;
       }
       const subType = (node.type.spec as ParagraphNodeSpec).subType;
