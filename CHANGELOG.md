@@ -1,5 +1,33 @@
 # @lblod/ember-rdfa-editor
 
+## 8.2.0
+
+### Minor Changes
+
+- [#1086](https://github.com/lblod/ember-rdfa-editor/pull/1086) [`f1272d18`](https://github.com/lblod/ember-rdfa-editor/commit/f1272d18be1579726c90ef723fde36c1586dd641) Thanks [@piemonkey](https://github.com/piemonkey)! - When creating paragraph elements, do not set a style attribute if there is no style, instead of setting an empty attribute.
+
+- [#1086](https://github.com/lblod/ember-rdfa-editor/pull/1086) [`f1272d18`](https://github.com/lblod/ember-rdfa-editor/commit/f1272d18be1579726c90ef723fde36c1586dd641) Thanks [@piemonkey](https://github.com/piemonkey)! - When creating paragraph elements, only set an indentation level data attribute if the indentation level is non-zero.
+
+- [#1074](https://github.com/lblod/ember-rdfa-editor/pull/1074) [`994dd5df`](https://github.com/lblod/ember-rdfa-editor/commit/994dd5dff0f9d129aa8184c84b14643c77322f31) Thanks [@piemonkey](https://github.com/piemonkey)! - When adding the href for a link, automatically add `http://` or `mailto:` to the href attribute to generate a valid `<a>` tag.
+
+- [#1075](https://github.com/lblod/ember-rdfa-editor/pull/1075) [`cfaeba10`](https://github.com/lblod/ember-rdfa-editor/commit/cfaeba106fa82e903272bf7519e572b22f41d409) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4612: Paste highlight color correctly
+
+- [#1085](https://github.com/lblod/ember-rdfa-editor/pull/1085) [`b40e4651`](https://github.com/lblod/ember-rdfa-editor/commit/b40e46514c68cca0dc21d94a6e8ebdcf2484ddf8) Thanks [@elpoelma](https://github.com/elpoelma)! - Apply formatting to html/xml shown in codemirror debug editor
+
+### Patch Changes
+
+- [#1087](https://github.com/lblod/ember-rdfa-editor/pull/1087) [`ec853241`](https://github.com/lblod/ember-rdfa-editor/commit/ec853241567c7a0310d1eaaee88b877501c4c84c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix behaviour of formatting marks for some selections, such as selecting multiple table cells. Now all cells are considered rather than just the last one to be selected.
+
+- [#1083](https://github.com/lblod/ember-rdfa-editor/pull/1083) [`051a032b`](https://github.com/lblod/ember-rdfa-editor/commit/051a032b0c5e63b97872984448f5b296a16404f2) Thanks [@elpoelma](https://github.com/elpoelma)! - Do not clean up empty elements when they have attributes
+
+- [#1089](https://github.com/lblod/ember-rdfa-editor/pull/1089) [`0d22ff9c`](https://github.com/lblod/ember-rdfa-editor/commit/0d22ff9cfea31f8065e71bda0d179b1c1662386e) Thanks [@piemonkey](https://github.com/piemonkey)! - Maintain formatting (such as indentation) of paragraphs which include 'soft breaks' (new lines created with shift-enter) on reloading the editor
+
+- [#1084](https://github.com/lblod/ember-rdfa-editor/pull/1084) [`0c829fe2`](https://github.com/lblod/ember-rdfa-editor/commit/0c829fe2bc438f21d48344924b11e30760babf27) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix highlight and text color behaviour when multiple table cells are selected
+
+- [#1082](https://github.com/lblod/ember-rdfa-editor/pull/1082) [`8d5759fb`](https://github.com/lblod/ember-rdfa-editor/commit/8d5759fbbc3945bdf14785db6f093cb6194f7f3f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4568: Fallback to "align" attribute when parsing DOM.
+
+  Editor will attempt to use the `align` attribute if the `text-align` property of `style` attribute is not present to determine the alignment when parsing DOM.
+
 ## 8.1.0
 
 ### Minor Changes
