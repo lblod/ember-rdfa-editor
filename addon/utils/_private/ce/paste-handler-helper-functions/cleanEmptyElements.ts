@@ -1,10 +1,13 @@
 import { traverseElements } from './traverseElements';
 
-const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG'];
+const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG', 'TR', 'TD'];
 const NOTRIM_ELEMENTS = ['SPAN'];
 
 function isEmpty(element: Element): boolean {
   if (ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName)) {
+    return false;
+  }
+  if (element.hasAttributes()) {
     return false;
   }
   let content;

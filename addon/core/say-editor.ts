@@ -8,7 +8,6 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 import { v4 as uuidv4 } from 'uuid';
-import { gapCursor } from 'prosemirror-gapcursor';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import {
@@ -23,7 +22,6 @@ import {
   isElementPNode,
   ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import { pasteHandler } from './paste-handler';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
 import Owner from '@ember/owner';
@@ -34,6 +32,9 @@ import {
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+import { gapCursor } from '../plugins/gap-cursor';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
   owner: Owner;
@@ -88,7 +89,6 @@ export default class SayEditor {
       pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
         ...pluginArr,
-        pasteHandler(),
         dropCursor(),
         gapCursor(),
         keymap(baseKeymap(schema, keyMapOptions)),
@@ -96,7 +96,7 @@ export default class SayEditor {
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
           {
-            attribute: '__rdfaId',
+            attribute: '_guid',
             generator() {
               return uuidv4();
             },
@@ -123,6 +123,11 @@ export default class SayEditor {
         focus: () => {
           this.setActiveView(this.mainView);
         },
+      },
+      transformPastedHTML: (html, editorView) => {
+        const htmlCleaner = new HTMLInputParser({ editorView });
+
+        return htmlCleaner.prepareHTML(html);
       },
       clipboardSerializer: this.serializer,
     });

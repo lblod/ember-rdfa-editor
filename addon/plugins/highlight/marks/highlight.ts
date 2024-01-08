@@ -1,5 +1,8 @@
 import { MarkSpec } from 'prosemirror-model';
 
+const isValidCssColor = (colorString: string) =>
+  CSS.supports('color', colorString);
+
 export const highlight: MarkSpec = {
   attrs: {
     value: {},
@@ -8,6 +11,18 @@ export const highlight: MarkSpec = {
     {
       style: 'background-color',
       getAttrs(value) {
+        return {
+          value,
+        };
+      },
+    },
+    {
+      style: 'background',
+      getAttrs(value) {
+        if (typeof value !== 'string') return false;
+
+        if (!isValidCssColor(value.trim())) return false;
+
         return {
           value,
         };

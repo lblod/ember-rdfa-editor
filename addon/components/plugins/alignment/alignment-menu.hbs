@@ -1,0 +1,18 @@
+<Toolbar::Dropdown
+  @label={{this.labelFor this.currentAlignment}}
+  @icon="nav-down"
+  @iconSize="small"
+  @controller={{@controller}}
+  @disabled={{not this.enabled}}
+  title={{t 'ember-rdfa-editor.alignment.label'}}
+  as |Menu|
+>
+  {{#each this.options as |option|}}
+    <Menu.Item
+      @menuAction={{fn this.setAlignment option}}
+      title={{this.labelFor option}}
+    >
+      {{this.labelFor option}}
+    </Menu.Item>
+  {{/each}}
+</Toolbar::Dropdown>

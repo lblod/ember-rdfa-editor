@@ -1,7 +1,7 @@
 import sampleData from '../config/sample-data';
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { Service as Intl } from 'ember-intl';
+import type { IntlService as Intl } from 'ember-intl';
 
 export default class ApplicationRoute extends Route {
   @service declare intl: Intl;

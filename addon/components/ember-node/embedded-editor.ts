@@ -114,7 +114,7 @@ export default class EmbeddedEditor extends Component<Args> {
         ...undoRedoMap,
       };
     } else {
-      return { ...embeddedEditorBaseKeymap, ...undoRedoMap };
+      return { ...embeddedEditorBaseKeymap(this.schema), ...undoRedoMap };
     }
   }
 
@@ -193,18 +193,18 @@ export default class EmbeddedEditor extends Component<Args> {
         this.controller.mainEditorState,
       );
 
-      const lastKeyPressed =
-        lastKeyPressedPluginState?.lastKeyPressed ?? 'ArrowRight';
-
-      this.innerView.dispatch(
-        this.innerView.state.tr.setSelection(
-          Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
-            this.innerView.state.doc,
+      const lastKeyPressed = lastKeyPressedPluginState?.lastKeyPressed;
+      if (!this.innerView.hasFocus()) {
+        this.innerView.dispatch(
+          this.innerView.state.tr.setSelection(
+            Selection[lastKeyPressed === 'ArrowLeft' ? 'atEnd' : 'atStart'](
+              this.innerView.state.doc,
+            ),
           ),
-        ),
-      );
+        );
 
-      this.innerView.focus();
+        this.innerView.focus();
+      }
     } else if (this.innerView) {
       const state = this.innerView.state;
       // De-select the inner node if we're no longer selected

@@ -1,11 +1,98 @@
 import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
-import { convertMsWordHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-func';
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import sinon from 'sinon';
 import * as DOMPurify from 'dompurify';
 
-module('Utils | CS | paste-handler | convertMsWordHtml', function () {
-  test('It should handle rtf -> html correctly', function (assert) {
+import { EditorState } from 'prosemirror-state';
+import { Schema } from 'prosemirror-model';
+
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import { SayView } from '@lblod/ember-rdfa-editor';
+import { docWithConfig, paragraph, text } from '@lblod/ember-rdfa-editor/nodes';
+
+const editorContainerMock = document.createElement('div');
+sinon.stub(editorContainerMock, 'clientWidth').get(() => 800);
+
+const editorView = new SayView(document.createElement('div'), {
+  state: EditorState.create({
+    schema: new Schema({
+      nodes: {
+        doc: docWithConfig({
+          defaultLanguage: 'nl-BE',
+        }),
+        paragraph,
+        text,
+      },
+    }),
+  }),
+});
+
+sinon.stub(editorView, 'dom').get(() => editorContainerMock);
+
+module('Utils | CS | HTMLInputParser', function () {
+  test('It should not change simple html', function (assert) {
+    const expectedHtml = oneLineTrim`<span>Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span>Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should not remove inline styles', function (assert) {
+    const expectedHtml = oneLineTrim`<span style="color:green">Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span style="color:green">Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('it should not remove empty element with rdfa attributes', function (assert) {
+    const expectedHtml = oneLineTrim`<span property="schema:name"></span><br><span>Lorem Ipsum</span>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><span property="schema:name"></span><br/><span>Lorem Ipsum</span><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('it should not remove empty table cells and rows', function (assert) {
+    const expectedHtml = oneLineTrim`<table><tbody><tr><td></td></tr></tbody></table>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`
+            <!--StartFragment--><table><tbody><tr><td></td></tr></tbody></table><!--EndFragment-->
+    `;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should remove unsafe url schemes', function (assert) {
+    const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`<a href="javascript:console.log('this should not work')" style="color:green">Lorem Ipsum</a>`;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should remove src tags', function (assert) {
+    const expectedHtml = oneLineTrim`console.log('test')`;
+    const inputParser = new HTMLInputParser({ editorView });
+    const htmlContent = oneLineTrim`<src>console.log('test')</src>`;
+
+    const actualHtml = inputParser.prepareHTML(htmlContent);
+    assert.strictEqual(actualHtml, expectedHtml);
+  });
+
+  test('It should handle Microsoft HTML correctly', function (assert) {
     const expectedHtml = oneLineTrim`<span style="font-size:14.0pt;font-family:&quot;Calibri&quot;,sans-serif; mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font: minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:&quot;Times New Roman&quot;; mso-bidi-theme-font:minor-bidi;mso-ansi-language:#0C00;mso-fareast-language: EN-US;mso-bidi-language:AR-SA">Lorem Ipsum</span>`;
     const htmlContent = oneLineTrim`
      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -21,25 +108,27 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const inputParser = new HTMLInputParser({});
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const inputParser = new HTMLInputParser({ editorView });
+    const actualHtml = inputParser.prepareHTML(htmlContent);
 
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
      <ul>
        <li>
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">1</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
       <li>
         <span style=\"font-size:14.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Feature</span>
         <span style=\"font-size:14.0pt\" lang=\"EN-US\"> </span>
         <span style=\"font-size:14.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">2</span>
+        <span style=\"font-size:20.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\"></span>
       </li>
     </ul>`;
     const htmlContent = oneLineTrim`
@@ -69,25 +158,29 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
        <ol>
          <li>
            <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test1</span>
+           <span style=\"font-size:18.0pt\"></span>
            <ol>
              <li>
                <span style=\"font-size:18.0pt; mso-ansi-language:EN-US\" lang=\"EN-US\">Subtest1</span>
+               <span style=\"font-size:18.0pt\"></span>
                <ol>
                  <li>
                    <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Subsubset1.1</span>
+                   <span style=\"font-size:18.0pt\"></span>
                    <ol>
                      <li>
                        <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Sub-sub-subet1.1</span>
+                       <span style=\"font-size:18.0pt\"></span>
                      </li>
                    </ol>
                  </li>
@@ -97,6 +190,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
          </li>
          <li>
            <span style=\"font-size:18.0pt;mso-ansi-language:EN-US\" lang=\"EN-US\">Test 2</span>
+           <span style=\"font-size:18.0pt\"></span>
          </li>
        </ol>`;
     const htmlContent = oneLineTrim`
@@ -584,30 +678,51 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
 </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display a complex nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`<ol>
-    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
+    <li>
+        <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
+        <span style=\"font-size:18.0pt\"></span>
         <ol>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.1</span></li>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.2</span>
-                <ol>
-                    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1</span>
-                        <ol>
-                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.1</span></li>
-                            <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.2</span></li>
-                        </ol>
-                    </li>
-                </ol>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.1</span>
+              <span style=\"font-size:18.0pt\"></span>
             </li>
-            <li><span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.3</span></li>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.2</span>
+              <span style=\"font-size:18.0pt\"></span>
+              <ol>
+                <li>
+                  <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1</span>
+                  <span style=\"font-size:18.0pt\"></span>
+                  <ol>
+                    <li>
+                      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.1</span>
+                      <span style=\"font-size:18.0pt\"></span>
+                    </li>
+                    <li>
+                      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1.2.1.2</span>
+                      <span style=\"font-size:18.0pt\"></span>
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <span style="font-size:18.0pt; mso-ansi-language:EN-US" lang="EN-US">1.3</span>
+              <span style=\"font-size:18.0pt\"></span>
+            </li>
         </ol>
     </li>
-    <li><span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">2</span></li>
+    <li>
+      <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">2</span>
+      <span style=\"font-size:18.0pt\"></span>
+    </li>
 </ol>
     `;
     const htmlContent = oneLineTrim`
@@ -1121,13 +1236,13 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
 </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
   test('It should display formatted table as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
 
@@ -1283,7 +1398,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       // strip attrs to make test less flaky
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
@@ -1292,7 +1407,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display bold text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><b><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></b></p>
     `;
@@ -1319,12 +1434,12 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display italic text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><i><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></i></p>
     `;
@@ -1351,12 +1466,12 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display underlined text', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><u><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></u></p>
     `;
@@ -1383,14 +1498,14 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
     </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list in a table', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td><p><span>Column 1</span></p></td><td><p><span>Column 2</span></p></td><td><p><span>Column 3</span></p></td><td><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1527,7 +1642,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
       expectedHtml,
@@ -1535,9 +1650,9 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
   });
 
   test('It should display table in a list', function (assert) {
-    const inputParser = new HTMLInputParser({});
+    const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td><p><span>Table column 1</span></p></td><td><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
+<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
     `;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1644,7 +1759,7 @@ module('Utils | CS | paste-handler | convertMsWordHtml', function () {
       </html>
     `;
 
-    const actualHtml = convertMsWordHtml(htmlContent, inputParser);
+    const actualHtml = inputParser.prepareHTML(htmlContent);
     assert.strictEqual(
       DOMPurify.sanitize(actualHtml, { ALLOWED_ATTR: [] }),
       expectedHtml,

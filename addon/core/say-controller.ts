@@ -1,19 +1,19 @@
 import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
 import Owner from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import { rangeHasMarkEverywhere } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
-import { MarkType, Schema } from 'prosemirror-model';
+import { Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
   Command,
   EditorState,
   Selection,
   Transaction,
 } from 'prosemirror-state';
-import { SetDocAttributeStep } from '@lblod/ember-rdfa-editor/utils/_private/steps';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 export default class SayController {
@@ -47,7 +47,10 @@ export default class SayController {
    * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
    */
   initialize(html: string, { shouldFocus = true } = {}) {
-    const doc = htmlToDoc(html, { schema: this.schema });
+    const doc = htmlToDoc(html, {
+      schema: this.schema,
+      editorView: this.editor.mainView,
+    });
 
     this.editor.mainView.updateState(
       EditorState.create({
@@ -72,7 +75,10 @@ export default class SayController {
     if (shouldFocus) {
       this.focus();
     }
-    const doc = htmlToDoc(content, { schema: this.schema });
+    const doc = htmlToDoc(content, {
+      schema: this.schema,
+      editorView: this.mainEditorView,
+    });
     const tr = this.mainEditorState.tr;
     tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
     tr.setSelection(Selection.atEnd(tr.doc));
@@ -91,13 +97,19 @@ export default class SayController {
     return command(view.state);
   }
 
-  isMarkActive(markType: MarkType) {
+  isMarkActive(markType: MarkType, attrs?: Attrs) {
     const state = this.activeEditorState;
-    const { from, $from, to, empty } = state.selection;
+    const { $from, empty } = state.selection;
     if (empty) {
-      return !!markType.isInSet(state.storedMarks || $from.marks());
+      const mark = markType.isInSet(state.storedMarks || $from.marks());
+      return !!mark && (!attrs || shallowEqual(attrs, mark.attrs));
     } else {
-      return rangeHasMarkEverywhere(state.doc, from, to, markType);
+      return selectionHasMarkEverywhere(
+        state.doc,
+        state.selection,
+        markType,
+        attrs,
+      );
     }
   }
 
@@ -129,14 +141,12 @@ export default class SayController {
   }
 
   set documentLanguage(language: string) {
-    this.withTransaction((tr) => {
-      return tr.step(new SetDocAttributeStep('lang', language));
-    });
+    this.setDocumentAttribute('lang', language);
   }
 
   setDocumentAttribute(key: string, value: unknown) {
     this.withTransaction((tr) => {
-      return tr.step(new SetDocAttributeStep(key, value));
+      return tr.setDocAttribute(key, value);
     });
   }
 
