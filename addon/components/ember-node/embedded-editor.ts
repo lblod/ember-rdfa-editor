@@ -58,6 +58,7 @@ type Args = EmberNodeArgs & {
   nodeViews?: {
     [node: string]: NodeViewConstructor;
   };
+  onSelected?: (selected: boolean, innerState: EditorState) => void;
 };
 
 /**
@@ -187,7 +188,10 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   @action
-  onSelected() {
+  onSelected(_: unknown, sel: [boolean]) {
+    if (this.args.onSelected && this.innerView) {
+      this.args.onSelected(sel[0], this.innerView.state);
+    }
     if (this.args.selected && this.innerView) {
       const lastKeyPressedPluginState = lastKeyPressedPluginKey.getState(
         this.controller.mainEditorState,
