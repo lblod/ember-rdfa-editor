@@ -233,6 +233,8 @@ export function renderRdfaAware({
   delete clone.rdfaNodeType;
   const renderAttrs = { ...clone, ...renderRdfaAttrs(renderable) };
   let { property } = renderAttrs;
+  // The return from renderRdfaAttrs can include a null datatype, so in this case we want to still
+  // use the one from the passed attrs.
   let datatype = renderAttrs.datatype || clone.datatype;
   if (datatype === 'rdf:XMLLiteral') {
     contentContainerAttrs = {
