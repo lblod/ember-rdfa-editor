@@ -6,7 +6,7 @@
   "postUpgradeTasks" : {
     "commands": ["echo \"---\\n\\\"@lblod/ember-rdfa-editor\\\": patch\\n---\\n\\nBump {{{depName}}} from {{{currentVersion}}} to {{{newVersion}}}\" > .changeset/$(date -Is -u).md"],
     "fileFilters": ["**/*"],
-    "executionMode": "update",
+    "executionMode": "update"
   }
 
 }
