@@ -124,7 +124,7 @@
     "@types/prosemirror-dev-tools": "^3.0.3",
     "@types/qunit": "^2.19.3",
     "@types/responselike": "^1.0.0",
-    "@types/rsvp": "^4.0.4",
+    "@types/rsvp": "^4.0.8",
     "@types/sinon": "^17.0.1",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
