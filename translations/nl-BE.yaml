@@ -19,7 +19,7 @@ ember-rdfa-editor:
       upper-roman: Romeinse Cijfers
   unindent-list: Lijstniveau hoger
   indent-list: Lijstniveau lager
-  table-options: Tabel opties
+  table-options: Tabelopties
   insert-table: Tabel invoegen
   add-row-below: Rij onder invoegen
   add-row-above: Rij boven invoegen
