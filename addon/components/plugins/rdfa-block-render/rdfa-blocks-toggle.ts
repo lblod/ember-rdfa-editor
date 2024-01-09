@@ -7,6 +7,9 @@ type Args = {
 };
 
 export default class RdfaBlocksToggleComponent extends Component<Args> {
+  get isShowingRdfaBlocks() {
+    return this.args.controller?.showRdfaBlocks;
+  }
   @action
   toggle() {
     if (this.args.controller) {
