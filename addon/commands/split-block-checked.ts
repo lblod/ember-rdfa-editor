@@ -127,8 +127,8 @@ export const splitBlockChecked =
       let types = splitType
         ? [splitType]
         : atEnd && deflt
-        ? [{ type: deflt }]
-        : undefined;
+          ? [{ type: deflt }]
+          : undefined;
       let can = canSplit(tr.doc, tr.mapping.map($from.pos), 1, types);
       if (
         !types &&

@@ -6,7 +6,6 @@ import {
   EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import IntlService from 'ember-intl/services/intl';
 import Counter from 'dummy/components/sample-ember-nodes/counter';
 
 const emberNodeConfig: EmberNodeConfig = {
@@ -33,7 +32,7 @@ const emberNodeConfig: EmberNodeConfig = {
   serialize: (node, state) => {
     const intl = emberApplicationPluginKey
       .getState(state)
-      ?.application.lookup('service:intl') as IntlService | undefined;
+      ?.application.lookup('service:intl');
     const lang = state.doc.attrs.lang as string;
     const count = node.attrs.count as number;
     const serializedAttributes: Record<string, string> = {
