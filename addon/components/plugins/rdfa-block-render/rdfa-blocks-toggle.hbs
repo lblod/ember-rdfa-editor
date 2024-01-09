@@ -1,6 +1,8 @@
 <div class="say-rdfa-toggle">
   <AuToggleSwitch
-    {{on 'click' this.toggle}}
-    @label={{ t 'ember-rdfa-editor.show-annotations'}}
-  />
+    @checked={{@controller.isShowingRdfaBlocks}}
+    @onChange={{this.toggle}}
+  >
+    {{t 'ember-rdfa-editor.show-annotations'}}
+  </AuToggleSwitch>
 </div>
