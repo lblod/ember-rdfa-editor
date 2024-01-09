@@ -201,9 +201,11 @@ export default class EmbeddedEditor extends Component<Args> {
       if (!this.innerView.hasFocus()) {
         this.innerView.dispatch(
           this.innerView.state.tr.setSelection(
-            Selection[lastKeyPressed === 'ArrowLeft' ? 'atEnd' : 'atStart'](
-              this.innerView.state.doc,
-            ),
+            Selection[
+              ['ArrowLeft', 'Backspace'].includes(lastKeyPressed ?? '')
+                ? 'atEnd'
+                : 'atStart'
+            ](this.innerView.state.doc),
           ),
         );
 
