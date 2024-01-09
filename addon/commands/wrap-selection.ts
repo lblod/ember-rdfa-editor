@@ -27,16 +27,13 @@ export function wrapSelection(
       if (!nodeRange) {
         return false;
       }
-      let wrappers = findWrapping(nodeRange, nodeType);
+      const wrappers = attrsFromWrapped
+        ? findWrapping(nodeRange, nodeType, attrsFromWrapped(nodeRange))
+        : findWrapping(nodeRange, nodeType);
       if (!wrappers) {
         return false;
       }
       if (dispatch) {
-        if (attrsFromWrapped) {
-          const attrs = attrsFromWrapped(nodeRange);
-          const newWrap = findWrapping(nodeRange, nodeType, attrs);
-          wrappers = newWrap ?? wrappers;
-        }
         const tr = state.tr;
         tr.wrap(nodeRange, wrappers);
         const selection = NodeSelection.create(tr.doc, nodeRange.$from.pos);
