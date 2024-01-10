@@ -1,14 +1,23 @@
 .say-link-tooltip {
   z-index: 3;
   background-color: var(--au-white);
+  gap: 0;
+  align-items: stretch;
+  padding: 0;
+  width: 28rem;
 
   a, button {
-    padding: 0.5rem;
+    padding: 0;
+    flex: 1;
+    border: 0;
+    justify-content: center;
   }
 
   .au-c-input {
     border-width: 0 0.1rem;
     border-radius: 0%;
+    padding: 0 0.3rem;
+    flex: 7;
   }
 
   .au-c-input:focus {
@@ -19,6 +28,9 @@
 
 
 .say-link {
+  gap: 0;
+  vertical-align: bottom;
+
   [contenteditable] {
     outline: none;
     white-space: break-spaces;
@@ -26,6 +38,7 @@
     word-wrap: break-word;
     cursor: text;
     min-width: 5rem;
+    padding-right: 0.5rem;
   }
 }
 

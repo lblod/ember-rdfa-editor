@@ -3,6 +3,7 @@ import Component from '@glimmer/component';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
+import { EditorState } from '@lblod/ember-rdfa-editor';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
@@ -29,6 +30,16 @@ export default class Link extends Component<EmberNodeArgs> {
 
   get interactive() {
     return this.node.attrs.interactive as boolean;
+  }
+
+  @action
+  onSelectEmbedded(selected: boolean, innerState: EditorState) {
+    if (!selected && !this.href) {
+      const href = linkToHref(innerState.doc.textContent);
+      if (href) {
+        this.href = href;
+      }
+    }
   }
 
   @action
