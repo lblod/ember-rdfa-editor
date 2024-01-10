@@ -1,5 +1,39 @@
 # @lblod/ember-rdfa-editor
 
+## 8.3.0
+
+### Minor Changes
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`61bb25fde5638c481eb28a7e3ab65eb1f64464aa`](https://github.com/lblod/ember-rdfa-editor/commit/61bb25fde5638c481eb28a7e3ab65eb1f64464aa) Thanks [@piemonkey](https://github.com/piemonkey)! - If the visible text of a link is a valid url, and no href is set, set this url as the href when de-selecting the link.
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`0176b1139336cbdcf8c0b5695d2a1ee50ff18a51`](https://github.com/lblod/ember-rdfa-editor/commit/0176b1139336cbdcf8c0b5695d2a1ee50ff18a51) Thanks [@piemonkey](https://github.com/piemonkey)! - If a valid url is selected when creating a link, this url is used for the href of the link
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`6e4390232968b63fda72702a230a016ab37f1d78`](https://github.com/lblod/ember-rdfa-editor/commit/6e4390232968b63fda72702a230a016ab37f1d78) Thanks [@piemonkey](https://github.com/piemonkey)! - Handle use of backspace and delete keys around the edges of ember-nodes (such as links) in an intuitive way
+
+- [#1103](https://github.com/lblod/ember-rdfa-editor/pull/1103) [`211cc6dc1e0cf8d8cbd75ee04dcf50e9b582fe5a`](https://github.com/lblod/ember-rdfa-editor/commit/211cc6dc1e0cf8d8cbd75ee04dcf50e9b582fe5a) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4660: Resize column based on sibling column width
+
+### Patch Changes
+
+- [#1094](https://github.com/lblod/ember-rdfa-editor/pull/1094) [`d485ae5e82b62448680d42b83de79b0a1ec621ab`](https://github.com/lblod/ember-rdfa-editor/commit/d485ae5e82b62448680d42b83de79b0a1ec621ab) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/common-tags from 1.8.2 to 1.8.4
+
+- [#1091](https://github.com/lblod/ember-rdfa-editor/pull/1091) [`a07049f2d3a640b006bef7068ac35cf81bdf16c9`](https://github.com/lblod/ember-rdfa-editor/commit/a07049f2d3a640b006bef7068ac35cf81bdf16c9) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @glint/template from 1.2.1 to 1.2.2
+
+- [#1097](https://github.com/lblod/ember-rdfa-editor/pull/1097) [`7c49f45577eb0acaa9f26e69acd355b91cc29f07`](https://github.com/lblod/ember-rdfa-editor/commit/7c49f45577eb0acaa9f26e69acd355b91cc29f07) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/rsvp from 4.0.4 to 4.0.8
+
+- [#1096](https://github.com/lblod/ember-rdfa-editor/pull/1096) [`c24f40e038cb624b2ccf845e73e845e05296ff16`](https://github.com/lblod/ember-rdfa-editor/commit/c24f40e038cb624b2ccf845e73e845e05296ff16) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/responselike from 1.0.1 to 1.0.3
+
+- [#1101](https://github.com/lblod/ember-rdfa-editor/pull/1101) [`caa96ac9a8cdea7ef9a0232df7165d3f4e67079c`](https://github.com/lblod/ember-rdfa-editor/commit/caa96ac9a8cdea7ef9a0232df7165d3f4e67079c) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/sinon from 17.0.1 to 17.0.2
+
+- [#1102](https://github.com/lblod/ember-rdfa-editor/pull/1102) [`9a7adee0a7f88e6a461bf8377d11a825b051a26e`](https://github.com/lblod/ember-rdfa-editor/commit/9a7adee0a7f88e6a461bf8377d11a825b051a26e) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump sass from 1.69.3 to 1.69.7
+
+- [#1088](https://github.com/lblod/ember-rdfa-editor/pull/1088) [`74e8de8ff1f172b6c48ea7c41804fcbd3597eef8`](https://github.com/lblod/ember-rdfa-editor/commit/74e8de8ff1f172b6c48ea7c41804fcbd3597eef8) Thanks [@piemonkey](https://github.com/piemonkey)! - Allow dropbown menus to extend beyond editor container when embedded as a very small window
+
+- [`6cc5697299eb7dbb154e6b90fc78addad50c714e`](https://github.com/lblod/ember-rdfa-editor/commit/6cc5697299eb7dbb154e6b90fc78addad50c714e) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4631: use 'tabelopties' instead of 'tabel opties' in dutch translation of table buttons
+
+- [#1106](https://github.com/lblod/ember-rdfa-editor/pull/1106) [`66036f567658310a77740daf21ee58bb70ffba8e`](https://github.com/lblod/ember-rdfa-editor/commit/66036f567658310a77740daf21ee58bb70ffba8e) Thanks [@piemonkey](https://github.com/piemonkey)! - Add a more flexible way to programatically hide the editor sidebar
+
+- [#1099](https://github.com/lblod/ember-rdfa-editor/pull/1099) [`69b917cace0c20af2eba74d89f8d10f47c1d8f90`](https://github.com/lblod/ember-rdfa-editor/commit/69b917cace0c20af2eba74d89f8d10f47c1d8f90) Thanks [@piemonkey](https://github.com/piemonkey)! - Update to use latest AppUniversum style api
+
 ## 8.2.0
 
 ### Minor Changes
