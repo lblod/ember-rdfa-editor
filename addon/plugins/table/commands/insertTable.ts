@@ -2,9 +2,10 @@ import { Command } from 'prosemirror-state';
 
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor';
+import { getEditorViewWidth } from '@lblod/ember-rdfa-editor/utils/_private/editor-view';
 
 export function insertTable(rows: number, columns: number): Command {
-  return (state, dispatch) => {
+  return (state, dispatch, view) => {
     const {
       schema,
       selection: { $from },
@@ -23,8 +24,20 @@ export function insertTable(rows: number, columns: number): Command {
 
     for (let r = 0; r < rows; r++) {
       const cells = [];
+      const proportionalWidth = view ? getEditorViewWidth(view) / columns : 0;
+
       for (let c = 0; c < columns; c++) {
-        cells.push(unwrap(schema.nodes.table_cell.createAndFill()));
+        cells.push(
+          unwrap(
+            schema.nodes.table_cell.createAndFill(
+              proportionalWidth
+                ? {
+                    colwidth: [proportionalWidth],
+                  }
+                : undefined,
+            ),
+          ),
+        );
       }
 
       tableContent.push(schema.node('table_row', null, cells));
