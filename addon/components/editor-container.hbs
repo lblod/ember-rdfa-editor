@@ -2,7 +2,7 @@
   class='say-container
     {{if @editorOptions.showRdfaHover "say-container--sidebar-left"}}
     {{if @editorOptions.showPaper "say-container--paper"}}
-    {{if (has-block "aside") "say-container--sidebar-right"}}
+    {{if (and (has-block "aside") (not @hideSidebar)) "say-container--sidebar-right"}}
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
 >
   {{yield to='top'}}
