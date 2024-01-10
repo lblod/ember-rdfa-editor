@@ -75,7 +75,7 @@
     "prosemirror-schema-basic": "^1.2.1",
     "prosemirror-schema-list": "^1.2.2",
     "prosemirror-state": "^1.4.2",
-    "prosemirror-tables": "git://github.com/lblod/prosemirror-tables#GN-4660",
+    "prosemirror-tables": "git://github.com/lblod/prosemirror-tables",
     "prosemirror-transform": "^1.8.0",
     "prosemirror-view": "^1.32.4",
     "rdf-data-factory": "^1.1.0",
