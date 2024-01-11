@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { EditorView } from 'prosemirror-view';
 import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx';
 import { preCleanHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions';
+import { getEditorViewWidth } from './editor-view';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',
@@ -268,7 +269,7 @@ export default class HTMLInputParser {
     safeTags = DEFAULT_SAFE_TAGS,
     uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
   }: HTMLInputParserArguments) {
-    this.editorViewWidth = this.getEditorViewWidth(editorView);
+    this.editorViewWidth = getEditorViewWidth(editorView);
     this.safeAttributes = safeAttributes;
     this.safeTags = safeTags;
     this.uriSafeAttributes = uriSafeAttributes;
@@ -399,32 +400,5 @@ export default class HTMLInputParser {
     }
 
     return 0;
-  }
-
-  /**
-   * An extra hack width to make sure the editor doesn't overflow.
-   */
-  private static ADDITIONAL_WIDTH_MARGIN = 5;
-
-  /**
-   * Returns the width of the editor view minus the padding
-   */
-  private getEditorViewWidth(view: EditorView): number {
-    const computedStyle = window.getComputedStyle(view.dom);
-    const paddingLeft = computedStyle.paddingLeft
-      ? parseInt(computedStyle.paddingLeft, 10)
-      : 0;
-    const paddingRight = computedStyle.paddingRight
-      ? parseInt(computedStyle.paddingRight, 10)
-      : 0;
-
-    const clientWidthWithoutPadding =
-      view.dom.clientWidth - paddingLeft - paddingRight;
-
-    if (!clientWidthWithoutPadding) {
-      return 0;
-    }
-
-    return clientWidthWithoutPadding - HTMLInputParser.ADDITIONAL_WIDTH_MARGIN;
   }
 }

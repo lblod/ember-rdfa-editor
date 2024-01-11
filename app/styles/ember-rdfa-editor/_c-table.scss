@@ -3,7 +3,9 @@
   display: table;
   table-layout: fixed;
   position: relative;
-  width: 100%;
+  // important because we're overriding `width` that is being set by columnResizing plugin
+  // TODO: do not set `table` width inside `columnResizing` plugin
+  width: 100% !important;
   border-collapse: collapse;
   border: 0.1rem solid var(--au-gray-300);
 
@@ -63,7 +65,14 @@
     pointer-events: none;
     margin-top: 0;
   }
+
+  colgroup col:last-child {
+    // last column should always be `auto` so it takes up the remaining space
+    // that accommodates editor width changes
+    width: auto !important;
+  }
 }
+
 
 .tableWrapper {
   overflow-y: hidden;
