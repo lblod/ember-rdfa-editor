@@ -59,7 +59,7 @@ module.exports = {
     {
       files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['./tsconfig.json'],
+        project: ['./tsconfig.json', './cypress/tsconfig.json'],
       },
       rules: {
         'deprecation/deprecation': 'warn',
