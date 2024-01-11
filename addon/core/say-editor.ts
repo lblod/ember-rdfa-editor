@@ -1,6 +1,11 @@
 import { EditorState, Plugin } from 'prosemirror-state';
 import { NodeViewConstructor } from 'prosemirror-view';
-import { DOMParser as ProseParser, Schema } from 'prosemirror-model';
+import {
+  Fragment,
+  DOMParser as ProseParser,
+  Schema,
+  Slice,
+} from 'prosemirror-model';
 import {
   getPathFromRoot,
   isElement,
@@ -34,6 +39,8 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { gapCursor } from '../plugins/gap-cursor';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import { unwrap } from '../utils/_private/option';
+import { closeSlice } from '../utils/node-utils';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
@@ -128,6 +135,15 @@ export default class SayEditor {
         const htmlCleaner = new HTMLInputParser({ editorView });
 
         return htmlCleaner.prepareHTML(html);
+      },
+      transformPasted(slice, view) {
+        const { selection } = view.state;
+        const { nodeBefore } = selection.$from;
+        const { nodeAfter } = selection.$to;
+
+        const openStart = nodeBefore?.isInline ? slice.openStart : 0;
+        const openEnd = nodeAfter?.isInline ? slice.openEnd : 0;
+        return closeSlice(slice, openStart, openEnd);
       },
       clipboardSerializer: this.serializer,
     });
