@@ -1,11 +1,6 @@
 import { EditorState, Plugin } from 'prosemirror-state';
 import { NodeViewConstructor } from 'prosemirror-view';
-import {
-  Fragment,
-  DOMParser as ProseParser,
-  Schema,
-  Slice,
-} from 'prosemirror-model';
+import { DOMParser as ProseParser, Schema } from 'prosemirror-model';
 import {
   getPathFromRoot,
   isElement,
@@ -39,7 +34,6 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { gapCursor } from '../plugins/gap-cursor';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
-import { unwrap } from '../utils/_private/option';
 import { closeSlice } from '../utils/node-utils';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
