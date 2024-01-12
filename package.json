@@ -198,6 +198,6 @@
     "last 1 Edge version"
   ],
   "volta": {
-    "node": "20.10.0"
+    "node": "20.11.0"
   }
 }
