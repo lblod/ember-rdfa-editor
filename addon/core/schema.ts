@@ -15,7 +15,6 @@ export const rdfaAttrs = {
   lang: { default: undefined },
   xmlns: { default: undefined },
   src: { default: undefined },
-  id: { default: undefined },
   role: { default: undefined },
   inlist: { default: undefined },
   datetime: { default: undefined },
