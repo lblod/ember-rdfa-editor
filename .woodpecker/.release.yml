@@ -1,6 +1,6 @@
 steps:
   install:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     commands:
       - npm ci
   release:
