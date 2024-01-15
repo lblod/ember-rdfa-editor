@@ -170,7 +170,7 @@
     "webpack": "^5.78.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.4.2",
+    "@appuniversum/ember-appuniversum": "^2.15.0",
     "@glint/template": "^1.1.0",
     "ember-cli-sass": "^11.0.1",
     "ember-intl": "^5.7.2 || ^6.1.0",
