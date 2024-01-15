@@ -140,7 +140,7 @@
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
     "ember-cli-typescript-blueprints": "^3.0.0",
-    "ember-intl": "^6.4.0",
+    "ember-intl": "6.1.0",
     "ember-load-initializers": "^2.1.2",
     "ember-modifier": "^3.2.7",
     "ember-page-title": "^8.0.0",
@@ -173,14 +173,9 @@
     "@appuniversum/ember-appuniversum": "^2.15.0",
     "@glint/template": "^1.1.0",
     "ember-cli-sass": "^11.0.1",
-    "ember-intl": "^5.7.2 || ^6.1.0",
+    "ember-intl": "^6.1.0",
     "ember-modifier": "^3.2.7",
     "ember-source": "^3.28.0 || ^4.0.0"
-  },
-  "overrides": {
-    "ember-intl@^5.7.2": {
-      "typescript": "$typescript"
-    }
   },
   "engines": {
     "node": "16.* || 18.* || >= 20"
