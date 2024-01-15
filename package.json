@@ -32,7 +32,10 @@
     "postpublish": "ember ts:clean",
     "release": "release-it",
     "prepack": "ember ts:precompile",
-    "postpack": "ember ts:clean"
+    "postpack": "ember ts:clean",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:ci": "start-server-and-test start http://localhost:4200 cypress:run"
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.1.1",
@@ -130,6 +133,7 @@
     "broccoli-asset-rev": "^3.0.0",
     "changesets-release-it-plugin": "^0.1.1",
     "concurrently": "^8.0.1",
+    "cypress": "^13.6.2",
     "ember-cli": "~4.12.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
@@ -151,6 +155,7 @@
     "ember-try": "^3.0.0",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-deprecation": "^1.4.1",
     "eslint-plugin-ember": "^11.5.0",
     "eslint-plugin-n": "^15.7.0",
@@ -164,6 +169,7 @@
     "release-it": "^16.1.0",
     "sass": "^1.69.7",
     "sinon": "^17.0.1",
+    "start-server-and-test": "^2.0.3",
     "typescript": "~5.3.0",
     "webpack": "^5.78.0"
   },
