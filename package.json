@@ -140,7 +140,7 @@
     "ember-cli-typescript-blueprints": "^3.0.0",
     "ember-intl": "6.1.0",
     "ember-load-initializers": "^2.1.2",
-    "ember-modifier": "^3.2.7",
+    "ember-modifier": "3.2.7",
     "ember-page-title": "^8.0.0",
     "ember-qunit": "^6.2.0",
     "ember-resolver": "^11.0.1",
