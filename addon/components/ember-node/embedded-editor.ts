@@ -55,6 +55,10 @@ type Args = EmberNodeArgs & {
   keymap?: { [key: string]: Command };
   /* editor plugins to add */
   plugins?: Plugin[];
+  nodeViews?: {
+    [node: string]: NodeViewConstructor;
+  };
+  onSelected?: (selected: boolean, innerState: EditorState) => void;
 };
 
 /**
@@ -162,19 +166,29 @@ export default class EmbeddedEditor extends Component<Args> {
           },
         },
         // These handlers are needed to fix part of a bug in Gecko (firefox): https://bugzilla.mozilla.org/show_bug.cgi?id=1612076
-        handleKeyDown: (view, event) => {
-          if (event.code === 'ArrowLeft') {
-            const { selection } = view.state;
-            if (selection.empty && selection.from === 0) {
-              this.outerView.focus();
+        handleKeyDown: ({ state: { selection, doc } }, event) => {
+          if (selection.empty) {
+            if (selection.from === 0) {
+              // At the start of the embedded editor
+              if (event.code === 'ArrowLeft' || event.code === 'Backspace') {
+                this.outerView.focus();
+              }
+              if (event.code === 'Backspace' && doc.content.size !== 0) {
+                // Prevent the deletion of the node as there is still content
+                event.preventDefault();
+                this.selectOutside('before');
+              }
             }
-          } else if (event.code === 'ArrowRight') {
-            const { selection } = view.state;
-            if (
-              selection.empty &&
-              selection.from === view.state.doc.nodeSize - 2
-            ) {
-              this.outerView.focus();
+            if (selection.from === doc.nodeSize - 2) {
+              // At the end of the embedded editor
+              if (event.code === 'ArrowRight' || event.code === 'Delete') {
+                this.outerView.focus();
+              }
+              if (event.code === 'Delete' && doc.content.size !== 0) {
+                // Prevent the deletion of the node as there is still content
+                event.preventDefault();
+                this.selectOutside('after');
+              }
             }
           }
         },
@@ -188,19 +202,24 @@ export default class EmbeddedEditor extends Component<Args> {
   }
 
   @action
-  onSelected() {
+  onSelected(_: unknown, sel: [boolean]) {
+    if (this.args.onSelected && this.innerView) {
+      this.args.onSelected(sel[0], this.innerView.state);
+    }
     if (this.args.selected && this.innerView) {
       const lastKeyPressedPluginState = lastKeyPressedPluginKey.getState(
         this.controller.mainEditorState,
       );
 
       const lastKeyPressed = lastKeyPressedPluginState?.lastKeyPressed;
-      if (lastKeyPressed === 'ArrowLeft' || lastKeyPressed === 'ArrowRight') {
+      if (!this.innerView.hasFocus()) {
         this.innerView.dispatch(
           this.innerView.state.tr.setSelection(
-            Selection[lastKeyPressed === 'ArrowRight' ? 'atStart' : 'atEnd'](
-              this.innerView.state.doc,
-            ),
+            Selection[
+              ['ArrowLeft', 'Backspace'].includes(lastKeyPressed ?? '')
+                ? 'atEnd'
+                : 'atStart'
+            ](this.innerView.state.doc),
           ),
         );
 
@@ -255,6 +274,19 @@ export default class EmbeddedEditor extends Component<Args> {
   @action
   onDecorationsUpdate() {
     this.innerView?.dispatch(this.innerView.state.tr);
+  }
+
+  selectOutside(side: 'before' | 'after') {
+    const selectionSide = side === 'after' ? '$head' : '$anchor';
+    const outerState = this.outerView.state;
+    this.outerView.dispatch(
+      outerState.tr.setSelection(
+        TextSelection.create(
+          outerState.doc,
+          outerState.selection[selectionSide].pos,
+        ),
+      ),
+    );
   }
 
   dispatchInner = (tr: Transaction) => {

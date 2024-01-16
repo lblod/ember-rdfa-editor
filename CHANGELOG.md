@@ -29,6 +29,106 @@
 
 - [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
 
+## 9.0.0
+
+### Major Changes
+
+- [#1121](https://github.com/lblod/ember-rdfa-editor/pull/1121) [`9f76b57`](https://github.com/lblod/ember-rdfa-editor/commit/9f76b57225b10432caadf887889a0fd8d807c8c5) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop support for ember `3.28.x`.
+  Stricten `ember-source` peerdependency to only support version-range `^4.12.0`
+
+- [#1120](https://github.com/lblod/ember-rdfa-editor/pull/1120) [`0357fdf`](https://github.com/lblod/ember-rdfa-editor/commit/0357fdf1230f0e8ca961a39e9ff866b4617270ec) Thanks [@elpoelma](https://github.com/elpoelma)! - Increase `@appuniversum/ember-appuniversum` peerdependency requirement to `^2.15.0`
+
+- [#1122](https://github.com/lblod/ember-rdfa-editor/pull/1122) [`a9da3a0`](https://github.com/lblod/ember-rdfa-editor/commit/a9da3a009b5eb0d1f8ff6fef4fe0df3d74a102c3) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop support for `ember-intl` `5.x`
+
+- [#1113](https://github.com/lblod/ember-rdfa-editor/pull/1113) [`37aa34a`](https://github.com/lblod/ember-rdfa-editor/commit/37aa34a233ce4e6e11fc58fa2cc3ee05d91d08e3) Thanks [@elpoelma](https://github.com/elpoelma)! - Removal of the id attribute from the block_rdfa spec. It is currently not used by the block_rdfa node and is not part of the RDFa spec.
+
+  Additionally, this solves the issue where paragraphs with an id attribute were parsed as block_rdfa.
+
+### Minor Changes
+
+- [#1117](https://github.com/lblod/ember-rdfa-editor/pull/1117) [`4525217`](https://github.com/lblod/ember-rdfa-editor/commit/4525217f21c12072d6c822fc03110f26bc1fa5fc) Thanks [@piemonkey](https://github.com/piemonkey)! - Add helper function to help with locale selection and add translation note to readme
+
+### Patch Changes
+
+- [#1111](https://github.com/lblod/ember-rdfa-editor/pull/1111) [`022bad0`](https://github.com/lblod/ember-rdfa-editor/commit/022bad0bec41f494fde8ecbc099b40f02e784eae) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump danlynn/ember-cli from 4.8.0 to 4.12.1
+
+- [#1112](https://github.com/lblod/ember-rdfa-editor/pull/1112) [`5fdb634`](https://github.com/lblod/ember-rdfa-editor/commit/5fdb6344613d4888381f6be0a66dcf2d74bd5aa7) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @changesets/changelog-github from 0.4.8 to 0.5.0
+
+- [#1109](https://github.com/lblod/ember-rdfa-editor/pull/1109) [`c171687`](https://github.com/lblod/ember-rdfa-editor/commit/c1716879c255ed2df48d676d1f6ed7c8ab4fa045) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/sinon from 17.0.2 to 17.0.3
+
+- [#1110](https://github.com/lblod/ember-rdfa-editor/pull/1110) [`b40fea9`](https://github.com/lblod/ember-rdfa-editor/commit/b40fea9261c077d0fdbee68251652deb10ae5535) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump eslint-plugin-prettier from 5.1.2 to 5.1.3
+
+- [#1114](https://github.com/lblod/ember-rdfa-editor/pull/1114) [`b636d3b`](https://github.com/lblod/ember-rdfa-editor/commit/b636d3b4404823fa2e6e4b260d98f601fe50cf6e) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump typescript from 5.2.2 to 5.3.3
+
+- [#1115](https://github.com/lblod/ember-rdfa-editor/pull/1115) [`82efb68`](https://github.com/lblod/ember-rdfa-editor/commit/82efb68f7402dd672bf0d865bf3c33e34d4634ff) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump node from 20.10.0 to v20.11.0
+
+- [#1118](https://github.com/lblod/ember-rdfa-editor/pull/1118) [`1c24bf2`](https://github.com/lblod/ember-rdfa-editor/commit/1c24bf2520f64e76432dbba1c7e5a5a06690f930) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump prettier from 3.1.1 to 3.2.0
+
+- [#1107](https://github.com/lblod/ember-rdfa-editor/pull/1107) [`7b3dd5d`](https://github.com/lblod/ember-rdfa-editor/commit/7b3dd5de56a6ce36ff1bed8fe59fdbba78b207b7) Thanks [@piemonkey](https://github.com/piemonkey)! - Do not clean <hr /> tags from pasted input
+
+- [#1116](https://github.com/lblod/ember-rdfa-editor/pull/1116) [`3b3a154`](https://github.com/lblod/ember-rdfa-editor/commit/3b3a1545b083f8854e16e1f7d7db6f9c85043e07) Thanks [@piemonkey](https://github.com/piemonkey)! - Add capability to write end-to-end tests
+
+## 8.3.0
+
+### Minor Changes
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`61bb25fde5638c481eb28a7e3ab65eb1f64464aa`](https://github.com/lblod/ember-rdfa-editor/commit/61bb25fde5638c481eb28a7e3ab65eb1f64464aa) Thanks [@piemonkey](https://github.com/piemonkey)! - If the visible text of a link is a valid url, and no href is set, set this url as the href when de-selecting the link.
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`0176b1139336cbdcf8c0b5695d2a1ee50ff18a51`](https://github.com/lblod/ember-rdfa-editor/commit/0176b1139336cbdcf8c0b5695d2a1ee50ff18a51) Thanks [@piemonkey](https://github.com/piemonkey)! - If a valid url is selected when creating a link, this url is used for the href of the link
+
+- [#1098](https://github.com/lblod/ember-rdfa-editor/pull/1098) [`6e4390232968b63fda72702a230a016ab37f1d78`](https://github.com/lblod/ember-rdfa-editor/commit/6e4390232968b63fda72702a230a016ab37f1d78) Thanks [@piemonkey](https://github.com/piemonkey)! - Handle use of backspace and delete keys around the edges of ember-nodes (such as links) in an intuitive way
+
+- [#1103](https://github.com/lblod/ember-rdfa-editor/pull/1103) [`211cc6dc1e0cf8d8cbd75ee04dcf50e9b582fe5a`](https://github.com/lblod/ember-rdfa-editor/commit/211cc6dc1e0cf8d8cbd75ee04dcf50e9b582fe5a) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4660: Resize column based on sibling column width
+
+### Patch Changes
+
+- [#1094](https://github.com/lblod/ember-rdfa-editor/pull/1094) [`d485ae5e82b62448680d42b83de79b0a1ec621ab`](https://github.com/lblod/ember-rdfa-editor/commit/d485ae5e82b62448680d42b83de79b0a1ec621ab) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/common-tags from 1.8.2 to 1.8.4
+
+- [#1091](https://github.com/lblod/ember-rdfa-editor/pull/1091) [`a07049f2d3a640b006bef7068ac35cf81bdf16c9`](https://github.com/lblod/ember-rdfa-editor/commit/a07049f2d3a640b006bef7068ac35cf81bdf16c9) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @glint/template from 1.2.1 to 1.2.2
+
+- [#1097](https://github.com/lblod/ember-rdfa-editor/pull/1097) [`7c49f45577eb0acaa9f26e69acd355b91cc29f07`](https://github.com/lblod/ember-rdfa-editor/commit/7c49f45577eb0acaa9f26e69acd355b91cc29f07) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/rsvp from 4.0.4 to 4.0.8
+
+- [#1096](https://github.com/lblod/ember-rdfa-editor/pull/1096) [`c24f40e038cb624b2ccf845e73e845e05296ff16`](https://github.com/lblod/ember-rdfa-editor/commit/c24f40e038cb624b2ccf845e73e845e05296ff16) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/responselike from 1.0.1 to 1.0.3
+
+- [#1101](https://github.com/lblod/ember-rdfa-editor/pull/1101) [`caa96ac9a8cdea7ef9a0232df7165d3f4e67079c`](https://github.com/lblod/ember-rdfa-editor/commit/caa96ac9a8cdea7ef9a0232df7165d3f4e67079c) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/sinon from 17.0.1 to 17.0.2
+
+- [#1102](https://github.com/lblod/ember-rdfa-editor/pull/1102) [`9a7adee0a7f88e6a461bf8377d11a825b051a26e`](https://github.com/lblod/ember-rdfa-editor/commit/9a7adee0a7f88e6a461bf8377d11a825b051a26e) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump sass from 1.69.3 to 1.69.7
+
+- [#1088](https://github.com/lblod/ember-rdfa-editor/pull/1088) [`74e8de8ff1f172b6c48ea7c41804fcbd3597eef8`](https://github.com/lblod/ember-rdfa-editor/commit/74e8de8ff1f172b6c48ea7c41804fcbd3597eef8) Thanks [@piemonkey](https://github.com/piemonkey)! - Allow dropbown menus to extend beyond editor container when embedded as a very small window
+
+- [`6cc5697299eb7dbb154e6b90fc78addad50c714e`](https://github.com/lblod/ember-rdfa-editor/commit/6cc5697299eb7dbb154e6b90fc78addad50c714e) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4631: use 'tabelopties' instead of 'tabel opties' in dutch translation of table buttons
+
+- [#1106](https://github.com/lblod/ember-rdfa-editor/pull/1106) [`66036f567658310a77740daf21ee58bb70ffba8e`](https://github.com/lblod/ember-rdfa-editor/commit/66036f567658310a77740daf21ee58bb70ffba8e) Thanks [@piemonkey](https://github.com/piemonkey)! - Add a more flexible way to programatically hide the editor sidebar
+
+- [#1099](https://github.com/lblod/ember-rdfa-editor/pull/1099) [`69b917cace0c20af2eba74d89f8d10f47c1d8f90`](https://github.com/lblod/ember-rdfa-editor/commit/69b917cace0c20af2eba74d89f8d10f47c1d8f90) Thanks [@piemonkey](https://github.com/piemonkey)! - Update to use latest AppUniversum style api
+
+## 8.2.0
+
+### Minor Changes
+
+- [#1086](https://github.com/lblod/ember-rdfa-editor/pull/1086) [`f1272d18`](https://github.com/lblod/ember-rdfa-editor/commit/f1272d18be1579726c90ef723fde36c1586dd641) Thanks [@piemonkey](https://github.com/piemonkey)! - When creating paragraph elements, do not set a style attribute if there is no style, instead of setting an empty attribute.
+
+- [#1086](https://github.com/lblod/ember-rdfa-editor/pull/1086) [`f1272d18`](https://github.com/lblod/ember-rdfa-editor/commit/f1272d18be1579726c90ef723fde36c1586dd641) Thanks [@piemonkey](https://github.com/piemonkey)! - When creating paragraph elements, only set an indentation level data attribute if the indentation level is non-zero.
+
+- [#1074](https://github.com/lblod/ember-rdfa-editor/pull/1074) [`994dd5df`](https://github.com/lblod/ember-rdfa-editor/commit/994dd5dff0f9d129aa8184c84b14643c77322f31) Thanks [@piemonkey](https://github.com/piemonkey)! - When adding the href for a link, automatically add `http://` or `mailto:` to the href attribute to generate a valid `<a>` tag.
+
+- [#1075](https://github.com/lblod/ember-rdfa-editor/pull/1075) [`cfaeba10`](https://github.com/lblod/ember-rdfa-editor/commit/cfaeba106fa82e903272bf7519e572b22f41d409) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4612: Paste highlight color correctly
+
+- [#1085](https://github.com/lblod/ember-rdfa-editor/pull/1085) [`b40e4651`](https://github.com/lblod/ember-rdfa-editor/commit/b40e46514c68cca0dc21d94a6e8ebdcf2484ddf8) Thanks [@elpoelma](https://github.com/elpoelma)! - Apply formatting to html/xml shown in codemirror debug editor
+
+### Patch Changes
+
+- [#1087](https://github.com/lblod/ember-rdfa-editor/pull/1087) [`ec853241`](https://github.com/lblod/ember-rdfa-editor/commit/ec853241567c7a0310d1eaaee88b877501c4c84c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix behaviour of formatting marks for some selections, such as selecting multiple table cells. Now all cells are considered rather than just the last one to be selected.
+
+- [#1083](https://github.com/lblod/ember-rdfa-editor/pull/1083) [`051a032b`](https://github.com/lblod/ember-rdfa-editor/commit/051a032b0c5e63b97872984448f5b296a16404f2) Thanks [@elpoelma](https://github.com/elpoelma)! - Do not clean up empty elements when they have attributes
+
+- [#1089](https://github.com/lblod/ember-rdfa-editor/pull/1089) [`0d22ff9c`](https://github.com/lblod/ember-rdfa-editor/commit/0d22ff9cfea31f8065e71bda0d179b1c1662386e) Thanks [@piemonkey](https://github.com/piemonkey)! - Maintain formatting (such as indentation) of paragraphs which include 'soft breaks' (new lines created with shift-enter) on reloading the editor
+
+- [#1084](https://github.com/lblod/ember-rdfa-editor/pull/1084) [`0c829fe2`](https://github.com/lblod/ember-rdfa-editor/commit/0c829fe2bc438f21d48344924b11e30760babf27) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix highlight and text color behaviour when multiple table cells are selected
+
+- [#1082](https://github.com/lblod/ember-rdfa-editor/pull/1082) [`8d5759fb`](https://github.com/lblod/ember-rdfa-editor/commit/8d5759fbbc3945bdf14785db6f093cb6194f7f3f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4568: Fallback to "align" attribute when parsing DOM.
+
+  Editor will attempt to use the `align` attribute if the `text-align` property of `style` attribute is not present to determine the alignment when parsing DOM.
 
 ## 8.1.0
 

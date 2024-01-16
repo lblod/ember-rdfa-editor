@@ -56,6 +56,16 @@ export default class ImageInsertMenu extends Component<Args> {
   }
 
   @action
+  onChangeUrl(event: InputEvent) {
+    this.url = (event.target as HTMLInputElement).value;
+  }
+
+  @action
+  onChangeAltText(event: InputEvent) {
+    this.altText = (event.target as HTMLInputElement).value;
+  }
+
+  @action
   resetValues() {
     this.url = '';
     this.altText = '';

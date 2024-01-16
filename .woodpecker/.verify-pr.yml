@@ -1,24 +1,24 @@
 steps:
   install:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     commands:
       - npm ci
   lint-js:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     group: lint
     commands:
       - npm run lint:js
   lint-hbs:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     group: lint
     commands:
       - npm run lint:hbs
   test:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     commands:
       - npm run test:ember
   precompile:
-    image: danlynn/ember-cli:4.8.0
+    image: danlynn/ember-cli:4.12.1
     commands:
       - ember ts:precompile
 when:
