@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 9.0.1
+
+### Patch Changes
+
+- [#1108](https://github.com/lblod/ember-rdfa-editor/pull/1108) [`e45216a`](https://github.com/lblod/ember-rdfa-editor/commit/e45216a2db1890c864504a73b0a9b5897a0d0db6) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a transformPasted hook to transform the slice to be pasted if necessary.
+  - If the node before the current selection is not inline, the slice will be closed at the start
+  - If the node after the current selection is not inline, the slice will be closed at the end
+
 ## 9.0.0
 
 ### Major Changes
