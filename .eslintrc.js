@@ -59,7 +59,7 @@ module.exports = {
     {
       files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['./tsconfig.json'],
+        project: ['./tsconfig.json', './cypress/tsconfig.json'],
       },
       rules: {
         'deprecation/deprecation': 'warn',
@@ -67,7 +67,11 @@ module.exports = {
         semi: 'off',
         '@typescript-eslint/no-unused-vars': [
           'error',
-          { argsIgnorePattern: '^_' },
+          {
+            argsIgnorePattern: '^_',
+            args: 'after-used',
+            ignoreRestSiblings: true,
+          },
         ],
         '@typescript-eslint/semi': ['error', 'always'],
 

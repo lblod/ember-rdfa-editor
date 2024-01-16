@@ -6,10 +6,10 @@ export function wrapInlineLiteral(): Command {
   return (state, dispatch) => {
     if (dispatch) {
       const objectId = uuidv4();
-      const wrapStatus = wrapSelection(state.schema.nodes.inline_rdfa, {
+      const wrapStatus = wrapSelection(state.schema.nodes.inline_rdfa, () => ({
         __rdfaId: objectId,
         rdfaNodeType: 'literal',
-      })(state, dispatch);
+      }))(state, dispatch);
 
       return wrapStatus;
     }

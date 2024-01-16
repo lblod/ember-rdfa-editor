@@ -1,5 +1,4 @@
 import { Command } from 'prosemirror-state';
-import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
 import {
   findNodeByRdfaId,
@@ -18,9 +17,9 @@ export function wrapInlineResource(
       rdfaNodeType: 'resource',
       resource: 'another placeholder',
     };
-    const wrapArgs: Parameters<typeof wrapIn> = [
+    const wrapArgs: Parameters<typeof wrapSelection> = [
       state.schema.nodes.inline_rdfa,
-      attrs,
+      () => attrs,
     ];
     if (!wrapSelection(...wrapArgs)(state)) {
       return false;

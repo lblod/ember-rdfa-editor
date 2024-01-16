@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "postUpgradeTasks": {
+    "commands": [
+      "echo \"---\\n\\\"@lblod/ember-rdfa-editor\\\": patch\\n---\\n\\nBump {{{depName}}} from {{{currentVersion}}} to {{{newVersion}}}\" > .changeset/$(date -Is -u).md"
+    ],
+    "fileFilters": ["**/*"],
+    "executionMode": "update"
+  },
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@types/ember"],
+      "groupName": "ember types"
+    },
+    {
+      "matchPackagePatterns": ["^eslint"],
+      "groupName": "eslint packages"
+    }
+  ]
+}

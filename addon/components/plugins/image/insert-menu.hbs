@@ -17,7 +17,14 @@
           <AuLabel @required='true' for={{id}}>
             {{t 'ember-rdfa-editor.image.url-label'}}
           </AuLabel>
-          <AuInput id={{id}} @width='block' @value={{this.url}} @error={{this.showError}} {{on "focus" this.hideError}} />
+          <AuInput
+            id={{id}}
+            @width='block'
+            value={{this.url}}
+            @error={{this.showError}}
+            {{on "change" this.onChangeUrl}}
+            {{on "focus" this.hideError}}
+          />
           {{#if this.showError}}
             <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
           {{/if}}
@@ -28,7 +35,12 @@
           <AuLabel for={{id}}>
             {{t 'ember-rdfa-editor.image.alt-label'}}
           </AuLabel>
-          <AuInput id={{id}} @width='block' @value={{this.altText}} />
+          <AuInput
+            id={{id}}
+            @width='block'
+            value={{this.altText}}
+            {{on "change" this.onChangeAltText}}
+          />
         {{/let}}
       </AuFormRow>
     </form>
