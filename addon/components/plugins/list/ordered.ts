@@ -12,6 +12,7 @@ import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { tracked } from '@glimmer/tracking';
+import { PNode } from '@lblod/ember-rdfa-editor';
 
 type Args = {
   controller: SayController;
@@ -98,9 +99,7 @@ export default class ListOrdered extends Component<Args> {
   @action
   setStyle(style: OrderListStyle) {
     const firstListParent = this.firstListParent;
-    if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
-    ) {
+    if (firstListParent && this.isNodeOrderedListType(firstListParent.node)) {
       const pos = firstListParent.pos;
       this.controller.withTransaction((tr) => {
         return tr.setNodeAttribute(pos, 'style', style);
@@ -114,9 +113,7 @@ export default class ListOrdered extends Component<Args> {
   setOrder() {
     const firstListParent = this.firstListParent;
 
-    if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
-    ) {
+    if (firstListParent && this.isNodeOrderedListType(firstListParent.node)) {
       const pos = firstListParent.pos;
       this.controller.withTransaction((tr) => {
         return tr.setNodeAttribute(pos, 'order', this.listStart);
@@ -127,21 +124,21 @@ export default class ListOrdered extends Component<Args> {
   @action
   toggleDropdown() {
     const firstListParent = this.firstListParent;
-    if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
-    ) {
+    if (firstListParent && this.isNodeOrderedListType(firstListParent.node)) {
       this.listStart = parseInt(firstListParent.node.attrs.order, 10);
     }
   }
 
   styleIsActive = (style: string) => {
     const firstListParent = this.firstListParent;
-    if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
-    ) {
+    if (firstListParent && this.isNodeOrderedListType(firstListParent.node)) {
       return firstListParent.node.attrs.style === style;
     } else {
       return false;
     }
+  };
+
+  isNodeOrderedListType = (node: PNode) => {
+    return node?.type === this.controller.schema.nodes.ordered_list;
   };
 }
