@@ -24,12 +24,11 @@ export function decentLocaleMatch(
     languageMap[lang] = [...(languageMap[lang] || []), locale];
   });
   userLocs.forEach((locale) => {
-    const looseMatches = languageMap[locale.split('-')[0]];
+    const looseMatches = languageMap[locale.split('-')[0]] ?? [];
     looseMatches.forEach((match) => matches.add(match));
   });
 
   // Add the default so we always have something
   matches.add(defaultLocale.toLowerCase());
-
   return [...matches];
 }
