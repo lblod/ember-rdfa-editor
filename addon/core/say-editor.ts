@@ -34,6 +34,7 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { gapCursor } from '../plugins/gap-cursor';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import SliceUtils from '../utils/_private/slice-utils';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
@@ -128,6 +129,15 @@ export default class SayEditor {
         const htmlCleaner = new HTMLInputParser({ editorView });
 
         return htmlCleaner.prepareHTML(html);
+      },
+      transformPasted(slice, view) {
+        const { selection } = view.state;
+        const { nodeBefore } = selection.$from;
+        const { nodeAfter } = selection.$to;
+
+        const openStart = nodeBefore?.isInline ? slice.openStart : 0;
+        const openEnd = nodeAfter?.isInline ? slice.openEnd : 0;
+        return SliceUtils.closeSlice(slice, openStart, openEnd);
       },
       clipboardSerializer: this.serializer,
     });
