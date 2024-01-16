@@ -79,7 +79,6 @@ export const paragraphWithConfig: (
           }
 
           if (!matchingSubType(node, config.subType)) return false;
-
           return {
             indentationLevel: optionMapOr(
               DEFAULT_INDENTATION,

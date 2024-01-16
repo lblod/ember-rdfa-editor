@@ -339,6 +339,14 @@ To use `@lblod/ember-rdfa-editor` with Embroider some extra Webpack configuratio
 
 If you already provide some Webpack configuration, you can deep merge that with the config object we provide.
 
+## Translation
+
+Translations are provided for UI elements using ember-intl.
+Currently the only languages supported are English (en-US) and Dutch (nl-BE).
+Other languages can be added by copying the contents of the file `translations/en-us.yaml` into the relevant language file in your `translations` folder and translating all of the strings.
+
+A helper function is provided to assist with finding a reasonable fallback locale, for example providing `en-US` translations if `en` is requested.
+See [the test app](tests/dummy/app/routes/application.ts) for example of it's usage.
 
 ## Compatibility
 

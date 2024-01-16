@@ -1,5 +1,44 @@
 # @lblod/ember-rdfa-editor
 
+## 9.0.0
+
+### Major Changes
+
+- [#1121](https://github.com/lblod/ember-rdfa-editor/pull/1121) [`9f76b57`](https://github.com/lblod/ember-rdfa-editor/commit/9f76b57225b10432caadf887889a0fd8d807c8c5) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop support for ember `3.28.x`.
+  Stricten `ember-source` peerdependency to only support version-range `^4.12.0`
+
+- [#1120](https://github.com/lblod/ember-rdfa-editor/pull/1120) [`0357fdf`](https://github.com/lblod/ember-rdfa-editor/commit/0357fdf1230f0e8ca961a39e9ff866b4617270ec) Thanks [@elpoelma](https://github.com/elpoelma)! - Increase `@appuniversum/ember-appuniversum` peerdependency requirement to `^2.15.0`
+
+- [#1122](https://github.com/lblod/ember-rdfa-editor/pull/1122) [`a9da3a0`](https://github.com/lblod/ember-rdfa-editor/commit/a9da3a009b5eb0d1f8ff6fef4fe0df3d74a102c3) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop support for `ember-intl` `5.x`
+
+- [#1113](https://github.com/lblod/ember-rdfa-editor/pull/1113) [`37aa34a`](https://github.com/lblod/ember-rdfa-editor/commit/37aa34a233ce4e6e11fc58fa2cc3ee05d91d08e3) Thanks [@elpoelma](https://github.com/elpoelma)! - Removal of the id attribute from the block_rdfa spec. It is currently not used by the block_rdfa node and is not part of the RDFa spec.
+
+  Additionally, this solves the issue where paragraphs with an id attribute were parsed as block_rdfa.
+
+### Minor Changes
+
+- [#1117](https://github.com/lblod/ember-rdfa-editor/pull/1117) [`4525217`](https://github.com/lblod/ember-rdfa-editor/commit/4525217f21c12072d6c822fc03110f26bc1fa5fc) Thanks [@piemonkey](https://github.com/piemonkey)! - Add helper function to help with locale selection and add translation note to readme
+
+### Patch Changes
+
+- [#1111](https://github.com/lblod/ember-rdfa-editor/pull/1111) [`022bad0`](https://github.com/lblod/ember-rdfa-editor/commit/022bad0bec41f494fde8ecbc099b40f02e784eae) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump danlynn/ember-cli from 4.8.0 to 4.12.1
+
+- [#1112](https://github.com/lblod/ember-rdfa-editor/pull/1112) [`5fdb634`](https://github.com/lblod/ember-rdfa-editor/commit/5fdb6344613d4888381f6be0a66dcf2d74bd5aa7) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @changesets/changelog-github from 0.4.8 to 0.5.0
+
+- [#1109](https://github.com/lblod/ember-rdfa-editor/pull/1109) [`c171687`](https://github.com/lblod/ember-rdfa-editor/commit/c1716879c255ed2df48d676d1f6ed7c8ab4fa045) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump @types/sinon from 17.0.2 to 17.0.3
+
+- [#1110](https://github.com/lblod/ember-rdfa-editor/pull/1110) [`b40fea9`](https://github.com/lblod/ember-rdfa-editor/commit/b40fea9261c077d0fdbee68251652deb10ae5535) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump eslint-plugin-prettier from 5.1.2 to 5.1.3
+
+- [#1114](https://github.com/lblod/ember-rdfa-editor/pull/1114) [`b636d3b`](https://github.com/lblod/ember-rdfa-editor/commit/b636d3b4404823fa2e6e4b260d98f601fe50cf6e) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump typescript from 5.2.2 to 5.3.3
+
+- [#1115](https://github.com/lblod/ember-rdfa-editor/pull/1115) [`82efb68`](https://github.com/lblod/ember-rdfa-editor/commit/82efb68f7402dd672bf0d865bf3c33e34d4634ff) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump node from 20.10.0 to v20.11.0
+
+- [#1118](https://github.com/lblod/ember-rdfa-editor/pull/1118) [`1c24bf2`](https://github.com/lblod/ember-rdfa-editor/commit/1c24bf2520f64e76432dbba1c7e5a5a06690f930) Thanks [@redpencil-renovate-bot](https://github.com/apps/redpencil-renovate-bot)! - Bump prettier from 3.1.1 to 3.2.0
+
+- [#1107](https://github.com/lblod/ember-rdfa-editor/pull/1107) [`7b3dd5d`](https://github.com/lblod/ember-rdfa-editor/commit/7b3dd5de56a6ce36ff1bed8fe59fdbba78b207b7) Thanks [@piemonkey](https://github.com/piemonkey)! - Do not clean <hr /> tags from pasted input
+
+- [#1116](https://github.com/lblod/ember-rdfa-editor/pull/1116) [`3b3a154`](https://github.com/lblod/ember-rdfa-editor/commit/3b3a1545b083f8854e16e1f7d7db6f9c85043e07) Thanks [@piemonkey](https://github.com/piemonkey)! - Add capability to write end-to-end tests
+
 ## 8.3.0
 
 ### Minor Changes
