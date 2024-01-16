@@ -8,7 +8,9 @@ import { Velcro } from 'ember-velcro';
 
 type Args = {
   controller: SayController;
+  onToggleDropdown?: (newState: boolean) => void;
 };
+
 export default class ToolbarDropdown extends Component<Args> {
   @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
@@ -35,7 +37,10 @@ export default class ToolbarDropdown extends Component<Args> {
 
   @action
   toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
+    const nextDropdownOpenState = !this.dropdownOpen;
+
+    this.dropdownOpen = nextDropdownOpenState;
+    this.args.onToggleDropdown?.(nextDropdownOpenState);
   }
 
   @action

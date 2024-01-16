@@ -11,12 +11,15 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { tracked } from '@glimmer/tracking';
 
 type Args = {
   controller: SayController;
 };
+
 export default class ListOrdered extends Component<Args> {
   @service declare intl: IntlService;
+  @tracked listStart = 1;
 
   get styles() {
     return [
@@ -104,6 +107,30 @@ export default class ListOrdered extends Component<Args> {
       });
     } else {
       this.toggle(style);
+    }
+  }
+
+  @action
+  setOrder() {
+    const firstListParent = this.firstListParent;
+
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      const pos = firstListParent.pos;
+      this.controller.withTransaction((tr) => {
+        return tr.setNodeAttribute(pos, 'order', this.listStart);
+      });
+    }
+  }
+
+  @action
+  toggleDropdown() {
+    const firstListParent = this.firstListParent;
+    if (
+      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+    ) {
+      this.listStart = parseInt(firstListParent.node.attrs.order, 10);
     }
   }
 

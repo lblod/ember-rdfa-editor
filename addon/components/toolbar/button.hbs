@@ -14,7 +14,8 @@
   </button>
   {{#if (has-block "options")}}
     <Toolbar::Dropdown @disabled={{@disabled}} @icon={{this.optionsIcon}} @iconSize="" @controller={{@controller}} class="options"
-                       title={{@optionsLabel}} as |Menu|>
+                       title={{@optionsLabel}}
+                       @onToggleDropdown={{@onToggleDropdown}} as |Menu|>
       {{yield Menu to="options"}}
     </Toolbar::Dropdown>
   {{/if}}

@@ -7,6 +7,7 @@
     {{on "click" (fn this.toggle 'decimal')}}
     @controller={{@controller}}
     @disabled={{not this.canToggle}}
+    @onToggleDropdown={{fn this.toggleDropdown}}
   >
     <:options as |Menu|>
       {{#each this.styles as |style|}}
@@ -17,6 +18,22 @@
           {{style.description}}
         </Menu.Item>
       {{/each}}
+      <div role='group'>
+        <div role='menuitem' class='say-dropdown__menu-with-inputs'>
+          List start
+          <AuLabel for='editor-table-columns' class='au-u-hidden-visually'>
+            List start
+          </AuLabel>
+          <Input
+            class='say-input say-input--small'
+            size='2'
+            @value={{this.listStart}}
+          />
+        </div>
+      </div>
+      <Menu.Item @menuAction={{(fn this.setOrder)}}>
+        Set start
+      </Menu.Item>
     </:options>
   </Toolbar::Button>
 {{/if}}
