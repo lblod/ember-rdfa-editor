@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 9.0.2
+
+### Patch Changes
+
+- [#1126](https://github.com/lblod/ember-rdfa-editor/pull/1126) [`022cbff`](https://github.com/lblod/ember-rdfa-editor/commit/022cbff22913fd598aa48e5e5d29fc5bdc518677) Thanks [@elpoelma](https://github.com/elpoelma)! - Widen support for `ember-intl` to include version 5.7.2 due to outstanding issues with the 6.x releases.
+
+  For more information, see https://github.com/ember-intl/ember-intl/issues/1826
+
 ## 9.0.1
 
 ### Patch Changes
