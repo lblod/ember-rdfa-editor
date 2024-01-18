@@ -1,6 +1,5 @@
 import {
-  Backlink,
-  Property,
+  Backlink, OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
@@ -9,7 +8,7 @@ import {
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { getProperties } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { getProperties, isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
 
 const logger = createLogger('rdfa-utils');
@@ -17,7 +16,7 @@ export type AddPropertyArgs = {
   /** The resource to which to add a property */
   resource: string;
   /** Property to add */
-  property: Property;
+  property: OutgoingTriple;
   /**
     A transaction to use in place of getting a new one from state.tr
     This can be used to call this command from within another, but care must be taken to not use
@@ -54,7 +53,7 @@ export function addProperty({
         );
       });
 
-      if (property.type === 'external') {
+      if (isLinkToNode(property)) {
         const newBacklink: Backlink = {
           subject: resource,
           predicate: property.predicate,
@@ -66,13 +65,13 @@ export function addProperty({
          * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
          * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
          */
-        if (object.type === 'literal') {
+        if (object.termType === 'LiteralNode') {
           const target = getNodeByRdfaId(state, object.rdfaId);
           if (target) {
             targets = [target];
           }
         } else {
-          targets = getNodesByResource(state, object.resource);
+          targets = getNodesByResource(state, object.value);
         }
         targets?.forEach((target) => {
           const backlinks = target.value.attrs.backlinks as

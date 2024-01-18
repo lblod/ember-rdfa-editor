@@ -52,7 +52,6 @@ export function wrapInlineResource(
           const addCmd = addProperty({
             resource: attrs.resource,
             property: {
-              type: 'external',
               predicate: child.predicate,
               object: child.object,
             },

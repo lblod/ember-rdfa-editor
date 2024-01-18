@@ -10,11 +10,11 @@ import {
   getProperties,
   getRdfaId,
   getResource,
+  isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import type {
-  Backlink,
-  Property,
+  Backlink, OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
@@ -76,7 +76,7 @@ export function removePropertiesOfDeletedNodes() {
 
       const targetsWithBacklinks = new Map<
         ResolvedPNode,
-        Array<{ property: Property; resource: string }>
+        Array<{ property: OutgoingTriple; resource: string }>
       >();
 
       const targetsWithProperties = new Map<
@@ -98,17 +98,17 @@ export function removePropertiesOfDeletedNodes() {
           const properties = getProperties(node) ?? [];
 
           properties.forEach((property) => {
-            if (property.type === 'external') {
+            if (isLinkToNode(property)) {
               const { object } = property;
 
-              if (object.type === 'literal') {
+              if (object.termType === 'LiteralNode') {
                 const node = getNodeByRdfaId(newState, object.rdfaId);
 
                 if (node) {
                   setOrPush(targetsWithBacklinks, node, { property, resource });
                 }
               } else {
-                const nodes = getNodesByResource(newState, object.resource);
+                const nodes = getNodesByResource(newState, object.value);
 
                 nodes?.forEach((node) => {
                   setOrPush(targetsWithBacklinks, node, { property, resource });
@@ -185,11 +185,11 @@ export function removePropertiesOfDeletedNodes() {
             (property) =>
               !meta.some(({ backlink, rdfaId }) => {
                 if (rdfaId) {
-                  if (property.type !== 'external') {
+                  if (!isLinkToNode(property)) {
                     return false;
                   }
 
-                  if (property.object.type !== 'literal') {
+                  if (property.object.termType !== 'LiteralNode') {
                     return false;
                   }
 

@@ -8,8 +8,9 @@ import {
   deepEqualProperty,
   getBacklinks,
   getProperties,
+  isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Property } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { Command, Transaction } from 'prosemirror-state';
 
 type RemovePropertyArgs = {
@@ -28,7 +29,7 @@ type RemovePropertyArgs = {
     }
   | {
       /** The exact property object to find and remove */
-      property: Property;
+      property: OutgoingTriple;
     }
 );
 
@@ -44,7 +45,7 @@ export function removeProperty({
     }
 
     const properties = getProperties(resourceNodes[0].value);
-    let propertyToRemove: Property | undefined;
+    let propertyToRemove: OutgoingTriple | undefined;
     let index = -1;
     if ('index' in args) {
       propertyToRemove = properties?.[args.index];
@@ -75,7 +76,7 @@ export function removeProperty({
         );
       });
 
-      if (propertyToRemove.type === 'external') {
+      if (isLinkToNode(propertyToRemove)) {
         const { object } = propertyToRemove;
         /**
          * We need two make two cases here
@@ -83,13 +84,13 @@ export function removeProperty({
          * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
          */
         let targets: ResolvedPNode[] | undefined;
-        if (object.type === 'literal') {
+        if (object.termType === 'LiteralNode') {
           const target = getNodeByRdfaId(state, object.rdfaId);
           if (target) {
             targets = [target];
           }
         } else {
-          targets = getNodesByResource(state, object.resource);
+          targets = getNodesByResource(state, object.value);
         }
         targets?.forEach((target) => {
           const backlinks = getBacklinks(target.value);

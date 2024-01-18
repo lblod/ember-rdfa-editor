@@ -20,6 +20,58 @@
             />
           {{/let}}
         </AuFormRow>
+        <AuFormRow>
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
+              Type
+            </AuLabel>
+            <PowerSelect
+              id={{id}}
+              @searchEnabled={{false}}
+              @options={{this.typeOptions}}
+              @selected={{this.valueType}}
+              @onChange={{this.selectValueType}}
+              as |option|
+            >
+              {{option}}
+
+            </PowerSelect>
+
+          {{/let}}
+
+        </AuFormRow>
+        {{#if (eq this.valueType 'Literal')}}
+
+        <AuFormRow @alignment="default">
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
+             Datatype
+            </AuLabel>
+            <AuInput
+              id={{id}}
+              required={{false}}
+              @value={{this.newDataType}}
+              @width="block"
+              @disabled={{this.newLanguage.length}}
+              {{on "input" this.updateDataType}}
+            />
+          {{/let}}
+          {{#let (unique-id) as |id|}}
+            <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
+             Language
+            </AuLabel>
+            <AuInput
+              id={{id}}
+              required={{false}}
+              @value={{this.newLanguage}}
+              @width="block"
+              @disabled={{this.newDataType.length}}
+              {{on "input" this.updateLanguage}}
+            />
+          {{/let}}
+        </AuFormRow>
+        {{else}}
+        {{/if}}
         <AuFormRow @alignment="default">
           {{#let (unique-id) as |id|}}
             <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
@@ -28,7 +80,7 @@
             <AuInput
               id={{id}}
               required={{true}}
-              @value={{this.newObject}}
+              @value={{this.newObjectValue}}
               @width="block"
               {{on "input" this.updateObject}}
             />

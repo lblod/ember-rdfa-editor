@@ -17,11 +17,10 @@ export function insertRelation(args: InsertRelationArgs): Command {
     const addPropArgs: AddPropertyArgs = {
       resource: subject,
       property: {
-        type: 'external',
         predicate,
         // Use a placeholder for applicability checks (i.e. !dispatcher)
         object: {
-          type: 'literal',
+          termType: 'LiteralNode',
           rdfaId: 'placeholder',
         },
       },
@@ -46,7 +45,7 @@ export function insertRelation(args: InsertRelationArgs): Command {
       );
       // Replace the placeholder
       addPropArgs.property.object = {
-        type: 'literal',
+        termType: 'LiteralNode',
         rdfaId: objectId,
       };
       // Need to create the node before can call add property

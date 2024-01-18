@@ -2,8 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
-import { Backlink, Property } from './rdfa-processor';
+import { Backlink, IncomingTriple, OutgoingTriple } from './rdfa-processor';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+import { EditorState } from 'prosemirror-state';
+import { getNodesByResource } from '../plugins/rdfa-info';
 
 const logger = createLogger('core/schema');
 
@@ -37,10 +39,10 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
   resource: string;
-  properties: Property[];
+  properties: OutgoingTriple[];
 }
 export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
-  Record<string, string | number | Property[] | Backlink[]>;
+  Record<string, string | number | OutgoingTriple[] | IncomingTriple[]>;
 
 export const sharedRdfaNodeSpec = {
   isolating: true,
@@ -65,11 +67,11 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
       hasAnyRdfaAttributes = true;
 
       if (key === 'data-outgoing-props') {
-        const properties = JSON.parse(value) as Property[];
+        const properties = JSON.parse(value) as OutgoingTriple[];
         attrs['properties'] = properties;
       }
       if (key === 'data-incoming-props') {
-        const backlinks = JSON.parse(value) as Backlink[];
+        const backlinks = JSON.parse(value) as IncomingTriple[];
         attrs['backlinks'] = backlinks;
       }
       if (key === 'data-rdfa-node-type') {
@@ -87,11 +89,11 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
               attrs.resource && typeof attrs.resource === 'string'
                 ? attrs.resource
                 : attrs.about && typeof attrs.about === 'string'
-                ? attrs.about
-                : '',
+                  ? attrs.about
+                  : '',
             properties:
               attrs.properties && attrs.properties instanceof Array
-                ? (attrs.properties as Property[])
+                ? (attrs.properties as OutgoingTriple[])
                 : [],
           };
         }
@@ -116,10 +118,50 @@ export function renderInvisibleRdfa(
   attrs: Record<string, unknown> = {},
 ): DOMOutputSpec {
   const propElements = [];
-  const properties = nodeOrMark.attrs.properties as Property[];
-  for (const { type, predicate, object } of properties) {
-    if (type === 'attribute') {
-      propElements.push(['span', { property: predicate, content: object }, '']);
+  const properties = nodeOrMark.attrs.properties as OutgoingTriple[];
+  for (const { predicate, object } of properties) {
+    if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
+      // the triple refers to a URI which does not have a corresponding
+      // resource node
+      propElements.push([
+        'span',
+        {
+          about: nodeOrMark.attrs.subject,
+          property: predicate,
+          resource: object.value,
+        },
+      ]);
+    } else if (object.termType === 'Literal') {
+      if (object.datatype.value.length) {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+            datatype: object.datatype.value,
+          },
+          '',
+        ]);
+      } else if (object.language.length) {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+            lang: object.language,
+          },
+          '',
+        ]);
+      } else {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+          },
+          '',
+        ]);
+      }
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {

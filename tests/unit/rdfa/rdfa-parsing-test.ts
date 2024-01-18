@@ -59,7 +59,7 @@ import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
 import { testEditor } from 'dummy/tests/utils/editor';
 import {
   Backlink,
-  Property,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 const schema = new Schema({
@@ -174,21 +174,21 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
+    const actualProps = decisionNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
       | Backlink[]
       | undefined;
-    const expectedProps: Property[] = [
+    const expectedProps: OutgoingTriple[] = [
       {
-        object: 'besluit:Besluit',
+        object: { termType: 'NamedNode', value: 'besluit:Besluit' },
         predicate: rdf('type'),
-        type: 'attribute',
       },
       {
-        type: 'external',
         predicate: prov('value'),
         object: {
-          type: 'literal',
+          termType: 'LiteralNode',
           rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
         },
       },
@@ -202,9 +202,11 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as Property[] | undefined;
+    const valueProps = valueNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
     const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
-    const expectedValueProps: Property[] = [];
+    const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks: Backlink[] = [
       {
         subject: 'http://test/1',
@@ -215,7 +217,7 @@ module('rdfa | parsing', function () {
     assert.deepEqual(valueBacklinks, expectedValueBacklinks, 'valueBacklinks');
   });
 
-  test('it should convert rdfa with property spans correctly', function (assert) {
+  test('it should convert rdfa with property spans correctly', function (assert): void {
     const { controller } = testEditor(schema, plugins);
     const htmlContent = oneLineTrim`
     <div resource="http://test/1"
@@ -251,29 +253,32 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
+    const actualProps = decisionNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
       | Backlink[]
       | undefined;
 
-    const expectedProps: Property[] = [
+    const expectedProps: OutgoingTriple[] = [
       {
-        object: 'ext:BesluitNieuweStijl',
+        object: { termType: 'NamedNode', value: 'ext:BesluitNieuweStijl' },
         predicate: rdf('type'),
-        type: 'attribute',
-      },
-      {
-        object: 'http://publications.europa.eu/resource/authority/language/NLD',
-        predicate: 'eli:language',
-        type: 'attribute',
       },
       {
         object: {
-          type: 'literal',
+          value:
+            'http://publications.europa.eu/resource/authority/language/NLD',
+          termType: 'NamedNode',
+        },
+        predicate: 'eli:language',
+      },
+      {
+        object: {
+          termType: 'LiteralNode',
           rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
         },
         predicate: prov('value'),
-        type: 'external',
       },
     ];
     const expectedBacklinks: Backlink[] = [];
@@ -285,9 +290,11 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as Property[] | undefined;
+    const valueProps = valueNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
     const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
-    const expectedValueProps: Property[] = [];
+    const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks: Backlink[] = [
       {
         subject: 'http://test/1',

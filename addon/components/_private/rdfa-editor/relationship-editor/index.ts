@@ -14,10 +14,10 @@ import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   Backlink,
-  ExternalProperty,
-  ExternalPropertyObject,
-  Property,
+  NodeLinkObject,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 
 type Args = {
   controller?: SayController;
@@ -46,11 +46,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get properties() {
-    return this.node.attrs.properties as Property[] | undefined;
+    return this.node.attrs.properties as OutgoingTriple[] | undefined;
   }
 
   get hasOutgoing() {
-    return this.properties?.some((prop) => prop.type === 'external');
+    return this.properties?.some(isLinkToNode);
   }
 
   get controller() {
@@ -86,11 +86,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   closeStatusMessage = () => {
     this.statusMessage = null;
   };
+  isNodeLink = isLinkToNode;
 
-  goToOutgoing = (outgoing: ExternalProperty) => {
+  goToOutgoing = (outgoing: OutgoingTriple) => {
     this.closeStatusMessage();
+    if (!isLinkToNode(outgoing)) {
+      return;
+    }
     const { object } = outgoing;
-    if (object.type === 'literal') {
+    if (object.termType === 'LiteralNode') {
       const result = this.controller?.doCommand(
         selectNodeByRdfaId({ rdfaId: object.rdfaId }),
         { view: this.controller.mainEditorView },
@@ -103,12 +107,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       }
     } else {
       const result = this.controller?.doCommand(
-        selectNodeByResource({ resource: object.resource }),
+        selectNodeByResource({ resource: object.value }),
         { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
-          message: `No resource node found for ${object.resource}.`,
+          message: `No resource node found for ${object.value}.`,
           type: 'info',
         };
       }
@@ -134,15 +138,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
-    let target: ExternalPropertyObject;
+    let target: NodeLinkObject;
     if (this.currentResource) {
       target = {
-        type: 'resource',
-        resource: this.currentResource,
+        termType: 'ResourceNode',
+        value: this.currentResource,
       };
     } else {
       target = {
-        type: 'literal',
+        termType: 'LiteralNode',
         rdfaId: this.currentRdfaId,
       };
     }
@@ -176,10 +180,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
 
   saveNewRelationship = (details: {
     predicate: string;
-    object: ExternalPropertyObject;
+    object: NodeLinkObject;
   }) => {
     this.addProperty({
-      type: 'external',
       predicate: details.predicate,
       object: details.object,
     });
@@ -194,7 +197,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     throw new NotImplementedError();
   };
 
-  addProperty = (property: Property) => {
+  addProperty = (property: OutgoingTriple) => {
     // This function can only be called when the selected node defines a resource
     if (this.currentResource) {
       this.controller?.doCommand(

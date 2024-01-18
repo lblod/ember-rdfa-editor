@@ -4,9 +4,8 @@ import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
 import {
   Backlink,
-  ExternalProperty,
-  ExternalPropertyObject,
-  Property,
+  LinkTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export type RdfaAttr =
@@ -148,8 +147,8 @@ export function getResource(node: PNode): string | undefined {
   return node.attrs.resource as string | undefined;
 }
 
-export function getProperties(node: PNode): Property[] | undefined {
-  return node.attrs.properties as Property[] | undefined;
+export function getProperties(node: PNode): OutgoingTriple[] | undefined {
+  return node.attrs.properties as OutgoingTriple[] | undefined;
 }
 
 export function getBacklinks(node: PNode): Backlink[] | undefined {
@@ -194,7 +193,7 @@ export function findRdfaIdsInSelection(selection: Selection) {
  * into resource nodes
  */
 export function getRdfaChildren(node: PNode) {
-  const result = new Set<ExternalProperty>();
+  const result = new Set<LinkTriple>();
   node.descendants((child) => {
     const id = getRdfaId(child);
     if (id) {
@@ -202,11 +201,10 @@ export function getRdfaChildren(node: PNode) {
       const resource = getResource(child);
       if (backlinks?.[0]) {
         result.add({
-          type: 'external',
           predicate: backlinks[0].predicate,
           object: resource
-            ? { type: 'resource', resource }
-            : { type: 'literal', rdfaId: id },
+            ? { termType: 'ResourceNode', value: resource }
+            : { termType: 'LiteralNode', rdfaId: id },
         });
       }
       // We don't want to recurse, so stop descending
@@ -229,15 +227,18 @@ export function generateNewUri(uriBase: string) {
   };
 }
 
-export function deepEqualProperty(a: Property, b: Property) {
-  if (a.type === b.type && a.predicate === b.predicate) {
-    if (a.type === 'attribute' || b.type === 'attribute') {
-      return a.object === b.object;
-    } else {
-      return Object.keys(a.object).every(
-        (key: keyof ExternalPropertyObject) => a.object[key] === b.object[key],
-      );
-    }
+export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
+  if (a.object.termType === b.object.termType && a.predicate === b.predicate) {
+    return Object.keys(a.object).every(
+      (key: keyof typeof a.object) => a.object[key] === b.object[key],
+    );
   }
   return false;
+}
+
+export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
+  return (
+    triple.object.termType === 'LiteralNode' ||
+    triple.object.termType === 'ResourceNode'
+  );
 }

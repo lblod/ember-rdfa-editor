@@ -8,7 +8,7 @@ import {
   rdfaInfoPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { ExternalPropertyObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { NodeLinkObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 const objectTypes = ['resource', 'literal'] as const;
 type ObjectType = (typeof objectTypes)[number];
@@ -24,7 +24,7 @@ export default class RelationshipEditorModal extends Component<Args> {
   @tracked selectedObjectType: ObjectType = this.objectTypes[0];
 
   @tracked newPredicate = '';
-  @tracked objectRdfa?: ExternalPropertyObject;
+  @tracked objectRdfa?: NodeLinkObject;
 
   get controller() {
     return this.args.controller;
@@ -38,7 +38,7 @@ export default class RelationshipEditorModal extends Component<Args> {
     }
   }
 
-  get literals(): ExternalPropertyObject[] {
+  get literals(): NodeLinkObject[] {
     if (!this.controller) throw Error('No Controller');
     const rdfaIdMapping = rdfaInfoPluginKey.getState(
       this.controller.mainEditorState,
@@ -46,11 +46,11 @@ export default class RelationshipEditorModal extends Component<Args> {
     if (!rdfaIdMapping) {
       return [];
     }
-    const result: ExternalPropertyObject[] = [];
+    const result: NodeLinkObject[] = [];
     rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
       if (resolvedNode.value.attrs.rdfaNodeType === 'literal') {
         result.push({
-          type: 'literal',
+          termType: 'LiteralNode',
           rdfaId,
         });
       }
@@ -58,21 +58,21 @@ export default class RelationshipEditorModal extends Component<Args> {
     return result;
   }
 
-  get resources(): ExternalPropertyObject[] {
+  get resources(): NodeLinkObject[] {
     if (!this.controller) throw Error('No Controller');
     return getResources(this.controller.mainEditorState).map((resource) => {
       return {
-        type: 'resource',
-        resource,
+        termType: 'ResourceNode',
+        value: resource,
       };
     });
   }
 
-  label = (rdfaObject: ExternalPropertyObject) => {
+  label = (rdfaObject: NodeLinkObject) => {
     if (!this.controller) throw Error('No Controller');
     console.log(rdfaObject);
-    if (rdfaObject.type === 'resource') {
-      return rdfaObject.resource;
+    if (rdfaObject.termType === 'ResourceNode') {
+      return rdfaObject.value;
     } else {
       const node = unwrap(
         getNodeByRdfaId(this.controller.mainEditorState, rdfaObject.rdfaId),
@@ -87,7 +87,7 @@ export default class RelationshipEditorModal extends Component<Args> {
   updatePredicate = (event: InputEvent) => {
     this.newPredicate = (event.target as HTMLInputElement).value;
   };
-  updateObject = (rdfaObj?: ExternalPropertyObject) => {
+  updateObject = (rdfaObj?: NodeLinkObject) => {
     this.objectRdfa = rdfaObj;
   };
 
