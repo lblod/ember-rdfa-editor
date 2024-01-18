@@ -4,6 +4,12 @@ const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG', 'TR', 'TD', 'HR'];
 const NOTRIM_ELEMENTS = ['SPAN'];
 
 function isEmpty(element: Element): boolean {
+  if (
+    element.hasAttribute('data-content-container') ||
+    element.hasAttribute('data-rdfa-container')
+  ) {
+    return false;
+  }
   if (ALLOWED_EMPTY_ELEMENTS.includes(element.nodeName)) {
     return false;
   }

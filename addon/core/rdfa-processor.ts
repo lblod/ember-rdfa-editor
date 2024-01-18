@@ -46,6 +46,7 @@ export type SayRDFLiteral = Pick<
 > & {
   datatype: Omit<RDF.NamedNode, 'equals'>;
 };
+export type ContentLiteralObject = Omit<SayRDFLiteral, 'value' | 'termType'> & {termType: 'ContentLiteral'};
 
 export type PlainObject =
   | SayRDFLiteral
@@ -62,7 +63,11 @@ export type PlainTriple = {
   predicate: string;
   object: PlainObject;
 };
-export type OutgoingTriple = PlainTriple | LinkTriple;
+export type ContentTriple = {
+  predicate: string;
+  object: ContentLiteralObject;
+}
+export type OutgoingTriple = PlainTriple | LinkTriple | ContentTriple;
 
 /**
  * @deprecated use {@link IncomingTriple} instead
@@ -111,7 +116,7 @@ export function preprocessRDFa(dom: Node) {
   for (const [node, subject] of datastore.getResourceNodeMap().entries()) {
     const properties: OutgoingTriple[] = [];
     // get all quads that have our subject
-    const outgoingQuads = datastore.match(subject).asQuadResultSet();
+    const outgoingQuads = datastore.match(entry.subject).asQuadResultSet();
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
       quadToProperties(datastore, quad).forEach((prop) => {
@@ -126,6 +131,12 @@ export function preprocessRDFa(dom: Node) {
       });
     }
 
+    if (subject.contentPredicate) {
+      properties.push({
+        predicate: subject.contentPredicate.value,
+        object: {termType: "ContentLiteral"}
+      });
+    }
     const incomingProps: IncomingTriple[] = [];
     const incomingQuads = datastore.match(null, null, subject);
     for (const quad of incomingQuads.asQuadResultSet()) {
@@ -136,6 +147,7 @@ export function preprocessRDFa(dom: Node) {
     (node as HTMLElement).dataset.outgoingProps = JSON.stringify(properties);
     (node as HTMLElement).dataset.incomingProps = JSON.stringify(incomingProps);
     (node as HTMLElement).dataset.rdfaNodeType = 'resource';
+    (node as HTMLElement).dataset.subject = entry.subject.value;
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
@@ -181,7 +193,7 @@ function quadToProperties(
     ) {
       const resourceNode = datastore
         .getResourceNodeMap()
-        .getFirstValue(quad.object);
+        .getFirstValue({ subject: quad.object });
       if (resourceNode) {
         return [
           {

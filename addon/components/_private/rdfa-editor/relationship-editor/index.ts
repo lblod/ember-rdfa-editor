@@ -18,6 +18,7 @@ import {
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import ContentPredicateListComponent from './content-predicate-list';
 
 type Args = {
   controller?: SayController;
@@ -37,6 +38,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
 
   Modal = RelationshipEditorModal;
+  ContentPredicateList = ContentPredicateListComponent;
   get node(): PNode {
     return this.args.node.value;
   }
@@ -52,6 +54,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   get hasOutgoing() {
     return this.properties?.some(isLinkToNode);
   }
+  get hasContentPredicate() {
+    return this.properties?.some((prop) => prop.type === 'content');
+  }
 
   get controller() {
     return this.args.controller;
@@ -62,7 +67,17 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return this.node.attrs.resource as string | undefined;
+    return (
+      this.node.attrs.subject ||
+      this.node.attrs.about ||
+      (this.node.attrs.resource as string | undefined)
+    );
+  }
+  get type() {
+    return this.node.attrs.rdfaNodeType as 'resource' | 'literal';
+  }
+  get isResource() {
+    return this.type === 'resource';
   }
 
   get currentRdfaId() {

@@ -159,8 +159,8 @@ export default class EditableBlockController extends Controller {
 
   get activeNode() {
     if (this.rdfaEditor) {
-      const result= getActiveEditableNode(this.rdfaEditor.activeEditorState);
-      return result
+      const result = getActiveEditableNode(this.rdfaEditor.activeEditorState);
+      return result;
     }
     return;
   }

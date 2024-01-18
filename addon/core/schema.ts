@@ -2,10 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
-import { Backlink, IncomingTriple, OutgoingTriple } from './rdfa-processor';
+import {
+  Backlink,
+  ContentTriple,
+  IncomingTriple,
+  OutgoingTriple,
+} from './rdfa-processor';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
-import { EditorState } from 'prosemirror-state';
-import { getNodesByResource } from '../plugins/rdfa-info';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 const logger = createLogger('core/schema');
 
@@ -15,6 +19,7 @@ export const rdfaAttrSpec = {
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   resource: { default: null },
+  subject: { default: null },
 };
 /** @deprecated Renamed to rdfaAttrSpec */
 export const rdfaAttrs = rdfaAttrSpec;
@@ -22,6 +27,7 @@ export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   resource: { default: null },
+  'data-subject': { default: null },
   about: { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
@@ -74,6 +80,9 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
         const backlinks = JSON.parse(value) as IncomingTriple[];
         attrs['backlinks'] = backlinks;
       }
+      if (key === 'data-subject') {
+        attrs['subject'] = value;
+      }
       if (key === 'data-rdfa-node-type') {
         const type = value as unknown as RdfaAttrs['rdfaNodeType'];
         if (!rdfaNodeTypes.includes(type)) {
@@ -103,7 +112,6 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   if (hasAnyRdfaAttributes) {
     if (!attrs['__rdfaId']) {
       attrs['__rdfaId'] = uuidv4();
-      logger('No rdfaId found, generating one', attrs['__rdfaId'], attrs);
     }
     return attrs;
   }
@@ -179,8 +187,32 @@ export function renderInvisibleRdfa(
 
 export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
-): Record<string, string> {
-  if (nodeOrMark.attrs.rdfaNodeType !== 'resource') {
+): Record<string, string | null> {
+  if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
+    const contentPred: ContentTriple | null = (
+      nodeOrMark.attrs.properties as OutgoingTriple[]
+    ).find(
+      (prop) => prop.object.termType === 'ContentLiteral',
+    ) as ContentTriple | null;
+
+    return contentPred
+      ? {
+          about: (nodeOrMark.attrs.subject ||
+            nodeOrMark.attrs.about ||
+            nodeOrMark.attrs.resource) as string,
+          property: contentPred.predicate,
+          datatype: contentPred.object.datatype?.value,
+          lang: contentPred.object.language,
+
+          resource: null,
+        }
+      : {
+          about: (nodeOrMark.attrs.subject ||
+            nodeOrMark.attrs.about ||
+            nodeOrMark.attrs.resource) as string,
+          resource: null,
+        };
+  } else {
     const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
     if (!backlinks.length) {
       return {};
@@ -189,9 +221,9 @@ export function renderRdfaAttrs(
     return {
       about: backlinks[0].subject,
       property: backlinks[0].predicate,
+      'data-literal-node': 'true',
     };
   }
-  return {};
 }
 
 export interface RenderContentArgs {
@@ -218,9 +250,16 @@ export function renderRdfaAware({
   contentContainerAttrs = {},
   ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
+  const clone = { ...attrs };
+  delete clone.properties;
+  delete clone.backlinks;
+  delete clone.subject;
+  delete clone.resource;
+  delete clone.__rdfaId;
+  delete clone.rdfaNodeType;
   return [
     tag,
-    { ...attrs, ...renderRdfaAttrs(renderable) },
+    { ...clone, ...renderRdfaAttrs(renderable) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,
@@ -229,10 +268,15 @@ export function renderRdfaAware({
     ],
   ];
 }
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
+
+export const getRdfaContentElement = (node: Node) => {
+  if (!isElement(node)) {
+    throw new Error('node is not an element');
   }
-  return copy;
-}
+  for (const child of node.children) {
+    if ((child as HTMLElement).dataset.contentContainer) {
+      return child as HTMLElement;
+    }
+  }
+  return node;
+};
