@@ -987,12 +987,17 @@ export class RdfaParser<N> {
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
     contentPredicate?: ModelNamedNode<N>,
+    contentDatatype?: ModelNamedNode<N>,
+    contentLanguage?: string,
   ) => {
     this.resourceNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(resource, activeTag),
       contentPredicate: contentPredicate
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
+      contentDatatype,
+      // a literal can't have both a datatype and a language
+      contentLanguage: contentDatatype ? undefined : contentLanguage,
     });
   };
 

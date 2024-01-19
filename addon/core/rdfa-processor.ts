@@ -7,6 +7,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import Datastore, {
   EditorStore,
+  SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
 
@@ -46,7 +47,9 @@ export type SayRDFLiteral = Pick<
 > & {
   datatype: Omit<RDF.NamedNode, 'equals'>;
 };
-export type ContentLiteralObject = Omit<SayRDFLiteral, 'value' | 'termType'> & {termType: 'ContentLiteral'};
+export type ContentLiteralObject = Omit<SayRDFLiteral, 'value' | 'termType'> & {
+  termType: 'ContentLiteral';
+};
 
 export type PlainObject =
   | SayRDFLiteral
@@ -66,7 +69,7 @@ export type PlainTriple = {
 export type ContentTriple = {
   predicate: string;
   object: ContentLiteralObject;
-}
+};
 export type OutgoingTriple = PlainTriple | LinkTriple | ContentTriple;
 
 /**
@@ -113,32 +116,28 @@ export function preprocessRDFa(dom: Node) {
   }
 
   // every resource node
-  for (const [node, subject] of datastore.getResourceNodeMap().entries()) {
+  for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
     const properties: OutgoingTriple[] = [];
     // get all quads that have our subject
     const outgoingQuads = datastore.match(entry.subject).asQuadResultSet();
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
-      quadToProperties(datastore, quad).forEach((prop) => {
+      quadToProperties(datastore, quad, entry).forEach((prop) => {
+        console.log('prop', prop);
         if (prop.object.termType === 'LiteralNode') {
           if (!seenLinks.has(prop.object.rdfaId)) {
             seenLinks.add(prop.object.rdfaId);
             properties.push(prop);
           }
+          // we'll handle this case separately below
         } else {
           properties.push(prop);
         }
       });
     }
 
-    if (subject.contentPredicate) {
-      properties.push({
-        predicate: subject.contentPredicate.value,
-        object: {termType: "ContentLiteral"}
-      });
-    }
     const incomingProps: IncomingTriple[] = [];
-    const incomingQuads = datastore.match(null, null, subject);
+    const incomingQuads = datastore.match(null, null, entry.subject);
     for (const quad of incomingQuads.asQuadResultSet()) {
       incomingProps.push(quadToBacklink(quad));
     }
@@ -167,6 +166,7 @@ export function preprocessRDFa(dom: Node) {
 function quadToProperties(
   datastore: Datastore<Node>,
   quad: Quad,
+  entry: SubAndContentPred,
 ): OutgoingTriple[] {
   const result: OutgoingTriple[] = [];
   // check if quad refers to a contentNode
@@ -202,15 +202,37 @@ function quadToProperties(
           },
         ];
       } else {
-        return [{ predicate: quad.predicate.value, object: quad.object }];
+        return [
+          // copying object to prevent weird bugs
+          { predicate: quad.predicate.value, object: { ...quad.object } },
+        ];
       }
     }
     // neither a content nor resource node, so just a plain attribute
     if (quad.object.termType === 'Literal') {
+      const { contentDatatype, contentLanguage, contentPredicate } = entry;
+      if (
+        contentPredicate &&
+        quad.predicate.equals(contentPredicate) &&
+        (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
+        (!contentLanguage || contentLanguage === quad.object.language)
+      ) {
+        return [
+          {
+            predicate: quad.predicate.value,
+            object: {
+              termType: 'ContentLiteral',
+              datatype: quad.object.datatype,
+              language: quad.object.language,
+            },
+          },
+        ];
+      }
       return [
         {
           predicate: quad.predicate.value,
-          object: quad.object,
+          // need to copy the object here or weird stuff happens
+          object: { ...quad.object, termType: 'Literal' },
         },
       ];
     } else {

@@ -15,24 +15,5 @@
         </AuButton>
       </AuDropdown>
     </Item>
-  {{else}}
-    <form {{on "submit" this.addContentProperty}}>
-      <AuFormRow @alignment="post">
-        <AuButton
-          @type="submit"
-          @icon="add"
-          @skin="secondary"
-          aria-label="Add"
-          {{on "click" this.addContentProperty}}
-        />
-        <AuInput
-          aria-label="New predicate input"
-          id="new-predicate-input"
-          @value={{this.newPredicate}}
-          placeholder="Add new predicate"
-        />
-
-      </AuFormRow>
-    </form>
   {{/each}}
 </AuList>

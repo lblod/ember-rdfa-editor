@@ -40,52 +40,54 @@
           {{/let}}
 
         </AuFormRow>
-        {{#if (eq this.valueType 'Literal')}}
+        {{#if this.showDataTypeAndLanguage}}
 
-        <AuFormRow @alignment="default">
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
-             Datatype
-            </AuLabel>
-            <AuInput
-              id={{id}}
-              required={{false}}
-              @value={{this.newDataType}}
-              @width="block"
-              @disabled={{this.newLanguage.length}}
-              {{on "input" this.updateDataType}}
-            />
-          {{/let}}
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
-             Language
-            </AuLabel>
-            <AuInput
-              id={{id}}
-              required={{false}}
-              @value={{this.newLanguage}}
-              @width="block"
-              @disabled={{this.newDataType.length}}
-              {{on "input" this.updateLanguage}}
-            />
-          {{/let}}
-        </AuFormRow>
+          <AuFormRow @alignment="default">
+            {{#let (unique-id) as |id|}}
+              <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
+                Datatype
+              </AuLabel>
+              <AuInput
+                id={{id}}
+                required={{false}}
+                @value={{this.newDataType}}
+                @width="block"
+                @disabled={{this.newLanguage.length}}
+                {{on "input" this.updateDataType}}
+              />
+            {{/let}}
+            {{#let (unique-id) as |id|}}
+              <AuLabel for={{id}} @required={{false}} @requiredLabel="Required">
+                Language
+              </AuLabel>
+              <AuInput
+                id={{id}}
+                required={{false}}
+                @value={{this.newLanguage}}
+                @width="block"
+                @disabled={{this.newDataType.length}}
+                {{on "input" this.updateLanguage}}
+              />
+            {{/let}}
+          </AuFormRow>
         {{else}}
         {{/if}}
-        <AuFormRow @alignment="default">
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-              Object
-            </AuLabel>
-            <AuInput
-              id={{id}}
-              required={{true}}
-              @value={{this.newObjectValue}}
-              @width="block"
-              {{on "input" this.updateObject}}
-            />
-          {{/let}}
-        </AuFormRow>
+        {{#unless (eq this.valueType "ContentLiteral")}}
+          <AuFormRow @alignment="default">
+            {{#let (unique-id) as |id|}}
+              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
+                Object
+              </AuLabel>
+              <AuInput
+                id={{id}}
+                required={{true}}
+                @value={{this.newObjectValue}}
+                @width="block"
+                {{on "input" this.updateObject}}
+              />
+            {{/let}}
+          </AuFormRow>
+        {{/unless}}
       </form>
     </:body>
     <:footer>

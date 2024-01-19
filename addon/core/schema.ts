@@ -140,7 +140,7 @@ export function renderInvisibleRdfa(
         },
       ]);
     } else if (object.termType === 'Literal') {
-      if (object.datatype.value.length) {
+      if (object.datatype?.value?.length) {
         propElements.push([
           'span',
           {
@@ -150,7 +150,7 @@ export function renderInvisibleRdfa(
           },
           '',
         ]);
-      } else if (object.language.length) {
+      } else if (object.language?.length) {
         propElements.push([
           'span',
           {

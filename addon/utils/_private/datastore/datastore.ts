@@ -43,6 +43,8 @@ interface ObjectNodesResponse<N> extends TermNodesResponse<N> {
 export interface SubAndContentPred {
   subject: RDF.Quad_Subject;
   contentPredicate?: RDF.Quad_Predicate;
+  contentDatatype?: RDF.NamedNode;
+  contentLanguage?: string;
 }
 
 export type WhichTerm = 'subject' | 'predicate' | 'object';

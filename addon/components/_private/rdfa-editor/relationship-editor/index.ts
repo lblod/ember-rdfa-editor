@@ -55,7 +55,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return this.properties?.some(isLinkToNode);
   }
   get hasContentPredicate() {
-    return this.properties?.some((prop) => prop.type === 'content');
+    return this.properties?.some(
+      (prop) => prop.object.termType === 'ContentLiteral',
+    );
   }
 
   get controller() {

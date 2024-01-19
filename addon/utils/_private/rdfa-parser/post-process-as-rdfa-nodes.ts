@@ -17,6 +17,8 @@ export interface PostProcessArgs<N> {
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
     contentPredicate?: ModelNamedNode<N>,
+    contentDatatype?: ModelNamedNode<N>,
+    contentLanguage?: string,
   ) => void;
 }
 
@@ -99,6 +101,8 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
             activeTag.predicates?.find(
               (pred) => pred.value === attributes['property'],
             ),
+            activeTag.datatype,
+            activeTag.language,
           );
           return;
         } else if (isRootTag) {
@@ -122,6 +126,8 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
             activeTag.predicates?.find(
               (pred) => pred.value === attributes['property'],
             ),
+            activeTag.datatype,
+            activeTag.language
           );
           return;
         } else if (
