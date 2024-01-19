@@ -21,14 +21,18 @@
             class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
           >
             <div class="au-u-padding-tiny">
-              <p><strong>{{prop.predicate}}</strong></p>
+              <p><strong>predicate:</strong> {{prop.predicate}}</p>
               {{#if prop.object.datatype}}
-                <p>{{prop.object.datatype.value}}</p>
+                <p><strong>datatype:</strong> {{prop.object.datatype.value}}</p>
               {{/if}}
               {{#if prop.object.language}}
-                <p>{{prop.object.language}}</p>
+                <p><strong>language:</strong> {{prop.object.language}}</p>
               {{/if}}
-              <p>{{prop.object.value}}</p>
+              {{#unless (eq prop.object.termType 'ContentLiteral')}}
+              <p><strong>value:</strong> {{prop.object.value}}</p>
+              {{else}}
+              <AuPill>content-predicate</AuPill>
+              {{/unless}}
             </div>
             <AuDropdown @icon="three-dots" role="menu" @alignment="left">
               <AuButton
