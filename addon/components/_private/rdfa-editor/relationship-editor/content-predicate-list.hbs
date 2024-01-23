@@ -28,8 +28,9 @@
         <AuInput
           aria-label="New predicate input"
           id="new-predicate-input"
-          @value={{this.newPredicate}}
+          value={{this.newPredicate}}
           placeholder="Add new predicate"
+          {{on "change" this.setNewPredicate}}
         />
 
       </AuFormRow>
