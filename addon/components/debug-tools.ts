@@ -138,28 +138,38 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
     const wnd = window.open('about:blank', '', '_blank');
 
     if (wnd) {
-      const styles = Array.from(document.styleSheets);
-      styles.forEach((style) => {
-        if (style.href) {
-          const link = wnd.document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = style.href;
-          link.type = 'text/css';
-          wnd.document.head.appendChild(link);
+      const parser = new DOMParser();
+      const basicDocument = parser.parseFromString(
+        '<html><head></head><body class="say-content"></body></html>',
+        'text/html',
+      );
+
+      const styleSheets = Array.from(document.styleSheets);
+
+      styleSheets.forEach((styleSheet) => {
+        if (styleSheet.href) {
+          const linkElement = basicDocument.createElement('link');
+
+          linkElement.rel = 'stylesheet';
+          linkElement.href = styleSheet.href;
+          linkElement.type = 'text/css';
+
+          basicDocument.head.appendChild(linkElement);
         }
       });
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(
+      const contentDocument = parser.parseFromString(
         this.controller?.htmlContent || '',
         'text/html',
       );
 
-      if (doc.body.firstChild) {
-        wnd.document.body.appendChild(doc.body.firstChild);
+      if (contentDocument.body.firstChild) {
+        basicDocument.body.appendChild(contentDocument.body.firstChild);
       }
 
-      wnd.document.body.classList.add('say-content');
+      wnd.document.write(
+        '<!DOCTYPE html>' + basicDocument.documentElement.outerHTML,
+      );
     }
   }
 
