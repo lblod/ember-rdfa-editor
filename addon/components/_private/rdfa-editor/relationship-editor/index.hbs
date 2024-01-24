@@ -36,6 +36,14 @@
                 <AuDropdown @icon="three-dots" role="menu" @alignment="left">
                   <AuButton
                     @skin="link"
+                    @icon="pencil"
+                    role="menuitem"
+                    {{on "click" (fn this.editRelationship index)}}
+                  >
+                    Edit relationship
+                  </AuButton>
+                  <AuButton
+                    @skin="link"
                     @icon="bin"
                     role="menuitem"
                     class="au-c-button--alert"
@@ -113,10 +121,18 @@
   {{/if}}
 </AuContent>
 
-{{#if this.modalOpen}}
-  <this.Modal
-    @controller={{@controller}}
-    @onSave={{this.saveNewRelationship}}
-    @onCancel={{this.cancel}}
-  />
-{{/if}}
+{{! Creation modal }}
+<this.Modal
+  @modalOpen={{this.isCreating}}
+  @onSave={{this.addProperty}}
+  @onCancel={{this.cancel}}
+  @controller={{this.controller}}
+/>
+{{! Update modal }}
+<this.Modal
+  @modalOpen={{this.isUpdating}}
+  @onSave={{this.updateProperty}}
+  @onCancel={{this.cancel}}
+  @triple={{this.status.triple}}
+  @controller={{this.controller}}
+/>

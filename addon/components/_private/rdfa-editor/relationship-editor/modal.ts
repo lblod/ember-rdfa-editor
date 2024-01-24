@@ -7,13 +7,15 @@ import {
   NodeLinkObject,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import OutgoingTripleFormComponent from '../outgoing-triple-form';
+import { action } from '@ember/object';
 
 type Args = {
+  triple?: LinkTriple;
   onSave: RdfaRelationshipEditor['saveNewRelationship'];
+  onCancel: () => void;
   controller?: SayController;
 };
 
-//TODO: add datatype and language UI and handling here
 export default class RelationshipEditorModal extends Component<Args> {
   OutgoingTripleForm = OutgoingTripleFormComponent;
 
@@ -24,4 +26,8 @@ export default class RelationshipEditorModal extends Component<Args> {
   save = (triple: LinkTriple) => {
     this.args.onSave(triple);
   };
+  @action
+  cancel() {
+    this.args.onCancel;
+  }
 }

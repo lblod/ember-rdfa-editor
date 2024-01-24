@@ -1,5 +1,5 @@
 {{#let (unique-id) as |formId|}}
-  <AuModal @modalOpen={{true}} @closable={{true}} @closeModal={{@onCancel}}>
+  <AuModal @modalOpen={{@modalOpen}} @closable={{true}} @closeModal={{@onCancel}}>
     <:title>Add Relationship</:title>
     <:body>
       <this.OutgoingTripleForm
@@ -7,6 +7,7 @@
         @onSubmit={{this.save}}
         @controller={{this.controller}}
         @termTypes={{(array "LiteralNode" "ResourceNode")}}
+        @triple={{@triple}}
       />
     </:body>
     <:footer>

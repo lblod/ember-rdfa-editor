@@ -14,12 +14,13 @@ import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   IncomingTriple,
-  NodeLinkObject,
+  LinkTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
-import { action } from '@ember/object';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 type Args = {
   controller?: SayController;
@@ -33,6 +34,15 @@ interface StatusMessage {
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
 }
+type CreationStatus = {
+  mode: 'creation';
+};
+type UpdateStatus = {
+  mode: 'update';
+  index: number;
+  triple: LinkTriple;
+};
+type Status = CreationStatus | UpdateStatus;
 
 export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked modalOpen = false;
@@ -41,6 +51,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   Modal = RelationshipEditorModal;
 
   ContentPredicateList = ContentPredicateListComponent;
+  @tracked status?: Status;
   get node(): PNode {
     return this.args.node.value;
   }
@@ -102,6 +113,13 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
   }
 
+  get isCreating() {
+    return this.status?.mode === 'creation';
+  }
+
+  get isUpdating() {
+    return this.status?.mode === 'update';
+  }
   closeStatusMessage = () => {
     this.statusMessage = null;
   };
@@ -194,22 +212,16 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   addRelationship = () => {
-    this.modalOpen = true;
+    this.status = { mode: 'creation' };
   };
 
-  saveNewRelationship = (details: {
-    predicate: string;
-    object: NodeLinkObject;
-  }) => {
-    this.addProperty({
-      predicate: details.predicate,
-      object: details.object,
-    });
+  saveNewRelationship = (triple: LinkTriple) => {
+    this.addProperty(triple);
     this.modalOpen = false;
   };
 
   cancel = () => {
-    this.modalOpen = false;
+    this.status = undefined;
   };
 
   addBacklink = (_backlink: IncomingTriple) => {
@@ -225,7 +237,35 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       );
     }
   };
+  editRelationship = (index: number) => {
+    this.status = {
+      mode: 'update',
+      index,
+      triple: this.properties?.[index] as LinkTriple,
+    };
+  };
 
+  updateProperty = (newProperty: LinkTriple) => {
+    // TODO: make a command to do this in one go
+    if (this.status?.mode === 'update') {
+      this.removeProperty(this.status.index);
+      this.addProperty(newProperty);
+      this.status = undefined;
+    }
+  };
+  updatePropertiesAttribute = (newProperties: OutgoingTriple[]) => {
+    this.args.controller?.withTransaction(
+      (tr) => {
+        return TransformUtils.setAttribute(
+          tr,
+          this.args.node.pos,
+          'properties',
+          newProperties,
+        );
+      },
+      { view: this.args.controller.mainEditorView },
+    );
+  };
   getNodeById = (rdfaid: string) => {
     if (!this.controller) {
       return;
