@@ -50,7 +50,7 @@ const namedNodeSchema: ObjectSchema<NamedNodeTriple> = object({
   predicate: string().curie().required(),
   object: object({
     termType: string<'NamedNode'>().required(),
-    value: string().required(),
+    value: string().curie().required(),
   }),
 });
 const literalSchema: ObjectSchema<LiteralTriple> = object({
@@ -274,7 +274,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                   termType: 'ContentLiteral',
                   datatype: {
                     termType: 'NamedNode',
-                    value: formData.get('object.datatypevalue')?.toString(),
+                    value: formData.get('object.datatype.value')?.toString(),
                   },
                   language: formData.get('object.language')?.toString(),
                 },
@@ -299,6 +299,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   @action
   setTermType(termType: SayTermType) {
     this.selectedTermType = termType;
+    this.errors = [];
   }
   @action
   setLiteralNodeLink(rdfaId: string) {
@@ -318,17 +319,16 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     event.preventDefault();
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
-    console.log(
-      'formData',
-      JSON.stringify(Object.fromEntries(formData.entries())),
-    );
     const validated = this.validateFormData(formData);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple);
     } else {
-      console.log(formData.get('predicate'));
-      console.log(validated);
       this.errors = validated.errors;
     }
+  }
+  @action
+  afterInsert(formElement: HTMLFormElement) {
+    const formData = new FormData(formElement);
+    this.currentFormData = formData;
   }
 }

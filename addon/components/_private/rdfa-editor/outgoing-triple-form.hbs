@@ -2,6 +2,7 @@
   ...attributes
   {{on "submit" this.handleSubmit}}
   {{on "input" this.handleInput}}
+  {{did-insert this.afterInsert}}
 >
   <AuFormRow>
     {{#let (unique-id) "predicate" as |id name|}}
