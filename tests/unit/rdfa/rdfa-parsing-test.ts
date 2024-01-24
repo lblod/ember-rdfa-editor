@@ -58,7 +58,7 @@ import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/ed
 import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
 import { testEditor } from 'dummy/tests/utils/editor';
 import {
-  Backlink,
+  IncomingTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
@@ -178,7 +178,7 @@ module('rdfa | parsing', function () {
       | OutgoingTriple[]
       | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
-      | Backlink[]
+      | IncomingTriple[]
       | undefined;
     const expectedProps: OutgoingTriple[] = [
       {
@@ -190,10 +190,12 @@ module('rdfa | parsing', function () {
         object: {
           termType: 'LiteralNode',
           rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+          datatype: { termType: 'NamedNode', value: '' },
+          language: '',
         },
       },
     ];
-    const expectedBacklinks: Backlink[] = [];
+    const expectedBacklinks: IncomingTriple[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -205,10 +207,13 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs.properties as
       | OutgoingTriple[]
       | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as
+      | IncomingTriple[]
+      | undefined;
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks: Backlink[] = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
+        termType: 'ResourceNode',
         subject: 'http://test/1',
         predicate: prov('value'),
       },
@@ -257,7 +262,7 @@ module('rdfa | parsing', function () {
       | OutgoingTriple[]
       | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
-      | Backlink[]
+      | IncomingTriple[]
       | undefined;
 
     const expectedProps: OutgoingTriple[] = [
@@ -277,11 +282,13 @@ module('rdfa | parsing', function () {
         object: {
           termType: 'LiteralNode',
           rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+          datatype: { termType: 'NamedNode', value: '' },
+          language: '',
         },
         predicate: prov('value'),
       },
     ];
-    const expectedBacklinks: Backlink[] = [];
+    const expectedBacklinks: IncomingTriple[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -293,10 +300,13 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs.properties as
       | OutgoingTriple[]
       | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as
+      | IncomingTriple[]
+      | undefined;
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks: Backlink[] = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
+        termType: 'ResourceNode',
         subject: 'http://test/1',
         predicate: prov('value'),
       },

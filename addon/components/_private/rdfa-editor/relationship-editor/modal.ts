@@ -3,12 +3,10 @@ import { tracked } from '@glimmer/tracking';
 import type RdfaRelationshipEditor from './index';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import {
-  getNodeByRdfaId,
-  getResources,
-  rdfaInfoPluginKey,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { NodeLinkObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+  LinkTriple,
+  NodeLinkObject,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import OutgoingTripleFormComponent from '../outgoing-triple-form';
 
 const objectTypes = ['resource', 'literal'] as const;
 type ObjectType = (typeof objectTypes)[number];
@@ -18,95 +16,23 @@ type Args = {
   controller?: SayController;
 };
 
+//TODO: add datatype and language UI and handling here
 export default class RelationshipEditorModal extends Component<Args> {
   objectTypes = objectTypes;
 
+  OutgoingTripleForm = OutgoingTripleFormComponent;
   @tracked selectedObjectType: ObjectType = this.objectTypes[0];
 
   @tracked newPredicate = '';
+  @tracked newDataType?: string;
+  @tracked newLanguage?: string;
   @tracked objectRdfa?: NodeLinkObject;
 
   get controller() {
     return this.args.controller;
   }
 
-  get dropdownPlaceholder() {
-    if (this.selectedObjectType === 'resource') {
-      return 'Select a resource';
-    } else {
-      return 'Select a literal';
-    }
-  }
-
-  get literals(): NodeLinkObject[] {
-    if (!this.controller) throw Error('No Controller');
-    const rdfaIdMapping = rdfaInfoPluginKey.getState(
-      this.controller.mainEditorState,
-    )?.rdfaIdMapping;
-    if (!rdfaIdMapping) {
-      return [];
-    }
-    const result: NodeLinkObject[] = [];
-    rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
-      if (resolvedNode.value.attrs.rdfaNodeType === 'literal') {
-        result.push({
-          termType: 'LiteralNode',
-          rdfaId,
-        });
-      }
-    });
-    return result;
-  }
-
-  get resources(): NodeLinkObject[] {
-    if (!this.controller) throw Error('No Controller');
-    return getResources(this.controller.mainEditorState).map((resource) => {
-      return {
-        termType: 'ResourceNode',
-        value: resource,
-      };
-    });
-  }
-
-  label = (rdfaObject: NodeLinkObject) => {
-    if (!this.controller) throw Error('No Controller');
-    console.log(rdfaObject);
-    if (rdfaObject.termType === 'ResourceNode') {
-      return rdfaObject.value;
-    } else {
-      const node = unwrap(
-        getNodeByRdfaId(this.controller.mainEditorState, rdfaObject.rdfaId),
-      );
-      const content = node.value.textContent;
-      const truncatedContent =
-        content.length <= 20 ? content : `${content.substring(0, 20)}...`;
-      return `${truncatedContent} (${rdfaObject.rdfaId})`;
-    }
+  save = (triple: LinkTriple) => {
+    this.args.onSave(triple);
   };
-
-  updatePredicate = (event: InputEvent) => {
-    this.newPredicate = (event.target as HTMLInputElement).value;
-  };
-  updateObject = (rdfaObj?: NodeLinkObject) => {
-    this.objectRdfa = rdfaObj;
-  };
-
-  setObjectType = (value: ObjectType) => {
-    this.selectedObjectType = value;
-    this.objectRdfa = undefined;
-  };
-
-  save = (event: Event) => {
-    event.preventDefault();
-    if (this.canSave) {
-      this.args.onSave({
-        predicate: this.newPredicate,
-        object: unwrap(this.objectRdfa),
-      });
-    }
-  };
-
-  get canSave() {
-    return this.newPredicate && this.objectRdfa;
-  }
 }

@@ -1,5 +1,6 @@
 import {
-  Backlink, OutgoingTriple,
+  IncomingTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
@@ -7,7 +8,10 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { getProperties, isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import {
+  getProperties,
+  isLinkToNode,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
 
 export type AddPropertyArgs = {
@@ -52,10 +56,6 @@ export function addProperty({
       });
 
       if (isLinkToNode(property)) {
-        const newBacklink: Backlink = {
-          subject: resource,
-          predicate: property.predicate,
-        };
         const { object } = property;
         let targets: ResolvedPNode[] | undefined;
         /**
@@ -63,17 +63,30 @@ export function addProperty({
          * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
          * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
          */
+        let newBacklink: IncomingTriple;
         if (object.termType === 'LiteralNode') {
+          newBacklink = {
+            termType: 'LiteralNode',
+            subject: resource,
+            predicate: property.predicate,
+            datatype: object.datatype,
+            language: object.language,
+          };
           const target = getNodeByRdfaId(state, object.rdfaId);
           if (target) {
             targets = [target];
           }
         } else {
+          newBacklink = {
+            termType: 'ResourceNode',
+            subject: resource,
+            predicate: property.predicate,
+          };
           targets = getNodesByResource(state, object.value);
         }
         targets?.forEach((target) => {
           const backlinks = target.value.attrs.backlinks as
-            | Backlink[]
+            | IncomingTriple[]
             | undefined;
           const newBacklinks = backlinks
             ? [...backlinks, newBacklink]

@@ -964,6 +964,8 @@ export class RdfaParser<N> {
     node: N,
     activeTag: IActiveTag<N>,
     attributes: Record<string, string>,
+    contentDatatype?: ModelNamedNode<N>,
+    contentLanguage?: string,
     predicateAttribute = 'property',
   ) => {
     this.contentNodeMapping.set(node, {

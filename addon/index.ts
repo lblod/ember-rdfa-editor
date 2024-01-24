@@ -1,5 +1,8 @@
 export * from 'prosemirror-keymap';
+import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { Decoration } from 'prosemirror-view';
+import { CurieOptions, string } from 'yup';
+import { addMethod } from 'yup';
 
 export {
   getRdfaAttrs,
@@ -31,3 +34,19 @@ export type InlineDecorationSpec = NonNullable<
 
 export { default as SayView } from '@lblod/ember-rdfa-editor/core/say-view';
 export { default as SayController } from '@lblod/ember-rdfa-editor/core/say-controller';
+addMethod(
+  string,
+  'curie',
+  function curie({ allowEmpty = false }: CurieOptions = {}) {
+    return this.test(
+      'is-curie',
+      '${path} is not a valid CURIE',
+      (value: string) => {
+        if (allowEmpty && value.length === 0) {
+          return true;
+        }
+        return isFullUri(value) || isPrefixedUri(value);
+      },
+    );
+  },
+);

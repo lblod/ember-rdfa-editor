@@ -46,10 +46,16 @@ export interface SubAndContentPred {
   contentDatatype?: RDF.NamedNode;
   contentLanguage?: string;
 }
+export interface SubAndPredLiteral {
+  subject: RDF.Quad_Subject;
+  predicate: RDF.Quad_Predicate;
+  datatype?: RDF.NamedNode;
+  language?: string;
+}
 
 export type WhichTerm = 'subject' | 'predicate' | 'object';
 export type RdfaResourceNodeMap<N> = TwoWayMap<N, SubAndContentPred, N, string>;
-export type RdfaContentNodeMap<N> = TwoWayMap<N, SubAndPred, N, string>;
+export type RdfaContentNodeMap<N> = TwoWayMap<N, SubAndPredLiteral, N, string>;
 export function rdfaResourceNodeMap<N>(
   init?: Iterable<[N, SubAndContentPred]>,
 ): RdfaResourceNodeMap<N> {

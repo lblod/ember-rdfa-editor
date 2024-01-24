@@ -1,4 +1,3 @@
-import { NodeLinkObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
   getNodesByResource,
@@ -14,7 +13,9 @@ import {
 import { Command, Transaction } from 'prosemirror-state';
 
 type RemoveBacklinkArgs = {
-  target: NodeLinkObject;
+  target:
+    | { termType: 'LiteralNode'; rdfaId: string }
+    | { termType: 'ResourceNode'; value: string };
   index: number;
   transaction?: Transaction;
 };

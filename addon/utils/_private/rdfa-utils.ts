@@ -3,7 +3,7 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
 import {
-  Backlink,
+  IncomingTriple,
   LinkTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -155,8 +155,8 @@ export function getProperties(node: PNode): OutgoingTriple[] | undefined {
   return node.attrs.properties as OutgoingTriple[] | undefined;
 }
 
-export function getBacklinks(node: PNode): Backlink[] | undefined {
-  return node.attrs.backlinks as Backlink[] | undefined;
+export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
+  return node.attrs.backlinks as IncomingTriple[] | undefined;
 }
 
 /**
@@ -204,12 +204,28 @@ export function getRdfaChildren(node: PNode) {
       const backlinks = getBacklinks(child);
       const resource = getResource(child);
       if (backlinks?.[0]) {
-        result.add({
-          predicate: backlinks[0].predicate,
-          object: resource
-            ? { termType: 'ResourceNode', value: resource }
-            : { termType: 'LiteralNode', rdfaId: id },
-        });
+        if (resource) {
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: { termType: 'ResourceNode', value: resource },
+          });
+        } else {
+          const incomingTriple = backlinks[0];
+          if (incomingTriple.termType !== 'LiteralNode') {
+            throw new Error(
+              'Unexpected type of incoming triple of a literal node',
+            );
+          }
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: {
+              termType: 'LiteralNode',
+              rdfaId: id,
+              datatype: incomingTriple.datatype,
+              language: incomingTriple.language,
+            },
+          });
+        }
       }
       // We don't want to recurse, so stop descending
       return false;

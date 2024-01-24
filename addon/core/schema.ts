@@ -3,8 +3,8 @@ import { DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import {
-  Backlink,
   ContentTriple,
+  IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor';
@@ -37,7 +37,7 @@ export const rdfaNodeTypes = ['resource', 'literal'] as const;
 export interface RdfaAwareAttrs {
   __rdfaId: string;
   rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: Backlink[];
+  backlinks: IncomingTriple[];
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
@@ -173,7 +173,7 @@ export function renderInvisibleRdfa(
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingTriple[];
     for (const { predicate, subject } of backlinks) {
       propElements.push(['span', { rev: predicate, resource: subject }]);
     }
@@ -213,7 +213,7 @@ export function renderRdfaAttrs(
           resource: null,
         };
   } else {
-    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {};
     }
@@ -221,6 +221,8 @@ export function renderRdfaAttrs(
     return {
       about: backlinks[0].subject,
       property: backlinks[0].predicate,
+      datatype: backlinks[0].datatype.value,
+      language: backlinks[0].language,
       'data-literal-node': 'true',
     };
   }

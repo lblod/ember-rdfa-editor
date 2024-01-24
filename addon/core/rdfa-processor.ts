@@ -32,10 +32,18 @@ import { Quad } from '@rdfjs/types';
 //   object: string;
 // };
 // export type Property = AttributeProperty | ExternalProperty;
+export type SayTermType =
+  | 'NamedNode'
+  | 'Literal'
+  | 'LiteralNode'
+  | 'ResourceNode'
+  | 'ContentLiteral';
 
 export interface LiteralNodeObject {
   termType: 'LiteralNode';
   rdfaId: string;
+  datatype: Omit<RDF.NamedNode, 'equals'>;
+  language: string;
 }
 export interface ResourceNodeObject {
   termType: 'ResourceNode';
@@ -55,32 +63,52 @@ export type PlainObject =
   | SayRDFLiteral
   | Omit<RDF.NamedNode, 'equals'>
   | Omit<RDF.BlankNode, 'equals'>;
+export interface LiteralTriple {
+  predicate: string;
+  object: SayRDFLiteral;
+}
+export interface NamedNodeTriple {
+  predicate: string;
+  object: Omit<RDF.NamedNode, 'equals'>;
+}
+export interface BlankNodeTriple {
+  predicate: string;
+  object: Omit<RDF.BlankNode, 'equals'>;
+}
 export type NodeLinkObject = ResourceNodeObject | LiteralNodeObject;
 export type OutgoingTripleObject = PlainObject | NodeLinkObject;
-export type LinkTriple = {
+export interface ResourceNodeTriple {
   predicate: string;
-  object: NodeLinkObject;
-};
+  object: ResourceNodeObject;
+}
+export interface LiteralNodeTriple {
+  predicate: string;
+  object: LiteralNodeObject;
+}
+export type LinkTriple = ResourceNodeTriple | LiteralNodeTriple;
 
-export type PlainTriple = {
-  predicate: string;
-  object: PlainObject;
-};
+export type PlainTriple = LiteralTriple | NamedNodeTriple | BlankNodeTriple;
 export type ContentTriple = {
   predicate: string;
   object: ContentLiteralObject;
 };
 export type OutgoingTriple = PlainTriple | LinkTriple | ContentTriple;
 
-/**
- * @deprecated use {@link IncomingTriple} instead
- */
-export type Backlink = {
+export type IncomingResourceNodeTriple = {
+  termType: 'ResourceNode';
   subject: string;
   predicate: string;
 };
-
-export type IncomingTriple = Backlink;
+export type IncomingLiteralNodeTriple = {
+  termType: 'LiteralNode';
+  subject: string;
+  predicate: string;
+  datatype: Omit<RDF.NamedNode, 'equals'>;
+  language: string;
+};
+export type IncomingTriple =
+  | IncomingLiteralNodeTriple
+  | IncomingResourceNodeTriple;
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -150,10 +178,13 @@ export function preprocessRDFa(dom: Node) {
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate } = object;
+    const { subject, predicate, datatype, language } = object;
     const incomingProp: IncomingTriple = {
+      termType: 'LiteralNode',
       subject: subject.value,
       predicate: predicate.value,
+      datatype: datatype ?? { termType: 'NamedNode', value: '' },
+      language: language || '',
     };
     // write info to node
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
@@ -176,11 +207,18 @@ function quadToProperties(
   if (contentNodes) {
     for (const contentNode of contentNodes) {
       const contentId = ensureId(contentNode as HTMLElement);
+      if (quad.object.termType !== 'Literal') {
+        throw new Error(
+          'unexpected quad object type for quad referring to literal node',
+        );
+      }
       result.push({
         predicate: quad.predicate.value,
         object: {
           termType: 'LiteralNode',
           rdfaId: contentId,
+          datatype: quad.object.datatype,
+          language: quad.object.language,
         },
       });
     }
@@ -245,6 +283,7 @@ function quadToProperties(
 function quadToBacklink(quad: Quad): IncomingTriple {
   // check if theres a resource node for the subject
   return {
+    termType: 'ResourceNode',
     subject: quad.subject.value,
     predicate: quad.predicate.value,
   };

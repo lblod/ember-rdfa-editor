@@ -13,12 +13,13 @@ import RelationshipEditorModal from './modal';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
-  Backlink,
+  IncomingTriple,
   NodeLinkObject,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
+import { action } from '@ember/object';
 
 type Args = {
   controller?: SayController;
@@ -38,13 +39,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
 
   Modal = RelationshipEditorModal;
+
   ContentPredicateList = ContentPredicateListComponent;
   get node(): PNode {
     return this.args.node.value;
   }
 
   get backlinks() {
-    return this.node.attrs.backlinks as Backlink[] | undefined;
+    return this.node.attrs.backlinks as IncomingTriple[] | undefined;
   }
 
   get properties() {
@@ -137,7 +139,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.controller?.focus();
   };
 
-  goToBacklink = (backlink: Backlink) => {
+  goToBacklink = (backlink: IncomingTriple) => {
     this.closeStatusMessage();
     const result = this.controller?.doCommand(
       selectNodeByResource({ resource: backlink.subject }),
@@ -155,7 +157,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
-    let target: NodeLinkObject;
+    let target: Parameters<typeof removeBacklink>[0]['target'];
     if (this.currentResource) {
       target = {
         termType: 'ResourceNode',
@@ -210,7 +212,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.modalOpen = false;
   };
 
-  addBacklink = (_backlink: Backlink) => {
+  addBacklink = (_backlink: IncomingTriple) => {
     throw new NotImplementedError();
   };
 

@@ -14,7 +14,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import type {
-  Backlink, OutgoingTriple,
+  IncomingTriple, OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
@@ -81,7 +81,7 @@ export function removePropertiesOfDeletedNodes() {
 
       const targetsWithProperties = new Map<
         ResolvedPNode,
-        Array<{ backlink: Backlink; rdfaId?: string }>
+        Array<{ backlink: IncomingTriple; rdfaId?: string }>
       >();
 
       deletedNodes.forEach((node) => {
