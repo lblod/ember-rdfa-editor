@@ -130,15 +130,6 @@ export default class SayEditor {
 
         return htmlCleaner.prepareHTML(html);
       },
-      transformPasted(slice, view) {
-        const { selection } = view.state;
-        const { nodeBefore } = selection.$from;
-        const { nodeAfter } = selection.$to;
-
-        const openStart = nodeBefore?.isInline ? slice.openStart : 0;
-        const openEnd = nodeAfter?.isInline ? slice.openEnd : 0;
-        return SliceUtils.closeSlice(slice, openStart, openEnd);
-      },
       clipboardSerializer: this.serializer,
     });
     this.activeView = this.mainView;
