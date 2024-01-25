@@ -77,7 +77,7 @@ export default class AttributeEditor extends Component<Args> {
   };
 
   formatValue = (value: unknown) => {
-    return JSON.stringify(value);
+    return JSON.stringify(value, null, 2);
   };
 
   editorComponent = (attr: string) => {
