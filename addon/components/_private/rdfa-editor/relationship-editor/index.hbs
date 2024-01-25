@@ -88,16 +88,28 @@
       <p>This node does not have any backlinks</p>
     {{/if}}
   </div>
+  {{#if this.isResource}}
+    <div>
+      <AuHeading @level="6" @skin="6" class="au-u-margin-bottom-small">
+        Content Predicate
+      </AuHeading>
+      <this.ContentPredicateList
+        @properties={{this.properties}}
+        @addProperty={{this.addProperty}}
+        @removeProperty={{this.removeProperty}}
+      />
+    </div>
+  {{/if}}
   {{#if this.statusMessage}}
-  <div>
-    <AuAlert
-      @skin={{this.statusMessage.type}}
-      @closable={{true}}
-      @onClose={{this.closeStatusMessage}}
-    >
-      {{this.statusMessage.message}}
-    </AuAlert>
-  </div>
+    <div>
+      <AuAlert
+        @skin={{this.statusMessage.type}}
+        @closable={{true}}
+        @onClose={{this.closeStatusMessage}}
+      >
+        {{this.statusMessage.message}}
+      </AuAlert>
+    </div>
   {{/if}}
 </AuContent>
 

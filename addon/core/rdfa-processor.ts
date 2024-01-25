@@ -28,8 +28,13 @@ export type AttributeProperty = {
   type: 'attribute';
   predicate: string;
   object: string;
+  datatype?: string;
 };
-export type Property = AttributeProperty | ExternalProperty;
+export type ContentProperty = {
+  type: 'content';
+  predicate: string;
+};
+export type Property = AttributeProperty | ExternalProperty | ContentProperty;
 
 export type Backlink = {
   subject: string;
@@ -68,10 +73,10 @@ export function preprocessRDFa(dom: Node) {
   });
 
   // every resource node
-  for (const [node, subject] of datastore.getResourceNodeMap().entries()) {
+  for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
     const properties: Property[] = [];
     // get all quads that have our subject
-    const outgoingQuads = datastore.match(subject).asQuadResultSet();
+    const outgoingQuads = datastore.match(entry.subject).asQuadResultSet();
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
       quadToProperties(datastore, quad).forEach((prop) => {
@@ -86,8 +91,15 @@ export function preprocessRDFa(dom: Node) {
       });
     }
 
+    if (entry.contentPredicate) {
+      properties.push({
+        type: 'content',
+        predicate: entry.contentPredicate.value,
+      });
+    }
+
     const incomingProps: Backlink[] = [];
-    const incomingQuads = datastore.match(null, null, subject);
+    const incomingQuads = datastore.match(null, null, entry.subject);
     for (const quad of incomingQuads.asQuadResultSet()) {
       incomingProps.push(quadToBacklink(quad));
     }
@@ -96,6 +108,7 @@ export function preprocessRDFa(dom: Node) {
     (node as HTMLElement).dataset.outgoingProps = JSON.stringify(properties);
     (node as HTMLElement).dataset.incomingProps = JSON.stringify(incomingProps);
     (node as HTMLElement).dataset.rdfaNodeType = 'resource';
+    (node as HTMLElement).dataset.subject = entry.subject.value;
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
@@ -139,7 +152,7 @@ function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
     ) {
       const resourceNode = datastore
         .getResourceNodeMap()
-        .getFirstValue(quad.object);
+        .getFirstValue({ subject: quad.object });
       if (resourceNode) {
         return [
           {
@@ -159,6 +172,8 @@ function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
         type: 'attribute',
         predicate: quad.predicate.value,
         object: quad.object.value,
+        datatype:
+          'datatype' in quad.object ? quad.object.datatype.value : undefined,
       },
     ];
   }

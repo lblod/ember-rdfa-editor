@@ -3,7 +3,6 @@ import Component from '@glimmer/component';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { tracked } from '@glimmer/tracking';
-import { Velcro } from 'ember-velcro';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 
 export default class InlineRdfaComponent extends Component<EmberNodeArgs> {
@@ -15,8 +14,6 @@ export default class InlineRdfaComponent extends Component<EmberNodeArgs> {
   get controller() {
     return this.args.controller;
   }
-  @action
-  onClick() {}
 
   @action
   initEditor(view: SayView) {

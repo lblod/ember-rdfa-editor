@@ -25,7 +25,6 @@ import {
   insertHardBreak,
   reduceIndent,
   liftEmptyBlockChecked,
-  selectBlockRdfaNode,
   selectNodeBackward,
   selectNodeForward,
 } from '@lblod/ember-rdfa-editor/commands';

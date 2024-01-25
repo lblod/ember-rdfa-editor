@@ -4,6 +4,8 @@ import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome } from '../utils/_private/option';
 import { Backlink, Property } from './rdfa-processor';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 
 const logger = createLogger('core/schema');
 
@@ -13,6 +15,7 @@ export const rdfaAttrSpec = {
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   resource: { default: null },
+  subject: { default: null },
 };
 /** @deprecated Renamed to rdfaAttrSpec */
 export const rdfaAttrs = rdfaAttrSpec;
@@ -20,6 +23,7 @@ export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
   resource: { default: null },
+  'data-subject': { default: null },
   about: { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
@@ -72,6 +76,9 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
         const backlinks = JSON.parse(value) as Backlink[];
         attrs['backlinks'] = backlinks;
       }
+      if (key === 'data-subject') {
+        attrs['subject'] = value;
+      }
       if (key === 'data-rdfa-node-type') {
         const type = value as unknown as RdfaAttrs['rdfaNodeType'];
         if (!rdfaNodeTypes.includes(type)) {
@@ -101,7 +108,6 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
   if (hasAnyRdfaAttributes) {
     if (!attrs['__rdfaId']) {
       attrs['__rdfaId'] = uuidv4();
-      logger('No rdfaId found, generating one', attrs['__rdfaId'], attrs);
     }
     return attrs;
   }
@@ -117,9 +123,26 @@ export function renderInvisibleRdfa(
 ): DOMOutputSpec {
   const propElements = [];
   const properties = nodeOrMark.attrs.properties as Property[];
-  for (const { type, predicate, object } of properties) {
+  for (const prop of properties) {
+    const { type, predicate } = prop;
     if (type === 'attribute') {
-      propElements.push(['span', { property: predicate, content: object }, '']);
+      if (prop.object && (isFullUri(prop.object) || isPrefixedUri(prop.object))) {
+        propElements.push([
+          'span',
+          { property: predicate, resource: prop.object },
+          '',
+        ]);
+      } else {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: prop.object,
+            datatype: prop.datatype,
+          },
+          '',
+        ]);
+      }
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
@@ -137,8 +160,26 @@ export function renderInvisibleRdfa(
 
 export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
-): Record<string, string> {
-  if (nodeOrMark.attrs.rdfaNodeType !== 'resource') {
+): Record<string, string | null> {
+  if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
+    const contentPred = (nodeOrMark.attrs.properties as Property[]).find(
+      (prop) => prop.type === 'content',
+    );
+    return contentPred
+      ? {
+          about: (nodeOrMark.attrs.subject ||
+            nodeOrMark.attrs.about ||
+            nodeOrMark.attrs.resource) as string,
+          property: contentPred.predicate,
+          resource: null,
+        }
+      : {
+          about: (nodeOrMark.attrs.subject ||
+            nodeOrMark.attrs.about ||
+            nodeOrMark.attrs.resource) as string,
+          resource: null,
+        };
+  } else {
     const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
     if (!backlinks.length) {
       return {};
@@ -147,9 +188,9 @@ export function renderRdfaAttrs(
     return {
       about: backlinks[0].subject,
       property: backlinks[0].predicate,
+      'data-literal-node': 'true',
     };
   }
-  return {};
 }
 
 export interface RenderContentArgs {
@@ -176,9 +217,16 @@ export function renderRdfaAware({
   contentContainerAttrs = {},
   ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
+  const clone = { ...attrs };
+  delete clone.properties;
+  delete clone.backlinks;
+  delete clone.subject;
+  delete clone.resource;
+  delete clone.__rdfaId;
+  delete clone.rdfaNodeType;
   return [
     tag,
-    { ...attrs, ...renderRdfaAttrs(renderable) },
+    { ...clone, ...renderRdfaAttrs(renderable) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,
@@ -187,10 +235,15 @@ export function renderRdfaAware({
     ],
   ];
 }
-function copy(obj: Record<string, unknown>) {
-  const copy: Record<string, unknown> = {};
-  for (const prop in obj) {
-    copy[prop] = obj[prop];
+
+export const getRdfaContentElement = (node: Node) => {
+  if (!isElement(node)) {
+    throw new Error('node is not an element');
   }
-  return copy;
-}
+  for (const child of node.children) {
+    if ((child as HTMLElement).dataset.contentContainer) {
+      return child as HTMLElement;
+    }
+  }
+  return node;
+};

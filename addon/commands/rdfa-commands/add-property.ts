@@ -6,13 +6,11 @@ import {
   getNodeByRdfaId,
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { getProperties } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
 
-const logger = createLogger('rdfa-utils');
 export type AddPropertyArgs = {
   /** The resource to which to add a property */
   resource: string;
