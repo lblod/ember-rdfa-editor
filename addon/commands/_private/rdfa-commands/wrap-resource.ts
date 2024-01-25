@@ -7,12 +7,7 @@ import {
   generateNewUri,
   getRdfaChildren,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import {
-  LinkTriple,
-  LiteralNodeTriple,
-  NodeLinkObject,
-  ResourceNodeTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export function wrapResource(
   args: { uriBase: string } | { existingUri: string },

@@ -1,3 +1,4 @@
+//@eslint-ignore
 import { AnyObject, Flags, Maybe } from 'yup';
 
 interface CurieOptions {
@@ -8,10 +9,10 @@ declare module 'yup' {
     allowEmpty?: boolean;
   }
   interface StringSchema<
-    TType extends Maybe<string> = string | undefined,
-    TContext = AnyObject,
-    TDefault = undefined,
-    TFlags extends Flags = '',
+    TType extends Maybe<string> = string | undefined, //eslint-disable-line @typescript-eslint/no-unused-vars
+    TContext = AnyObject, //eslint-disable-line @typescript-eslint/no-unused-vars
+    TDefault = undefined, //eslint-disable-line @typescript-eslint/no-unused-vars
+    TFlags extends Flags = '', //eslint-disable-line @typescript-eslint/no-unused-vars
   > {
     curie(options?: CurieOptions): this;
   }

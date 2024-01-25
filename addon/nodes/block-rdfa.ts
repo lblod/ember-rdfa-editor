@@ -7,7 +7,6 @@ import {
   sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import SayNodeSpec from '../core/say-node-spec';
-import { EditorState } from 'prosemirror-state';
 
 export const block_rdfa: SayNodeSpec = {
   content: 'block+',

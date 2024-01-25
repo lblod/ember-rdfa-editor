@@ -10,7 +10,6 @@ import Datastore, {
   SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
-import { NamedNode } from 'rdf-data-factory';
 
 export type SayTermType =
   | 'NamedNode'

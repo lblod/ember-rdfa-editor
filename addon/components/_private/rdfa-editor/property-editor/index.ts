@@ -29,7 +29,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;
 
   @tracked status?: Status;
-  isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple)
+  isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
 
   get properties() {
     return this.args.node.value.attrs.properties as

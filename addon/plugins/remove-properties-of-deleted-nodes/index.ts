@@ -14,7 +14,8 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import type {
-  IncomingTriple, OutgoingTriple,
+  IncomingTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 

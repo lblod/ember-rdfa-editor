@@ -19,7 +19,6 @@ import {
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 type Args = {
@@ -81,12 +80,10 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return isResourceNode(this.node);
   }
 
-  get currentResource() {
-    return (
-      this.node.attrs.subject ||
+  get currentResource(): string | undefined {
+    return (this.node.attrs.subject ||
       this.node.attrs.about ||
-      (this.node.attrs.resource as string | undefined)
-    );
+      this.node.attrs.resource) as string | undefined;
   }
   get type() {
     return this.node.attrs.rdfaNodeType as 'resource' | 'literal';

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { isSome } from '../utils/_private/option';
+import { isSome, unwrap } from '../utils/_private/option';
 import {
   ContentTriple,
   IncomingLiteralNodeTriple,
@@ -131,10 +131,11 @@ export function renderInvisibleRdfa(
     if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
       // the triple refers to a URI which does not have a corresponding
       // resource node
+      const subject: string = unwrap(nodeOrMark.attrs.subject as string);
       propElements.push([
         'span',
         {
-          about: nodeOrMark.attrs.subject,
+          about: subject,
           property: predicate,
           resource: object.value,
         },

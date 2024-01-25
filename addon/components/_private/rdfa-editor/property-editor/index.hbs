@@ -28,11 +28,11 @@
               {{#if prop.object.language}}
                 <p><strong>language:</strong> {{prop.object.language}}</p>
               {{/if}}
-              {{#unless (eq prop.object.termType 'ContentLiteral')}}
-              <p><strong>value:</strong> {{prop.object.value}}</p>
+              {{#if (eq prop.object.termType "ContentLiteral")}}
+                <AuPill>content-predicate</AuPill>
               {{else}}
-              <AuPill>content-predicate</AuPill>
-              {{/unless}}
+                <p><strong>value:</strong> {{prop.object.value}}</p>
+              {{/if}}
             </div>
             <AuDropdown @icon="three-dots" role="menu" @alignment="left">
               <AuButton
