@@ -131,7 +131,6 @@ export function preprocessRDFa(dom: Node) {
     },
   });
   for (const quad of datastore.asQuadResultSet()) {
-    console.log('quad', quad);
   }
 
   // every resource node
@@ -142,7 +141,6 @@ export function preprocessRDFa(dom: Node) {
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
       quadToProperties(datastore, quad, entry).forEach((prop) => {
-        console.log('prop', prop);
         if (prop.object.termType === 'LiteralNode') {
           if (!seenLinks.has(prop.object.rdfaId)) {
             seenLinks.add(prop.object.rdfaId);
@@ -254,15 +252,16 @@ function quadToProperties(
         contentPredicate &&
         quad.predicate.equals(contentPredicate) &&
         (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
-        (!contentLanguage || contentLanguage === quad.object.language)
+        (!contentLanguage ||
+          contentLanguage.toUpperCase() === quad.object.language.toUpperCase())
       ) {
         return [
           {
             predicate: quad.predicate.value,
             object: {
               termType: 'ContentLiteral',
-              datatype: quad.object.datatype,
-              language: quad.object.language,
+              datatype: contentDatatype ?? { termType: 'NamedNode', value: '' },
+              language: contentLanguage ?? '',
             },
           },
         ];

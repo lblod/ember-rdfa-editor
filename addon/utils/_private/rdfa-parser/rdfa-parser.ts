@@ -992,14 +992,22 @@ export class RdfaParser<N> {
     contentDatatype?: ModelNamedNode<N>,
     contentLanguage?: string,
   ) => {
+    const datatype =
+      contentDatatype &&
+      // this datatype gets set by the parser by default if a language is detected, but it
+      // seems invalid to have both
+      contentDatatype.value !==
+        'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
+        ? contentDatatype
+        : undefined;
     this.resourceNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(resource, activeTag),
       contentPredicate: contentPredicate
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
-      contentDatatype,
+      contentDatatype: datatype,
       // a literal can't have both a datatype and a language
-      contentLanguage: contentDatatype ? undefined : contentLanguage,
+      contentLanguage: datatype ? undefined : contentLanguage,
     });
   };
 

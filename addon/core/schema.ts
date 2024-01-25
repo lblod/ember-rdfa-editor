@@ -128,6 +128,12 @@ export function renderInvisibleRdfa(
   const propElements = [];
   const properties = nodeOrMark.attrs.properties as OutgoingTriple[];
   for (const { predicate, object } of properties) {
+    if(object.termType === 'ContentLiteral') {
+      // the contentliteral triple gets rendered as main node attributes, so we
+      // skip it here
+      continue;
+
+    }
     if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
       // the triple refers to a URI which does not have a corresponding
       // resource node
