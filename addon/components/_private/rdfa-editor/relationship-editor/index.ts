@@ -128,8 +128,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       return;
     }
     const { object } = outgoing;
+    if (!this.controller) {
+      this.statusMessage = {
+        message: 'No editor controller found. This is probably a bug.',
+        type: 'error',
+      };
+      return;
+    }
     if (object.termType === 'LiteralNode') {
-      const result = this.controller?.doCommand(
+      const result = this.controller.doCommand(
         selectNodeByRdfaId({ rdfaId: object.rdfaId }),
         { view: this.controller.mainEditorView },
       );
@@ -140,7 +147,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         };
       }
     } else {
-      const result = this.controller?.doCommand(
+      const result = this.controller.doCommand(
         selectNodeByResource({ resource: object.value }),
         { view: this.controller.mainEditorView },
       );
@@ -151,7 +158,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         };
       }
     }
-    this.controller?.focus();
+    this.controller.focus();
   };
 
   goToBacklink = (backlink: IncomingTriple) => {
@@ -162,7 +169,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         view: this.controller.mainEditorView,
       },
     );
-    if (!result) {
+    if (!this.controller) {
+      this.statusMessage = {
+        message: 'No editor controller found. This is probably a bug.',
+        type: 'error',
+      };
+    } else if (!result) {
       this.statusMessage = {
         message: `No resource node found for ${backlink.subject}.`,
         type: 'info',

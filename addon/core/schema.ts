@@ -272,7 +272,7 @@ export function renderRdfaAware({
   ];
 }
 
-export const getRdfaContentElement = (node: Node) => {
+const findRdfaContentElement = (node: Node) => {
   if (!isElement(node)) {
     throw new Error('node is not an element');
   }
@@ -281,5 +281,16 @@ export const getRdfaContentElement = (node: Node) => {
       return child as HTMLElement;
     }
   }
-  return node;
+  return null;
+};
+
+export const hasRdfaContentChild = (node: Node) =>
+  !!findRdfaContentElement(node);
+
+/**
+ * Returns a direct child element with 'data-content-container' attribute. If not found, returns the
+ * node itself (to satisfy prosemirror api)
+ **/
+export const getRdfaContentElement = (node: Node) => {
+  return findRdfaContentElement(node) ?? (node as HTMLElement);
 };
