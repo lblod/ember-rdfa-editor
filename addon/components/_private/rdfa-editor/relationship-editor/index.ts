@@ -67,11 +67,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return (
-      this.node.attrs.subject ||
+    return (this.node.attrs.subject ||
       this.node.attrs.about ||
-      (this.node.attrs.resource as string | undefined)
-    );
+      this.node.attrs.resource) as string | undefined;
   }
   get type() {
     return this.node.attrs.rdfaNodeType as 'resource' | 'literal';
@@ -105,8 +103,13 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   goToOutgoing = (outgoing: ExternalProperty) => {
     this.closeStatusMessage();
     const { object } = outgoing;
-    if (object.type === 'literal') {
-      const result = this.controller?.doCommand(
+    if (!this.controller) {
+      this.statusMessage = {
+        message: 'No editor controller found. This is probably a bug.',
+        type: 'error',
+      };
+    } else if (object.type === 'literal') {
+      const result = this.controller.doCommand(
         selectNodeByRdfaId({ rdfaId: object.rdfaId }),
         { view: this.controller.mainEditorView },
       );
@@ -117,7 +120,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         };
       }
     } else {
-      const result = this.controller?.doCommand(
+      const result = this.controller.doCommand(
         selectNodeByResource({ resource: object.resource }),
         { view: this.controller.mainEditorView },
       );
@@ -139,7 +142,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         view: this.controller.mainEditorView,
       },
     );
-    if (!result) {
+    if (!this.controller) {
+      this.statusMessage = {
+        message: 'No editor controller found. This is probably a bug.',
+        type: 'error',
+      };
+    } else if (!result) {
       this.statusMessage = {
         message: `No resource node found for ${backlink.subject}.`,
         type: 'info',

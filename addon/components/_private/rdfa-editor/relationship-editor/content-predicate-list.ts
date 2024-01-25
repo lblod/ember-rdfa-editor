@@ -17,6 +17,10 @@ export default class ContentPredicateListComponent extends Component<Args> {
       .filter((entry) => entry.prop.type === 'content');
   }
   @action
+  setNewPredicate(event: InputEvent) {
+    this.newPredicate = (event.target as HTMLInputElement).value;
+  }
+  @action
   addContentProperty() {
     this.args.addProperty({ type: 'content', predicate: this.newPredicate });
     this.newPredicate = '';

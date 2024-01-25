@@ -14,7 +14,7 @@
             </AuLabel>
             <AuInput
               id={{id}}
-              @value={{this.newPredicate}}
+              value={{this.newPredicate}}
               @width="block"
               {{on "input" this.updatePredicate}}
             />
@@ -28,7 +28,7 @@
             <AuInput
               id={{id}}
               required={{true}}
-              @value={{this.newObject}}
+              value={{this.newObject}}
               @width="block"
               {{on "input" this.updateObject}}
             />
