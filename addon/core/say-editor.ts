@@ -34,7 +34,6 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { gapCursor } from '../plugins/gap-cursor';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
-import SliceUtils from '../utils/_private/slice-utils';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 interface SayEditorArgs {
