@@ -18,18 +18,17 @@ export function decentLocaleMatch(
 
   // Then look for locales that just match based on language,
   // e.g. match en or en-US if looking for en-GB
-  const languageMap: Record<string, string[]> = {};
+  const languageMap: Record<string, string[] | undefined> = {};
   supportedLocs.forEach((locale) => {
     const lang = locale.split('-')[0];
     languageMap[lang] = [...(languageMap[lang] || []), locale];
   });
   userLocs.forEach((locale) => {
-    const looseMatches = languageMap[locale.split('-')[0]];
+    const looseMatches = languageMap[locale.split('-')[0]] ?? [];
     looseMatches.forEach((match) => matches.add(match));
   });
 
   // Add the default so we always have something
   matches.add(defaultLocale.toLowerCase());
-
   return [...matches];
 }
