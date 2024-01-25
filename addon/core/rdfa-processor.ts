@@ -10,35 +10,22 @@ import Datastore, {
   SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
+import { NamedNode } from 'rdf-data-factory';
 
-// export type ExternalPropertyObject =
-//   | {
-//       type: 'literal';
-//       rdfaId: string;
-//     }
-//   | {
-//       type: 'resource';
-//       resource: string;
-//     };
-// export type ExternalProperty = {
-//   type: 'external';
-//   predicate: string;
-//   object: ExternalPropertyObject;
-// };
-
-// export type AttributeProperty = {
-//   type: 'attribute';
-//   predicate: string;
-//   object: string;
-// };
-// export type Property = AttributeProperty | ExternalProperty;
 export type SayTermType =
   | 'NamedNode'
   | 'Literal'
   | 'LiteralNode'
   | 'ResourceNode'
-  | 'ContentLiteral';
+  | 'ContentLiteral'
+  | 'BlankNode';
 
+export type SayRDFLiteral = Pick<
+  RDF.Literal,
+  'value' | 'termType' | 'language'
+> & {
+  datatype: Omit<RDF.NamedNode, 'equals'>;
+};
 export interface LiteralNodeObject {
   termType: 'LiteralNode';
   rdfaId: string;
@@ -49,20 +36,21 @@ export interface ResourceNodeObject {
   termType: 'ResourceNode';
   value: string;
 }
-export type SayRDFLiteral = Pick<
-  RDF.Literal,
-  'value' | 'termType' | 'language'
-> & {
-  datatype: Omit<RDF.NamedNode, 'equals'>;
-};
-export type ContentLiteralObject = Omit<SayRDFLiteral, 'value' | 'termType'> & {
+export interface ContentLiteralObject {
   termType: 'ContentLiteral';
-};
-
+  datatype: Omit<RDF.NamedNode, 'equals'>;
+  language: string;
+}
 export type PlainObject =
   | SayRDFLiteral
   | Omit<RDF.NamedNode, 'equals'>
   | Omit<RDF.BlankNode, 'equals'>;
+export type NodeLinkObject = ResourceNodeObject | LiteralNodeObject;
+
+export type OutgoingTripleObject =
+  | PlainObject
+  | NodeLinkObject
+  | ContentLiteralObject;
 export interface LiteralTriple {
   predicate: string;
   object: SayRDFLiteral;
@@ -75,8 +63,6 @@ export interface BlankNodeTriple {
   predicate: string;
   object: Omit<RDF.BlankNode, 'equals'>;
 }
-export type NodeLinkObject = ResourceNodeObject | LiteralNodeObject;
-export type OutgoingTripleObject = PlainObject | NodeLinkObject;
 export interface ResourceNodeTriple {
   predicate: string;
   object: ResourceNodeObject;
@@ -85,14 +71,20 @@ export interface LiteralNodeTriple {
   predicate: string;
   object: LiteralNodeObject;
 }
-export type LinkTriple = ResourceNodeTriple | LiteralNodeTriple;
-
-export type PlainTriple = LiteralTriple | NamedNodeTriple | BlankNodeTriple;
 export type ContentTriple = {
   predicate: string;
   object: ContentLiteralObject;
 };
-export type OutgoingTriple = PlainTriple | LinkTriple | ContentTriple;
+
+export type PlainTriple = LiteralTriple | NamedNodeTriple | BlankNodeTriple;
+export type LinkTriple = ResourceNodeTriple | LiteralNodeTriple;
+export type OutgoingTriple =
+  | LiteralTriple
+  | NamedNodeTriple
+  | BlankNodeTriple
+  | ResourceNodeTriple
+  | LiteralNodeTriple
+  | ContentTriple;
 
 export type IncomingResourceNodeTriple = {
   termType: 'ResourceNode';
@@ -225,25 +217,35 @@ function quadToProperties(
     return result;
   } else {
     // check if this quad refers to a resourceNode
-    if (
-      quad.object.termType === 'BlankNode' ||
-      quad.object.termType === 'NamedNode'
-    ) {
+    const { object } = quad;
+    if (object.termType === 'BlankNode' || object.termType === 'NamedNode') {
       const resourceNode = datastore
         .getResourceNodeMap()
-        .getFirstValue({ subject: quad.object });
+        .getFirstValue({ subject: object });
       if (resourceNode) {
         return [
           {
             predicate: quad.predicate.value,
-            object: { termType: 'ResourceNode', value: quad.object.value },
+            object: { termType: 'ResourceNode', value: object.value },
           },
         ];
       } else {
-        return [
-          // copying object to prevent weird bugs
-          { predicate: quad.predicate.value, object: { ...quad.object } },
-        ];
+        // this is just to make typescript happy
+        if (object.termType === 'BlankNode') {
+          return [
+            {
+              predicate: quad.predicate.value,
+              object: { value: object.value, termType: object.termType },
+            },
+          ];
+        } else {
+          return [
+            {
+              predicate: quad.predicate.value,
+              object: { value: object.value, termType: object.termType },
+            },
+          ];
+        }
       }
     }
     // neither a content nor resource node, so just a plain attribute

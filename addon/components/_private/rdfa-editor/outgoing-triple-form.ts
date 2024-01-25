@@ -283,6 +283,10 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
             ),
           };
         }
+        // ts apparently not smart enough to see this can't happen
+        default: {
+          return { valid: false, errors: [] };
+        }
       }
     } catch (e) {
       if (e instanceof ValidationError) {

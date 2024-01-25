@@ -1,11 +1,5 @@
 import { AnyObject, Flags, Maybe } from 'yup';
 
-// Types for compiled templates
-declare module '@lblod/ember-rdfa-editor/templates/*' {
-  import { TemplateFactory } from 'htmlbars-inline-precompile';
-  const tmpl: TemplateFactory;
-  export default tmpl;
-}
 interface CurieOptions {
   allowEmpty?: boolean;
 }
