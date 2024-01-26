@@ -2,6 +2,7 @@ import {
   Decoration,
   DecorationSet,
   EditorState,
+  EditorView,
   ProsePlugin,
   SayView,
   TextSelection,
@@ -53,7 +54,7 @@ export function firefoxCursorFix(): ProsePlugin {
         }
         return false;
       },
-      handleClick(view: SayView, pos: number, event: MouseEvent) {
+      handleClick(view: EditorView | SayView, pos: number, event: MouseEvent) {
         const $pos = view.state.doc.resolve(pos);
         let cur = $pos.nodeAfter;
         let insertPos = $pos.pos;

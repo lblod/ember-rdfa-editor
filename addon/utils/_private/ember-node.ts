@@ -16,23 +16,23 @@ import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
 import type {
   AttributeSpec,
   DOMOutputSpec,
-  Node as PNode,
   ParseRule,
+  Node as PNode,
 } from 'prosemirror-model';
 import {
   Decoration,
   type DecorationSource,
   type NodeView,
-  type NodeViewConstructor,
 } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
+import { SayView } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type { NodeSerializer } from '@lblod/ember-rdfa-editor/core/say-serializer';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -193,7 +193,7 @@ class EmberNodeView implements NodeView {
 
   update(
     node: PNode,
-    _decorations: Decoration[],
+    _decorations: readonly Decoration[],
     innerDecorations: DecorationSource,
   ) {
     if (node.type !== this.node.type) return false;
@@ -326,7 +326,7 @@ export type EmberNodeConfig = {
    * Allows creating a serialized version based on the node itself
    * @see {@link SayNodeSpec}
    */
-  serialize?: (node: PNode, state: EditorState) => DOMOutputSpec;
+  serialize?: NodeSerializer;
   /**
    * Prevents the editor view from handling events which are inside the ember-node but not inside it's editable content.
    * By default this will stop events which occur inside the ember-node but not inside it's content.
@@ -437,12 +437,17 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
   };
 }
 
+export type SayNodeViewConstructor = (
+  node: PNode,
+  view: SayView,
+  getPos: () => number | undefined,
+) => NodeView;
 /**
  * Creates a constructor for EmberNodeViews according to the passed config
  * @see {@link EmberNodeView}
  */
 export function createEmberNodeView(config: EmberNodeConfig) {
-  return function (controller: SayController): NodeViewConstructor {
+  return function (controller: SayController): SayNodeViewConstructor {
     return function (node, view: SayView, getPos) {
       return new EmberNodeView(controller, config, node, view, getPos);
     };

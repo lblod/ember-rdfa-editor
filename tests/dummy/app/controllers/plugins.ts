@@ -71,6 +71,7 @@ import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import { getOwner } from '@ember/application';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
+import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -128,7 +129,7 @@ export default class IndexController extends Controller {
 
   @tracked nodeViews: (
     proseController: SayController,
-  ) => Record<string, NodeViewConstructor> = (proseController) => {
+  ) => Record<string, SayNodeViewConstructor> = (proseController) => {
     return {
       card: cardView(proseController),
       counter: counterView(proseController),

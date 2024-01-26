@@ -6,6 +6,7 @@ import { DOMSerializer, ProseParser } from '..';
 import { SetDocAttributesStep } from '../utils/steps';
 
 export default class SayView extends EditorView {
+  isSayView = true;
   @tracked declare state: EditorState;
   @tracked parent?: SayView;
   domParser?: ProseParser;

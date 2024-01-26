@@ -15,7 +15,6 @@
     "doc": "doc",
     "test": "tests"
   },
-
   "typesVersions": {
     "*": {
       "test-support": [
@@ -64,7 +63,7 @@
     "@embroider/macros": "^1.13.1",
     "@glimmer/tracking": "^1.1.2",
     "@graphy/memory.dataset.fast": "4.3.3",
-    "@guardian/prosemirror-invisibles": "git+https://git@github.com/lblod/prosemirror-invisibles",
+    "@guardian/prosemirror-invisibles": "file:.yalc/@guardian/prosemirror-invisibles",
     "@lblod/marawa": "^0.8.0-beta.2",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
@@ -112,8 +111,8 @@
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
-    "@glint/template": "1.3.0",
     "@glint/environment-ember-loose": "^1.3.0",
+    "@glint/template": "1.3.0",
     "@graphy/content.ttl.write": "^4.3.7",
     "@rdfjs/types": "^1.1.0",
     "@release-it/keep-a-changelog": "^4.0.0",
@@ -122,6 +121,7 @@
     "@types/debug": "^4.1.7",
     "@types/dompurify": "^3.0.0",
     "@types/ember": "~4.0",
+    "@types/ember-resolver": "^9.0.0",
     "@types/ember__application": "~4.0",
     "@types/ember__array": "~4.0",
     "@types/ember__component": "~4.0",
@@ -139,7 +139,6 @@
     "@types/ember__template": "~4.0",
     "@types/ember__test": "~4.0",
     "@types/ember__utils": "~4.0",
-    "@types/ember-resolver": "^9.0.0",
     "@types/htmlbars-inline-precompile": "^3.0.0",
     "@types/prosemirror-dev-tools": "^3.0.3",
     "@types/qunit": "^2.19.3",

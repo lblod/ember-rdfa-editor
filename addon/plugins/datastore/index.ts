@@ -222,7 +222,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
                   serializer,
                   schema,
                   textBuffer,
-                ),
+                ) as Iterable<TextPNode>,
               ),
             );
           }
@@ -251,7 +251,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
               serializer,
               schema,
               textBuffer,
-            ),
+            ) as Iterable<TextPNode>,
           ),
         );
       }
@@ -391,7 +391,9 @@ function serializeTextBlobRec(
       domNode: dom,
       children,
     }) as TextPNode;
-    result.children.forEach((child: TextPNode) => (child.parent = result));
+    (result.children as TextPNode[]).forEach(
+      (child: TextPNode) => (child.parent = result),
+    );
     return [result];
   }
 }
