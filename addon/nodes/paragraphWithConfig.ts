@@ -39,6 +39,7 @@ export const paragraphWithConfig: (
     content: config?.content || 'inline*',
     group: config?.group || 'block paragraphGroup',
     subType: config.subType,
+    defining: true,
     attrs: {
       alignment: {
         default: DEFAULT_ALIGNMENT,
