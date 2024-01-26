@@ -118,6 +118,8 @@ export const LUMP_NODE_PROPERTY =
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';
+export const LANG_STRING =
+  'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString';
 export const RDFA_ATTRIBUTES = [
   'resource',
   'about',

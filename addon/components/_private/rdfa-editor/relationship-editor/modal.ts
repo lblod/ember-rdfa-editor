@@ -7,8 +7,8 @@ import { action } from '@ember/object';
 
 type Args = {
   triple?: LinkTriple;
-  onSave: RdfaRelationshipEditor['saveNewRelationship'];
   onCancel: () => void;
+  onSave: RdfaRelationshipEditor['saveNewRelationship'];
   controller?: SayController;
 };
 
@@ -19,11 +19,12 @@ export default class RelationshipEditorModal extends Component<Args> {
     return this.args.controller;
   }
 
+  @action
+  cancel() {
+    this.args.onCancel();
+  }
+
   save = (triple: LinkTriple) => {
     this.args.onSave(triple);
   };
-  @action
-  cancel() {
-    this.args.onCancel;
-  }
 }

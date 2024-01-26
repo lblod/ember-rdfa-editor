@@ -1,5 +1,5 @@
 {{#let (unique-id) as |formId|}}
-  <AuModal @modalOpen={{@modalOpen}} @closable={{true}} @closeModal={{@onCancel}}>
+  <AuModal @modalOpen={{@modalOpen}} @closable={{true}} @closeModal={{this.cancel}}>
     <:title>Add Relationship</:title>
     <:body>
       <this.OutgoingTripleForm
@@ -16,7 +16,7 @@
           form={{formId}}
           type="submit"
         >Save</AuButton>
-        <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
+        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

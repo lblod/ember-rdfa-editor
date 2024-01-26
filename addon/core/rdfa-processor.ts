@@ -10,6 +10,7 @@ import Datastore, {
   SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
+import { LANG_STRING } from '../utils/_private/constants';
 
 export type SayTermType =
   | 'NamedNode'
@@ -201,13 +202,17 @@ function quadToProperties(
           'unexpected quad object type for quad referring to literal node',
         );
       }
+      const datatype =
+        quad.object.datatype && quad.object.datatype.value !== LANG_STRING
+          ? quad.object.datatype
+          : undefined;
       result.push({
         predicate: quad.predicate.value,
         object: {
           termType: 'LiteralNode',
           rdfaId: contentId,
-          datatype: quad.object.datatype,
-          language: quad.object.language,
+          datatype: datatype ?? { termType: 'NamedNode', value: '' },
+          language: datatype ? '' : quad.object.language ?? '',
         },
       });
     }

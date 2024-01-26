@@ -226,7 +226,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
 
   saveNewRelationship = (triple: LinkTriple) => {
     this.addProperty(triple);
-    this.modalOpen = false;
+    this.status = undefined;
   };
 
   cancel = () => {
@@ -244,6 +244,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
         addProperty({ resource: this.currentResource, property }),
         { view: this.controller.mainEditorView },
       );
+      this.status = undefined;
     }
   };
   editRelationship = (index: number) => {
