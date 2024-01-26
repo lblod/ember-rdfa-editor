@@ -10,8 +10,6 @@ export interface PostProcessArgs<N> {
     node: N,
     activeTag: IActiveTag<N>,
     attributes: Record<string, string>,
-    contentDatatype?: ModelNamedNode<N>,
-    contentLanguage?: string,
     predicateAttribute?: string,
   ) => void;
   markAsResourceNode: (
@@ -177,13 +175,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
     if (truthyAttribute(attributes, 'property')) {
       if (truthyAttribute(attributes, 'datatype')) {
         if (!truthyAttribute(attributes, 'content')) {
-          markAsLiteralNode(
-            node,
-            activeTag,
-            attributes,
-            activeTag.datatype,
-            activeTag.language,
-          );
+          markAsLiteralNode(node, activeTag, attributes);
           return;
         }
       } else if (truthyAttribute(attributes, 'content')) {
@@ -204,13 +196,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
       ) {
         return;
       } else {
-        markAsLiteralNode(
-          node,
-          activeTag,
-          attributes,
-          activeTag.datatype,
-          activeTag.language,
-        );
+        markAsLiteralNode(node, activeTag, attributes);
         return;
       }
     }
