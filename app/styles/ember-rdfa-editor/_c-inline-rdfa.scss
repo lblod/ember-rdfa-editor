@@ -1,13 +1,15 @@
-.say-inline-rdfa {
-
-  display: inline-block;
-  border-color: green;
-  border-style: dashed;
-  border-width: 1px;
-  &.say-active {
-    outline: 0.2rem solid var(--au-blue-500);
+.rdfa-editing {
+  .say-inline-rdfa {
+    display: inline-block;
+    border-color: green;
+    border-style: dashed;
+    border-width: 1px;
+    &.say-active {
+      outline: 0.2rem solid var(--au-blue-500);
+    }
   }
 }
+
 .ember-node {
   white-space: normal !important;
   &.say-active {
