@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
 

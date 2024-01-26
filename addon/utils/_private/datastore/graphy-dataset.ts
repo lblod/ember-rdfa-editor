@@ -1,5 +1,5 @@
 import * as RDF from '@rdfjs/types';
-import dataset, { FastDataset } from '@graphy/memory.dataset.fast';
+import dataset, { type FastDataset } from '@graphy/memory.dataset.fast';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 
 function isFastDataset(thing: unknown): thing is FastDataset {

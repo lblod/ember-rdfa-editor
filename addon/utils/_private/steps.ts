@@ -41,10 +41,10 @@ export class SetDocAttributeStep extends Step {
   }
 
   static fromJSON(schema: Schema, json: Record<string, unknown>): Step {
-    if (typeof json.key != 'string' || !json.value) {
+    if (typeof json['key'] != 'string' || !json['value']) {
       throw new Error('Invalid input for SetDocAttributeStep.fromJSON');
     }
-    return new SetDocAttributeStep(json.key, json.value);
+    return new SetDocAttributeStep(json['key'], json['value']);
   }
 }
 
@@ -77,9 +77,9 @@ export class SetDocAttributesStep extends Step {
   }
 
   static fromJSON(schema: Schema, json: Record<string, unknown>): Step {
-    if (!json.attrs) {
+    if (!json['attrs']) {
       throw new Error('Invalid input for SetDocAttributeSteps.fromJSON');
     }
-    return new SetDocAttributesStep(json.attrs as Record<string, unknown>);
+    return new SetDocAttributesStep(json['attrs'] as Record<string, unknown>);
   }
 }

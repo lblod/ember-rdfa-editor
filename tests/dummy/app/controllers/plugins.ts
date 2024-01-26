@@ -13,7 +13,7 @@ import {
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
-import { NodeViewConstructor } from 'prosemirror-view';
+import type { NodeViewConstructor } from 'prosemirror-view';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import {
@@ -66,7 +66,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
+import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import { getOwner } from '@ember/application';

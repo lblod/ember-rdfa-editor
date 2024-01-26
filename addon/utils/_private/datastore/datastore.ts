@@ -1,29 +1,29 @@
 import * as RDF from '@rdfjs/types';
 import {
-  ModelQuad,
+  type ModelQuad,
   quadHash,
-  QuadNodes,
-  RdfaParseConfig,
+  type QuadNodes,
+  type RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
 import {
-  ConciseTerm,
+  type ConciseTerm,
   conciseToRdfjs,
-  TermConverter,
+  type TermConverter,
 } from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
 import { ResultSet } from '@lblod/ember-rdfa-editor/utils/_private/datastore/result-set';
 import { TermMapping } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-mapping';
 import {
   isPrimitive,
-  ObjectSpec,
-  PredicateSpec,
-  SubjectSpec,
+  type ObjectSpec,
+  type PredicateSpec,
+  type SubjectSpec,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-spec';
 import { GraphyDataset } from './graphy-dataset';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { TwoWayMap } from '../map-utils';
-import { IncomingLiteralNodeTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { IncomingLiteralNodeTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;

@@ -1,5 +1,5 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { NodeViewConstructor } from 'prosemirror-view';
+import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import {
   getPathFromRoot,
@@ -12,18 +12,18 @@ import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { createLogger, Logger } from '../utils/_private/logging-utils';
+import { createLogger, type Logger } from '../utils/_private/logging-utils';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
 import {
   datastore,
   isElementPNode,
-  ResolvedPNode,
+  type ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import {
-  DefaultAttrGenPuginOptions,
+  type DefaultAttrGenPuginOptions,
   defaultAttributeValueGeneration,
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';

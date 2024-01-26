@@ -1,5 +1,5 @@
-import { Attrs, NodeRange, NodeType } from 'prosemirror-model';
-import { Command, NodeSelection } from 'prosemirror-state';
+import { type Attrs, NodeRange, NodeType } from 'prosemirror-model';
+import { type Command, NodeSelection } from 'prosemirror-state';
 import { findWrapping } from 'prosemirror-transform';
 
 /**

@@ -1,4 +1,4 @@
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import {
   block_rdfa,
   docWithConfig,
@@ -39,7 +39,7 @@ import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color';
 import {
   inputRules,
-  PluginConfig,
+  type PluginConfig,
   SayController,
   Schema,
 } from '@lblod/ember-rdfa-editor';

@@ -2,7 +2,7 @@
  *
  * Modified from https://github.com/ProseMirror/prosemirror-transform and https://github.com/ProseMirror/prosemirror-commands
  * This modified version of the setBlockType command allows for the option to preserve the existing attributes of the nodes
- * 
+ *
  * Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,8 +24,8 @@
  * THE SOFTWARE.
  */
 
-import { Attrs, Fragment, NodeType, Slice } from 'prosemirror-model';
-import { Command } from 'prosemirror-state';
+import { type Attrs, Fragment, NodeType, Slice } from 'prosemirror-model';
+import type { Command } from 'prosemirror-state';
 import { ReplaceAroundStep, Transform } from 'prosemirror-transform';
 import { PNode } from '..';
 

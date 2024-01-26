@@ -1,4 +1,4 @@
-import { DOMOutputSpec, Mark, MarkSpec } from 'prosemirror-model';
+import type { DOMOutputSpec, Mark, MarkSpec } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
 /**

@@ -2,17 +2,17 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import {
   createLogger,
-  Logger,
+  type Logger,
 } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
 import SayEditor, {
-  PluginConfig,
+  type PluginConfig,
 } from '@lblod/ember-rdfa-editor/core/say-editor';
-import { NodeViewConstructor } from 'prosemirror-view';
+import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { getOwner } from '@ember/application';
-import Owner from '@ember/owner';
-import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
+import type Owner from '@ember/owner';
+import type { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 export interface RdfaEditorArgs {

@@ -1,6 +1,6 @@
-import { ComponentLike } from '@glint/template';
+import type { ComponentLike } from '@glint/template';
 import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
-import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
+import type { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 export interface SayAttributeSpec {
   default?: unknown;

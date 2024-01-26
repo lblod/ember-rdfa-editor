@@ -1,4 +1,4 @@
-import { Mark, MarkSpec } from 'prosemirror-model';
+import type { Mark, MarkSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { renderRdfaAware } from '../core/schema';
 
@@ -13,7 +13,10 @@ export const inline_rdfa: MarkSpec = {
       tag: 'span',
       // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
       priority: 10,
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         const attrs = getRdfaAttrs(node);
         if (attrs) {
           return attrs;
@@ -23,7 +26,7 @@ export const inline_rdfa: MarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
-    const resource = mark.attrs.resource as string;
+    const resource = mark.attrs['resource'] as string;
     return renderRdfaAware({
       renderable: mark,
       tag: 'span',

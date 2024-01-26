@@ -1,4 +1,4 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 
 export function setColor(color: string): Command {
@@ -8,10 +8,10 @@ export function setColor(color: string): Command {
       const markAttrs = { color };
       const tr = state.tr;
       if (selection.empty) {
-        const mark = schema.marks.color.create(markAttrs);
+        const mark = schema.marks['color'].create(markAttrs);
         tr.addStoredMark(mark);
       } else {
-        return toggleMarkAddFirst(schema.marks.color, markAttrs)(
+        return toggleMarkAddFirst(schema.marks['color'], markAttrs)(
           state,
           dispatch,
         );

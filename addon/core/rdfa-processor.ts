@@ -4,18 +4,19 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import Datastore, {
-  EditorStore,
-  SubAndContentPred,
-} from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
-import { Quad } from '@rdfjs/types';
 import {
-  ContentLiteralTerm,
-  LiteralNodeTerm,
-  ResourceNodeTerm,
-  SayBlankNode,
-  SayLiteral,
-  SayNamedNode,
+  type default as Datastore,
+  EditorStore,
+  type SubAndContentPred,
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
+import type { Quad } from '@rdfjs/types';
+import {
+  type ContentLiteralTerm,
+  type LiteralNodeTerm,
+  type ResourceNodeTerm,
+  type SayBlankNode,
+  type SayLiteral,
+  type SayNamedNode,
   languageOrDataType,
   sayDataFactory,
 } from './say-data-factory';
@@ -132,10 +133,12 @@ export function preprocessRDFa(dom: Node) {
     }
 
     // write info to node
-    (node as HTMLElement).dataset.outgoingProps = JSON.stringify(properties);
-    (node as HTMLElement).dataset.incomingProps = JSON.stringify(incomingProps);
-    (node as HTMLElement).dataset.rdfaNodeType = 'resource';
-    (node as HTMLElement).dataset.subject = entry.subject.value;
+    // write info to node
+    (node as HTMLElement).dataset['outgoingProps'] = JSON.stringify(properties);
+    (node as HTMLElement).dataset['incomingProps'] =
+      JSON.stringify(incomingProps);
+    (node as HTMLElement).dataset['rdfaNodeType'] = 'resource';
+    (node as HTMLElement).dataset['subject'] = entry.subject.value;
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
@@ -146,10 +149,11 @@ export function preprocessRDFa(dom: Node) {
       predicate,
     };
     // write info to node
-    (node as HTMLElement).dataset.incomingProps = JSON.stringify([
+    // write info to node
+    (node as HTMLElement).dataset['incomingProps'] = JSON.stringify([
       incomingProp,
     ]);
-    (node as HTMLElement).dataset.rdfaNodeType = 'literal';
+    (node as HTMLElement).dataset['rdfaNodeType'] = 'literal';
   }
 }
 

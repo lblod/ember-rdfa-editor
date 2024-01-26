@@ -4,7 +4,7 @@ import {
   sinkListItem,
   splitListItem,
 } from 'prosemirror-schema-list';
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
 import {
@@ -40,13 +40,17 @@ const backspaceBase: Command[] = [
   reduceIndent,
   deleteSelection,
   (state, dispatch, view) => {
-    const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
+    const isInTable = hasParentNodeOfType(state.schema.nodes['table'])(
       state.selection,
     );
     if (joinBackward(state, dispatch) && dispatch && view) {
       const { state } = view;
       if (!isInTable) {
-        selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+        selectParentNodeOfType(state.schema.nodes['table'])(
+          state,
+          dispatch,
+          view,
+        );
       }
       return true;
     }
@@ -58,13 +62,17 @@ const backspaceBase: Command[] = [
 const del = chainCommands(
   deleteSelection,
   (state, dispatch, view) => {
-    const isInTable = hasParentNodeOfType(state.schema.nodes.table)(
+    const isInTable = hasParentNodeOfType(state.schema.nodes['table'])(
       state.selection,
     );
     if (joinForward(state, dispatch) && dispatch && view) {
       const { state } = view;
       if (!isInTable) {
-        selectParentNodeOfType(state.schema.nodes.table)(state, dispatch, view);
+        selectParentNodeOfType(state.schema.nodes['table'])(
+          state,
+          dispatch,
+          view,
+        );
       }
       return true;
     }
@@ -96,7 +104,7 @@ export const pcBaseKeymap: Keymap = (schema) => ({
   'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
   'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
   Enter: chainCommands(
-    splitListItem(schema.nodes.list_item),
+    splitListItem(schema.nodes['list_item']),
     newlineInCode,
     createParagraphNear,
     liftEmptyBlockChecked,
@@ -111,8 +119,8 @@ export const pcBaseKeymap: Keymap = (schema) => ({
   Delete: del,
   'Mod-Delete': del,
   'Mod-a': selectAll,
-  Tab: sinkListItem(schema.nodes.list_item),
-  'Shift-Tab': liftListItem(schema.nodes.list_item),
+  Tab: sinkListItem(schema.nodes['list_item']),
+  'Shift-Tab': liftListItem(schema.nodes['list_item']),
   // Alignment shortcuts
   'Mod-Shift-L': setAlignment({ option: 'left' }),
   'Mod-Shift-E': setAlignment({ option: 'center' }),
@@ -141,12 +149,12 @@ export const macBaseKeymap: Keymap = (schema) => {
 
 export const embeddedEditorBaseKeymap: Keymap = (schema) => {
   return {
-    'Mod-b': toggleMarkAddFirst(schema.marks.strong),
-    'Mod-B': toggleMarkAddFirst(schema.marks.strong),
-    'Mod-i': toggleMarkAddFirst(schema.marks.em),
-    'Mod-I': toggleMarkAddFirst(schema.marks.em),
-    'Mod-u': toggleMarkAddFirst(schema.marks.underline),
-    'Mod-U': toggleMarkAddFirst(schema.marks.underline),
+    'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
+    'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
+    'Mod-i': toggleMarkAddFirst(schema.marks['em']),
+    'Mod-I': toggleMarkAddFirst(schema.marks['em']),
+    'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
+    'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
     Enter: chainCommands(
       newlineInCode,
       createParagraphNear,

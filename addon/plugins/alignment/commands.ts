@@ -1,5 +1,5 @@
-import { Command } from 'prosemirror-state';
-import { AlignmentOption } from '.';
+import type { Command } from 'prosemirror-state';
+import type { AlignmentOption } from '.';
 
 type SetAlignmentArgs = {
   option: AlignmentOption;

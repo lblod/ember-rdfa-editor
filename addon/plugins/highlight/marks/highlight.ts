@@ -1,4 +1,4 @@
-import { MarkSpec } from 'prosemirror-model';
+import type { MarkSpec } from 'prosemirror-model';
 
 const isValidCssColor = (colorString: string) =>
   CSS.supports('color', colorString);

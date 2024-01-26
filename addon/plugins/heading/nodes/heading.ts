@@ -6,9 +6,9 @@ import {
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import NumberEditor from '@lblod/ember-rdfa-editor/components/_private/number-editor';
-import { ComponentLike } from '@glint/template';
+import type { ComponentLike } from '@glint/template';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment';
 
 export const heading: SayNodeSpec = {
@@ -34,13 +34,16 @@ export const heading: SayNodeSpec = {
   parseDOM: [
     {
       tag: 'h1',
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         return {
           level: 1,
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),
@@ -55,7 +58,7 @@ export const heading: SayNodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),
@@ -70,7 +73,7 @@ export const heading: SayNodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),
@@ -85,7 +88,7 @@ export const heading: SayNodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),
@@ -100,7 +103,7 @@ export const heading: SayNodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),
@@ -115,7 +118,7 @@ export const heading: SayNodeSpec = {
           indentationLevel: optionMapOr(
             0,
             parseInt,
-            node.dataset.indentationLevel,
+            node.dataset['indentationLevel'],
           ),
           ...getRdfaAttrs(node),
           alignment: getAlignment(node),

@@ -1,4 +1,4 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 
 export function addType(pos: number, type: string): Command {
   return function (state, dispatch) {

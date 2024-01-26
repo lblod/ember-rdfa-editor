@@ -12,8 +12,8 @@
 
  */
 
-import { hbs, TemplateFactory } from 'ember-cli-htmlbars';
-import {
+import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
+import type {
   AttributeSpec,
   DOMOutputSpec,
   Node as PNode,
@@ -21,18 +21,18 @@ import {
 } from 'prosemirror-model';
 import {
   Decoration,
-  DecorationSource,
-  NodeView,
-  NodeViewConstructor,
+  type DecorationSource,
+  type NodeView,
+  type NodeViewConstructor,
 } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
 import Component from '@ember/component';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -161,7 +161,7 @@ class EmberNodeView implements NodeView {
       : undefined;
     // Note `this.contentDOM` needs an attribute to prevent chromium-based browsers from deleting it when it is empty/only has empty children.
     if (this.contentDOM) {
-      this.contentDOM.dataset.emberNodeContent = 'true';
+      this.contentDOM.dataset['emberNodeContent'] = 'true';
     }
     const { node, component } = emberComponent(
       controller.owner,
@@ -388,8 +388,11 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
     parseDOM: parseDOM ?? [
       {
         tag: inline ? 'span' : 'div',
-        getAttrs(node: HTMLElement) {
-          if (node.dataset.emberNode === name) {
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
+          if (node.dataset['emberNode'] === name) {
             const result: Record<string, unknown> = {};
             if (attrs) {
               for (const [attributeName, attributeSpec] of Object.entries(

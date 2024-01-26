@@ -1,4 +1,4 @@
-import Modifier, { ArgsFor, PositionalArgs } from 'ember-modifier';
+import Modifier, { type ArgsFor, type PositionalArgs } from 'ember-modifier';
 import { SayController, TextSelection } from '..';
 import { registerDestructor } from '@ember/destroyable';
 

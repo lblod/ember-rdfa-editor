@@ -372,7 +372,7 @@ export default class HTMLInputParser {
       }
 
       for (let i = 0; i < cellElements.length; i++) {
-        cellElements[i].dataset.colwidth = `${cellWidths[i]}`;
+        cellElements[i].dataset['colwidth'] = `${cellWidths[i]}`;
       }
     });
 

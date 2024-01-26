@@ -11,8 +11,8 @@ import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal from './modal';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import {
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
@@ -56,11 +56,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get backlinks() {
-    return this.node.attrs.backlinks as IncomingTriple[] | undefined;
+    return this.node.attrs['backlinks'] as IncomingTriple[] | undefined;
   }
 
   get properties() {
-    return this.node.attrs.properties as OutgoingTriple[] | undefined;
+    return this.node.attrs['properties'] as OutgoingTriple[] | undefined;
   }
 
   get hasOutgoing() {
@@ -81,19 +81,19 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get currentResource(): string | undefined {
-    return (this.node.attrs.subject ||
-      this.node.attrs.about ||
-      this.node.attrs.resource) as string | undefined;
+    return (this.node.attrs['subject'] ||
+      this.node.attrs['about'] ||
+      this.node.attrs['resource']) as string | undefined;
   }
   get type() {
-    return this.node.attrs.rdfaNodeType as 'resource' | 'literal';
+    return this.node.attrs['rdfaNodeType'] as 'resource' | 'literal';
   }
   get isResource() {
     return this.type === 'resource';
   }
 
   get currentRdfaId() {
-    return this.node.attrs.__rdfaId as string;
+    return this.node.attrs['__rdfaId'] as string;
   }
   get statusMessage(): StatusMessage | null {
     // show only if a message is relevant for the current node

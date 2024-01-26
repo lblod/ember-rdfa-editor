@@ -1,4 +1,4 @@
-import { NodeSpec } from 'prosemirror-model';
+import type { NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
@@ -17,8 +17,9 @@ const BLOCK_SELECTOR = `:not(${NON_BLOCK_NODES.join(', ')})`;
 const BASE_PARAGRAPH_TYPE = 'paragraph';
 const matchingSubType = (node: HTMLElement, subType: string) => {
   // basic paragraph has no subtype in its dataset and an empty subType
-  const isBasicParagraph = node.dataset.subType === undefined && subType === '';
-  return isBasicParagraph || node.dataset.subType === subType;
+  const isBasicParagraph =
+    node.dataset['subType'] === undefined && subType === '';
+  return isBasicParagraph || node.dataset['subType'] === subType;
 };
 
 export interface ParagraphConfig {
@@ -50,7 +51,10 @@ export const paragraphWithConfig: (
     parseDOM: [
       {
         tag: 'p',
-        getAttrs(node: HTMLElement) {
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
           const blockNode = node.querySelector(BLOCK_SELECTOR);
           if (blockNode && matchingSubType(node, config.subType)) {
             // NOTE This parse rule is used to avoid parsing `<p>` tags which contain block tags,
@@ -72,7 +76,10 @@ export const paragraphWithConfig: (
       },
       {
         tag: 'p',
-        getAttrs(node: HTMLElement) {
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
           const myAttrs = getRdfaAttrs(node);
           if (myAttrs) {
             return false;
@@ -83,7 +90,7 @@ export const paragraphWithConfig: (
             indentationLevel: optionMapOr(
               DEFAULT_INDENTATION,
               parseInt,
-              node.dataset.indentationLevel,
+              node.dataset['indentationLevel'],
             ),
             alignment: getAlignment(node),
           };

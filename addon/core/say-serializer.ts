@@ -26,10 +26,10 @@
 
 import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import {
-  DOMOutputSpec,
+  type DOMOutputSpec,
   DOMSerializer,
   Mark,
   MarkType,
@@ -116,8 +116,8 @@ export default class SaySerializer extends DOMSerializer {
   static fromSchema(schema: Schema, editor?: SayEditor): DOMSerializer {
     if (editor) {
       return (
-        (schema.cached.saySerializer as SaySerializer) ||
-        (schema.cached.saySerializer = new SaySerializer(
+        (schema.cached['saySerializer'] as SaySerializer) ||
+        (schema.cached['saySerializer'] = new SaySerializer(
           SaySerializer.nodesFromSchema(schema),
           SaySerializer.marksFromSchema(schema),
           editor,
@@ -125,8 +125,8 @@ export default class SaySerializer extends DOMSerializer {
       );
     } else {
       return (
-        (schema.cached.domSerializer as DOMSerializer) ||
-        (schema.cached.domSerializer = new DOMSerializer(
+        (schema.cached['domSerializer'] as DOMSerializer) ||
+        (schema.cached['domSerializer'] = new DOMSerializer(
           DOMSerializer.nodesFromSchema(schema),
           DOMSerializer.marksFromSchema(schema),
         ))
@@ -136,7 +136,7 @@ export default class SaySerializer extends DOMSerializer {
 
   static nodesFromSchema(schema: Schema) {
     const result = gatherToDOM(schema.nodes);
-    if (!result.text) result.text = (node) => node.text as string;
+    if (!result['text']) result['text'] = (node) => node.text as string;
     return result;
   }
 

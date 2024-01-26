@@ -58,7 +58,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
+import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';

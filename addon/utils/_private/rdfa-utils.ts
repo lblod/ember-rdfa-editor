@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
-import { ResolvedPNode } from './types';
-import {
+import type { ResolvedPNode } from './types';
+import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
@@ -117,7 +117,7 @@ export function findNodeByRdfaId(
   let result: ResolvedPNode | undefined;
   doc.descendants((node, pos) => {
     if (result) return false;
-    if (node.attrs.__rdfaId === rdfaId) {
+    if (node.attrs['__rdfaId'] === rdfaId) {
       result = {
         pos: pos,
         value: node,
@@ -135,7 +135,7 @@ export function findNodesByResource(
 ): ResolvedPNode[] {
   const result: ResolvedPNode[] = [];
   doc.descendants((node, pos) => {
-    if (node.attrs.resource === resource) {
+    if (node.attrs['resource'] === resource) {
       result.push({ pos, value: node });
     }
     return true;
@@ -148,17 +148,17 @@ export function getRdfaId(node: PNode): string | undefined {
 }
 
 export function getResource(node: PNode): string | undefined {
-  return (node.attrs.subject ?? node.attrs.about ?? node.attrs.resource) as
-    | string
-    | undefined;
+  return (node.attrs['subject'] ??
+    node.attrs['about'] ??
+    node.attrs['resource']) as string | undefined;
 }
 
 export function getProperties(node: PNode): OutgoingTriple[] | undefined {
-  return node.attrs.properties as OutgoingTriple[] | undefined;
+  return node.attrs['properties'] as OutgoingTriple[] | undefined;
 }
 
 export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
-  return node.attrs.backlinks as IncomingTriple[] | undefined;
+  return node.attrs['backlinks'] as IncomingTriple[] | undefined;
 }
 
 /**
