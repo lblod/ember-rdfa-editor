@@ -13,6 +13,9 @@ module.exports = {
     autoImport: {
       webpack: require('./webpack-config'),
     },
+    'ember-cli-babel': {
+      enableTypescriptTransform: true,
+    },
   },
 
   included: function (app) {

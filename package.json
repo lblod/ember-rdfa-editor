@@ -15,6 +15,22 @@
     "doc": "doc",
     "test": "tests"
   },
+
+  "typesVersions": {
+    "*": {
+      "test-support": [
+        "declarations/addon-test-support/index.d.ts"
+      ],
+      "test-support/*": [
+        "declarations/addon-test-support/*",
+        "declarations/addon-test-support/*/index.d.ts"
+      ],
+      "*": [
+        "declarations/addon/*",
+        "declarations/addon/*/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "build": "ember build --environment=production",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
@@ -24,20 +40,20 @@
     "lint:js": "eslint . --cache",
     "lint:errors": "eslint . --quiet",
     "lint:js:fix": "eslint . --fix",
+    "lint:types": "tsc --noEmit",
+    "prepack": "tsc --project tsconfig.declarations.json",
+    "postpack": "rimraf declarations",
     "start": "ember serve",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test",
     "test:ember-compatibility": "ember try:each",
-    "prepublishOnly": "ember ts:precompile",
-    "postpublish": "ember ts:clean",
     "release": "release-it",
-    "prepack": "ember ts:precompile",
-    "postpack": "ember ts:clean",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:ci": "start-server-and-test start http://localhost:4200 cypress:run"
   },
   "dependencies": {
+    "@babel/core": "^7.23.7",
     "@codemirror/lang-html": "^6.1.1",
     "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/state": "^6.1.1",
@@ -56,9 +72,8 @@
     "debug": "^4.3.4",
     "dompurify": "^3.0.0",
     "ember-auto-import": "^2.6.3",
-    "ember-cli-babel": "^7.26.11",
+    "ember-cli-babel": "^8.2.0",
     "ember-cli-htmlbars": "^6.2.0",
-    "ember-cli-typescript": "^5.1.0",
     "ember-focus-trap": "~1.0.1",
     "ember-truth-helpers": "^3.0.0",
     "ember-velcro": "^2.1.0",
@@ -91,18 +106,18 @@
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "2.15.0",
-    "@babel/eslint-parser": "^7.21.3",
-    "@babel/plugin-proposal-decorators": "^7.21.0",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.26.2",
     "@ember/string": "^3.0.1",
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
-    "@glint/template": "1.1.0",
+    "@glint/template": "1.3.0",
+    "@glint/environment-ember-loose": "^1.3.0",
     "@graphy/content.ttl.write": "^4.3.7",
     "@rdfjs/types": "^1.1.0",
     "@release-it/keep-a-changelog": "^4.0.0",
+    "@tsconfig/ember": "^3.0.3",
     "@types/common-tags": "^1.8.4",
     "@types/debug": "^4.1.7",
     "@types/dompurify": "^3.0.0",
@@ -132,14 +147,14 @@
     "@types/rsvp": "^4.0.8",
     "@types/sinon": "^17.0.3",
     "@types/uuid": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
     "broccoli-asset-rev": "^3.0.0",
     "changesets-release-it-plugin": "^0.1.1",
     "concurrently": "^8.0.1",
     "cypress": "^13.6.2",
     "ember-changeset": "^4.1.2",
-    "ember-cli": "~4.12.0",
+    "ember-cli": "~5.6.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
     "ember-cli-inject-live-reload": "^2.1.0",
@@ -173,6 +188,7 @@
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
     "release-it": "^16.1.0",
+    "rimraf": "^5.0.1",
     "sass": "^1.69.7",
     "sinon": "^17.0.1",
     "start-server-and-test": "^2.0.3",
