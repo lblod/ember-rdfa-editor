@@ -202,10 +202,11 @@ function quadToProperties(
           'unexpected quad object type for quad referring to literal node',
         );
       }
-      const datatype =
+      const datatype: Omit<RDF.NamedNode, 'equals'> | undefined =
         quad.object.datatype && quad.object.datatype.value !== LANG_STRING
-          ? quad.object.datatype
+          ? { termType: 'NamedNode', value: quad.object.datatype.value }
           : undefined;
+      console.log('datatype', datatype);
       result.push({
         predicate: quad.predicate.value,
         object: {

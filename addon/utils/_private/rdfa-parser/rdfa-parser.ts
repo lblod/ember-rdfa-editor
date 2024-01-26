@@ -980,6 +980,8 @@ export class RdfaParser<N> {
         true,
         false,
       ),
+      datatype: activeTag.datatype,
+      language: activeTag.language,
     });
   };
 
