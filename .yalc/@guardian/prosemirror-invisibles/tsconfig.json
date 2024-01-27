@@ -1,0 +1,12 @@
+{
+  "include": ["src/ts"],
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "target": "es5",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  }
+}
