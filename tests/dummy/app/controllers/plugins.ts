@@ -1,7 +1,9 @@
+import { getOwner } from '@ember/application';
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
-import { tracked } from 'tracked-built-ins';
-import { Schema } from 'prosemirror-model';
+import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   block_rdfa,
   docWithConfig,
@@ -12,25 +14,42 @@ import {
   repaired_block,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
-import type { NodeViewConstructor } from 'prosemirror-view';
-import applyDevTools from 'prosemirror-dev-tools';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
+import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import {
-  card,
-  cardView,
-  counter,
-  counterView,
-  dropdown,
-  dropdownView,
-} from '../dummy-nodes';
+  createInvisiblesPlugin,
+  hardBreak,
+  heading as headingInvisible,
+  paragraph as paragraphInvisible,
+} from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import {
+  link,
+  linkPasteHandler,
+  linkView,
+} from '@lblod/ember-rdfa-editor/plugins/link';
+import {
+  bullet_list,
+  list_item,
+  ordered_list,
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import {
+  bullet_list_input_rule,
+  ordered_list_input_rule,
+} from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import {
   tableKeymap,
   tableNodes,
   tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
-import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import {
   em,
   strikethrough,
@@ -39,39 +58,19 @@ import {
   superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
-import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
-import {
-  bullet_list,
-  list_item,
-  ordered_list,
-} from '@lblod/ember-rdfa-editor/plugins/list';
-import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import {
-  link,
-  linkPasteHandler,
-  linkView,
-} from '@lblod/ember-rdfa-editor/plugins/link';
-import {
-  createInvisiblesPlugin,
-  hardBreak,
-  paragraph as paragraphInvisible,
-  heading as headingInvisible,
-} from '@lblod/ember-rdfa-editor/plugins/invisibles';
-import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
-import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
-import {
-  bullet_list_input_rule,
-  ordered_list_input_rule,
-} from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
-import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
-import { getOwner } from '@ember/application';
-import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
+import applyDevTools from 'prosemirror-dev-tools';
+import { Schema } from 'prosemirror-model';
+import { tracked } from 'tracked-built-ins';
+import {
+  card,
+  cardView,
+  counter,
+  counterView,
+  dropdown,
+  dropdownView,
+} from '../dummy-nodes';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
