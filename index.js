@@ -14,7 +14,7 @@ module.exports = {
       webpack: require('./webpack-config'),
     },
     'ember-cli-babel': {
-      enableTypescriptTransform: true,
+      enableTypeScriptTransform: true,
     },
   },
 

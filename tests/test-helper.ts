@@ -2,7 +2,7 @@
 //@ts-nocheck
 // TODO: linting disabled cause of really bad and incomplete qunit typings, fix
 import * as QUnit from 'qunit';
-import Application from 'dummy/app';
+import Application from 'dummy/tests/dummy/app/app';
 import config from 'dummy/config/environment';
 import { setApplication } from '@ember/test-helpers';
 import { start } from 'ember-qunit';

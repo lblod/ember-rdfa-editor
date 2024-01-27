@@ -19,7 +19,7 @@ module.exports = function (defaults) {
       disableWormholeElement: true,
     },
     'ember-cli-babel': {
-      enableTypescriptTransform: true,
+      enableTypeScriptTransform: true,
     },
   });
 
