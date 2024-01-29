@@ -131,8 +131,6 @@ export function preprocessRDFa(dom: Node) {
       return node.textContent || '';
     },
   });
-  for (const quad of datastore.asQuadResultSet()) {
-  }
 
   // every resource node
   for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
@@ -168,13 +166,18 @@ export function preprocessRDFa(dom: Node) {
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate, datatype, language } = object;
+    const { subject, predicate, language } = object;
+
+    const datatype: Omit<RDF.NamedNode, 'equals'> | undefined =
+      object.datatype && object.datatype.value !== LANG_STRING
+        ? { termType: 'NamedNode', value: object.datatype.value }
+        : undefined;
     const incomingProp: IncomingTriple = {
       termType: 'LiteralNode',
       subject: subject.value,
       predicate: predicate.value,
       datatype: datatype ?? { termType: 'NamedNode', value: '' },
-      language: language || '',
+      language: datatype ? '' : language || '',
     };
     // write info to node
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
@@ -206,7 +209,6 @@ function quadToProperties(
         quad.object.datatype && quad.object.datatype.value !== LANG_STRING
           ? { termType: 'NamedNode', value: quad.object.datatype.value }
           : undefined;
-      console.log('datatype', datatype);
       result.push({
         predicate: quad.predicate.value,
         object: {
@@ -267,7 +269,7 @@ function quadToProperties(
             object: {
               termType: 'ContentLiteral',
               datatype: contentDatatype ?? { termType: 'NamedNode', value: '' },
-              language: contentLanguage ?? '',
+              language: contentDatatype ? '' : contentLanguage ?? '',
             },
           },
         ];
