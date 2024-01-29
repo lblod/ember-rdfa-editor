@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 9.1.0
+
+### Minor Changes
+
+- [#1127](https://github.com/lblod/ember-rdfa-editor/pull/1127) [`3e7b5fb`](https://github.com/lblod/ember-rdfa-editor/commit/3e7b5fb1f0cf599eb6d78f06f9ef89102d57c2ce) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4657: Serialize table column width to exported HTML
+
+### Patch Changes
+
+- [#1124](https://github.com/lblod/ember-rdfa-editor/pull/1124) [`979719d`](https://github.com/lblod/ember-rdfa-editor/commit/979719da9fce6e08b05ae940677ce56009796559) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix `looseMatches` is undefined error
+
+- [#1131](https://github.com/lblod/ember-rdfa-editor/pull/1131) [`07916e1`](https://github.com/lblod/ember-rdfa-editor/commit/07916e1a6961d84c836b83ebad7f3aee488d6387) Thanks [@elpoelma](https://github.com/elpoelma)! - Mark paragraphs as `defining`, as they may contain important attributes (such as alignment and indentation) that should not be lost when pasting
+
+- [#1131](https://github.com/lblod/ember-rdfa-editor/pull/1131) [`07916e1`](https://github.com/lblod/ember-rdfa-editor/commit/07916e1a6961d84c836b83ebad7f3aee488d6387) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove custom `transformPasted` hook as it conflicts with the `defining` node-spec attribute
+
 ## 9.0.2
 
 ### Patch Changes

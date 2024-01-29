@@ -18,9 +18,11 @@ interface Args {
   controller?: SayController;
 }
 
+const DEFAULT_COLUMNS_ROWS = 2;
+
 export default class TableMenu extends Component<Args> {
-  @tracked tableAddRows = 2;
-  @tracked tableAddColumns = 2;
+  @tracked tableAddRows = DEFAULT_COLUMNS_ROWS;
+  @tracked tableAddColumns = DEFAULT_COLUMNS_ROWS;
 
   // Table commands
   get controller(): SayController | undefined {
@@ -39,9 +41,29 @@ export default class TableMenu extends Component<Args> {
     return this.controller?.checkCommand(insertTable(1, 1));
   }
 
+  normalizeNumber(value?: string | number) {
+    if (!value) {
+      return DEFAULT_COLUMNS_ROWS;
+    }
+
+    const numberValue = Number(value);
+
+    if (isNaN(numberValue)) {
+      return DEFAULT_COLUMNS_ROWS;
+    }
+
+    if (numberValue < 1) {
+      return 1;
+    }
+
+    return Math.floor(numberValue);
+  }
+
   @action
-  insertTable(rows: number, columns: number) {
-    return this.controller?.doCommand(insertTable(rows, columns));
+  insertTable(rows?: string | number, columns?: string | number) {
+    return this.controller?.doCommand(
+      insertTable(this.normalizeNumber(rows), this.normalizeNumber(columns)),
+    );
   }
 
   @action
