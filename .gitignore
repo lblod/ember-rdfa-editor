@@ -45,13 +45,3 @@ testem.log
 # broccoli-debug
 /DEBUG/
 
-/commands/**/*.d.ts
-/config/**/*.d.ts
-/core/**/*.d.ts
-/marks/**/*.d.ts
-/modifiers/**/*.d.ts
-/nodes/**/*.d.ts
-/plugins/**/*.d.ts
-/utils/**/*.d.ts
-/components/**/*.d.ts
-index.d.ts
