@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es5", "dom"],
-    "types": ["cypress", "node"],
-    "noEmitOnError": false
+    "types": ["cypress", "node", "cypress-visual-regression", "@cypress/grep"],
+    "noEmitOnError": false,
   },
   "extends": "../tsconfig.json",
   "include": ["**/*.ts"]
