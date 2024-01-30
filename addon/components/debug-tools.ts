@@ -71,7 +71,6 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
       }),
       parent: element,
     });
-
     this.htmlEditor.dispatch({
       changes: { from: 0, insert: this.formattedDebuggerContent },
     });

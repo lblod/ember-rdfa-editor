@@ -9,6 +9,13 @@ type OrderedListAttrs = typeof rdfaAttrs & {
   style?: OrderListStyle;
 };
 
+const getListStyleFromDomElement = (dom: HTMLElement) => {
+  const { listStyleType } = dom.style;
+
+  // Falling back to dataset for back-compatability
+  return (listStyleType || dom.dataset.listStyle) as OrderListStyle | undefined;
+};
+
 export const ordered_list: NodeSpec = {
   attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrs },
   content: 'list_item+',
@@ -20,7 +27,7 @@ export const ordered_list: NodeSpec = {
         const start = dom.getAttribute('start');
         return {
           order: optionMapOr(1, (val) => Number(val), start),
-          style: dom.dataset.listStyle,
+          style: getListStyleFromDomElement(dom),
           ...getRdfaAttrs(dom),
         };
       },
@@ -29,11 +36,14 @@ export const ordered_list: NodeSpec = {
   ],
   toDOM(node) {
     const { style, order, ...attrs } = node.attrs as OrderedListAttrs;
+
     return [
       'ol',
       {
         ...(order !== 1 && { start: order }),
-        ...(style && { 'data-list-style': style }),
+        ...(style && {
+          style: `list-style-type: ${style};`,
+        }),
         ...attrs,
       },
       0,
