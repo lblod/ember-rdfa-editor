@@ -146,23 +146,23 @@ export function renderInvisibleRdfa(
         },
       ]);
     } else if (object.termType === 'Literal') {
-      if (object.datatype?.value?.length) {
-        propElements.push([
-          'span',
-          {
-            property: predicate,
-            content: object.value,
-            datatype: object.datatype.value,
-          },
-          '',
-        ]);
-      } else if (object.language?.length) {
+      if (object.language?.length) {
         propElements.push([
           'span',
           {
             property: predicate,
             content: object.value,
             lang: object.language,
+          },
+          '',
+        ]);
+      } else if (object.datatype?.value?.length) {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+            datatype: object.datatype.value,
           },
           '',
         ]);
@@ -207,7 +207,9 @@ export function renderRdfaAttrs(
             nodeOrMark.attrs.about ||
             nodeOrMark.attrs.resource) as string,
           property: contentTriple.predicate,
-          datatype: contentTriple.object.datatype?.value,
+          datatype: contentTriple.language.length
+            ? null
+            : contentTriple.object.datatype.value,
           lang: contentTriple.object.language,
 
           resource: null,
@@ -227,7 +229,9 @@ export function renderRdfaAttrs(
     return {
       about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
-      datatype: backlinks[0].subject.datatype.value,
+      datatype: backlinks[0].subject.language
+        ? null
+        : backlinks[0].subject.datatype.value,
       language: backlinks[0].subject.language,
       'data-literal-node': 'true',
     };

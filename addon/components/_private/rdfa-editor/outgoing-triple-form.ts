@@ -97,7 +97,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   @localCopy('args.triple.object.value')
   linkedResourceNode?: string;
 
-  @localCopy('args.triple.object.rdfaId')
+  @localCopy('args.triple.object.value')
   linkedLiteralNode?: string;
 
   @tracked
@@ -159,6 +159,39 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     }
     return getResources(this.controller.mainEditorState);
   }
+
+  get initialDatatypeValue(): string {
+    console.log('triple', this.triple)
+    const termType = this.triple.object.termType;
+    if (
+      termType === 'Literal' ||
+      termType === 'ContentLiteral' ||
+      termType === 'LiteralNode'
+    ) {
+      const { language, datatype } = this.triple.object;
+      if (language.length) {
+        return '';
+      } else {
+        return datatype.value;
+      }
+    }
+    return '';
+  }
+
+  get hasDatatype(): boolean {
+    return (
+      !this.hasLanguage &&
+      Boolean(
+        this.currentFormData?.get('object.datatype.value')?.toString().length,
+      )
+    );
+  }
+
+  get hasLanguage(): boolean {
+    return Boolean(
+      this.currentFormData?.get('object.language')?.toString().length,
+    );
+  }
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -174,17 +207,6 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
       content.length <= 20 ? content : `${content.substring(0, 20)}...`;
     return `${truncatedContent} (${rdfaId})`;
   };
-  get hasDatatype(): boolean {
-    return Boolean(
-      this.currentFormData?.get('object.datatype.value')?.toString().length,
-    );
-  }
-  get hasLanguage(): boolean {
-    return (
-      !this.hasDatatype &&
-      Boolean(this.currentFormData?.get('object.language')?.toString().length)
-    );
-  }
   validateFormData(
     formData: FormData,
   ):
@@ -371,6 +393,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
+    console.log('validated', validated);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple);
     } else {
