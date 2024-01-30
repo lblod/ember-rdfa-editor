@@ -128,11 +128,10 @@ export function renderInvisibleRdfa(
   const propElements = [];
   const properties = nodeOrMark.attrs.properties as OutgoingTriple[];
   for (const { predicate, object } of properties) {
-    if(object.termType === 'ContentLiteral') {
+    if (object.termType === 'ContentLiteral') {
       // the contentliteral triple gets rendered as main node attributes, so we
       // skip it here
       continue;
-
     }
     if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
       // the triple refers to a URI which does not have a corresponding
@@ -196,20 +195,20 @@ export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
 ): Record<string, string | null> {
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const contentPred: ContentTriple | null = (
+    const contentTriple: ContentTriple | null = (
       nodeOrMark.attrs.properties as OutgoingTriple[]
     ).find(
       (prop) => prop.object.termType === 'ContentLiteral',
     ) as ContentTriple | null;
 
-    return contentPred
+    return contentTriple
       ? {
           about: (nodeOrMark.attrs.subject ||
             nodeOrMark.attrs.about ||
             nodeOrMark.attrs.resource) as string,
-          property: contentPred.predicate,
-          datatype: contentPred.object.datatype?.value,
-          lang: contentPred.object.language,
+          property: contentTriple.predicate,
+          datatype: contentTriple.object.datatype?.value,
+          lang: contentTriple.object.language,
 
           resource: null,
         }
@@ -226,10 +225,10 @@ export function renderRdfaAttrs(
     }
 
     return {
-      about: backlinks[0].subject,
+      about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
-      datatype: backlinks[0].datatype.value,
-      language: backlinks[0].language,
+      datatype: backlinks[0].subject.datatype.value,
+      language: backlinks[0].subject.language,
       'data-literal-node': 'true',
     };
   }

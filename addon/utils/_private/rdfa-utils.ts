@@ -7,6 +7,10 @@ import {
   LinkTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 export type RdfaAttr =
   | 'vocab'
@@ -205,23 +209,24 @@ export function getRdfaChildren(node: PNode) {
         if (resource) {
           result.add({
             predicate: backlinks[0].predicate,
-            object: { termType: 'ResourceNode', value: resource },
+            object: sayDataFactory.resourceNode(resource),
           });
         } else {
           const incomingTriple = backlinks[0];
-          if (incomingTriple.termType !== 'LiteralNode') {
+          if (incomingTriple.subject.termType !== 'LiteralNode') {
             throw new Error(
               'Unexpected type of incoming triple of a literal node',
             );
           }
           result.add({
             predicate: backlinks[0].predicate,
-            object: {
-              termType: 'LiteralNode',
-              rdfaId: id,
-              datatype: incomingTriple.datatype,
-              language: incomingTriple.language,
-            },
+            object: sayDataFactory.literalNode(
+              id,
+              languageOrDataType(
+                incomingTriple.subject.language,
+                incomingTriple.subject.datatype,
+              ),
+            ),
           });
         }
       }

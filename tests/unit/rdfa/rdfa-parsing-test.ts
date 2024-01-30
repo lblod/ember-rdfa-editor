@@ -61,6 +61,7 @@ import {
   IncomingTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 const schema = new Schema({
   nodes: {
@@ -182,17 +183,14 @@ module('rdfa | parsing', function () {
       | undefined;
     const expectedProps: OutgoingTriple[] = [
       {
-        object: { termType: 'NamedNode', value: 'besluit:Besluit' },
+        object: sayDataFactory.namedNode('besluit:Besluit'),
         predicate: rdf('type'),
       },
       {
         predicate: prov('value'),
-        object: {
-          termType: 'LiteralNode',
-          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-          datatype: { termType: 'NamedNode', value: '' },
-          language: '',
-        },
+        object: sayDataFactory.literalNode(
+          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        ),
       },
     ];
     const expectedBacklinks: IncomingTriple[] = [];
@@ -213,8 +211,7 @@ module('rdfa | parsing', function () {
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks: IncomingTriple[] = [
       {
-        termType: 'ResourceNode',
-        subject: 'http://test/1',
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -267,24 +264,20 @@ module('rdfa | parsing', function () {
 
     const expectedProps: OutgoingTriple[] = [
       {
-        object: { termType: 'NamedNode', value: 'ext:BesluitNieuweStijl' },
+        object: sayDataFactory.namedNode('ext:BesluitNieuweStijl'),
         predicate: rdf('type'),
       },
       {
-        object: {
-          value:
-            'http://publications.europa.eu/resource/authority/language/NLD',
-          termType: 'NamedNode',
-        },
+        object: sayDataFactory.namedNode(
+          'http://publications.europa.eu/resource/authority/language/NLD',
+        ),
         predicate: 'eli:language',
       },
       {
-        object: {
-          termType: 'LiteralNode',
-          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-          datatype: { termType: 'NamedNode', value: '' },
-          language: '',
-        },
+        object: sayDataFactory.literalNode(
+          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        ),
+
         predicate: prov('value'),
       },
     ];
@@ -306,8 +299,7 @@ module('rdfa | parsing', function () {
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks: IncomingTriple[] = [
       {
-        termType: 'ResourceNode',
-        subject: 'http://test/1',
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];

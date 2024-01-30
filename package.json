@@ -80,7 +80,7 @@
     "prosemirror-tables": "git://github.com/lblod/prosemirror-tables",
     "prosemirror-transform": "^1.8.0",
     "prosemirror-view": "^1.32.4",
-    "rdf-data-factory": "^1.1.0",
+    "rdf-data-factory": "^1.1.2",
     "relative-to-absolute-iri": "^1.0.6",
     "stream-browserify": "^3.0.0",
     "tracked-built-ins": "^3.1.0",

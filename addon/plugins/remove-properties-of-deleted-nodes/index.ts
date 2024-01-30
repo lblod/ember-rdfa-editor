@@ -103,7 +103,7 @@ export function removePropertiesOfDeletedNodes() {
               const { object } = property;
 
               if (object.termType === 'LiteralNode') {
-                const node = getNodeByRdfaId(newState, object.rdfaId);
+                const node = getNodeByRdfaId(newState, object.value);
 
                 if (node) {
                   setOrPush(targetsWithBacklinks, node, { property, resource });
@@ -122,7 +122,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesByResource(newState, subject);
+            const nodes = getNodesByResource(newState, subject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -139,7 +139,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesByResource(newState, subject);
+            const nodes = getNodesByResource(newState, subject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -166,7 +166,7 @@ export function removePropertiesOfDeletedNodes() {
               !meta.some(
                 (meta) =>
                   backlink.predicate === meta.property.predicate &&
-                  backlink.subject === meta.resource,
+                  backlink.subject.value === meta.resource,
               ),
           );
           TransformUtils.setAttribute(
@@ -194,14 +194,14 @@ export function removePropertiesOfDeletedNodes() {
                     return false;
                   }
 
-                  if (property.object.rdfaId !== rdfaId) {
+                  if (property.object.value !== rdfaId) {
                     return false;
                   }
                 }
 
                 return (
                   backlink.predicate === property.predicate &&
-                  backlink.subject === getResource(target.value)
+                  backlink.subject.value === getResource(target.value)
                 );
               }),
           );
