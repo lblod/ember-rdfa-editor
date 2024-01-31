@@ -240,7 +240,7 @@ export function renderRdfaAttrs(
       datatype: backlinks[0].subject.language.length
         ? null
         : backlinks[0].subject.datatype.value,
-      language: backlinks[0].subject.language,
+      lang: backlinks[0].subject.language,
       'data-literal-node': 'true',
     };
   }
