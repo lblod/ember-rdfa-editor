@@ -50,7 +50,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return this.args.node.value.attrs['resource'] as string;
+    return this.args.node.value.attrs['subject'] as string;
   }
 
   startPropertyCreation = () => {

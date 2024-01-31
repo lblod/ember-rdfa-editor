@@ -22,7 +22,7 @@ type CellAttributes = {
 } & Record<string, unknown>;
 
 function getCellAttrs(
-  dom: Element,
+  dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');

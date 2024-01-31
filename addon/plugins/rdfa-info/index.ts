@@ -2,7 +2,7 @@ import { EditorState, PluginKey } from 'prosemirror-state';
 import { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import {
   getRdfaId,
-  getResource,
+  getSubject,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
@@ -11,26 +11,26 @@ import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/type
 class RdfaInfo {
   private state: EditorState;
   private _rdfaIdMapping?: Map<string, ResolvedPNode>;
-  private _resourceMapping?: Map<string, ResolvedPNode[]>;
+  private _subjectMapping?: Map<string, ResolvedPNode[]>;
   constructor(state: EditorState) {
     this.state = state;
   }
 
   private computeMappings() {
     const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
-    const resourceMapping: Map<string, ResolvedPNode[]> = new Map();
+    const subjectMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
     doc.descendants((node, pos) => {
       const rdfaId = getRdfaId(node);
-      const resource = getResource(node);
+      const subject = getSubject(node);
       if (rdfaId) {
         rdfaIdMapping.set(rdfaId, {
           pos,
           value: node,
         });
       }
-      if (resource) {
-        MapUtils.setOrPush(resourceMapping, resource, {
+      if (subject) {
+        MapUtils.setOrPush(subjectMapping, subject, {
           pos,
           value: node,
         });
@@ -38,15 +38,15 @@ class RdfaInfo {
       return true;
     });
     const rdfaId = getRdfaId(doc);
-    const resource = getResource(doc);
+    const subject = getSubject(doc);
     if (rdfaId) {
       rdfaIdMapping.set(rdfaId, { pos: -1, value: doc });
     }
-    if (resource) {
-      MapUtils.setOrPush(resourceMapping, resource, { pos: -1, value: doc });
+    if (subject) {
+      MapUtils.setOrPush(subjectMapping, subject, { pos: -1, value: doc });
     }
     this._rdfaIdMapping = rdfaIdMapping;
-    this._resourceMapping = resourceMapping;
+    this._subjectMapping = subjectMapping;
   }
 
   get rdfaIdMapping() {
@@ -56,11 +56,11 @@ class RdfaInfo {
     return unwrap(this._rdfaIdMapping);
   }
 
-  get resourceMapping() {
-    if (!this._resourceMapping) {
+  get subjectMapping() {
+    if (!this._subjectMapping) {
       this.computeMappings();
     }
-    return unwrap(this._resourceMapping);
+    return unwrap(this._subjectMapping);
   }
 }
 
@@ -88,12 +88,12 @@ export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
 }
 
 /**
- * In RDFA, many nodes can define the same resource, find all of those nodes
+ * In RDFA, many nodes can define the same subject, find all of those nodes
  * @param state
- * @param resource - Resource URI
+ * @param subject - Subject URI
  */
-export function getNodesByResource(state: EditorState, resource: string) {
-  return rdfaInfoPluginKey.getState(state)?.resourceMapping.get(resource) ?? [];
+export function getNodesBySubject(state: EditorState, subject: string) {
+  return rdfaInfoPluginKey.getState(state)?.subjectMapping.get(subject) ?? [];
 }
 
 export function getRdfaIds(state: EditorState) {
@@ -101,7 +101,7 @@ export function getRdfaIds(state: EditorState) {
   return pluginState ? [...pluginState.rdfaIdMapping.keys()] : [];
 }
 
-export function getResources(state: EditorState) {
+export function getSubjects(state: EditorState) {
   const pluginState = rdfaInfoPluginKey.getState(state);
-  return pluginState ? [...pluginState.resourceMapping.keys()] : [];
+  return pluginState ? [...pluginState.subjectMapping.keys()] : [];
 }

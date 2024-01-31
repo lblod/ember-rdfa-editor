@@ -127,7 +127,7 @@ export const heading: SayNodeSpec = {
     },
   ],
   toDOM(node: PNode) {
-    const { level, indentationLevel, resource, alignment } = node.attrs;
+    const { level, indentationLevel, alignment } = node.attrs;
     let style = '';
     if (alignment && alignment !== DEFAULT_ALIGNMENT) {
       style += `text-align: ${alignment}`;
@@ -138,7 +138,6 @@ export const heading: SayNodeSpec = {
       attrs: {
         'data-indentation-level': indentationLevel as number,
         class: 'say-editable',
-        resource: resource as string,
         style,
       },
       rdfaContainerTag: 'span',

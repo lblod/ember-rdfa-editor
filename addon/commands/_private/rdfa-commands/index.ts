@@ -1,5 +1,5 @@
 export { selectNodeByRdfaId } from './select-node-by-rdfa-id';
-export { selectNodeByResource } from './select-node-by-resource';
+export { selectNodeBySubject } from './select-node-by-subject';
 export { removeBacklink } from './remove-backlink';
 export * from './wrap-resource';
 export * from './wrap-literal';

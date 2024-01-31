@@ -43,7 +43,7 @@ export default class WrappingUtils extends Component<Args> {
   }
 
   get currentResource() {
-    return this.args.node.value.attrs['resource'] as string | undefined;
+    return this.args.node.value.attrs['subject'] as string | undefined;
   }
 
   get canWrapWithLiteral() {

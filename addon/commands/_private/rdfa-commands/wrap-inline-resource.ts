@@ -16,7 +16,7 @@ export function wrapInlineResource(
     const attrs = {
       __rdfaId: 'placeholder',
       rdfaNodeType: 'resource',
-      resource: 'another placeholder',
+      subject: 'another placeholder',
     };
     const wrapArgs: Parameters<typeof wrapSelection> = [
       state.schema.nodes['inline_rdfa'],
@@ -28,11 +28,11 @@ export function wrapInlineResource(
     if (dispatch) {
       if ('existingUri' in args) {
         attrs.__rdfaId = uuidv4();
-        attrs.resource = args.existingUri;
+        attrs.subject = args.existingUri;
       } else {
         const { __rdfaId, resource } = generateNewUri(args.uriBase);
         attrs.__rdfaId = __rdfaId;
-        attrs.resource = resource;
+        attrs.subject = resource;
       }
 
       const wrapStatus = wrapSelection(...wrapArgs)(state, (tr) => {
@@ -52,7 +52,7 @@ export function wrapInlineResource(
         childLiterals.forEach((child) => {
           const triple: LinkTriple = { ...child };
           const addCmd = addProperty({
-            resource: attrs.resource,
+            resource: attrs.subject,
             property: triple,
             transaction: currentTransaction,
           });
