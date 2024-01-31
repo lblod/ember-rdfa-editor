@@ -123,7 +123,6 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           !truthyAttribute(attributes, 'data-literal-node')
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
-          console.log('activetag 2', activeTag.predicates);
           markAsResourceNode(
             node,
             unwrap(activeTag.subject),
@@ -151,7 +150,6 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
         } else if (activeTag.object) {
-          console.log('in empty');
           // intentionally empty, to preserve structure from algorithm in spec
         }
       }

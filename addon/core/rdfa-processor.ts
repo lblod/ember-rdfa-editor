@@ -161,13 +161,6 @@ function quadToProperties(
   const result: OutgoingTriple[] = [];
   // check if quad refers to a contentNode
   if (quad.object.termType === 'Literal') {
-    console.log('quad', quad);
-    console.log('contentMap', datastore.getContentNodeMap());
-
-    console.log(
-      'lordt',
-      languageOrDataType(quad.object.language, quad.object.datatype),
-    );
     const contentNodes = datastore.getContentNodeMap().getValues({
       subject: sayDataFactory.literalNode(
         quad.subject.value,

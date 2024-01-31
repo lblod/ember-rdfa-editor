@@ -248,7 +248,6 @@ module('rdfa | parsing', function () {
     `;
     const parser = new DOMParser();
     const dom = parser.parseFromString(htmlContent, 'text/html');
-    console.log('dom', dom);
     controller.initialize(htmlContent);
     const { doc } = controller.mainEditorState;
     const { node: decisionNode } = findNodeById(

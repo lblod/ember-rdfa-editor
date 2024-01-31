@@ -971,7 +971,6 @@ export class RdfaParser<N> {
     attributes: Record<string, string>,
     predicateAttribute = 'property',
   ) => {
-    console.log('activeTag', activeTag.language, activeTag.datatype);
     this.contentNodeMapping.set(node, {
       subject: sayDataFactory.literalNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)

@@ -392,7 +392,6 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
-    console.log('validated', validated);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple);
     } else {
