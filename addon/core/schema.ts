@@ -207,7 +207,7 @@ export function renderRdfaAttrs(
             nodeOrMark.attrs.about ||
             nodeOrMark.attrs.resource) as string,
           property: contentTriple.predicate,
-          datatype: contentTriple.language.length
+          datatype: contentTriple.object.language.length
             ? null
             : contentTriple.object.datatype.value,
           lang: contentTriple.object.language,
