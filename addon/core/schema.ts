@@ -1,11 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { isSome } from '../utils/_private/option';
-import { Backlink, Property } from './rdfa-processor';
+import { isSome, unwrap } from '../utils/_private/option';
+import {
+  ContentTriple,
+  IncomingLiteralNodeTriple,
+  IncomingTriple,
+  OutgoingTriple,
+} from './rdfa-processor';
 import { createLogger } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 
 const logger = createLogger('core/schema');
 
@@ -33,7 +37,7 @@ export const rdfaNodeTypes = ['resource', 'literal'] as const;
 export interface RdfaAwareAttrs {
   __rdfaId: string;
   rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: Backlink[];
+  backlinks: IncomingTriple[];
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
@@ -41,10 +45,10 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
   resource: string;
-  properties: Property[];
+  properties: OutgoingTriple[];
 }
 export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
-  Record<string, string | number | Property[] | Backlink[]>;
+  Record<string, string | number | OutgoingTriple[] | IncomingTriple[]>;
 
 export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
   return (
@@ -77,11 +81,11 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
       hasAnyRdfaAttributes = true;
 
       if (key === 'data-outgoing-props') {
-        const properties = JSON.parse(value) as Property[];
+        const properties = JSON.parse(value) as OutgoingTriple[];
         attrs['properties'] = properties;
       }
       if (key === 'data-incoming-props') {
-        const backlinks = JSON.parse(value) as Backlink[];
+        const backlinks = JSON.parse(value) as IncomingTriple[];
         attrs['backlinks'] = backlinks;
       }
       if (key === 'data-subject') {
@@ -102,11 +106,11 @@ export function getRdfaAttrs(node: Element): RdfaAttrs | false {
               attrs.resource && typeof attrs.resource === 'string'
                 ? attrs.resource
                 : attrs.about && typeof attrs.about === 'string'
-                ? attrs.about
-                : '',
+                  ? attrs.about
+                  : '',
             properties:
               attrs.properties && attrs.properties instanceof Array
-                ? (attrs.properties as Property[])
+                ? (attrs.properties as OutgoingTriple[])
                 : [],
           };
         }
@@ -130,14 +134,44 @@ export function renderInvisibleRdfa(
   attrs: Record<string, unknown> = {},
 ): DOMOutputSpec {
   const propElements = [];
-  const properties = nodeOrMark.attrs.properties as Property[];
-  for (const prop of properties) {
-    const { type, predicate } = prop;
-    if (type === 'attribute') {
-      if (prop.object && (isFullUri(prop.object) || isPrefixedUri(prop.object))) {
+  const properties = nodeOrMark.attrs.properties as OutgoingTriple[];
+  for (const { predicate, object } of properties) {
+    if (object.termType === 'ContentLiteral') {
+      // the contentliteral triple gets rendered as main node attributes, so we
+      // skip it here
+      continue;
+    }
+    if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
+      // the triple refers to a URI which does not have a corresponding
+      // resource node
+      const subject: string = unwrap(nodeOrMark.attrs.subject as string);
+      propElements.push([
+        'span',
+        {
+          about: subject,
+          property: predicate,
+          resource: object.value,
+        },
+      ]);
+    } else if (object.termType === 'Literal') {
+      if (object.language?.length) {
         propElements.push([
           'span',
-          { property: predicate, resource: prop.object },
+          {
+            property: predicate,
+            content: object.value,
+            lang: object.language,
+          },
+          '',
+        ]);
+      } else if (object.datatype?.value?.length) {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+            datatype: object.datatype.value,
+          },
           '',
         ]);
       } else {
@@ -145,8 +179,7 @@ export function renderInvisibleRdfa(
           'span',
           {
             property: predicate,
-            content: prop.object,
-            datatype: prop.datatype,
+            content: object.value,
           },
           '',
         ]);
@@ -154,7 +187,7 @@ export function renderInvisibleRdfa(
     }
   }
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingTriple[];
     for (const { predicate, subject } of backlinks) {
       propElements.push(['span', { rev: predicate, resource: subject }]);
     }
@@ -170,15 +203,23 @@ export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
 ): Record<string, string | null> {
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const contentPred = (nodeOrMark.attrs.properties as Property[]).find(
-      (prop) => prop.type === 'content',
-    );
-    return contentPred
+    const contentTriple: ContentTriple | null = (
+      nodeOrMark.attrs.properties as OutgoingTriple[]
+    ).find(
+      (prop) => prop.object.termType === 'ContentLiteral',
+    ) as ContentTriple | null;
+
+    return contentTriple
       ? {
           about: (nodeOrMark.attrs.subject ||
             nodeOrMark.attrs.about ||
             nodeOrMark.attrs.resource) as string,
-          property: contentPred.predicate,
+          property: contentTriple.predicate,
+          datatype: contentTriple.object.language.length
+            ? null
+            : contentTriple.object.datatype.value,
+          lang: contentTriple.object.language,
+
           resource: null,
         }
       : {
@@ -188,14 +229,18 @@ export function renderRdfaAttrs(
           resource: null,
         };
   } else {
-    const backlinks = nodeOrMark.attrs.backlinks as Backlink[];
+    const backlinks = nodeOrMark.attrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {};
     }
 
     return {
-      about: backlinks[0].subject,
+      about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
+      datatype: backlinks[0].subject.language.length
+        ? null
+        : backlinks[0].subject.datatype.value,
+      lang: backlinks[0].subject.language,
       'data-literal-node': 'true',
     };
   }

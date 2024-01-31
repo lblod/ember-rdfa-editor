@@ -58,9 +58,10 @@ import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/ed
 import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
 import { testEditor } from 'dummy/tests/utils/editor';
 import {
-  Backlink,
-  Property,
+  IncomingTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 const schema = new Schema({
   nodes: {
@@ -174,26 +175,25 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
-    const actualBacklinks = decisionNode.attrs.backlinks as
-      | Backlink[]
+    const actualProps = decisionNode.attrs.properties as
+      | OutgoingTriple[]
       | undefined;
-    const expectedProps: Property[] = [
+    const actualBacklinks = decisionNode.attrs.backlinks as
+      | IncomingTriple[]
+      | undefined;
+    const expectedProps: OutgoingTriple[] = [
       {
-        object: 'besluit:Besluit',
+        object: sayDataFactory.namedNode('besluit:Besluit'),
         predicate: rdf('type'),
-        type: 'attribute',
       },
       {
-        type: 'external',
         predicate: prov('value'),
-        object: {
-          type: 'literal',
-          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        },
+        object: sayDataFactory.literalNode(
+          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        ),
       },
     ];
-    const expectedBacklinks: Backlink[] = [];
+    const expectedBacklinks: IncomingTriple[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -202,12 +202,16 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as Property[] | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
-    const expectedValueProps: Property[] = [];
-    const expectedValueBacklinks: Backlink[] = [
+    const valueProps = valueNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as
+      | IncomingTriple[]
+      | undefined;
+    const expectedValueProps: OutgoingTriple[] = [];
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: 'http://test/1',
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -215,7 +219,7 @@ module('rdfa | parsing', function () {
     assert.deepEqual(valueBacklinks, expectedValueBacklinks, 'valueBacklinks');
   });
 
-  test('it should convert rdfa with property spans correctly', function (assert) {
+  test('it should convert rdfa with property spans correctly', function (assert): void {
     const { controller } = testEditor(schema, plugins);
     const htmlContent = oneLineTrim`
     <div resource="http://test/1"
@@ -242,41 +246,39 @@ module('rdfa | parsing', function () {
        </span>
    </div>
     `;
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(htmlContent, 'text/html');
-    console.log('dom', dom);
     controller.initialize(htmlContent);
     const { doc } = controller.mainEditorState;
     const { node: decisionNode } = findNodeById(
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as Property[] | undefined;
+    const actualProps = decisionNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
     const actualBacklinks = decisionNode.attrs.backlinks as
-      | Backlink[]
+      | IncomingTriple[]
       | undefined;
 
-    const expectedProps: Property[] = [
+    const expectedProps: OutgoingTriple[] = [
       {
-        object: 'ext:BesluitNieuweStijl',
+        object: sayDataFactory.namedNode('ext:BesluitNieuweStijl'),
         predicate: rdf('type'),
-        type: 'attribute',
       },
       {
-        object: 'http://publications.europa.eu/resource/authority/language/NLD',
+        object: sayDataFactory.namedNode(
+          'http://publications.europa.eu/resource/authority/language/NLD',
+        ),
         predicate: 'eli:language',
-        type: 'attribute',
       },
       {
-        object: {
-          type: 'literal',
-          rdfaId: 'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        },
+        object: sayDataFactory.literalNode(
+          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+        ),
+
         predicate: prov('value'),
-        type: 'external',
       },
     ];
-    const expectedBacklinks: Backlink[] = [];
+    const expectedBacklinks: IncomingTriple[] = [];
 
     assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
@@ -285,12 +287,16 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as Property[] | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as Backlink[] | undefined;
-    const expectedValueProps: Property[] = [];
-    const expectedValueBacklinks: Backlink[] = [
+    const valueProps = valueNode.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
+    const valueBacklinks = valueNode.attrs.backlinks as
+      | IncomingTriple[]
+      | undefined;
+    const expectedValueProps: OutgoingTriple[] = [];
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: 'http://test/1',
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];

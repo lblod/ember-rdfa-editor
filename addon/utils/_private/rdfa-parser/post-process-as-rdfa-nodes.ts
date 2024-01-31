@@ -17,6 +17,8 @@ export interface PostProcessArgs<N> {
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
     contentPredicate?: ModelNamedNode<N>,
+    contentDatatype?: ModelNamedNode<N>,
+    contentLanguage?: string,
   ) => void;
 }
 
@@ -81,17 +83,19 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
   const node = activeTag.node;
   if (!activeTag.skipElement && node) {
     // no rel or rev
-    if (!('rel' in attributes) && !('rev' in attributes)) {
+    if (
+      !truthyAttribute(attributes, 'rel') &&
+      !truthyAttribute(attributes, 'rev')
+    ) {
       if (
-        'property' in attributes &&
-        !('content' in attributes) &&
-        !('datatype' in attributes)
+        truthyAttribute(attributes, 'property') &&
+        !truthyAttribute(attributes, 'content') &&
+        !truthyAttribute(attributes, 'datatype')
       ) {
-        if ('about' in attributes && !('data-literal-node' in attributes)) {
-          console.log('activetag 1', activeTag.predicates);
-          // !! content node
-          // this combo BOTH sets a new subject, AND sets the value of the triple to its textcontent.
-          // we choose to interpret as a literal rather than a resource
+        if (
+          truthyAttribute(attributes, 'about') &&
+          !truthyAttribute(attributes, 'data-literal-node')
+        ) {
           markAsResourceNode(
             node,
             unwrap(activeTag.subject),
@@ -99,6 +103,8 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
             activeTag.predicates?.find(
               (pred) => pred.value === attributes['property'],
             ),
+            activeTag.datatype,
+            activeTag.language,
           );
           return;
         } else if (isRootTag) {
@@ -106,15 +112,17 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
         } else {
-          if ('typeof' in attributes) {
+          if (truthyAttribute(attributes, 'typeof')) {
             markAsResourceNode(node, unwrap(typedResource), activeTag);
             return;
           }
         }
       } else {
-        if ('about' in attributes && !('data-literal-node' in attributes)) {
+        if (
+          truthyAttribute(attributes, 'about') &&
+          !truthyAttribute(attributes, 'data-literal-node')
+        ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
-          console.log('activetag 2', activeTag.predicates);
           markAsResourceNode(
             node,
             unwrap(activeTag.subject),
@@ -122,12 +130,14 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
             activeTag.predicates?.find(
               (pred) => pred.value === attributes['property'],
             ),
+            activeTag.datatype,
+            activeTag.language,
           );
           return;
         } else if (
-          'href' in attributes ||
-          'src' in attributes ||
-          'resource' in attributes
+          truthyAttribute(attributes, 'href') ||
+          truthyAttribute(attributes, 'src') ||
+          truthyAttribute(attributes, 'resource')
         ) {
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
@@ -135,7 +145,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           // root resource node
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
-        } else if ('typeof' in attributes) {
+        } else if (truthyAttribute(attributes, 'typeof')) {
           // blank resource node
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
@@ -144,10 +154,10 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
         }
       }
     } else {
-      if ('about' in attributes) {
+      if (truthyAttribute(attributes, 'about')) {
         markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
         return;
-      } else if ('typeof' in attributes) {
+      } else if (truthyAttribute(attributes, 'typeof')) {
         markAsResourceNode(node, unwrap(typedResource), activeTag);
         return;
       } else if (isRootTag) {
@@ -160,25 +170,28 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
     }
 
     // no-op returns are intentional
-    if ('property' in attributes) {
-      if ('datatype' in attributes) {
-        if (!('content' in attributes)) {
+    if (truthyAttribute(attributes, 'property')) {
+      if (truthyAttribute(attributes, 'datatype')) {
+        if (!truthyAttribute(attributes, 'content')) {
           markAsLiteralNode(node, activeTag, attributes);
           return;
         }
-      } else if ('content' in attributes) {
+      } else if (truthyAttribute(attributes, 'content')) {
         return;
       } else if (
-        !('rel' in attributes) &&
-        !('rev' in attributes) &&
-        !('content' in attributes) &&
-        ('resource' in attributes ||
-          'href' in attributes ||
-          'src' in attributes)
+        !truthyAttribute(attributes, 'rel') &&
+        !truthyAttribute(attributes, 'rev') &&
+        !truthyAttribute(attributes, 'content') &&
+        (truthyAttribute(attributes, 'resource') ||
+          truthyAttribute(attributes, 'href') ||
+          truthyAttribute(attributes, 'src'))
       ) {
         markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
         return;
-      } else if ('typeof' in attributes && !('about' in attributes)) {
+      } else if (
+        truthyAttribute(attributes, 'typeof') &&
+        !truthyAttribute(attributes, 'about')
+      ) {
         return;
       } else {
         markAsLiteralNode(node, activeTag, attributes);
@@ -186,4 +199,14 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
       }
     }
   }
+}
+function truthyAttribute(attrs: Record<string, string>, key: string) {
+  if (key in attrs) {
+    const value = attrs[key];
+    if (value === '' || value === 'false') {
+      return false;
+    }
+    return true;
+  }
+  return false;
 }

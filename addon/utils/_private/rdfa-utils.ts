@@ -3,11 +3,14 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
 import { ResolvedPNode } from './types';
 import {
-  Backlink,
-  ExternalProperty,
-  ExternalPropertyObject,
-  Property,
+  IncomingTriple,
+  LinkTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 export type RdfaAttr =
   | 'vocab'
@@ -145,19 +148,17 @@ export function getRdfaId(node: PNode): string | undefined {
 }
 
 export function getResource(node: PNode): string | undefined {
-  return (
-    node.attrs.subject ??
-    node.attrs.about ??
-    (node.attrs.resource as string | undefined)
-  );
+  return (node.attrs.subject ?? node.attrs.about ?? node.attrs.resource) as
+    | string
+    | undefined;
 }
 
-export function getProperties(node: PNode): Property[] | undefined {
-  return node.attrs.properties as Property[] | undefined;
+export function getProperties(node: PNode): OutgoingTriple[] | undefined {
+  return node.attrs.properties as OutgoingTriple[] | undefined;
 }
 
-export function getBacklinks(node: PNode): Backlink[] | undefined {
-  return node.attrs.backlinks as Backlink[] | undefined;
+export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
+  return node.attrs.backlinks as IncomingTriple[] | undefined;
 }
 
 /**
@@ -198,20 +199,36 @@ export function findRdfaIdsInSelection(selection: Selection) {
  * into resource nodes
  */
 export function getRdfaChildren(node: PNode) {
-  const result = new Set<ExternalProperty>();
+  const result = new Set<LinkTriple>();
   node.descendants((child) => {
     const id = getRdfaId(child);
     if (id) {
       const backlinks = getBacklinks(child);
       const resource = getResource(child);
       if (backlinks?.[0]) {
-        result.add({
-          type: 'external',
-          predicate: backlinks[0].predicate,
-          object: resource
-            ? { type: 'resource', resource }
-            : { type: 'literal', rdfaId: id },
-        });
+        if (resource) {
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: sayDataFactory.resourceNode(resource),
+          });
+        } else {
+          const incomingTriple = backlinks[0];
+          if (incomingTriple.subject.termType !== 'LiteralNode') {
+            throw new Error(
+              'Unexpected type of incoming triple of a literal node',
+            );
+          }
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: sayDataFactory.literalNode(
+              id,
+              languageOrDataType(
+                incomingTriple.subject.language,
+                incomingTriple.subject.datatype,
+              ),
+            ),
+          });
+        }
       }
       // We don't want to recurse, so stop descending
       return false;
@@ -233,17 +250,18 @@ export function generateNewUri(uriBase: string) {
   };
 }
 
-export function deepEqualProperty(a: Property, b: Property) {
-  if (a.type === b.type && a.predicate === b.predicate) {
-    if (a.type === 'attribute' && b.type === 'attribute') {
-      return a.object === b.object;
-    } else if (a.type === 'external' && b.type === 'external') {
-      return Object.keys(a.object).every(
-        (key: keyof ExternalPropertyObject) => a.object[key] === b.object[key],
-      );
-    } else {
-      return a.predicate === b.predicate;
-    }
+export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
+  if (a.object.termType === b.object.termType && a.predicate === b.predicate) {
+    return Object.keys(a.object).every(
+      (key: keyof typeof a.object) => a.object[key] === b.object[key],
+    );
   }
   return false;
+}
+
+export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
+  return (
+    triple.object.termType === 'LiteralNode' ||
+    triple.object.termType === 'ResourceNode'
+  );
 }

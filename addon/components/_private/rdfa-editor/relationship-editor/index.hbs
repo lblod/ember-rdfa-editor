@@ -24,7 +24,7 @@
       {{#if this.hasOutgoing}}
         <AuList @divider={{true}} as |Item|>
           {{#each this.properties as |prop index|}}
-            {{#if (eq prop.type "external")}}
+            {{#if (this.isNodeLink prop)}}
               <Item
                 class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
               >
@@ -34,6 +34,14 @@
                   {{on "click" (fn this.goToOutgoing prop)}}
                 >{{prop.predicate}}</AuButton>
                 <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+                  <AuButton
+                    @skin="link"
+                    @icon="pencil"
+                    role="menuitem"
+                    {{on "click" (fn this.editRelationship index)}}
+                  >
+                    Edit relationship
+                  </AuButton>
                   <AuButton
                     @skin="link"
                     @icon="bin"
@@ -113,10 +121,18 @@
   {{/if}}
 </AuContent>
 
-{{#if this.modalOpen}}
-  <this.Modal
-    @controller={{@controller}}
-    @onSave={{this.saveNewRelationship}}
-    @onCancel={{this.cancel}}
-  />
-{{/if}}
+{{! Creation modal }}
+<this.Modal
+  @modalOpen={{this.isCreating}}
+  @onSave={{this.addProperty}}
+  @onCancel={{this.cancel}}
+  @controller={{this.controller}}
+/>
+{{! Update modal }}
+<this.Modal
+  @modalOpen={{this.isUpdating}}
+  @onSave={{this.updateProperty}}
+  @onCancel={{this.cancel}}
+  @triple={{this.status.triple}}
+  @controller={{this.controller}}
+/>

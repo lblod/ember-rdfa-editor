@@ -1,4 +1,3 @@
-import { ExternalPropertyObject } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
   getNodesByResource,
@@ -9,11 +8,14 @@ import {
   getBacklinks,
   getProperties,
   getResource,
+  isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
 
 type RemoveBacklinkArgs = {
-  target: ExternalPropertyObject;
+  target:
+    | { termType: 'LiteralNode'; rdfaId: string }
+    | { termType: 'ResourceNode'; value: string };
   index: number;
   transaction?: Transaction;
 };
@@ -25,7 +27,7 @@ export function removeBacklink({
 }: RemoveBacklinkArgs): Command {
   return (state, dispatch) => {
     let nodes: ResolvedPNode[];
-    if (target.type === 'literal') {
+    if (target.termType === 'LiteralNode') {
       const { rdfaId } = target;
       const node = getNodeByRdfaId(state, rdfaId);
       if (!node) {
@@ -33,7 +35,7 @@ export function removeBacklink({
       }
       nodes = [node];
     } else {
-      const { resource } = target;
+      const { value: resource } = target;
       nodes = getNodesByResource(state, resource);
       if (!nodes?.length) {
         return false;
@@ -60,29 +62,35 @@ export function removeBacklink({
           updatedBacklinks,
         );
       });
-      const subjects = getNodesByResource(state, backlinkToRemove.subject);
+      const subjects = getNodesByResource(
+        state,
+        backlinkToRemove.subject.value,
+      );
       subjects?.forEach((subject) => {
         const properties = getProperties(subject.value);
         if (properties) {
           const filteredProperties = properties.filter((prop) => {
-            if (prop.type !== 'external') {
+            if (!isLinkToNode(prop)) {
               return true;
             }
 
-            if (target.type === 'literal' && prop.object.type === 'literal') {
-              return !(
-                backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getResource(subject.value) &&
-                prop.object.rdfaId === target.rdfaId
-              );
-            } else if (
-              target.type === 'resource' &&
-              prop.object.type === 'resource'
+            if (
+              target.termType === 'LiteralNode' &&
+              prop.object.termType === 'LiteralNode'
             ) {
               return !(
                 backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getResource(subject.value) &&
-                prop.object.resource === target.resource
+                backlinkToRemove.subject.value === getResource(subject.value) &&
+                prop.object.value === target.rdfaId
+              );
+            } else if (
+              target.termType === 'ResourceNode' &&
+              prop.object.termType === 'ResourceNode'
+            ) {
+              return !(
+                backlinkToRemove.predicate === prop.predicate &&
+                backlinkToRemove.subject.value === getResource(subject.value) &&
+                prop.object.value === target.value
               );
             } else {
               return true;

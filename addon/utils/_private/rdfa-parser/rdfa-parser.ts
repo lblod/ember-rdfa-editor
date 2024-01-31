@@ -26,6 +26,10 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/datastore';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -85,6 +89,7 @@ export interface QuadNodes<N> {
 export interface SubAndPred {
   subject: RDF.Quad_Subject;
   predicate: RDF.Quad_Predicate;
+  languageOrDatatype?: RDF.NamedNode;
 }
 
 export interface RdfaParseResponse<N> {
@@ -967,9 +972,10 @@ export class RdfaParser<N> {
     predicateAttribute = 'property',
   ) => {
     this.contentNodeMapping.set(node, {
-      subject: this.util.getResourceOrBaseIri(
-        unwrap(activeTag.subject),
-        activeTag,
+      subject: sayDataFactory.literalNode(
+        this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
+          .value,
+        languageOrDataType(activeTag.language, activeTag.datatype),
       ),
 
       predicate: this.util.createIri(
@@ -978,7 +984,7 @@ export class RdfaParser<N> {
         true,
         true,
         false,
-      ),
+      ).value,
     });
   };
 
@@ -987,12 +993,16 @@ export class RdfaParser<N> {
     resource: boolean | ModelBlankNode<N> | ModelNamedNode<N>,
     activeTag: IActiveTag<N>,
     contentPredicate?: ModelNamedNode<N>,
+    contentDatatype?: ModelNamedNode<N>,
+    contentLanguage?: string,
   ) => {
     this.resourceNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(resource, activeTag),
       contentPredicate: contentPredicate
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
+      contentDatatype,
+      contentLanguage: contentLanguage?.toLowerCase(),
     });
   };
 

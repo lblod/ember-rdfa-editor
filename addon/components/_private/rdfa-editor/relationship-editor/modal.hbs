@@ -1,80 +1,22 @@
 {{#let (unique-id) as |formId|}}
-  <AuModal @modalOpen={{true}} @closable={{true}} @closeModal={{@onCancel}}>
+  <AuModal @modalOpen={{@modalOpen}} @closable={{true}} @closeModal={{this.cancel}}>
     <:title>Add Relationship</:title>
     <:body>
-      <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
-        <AuFormRow @alignment="default">
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-              Predicate
-            </AuLabel>
-            <AuInput
-              id={{id}}
-              required={{true}}
-              value={{this.newPredicate}}
-              @width="block"
-              {{on "input" this.updatePredicate}}
-            />
-          {{/let}}
-        </AuFormRow>
-        <AuFormRow @alignment="default">
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-              Object type
-            </AuLabel>
-            <AuRadioGroup
-              id={{id}}
-              required={{true}}
-              @name="object-type"
-              @selected={{this.selectedObjectType}}
-              @width="block"
-              @onChange={{this.setObjectType}}
-              @alignment="inline"
-              as |Group|
-            >
-              {{#each this.objectTypes as |type|}}
-                <Group.Radio @value={{type}}>
-                  {{type}}
-                </Group.Radio>
-              {{/each}}
-            </AuRadioGroup>
-          {{/let}}
-        </AuFormRow>
-        <AuFormRow @alignment="default">
-          {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-              Object
-            </AuLabel>
-            <PowerSelect
-              id={{id}}
-              {{! For some reason need to manually set width }}
-              class="au-u-1-1"
-              @searchEnabled={{false}}
-              @options={{if
-                (eq this.selectedObjectType "resource")
-                this.resources
-                this.literals
-              }}
-              @selected={{this.objectRdfa}}
-              @onChange={{this.updateObject}}
-              @allowClear={{true}}
-              @placeholder={{this.dropdownPlaceholder}}
-              as |obj|
-            >
-              {{this.label obj}}
-            </PowerSelect>
-          {{/let}}
-        </AuFormRow>
-      </form>
+      <this.OutgoingTripleForm
+        id={{formId}}
+        @onSubmit={{this.save}}
+        @controller={{this.controller}}
+        @termTypes={{(array "LiteralNode" "ResourceNode")}}
+        @triple={{@triple}}
+      />
     </:body>
     <:footer>
       <AuButtonGroup>
         <AuButton
           form={{formId}}
           type="submit"
-          @disabled={{not this.canSave}}
         >Save</AuButton>
-        <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
+        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

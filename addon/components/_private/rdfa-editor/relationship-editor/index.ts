@@ -13,12 +13,13 @@ import RelationshipEditorModal from './modal';
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
-  Backlink,
-  ExternalProperty,
-  ExternalPropertyObject,
-  Property,
+  IncomingTriple,
+  LinkTriple,
+  OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 
 type Args = {
   controller?: SayController;
@@ -32,30 +33,43 @@ interface StatusMessage {
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
 }
+type CreationStatus = {
+  mode: 'creation';
+};
+type UpdateStatus = {
+  mode: 'update';
+  index: number;
+  triple: LinkTriple;
+};
+type Status = CreationStatus | UpdateStatus;
 
 export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked modalOpen = false;
   @tracked _statusMessage: StatusMessageForNode | null = null;
 
   Modal = RelationshipEditorModal;
+
   ContentPredicateList = ContentPredicateListComponent;
+  @tracked status?: Status;
   get node(): PNode {
     return this.args.node.value;
   }
 
   get backlinks() {
-    return this.node.attrs.backlinks as Backlink[] | undefined;
+    return this.node.attrs.backlinks as IncomingTriple[] | undefined;
   }
 
   get properties() {
-    return this.node.attrs.properties as Property[] | undefined;
+    return this.node.attrs.properties as OutgoingTriple[] | undefined;
   }
 
   get hasOutgoing() {
-    return this.properties?.some((prop) => prop.type === 'external');
+    return this.properties?.some(isLinkToNode);
   }
   get hasContentPredicate() {
-    return this.properties?.some((prop) => prop.type === 'content');
+    return this.properties?.some(
+      (prop) => prop.object.termType === 'ContentLiteral',
+    );
   }
 
   get controller() {
@@ -66,7 +80,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     return isResourceNode(this.node);
   }
 
-  get currentResource() {
+  get currentResource(): string | undefined {
     return (this.node.attrs.subject ||
       this.node.attrs.about ||
       this.node.attrs.resource) as string | undefined;
@@ -96,48 +110,61 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
   }
 
+  get isCreating() {
+    return this.status?.mode === 'creation';
+  }
+
+  get isUpdating() {
+    return this.status?.mode === 'update';
+  }
   closeStatusMessage = () => {
     this.statusMessage = null;
   };
+  isNodeLink = isLinkToNode;
 
-  goToOutgoing = (outgoing: ExternalProperty) => {
+  goToOutgoing = (outgoing: OutgoingTriple) => {
     this.closeStatusMessage();
+    if (!isLinkToNode(outgoing)) {
+      return;
+    }
     const { object } = outgoing;
     if (!this.controller) {
       this.statusMessage = {
         message: 'No editor controller found. This is probably a bug.',
         type: 'error',
       };
-    } else if (object.type === 'literal') {
+      return;
+    }
+    if (object.termType === 'LiteralNode') {
       const result = this.controller.doCommand(
-        selectNodeByRdfaId({ rdfaId: object.rdfaId }),
+        selectNodeByRdfaId({ rdfaId: object.value }),
         { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
-          message: `No literal node found for id ${object.rdfaId}.`,
+          message: `No literal node found for id ${object.value}.`,
           type: 'error',
         };
       }
     } else {
       const result = this.controller.doCommand(
-        selectNodeByResource({ resource: object.resource }),
+        selectNodeByResource({ resource: object.value }),
         { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
-          message: `No resource node found for ${object.resource}.`,
+          message: `No resource node found for ${object.value}.`,
           type: 'info',
         };
       }
     }
-    this.controller?.focus();
+    this.controller.focus();
   };
 
-  goToBacklink = (backlink: Backlink) => {
+  goToBacklink = (backlink: IncomingTriple) => {
     this.closeStatusMessage();
     const result = this.controller?.doCommand(
-      selectNodeByResource({ resource: backlink.subject }),
+      selectNodeByResource({ resource: backlink.subject.value }),
       {
         view: this.controller.mainEditorView,
       },
@@ -149,7 +176,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       };
     } else if (!result) {
       this.statusMessage = {
-        message: `No resource node found for ${backlink.subject}.`,
+        message: `No resource node found for ${backlink.subject.value}.`,
         type: 'info',
       };
     }
@@ -157,15 +184,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
-    let target: ExternalPropertyObject;
+    let target: Parameters<typeof removeBacklink>[0]['target'];
     if (this.currentResource) {
       target = {
-        type: 'resource',
-        resource: this.currentResource,
+        termType: 'ResourceNode',
+        value: this.currentResource,
       };
     } else {
       target = {
-        type: 'literal',
+        termType: 'LiteralNode',
         rdfaId: this.currentRdfaId,
       };
     }
@@ -194,39 +221,61 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   addRelationship = () => {
-    this.modalOpen = true;
+    this.status = { mode: 'creation' };
   };
 
-  saveNewRelationship = (details: {
-    predicate: string;
-    object: ExternalPropertyObject;
-  }) => {
-    this.addProperty({
-      type: 'external',
-      predicate: details.predicate,
-      object: details.object,
-    });
-    this.modalOpen = false;
+  saveNewRelationship = (triple: LinkTriple) => {
+    this.addProperty(triple);
+    this.status = undefined;
   };
 
   cancel = () => {
-    this.modalOpen = false;
+    this.status = undefined;
   };
 
-  addBacklink = (_backlink: Backlink) => {
+  addBacklink = (_backlink: IncomingTriple) => {
     throw new NotImplementedError();
   };
 
-  addProperty = (property: Property) => {
+  addProperty = (property: OutgoingTriple) => {
     // This function can only be called when the selected node defines a resource
     if (this.currentResource) {
       this.controller?.doCommand(
         addProperty({ resource: this.currentResource, property }),
         { view: this.controller.mainEditorView },
       );
+      this.status = undefined;
     }
   };
+  editRelationship = (index: number) => {
+    this.status = {
+      mode: 'update',
+      index,
+      triple: this.properties?.[index] as LinkTriple,
+    };
+  };
 
+  updateProperty = (newProperty: LinkTriple) => {
+    // TODO: make a command to do this in one go
+    if (this.status?.mode === 'update') {
+      this.removeProperty(this.status.index);
+      this.addProperty(newProperty);
+      this.status = undefined;
+    }
+  };
+  updatePropertiesAttribute = (newProperties: OutgoingTriple[]) => {
+    this.args.controller?.withTransaction(
+      (tr) => {
+        return TransformUtils.setAttribute(
+          tr,
+          this.args.node.pos,
+          'properties',
+          newProperties,
+        );
+      },
+      { view: this.args.controller.mainEditorView },
+    );
+  };
   getNodeById = (rdfaid: string) => {
     if (!this.controller) {
       return;

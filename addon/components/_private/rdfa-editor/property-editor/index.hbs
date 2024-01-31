@@ -16,13 +16,23 @@
   {{#if this.hasAttributeProperties}}
     <AuList @divider={{true}} as |Item|>
       {{#each this.properties as |prop index|}}
-        {{#if (eq prop.type "attribute")}}
+        {{#if (this.isPlainTriple prop)}}
           <Item
             class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
           >
             <div class="au-u-padding-tiny">
-              <p><strong>{{prop.predicate}}</strong></p>
-              <p>{{prop.object}}</p>
+              <p><strong>predicate:</strong> {{prop.predicate}}</p>
+              {{#if prop.object.datatype}}
+                <p><strong>datatype:</strong> {{prop.object.datatype.value}}</p>
+              {{/if}}
+              {{#if prop.object.language}}
+                <p><strong>language:</strong> {{prop.object.language}}</p>
+              {{/if}}
+              {{#if (eq prop.object.termType "ContentLiteral")}}
+                <AuPill>content-predicate</AuPill>
+              {{else}}
+                <p><strong>value:</strong> {{prop.object.value}}</p>
+              {{/if}}
             </div>
             <AuDropdown @icon="three-dots" role="menu" @alignment="left">
               <AuButton

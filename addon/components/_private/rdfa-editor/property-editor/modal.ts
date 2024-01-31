@@ -1,59 +1,24 @@
 import Component from '@glimmer/component';
-import { AttributeProperty } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { localCopy } from 'tracked-toolbox';
+import type {
+  ContentTriple,
+  PlainTriple,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import OutgoingTripleFormComponent from '../outgoing-triple-form';
 
 type Args = {
-  property?: AttributeProperty;
+  property?: PlainTriple | ContentTriple;
   onCancel: () => void;
-  onSave: (property: AttributeProperty) => void;
+  onSave: (property: PlainTriple | ContentTriple) => void;
 };
 
 export default class PropertyEditorModal extends Component<Args> {
-  @localCopy('args.property.predicate') newPredicate?: string;
-  @localCopy('args.property.object') newObject?: string;
-
-  get isNew() {
-    return !this.args.property;
-  }
-
-  get title() {
-    if (this.isNew) {
-      return 'Add property';
-    } else {
-      return 'Edit property';
-    }
-  }
-
-  updatePredicate = (event: InputEvent) => {
-    this.newPredicate = (event.target as HTMLInputElement).value;
-  };
-
-  updateObject = (event: InputEvent) => {
-    this.newObject = (event.target as HTMLInputElement).value;
-  };
+  OutgoingTripleForm = OutgoingTripleFormComponent;
 
   cancel = () => {
     this.args.onCancel();
   };
 
-  save = () => {
-    if (this.newPredicate && this.newObject) {
-      this.args.onSave({
-        type: 'attribute',
-        predicate: this.newPredicate,
-        object: this.newObject,
-      });
-    }
+  save = (triple: PlainTriple) => {
+    this.args.onSave(triple);
   };
-
-  get canSave() {
-    return (
-      this.newPredicate &&
-      this.newObject &&
-      !(
-        this.newPredicate === this.args.property?.predicate &&
-        this.newObject === this.args.property?.object
-      )
-    );
-  }
 }

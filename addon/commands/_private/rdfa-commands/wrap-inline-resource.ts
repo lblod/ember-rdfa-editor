@@ -7,6 +7,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { wrapSelection } from '../../wrap-selection';
 import { addProperty } from '../../rdfa-commands/add-property';
+import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export function wrapInlineResource(
   args: { uriBase: string } | { existingUri: string },
@@ -49,13 +50,10 @@ export function wrapInlineResource(
         let currentTransaction = tr;
         let addPropStatus = false;
         childLiterals.forEach((child) => {
+          const triple: LinkTriple = { ...child };
           const addCmd = addProperty({
             resource: attrs.resource,
-            property: {
-              type: 'external',
-              predicate: child.predicate,
-              object: child.object,
-            },
+            property: triple,
             transaction: currentTransaction,
           });
           addPropStatus = addCmd(newState, (transaction) => {

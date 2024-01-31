@@ -59,7 +59,6 @@ export const docWithConfig = ({
           }
           const result: HTMLElement =
             node.querySelector('[data-content-container="true"]') ?? node;
-          console.log(result);
           return result;
         },
       },

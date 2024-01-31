@@ -7,6 +7,7 @@ import {
   generateNewUri,
   getRdfaChildren,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export function wrapResource(
   args: { uriBase: string } | { existingUri: string },
@@ -48,14 +49,13 @@ export function wrapResource(
         const childLiterals = getRdfaChildren(createdWrappingNode.value);
         let currentTransaction = tr;
         let addPropStatus = false;
-        childLiterals.forEach((child) => {
+        childLiterals.forEach((child: LinkTriple) => {
+          const triple: LinkTriple = {
+            ...child,
+          };
           const addCmd = addProperty({
             resource: attrs.resource,
-            property: {
-              type: 'external',
-              predicate: child.predicate,
-              object: child.object,
-            },
+            property: triple,
             transaction: currentTransaction,
           });
           addPropStatus = addCmd(newState, (transaction) => {

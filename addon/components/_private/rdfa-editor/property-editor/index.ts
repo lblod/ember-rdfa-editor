@@ -5,11 +5,12 @@ import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
 import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import {
-  AttributeProperty,
-  Property,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+import {
+  OutgoingTriple,
+  PlainTriple,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 
 type CreationStatus = {
   mode: 'creation';
@@ -17,7 +18,7 @@ type CreationStatus = {
 type UpdateStatus = {
   mode: 'update';
   index: number;
-  property: AttributeProperty;
+  property: PlainTriple;
 };
 type Status = CreationStatus | UpdateStatus;
 type Args = {
@@ -28,13 +29,16 @@ export default class RdfaPropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;
 
   @tracked status?: Status;
+  isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
 
   get properties() {
-    return this.args.node.value.attrs.properties as Property[] | undefined;
+    return this.args.node.value.attrs.properties as
+      | OutgoingTriple[]
+      | undefined;
   }
 
   get hasAttributeProperties() {
-    return this.properties?.some((prop) => prop.type === 'attribute');
+    return this.properties?.some((prop) => !isLinkToNode(prop));
   }
 
   get isCreating() {
@@ -59,11 +63,11 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.status = {
       mode: 'update',
       index,
-      property: this.properties?.[index] as AttributeProperty,
+      property: this.properties?.[index] as PlainTriple,
     };
   };
 
-  addProperty = (property: AttributeProperty) => {
+  addProperty = (property: PlainTriple) => {
     this.args.controller?.doCommand(
       addProperty({
         resource: this.currentResource,
@@ -74,7 +78,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.status = undefined;
   };
 
-  updateProperty = (newProperty: AttributeProperty) => {
+  updateProperty = (newProperty: PlainTriple) => {
     const { index } = this.status as UpdateStatus;
     const newProperties = unwrap(this.properties).slice();
     newProperties[index] = newProperty;
@@ -89,7 +93,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     );
   };
 
-  updatePropertiesAttribute = (newProperties: Property[]) => {
+  updatePropertiesAttribute = (newProperties: OutgoingTriple[]) => {
     this.args.controller?.withTransaction(
       (tr) => {
         return TransformUtils.setAttribute(

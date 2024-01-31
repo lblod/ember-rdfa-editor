@@ -6,41 +6,74 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import Datastore, {
   EditorStore,
+  SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
+import {
+  ContentLiteralTerm,
+  LiteralNodeTerm,
+  ResourceNodeTerm,
+  SayBlankNode,
+  SayLiteral,
+  SayNamedNode,
+  languageOrDataType,
+  sayDataFactory,
+} from './say-data-factory';
 
-export type ExternalPropertyObject =
-  | {
-      type: 'literal';
-      rdfaId: string;
-    }
-  | {
-      type: 'resource';
-      resource: string;
-    };
-export type ExternalProperty = {
-  type: 'external';
+export type SayTermType =
+  | 'NamedNode'
+  | 'Literal'
+  | 'LiteralNode'
+  | 'ResourceNode'
+  | 'ContentLiteral'
+  | 'BlankNode';
+
+export interface LiteralTriple {
   predicate: string;
-  object: ExternalPropertyObject;
+  object: SayLiteral;
+}
+export interface NamedNodeTriple {
+  predicate: string;
+  object: SayNamedNode;
+}
+export interface BlankNodeTriple {
+  predicate: string;
+  object: SayBlankNode;
+}
+export interface ResourceNodeTriple {
+  predicate: string;
+  object: ResourceNodeTerm;
+}
+export interface LiteralNodeTriple {
+  predicate: string;
+  object: LiteralNodeTerm;
+}
+export type ContentTriple = {
+  predicate: string;
+  object: ContentLiteralTerm;
 };
 
-export type AttributeProperty = {
-  type: 'attribute';
-  predicate: string;
-  object: string;
-  datatype?: string;
-};
-export type ContentProperty = {
-  type: 'content';
-  predicate: string;
-};
-export type Property = AttributeProperty | ExternalProperty | ContentProperty;
+export type PlainTriple = LiteralTriple | NamedNodeTriple | BlankNodeTriple;
+export type LinkTriple = ResourceNodeTriple | LiteralNodeTriple;
+export type OutgoingTriple =
+  | LiteralTriple
+  | NamedNodeTriple
+  | BlankNodeTriple
+  | ResourceNodeTriple
+  | LiteralNodeTriple
+  | ContentTriple;
 
-export type Backlink = {
-  subject: string;
+export type IncomingResourceNodeTriple = {
+  subject: ResourceNodeTerm;
   predicate: string;
 };
-
+export type IncomingLiteralNodeTriple = {
+  subject: LiteralNodeTerm;
+  predicate: string;
+};
+export type IncomingTriple =
+  | IncomingLiteralNodeTriple
+  | IncomingResourceNodeTriple;
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -74,31 +107,25 @@ export function preprocessRDFa(dom: Node) {
 
   // every resource node
   for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
-    const properties: Property[] = [];
+    const properties: OutgoingTriple[] = [];
     // get all quads that have our subject
     const outgoingQuads = datastore.match(entry.subject).asQuadResultSet();
     const seenLinks = new Set<string>();
     for (const quad of outgoingQuads) {
-      quadToProperties(datastore, quad).forEach((prop) => {
-        if (prop.type === 'external' && prop.object.type === 'literal') {
-          if (!seenLinks.has(prop.object.rdfaId)) {
-            seenLinks.add(prop.object.rdfaId);
+      quadToProperties(datastore, quad, entry).forEach((prop) => {
+        if (prop.object.termType === 'LiteralNode') {
+          if (!seenLinks.has(prop.object.value)) {
+            seenLinks.add(prop.object.value);
             properties.push(prop);
           }
+          // we'll handle this case separately below
         } else {
           properties.push(prop);
         }
       });
     }
 
-    if (entry.contentPredicate) {
-      properties.push({
-        type: 'content',
-        predicate: entry.contentPredicate.value,
-      });
-    }
-
-    const incomingProps: Backlink[] = [];
+    const incomingProps: IncomingTriple[] = [];
     const incomingQuads = datastore.match(null, null, entry.subject);
     for (const quad of incomingQuads.asQuadResultSet()) {
       incomingProps.push(quadToBacklink(quad));
@@ -113,9 +140,10 @@ export function preprocessRDFa(dom: Node) {
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
     const { subject, predicate } = object;
-    const incomingProp: Backlink = {
-      subject: subject.value,
-      predicate: predicate.value,
+
+    const incomingProp = {
+      subject,
+      predicate,
     };
     // write info to node
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
@@ -125,64 +153,108 @@ export function preprocessRDFa(dom: Node) {
   }
 }
 
-function quadToProperties(datastore: Datastore<Node>, quad: Quad): Property[] {
-  const result: Property[] = [];
+function quadToProperties(
+  datastore: Datastore<Node>,
+  quad: Quad,
+  entry: SubAndContentPred,
+): OutgoingTriple[] {
+  const result: OutgoingTriple[] = [];
   // check if quad refers to a contentNode
-  const contentNodes = datastore
-    .getContentNodeMap()
-    .getValues({ subject: quad.subject, predicate: quad.predicate });
-  if (contentNodes) {
-    for (const contentNode of contentNodes) {
-      const contentId = ensureId(contentNode as HTMLElement);
-      result.push({
-        type: 'external',
-        predicate: quad.predicate.value,
-        object: {
-          type: 'literal',
-          rdfaId: contentId,
-        },
-      });
-    }
-    return result;
-  } else {
-    // check if this quad refers to a resourceNode
-    if (
-      quad.object.termType === 'BlankNode' ||
-      quad.object.termType === 'NamedNode'
-    ) {
-      const resourceNode = datastore
-        .getResourceNodeMap()
-        .getFirstValue({ subject: quad.object });
-      if (resourceNode) {
+  if (quad.object.termType === 'Literal') {
+    const contentNodes = datastore.getContentNodeMap().getValues({
+      subject: sayDataFactory.literalNode(
+        quad.subject.value,
+        languageOrDataType(quad.object.language, quad.object.datatype),
+      ),
+      predicate: quad.predicate.value,
+    });
+    if (contentNodes) {
+      for (const contentNode of contentNodes) {
+        const contentId = ensureId(contentNode as HTMLElement);
+        if (quad.object.termType !== 'Literal') {
+          throw new Error(
+            'unexpected quad object type for quad referring to literal node',
+          );
+        }
+        const { datatype, language } = quad.object;
+        result.push({
+          predicate: quad.predicate.value,
+          object: sayDataFactory.literalNode(
+            contentId,
+            languageOrDataType(language, datatype),
+          ),
+        });
+      }
+      return result;
+    } else {
+      const { contentDatatype, contentLanguage, contentPredicate } = entry;
+      if (
+        contentPredicate &&
+        quad.predicate.equals(contentPredicate) &&
+        (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
+        (!contentLanguage ||
+          contentLanguage.toLowerCase() === quad.object.language.toLowerCase())
+      ) {
         return [
           {
-            type: 'external',
             predicate: quad.predicate.value,
-            object: {
-              type: 'resource',
-              resource: quad.object.value,
-            },
+            object: sayDataFactory.contentLiteral(
+              languageOrDataType(contentLanguage, contentDatatype),
+            ),
           },
         ];
       }
+      return [
+        {
+          predicate: quad.predicate.value,
+          // need to copy the object here or weird stuff happens
+          object: { ...quad.object, termType: 'Literal' },
+        },
+      ];
+    }
+  } else {
+    // check if this quad refers to a resourceNode
+    const { object } = quad;
+    if (object.termType === 'BlankNode' || object.termType === 'NamedNode') {
+      const resourceNode = datastore
+        .getResourceNodeMap()
+        .getFirstValue({ subject: object });
+      if (resourceNode) {
+        return [
+          {
+            predicate: quad.predicate.value,
+            object: sayDataFactory.resourceNode(object.value),
+          },
+        ];
+      } else {
+        // this is just to make typescript happy
+        if (object.termType === 'BlankNode') {
+          return [
+            {
+              predicate: quad.predicate.value,
+              object: sayDataFactory.blankNode(quad.object.value),
+            },
+          ];
+        } else {
+          return [
+            {
+              predicate: quad.predicate.value,
+              object: sayDataFactory.namedNode(object.value),
+            },
+          ];
+        }
+      }
     }
     // neither a content nor resource node, so just a plain attribute
-    return [
-      {
-        type: 'attribute',
-        predicate: quad.predicate.value,
-        object: quad.object.value,
-        datatype:
-          'datatype' in quad.object ? quad.object.datatype.value : undefined,
-      },
-    ];
+    // termtype === 'Variable', which we don't support.
+    return [];
   }
 }
 
-function quadToBacklink(quad: Quad): Backlink {
+function quadToBacklink(quad: Quad): IncomingTriple {
   // check if theres a resource node for the subject
   return {
-    subject: quad.subject.value,
+    subject: sayDataFactory.resourceNode(quad.subject.value),
     predicate: quad.predicate.value,
   };
 }
