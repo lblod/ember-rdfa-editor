@@ -8,6 +8,7 @@ import type {
 } from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
 import type { Option } from '../utils/_private/option';
+import { LANG_STRING } from '../utils/_private/constants';
 
 export interface SayDefaultGraph extends DefaultGraph {
   equals(other?: SayTerm | null): boolean;
@@ -91,7 +92,15 @@ export function languageOrDataType(
   datatype?: Option<SayNamedNode>,
 ): string | SayNamedNode | undefined {
   if (language?.length) {
-    return language;
+    if (datatype) {
+      if (datatype.equals(sayDataFactory.namedNode(LANG_STRING))) {
+        return language;
+      } else {
+        return datatype;
+      }
+    } else {
+      return language;
+    }
   } else if (datatype) {
     return datatype;
   }
