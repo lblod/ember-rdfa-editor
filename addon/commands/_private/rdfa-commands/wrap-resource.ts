@@ -16,7 +16,7 @@ export function wrapResource(
     const attrs = {
       __rdfaId: 'placeholder',
       rdfaNodeType: 'resource',
-      resource: 'another placeholder',
+      subject: 'another placeholder',
     };
     const wrapArgs: Parameters<typeof wrapIn> = [
       state.schema.nodes.block_rdfa,
@@ -28,11 +28,11 @@ export function wrapResource(
     if (dispatch) {
       if ('existingUri' in args) {
         attrs.__rdfaId = uuidv4();
-        attrs.resource = args.existingUri;
+        attrs.subject = args.existingUri;
       } else {
         const { __rdfaId, resource } = generateNewUri(args.uriBase);
         attrs.__rdfaId = __rdfaId;
-        attrs.resource = resource;
+        attrs.subject = resource;
       }
 
       const wrapStatus = wrapIn(...wrapArgs)(state, (tr) => {
@@ -54,7 +54,7 @@ export function wrapResource(
             ...child,
           };
           const addCmd = addProperty({
-            resource: attrs.resource,
+            resource: attrs.subject,
             property: triple,
             transaction: currentTransaction,
           });

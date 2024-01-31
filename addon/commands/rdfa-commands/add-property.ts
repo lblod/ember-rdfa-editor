@@ -4,7 +4,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
-  getNodesByResource,
+  getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
@@ -33,7 +33,7 @@ export function addProperty({
   transaction,
 }: AddPropertyArgs): Command {
   return (state, dispatch) => {
-    const resourceNodes = getNodesByResource(state, resource);
+    const resourceNodes = getNodesBySubject(state, resource);
     if (!resourceNodes?.length) {
       return false;
     }
@@ -82,7 +82,7 @@ export function addProperty({
             subject: resource,
             predicate: property.predicate,
           };
-          targets = getNodesByResource(state, object.value);
+          targets = getNodesBySubject(state, object.value);
         }
         targets?.forEach((target) => {
           const backlinks = target.value.attrs.backlinks as

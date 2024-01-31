@@ -1,13 +1,13 @@
 import {
   getNodeByRdfaId,
-  getNodesByResource,
+  getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getBacklinks,
   getProperties,
-  getResource,
+  getSubject,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Command, Transaction } from 'prosemirror-state';
@@ -36,7 +36,7 @@ export function removeBacklink({
       nodes = [node];
     } else {
       const { value: resource } = target;
-      nodes = getNodesByResource(state, resource);
+      nodes = getNodesBySubject(state, resource);
       if (!nodes?.length) {
         return false;
       }
@@ -62,7 +62,7 @@ export function removeBacklink({
           updatedBacklinks,
         );
       });
-      const subjects = getNodesByResource(state, backlinkToRemove.subject);
+      const subjects = getNodesBySubject(state, backlinkToRemove.subject);
       subjects?.forEach((subject) => {
         const properties = getProperties(subject.value);
         if (properties) {
@@ -77,7 +77,7 @@ export function removeBacklink({
             ) {
               return !(
                 backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getResource(subject.value) &&
+                backlinkToRemove.subject === getSubject(subject.value) &&
                 prop.object.rdfaId === target.rdfaId
               );
             } else if (
@@ -86,7 +86,7 @@ export function removeBacklink({
             ) {
               return !(
                 backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getResource(subject.value) &&
+                backlinkToRemove.subject === getSubject(subject.value) &&
                 prop.object.value === target.value
               );
             } else {

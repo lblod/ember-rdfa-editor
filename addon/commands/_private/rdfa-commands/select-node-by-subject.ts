@@ -1,18 +1,18 @@
-import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getNodesBySubject } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { AllSelection, Command, NodeSelection } from 'prosemirror-state';
 
-type SelectNodeByResourceArgs = {
-  resource: string;
+type SelectNodeBySubjectArgs = {
+  subject: string;
 };
 
 /**
- * Command which moves the selection to the first node that defines the provided resource
+ * Command which moves the selection to the first node that defines the provided subject
  */
-export function selectNodeByResource({
-  resource,
-}: SelectNodeByResourceArgs): Command {
+export function selectNodeBySubject({
+  subject,
+}: SelectNodeBySubjectArgs): Command {
   return (state, dispatch) => {
-    const target = getNodesByResource(state, resource)?.[0];
+    const target = getNodesBySubject(state, subject)?.[0];
     if (!target) {
       return false;
     }

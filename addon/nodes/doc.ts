@@ -1,7 +1,7 @@
 import { AttributeSpec } from 'prosemirror-model';
 import SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
-import { getRdfaAttrs, renderRdfaAware } from '../core/schema';
+import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
 
 interface DocumentConfig {
   defaultLanguage?: string;
@@ -20,20 +20,7 @@ export const docWithConfig = ({
       default: defaultLanguage,
       editable: true,
     },
-    properties: {
-      default: [],
-    },
-    backlinks: {
-      default: [],
-    },
-    resource: {
-      default: null,
-      editable: true,
-    },
-    rdfaNodeType: {
-      default: null,
-    },
-    __rdfaId: { default: null },
+    ...rdfaAttrSpec,
   };
 
   return {
@@ -65,7 +52,6 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
-      const resource = node.attrs.resource as string;
       const lang = node.attrs.lang as string;
       return renderRdfaAware({
         renderable: node,
@@ -73,7 +59,6 @@ export const docWithConfig = ({
         attrs: {
           lang,
           'data-say-document': true,
-          resource,
         },
         content: 0,
       });

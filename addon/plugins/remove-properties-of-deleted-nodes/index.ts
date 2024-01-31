@@ -2,14 +2,14 @@ import { EditorState, Plugin } from 'prosemirror-state';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import {
   getNodeByRdfaId,
-  getNodesByResource,
+  getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/_private/node-utils';
 import {
   getBacklinks,
   getProperties,
   getRdfaId,
-  getResource,
+  getSubject,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
@@ -89,8 +89,8 @@ export function removePropertiesOfDeletedNodes() {
         const isResource = isResourceNode(node);
 
         if (isResource) {
-          const resource = node.attrs.resource as string;
-          const resourceNodes = getNodesByResource(newState, resource);
+          const subject = node.attrs.subject as string;
+          const resourceNodes = getNodesBySubject(newState, subject);
 
           if (resourceNodes && resourceNodes.length >= 1) {
             return;
@@ -106,13 +106,19 @@ export function removePropertiesOfDeletedNodes() {
                 const node = getNodeByRdfaId(newState, object.rdfaId);
 
                 if (node) {
-                  setOrPush(targetsWithBacklinks, node, { property, resource });
+                  setOrPush(targetsWithBacklinks, node, {
+                    property,
+                    resource: subject,
+                  });
                 }
               } else {
-                const nodes = getNodesByResource(newState, object.value);
+                const nodes = getNodesBySubject(newState, object.value);
 
                 nodes?.forEach((node) => {
-                  setOrPush(targetsWithBacklinks, node, { property, resource });
+                  setOrPush(targetsWithBacklinks, node, {
+                    property,
+                    resource: subject,
+                  });
                 });
               }
             }
@@ -122,7 +128,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesByResource(newState, subject);
+            const nodes = getNodesBySubject(newState, subject);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -139,7 +145,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesByResource(newState, subject);
+            const nodes = getNodesBySubject(newState, subject);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -201,7 +207,7 @@ export function removePropertiesOfDeletedNodes() {
 
                 return (
                   backlink.predicate === property.predicate &&
-                  backlink.subject === getResource(target.value)
+                  backlink.subject === getSubject(target.value)
                 );
               }),
           );

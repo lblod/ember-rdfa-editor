@@ -5,7 +5,7 @@ import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
   removeBacklink,
   selectNodeByRdfaId,
-  selectNodeByResource,
+  selectNodeBySubject,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
@@ -148,7 +148,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       }
     } else {
       const result = this.controller.doCommand(
-        selectNodeByResource({ resource: object.value }),
+        selectNodeBySubject({ subject: object.value }),
         { view: this.controller.mainEditorView },
       );
       if (!result) {
@@ -164,7 +164,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   goToBacklink = (backlink: IncomingTriple) => {
     this.closeStatusMessage();
     const result = this.controller?.doCommand(
-      selectNodeByResource({ resource: backlink.subject }),
+      selectNodeBySubject({ subject: backlink.subject }),
       {
         view: this.controller.mainEditorView,
       },

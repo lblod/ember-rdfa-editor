@@ -125,13 +125,13 @@ export function findNodeByRdfaId(
   return result;
 }
 
-export function findNodesByResource(
+export function findNodesBySubject(
   doc: PNode,
-  resource: string,
+  subject: string,
 ): ResolvedPNode[] {
   const result: ResolvedPNode[] = [];
   doc.descendants((node, pos) => {
-    if (node.attrs.resource === resource) {
+    if (node.attrs.subject === subject) {
       result.push({ pos, value: node });
     }
     return true;
@@ -143,7 +143,7 @@ export function getRdfaId(node: PNode): string | undefined {
   return node.attrs['__rdfaId'] as string | undefined;
 }
 
-export function getResource(node: PNode): string | undefined {
+export function getSubject(node: PNode): string | undefined {
   return (node.attrs.subject ?? node.attrs.about ?? node.attrs.resource) as
     | string
     | undefined;
@@ -158,18 +158,18 @@ export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
 }
 
 /**
- * Calculates a set of resource attributes present in the provided node and its children
+ * Calculates a set of subject attributes present in the provided node and its children
  */
-export function getResources(node: PNode): Set<string> {
+export function getSubjects(node: PNode): Set<string> {
   const result = new Set<string>();
-  const resource = getResource(node);
-  if (resource) {
-    result.add(resource);
+  const subject = getSubject(node);
+  if (subject) {
+    result.add(subject);
   }
   node.descendants((child) => {
-    const resource = getResource(child);
-    if (resource) {
-      result.add(resource);
+    const subject = getSubject(child);
+    if (subject) {
+      result.add(subject);
     }
     return true;
   });
@@ -200,12 +200,12 @@ export function getRdfaChildren(node: PNode) {
     const id = getRdfaId(child);
     if (id) {
       const backlinks = getBacklinks(child);
-      const resource = getResource(child);
+      const subject = getSubject(child);
       if (backlinks?.[0]) {
-        if (resource) {
+        if (subject) {
           result.add({
             predicate: backlinks[0].predicate,
-            object: { termType: 'ResourceNode', value: resource },
+            object: { termType: 'ResourceNode', value: subject },
           });
         } else {
           const incomingTriple = backlinks[0];

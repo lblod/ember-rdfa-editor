@@ -13,7 +13,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
-  getResources,
+  getSubjects,
   rdfaInfoPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
@@ -158,7 +158,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     if (!this.controller) {
       return [];
     }
-    return getResources(this.controller.mainEditorState);
+    return getSubjects(this.controller.mainEditorState);
   }
   resourceNodeLabel = (resource: string): string => {
     return resource;
