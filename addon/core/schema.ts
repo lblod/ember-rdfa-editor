@@ -165,7 +165,7 @@ export function renderInvisibleRdfa(
   if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
     const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
     for (const { predicate, subject } of backlinks) {
-      propElements.push(['span', { rev: predicate, resource: subject }]);
+      propElements.push(['span', { rev: predicate, resource: subject.value }]);
     }
   }
   return [
