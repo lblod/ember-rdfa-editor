@@ -1,4 +1,3 @@
-import * as RDF from '@rdfjs/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
   isElement,
@@ -10,7 +9,16 @@ import Datastore, {
   SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import { Quad } from '@rdfjs/types';
-import { LANG_STRING } from '../utils/_private/constants';
+import {
+  ContentLiteralTerm,
+  LiteralNodeTerm,
+  ResourceNodeTerm,
+  SayBlankNode,
+  SayLiteral,
+  SayNamedNode,
+  languageOrDataType,
+  sayDataFactory,
+} from './say-data-factory';
 
 export type SayTermType =
   | 'NamedNode'
@@ -20,60 +28,29 @@ export type SayTermType =
   | 'ContentLiteral'
   | 'BlankNode';
 
-export type SayRDFLiteral = Pick<
-  RDF.Literal,
-  'value' | 'termType' | 'language'
-> & {
-  datatype: Omit<RDF.NamedNode, 'equals'>;
-};
-export interface LiteralNodeObject {
-  termType: 'LiteralNode';
-  rdfaId: string;
-  datatype: Omit<RDF.NamedNode, 'equals'>;
-  language: string;
-}
-export interface ResourceNodeObject {
-  termType: 'ResourceNode';
-  value: string;
-}
-export interface ContentLiteralObject {
-  termType: 'ContentLiteral';
-  datatype: Omit<RDF.NamedNode, 'equals'>;
-  language: string;
-}
-export type PlainObject =
-  | SayRDFLiteral
-  | Omit<RDF.NamedNode, 'equals'>
-  | Omit<RDF.BlankNode, 'equals'>;
-export type NodeLinkObject = ResourceNodeObject | LiteralNodeObject;
-
-export type OutgoingTripleObject =
-  | PlainObject
-  | NodeLinkObject
-  | ContentLiteralObject;
 export interface LiteralTriple {
   predicate: string;
-  object: SayRDFLiteral;
+  object: SayLiteral;
 }
 export interface NamedNodeTriple {
   predicate: string;
-  object: Omit<RDF.NamedNode, 'equals'>;
+  object: SayNamedNode;
 }
 export interface BlankNodeTriple {
   predicate: string;
-  object: Omit<RDF.BlankNode, 'equals'>;
+  object: SayBlankNode;
 }
 export interface ResourceNodeTriple {
   predicate: string;
-  object: ResourceNodeObject;
+  object: ResourceNodeTerm;
 }
 export interface LiteralNodeTriple {
   predicate: string;
-  object: LiteralNodeObject;
+  object: LiteralNodeTerm;
 }
 export type ContentTriple = {
   predicate: string;
-  object: ContentLiteralObject;
+  object: ContentLiteralTerm;
 };
 
 export type PlainTriple = LiteralTriple | NamedNodeTriple | BlankNodeTriple;
@@ -87,16 +64,12 @@ export type OutgoingTriple =
   | ContentTriple;
 
 export type IncomingResourceNodeTriple = {
-  termType: 'ResourceNode';
-  subject: string;
+  subject: ResourceNodeTerm;
   predicate: string;
 };
 export type IncomingLiteralNodeTriple = {
-  termType: 'LiteralNode';
-  subject: string;
+  subject: LiteralNodeTerm;
   predicate: string;
-  datatype: Omit<RDF.NamedNode, 'equals'>;
-  language: string;
 };
 export type IncomingTriple =
   | IncomingLiteralNodeTriple
@@ -141,8 +114,8 @@ export function preprocessRDFa(dom: Node) {
     for (const quad of outgoingQuads) {
       quadToProperties(datastore, quad, entry).forEach((prop) => {
         if (prop.object.termType === 'LiteralNode') {
-          if (!seenLinks.has(prop.object.rdfaId)) {
-            seenLinks.add(prop.object.rdfaId);
+          if (!seenLinks.has(prop.object.value)) {
+            seenLinks.add(prop.object.value);
             properties.push(prop);
           }
           // we'll handle this case separately below
@@ -166,18 +139,14 @@ export function preprocessRDFa(dom: Node) {
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate, language } = object;
+    const { subject, predicate, language, datatype } = object;
 
-    const datatype: Omit<RDF.NamedNode, 'equals'> | undefined =
-      object.datatype && object.datatype.value !== LANG_STRING
-        ? { termType: 'NamedNode', value: object.datatype.value }
-        : undefined;
-    const incomingProp: IncomingTriple = {
-      termType: 'LiteralNode',
-      subject: subject.value,
+    const incomingProp = {
+      subject: sayDataFactory.literalNode(
+        subject.value,
+        languageOrDataType(language, datatype),
+      ),
       predicate: predicate.value,
-      datatype: datatype ?? { termType: 'NamedNode', value: '' },
-      language: datatype ? '' : language || '',
     };
     // write info to node
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
@@ -205,18 +174,13 @@ function quadToProperties(
           'unexpected quad object type for quad referring to literal node',
         );
       }
-      const datatype: Omit<RDF.NamedNode, 'equals'> | undefined =
-        quad.object.datatype && quad.object.datatype.value !== LANG_STRING
-          ? { termType: 'NamedNode', value: quad.object.datatype.value }
-          : undefined;
+      const { datatype, language } = quad.object;
       result.push({
         predicate: quad.predicate.value,
-        object: {
-          termType: 'LiteralNode',
-          rdfaId: contentId,
-          datatype: datatype ?? { termType: 'NamedNode', value: '' },
-          language: datatype ? '' : quad.object.language ?? '',
-        },
+        object: sayDataFactory.literalNode(
+          contentId,
+          languageOrDataType(language, datatype),
+        ),
       });
     }
     return result;
@@ -231,7 +195,7 @@ function quadToProperties(
         return [
           {
             predicate: quad.predicate.value,
-            object: { termType: 'ResourceNode', value: object.value },
+            object: sayDataFactory.resourceNode(object.value),
           },
         ];
       } else {
@@ -240,14 +204,14 @@ function quadToProperties(
           return [
             {
               predicate: quad.predicate.value,
-              object: { value: object.value, termType: object.termType },
+              object: sayDataFactory.blankNode(quad.object.value),
             },
           ];
         } else {
           return [
             {
               predicate: quad.predicate.value,
-              object: { value: object.value, termType: object.termType },
+              object: sayDataFactory.namedNode(object.value),
             },
           ];
         }
@@ -261,16 +225,14 @@ function quadToProperties(
         quad.predicate.equals(contentPredicate) &&
         (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
         (!contentLanguage ||
-          contentLanguage.toUpperCase() === quad.object.language.toUpperCase())
+          contentLanguage.toLowerCase() === quad.object.language.toLowerCase())
       ) {
         return [
           {
             predicate: quad.predicate.value,
-            object: {
-              termType: 'ContentLiteral',
-              datatype: contentDatatype ?? { termType: 'NamedNode', value: '' },
-              language: contentDatatype ? '' : contentLanguage ?? '',
-            },
+            object: sayDataFactory.contentLiteral(
+              languageOrDataType(contentLanguage, contentDatatype),
+            ),
           },
         ];
       }
@@ -291,8 +253,7 @@ function quadToProperties(
 function quadToBacklink(quad: Quad): IncomingTriple {
   // check if theres a resource node for the subject
   return {
-    termType: 'ResourceNode',
-    subject: quad.subject.value,
+    subject: sayDataFactory.resourceNode(quad.subject.value),
     predicate: quad.predicate.value,
   };
 }

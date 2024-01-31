@@ -29,6 +29,22 @@
 
 - [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
 
+## 9.0.2
+
+### Patch Changes
+
+- [#1126](https://github.com/lblod/ember-rdfa-editor/pull/1126) [`022cbff`](https://github.com/lblod/ember-rdfa-editor/commit/022cbff22913fd598aa48e5e5d29fc5bdc518677) Thanks [@elpoelma](https://github.com/elpoelma)! - Widen support for `ember-intl` to include version 5.7.2 due to outstanding issues with the 6.x releases.
+
+  For more information, see https://github.com/ember-intl/ember-intl/issues/1826
+
+## 9.0.1
+
+### Patch Changes
+
+- [#1108](https://github.com/lblod/ember-rdfa-editor/pull/1108) [`e45216a`](https://github.com/lblod/ember-rdfa-editor/commit/e45216a2db1890c864504a73b0a9b5897a0d0db6) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a transformPasted hook to transform the slice to be pasted if necessary.
+  - If the node before the current selection is not inline, the slice will be closed at the start
+  - If the node after the current selection is not inline, the slice will be closed at the end
+
 ## 9.0.0
 
 ### Major Changes

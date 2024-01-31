@@ -137,12 +137,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
     if (object.termType === 'LiteralNode') {
       const result = this.controller.doCommand(
-        selectNodeByRdfaId({ rdfaId: object.rdfaId }),
+        selectNodeByRdfaId({ rdfaId: object.value }),
         { view: this.controller.mainEditorView },
       );
       if (!result) {
         this.statusMessage = {
-          message: `No literal node found for id ${object.rdfaId}.`,
+          message: `No literal node found for id ${object.value}.`,
           type: 'error',
         };
       }
@@ -164,7 +164,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   goToBacklink = (backlink: IncomingTriple) => {
     this.closeStatusMessage();
     const result = this.controller?.doCommand(
-      selectNodeBySubject({ subject: backlink.subject }),
+      selectNodeBySubject({ subject: backlink.subject.value }),
       {
         view: this.controller.mainEditorView,
       },
@@ -176,7 +176,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       };
     } else if (!result) {
       this.statusMessage = {
-        message: `No resource node found for ${backlink.subject}.`,
+        message: `No resource node found for ${backlink.subject.value}.`,
         type: 'info',
       };
     }

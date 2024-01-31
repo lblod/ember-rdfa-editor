@@ -103,7 +103,7 @@ export function removePropertiesOfDeletedNodes() {
               const { object } = property;
 
               if (object.termType === 'LiteralNode') {
-                const node = getNodeByRdfaId(newState, object.rdfaId);
+                const node = getNodeByRdfaId(newState, object.value);
 
                 if (node) {
                   setOrPush(targetsWithBacklinks, node, {
@@ -128,7 +128,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesBySubject(newState, subject);
+            const nodes = getNodesBySubject(newState, subject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -145,7 +145,7 @@ export function removePropertiesOfDeletedNodes() {
 
           backlinks.forEach((backlink) => {
             const subject = backlink.subject;
-            const nodes = getNodesBySubject(newState, subject);
+            const nodes = getNodesBySubject(newState, subject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -172,7 +172,7 @@ export function removePropertiesOfDeletedNodes() {
               !meta.some(
                 (meta) =>
                   backlink.predicate === meta.property.predicate &&
-                  backlink.subject === meta.resource,
+                  backlink.subject.value === meta.resource,
               ),
           );
           TransformUtils.setAttribute(
@@ -200,14 +200,14 @@ export function removePropertiesOfDeletedNodes() {
                     return false;
                   }
 
-                  if (property.object.rdfaId !== rdfaId) {
+                  if (property.object.value !== rdfaId) {
                     return false;
                   }
                 }
 
                 return (
                   backlink.predicate === property.predicate &&
-                  backlink.subject === getSubject(target.value)
+                  backlink.subject.value === getSubject(target.value)
                 );
               }),
           );

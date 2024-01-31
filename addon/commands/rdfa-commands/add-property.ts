@@ -3,6 +3,10 @@ import {
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import {
   getNodeByRdfaId,
   getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
@@ -66,20 +70,19 @@ export function addProperty({
         let newBacklink: IncomingTriple;
         if (object.termType === 'LiteralNode') {
           newBacklink = {
-            termType: 'LiteralNode',
-            subject: resource,
+            subject: sayDataFactory.literalNode(
+              resource,
+              languageOrDataType(object.language, object.datatype),
+            ),
             predicate: property.predicate,
-            datatype: object.datatype,
-            language: object.language,
           };
-          const target = getNodeByRdfaId(state, object.rdfaId);
+          const target = getNodeByRdfaId(state, object.value);
           if (target) {
             targets = [target];
           }
         } else {
           newBacklink = {
-            termType: 'ResourceNode',
-            subject: resource,
+            subject: sayDataFactory.resourceNode(resource),
             predicate: property.predicate,
           };
           targets = getNodesBySubject(state, object.value);

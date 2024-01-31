@@ -3,14 +3,13 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import {
-  ContentTriple,
-  LiteralNodeTriple,
-  LiteralTriple,
-  NamedNodeTriple,
   OutgoingTriple,
-  ResourceNodeTriple,
   SayTermType,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import {
   getNodeByRdfaId,
   getSubjects,
@@ -18,7 +17,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { localCopy } from 'tracked-toolbox';
-import { ObjectSchema, ValidationError, object, string } from 'yup';
+import { ValidationError, object, string } from 'yup';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -46,14 +45,14 @@ const datatypeSchema = object({
   termType: string<'NamedNode'>().required(),
   value: string().curie({ allowEmpty: true }).default(''),
 });
-const namedNodeSchema: ObjectSchema<NamedNodeTriple> = object({
+const namedNodeSchema = object({
   predicate: string().curie().required(),
   object: object({
     termType: string<'NamedNode'>().required(),
     value: string().curie().required(),
   }),
 });
-const literalSchema: ObjectSchema<LiteralTriple> = object({
+const literalSchema = object({
   predicate: string().curie().required(),
   object: object({
     termType: string<'Literal'>().required(),
@@ -62,23 +61,23 @@ const literalSchema: ObjectSchema<LiteralTriple> = object({
     language: string().default(''),
   }),
 });
-const literalNodeSchema: ObjectSchema<LiteralNodeTriple> = object({
+const literalNodeSchema = object({
   predicate: string().curie().required(),
   object: object({
     termType: string().oneOf(['LiteralNode']).required(),
-    rdfaId: string().required(),
+    value: string().required(),
     datatype: datatypeSchema,
     language: string().default(''),
   }),
 });
-const resourceNodeSchema: ObjectSchema<ResourceNodeTriple> = object({
+const resourceNodeSchema = object({
   predicate: string().curie().required(),
   object: object({
     termType: string<'ResourceNode'>().required(),
     value: string().curie().required(),
   }),
 });
-const contentLiteralSchema: ObjectSchema<ContentTriple> = object({
+const contentLiteralSchema = object({
   predicate: string().curie().required(),
   object: object({
     termType: string<'ContentLiteral'>().required(),
@@ -89,7 +88,7 @@ const contentLiteralSchema: ObjectSchema<ContentTriple> = object({
 
 const DEFAULT_TRIPLE: OutgoingTriple = {
   predicate: '',
-  object: { termType: 'NamedNode', value: '' },
+  object: sayDataFactory.namedNode(''),
 };
 export default class OutgoingTripleFormComponent extends Component<Args> {
   @localCopy('args.triple.object.termType')
@@ -98,7 +97,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   @localCopy('args.triple.object.value')
   linkedResourceNode?: string;
 
-  @localCopy('args.triple.object.rdfaId')
+  @localCopy('args.triple.object.value')
   linkedLiteralNode?: string;
 
   @tracked
@@ -160,6 +159,38 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     }
     return getSubjects(this.controller.mainEditorState);
   }
+
+  get initialDatatypeValue(): string {
+    const termType = this.triple.object.termType;
+    if (
+      termType === 'Literal' ||
+      termType === 'ContentLiteral' ||
+      termType === 'LiteralNode'
+    ) {
+      const { language, datatype } = this.triple.object;
+      if (language.length) {
+        return '';
+      } else {
+        return datatype.value;
+      }
+    }
+    return '';
+  }
+
+  get hasDatatype(): boolean {
+    return (
+      !this.hasLanguage &&
+      Boolean(
+        this.currentFormData?.get('object.datatype.value')?.toString().length,
+      )
+    );
+  }
+
+  get hasLanguage(): boolean {
+    return Boolean(
+      this.currentFormData?.get('object.language')?.toString().length,
+    );
+  }
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -175,17 +206,6 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
       content.length <= 20 ? content : `${content.substring(0, 20)}...`;
     return `${truncatedContent} (${rdfaId})`;
   };
-  get hasDatatype(): boolean {
-    return Boolean(
-      this.currentFormData?.get('object.datatype.value')?.toString().length,
-    );
-  }
-  get hasLanguage(): boolean {
-    return (
-      !this.hasDatatype &&
-      Boolean(this.currentFormData?.get('object.language')?.toString().length)
-    );
-  }
   validateFormData(
     formData: FormData,
   ):
@@ -194,93 +214,141 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     try {
       switch (this.termType) {
         case 'NamedNode': {
+          const validated = namedNodeSchema.validateSync(
+            {
+              predicate: formData.get('predicate')?.toString(),
+              object: {
+                termType: 'NamedNode',
+                value: formData.get('object.value')?.toString(),
+              },
+            },
+            { abortEarly: false },
+          );
+
           return {
             valid: true,
-            triple: namedNodeSchema.validateSync(
-              {
-                predicate: formData.get('predicate')?.toString(),
-                object: {
-                  termType: 'NamedNode',
-                  value: formData.get('object.value')?.toString(),
-                },
-              },
-              { abortEarly: false },
-            ),
+            triple: {
+              predicate: validated.predicate,
+              object: sayDataFactory.namedNode(validated.object.value),
+            },
           };
         }
         case 'Literal': {
+          const { predicate, object } = literalSchema.validateSync(
+            {
+              predicate: formData.get('predicate')?.toString(),
+              object: {
+                termType: 'Literal',
+                value: formData.get('object.value')?.toString(),
+                datatype: {
+                  termType: 'NamedNode',
+                  value: formData.get('object.datatype.value')?.toString(),
+                },
+                language: formData.get('object.language')?.toString(),
+              },
+            },
+
+            { abortEarly: false },
+          );
+
           return {
             valid: true,
-            triple: literalSchema.validateSync(
-              {
-                predicate: formData.get('predicate')?.toString(),
-                object: {
-                  termType: 'Literal',
-                  value: formData.get('object.value')?.toString(),
-                  datatype: {
-                    termType: 'NamedNode',
-                    value: formData.get('object.datatype.value')?.toString(),
-                  },
-                  language: formData.get('object.language')?.toString(),
-                },
-              },
-
-              { abortEarly: false },
-            ),
+            triple: {
+              predicate,
+              object: sayDataFactory.literal(
+                object.value,
+                languageOrDataType(
+                  object.language,
+                  sayDataFactory.namedNode(object.datatype.value),
+                ),
+              ),
+            },
           };
         }
         case 'LiteralNode': {
+          const {
+            predicate,
+            object: { value, language, datatype },
+          } = literalNodeSchema.validateSync(
+            {
+              predicate: formData.get('predicate')?.toString(),
+              object: {
+                termType: 'LiteralNode',
+                value: this.selectedLiteralNode,
+                datatype: {
+                  termType: 'NamedNode',
+                  value: formData.get('object.datatype.value')?.toString(),
+                },
+                language: formData.get('object.language')?.toString(),
+              },
+            },
+            { abortEarly: false },
+          );
+
           return {
             valid: true,
-            triple: literalNodeSchema.validateSync(
-              {
-                predicate: formData.get('predicate')?.toString(),
-                object: {
-                  termType: 'LiteralNode',
-                  rdfaId: this.selectedLiteralNode,
-                  datatype: {
-                    termType: 'NamedNode',
-                    value: formData.get('object.datatype.value')?.toString(),
-                  },
-                  language: formData.get('object.language')?.toString(),
-                },
-              },
-              { abortEarly: false },
-            ),
+            triple: {
+              predicate,
+              object: sayDataFactory.literalNode(
+                value,
+                languageOrDataType(
+                  language,
+                  sayDataFactory.namedNode(datatype.value),
+                ),
+              ),
+            },
           };
         }
         case 'ResourceNode': {
+          const {
+            predicate,
+            object: { value },
+          } = resourceNodeSchema.validateSync(
+            {
+              predicate: formData.get('predicate')?.toString(),
+              object: {
+                termType: 'ResourceNode',
+                value: this.selectedResourceNode,
+              },
+            },
+            { abortEarly: false },
+          );
+
           return {
             valid: true,
-            triple: resourceNodeSchema.validateSync(
-              {
-                predicate: formData.get('predicate')?.toString(),
-                object: {
-                  termType: 'ResourceNode',
-                  value: this.selectedResourceNode,
-                },
-              },
-              { abortEarly: false },
-            ),
+            triple: { predicate, object: sayDataFactory.resourceNode(value) },
           };
         }
         case 'ContentLiteral': {
+          const {
+            predicate,
+            object: { datatype, language },
+          } = contentLiteralSchema.validateSync(
+            {
+              predicate: formData.get('predicate')?.toString(),
+              object: {
+                termType: 'ContentLiteral',
+                datatype: {
+                  termType: 'NamedNode',
+                  value: formData.get('object.datatype.value')?.toString(),
+                },
+                language: formData.get('object.language')?.toString(),
+              },
+            },
+            { abortEarly: false },
+          );
+
           return {
             valid: true,
-            triple: contentLiteralSchema.validateSync(
-              {
-                predicate: formData.get('predicate')?.toString(),
-                object: {
-                  termType: 'ContentLiteral',
-                  datatype: {
-                    termType: 'NamedNode',
-                    value: formData.get('object.datatype.value')?.toString(),
-                  },
-                  language: formData.get('object.language')?.toString(),
-                },
-              },
-              { abortEarly: false },
-            ),
+            triple: {
+              predicate,
+              object: sayDataFactory.contentLiteral(
+                languageOrDataType(
+                  language,
+                  sayDataFactory.namedNode(datatype.value),
+                ),
+              ),
+            },
           };
         }
         // ts apparently not smart enough to see this can't happen
@@ -324,6 +392,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
+    console.log('validated', validated);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple);
     } else {

@@ -26,7 +26,6 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/datastore';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
-import { LANG_STRING } from '../constants';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -993,21 +992,13 @@ export class RdfaParser<N> {
     contentDatatype?: ModelNamedNode<N>,
     contentLanguage?: string,
   ) => {
-    const datatype =
-      contentDatatype &&
-      // this datatype gets set by the parser by default if a language is detected, but it
-      // seems invalid to have both
-      contentDatatype.value !== LANG_STRING
-        ? contentDatatype
-        : undefined;
     this.resourceNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(resource, activeTag),
       contentPredicate: contentPredicate
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
-      contentDatatype: datatype,
-      // a literal can't have both a datatype and a language
-      contentLanguage: datatype ? undefined : contentLanguage,
+      contentDatatype,
+      contentLanguage,
     });
   };
 

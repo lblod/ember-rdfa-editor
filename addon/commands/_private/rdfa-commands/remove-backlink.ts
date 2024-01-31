@@ -62,7 +62,7 @@ export function removeBacklink({
           updatedBacklinks,
         );
       });
-      const subjects = getNodesBySubject(state, backlinkToRemove.subject);
+      const subjects = getNodesBySubject(state, backlinkToRemove.subject.value);
       subjects?.forEach((subject) => {
         const properties = getProperties(subject.value);
         if (properties) {
@@ -77,8 +77,8 @@ export function removeBacklink({
             ) {
               return !(
                 backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getSubject(subject.value) &&
-                prop.object.rdfaId === target.rdfaId
+                backlinkToRemove.subject.value === getSubject(subject.value) &&
+                prop.object.value === target.rdfaId
               );
             } else if (
               target.termType === 'ResourceNode' &&
@@ -86,7 +86,7 @@ export function removeBacklink({
             ) {
               return !(
                 backlinkToRemove.predicate === prop.predicate &&
-                backlinkToRemove.subject === getSubject(subject.value) &&
+                backlinkToRemove.subject.value === getSubject(subject.value) &&
                 prop.object.value === target.value
               );
             } else {

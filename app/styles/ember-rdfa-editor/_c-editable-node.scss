@@ -1,11 +1,13 @@
-.say-editable {
-  outline: 0.1rem solid var(--au-gray-300);
-  padding: $au-unit;
-  border-radius: $au-radius;
-  &.say-active {
-    outline: 0.2rem solid var(--au-blue-500);
-  }
-  &.ProseMirror-selectednode {
-    background-color: var(--au-blue-200);
+.rdfa-editing {
+  .say-editable {
+    outline: 0.1rem solid var(--au-gray-300);
+    padding: $au-unit;
+    border-radius: $au-radius;
+    &.say-active {
+      outline: 0.2rem solid var(--au-blue-500);
+    }
+    &.ProseMirror-selectednode {
+      background-color: var(--au-blue-200);
+    }
   }
 }

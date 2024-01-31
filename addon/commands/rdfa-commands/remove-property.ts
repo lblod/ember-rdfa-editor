@@ -85,7 +85,7 @@ export function removeProperty({
          */
         let targets: ResolvedPNode[] | undefined;
         if (object.termType === 'LiteralNode') {
-          const target = getNodeByRdfaId(state, object.rdfaId);
+          const target = getNodeByRdfaId(state, object.value);
           if (target) {
             targets = [target];
           }
@@ -98,7 +98,7 @@ export function removeProperty({
             const filteredBacklinks = backlinks.filter((backlink) => {
               return !(
                 backlink.predicate === propertyToRemove?.predicate &&
-                backlink.subject === resource
+                backlink.subject.value === resource
               );
             });
             TransformUtils.setAttribute(

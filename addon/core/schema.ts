@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { DOMOutputSpec, Mark } from 'prosemirror-model';
+import { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { unwrap } from '../utils/_private/option';
 import {
@@ -44,6 +44,14 @@ export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   properties: OutgoingTriple[];
 }
 export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
+
+export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
+  return (
+    '__rdfaId' in attrs &&
+    'backlinks' in attrs &&
+    rdfaNodeTypes.includes(attrs.rdfaNodeType)
+  );
+}
 
 export const sharedRdfaNodeSpec = {
   isolating: true,
@@ -122,23 +130,23 @@ export function renderInvisibleRdfa(
         },
       ]);
     } else if (object.termType === 'Literal') {
-      if (object.datatype?.value?.length) {
-        propElements.push([
-          'span',
-          {
-            property: predicate,
-            content: object.value,
-            datatype: object.datatype.value,
-          },
-          '',
-        ]);
-      } else if (object.language?.length) {
+      if (object.language?.length) {
         propElements.push([
           'span',
           {
             property: predicate,
             content: object.value,
             lang: object.language,
+          },
+          '',
+        ]);
+      } else if (object.datatype?.value?.length) {
+        propElements.push([
+          'span',
+          {
+            property: predicate,
+            content: object.value,
+            datatype: object.datatype.value,
           },
           '',
         ]);
@@ -171,20 +179,22 @@ export function renderRdfaAttrs(
   nodeOrMark: NodeOrMark,
 ): Record<string, string | null> {
   if (nodeOrMark.attrs.rdfaNodeType === 'resource') {
-    const contentPred: ContentTriple | null = (
+    const contentTriple: ContentTriple | null = (
       nodeOrMark.attrs.properties as OutgoingTriple[]
     ).find(
       (prop) => prop.object.termType === 'ContentLiteral',
     ) as ContentTriple | null;
 
-    return contentPred
+    return contentTriple
       ? {
           about: (nodeOrMark.attrs.subject ||
             nodeOrMark.attrs.about ||
             nodeOrMark.attrs.resource) as string,
-          property: contentPred.predicate,
-          datatype: contentPred.object.datatype?.value,
-          lang: contentPred.object.language,
+          property: contentTriple.predicate,
+          datatype: contentTriple.object.language.length
+            ? null
+            : contentTriple.object.datatype.value,
+          lang: contentTriple.object.language,
 
           resource: null,
         }
@@ -201,10 +211,12 @@ export function renderRdfaAttrs(
     }
 
     return {
-      about: backlinks[0].subject,
+      about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
-      datatype: backlinks[0].datatype.value,
-      language: backlinks[0].language,
+      datatype: backlinks[0].subject.language
+        ? null
+        : backlinks[0].subject.datatype.value,
+      language: backlinks[0].subject.language,
       'data-literal-node': 'true',
     };
   }
