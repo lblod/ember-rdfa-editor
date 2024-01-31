@@ -1,4 +1,8 @@
-import { getRdfaAttrs, rdfaAttrSpec } from '../../../core/schema';
+import {
+  getRdfaAttrs,
+  rdfaAttrSpec,
+  renderRdfaAware,
+} from '../../../core/schema';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
@@ -11,6 +15,9 @@ type LinkOptions = {
   interactive: boolean;
 };
 
+// TODO this spec doesn't play well with RDFa editing tools. It has been modified so that any
+// additional RDFa annotations are not striped. This is for example, used by the citation plugin in
+// lblod-plugins
 const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
   options,
 ) => {
@@ -48,7 +55,14 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     ],
     toDOM(node) {
       const { interactive, placeholder, ...attrs } = node.attrs;
-      return ['a', attrs, 0];
+      return renderRdfaAware({
+        renderable: node,
+        tag: 'a',
+        attrs,
+        rdfaContainerTag: 'span',
+        contentContainerTag: 'span',
+        content: 0,
+      });
     },
   };
 };

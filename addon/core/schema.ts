@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { DOMOutputSpec, Mark } from 'prosemirror-model';
+import { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome, unwrap } from '../utils/_private/option';
 import {
@@ -49,6 +49,14 @@ export interface RdfaResourceAttrs extends RdfaAwareAttrs {
 }
 export type RdfaAttrs = (RdfaLiteralAttrs | RdfaResourceAttrs) &
   Record<string, string | number | OutgoingTriple[] | IncomingTriple[]>;
+
+export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
+  return (
+    '__rdfaId' in attrs &&
+    'backlinks' in attrs &&
+    rdfaNodeTypes.includes(attrs.rdfaNodeType)
+  );
+}
 
 export const sharedRdfaNodeSpec = {
   isolating: true,
