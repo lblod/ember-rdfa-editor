@@ -161,7 +161,6 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   }
 
   get initialDatatypeValue(): string {
-    console.log('triple', this.triple)
     const termType = this.triple.object.termType;
     if (
       termType === 'Literal' ||

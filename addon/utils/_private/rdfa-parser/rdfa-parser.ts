@@ -26,7 +26,6 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/datastore';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
-import { LANG_STRING } from '../constants';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>

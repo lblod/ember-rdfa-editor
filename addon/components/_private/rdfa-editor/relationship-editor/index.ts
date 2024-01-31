@@ -176,7 +176,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       };
     } else if (!result) {
       this.statusMessage = {
-        message: `No resource node found for ${backlink.subject}.`,
+        message: `No resource node found for ${backlink.subject.value}.`,
         type: 'info',
       };
     }
