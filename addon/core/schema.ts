@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { isSome, unwrap } from '../utils/_private/option';
+import { unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
   IncomingLiteralNodeTriple,
@@ -59,7 +59,7 @@ export const sharedRdfaNodeSpec = {
 };
 
 export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
-  const rdfaNodeType = node.dataset.rdfaNodeType as
+  const rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
   if (!rdfaNodeType || !rdfaNodeTypes.includes(rdfaNodeType)) {
@@ -67,8 +67,8 @@ export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
   }
   const __rdfaId = node.getAttribute('__rdfaId') ?? uuidv4();
   let backlinks: IncomingTriple[];
-  if (node.dataset.incomingProps) {
-    backlinks = JSON.parse(node.dataset.incomingProps) as IncomingTriple[];
+  if (node.dataset['incomingProps']) {
+    backlinks = JSON.parse(node.dataset['incomingProps']) as IncomingTriple[];
   } else {
     backlinks = [];
   }
@@ -80,15 +80,15 @@ export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
       backlinks,
     };
   } else {
-    const subject = node.dataset.subject;
+    const subject = node.dataset['subject'];
     if (!subject) {
       throw new Error(
         `Node with rdfaNodeType 'resource' does not provide a subject`,
       );
     }
     let properties: OutgoingTriple[];
-    if (node.dataset.outgoingProps) {
-      properties = JSON.parse(node.dataset.outgoingProps) as OutgoingTriple[];
+    if (node.dataset['outgoingProps']) {
+      properties = JSON.parse(node.dataset['outgoingProps']) as OutgoingTriple[];
     } else {
       properties = [];
     }
