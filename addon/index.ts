@@ -3,6 +3,7 @@ import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { Decoration } from 'prosemirror-view';
 import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
+import { isNone } from './utils/_private/option';
 
 export {
   getRdfaAttrs,
@@ -42,9 +43,10 @@ addMethod(
       'is-curie',
       '${path} is not a valid CURIE',
       (value?: string) => {
-        if (!value) {
+        if (isNone(value)) {
           return false;
         }
+        console.log('testing', value)
 
         if (allowEmpty && value.length === 0) {
           return true;
