@@ -237,7 +237,7 @@ export function renderRdfaAttrs(
     return {
       about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
-      datatype: backlinks[0].subject.language
+      datatype: backlinks[0].subject.language.length
         ? null
         : backlinks[0].subject.datatype.value,
       language: backlinks[0].subject.language,

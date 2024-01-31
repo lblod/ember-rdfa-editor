@@ -92,14 +92,14 @@ export function languageOrDataType(
   datatype?: Option<SayNamedNode>,
 ): string | SayNamedNode | undefined {
   if (language?.length) {
-    if (datatype) {
+    if (datatype && datatype.value.length) {
       if (datatype.equals(sayDataFactory.namedNode(LANG_STRING))) {
-        return language;
+        return language.toLowerCase();
       } else {
         return datatype;
       }
     } else {
-      return language;
+      return language.toLowerCase();
     }
   } else if (datatype) {
     return datatype;

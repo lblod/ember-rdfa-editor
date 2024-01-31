@@ -139,14 +139,11 @@ export function preprocessRDFa(dom: Node) {
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate, language, datatype } = object;
+    const { subject, predicate } = object;
 
     const incomingProp = {
-      subject: sayDataFactory.literalNode(
-        subject.value,
-        languageOrDataType(language, datatype),
-      ),
-      predicate: predicate.value,
+      subject,
+      predicate,
     };
     // write info to node
     (node as HTMLElement).dataset.incomingProps = JSON.stringify([
@@ -163,27 +160,65 @@ function quadToProperties(
 ): OutgoingTriple[] {
   const result: OutgoingTriple[] = [];
   // check if quad refers to a contentNode
-  const contentNodes = datastore
-    .getContentNodeMap()
-    .getValues({ subject: quad.subject, predicate: quad.predicate });
-  if (contentNodes) {
-    for (const contentNode of contentNodes) {
-      const contentId = ensureId(contentNode as HTMLElement);
-      if (quad.object.termType !== 'Literal') {
-        throw new Error(
-          'unexpected quad object type for quad referring to literal node',
-        );
+  if (quad.object.termType === 'Literal') {
+    console.log('quad', quad);
+    console.log('contentMap', datastore.getContentNodeMap());
+
+    console.log(
+      'lordt',
+      languageOrDataType(quad.object.language, quad.object.datatype),
+    );
+    const contentNodes = datastore.getContentNodeMap().getValues({
+      subject: sayDataFactory.literalNode(
+        quad.subject.value,
+        languageOrDataType(quad.object.language, quad.object.datatype),
+      ),
+      predicate: quad.predicate.value,
+    });
+    if (contentNodes) {
+      for (const contentNode of contentNodes) {
+        const contentId = ensureId(contentNode as HTMLElement);
+        if (quad.object.termType !== 'Literal') {
+          throw new Error(
+            'unexpected quad object type for quad referring to literal node',
+          );
+        }
+        const { datatype, language } = quad.object;
+        result.push({
+          predicate: quad.predicate.value,
+          object: sayDataFactory.literalNode(
+            contentId,
+            languageOrDataType(language, datatype),
+          ),
+        });
       }
-      const { datatype, language } = quad.object;
-      result.push({
-        predicate: quad.predicate.value,
-        object: sayDataFactory.literalNode(
-          contentId,
-          languageOrDataType(language, datatype),
-        ),
-      });
+      return result;
+    } else {
+      const { contentDatatype, contentLanguage, contentPredicate } = entry;
+      if (
+        contentPredicate &&
+        quad.predicate.equals(contentPredicate) &&
+        (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
+        (!contentLanguage ||
+          contentLanguage.toLowerCase() === quad.object.language.toLowerCase())
+      ) {
+        return [
+          {
+            predicate: quad.predicate.value,
+            object: sayDataFactory.contentLiteral(
+              languageOrDataType(contentLanguage, contentDatatype),
+            ),
+          },
+        ];
+      }
+      return [
+        {
+          predicate: quad.predicate.value,
+          // need to copy the object here or weird stuff happens
+          object: { ...quad.object, termType: 'Literal' },
+        },
+      ];
     }
-    return result;
   } else {
     // check if this quad refers to a resourceNode
     const { object } = quad;
@@ -218,35 +253,8 @@ function quadToProperties(
       }
     }
     // neither a content nor resource node, so just a plain attribute
-    if (quad.object.termType === 'Literal') {
-      const { contentDatatype, contentLanguage, contentPredicate } = entry;
-      if (
-        contentPredicate &&
-        quad.predicate.equals(contentPredicate) &&
-        (!contentDatatype || contentDatatype?.equals(quad.object.datatype)) &&
-        (!contentLanguage ||
-          contentLanguage.toLowerCase() === quad.object.language.toLowerCase())
-      ) {
-        return [
-          {
-            predicate: quad.predicate.value,
-            object: sayDataFactory.contentLiteral(
-              languageOrDataType(contentLanguage, contentDatatype),
-            ),
-          },
-        ];
-      }
-      return [
-        {
-          predicate: quad.predicate.value,
-          // need to copy the object here or weird stuff happens
-          object: { ...quad.object, termType: 'Literal' },
-        },
-      ];
-    } else {
-      // termtype === 'Variable', which we don't support.
-      return [];
-    }
+    // termtype === 'Variable', which we don't support.
+    return [];
   }
 }
 

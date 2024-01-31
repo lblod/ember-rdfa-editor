@@ -5,7 +5,6 @@ import {
   QuadNodes,
   RdfaParseConfig,
   RdfaParser,
-  SubAndPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
 import {
   ConciseTerm,
@@ -24,6 +23,7 @@ import {
 import { GraphyDataset } from './graphy-dataset';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { TwoWayMap } from '../map-utils';
+import { IncomingLiteralNodeTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -46,16 +46,15 @@ export interface SubAndContentPred {
   contentDatatype?: RDF.NamedNode;
   contentLanguage?: string;
 }
-export interface SubAndPredLiteral {
-  subject: RDF.Quad_Subject;
-  predicate: RDF.Quad_Predicate;
-  datatype?: RDF.NamedNode;
-  language?: string;
-}
 
 export type WhichTerm = 'subject' | 'predicate' | 'object';
 export type RdfaResourceNodeMap<N> = TwoWayMap<N, SubAndContentPred, N, string>;
-export type RdfaContentNodeMap<N> = TwoWayMap<N, SubAndPredLiteral, N, string>;
+export type RdfaContentNodeMap<N> = TwoWayMap<
+  N,
+  IncomingLiteralNodeTriple,
+  N,
+  string
+>;
 export function rdfaResourceNodeMap<N>(
   init?: Iterable<[N, SubAndContentPred]>,
 ): RdfaResourceNodeMap<N> {
@@ -64,10 +63,16 @@ export function rdfaResourceNodeMap<N>(
     init,
   });
 }
-export function rdfaContentNodeMap<N>(init?: Iterable<[N, SubAndPred]>) {
-  return TwoWayMap.withValueStringHashing<N, SubAndPred>({
-    valueHasher: ({ subject, predicate }) =>
-      `${subject.termType}-${subject.value}-${predicate.termType}-${predicate.value}`,
+export function rdfaContentNodeMap<N>(
+  init?: Iterable<[N, IncomingLiteralNodeTriple]>,
+): RdfaContentNodeMap<N> {
+  return TwoWayMap.withValueStringHashing<N, IncomingLiteralNodeTriple>({
+    valueHasher: ({
+      subject: { termType, value, language, datatype },
+      predicate,
+    }) => {
+      return `${termType}-${value}-${language}-${datatype.value}-${predicate}`;
+    },
     init,
   });
 }
