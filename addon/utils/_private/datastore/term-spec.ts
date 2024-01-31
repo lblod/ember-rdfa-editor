@@ -1,5 +1,5 @@
 import * as RDF from '@rdfjs/types';
-import {
+import type {
   ConBlankNode,
   ConLiteral,
   ConNamedNode,

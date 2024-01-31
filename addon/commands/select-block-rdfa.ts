@@ -1,4 +1,4 @@
-import { Command, TextSelection } from 'prosemirror-state';
+import { type Command, TextSelection } from 'prosemirror-state';
 import { selectNodeBackward } from 'prosemirror-commands';
 
 import { block_rdfa } from '../nodes';

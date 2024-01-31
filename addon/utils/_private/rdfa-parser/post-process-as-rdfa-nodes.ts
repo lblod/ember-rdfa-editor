@@ -1,6 +1,6 @@
 import { unwrap } from '../option';
-import { IActiveTag } from './active-tag';
-import { ModelBlankNode, ModelNamedNode } from './rdfa-parser';
+import type { IActiveTag } from './active-tag';
+import type { ModelBlankNode, ModelNamedNode } from './rdfa-parser';
 export interface PostProcessArgs<N> {
   activeTag: IActiveTag<N>;
   attributes: Record<string, string>;
@@ -123,7 +123,6 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           !truthyAttribute(attributes, 'data-literal-node')
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
-          console.log('activetag 2', activeTag.predicates);
           markAsResourceNode(
             node,
             unwrap(activeTag.subject),
@@ -151,7 +150,6 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
         } else if (activeTag.object) {
-          console.log('in empty');
           // intentionally empty, to preserve structure from algorithm in spec
         }
       }

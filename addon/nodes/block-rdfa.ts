@@ -6,7 +6,7 @@ import {
   renderRdfaAware,
   sharedRdfaNodeSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
-import SayNodeSpec from '../core/say-node-spec';
+import type SayNodeSpec from '../core/say-node-spec';
 
 export const block_rdfa: SayNodeSpec = {
   content: 'block+',
@@ -22,7 +22,10 @@ export const block_rdfa: SayNodeSpec = {
       tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
       // Default priority is 50, so this means a more specific definition matches before this one
       priority: 40,
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         const attrs = getRdfaAttrs(node);
         if (attrs) {
           return attrs;

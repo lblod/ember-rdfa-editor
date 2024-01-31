@@ -89,7 +89,7 @@ export function removePropertiesOfDeletedNodes() {
         const isResource = isResourceNode(node);
 
         if (isResource) {
-          const subject = node.attrs.subject as string;
+          const subject = node.attrs['subject'] as string;
           const resourceNodes = getNodesBySubject(newState, subject);
 
           if (resourceNodes && resourceNodes.length >= 1) {

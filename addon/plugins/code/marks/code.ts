@@ -1,4 +1,4 @@
-import { MarkSpec } from '@lblod/ember-rdfa-editor';
+import type { MarkSpec } from '@lblod/ember-rdfa-editor';
 
 export const code: MarkSpec = {
   parseDOM: [{ tag: 'code' }],

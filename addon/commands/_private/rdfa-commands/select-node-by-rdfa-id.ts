@@ -1,5 +1,5 @@
 import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { AllSelection, Command, NodeSelection } from 'prosemirror-state';
+import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByRdfaIdArgs = {
   rdfaId: string;

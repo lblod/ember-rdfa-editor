@@ -2,7 +2,7 @@ import {
   canSplit,
   specCanSplit,
 } from '@lblod/ember-rdfa-editor/commands/split-block-checked';
-import { Command, TextSelection } from 'prosemirror-state';
+import type { Command, TextSelection } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 import { isNone, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 

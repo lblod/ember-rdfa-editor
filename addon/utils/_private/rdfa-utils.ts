@@ -1,8 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
-import { ResolvedPNode } from './types';
-import {
+import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
@@ -11,6 +8,9 @@ import {
   languageOrDataType,
   sayDataFactory,
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { v4 as uuidv4 } from 'uuid';
+import type { ResolvedPNode } from './types';
 
 export type RdfaAttr =
   | 'vocab'
@@ -117,7 +117,7 @@ export function findNodeByRdfaId(
   let result: ResolvedPNode | undefined;
   doc.descendants((node, pos) => {
     if (result) return false;
-    if (node.attrs.__rdfaId === rdfaId) {
+    if (node.attrs['__rdfaId'] === rdfaId) {
       result = {
         pos: pos,
         value: node,
@@ -135,7 +135,7 @@ export function findNodesBySubject(
 ): ResolvedPNode[] {
   const result: ResolvedPNode[] = [];
   doc.descendants((node, pos) => {
-    if (node.attrs.subject === subject) {
+    if (node.attrs['subject'] === subject) {
       result.push({ pos, value: node });
     }
     return true;
@@ -148,17 +148,17 @@ export function getRdfaId(node: PNode): string | undefined {
 }
 
 export function getSubject(node: PNode): string | undefined {
-  return (node.attrs.subject ?? node.attrs.about ?? node.attrs.resource) as
+  return (node.attrs['subject'] ?? node.attrs['about'] ?? node.attrs['resource']) as
     | string
     | undefined;
 }
 
 export function getProperties(node: PNode): OutgoingTriple[] | undefined {
-  return node.attrs.properties as OutgoingTriple[] | undefined;
+  return node.attrs['properties'] as OutgoingTriple[] | undefined;
 }
 
 export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
-  return node.attrs.backlinks as IncomingTriple[] | undefined;
+  return node.attrs['backlinks'] as IncomingTriple[] | undefined;
 }
 
 /**
@@ -251,10 +251,56 @@ export function generateNewUri(uriBase: string) {
 }
 
 export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
-  if (a.object.termType === b.object.termType && a.predicate === b.predicate) {
-    return Object.keys(a.object).every(
-      (key: keyof typeof a.object) => a.object[key] === b.object[key],
-    );
+  if (a.predicate === b.predicate) {
+    switch (a.object.termType) {
+      case 'NamedNode': {
+        if (b.object.termType === 'NamedNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'BlankNode': {
+        if (b.object.termType === 'BlankNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'ResourceNode': {
+        if (b.object.termType === 'ResourceNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'Literal': {
+        if (b.object.termType === 'Literal') {
+          return (
+            a.object.value === b.object.value &&
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+      case 'LiteralNode': {
+        if (b.object.termType === 'LiteralNode') {
+          return (
+            a.object.value === b.object.value &&
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+      case 'ContentLiteral': {
+        if (b.object.termType === 'ContentLiteral') {
+          return (
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+    }
   }
   return false;
 }

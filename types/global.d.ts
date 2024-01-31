@@ -1,6 +1,8 @@
 //@eslint-ignore
 import { AnyObject, Flags, Maybe } from 'yup';
-
+import type Cypress from 'cypress';
+// this to make tsc happy
+declare const cy: Cypress.cy & CyEventEmitter;
 interface CurieOptions {
   allowEmpty?: boolean;
 }

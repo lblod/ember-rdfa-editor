@@ -1,6 +1,6 @@
 import {
   getRdfaAttrs,
-  NodeSpec,
+  type NodeSpec,
   PNode,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor';
@@ -19,7 +19,10 @@ export const invisible_rdfa: NodeSpec = {
   parseDOM: [
     {
       tag: 'span, link',
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         if (!node.hasChildNodes()) {
           const attrs = getRdfaAttrs(node);
           if (attrs) {

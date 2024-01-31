@@ -1,4 +1,4 @@
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import type { Node as PNode, NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
@@ -21,11 +21,14 @@ export const ordered_list: NodeSpec = {
   parseDOM: [
     {
       tag: 'ol',
-      getAttrs(dom: HTMLElement) {
+      getAttrs(dom: string | HTMLElement) {
+        if (typeof dom === 'string') {
+          return false;
+        }
         const start = dom.getAttribute('start');
         return {
           order: optionMapOr(1, (val) => Number(val), start),
-          style: dom.dataset.listStyle,
+          style: dom.dataset['listStyle'],
           ...getRdfaAttrs(dom),
         };
       },
@@ -53,7 +56,10 @@ export const bullet_list: NodeSpec = {
   parseDOM: [
     {
       tag: 'ul',
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         return {
           ...getRdfaAttrs(node),
         };

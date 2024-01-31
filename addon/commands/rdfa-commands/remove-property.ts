@@ -3,15 +3,15 @@ import {
   getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   deepEqualProperty,
   getBacklinks,
   getProperties,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { Command, Transaction } from 'prosemirror-state';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { Command, Transaction } from 'prosemirror-state';
 
 type RemovePropertyArgs = {
   /** The resource from which to remove a property */

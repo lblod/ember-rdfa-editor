@@ -1,11 +1,12 @@
 import { AllSelection, EditorState, Selection } from 'prosemirror-state';
-import { DirectEditorProps, EditorView } from 'prosemirror-view';
+import { type DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc } from '../utils/_private/html-utils';
 import { DOMSerializer, ProseParser } from '..';
 import { SetDocAttributesStep } from '../utils/steps';
 
 export default class SayView extends EditorView {
+  isSayView = true;
   @tracked declare state: EditorState;
   @tracked parent?: SayView;
   domParser?: ProseParser;

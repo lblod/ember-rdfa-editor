@@ -1,4 +1,4 @@
-import { NodeSpec } from 'prosemirror-model';
+import type { NodeSpec } from 'prosemirror-model';
 
 export const code_block: NodeSpec = {
   content: 'inline*',

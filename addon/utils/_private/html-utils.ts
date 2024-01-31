@@ -1,6 +1,6 @@
 import { PNode, ProseParser } from '@lblod/ember-rdfa-editor';
 import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { Attrs, Schema } from 'prosemirror-model';
+import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
 import { tagName } from './dom-helpers';
 import { EditorView } from 'prosemirror-view';

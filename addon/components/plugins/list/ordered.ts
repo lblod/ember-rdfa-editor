@@ -4,12 +4,12 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import IntlService from 'ember-intl/services/intl';
 import {
-  OrderListStyle,
+  type OrderListStyle,
   toggleList,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
-import { Command } from 'prosemirror-state';
+import { type Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
@@ -44,15 +44,15 @@ export default class ListOrdered extends Component<Args> {
   get firstListParent() {
     return findParentNode(
       (node) =>
-        node.type === this.schema.nodes.ordered_list ||
-        node.type === this.schema.nodes.bullet_list,
+        node.type === this.schema.nodes['ordered_list'] ||
+        node.type === this.schema.nodes['bullet_list'],
     )(this.selection);
   }
 
   get isActive() {
     return (
       this.firstListParent?.node.type ===
-      this.controller.schema.nodes.ordered_list
+      this.controller.schema.nodes['ordered_list']
     );
   }
 
@@ -70,13 +70,17 @@ export default class ListOrdered extends Component<Args> {
 
   toggleCommand(listStyle?: OrderListStyle): Command {
     return chainCommands(
-      toggleList(this.schema.nodes.ordered_list, this.schema.nodes.list_item, {
+      toggleList(
+        this.schema.nodes['ordered_list'],
+        this.schema.nodes['list_item'],
+        {
+          style: listStyle,
+        },
+      ),
+      wrapInList(this.schema.nodes['ordered_list'], {
         style: listStyle,
       }),
-      wrapInList(this.schema.nodes.ordered_list, {
-        style: listStyle,
-      }),
-      sinkListItem(this.schema.nodes.list_item),
+      sinkListItem(this.schema.nodes['list_item']),
     );
   }
 
@@ -96,7 +100,8 @@ export default class ListOrdered extends Component<Args> {
   setStyle(style: OrderListStyle) {
     const firstListParent = this.firstListParent;
     if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+      firstListParent?.node.type ===
+      this.controller.schema.nodes['ordered_list']
     ) {
       const pos = firstListParent.pos;
       this.controller.withTransaction((tr) => {
@@ -110,9 +115,10 @@ export default class ListOrdered extends Component<Args> {
   styleIsActive = (style: string) => {
     const firstListParent = this.firstListParent;
     if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+      firstListParent?.node.type ===
+      this.controller.schema.nodes['ordered_list']
     ) {
-      return firstListParent.node.attrs.style === style;
+      return firstListParent.node.attrs['style'] === style;
     } else {
       return false;
     }

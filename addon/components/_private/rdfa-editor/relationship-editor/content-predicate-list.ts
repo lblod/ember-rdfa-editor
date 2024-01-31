@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 interface Args {
   properties: OutgoingTriple[];

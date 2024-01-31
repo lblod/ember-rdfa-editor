@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
 import { EditorState } from '@lblod/ember-rdfa-editor';
@@ -9,7 +9,7 @@ export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
 
   get href() {
-    return this.args.node.attrs.href as string;
+    return this.args.node.attrs['href'] as string;
   }
 
   set href(value: string) {
@@ -29,7 +29,7 @@ export default class Link extends Component<EmberNodeArgs> {
   }
 
   get interactive() {
-    return this.node.attrs.interactive as boolean;
+    return this.node.attrs['interactive'] as boolean;
   }
 
   @action

@@ -1,4 +1,4 @@
-import { NodeSpec } from 'prosemirror-model';
+import type { NodeSpec } from 'prosemirror-model';
 import { PLACEHOLDER_CLASS } from '../../../utils/_private/constants';
 
 export const placeholder: NodeSpec = {
@@ -13,16 +13,19 @@ export const placeholder: NodeSpec = {
     return [
       'span',
       { class: PLACEHOLDER_CLASS, ...node.attrs, contenteditable: false },
-      node.attrs.placeholderText,
+      node.attrs['placeholderText'],
     ];
   },
   leafText(node) {
-    return node.attrs.placeholderText as string;
+    return node.attrs['placeholderText'] as string;
   },
   parseDOM: [
     {
       tag: 'span',
-      getAttrs(node: HTMLElement) {
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
         if (node.classList.contains(PLACEHOLDER_CLASS)) {
           return { placeholderText: node.innerText };
         }

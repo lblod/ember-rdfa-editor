@@ -1,5 +1,10 @@
 import { keydownHandler } from 'prosemirror-keymap';
-import { TextSelection, Plugin, Command, EditorState } from 'prosemirror-state';
+import {
+  TextSelection,
+  Plugin,
+  type Command,
+  EditorState,
+} from 'prosemirror-state';
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { GapCursor } from './gap-cursor';
@@ -140,7 +145,7 @@ function beforeinput(view: EditorView, event: InputEvent) {
   const { $from } = view.state.selection;
   const insert = $from.parent
     .contentMatchAt($from.index())
-    .findWrapping(view.state.schema.nodes.text);
+    .findWrapping(view.state.schema.nodes['text']);
   if (!insert) return false;
 
   let frag = Fragment.empty;

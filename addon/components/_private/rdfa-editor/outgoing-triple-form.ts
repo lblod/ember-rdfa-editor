@@ -2,7 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
-import {
+import type {
   OutgoingTriple,
   SayTermType,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -146,7 +146,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     }
     const result: string[] = [];
     rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
-      if (resolvedNode.value.attrs.rdfaNodeType === 'literal') {
+      if (resolvedNode.value.attrs['rdfaNodeType'] === 'literal') {
         result.push(rdfaId);
       }
     });
@@ -392,7 +392,6 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
-    console.log('validated', validated);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple);
     } else {

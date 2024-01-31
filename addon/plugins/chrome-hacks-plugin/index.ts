@@ -24,7 +24,7 @@ export function chromeHacksPlugin(): ProsePlugin {
           }
           const $posToCheck = view.state.doc.resolve($from.pos + 1);
           const nodeAfter = $posToCheck.nodeAfter;
-          if (nodeAfter && nodeAfter.type.spec.needsChromeCursorFix) {
+          if (nodeAfter && nodeAfter.type.spec['needsChromeCursorFix']) {
             view.dispatch(view.state.tr.deleteRange(from, $posToCheck.pos));
             return true;
           }
@@ -40,7 +40,7 @@ export function chromeHacksPlugin(): ProsePlugin {
           return;
         }
         const nextNode = $from.nodeAfter;
-        if (nextNode?.type.spec.needsChromeCursorFix) {
+        if (nextNode?.type.spec['needsChromeCursorFix']) {
           return DecorationSet.create(state.doc, [
             Decoration.widget(
               from,

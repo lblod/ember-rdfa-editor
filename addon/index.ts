@@ -1,15 +1,15 @@
 export * from 'prosemirror-keymap';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { Decoration } from 'prosemirror-view';
-import { CurieOptions, string } from 'yup';
+import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
 
 export {
   getRdfaAttrs,
-  RdfaAttrs,
   rdfaAttrs,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
+export type { RdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 
 export {
   default as ProseMirror,
@@ -41,7 +41,11 @@ addMethod(
     return this.test(
       'is-curie',
       '${path} is not a valid CURIE',
-      (value: string) => {
+      (value?: string) => {
+        if (!value) {
+          return false;
+        }
+
         if (allowEmpty && value.length === 0) {
           return true;
         }

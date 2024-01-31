@@ -1,6 +1,6 @@
 import { findParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { NodeType } from 'prosemirror-model';
-import { Command, NodeSelection } from 'prosemirror-state';
+import { type Command, NodeSelection } from 'prosemirror-state';
 
 const selectParentNodeOfType: (type: NodeType) => Command = (type) => {
   return (state, dispatch) => {

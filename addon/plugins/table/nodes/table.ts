@@ -1,6 +1,7 @@
 // Helper for creating a schema that supports tables.
 
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+// Helper for creating a schema that supports tables.
+import type { Node as PNode, NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
@@ -47,14 +48,14 @@ function getCellAttrs(
 
 function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
   const attrs: CellAttributes = {};
-  if (Number(node.attrs.colspan) !== 1) {
-    attrs.colspan = node.attrs.colspan as number;
+  if (Number(node.attrs['colspan']) !== 1) {
+    attrs.colspan = node.attrs['colspan'] as number;
   }
-  if (Number(node.attrs.rowspan) !== 1) {
-    attrs.rowspan = node.attrs.rowspan as number;
+  if (Number(node.attrs['rowspan']) !== 1) {
+    attrs.rowspan = node.attrs['rowspan'] as number;
   }
-  if (node.attrs.colwidth) {
-    attrs['data-colwidth'] = (node.attrs.colwidth as number[]).join(',');
+  if (node.attrs['colwidth']) {
+    attrs['data-colwidth'] = (node.attrs['colwidth'] as number[]).join(',');
   }
   for (const [key, attr] of Object.entries(extraAttrs)) {
     const setter = attr.setDOMAttr;
@@ -103,7 +104,10 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'table',
-          getAttrs(node: HTMLElement) {
+          getAttrs(node: string | HTMLElement) {
+            if (typeof node === 'string') {
+              return false;
+            }
             const rdfaAttrs = getRdfaAttrs(node);
             if (rdfaAttrs) {
               return rdfaAttrs;
@@ -125,7 +129,10 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'tr',
-          getAttrs(node: HTMLElement) {
+          getAttrs(node: string | HTMLElement) {
+            if (typeof node === 'string') {
+              return false;
+            }
             const rdfaAttrs = getRdfaAttrs(node);
             if (rdfaAttrs) {
               return rdfaAttrs;
@@ -148,7 +155,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'td',
-          getAttrs: (dom: HTMLElement) => getCellAttrs(dom, extraAttrs),
+          getAttrs: (dom: string | HTMLElement) => {
+            if (typeof dom === 'string') {
+              return false;
+            }
+            return getCellAttrs(dom, extraAttrs);
+          },
         },
       ],
       toDOM(node) {
@@ -163,7 +175,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'th',
-          getAttrs: (dom: HTMLElement) => getCellAttrs(dom, extraAttrs),
+          getAttrs: (dom: string | HTMLElement) => {
+            if (typeof dom === 'string') {
+              return false;
+            }
+            return getCellAttrs(dom, extraAttrs);
+          },
         },
       ],
       toDOM(node) {

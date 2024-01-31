@@ -6,19 +6,22 @@ import {
   renderRdfaAware,
 } from '../core/schema';
 import {
-  EmberNodeConfig,
+  type EmberNodeConfig,
   createEmberNodeSpec,
   createEmberNodeView,
 } from '../utils/ember-node';
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa';
-import { ComponentLike } from '@glint/template';
+import type { ComponentLike } from '@glint/template';
 
 const parseDOM = [
   {
     tag: 'span',
     // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
     priority: 10,
-    getAttrs(node: HTMLElement) {
+    getAttrs(node: string | HTMLElement) {
+      if (typeof node === 'string') {
+        return false;
+      }
       const attrs = getRdfaAttrs(node);
       if (attrs) {
         return attrs;

@@ -4,12 +4,12 @@ import {
   EditorState,
   NodeSelection,
   PluginKey,
-  PluginView,
+  type PluginView,
   ProsePlugin,
 } from '@lblod/ember-rdfa-editor';
 import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { isSome } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type State = {
   activeNode?: ResolvedPNode;

@@ -27,11 +27,11 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
   AttrStep,
-  Command,
+  type Command,
   EditorState,
   keymap,
   NodeSelection,
-  NodeViewConstructor,
+  type NodeViewConstructor,
   SayView,
   Selection,
   Step,
@@ -39,7 +39,7 @@ import {
   TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';

@@ -40,7 +40,7 @@ import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color';
 import {
   inputRules,
-  PluginConfig,
+  type PluginConfig,
   PNode,
   Schema,
 } from '@lblod/ember-rdfa-editor';
@@ -55,9 +55,12 @@ import {
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import { findChildrenByAttr, NodeWithPos } from '@curvenote/prosemirror-utils';
-import { testEditor } from 'dummy/tests/utils/editor';
 import {
+  findChildrenByAttr,
+  type NodeWithPos,
+} from '@curvenote/prosemirror-utils';
+import { testEditor } from 'dummy/tests/utils/editor';
+import type {
   IncomingTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -130,7 +133,7 @@ const prov = (suffix: string) => `http://www.w3.org/ns/prov#${suffix}`;
 function findNodeById(doc: PNode, id: string): NodeWithPos {
   const result = findChildrenByAttr(
     doc,
-    (attrs) => attrs.__rdfaId === id,
+    (attrs) => attrs['__rdfaId'] === id,
     true,
   );
   if (result.length > 1) {
@@ -175,10 +178,10 @@ module('rdfa | parsing', function () {
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as
+    const actualProps = decisionNode.attrs['properties'] as
       | OutgoingTriple[]
       | undefined;
-    const actualBacklinks = decisionNode.attrs.backlinks as
+    const actualBacklinks = decisionNode.attrs['backlinks'] as
       | IncomingTriple[]
       | undefined;
     const expectedProps: OutgoingTriple[] = [
@@ -202,10 +205,10 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as
+    const valueProps = valueNode.attrs['properties'] as
       | OutgoingTriple[]
       | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as
+    const valueBacklinks = valueNode.attrs['backlinks'] as
       | IncomingTriple[]
       | undefined;
     const expectedValueProps: OutgoingTriple[] = [];
@@ -246,19 +249,16 @@ module('rdfa | parsing', function () {
        </span>
    </div>
     `;
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(htmlContent, 'text/html');
-    console.log('dom', dom);
     controller.initialize(htmlContent);
     const { doc } = controller.mainEditorState;
     const { node: decisionNode } = findNodeById(
       doc,
       '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
     );
-    const actualProps = decisionNode.attrs.properties as
+    const actualProps = decisionNode.attrs['properties'] as
       | OutgoingTriple[]
       | undefined;
-    const actualBacklinks = decisionNode.attrs.backlinks as
+    const actualBacklinks = decisionNode.attrs['backlinks'] as
       | IncomingTriple[]
       | undefined;
 
@@ -290,10 +290,10 @@ module('rdfa | parsing', function () {
       doc,
       'ef0c2983-ccd9-4924-a640-42d2426a77bf',
     );
-    const valueProps = valueNode.attrs.properties as
+    const valueProps = valueNode.attrs['properties'] as
       | OutgoingTriple[]
       | undefined;
-    const valueBacklinks = valueNode.attrs.backlinks as
+    const valueBacklinks = valueNode.attrs['backlinks'] as
       | IncomingTriple[]
       | undefined;
     const expectedValueProps: OutgoingTriple[] = [];

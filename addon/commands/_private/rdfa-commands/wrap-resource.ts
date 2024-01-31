@@ -1,5 +1,5 @@
 import { addProperty } from '../../rdfa-commands/add-property';
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -7,7 +7,7 @@ import {
   generateNewUri,
   getRdfaChildren,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export function wrapResource(
   args: { uriBase: string } | { existingUri: string },
@@ -19,7 +19,7 @@ export function wrapResource(
       subject: 'another placeholder',
     };
     const wrapArgs: Parameters<typeof wrapIn> = [
-      state.schema.nodes.block_rdfa,
+      state.schema.nodes['block_rdfa'],
       attrs,
     ];
     if (!wrapIn(...wrapArgs)(state)) {

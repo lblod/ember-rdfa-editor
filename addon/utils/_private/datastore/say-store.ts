@@ -1,14 +1,15 @@
 import {
   quadHash,
-  RdfaParseConfig,
+  type RdfaParseConfig,
   RdfaParser,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
 import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
 import { EditorState } from 'prosemirror-state';
-import Datastore, {
+import {
+  type default as Datastore,
   EditorStore,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore';
 
 export interface SayDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): SayStore;

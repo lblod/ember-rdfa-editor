@@ -13,7 +13,7 @@ export default class LinkEditor extends Component<Args> {
   }
 
   get href() {
-    return this.link?.node.attrs.href as string | undefined;
+    return this.link?.node.attrs['href'] as string | undefined;
   }
 
   set href(value: string | undefined) {
@@ -44,7 +44,7 @@ export default class LinkEditor extends Component<Args> {
       const { selection } = this.controller.mainEditorState;
       if (
         selection instanceof NodeSelection &&
-        selection.node.type === this.controller.schema.nodes.link
+        selection.node.type === this.controller.schema.nodes['link']
       ) {
         return { pos: selection.from, node: selection.node };
       }

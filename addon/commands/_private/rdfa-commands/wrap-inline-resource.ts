@@ -1,4 +1,4 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 import {
   findNodeByRdfaId,
@@ -7,7 +7,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { wrapSelection } from '../../wrap-selection';
 import { addProperty } from '../../rdfa-commands/add-property';
-import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export function wrapInlineResource(
   args: { uriBase: string } | { existingUri: string },
@@ -19,7 +19,7 @@ export function wrapInlineResource(
       subject: 'another placeholder',
     };
     const wrapArgs: Parameters<typeof wrapSelection> = [
-      state.schema.nodes.inline_rdfa,
+      state.schema.nodes['inline_rdfa'],
       () => attrs,
     ];
     if (!wrapSelection(...wrapArgs)(state)) {

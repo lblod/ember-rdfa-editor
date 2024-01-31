@@ -3,9 +3,12 @@ import { emberApplicationPluginKey } from '@lblod/ember-rdfa-editor/plugins/embe
 import {
   createEmberNodeSpec,
   createEmberNodeView,
-  EmberNodeConfig,
+  type EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
-import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  optionMapOr,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option';
 import Counter from 'dummy/components/sample-ember-nodes/counter';
 import type IntlService from 'ember-intl/services/intl';
 
@@ -20,7 +23,7 @@ const emberNodeConfig: EmberNodeConfig = {
     count: {
       default: 0,
       serialize: (node) => {
-        return (node.attrs.count as number).toString();
+        return (node.attrs['count'] as number).toString();
       },
       parse: (element) => {
         return optionMapOr(0, parseInt, element.getAttribute('count'));
@@ -30,12 +33,13 @@ const emberNodeConfig: EmberNodeConfig = {
   stopEvent() {
     return false;
   },
-  serialize: (node, state) => {
+  serialize: (node, maybeState) => {
+    const state = unwrap(maybeState);
     const intl = emberApplicationPluginKey
       .getState(state)
       ?.application.lookup('service:intl') as IntlService | undefined;
-    const lang = state.doc.attrs.lang as string;
-    const count = node.attrs.count as number;
+    const lang = state.doc.attrs['lang'] as string;
+    const count = node.attrs['count'] as number;
     const serializedAttributes: Record<string, string> = {
       'data-ember-node': 'counter',
       'data-count': count.toString(),

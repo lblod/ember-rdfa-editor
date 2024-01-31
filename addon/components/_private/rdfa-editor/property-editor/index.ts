@@ -4,9 +4,9 @@ import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
 import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import {
+import type {
   OutgoingTriple,
   PlainTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -32,7 +32,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
 
   get properties() {
-    return this.args.node.value.attrs.properties as
+    return this.args.node.value.attrs['properties'] as
       | OutgoingTriple[]
       | undefined;
   }
@@ -50,7 +50,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   get currentResource() {
-    return this.args.node.value.attrs.subject as string;
+    return this.args.node.value.attrs['subject'] as string;
   }
 
   startPropertyCreation = () => {

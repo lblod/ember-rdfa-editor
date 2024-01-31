@@ -33,7 +33,7 @@ export class TableView extends PluginTableView {
   }
 
   private addClasses(node: Node): void {
-    const nodeClasses = node.attrs.class as string | undefined;
+    const nodeClasses = node.attrs['class'] as string | undefined;
     if (typeof nodeClasses === 'string') {
       this.table.classList.add(...nodeClasses.split(' '));
     }

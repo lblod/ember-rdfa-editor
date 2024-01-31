@@ -3,6 +3,7 @@ import {
   NodeType,
   PNode,
   ProsePlugin,
+  EditorView,
   SayView,
   Slice,
 } from '@lblod/ember-rdfa-editor';
@@ -13,7 +14,7 @@ export { link, linkView } from './nodes/link';
 export const linkHandler: ProsePlugin = new ProsePlugin({
   props: {
     handleClickOn(
-      view: SayView,
+      view: EditorView | SayView,
       pos: number,
       node: PNode,
       nodePos: number,

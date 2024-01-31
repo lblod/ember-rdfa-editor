@@ -6,7 +6,7 @@ import {
 import {
   createEmberNodeSpec,
   createEmberNodeView,
-  EmberNodeConfig,
+  type EmberNodeConfig,
 } from '../../../utils/ember-node';
 import type { ComponentLike } from '@glint/template';
 import Link from '@lblod/ember-rdfa-editor/components/ember-node/link';
@@ -45,7 +45,10 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     parseDOM: [
       {
         tag: 'a',
-        getAttrs(dom: HTMLElement) {
+        getAttrs(dom: string | HTMLElement) {
+          if (typeof dom === 'string') {
+            return false;
+          }
           return {
             ...getRdfaAttrs(dom),
             href: dom.getAttribute('href'),
