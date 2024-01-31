@@ -1,5 +1,5 @@
-import { AttributeSpec } from 'prosemirror-model';
-import SayNodeSpec from '../core/say-node-spec';
+import type { AttributeSpec } from 'prosemirror-model';
+import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import { getRdfaAttrs, renderRdfaAware } from '../core/schema';
 
@@ -43,8 +43,11 @@ export const docWithConfig = ({
     parseDOM: [
       {
         tag: 'div',
-        getAttrs(node: HTMLElement) {
-          if (node.dataset.sayDocument) {
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
+          if (node.dataset['sayDocument']) {
             return {
               lang: node.getAttribute('lang'),
               ...getRdfaAttrs(node),
@@ -64,8 +67,8 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
-      const resource = node.attrs.resource as string;
-      const lang = node.attrs.lang as string;
+      const resource = node.attrs['resource'] as string;
+      const lang = node.attrs['lang'] as string;
       return renderRdfaAware({
         renderable: node,
         tag: 'div',

@@ -1,4 +1,4 @@
-import {
+import type {
   IncomingTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -11,12 +11,12 @@ import {
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getProperties,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command, Transaction } from 'prosemirror-state';
+import type { Command, Transaction } from 'prosemirror-state';
 
 export type AddPropertyArgs = {
   /** The resource to which to add a property */
@@ -88,7 +88,7 @@ export function addProperty({
           targets = getNodesByResource(state, object.value);
         }
         targets?.forEach((target) => {
-          const backlinks = target.value.attrs.backlinks as
+          const backlinks = target.value.attrs['backlinks'] as
             | IncomingTriple[]
             | undefined;
           const newBacklinks = backlinks

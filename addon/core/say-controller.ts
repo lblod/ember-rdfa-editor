@@ -1,5 +1,5 @@
 import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
@@ -7,9 +7,9 @@ import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_priv
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
-import { Attrs, MarkType, Schema } from 'prosemirror-model';
+import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
-  Command,
+  type Command,
   EditorState,
   Selection,
   Transaction,

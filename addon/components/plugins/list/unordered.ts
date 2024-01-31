@@ -4,7 +4,7 @@ import Component from '@glimmer/component';
 import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {
@@ -15,15 +15,15 @@ export default class ListUnordered extends Component<Args> {
   get firstListParent() {
     return findParentNode(
       (node) =>
-        node.type === this.schema.nodes.ordered_list ||
-        node.type === this.schema.nodes.bullet_list,
+        node.type === this.schema.nodes['ordered_list'] ||
+        node.type === this.schema.nodes['bullet_list'],
     )(this.selection);
   }
 
   get isActive() {
     return (
       this.firstListParent?.node.type ===
-      this.controller.schema.nodes.bullet_list
+      this.controller.schema.nodes['bullet_list']
     );
   }
 
@@ -41,8 +41,11 @@ export default class ListUnordered extends Component<Args> {
 
   get toggleCommand(): Command {
     return chainCommands(
-      toggleList(this.schema.nodes.bullet_list, this.schema.nodes.list_item),
-      wrapInList(this.schema.nodes.bullet_list),
+      toggleList(
+        this.schema.nodes['bullet_list'],
+        this.schema.nodes['list_item'],
+      ),
+      wrapInList(this.schema.nodes['bullet_list']),
     );
   }
 

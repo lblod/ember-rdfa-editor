@@ -6,7 +6,7 @@ import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
 import RemoveNode from './remove-node';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 type Args = {
   controller?: SayController;
@@ -58,7 +58,7 @@ export default class RdfaEditor extends Component<Args> {
       let resultPos = 0;
       doc.descendants((node, pos) => {
         if (found) return false;
-        if (node.attrs.__rdfaId === id) {
+        if (node.attrs['__rdfaId'] === id) {
           found = true;
           resultPos = pos;
           return false;

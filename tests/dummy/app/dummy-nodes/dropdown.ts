@@ -2,7 +2,7 @@ import type { ComponentLike } from '@glint/template';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
-  EmberNodeConfig,
+  type EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 import Dropdown from 'dummy/components/sample-ember-nodes/dropdown';
 

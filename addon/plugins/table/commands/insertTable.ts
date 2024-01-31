@@ -1,4 +1,4 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { PNode } from '@lblod/ember-rdfa-editor';
@@ -11,9 +11,9 @@ export function insertTable(rows: number, columns: number): Command {
       selection: { $from },
     } = state;
 
-    const specAllowSplitByTable = $from.parent.type.spec.allowSplitByTable as
-      | boolean
-      | undefined;
+    const specAllowSplitByTable = $from.parent.type.spec[
+      'allowSplitByTable'
+    ] as boolean | undefined;
 
     const allowSplitByTable: boolean =
       specAllowSplitByTable === undefined ? true : specAllowSplitByTable;
@@ -29,7 +29,7 @@ export function insertTable(rows: number, columns: number): Command {
       for (let c = 0; c < columns; c++) {
         cells.push(
           unwrap(
-            schema.nodes.table_cell.createAndFill(
+            schema.nodes['table_cell'].createAndFill(
               proportionalWidth
                 ? {
                     colwidth: [proportionalWidth],

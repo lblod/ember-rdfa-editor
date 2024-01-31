@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import type RdfaRelationshipEditor from './index';
 import { SayController } from '@lblod/ember-rdfa-editor';
-import { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import OutgoingTripleFormComponent from '../outgoing-triple-form';
 import { action } from '@ember/object';
 

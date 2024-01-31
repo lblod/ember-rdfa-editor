@@ -17,13 +17,13 @@ export default class ListIndentationControls extends Component<Args> {
 
   get canIndent() {
     return this.controller.checkCommand(
-      sinkListItem(this.controller.schema.nodes.list_item),
+      sinkListItem(this.controller.schema.nodes['list_item']),
     );
   }
 
   get canUnindent() {
     return this.controller.checkCommand(
-      liftListItem(this.controller.schema.nodes.list_item),
+      liftListItem(this.controller.schema.nodes['list_item']),
     );
   }
 
@@ -32,7 +32,7 @@ export default class ListIndentationControls extends Component<Args> {
     if (this.controller) {
       this.controller.focus();
       this.controller.doCommand(
-        sinkListItem(this.controller.schema.nodes.list_item),
+        sinkListItem(this.controller.schema.nodes['list_item']),
       );
     }
   }
@@ -42,7 +42,7 @@ export default class ListIndentationControls extends Component<Args> {
     if (this.controller) {
       this.controller.focus();
       this.controller.doCommand(
-        liftListItem(this.controller.schema.nodes.list_item),
+        liftListItem(this.controller.schema.nodes['list_item']),
       );
     }
   }

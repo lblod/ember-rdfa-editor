@@ -7,7 +7,7 @@ import {
   wrapResource,
 } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
 import WrappingModal from './modal';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { wrapInlineLiteral } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/wrap-inline-literal';
 
 type Args = {
@@ -43,7 +43,7 @@ export default class WrappingUtils extends Component<Args> {
   }
 
   get currentResource() {
-    return this.args.node.value.attrs.resource as string | undefined;
+    return this.args.node.value.attrs['resource'] as string | undefined;
   }
 
   get canWrapWithLiteral() {

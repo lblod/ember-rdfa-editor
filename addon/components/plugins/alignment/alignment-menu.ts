@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import {
   ALIGNMENT_OPTIONS,
-  AlignmentOption,
+  type AlignmentOption,
   DEFAULT_ALIGNMENT,
 } from '@lblod/ember-rdfa-editor/plugins/alignment';
 import { setAlignment } from '@lblod/ember-rdfa-editor/plugins/alignment/commands';
@@ -23,7 +23,7 @@ export default class AlignmentMenu extends Component<Args> {
   get currentAlignment() {
     if (this.controller) {
       const { selection } = this.controller.mainEditorState;
-      const anchorAlignment = selection.$anchor.parent.attrs.alignment as
+      const anchorAlignment = selection.$anchor.parent.attrs['alignment'] as
         | AlignmentOption
         | undefined;
       return anchorAlignment ?? DEFAULT_ALIGNMENT;

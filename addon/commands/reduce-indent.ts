@@ -1,4 +1,4 @@
-import { Command, TextSelection } from 'prosemirror-state';
+import { type Command, TextSelection } from 'prosemirror-state';
 
 /**
  * Returns a command to indent something to the left if selection cursor is at the start of the node.
@@ -20,14 +20,15 @@ export const reduceIndent: Command = (state, dispatch) => {
     // Skip action if cursor is not at the first position of "child"
     $cursor.parentOffset !== 0 ||
     // Skip action node has no existing "indentationLevel"
-    !$cursor.parent.attrs.indentationLevel
+    !$cursor.parent.attrs['indentationLevel']
   ) {
     return false;
   }
 
   const paragraphPosition = $cursor.before($cursor.depth);
-  const currentIndentationLevel = $cursor.parent.attrs
-    .indentationLevel as number;
+  const currentIndentationLevel = $cursor.parent.attrs[
+    'indentationLevel'
+  ] as number;
 
   if (dispatch) {
     const tr = state.tr.setNodeAttribute(

@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 
 export default class InlineComponentsPluginCounter extends Component<EmberNodeArgs> {
   @action
@@ -9,7 +9,7 @@ export default class InlineComponentsPluginCounter extends Component<EmberNodeAr
   }
 
   get count() {
-    return this.args.node.attrs.count as number;
+    return this.args.node.attrs['count'] as number;
   }
 
   get label() {

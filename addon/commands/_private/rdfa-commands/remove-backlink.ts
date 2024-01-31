@@ -3,14 +3,14 @@ import {
   getNodesByResource,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import {
   getBacklinks,
   getProperties,
   getResource,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { Command, Transaction } from 'prosemirror-state';
+import type { Command, Transaction } from 'prosemirror-state';
 
 type RemoveBacklinkArgs = {
   target:

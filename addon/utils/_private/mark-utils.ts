@@ -1,5 +1,5 @@
 import { PNode } from '@lblod/ember-rdfa-editor';
-import { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
+import type { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
 import { SelectionRange, Selection } from 'prosemirror-state';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';

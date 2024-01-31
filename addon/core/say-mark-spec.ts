@@ -1,5 +1,5 @@
-import { DOMOutputSpec, Mark, MarkSpec } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import type { MarkSpec } from 'prosemirror-model';
+import type { MarkSerializer } from './say-serializer';
 
 /**
  * Custom `MarkSpec` interface which extends it with a `serialize` method. This method is called by the custom `SaySerializer`.
@@ -15,9 +15,5 @@ export default interface SayMarkSpec extends MarkSpec {
    * e.g. copying a part of the editor (see `clipboardSerializer`) or extracting the document html using the 'SayController.htmlContent` method.
    *
    */
-  serialize?: (
-    mark: Mark,
-    inline: boolean,
-    state: EditorState,
-  ) => DOMOutputSpec;
+  serialize?: MarkSerializer;
 }

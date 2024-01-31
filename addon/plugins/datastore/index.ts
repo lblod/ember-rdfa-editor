@@ -1,6 +1,6 @@
 import {
   EditorState,
-  EditorStateConfig,
+  type EditorStateConfig,
   PluginKey,
   Transaction,
 } from 'prosemirror-state';
@@ -13,14 +13,17 @@ import { map, objectFrom } from 'iter-tools';
 import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/say-editor';
 import {
   createLogger,
-  Logger,
+  type Logger,
 } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
 import {
   isElement,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { Option, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  type Option,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option';
 import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
@@ -191,7 +194,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
   const serializer = DOMSerializer.fromSchema(schema);
   const rdfaMarks: MarkType[] = [];
   for (const markType of Object.values(schema.marks)) {
-    if (markType.spec.hasRdfa as boolean) {
+    if (markType.spec['hasRdfa'] as boolean) {
       rdfaMarks.push(markType);
     }
   }
@@ -219,7 +222,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
                   serializer,
                   schema,
                   textBuffer,
-                ),
+                ) as Iterable<TextPNode>,
               ),
             );
           }
@@ -248,7 +251,7 @@ function children(schema: Schema, refman: ProseReferenceManager) {
               serializer,
               schema,
               textBuffer,
-            ),
+            ) as Iterable<TextPNode>,
           ),
         );
       }
@@ -388,7 +391,9 @@ function serializeTextBlobRec(
       domNode: dom,
       children,
     }) as TextPNode;
-    result.children.forEach((child: TextPNode) => (child.parent = result));
+    (result.children as TextPNode[]).forEach(
+      (child: TextPNode) => (child.parent = result),
+    );
     return [result];
   }
 }

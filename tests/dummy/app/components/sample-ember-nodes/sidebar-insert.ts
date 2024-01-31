@@ -18,17 +18,17 @@ export default class RdfaIcPluginInsertComponent extends Component<RdfaIcPluginI
 
   @action
   insertCard() {
-    this.insert(this.schema.nodes.card);
+    this.insert(this.schema.nodes['card']);
   }
 
   @action
   insertCounter() {
-    this.insert(this.schema.nodes.counter);
+    this.insert(this.schema.nodes['counter']);
   }
 
   @action
   insertDropdown() {
-    this.insert(this.schema.nodes.dropdown);
+    this.insert(this.schema.nodes['dropdown']);
   }
 
   insert(type: NodeType) {

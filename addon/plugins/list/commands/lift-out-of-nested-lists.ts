@@ -28,7 +28,7 @@
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { mapPositionFrom } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { Fragment, NodeRange, NodeType, Slice } from 'prosemirror-model';
-import { Command, Transaction } from 'prosemirror-state';
+import type { Command, Transaction } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';
 
 export function liftOutOfNestedLists(itemType: NodeType): Command {

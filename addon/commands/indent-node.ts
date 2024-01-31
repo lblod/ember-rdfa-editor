@@ -1,4 +1,4 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { PNode } from '..';
 
 type IndentNodeArgs = {
@@ -27,8 +27,8 @@ export function indentNode({
       if (
         'indentationLevel' in node.attrs &&
         predicate(node, pos, parent) &&
-        ((direction === -1 && node.attrs.indentationLevel > 0) ||
-          (direction === 1 && node.attrs.indentationLevel < maxLevel))
+        ((direction === -1 && node.attrs['indentationLevel'] > 0) ||
+          (direction === 1 && node.attrs['indentationLevel'] < maxLevel))
       ) {
         applicableNodes.push({ node, pos });
       }
@@ -39,7 +39,7 @@ export function indentNode({
     if (dispatch) {
       const tr = state.tr;
       applicableNodes.forEach(({ node, pos }) => {
-        const indentationLevel = node.attrs.indentationLevel as number;
+        const indentationLevel = node.attrs['indentationLevel'] as number;
         tr.setNodeAttribute(
           pos,
           'indentationLevel',

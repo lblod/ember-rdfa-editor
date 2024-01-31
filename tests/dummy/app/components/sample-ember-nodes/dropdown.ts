@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
 
 export default class InlineComponentsPluginDropdown extends Component<EmberNodeArgs> {
   get title() {
