@@ -1,6 +1,6 @@
 # @lblod/ember-rdfa-editor
 
-## 9.0.0-next.0
+## 10.0.0-next.0
 
 ### Major Changes
 
