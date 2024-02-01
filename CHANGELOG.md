@@ -1,5 +1,21 @@
 # @lblod/ember-rdfa-editor
 
+## 10.0.0-next.1
+
+### Major Changes
+
+- [#1136](https://github.com/lblod/ember-rdfa-editor/pull/1136) [`7e88d94`](https://github.com/lblod/ember-rdfa-editor/commit/7e88d94cd1495ee566b1053a0405d5bdf5d8f706) Thanks [@elpoelma](https://github.com/elpoelma)! - Replace all instances of `resource` node-attribute by `subject` node-attribute
+
+### Minor Changes
+
+- [#1136](https://github.com/lblod/ember-rdfa-editor/pull/1136) [`7e88d94`](https://github.com/lblod/ember-rdfa-editor/commit/7e88d94cd1495ee566b1053a0405d5bdf5d8f706) Thanks [@elpoelma](https://github.com/elpoelma)! - Simplify implementation of `getRdfaAttrs` function
+
+### Patch Changes
+
+- [#1124](https://github.com/lblod/ember-rdfa-editor/pull/1124) [`979719d`](https://github.com/lblod/ember-rdfa-editor/commit/979719da9fce6e08b05ae940677ce56009796559) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix `looseMatches` is undefined error
+
+- [#1133](https://github.com/lblod/ember-rdfa-editor/pull/1133) [`57e11d6`](https://github.com/lblod/ember-rdfa-editor/commit/57e11d610e2f048c1e4acb8322cff3b0f3633c04) Thanks [@abeforgit](https://github.com/abeforgit)! - migrate off of ember-cli-typescript
+
 ## 10.0.0-next.0
 
 ### Major Changes
@@ -252,6 +268,7 @@
 - [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
 
 - [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+
 ## 7.0.2
 
 ### Patch Changes

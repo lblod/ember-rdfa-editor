@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "10.0.0-next.0",
+  "version": "10.0.0-next.1",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
