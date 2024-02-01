@@ -2,7 +2,9 @@
   "name": "@lblod/ember-rdfa-editor",
   "version": "9.0.0-next.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
-  "keywords": ["ember-addon"],
+  "keywords": [
+    "ember-addon"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
@@ -15,12 +17,18 @@
   },
   "typesVersions": {
     "*": {
-      "test-support": ["declarations/addon-test-support/index.d.ts"],
+      "test-support": [
+        "declarations/addon-test-support/index.d.ts"
+      ],
       "test-support/*": [
         "declarations/addon-test-support/*",
         "declarations/addon-test-support/*/index.d.ts"
       ],
-      "*": ["declarations/addon/*", "declarations/addon/*/index.d.ts"]
+      "*": [
+        "declarations/addon/*",
+        "declarations/addon/*/index.d.ts",
+        "declarations/addon/index.d.ts"
+      ]
     }
   },
   "scripts": {
