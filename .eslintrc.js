@@ -59,7 +59,7 @@ module.exports = {
     {
       files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['./tsconfig.json', './cypress/tsconfig.json'],
+        project: ['./tsconfig.json', './e2e/tsconfig.json'],
       },
       rules: {
         'deprecation/deprecation': 'warn',
@@ -124,6 +124,20 @@ module.exports = {
       // test files
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
+    },
+    {
+      files: ['e2e/**/*.spec.{js,ts}'],
+      extends: ['plugin:playwright/recommended'],
+      rules: {
+        'playwright/expect-expect': [
+          'error',
+          {
+            additionalAssertFunctionNames: [
+              'setEditorContentAndCompareSnapshot',
+            ],
+          },
+        ],
+      },
     },
   ],
 };
