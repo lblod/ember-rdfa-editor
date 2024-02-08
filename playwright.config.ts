@@ -44,4 +44,13 @@ export default defineConfig({
     url: 'http://127.0.0.1:4200',
     reuseExistingServer: !process.env.CI,
   },
+  expect: {
+    // https://github.com/microsoft/playwright/issues/13873
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    toMatchSnapshot: { _comparator: 'ssim-cie94' },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    toHaveScreenshot: { _comparator: 'ssim-cie94' },
+  },
 });

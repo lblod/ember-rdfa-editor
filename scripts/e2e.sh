@@ -3,9 +3,6 @@
 # The image used for the docker run command must be the same as in `.woodpecker/.e2e.yml` \
 # to ensure that snapshots are captured in the same browser versions both locally and in CI.
 
-# The `--add-host` flag is used to ensure that the tests can access the host machine,
-# which is required for visual regression testing, with the application running locally.
-
 # https://www.oddbird.net/2022/11/30/headed-playwright-in-docker/
 
 OS=$(uname)
