@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # The image used for the docker run command must be the same as in `.woodpecker/.e2e.yml` \
 # to ensure that snapshots are captured in the same browser versions both locally and in CI.
