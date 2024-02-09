@@ -23,3 +23,11 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('setEditorContentFromHtml', (fixtureLocation: string) => {
+  cy.fixture(fixtureLocation).then((html) => {
+    cy.window().then((win) => {
+      win.__PC.setHtmlContent(html);
+    });
+  });
+});

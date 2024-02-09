@@ -44,3 +44,7 @@ testem.log
 
 # broccoli-debug
 /DEBUG/
+
+cypress/snapshots/actual
+cypress/snapshots/diff
+

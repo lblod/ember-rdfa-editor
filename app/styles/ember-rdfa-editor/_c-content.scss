@@ -228,20 +228,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   ol.numbered-list {
     list-style-type: decimal;
 
-    & > li > ol:not([data-list-style]) {
+    & > li > ol {
       list-style-type: inherit;
-    }
-
-    &[data-list-style='decimal'] {
-      list-style-type: decimal;
-    }
-
-    &[data-list-style='upper-roman'] {
-      list-style-type: upper-roman;
-    }
-
-    &[data-list-style='lower-alpha'] {
-      list-style-type: lower-alpha;
     }
 
     // Stop indenting
@@ -260,73 +248,19 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
+  $styles: circle, square, initial;
+
   ul > li {
-    > ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul > li {
-      list-style-type: square;
-    }
-
-    > ul ul ul > li {
-      list-style-type: initial;
-    }
-
-    > ul ul ul ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul ul ul ul > li {
-      list-style-type: square;
-    }
-
-    > ul ul ul ul ul ul > li {
-      list-style-type: initial;
-    }
-
-    > ul ul ul ul ul ul ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul ul ul ul ul ul ul > li {
-      list-style-type: square;
-    }
-
-    > ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: initial;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: square;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: initial;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: square;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: initial;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: circle;
-    }
-
-    > ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul > li {
-      list-style-type: square;
+    // Goes up to 18 levels deep and assigns a different style
+    // to 1, 2 and 3 levels, then repeats.
+    @for $i from 1 through 18 {
+      $selector: '';
+      @for $j from 1 through $i {
+        $selector: $selector + 'ul ';
+      }
+      #{$selector} > li {
+        list-style-type: if($i >= 17, circle, nth($styles, ($i - 1) % 3 + 1));
+      }
     }
   }
 

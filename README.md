@@ -348,6 +348,35 @@ Other languages can be added by copying the contents of the file `translations/e
 A helper function is provided to assist with finding a reasonable fallback locale, for example providing `en-US` translations if `en` is requested.
 See [the test app](tests/dummy/app/routes/application.ts) for example of it's usage.
 
+## Testing
+
+### Cypress
+
+We use Cypress for testing in the browser. There are two types of tests:
+
+* Visual regression tests (VRT) - verifying how the content is rendered in the editor, tagged with `@vrt`.
+* Integration tests - verifying the behaviour of the editor, no tags.
+
+#### Visual regression tests
+
+To run visual regression tests locally you need to:
+
+1. Start the dummy app with `npm run start`
+2. Run `cypress:run:vrt`
+
+This will run Cypress in Docker and generate snapshots in `cypress/snapshots`:
+
+> [!IMPORTANT]
+> Cypress is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.
+
+* `cypress/snapshots/diff` - for any failed tests, a diff image will be generated here
+* `cypress/snapshots/actual` - the actual rendered image at time of test
+
+If the "actual" snapshot is the expected result, you can copy it to the "base" snapshots folder:
+
+* `cypress/snapshots/base` - the baseline image to compare against (committed to git)
+
+
 ## Compatibility
 
 * Ember.js v3.28 or above

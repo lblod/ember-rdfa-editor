@@ -34,7 +34,8 @@
     "prepack": "ember ts:precompile",
     "postpack": "ember ts:clean",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
+    "cypress:run": "cypress run --env grepTags='--@vrt'",
+    "cypress:run:vrt": "./scripts/cypress-vrt.sh",
     "cypress:ci": "start-server-and-test start http://localhost:4200 cypress:run"
   },
   "dependencies": {
@@ -92,6 +93,7 @@
     "@babel/plugin-proposal-decorators": "^7.21.0",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.26.2",
+    "@cypress/grep": "^4.0.1",
     "@ember/string": "^3.0.1",
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^3.0.1",
@@ -134,6 +136,7 @@
     "changesets-release-it-plugin": "^0.1.1",
     "concurrently": "^8.0.1",
     "cypress": "^13.6.2",
+    "cypress-visual-regression": "^4.0.0",
     "ember-cli": "~4.12.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
