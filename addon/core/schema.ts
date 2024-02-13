@@ -88,7 +88,9 @@ export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
     }
     let properties: OutgoingTriple[];
     if (node.dataset['outgoingProps']) {
-      properties = JSON.parse(node.dataset['outgoingProps']) as OutgoingTriple[];
+      properties = JSON.parse(
+        node.dataset['outgoingProps'],
+      ) as OutgoingTriple[];
     } else {
       properties = [];
     }

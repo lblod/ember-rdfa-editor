@@ -57,7 +57,7 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
       },
     ],
     toDOM(node) {
-      const { interactive, placeholder, ...attrs } = node.attrs;
+      const { interactive: _, placeholder: __, ...attrs } = node.attrs;
       return renderRdfaAware({
         renderable: node,
         tag: 'a',

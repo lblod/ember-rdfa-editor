@@ -46,7 +46,6 @@ addMethod(
         if (isNone(value)) {
           return false;
         }
-        console.log('testing', value)
 
         if (allowEmpty && value.length === 0) {
           return true;
