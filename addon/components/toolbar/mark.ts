@@ -1,5 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
+import type { MarkType } from 'prosemirror-model';
 import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
@@ -12,21 +13,30 @@ export default class MarkComponent extends Component<Args> {
     return this.args.controller;
   }
 
-  get mark() {
+  get mark(): MarkType | undefined {
+    if (this.controller && !this.controller.schema.marks[this.args.mark]) {
+      console.error(
+        `Can't find mark '${this.args.mark}', did you add it to your schema?`,
+      );
+    }
     return this.controller.schema.marks[this.args.mark];
   }
 
   get isActive() {
-    return this.controller.isMarkActive(this.mark);
+    return this.mark && this.controller.isMarkActive(this.mark);
   }
 
   get canToggle() {
-    return this.controller.checkCommand(toggleMarkAddFirst(this.mark));
+    return (
+      this.mark && this.controller.checkCommand(toggleMarkAddFirst(this.mark))
+    );
   }
 
   @action
   toggle() {
-    this.controller.focus();
-    this.controller.doCommand(toggleMarkAddFirst(this.mark));
+    if (this.mark) {
+      this.controller.focus();
+      this.controller.doCommand(toggleMarkAddFirst(this.mark));
+    }
   }
 }
