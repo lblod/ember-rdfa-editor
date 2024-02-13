@@ -510,6 +510,13 @@ export class RdfaParser<N> {
           newSubject = true;
         } else if (parentTag.object) {
           newSubject = parentTag.object;
+          // Hack to handle external subjects
+          if (typeof newSubject === 'object') {
+            const newValue = newSubject.value;
+            if (newValue && newValue.startsWith('http://example.org')) {
+              newSubject = { ...newSubject, value: newValue.slice(18) };
+            }
+          }
         }
 
         // Determine type
@@ -1297,7 +1304,10 @@ export class RdfaParser<N> {
   ) {
     // Validate IRIs
     if (
-      (subject.termType === 'NamedNode' && subject.value.indexOf(':') < 0) ||
+      // More hacking... Does including subjects with '#' but not ':' make sense?
+      (subject.termType === 'NamedNode' &&
+        subject.value.indexOf(':') < 0 &&
+        subject.value.indexOf('#') < 0) ||
       (predicate.termType === 'NamedNode' &&
         predicate.value.indexOf(':') < 0) ||
       (object.termType === 'NamedNode' && object.value.indexOf(':') < 0)
