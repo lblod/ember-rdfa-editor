@@ -19,16 +19,31 @@ type CellAttributes = {
   colwidth?: number[] | null;
 } & Record<string, unknown>;
 
+// A naive way to fix the colwidths attribute, from pixels to percentage
+const fixupColWidth = (number: string) => {
+  const numberWidth = Number(number);
+
+  if (numberWidth > 100) {
+    // return 0 to reset the width
+    return 0;
+  }
+
+  return numberWidth;
+};
+
 function getCellAttrs(
   dom: Element,
   extraAttrs: Record<string, ExtraAttribute>,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
+
   const widths =
-    widthAttr && /^\d+(,\d+)*$/.test(widthAttr)
-      ? widthAttr.split(',').map((s) => Number(s))
+    widthAttr && /^\d+(\.\d+)*(,\d+(\.\d+)*)*$/.test(widthAttr)
+      ? widthAttr.split(',').map(fixupColWidth)
       : null;
+
   const colspan = Number(dom.getAttribute('colspan') || 1);
+
   const result: CellAttributes = {
     colspan,
     rowspan: Number(dom.getAttribute('rowspan') || 1),
