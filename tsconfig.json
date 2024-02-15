@@ -79,6 +79,7 @@
     "types/**/*",
     "test-support/**/*",
     "addon-test-support/**/*",
-    "lib/dummy-plugin"
+    "lib/dummy-plugin",
+    "playwright.config.ts"
   ]
 }

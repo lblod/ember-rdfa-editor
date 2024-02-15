@@ -350,32 +350,30 @@ See [the test app](tests/dummy/app/routes/application.ts) for example of it's us
 
 ## Testing
 
-### Cypress
+### Playwright
 
-We use Cypress for testing in the browser. There are two types of tests:
+We use Playwright for testing in the browser. There are two types of tests:
 
 * Visual regression tests (VRT) - verifying how the content is rendered in the editor, tagged with `@vrt`.
 * Integration tests - verifying the behaviour of the editor, no tags.
 
-#### Visual regression tests
+#### Available commands
 
-To run visual regression tests locally you need to:
+* `e2e:open` - opens Playwright UI locally 
+* `e2e:open:docker` - opens Playwright UI in Docker and attempts to connect to your XServer 
+* `e2e:run` - runs Playwright tests locally, skipping tests tagged with `@vrt`
+* `e2e:run:docker` - runs all Playwright tests in Docker
+* `e2e:run:vrt` - runs visual regression tests in Docker
+* `e2e:run:vrt:update` - updates visual regression tests after running them in Docker
+* `e2e:show-report` - shows the report of the last run
 
-1. Start the dummy app with `npm run start`
-2. Run `cypress:run:vrt`
+#### Visual regression tests (VRT)
 
-This will run Cypress in Docker and generate snapshots in `cypress/snapshots`:
+To run visual regression tests locally you need to run `npm run e2e:run:vrt`.  
+Afterwards if you need to update the snapshots you can run `npm run e2e:run:vrt:update`.
 
 > [!IMPORTANT]
-> Cypress is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.
-
-* `cypress/snapshots/diff` - for any failed tests, a diff image will be generated here
-* `cypress/snapshots/actual` - the actual rendered image at time of test
-
-If the "actual" snapshot is the expected result, you can copy it to the "base" snapshots folder:
-
-* `cypress/snapshots/base` - the baseline image to compare against (committed to git)
-
+> Playwright is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.
 
 ## Compatibility
 
