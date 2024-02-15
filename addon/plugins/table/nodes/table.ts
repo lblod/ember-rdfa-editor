@@ -135,7 +135,11 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
 
         return [
           'table',
-          { ...node.attrs, class: 'say-table' },
+          {
+            ...node.attrs,
+            class: 'say-table',
+            style: 'min-width: 100%',
+          },
           tableView.colgroupElement,
           ['tbody', 0],
         ];
