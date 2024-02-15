@@ -93,6 +93,10 @@ module('Integration | RDFa blackbox test ', function () {
         ${initialTurtle || '<empty>'}
         After:
         ${resultingTurtle || '<empty>'}
+        In 'before' but not in 'after':
+        ${await toTurtle(initialDataset.minus(resultingDataset))}
+        In 'after' but not in 'before':
+        ${await toTurtle(resultingDataset.minus(initialDataset))}
       `;
       assert.true(isEqual, message);
     });

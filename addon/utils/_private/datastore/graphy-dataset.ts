@@ -96,6 +96,11 @@ export class GraphyDataset implements QuadDataSet {
     return new GraphyDataset(this.fastDataset.difference(gds.fastDataset));
   }
 
+  minus(other: QuadDataSet): QuadDataSet {
+    const gds = new GraphyDataset(other);
+    return new GraphyDataset(this.fastDataset.minus(gds.fastDataset));
+  }
+
   equals(other: RDF.Dataset<RDF.Quad, RDF.Quad>): boolean {
     const gds = new GraphyDataset(other);
     return this.fastDataset.equals(gds.fastDataset);
