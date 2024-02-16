@@ -42,7 +42,7 @@
     "lint:js:fix": "eslint . --fix",
     "lint:types": "tsc --noEmit",
     "prepack": "tsc --project tsconfig.declarations.json",
-    "postpack": "rimraf declarations",
+    "clean": "rimraf declarations",
     "start": "concurrently -c \"auto\" -P \"npm:serve -- {@}\" \"npm:typecheck\" --",
     "typecheck": "tsc --noEmit --watch",
     "serve": "ember serve",
