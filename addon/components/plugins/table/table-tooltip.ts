@@ -9,6 +9,8 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+  toggleHeaderColumn,
+  toggleHeaderRow,
 } from 'prosemirror-tables';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
@@ -22,7 +24,8 @@ type Args = {
 
 type Action = {
   title: string;
-  icon: string;
+  icon?: string;
+  label?: string;
   command: Command;
 };
 export default class TableTooltip extends Component<Args> {
@@ -72,6 +75,16 @@ export default class TableTooltip extends Component<Args> {
         title: this.intl.t('ember-rdfa-editor.add-column-before'),
         icon: 'table-column-start-add',
         command: addColumnBefore,
+      },
+      {
+        title: this.intl.t('ember-rdfa-editor.toggle-header-row'),
+        label: this.intl.t('ember-rdfa-editor.toggle-header-row'),
+        command: toggleHeaderRow,
+      },
+      {
+        title: this.intl.t('ember-rdfa-editor.toggle-header-column'),
+        label: this.intl.t('ember-rdfa-editor.toggle-header-column'),
+        command: toggleHeaderColumn,
       },
       {
         title: this.intl.t('ember-rdfa-editor.delete-row'),

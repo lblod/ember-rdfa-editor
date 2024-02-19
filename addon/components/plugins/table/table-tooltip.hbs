@@ -2,14 +2,22 @@
   <this.SelectionTooltip
     @controller={{this.controller}}
     @visible={{this.visible}}
+    class="say-table-tooltip"
   >
     {{#each this.tableActions as |action|}}
-      <Toolbar::Button
-        @title={{action.title}}
-        @icon={{action.icon}}
-        @disabled={{not (this.canExecuteAction action)}}
+      <button
+        type="button"
+        title={{action.title}}
+        disabled={{not (this.canExecuteAction action)}}
         {{on "click" (fn this.executeAction action)}}
-      />
+      >
+        {{#if action.icon}}
+          <AuIcon @icon={{action.icon}} @size="large" />
+        {{/if}}
+        {{#if action.label}}
+          <span>{{action.label}}</span>
+        {{/if}}
+      </button>
     {{/each}}
   </this.SelectionTooltip>
 </div>
