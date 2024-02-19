@@ -83,8 +83,12 @@ table.ProseMirror-selectednode,
 }
 
 .say-table-tooltip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: column;
+}
+.say-table-tooltip--actions {
+  display: flex;
+  flex-direction: row;
   button {
     outline: none;
     border: 0;

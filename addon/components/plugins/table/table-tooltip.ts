@@ -54,53 +54,59 @@ export default class TableTooltip extends Component<Args> {
     { eager: false },
   );
 
-  get tableActions(): Action[] {
+  get tableActions() {
     return [
-      {
-        title: this.intl.t('ember-rdfa-editor.add-row-below'),
-        icon: 'table-row-end-add',
-        command: addRowAfter,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.add-row-above'),
-        icon: 'table-row-start-add',
-        command: addRowBefore,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.add-column-after'),
-        icon: 'table-column-end-add',
-        command: addColumnAfter,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.add-column-before'),
-        icon: 'table-column-start-add',
-        command: addColumnBefore,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.toggle-header-row'),
-        label: this.intl.t('ember-rdfa-editor.toggle-header-row'),
-        command: toggleHeaderRow,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.toggle-header-column'),
-        label: this.intl.t('ember-rdfa-editor.toggle-header-column'),
-        command: toggleHeaderColumn,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.delete-row'),
-        icon: 'table-row-remove',
-        command: deleteRow,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.delete-column'),
-        icon: 'table-column-remove',
-        command: deleteColumn,
-      },
-      {
-        title: this.intl.t('ember-rdfa-editor.delete-table'),
-        icon: 'bin',
-        command: deleteTable,
-      },
+      [
+        {
+          title: this.intl.t('ember-rdfa-editor.toggle-header-row'),
+          label: this.intl.t('ember-rdfa-editor.toggle-header-row'),
+          command: toggleHeaderRow,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.toggle-header-column'),
+          label: this.intl.t('ember-rdfa-editor.toggle-header-column'),
+          command: toggleHeaderColumn,
+        },
+      ],
+      [
+        {
+          title: this.intl.t('ember-rdfa-editor.add-row-below'),
+          icon: 'table-row-end-add',
+          command: addRowAfter,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.add-row-above'),
+          icon: 'table-row-start-add',
+          command: addRowBefore,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.add-column-after'),
+          icon: 'table-column-end-add',
+          command: addColumnAfter,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.add-column-before'),
+          icon: 'table-column-start-add',
+          command: addColumnBefore,
+        },
+      ],
+      [
+        {
+          title: this.intl.t('ember-rdfa-editor.delete-row'),
+          icon: 'table-row-remove',
+          command: deleteRow,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.delete-column'),
+          icon: 'table-column-remove',
+          command: deleteColumn,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.delete-table'),
+          icon: 'bin',
+          command: deleteTable,
+        },
+      ],
     ];
   }
 
