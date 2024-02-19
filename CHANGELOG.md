@@ -1,5 +1,22 @@
 # @lblod/ember-rdfa-editor
 
+## 9.2.0
+
+### Minor Changes
+
+- [#1138](https://github.com/lblod/ember-rdfa-editor/pull/1138) [`674d7da`](https://github.com/lblod/ember-rdfa-editor/commit/674d7da1b6dcf2c68fb75997a1a29b6bb0d89869) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4660: Percentage resize for tables instead of absolute pixels
+
+- [#1137](https://github.com/lblod/ember-rdfa-editor/pull/1137) [`04ca80c`](https://github.com/lblod/ember-rdfa-editor/commit/04ca80cadb009607cf84afcc472c1fc07a63763f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4625: Introduce Playwright for E2E instead of Cypress
+
+### Patch Changes
+
+- [#1129](https://github.com/lblod/ember-rdfa-editor/pull/1129) [`2c96d02`](https://github.com/lblod/ember-rdfa-editor/commit/2c96d02ce3dd4a553349c07f8677ba96a6455d2f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4190: Scroll cursor into view after toggling "show rdfa annotations"
+
+- [#1135](https://github.com/lblod/ember-rdfa-editor/pull/1135) [`4be1940`](https://github.com/lblod/ember-rdfa-editor/commit/4be19404c35ab05242382add11fbc6ce8b49ee57) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4625: Copy lists to other editors correctly
+
+  Adds `list-style-type` to list elements in the rendered HTML, so other editors
+  can render lists with the same style as the editor.
+
 ## 9.1.0
 
 ### Minor Changes
