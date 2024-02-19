@@ -87,7 +87,7 @@ export default class TableTooltip extends Component<Args> {
         title: this.intl.t('ember-rdfa-editor.delete-table'),
         icon: 'bin',
         command: deleteTable,
-      }
+      },
     ];
   }
 
