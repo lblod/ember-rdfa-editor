@@ -1,0 +1,14 @@
+{{#if this.visible}}
+  <div
+    {{this.floatingUI
+      referenceElement=this.referenceElement
+      placement="bottom"
+      middleware=this.tooltipMiddleWare
+      strategy="fixed"
+      useTransform=true
+    }}
+    class="say-editor-selection-tooltip"
+  >
+    {{yield}}
+  </div>
+{{/if}}
