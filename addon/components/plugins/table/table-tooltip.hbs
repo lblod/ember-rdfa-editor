@@ -1,0 +1,15 @@
+<div {{this.setUpListeners}}>
+  <this.SelectionTooltip
+    @controller={{this.controller}}
+    @visible={{this.visible}}
+  >
+    {{#each this.tableActions as |action|}}
+      <Toolbar::Button
+        @title={{action.title}}
+        @icon={{action.icon}}
+        @disabled={{not (this.canExecuteAction action)}}
+        {{on "click" (fn this.executeAction action)}}
+      />
+    {{/each}}
+  </this.SelectionTooltip>
+</div>
