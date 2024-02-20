@@ -1,26 +1,26 @@
 steps:
   install:
-    image: danlynn/ember-cli:4.12.1
+    image: codeberg.org/woodpecker-plugins/node-pm
     commands:
-      - npm ci
+      - pnpm i --frozen-lockfile
   lint-js:
-    image: danlynn/ember-cli:4.12.1
+    image: codeberg.org/woodpecker-plugins/node-pm
     group: lint
     commands:
-      - npm run lint:js
+      - pnpm lint:js
   lint-hbs:
-    image: danlynn/ember-cli:4.12.1
+    image: codeberg.org/woodpecker-plugins/node-pm
     group: lint
     commands:
-      - npm run lint:hbs
+      - pnpm lint:hbs
   test:
-    image: danlynn/ember-cli:4.12.1
+    image: codeberg.org/woodpecker-plugins/node-pm
     commands:
-      - npm run test:ember
-  precompile:
-    image: danlynn/ember-cli:4.12.1
+      - pnpm test:ember
+  prepack:
+    image: codeberg.org/woodpecker-plugins/node-pm
     commands:
-      - ember ts:precompile
+      - pnpm prepack
 when:
   event:
     - pull_request
