@@ -1,8 +1,8 @@
 steps:
   install:
-    image: danlynn/ember-cli:4.12.1
+    image: codeberg.org/woodpecker-plugins/node-pm
     commands:
-      - npm ci
+      - pnpm i --frozen-lockfile
   release:
     image: plugins/npm
     settings:
