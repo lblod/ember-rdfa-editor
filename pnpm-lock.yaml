@@ -17128,7 +17128,6 @@ packages:
     id: github.com/lblod/prosemirror-invisibles/133dcb12871f9174ba8fe7dfc517e52496b14bc4
     name: '@guardian/prosemirror-invisibles'
     version: 3.0.3
-    prepare: true
     requiresBuild: true
     peerDependencies:
       prosemirror-model: ^1.18.2
@@ -17144,6 +17143,7 @@ packages:
     resolution: {tarball: https://codeload.github.com/lblod/prosemirror-tables/tar.gz/289fb59ede8c605767af9ef3a106a62aae223220}
     name: prosemirror-tables
     version: 1.3.5
+    prepare: true
     requiresBuild: true
     dependencies:
       prosemirror-keymap: 1.2.2
