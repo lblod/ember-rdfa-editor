@@ -41,6 +41,7 @@
     "lint:errors": "eslint . --quiet",
     "lint:js:fix": "eslint . --fix",
     "lint:types": "tsc --noEmit",
+    "prepare": "tsc --project tsconfig.declarations.json",
     "prepack": "tsc --project tsconfig.declarations.json",
     "postpack": "rimraf declarations",
     "start": "concurrently -c \"auto\" -P \"npm:serve -- {@}\" \"npm:typecheck\" --",
