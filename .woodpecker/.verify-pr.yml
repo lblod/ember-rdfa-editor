@@ -1,25 +1,30 @@
 steps:
   install:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: node:20-slim
     commands:
+      - corepack enable
       - pnpm i --frozen-lockfile
   lint-js:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: node:20-slim
     group: lint
     commands:
+      - corepack enable
       - pnpm lint:js
   lint-hbs:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: node:20-slim
     group: lint
     commands:
+      - corepack enable
       - pnpm lint:hbs
   test:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: danlynn/ember-cli:4.12.1
     commands:
+      - corepack enable
       - pnpm test:ember
   prepack:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: node:20-slim
     commands:
+      - corepack enable
       - pnpm prepack
 when:
   event:

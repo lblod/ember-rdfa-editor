@@ -1,7 +1,8 @@
 steps:
   install:
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: node:20-slim
     commands:
+      - corepack enable
       - pnpm i --frozen-lockfile
   release:
     image: plugins/npm
