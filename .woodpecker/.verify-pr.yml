@@ -1,26 +1,31 @@
 steps:
   install:
-    image: danlynn/ember-cli:4.12.1
+    image: node:20-slim
     commands:
-      - npm ci
+      - corepack enable
+      - pnpm i --frozen-lockfile
   lint-js:
-    image: danlynn/ember-cli:4.12.1
+    image: node:20-slim
     group: lint
     commands:
-      - npm run lint:js
+      - corepack enable
+      - pnpm lint:js
   lint-hbs:
-    image: danlynn/ember-cli:4.12.1
+    image: node:20-slim
     group: lint
     commands:
-      - npm run lint:hbs
+      - corepack enable
+      - pnpm lint:hbs
   test:
     image: danlynn/ember-cli:4.12.1
     commands:
-      - npm run test:ember
-  precompile:
-    image: danlynn/ember-cli:4.12.1
+      - corepack enable
+      - pnpm test:ember
+  prepack:
+    image: node:20-slim
     commands:
-      - ember ts:precompile
+      - corepack enable
+      - pnpm prepack
 when:
   event:
     - pull_request
