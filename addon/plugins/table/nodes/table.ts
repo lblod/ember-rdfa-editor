@@ -122,7 +122,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
   const tableStyle =
     inlineBorderStyle &&
     `border: ${inlineBorderStyle}; border-collapse: collapse;`;
-  const rowStyle = inlineBorderStyle && `border-bottom: ${inlineBorderStyle};`;
+  const rowStyle = inlineBorderStyle && `border-top: ${inlineBorderStyle};`;
   const cellStyle = inlineBorderStyle && `border-left: ${inlineBorderStyle};`;
 
   return {
