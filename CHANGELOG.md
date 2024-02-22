@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.2.1
+
+### Patch Changes
+
+- [`6454896`](https://github.com/lblod/ember-rdfa-editor/commit/64548966e378a60c861520a34679965ca32ecf09) Thanks [@elpoelma](https://github.com/elpoelma)! - Bump ip from 1.1.8 to 1.1.9
+
 ## 9.2.0
 
 ### Minor Changes
