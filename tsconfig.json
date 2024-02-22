@@ -16,5 +16,15 @@
       "@lblod/ember-rdfa-editor/test-support/*": ["addon-test-support/*"],
       "*": ["types/*"]
     }
-  }
+  },
+  "include": [
+    "app/**/*",
+    "addon/**/*",
+    "tests/**/*",
+    "types/**/*",
+    "test-support/**/*",
+    "addon-test-support/**/*",
+    "lib/dummy-plugin",
+    "playwright.config.ts"
+  ]
 }
