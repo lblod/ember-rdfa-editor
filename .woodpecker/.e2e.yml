@@ -3,8 +3,9 @@ steps:
     # this image must be the same as in `scripts/e2e.sh`
     image: mcr.microsoft.com/playwright:v1.41.1-jammy
     commands:
-      - npm ci
-      - npx playwright test
+      - corepack enable
+      - pnpm i --frozen-lockfile
+      - pnpm playwright test
 when:
   event:
     - pull_request
