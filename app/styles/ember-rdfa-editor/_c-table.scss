@@ -58,13 +58,11 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    z-index: 20;
     background-color: #adf;
     pointer-events: none;
     margin-top: 0;
   }
 }
-
 
 .tableWrapper {
   overflow-y: hidden;
@@ -81,4 +79,23 @@ table.ProseMirror-selectednode,
 // Class that columnResizing plugin adds
 .resize-cursor {
   cursor: col-resize;
+}
+
+.say-table-tooltip {
+  display: flex;
+  flex-direction: column;
+}
+.say-table-tooltip--actions {
+  display: flex;
+  flex-direction: row;
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-600);
+    padding: $au-unit-small;
+    &:hover,
+    &:focus {
+      color: var(--au-gray-700);
+    }
+  }
 }
