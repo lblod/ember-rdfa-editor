@@ -33,22 +33,12 @@ export class TableView extends PluginTableView {
   }
 
   private addAttrs(node: Node): void {
-    const {
-      class: nodeClasses,
-      style,
-      ...attrs
-    } = node.attrs as Record<string, unknown>;
+    const { class: nodeClasses, style } = node.attrs as Record<string, unknown>;
     if (typeof nodeClasses === 'string') {
       this.table.classList.add(...nodeClasses.split(' '));
     }
     if (typeof style === 'string') {
       this.table.style.cssText = `${this.table.style.cssText} ${style}`;
-    }
-    for (const attrName in attrs) {
-      const attr = attrs[attrName];
-      if (typeof attr === 'string') {
-        this.table.setAttribute(attrName, attr);
-      }
     }
   }
 
