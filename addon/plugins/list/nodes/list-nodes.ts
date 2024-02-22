@@ -18,7 +18,9 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
   const { listStyleType } = dom.style;
 
   // Falling back to dataset for back-compatability
-  return (listStyleType || dom.dataset['listStyle']) as OrderListStyle | undefined;
+  return (listStyleType || dom.dataset['listStyle']) as
+    | OrderListStyle
+    | undefined;
 };
 
 export const ordered_list: NodeSpec = {
