@@ -29,13 +29,16 @@ export class TableView extends PluginTableView {
     public cellMinWidth: number,
   ) {
     super(node, cellMinWidth);
-    this.addClasses(node);
+    this.addAttrs(node);
   }
 
-  private addClasses(node: Node): void {
-    const nodeClasses = node.attrs.class as string | undefined;
+  private addAttrs(node: Node): void {
+    const { class: nodeClasses, style } = node.attrs as Record<string, unknown>;
     if (typeof nodeClasses === 'string') {
       this.table.classList.add(...nodeClasses.split(' '));
+    }
+    if (typeof style === 'string') {
+      this.table.style.cssText = `${this.table.style.cssText} ${style}`;
     }
   }
 

@@ -82,7 +82,11 @@ export default class IndexController extends Controller {
       ordered_list,
       bullet_list,
       placeholder,
-      ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+      ...tableNodes({
+        tableGroup: 'block',
+        cellContent: 'block+',
+        inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+      }),
       heading,
       blockquote,
 

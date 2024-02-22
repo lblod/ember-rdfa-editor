@@ -91,7 +91,11 @@ export default class EditorComponent extends Component {
           defaultLanguage: 'nl-BE',
         }),
         paragraph,
-        ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+        ...tableNodes({
+          tableGroup: 'block',
+          cellContent: 'block+',
+          inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        }),
         heading,
         blockquote,
         horizontal_rule,
