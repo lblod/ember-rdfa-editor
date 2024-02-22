@@ -7,7 +7,7 @@ RUN corepack prepare pnpm@latest-8 --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY public ./public/
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --frozen-lockfile --ignore-scripts
 COPY . .
 RUN pnpm build
 
