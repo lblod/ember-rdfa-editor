@@ -46,3 +46,7 @@ testem.log
 # broccoli-debug
 /DEBUG/
 
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -57,5 +57,19 @@ module.exports = {
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
     },
+    {
+      files: ['e2e/**/*.spec.{js,ts}'],
+      extends: ['plugin:playwright/recommended'],
+      rules: {
+        'playwright/expect-expect': [
+          'error',
+          {
+            additionalAssertFunctionNames: [
+              'setEditorContentAndCompareSnapshot',
+            ],
+          },
+        ],
+      },
+    },
   ],
 };

@@ -316,6 +316,33 @@ Other languages can be added by copying the contents of the file `translations/e
 A helper function is provided to assist with finding a reasonable fallback locale, for example providing `en-US` translations if `en` is requested.
 See [the test app](tests/dummy/app/routes/application.ts) for example of it's usage.
 
+## Testing
+
+### Playwright
+
+We use Playwright for testing in the browser. There are two types of tests:
+
+* Visual regression tests (VRT) - verifying how the content is rendered in the editor, tagged with `@vrt`.
+* Integration tests - verifying the behaviour of the editor, no tags.
+
+#### Available commands
+
+* `e2e:open` - opens Playwright UI locally 
+* `e2e:open:docker` - opens Playwright UI in Docker and attempts to connect to your XServer 
+* `e2e:run` - runs Playwright tests locally, skipping tests tagged with `@vrt`
+* `e2e:run:docker` - runs all Playwright tests in Docker
+* `e2e:run:vrt` - runs visual regression tests in Docker
+* `e2e:run:vrt:update` - updates visual regression tests after running them in Docker
+* `e2e:show-report` - shows the report of the last run
+
+#### Visual regression tests (VRT)
+
+To run visual regression tests locally you need to run `npm run e2e:run:vrt`.  
+Afterwards if you need to update the snapshots you can run `npm run e2e:run:vrt:update`.
+
+> [!IMPORTANT]
+> Playwright is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.
+
 ## Compatibility
 
 * Ember.js v3.28 or above

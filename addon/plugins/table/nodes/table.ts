@@ -1,11 +1,11 @@
 // Helper for creating a schema that supports tables.
-
-// Helper for creating a schema that supports tables.
-import type { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { Node as PNode, type NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
+import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 interface ExtraAttribute {
   default: unknown;
@@ -21,16 +21,31 @@ type CellAttributes = {
   colwidth?: number[] | null;
 } & Record<string, unknown>;
 
+// A naive way to fix the colwidths attribute, from pixels to percentage
+const fixupColWidth = (number: string) => {
+  const numberWidth = Number(number);
+
+  if (numberWidth > 100) {
+    // return 0 to reset the width
+    return 0;
+  }
+
+  return numberWidth;
+};
+
 function getCellAttrs(
   dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
+
   const widths =
-    widthAttr && /^\d+(,\d+)*$/.test(widthAttr)
-      ? widthAttr.split(',').map((s) => Number(s))
+    widthAttr && /^\d+(\.\d+)*(,\d+(\.\d+)*)*$/.test(widthAttr)
+      ? widthAttr.split(',').map(fixupColWidth)
       : null;
+
   const colspan = Number(dom.getAttribute('colspan') || 1);
+
   const result: CellAttributes = {
     colspan,
     rowspan: Number(dom.getAttribute('rowspan') || 1),
@@ -76,7 +91,7 @@ interface TableNodeOptions {
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
-  table: NodeSpec;
+  table: SayNodeSpec;
   table_row: NodeSpec;
   table_cell: NodeSpec;
   table_header: NodeSpec;
@@ -119,6 +134,20 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       ],
       toDOM(node: PNode) {
         return ['table', { ...node.attrs, class: 'say-table' }, ['tbody', 0]];
+      },
+      serialize(node: PNode) {
+        const tableView = new TableView(node, 25);
+
+        return [
+          'table',
+          {
+            ...node.attrs,
+            class: 'say-table',
+            style: 'min-width: 100%',
+          },
+          tableView.colgroupElement,
+          ['tbody', 0],
+        ];
       },
     },
     table_row: {

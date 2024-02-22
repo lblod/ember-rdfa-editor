@@ -38,6 +38,10 @@ export class TableView extends PluginTableView {
       this.table.classList.add(...nodeClasses.split(' '));
     }
   }
+
+  get colgroupElement(): HTMLTableColElement {
+    return this.colgroup;
+  }
 }
 
 export const tableColumnResizingPlugin: Plugin = columnResizing({

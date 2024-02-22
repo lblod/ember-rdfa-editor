@@ -45,6 +45,43 @@
 
 - [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
 
+## 9.2.1
+
+### Patch Changes
+
+- [`6454896`](https://github.com/lblod/ember-rdfa-editor/commit/64548966e378a60c861520a34679965ca32ecf09) Thanks [@elpoelma](https://github.com/elpoelma)! - Bump ip from 1.1.8 to 1.1.9
+
+## 9.2.0
+
+### Minor Changes
+
+- [#1138](https://github.com/lblod/ember-rdfa-editor/pull/1138) [`674d7da`](https://github.com/lblod/ember-rdfa-editor/commit/674d7da1b6dcf2c68fb75997a1a29b6bb0d89869) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4660: Percentage resize for tables instead of absolute pixels
+
+- [#1137](https://github.com/lblod/ember-rdfa-editor/pull/1137) [`04ca80c`](https://github.com/lblod/ember-rdfa-editor/commit/04ca80cadb009607cf84afcc472c1fc07a63763f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4625: Introduce Playwright for E2E instead of Cypress
+
+### Patch Changes
+
+- [#1129](https://github.com/lblod/ember-rdfa-editor/pull/1129) [`2c96d02`](https://github.com/lblod/ember-rdfa-editor/commit/2c96d02ce3dd4a553349c07f8677ba96a6455d2f) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4190: Scroll cursor into view after toggling "show rdfa annotations"
+
+- [#1135](https://github.com/lblod/ember-rdfa-editor/pull/1135) [`4be1940`](https://github.com/lblod/ember-rdfa-editor/commit/4be19404c35ab05242382add11fbc6ce8b49ee57) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4625: Copy lists to other editors correctly
+
+  Adds `list-style-type` to list elements in the rendered HTML, so other editors
+  can render lists with the same style as the editor.
+
+## 9.1.0
+
+### Minor Changes
+
+- [#1127](https://github.com/lblod/ember-rdfa-editor/pull/1127) [`3e7b5fb`](https://github.com/lblod/ember-rdfa-editor/commit/3e7b5fb1f0cf599eb6d78f06f9ef89102d57c2ce) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4657: Serialize table column width to exported HTML
+
+### Patch Changes
+
+- [#1124](https://github.com/lblod/ember-rdfa-editor/pull/1124) [`979719d`](https://github.com/lblod/ember-rdfa-editor/commit/979719da9fce6e08b05ae940677ce56009796559) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix `looseMatches` is undefined error
+
+- [#1131](https://github.com/lblod/ember-rdfa-editor/pull/1131) [`07916e1`](https://github.com/lblod/ember-rdfa-editor/commit/07916e1a6961d84c836b83ebad7f3aee488d6387) Thanks [@elpoelma](https://github.com/elpoelma)! - Mark paragraphs as `defining`, as they may contain important attributes (such as alignment and indentation) that should not be lost when pasting
+
+- [#1131](https://github.com/lblod/ember-rdfa-editor/pull/1131) [`07916e1`](https://github.com/lblod/ember-rdfa-editor/commit/07916e1a6961d84c836b83ebad7f3aee488d6387) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove custom `transformPasted` hook as it conflicts with the `defining` node-spec attribute
+
 ## 9.0.2
 
 ### Patch Changes
