@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 9.3.0
+
+### Minor Changes
+
+- [#1144](https://github.com/lblod/ember-rdfa-editor/pull/1144) [`50ac70e`](https://github.com/lblod/ember-rdfa-editor/commit/50ac70e3bd85a9c73b5cf16d3a4bf7438db18c51) Thanks [@elpoelma](https://github.com/elpoelma)! - Add custom `floating-ui` modifier with support for virtual elements, custom middleware options and transform-positioning
+
+- [#1142](https://github.com/lblod/ember-rdfa-editor/pull/1142) [`13f0e16`](https://github.com/lblod/ember-rdfa-editor/commit/13f0e16bd2e17ac2c245b37cecc7d14786cb048f) Thanks [@piemonkey](https://github.com/piemonkey)! - Add option for table plugin to enable developers to specify the styling of table borders, which are maintained when exporting tables, such as when copying to the clipboard.
+
+- [#1144](https://github.com/lblod/ember-rdfa-editor/pull/1144) [`d5b46bd`](https://github.com/lblod/ember-rdfa-editor/commit/d5b46bd77c56d7d50aeefacaadc90f92eee6f6ee) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a `table-tooltip` component which allows users to quickly access table-editing features
+
 ## 9.2.1
 
 ### Patch Changes
