@@ -7,7 +7,8 @@ RUN corepack prepare pnpm@latest-8 --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY public ./public/
-RUN pnpm i --frozen-lockfile --ignore-scripts
+RUN pnpm pkg set scripts.prepare="echo prepare-disabled"
+RUN pnpm i --frozen-lockfile
 COPY . .
 RUN pnpm build
 
