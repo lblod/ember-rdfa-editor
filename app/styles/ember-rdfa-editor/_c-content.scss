@@ -154,6 +154,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   // No margin
   li p + *,
+  li div + *,
   p * + *,
   p + br,
   div + br,
@@ -228,7 +229,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   ol.numbered-list {
     list-style-type: decimal;
 
-    & > li > ol {
+    & > li ol {
       list-style-type: inherit;
     }
 
