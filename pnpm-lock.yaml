@@ -427,6 +427,9 @@ devDependencies:
   webpack:
     specifier: ^5.78.0
     version: 5.89.0
+  workaround-broken-npm-prepack-behavior:
+    specifier: github:cspotcode/workaround-broken-npm-prepack-behavior#1a7adbbb8a527784daf97edad6ba42d6e96611f6
+    version: github.com/cspotcode/workaround-broken-npm-prepack-behavior/1a7adbbb8a527784daf97edad6ba42d6e96611f6
 
 packages:
 
@@ -16522,6 +16525,13 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
+  github.com/cspotcode/workaround-broken-npm-prepack-behavior/1a7adbbb8a527784daf97edad6ba42d6e96611f6:
+    resolution: {tarball: https://codeload.github.com/cspotcode/workaround-broken-npm-prepack-behavior/tar.gz/1a7adbbb8a527784daf97edad6ba42d6e96611f6}
+    name: workaround-broken-npm-prepack-behavior
+    version: 0.0.1
+    hasBin: true
+    dev: true
+
   github.com/lblod/prosemirror-invisibles/9032fe872c36d7fbc44ef69511c6ce3bfdb19713(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7):
     resolution: {tarball: https://codeload.github.com/lblod/prosemirror-invisibles/tar.gz/9032fe872c36d7fbc44ef69511c6ce3bfdb19713}
     id: github.com/lblod/prosemirror-invisibles/9032fe872c36d7fbc44ef69511c6ce3bfdb19713
@@ -16542,7 +16552,6 @@ packages:
     resolution: {tarball: https://codeload.github.com/lblod/prosemirror-tables/tar.gz/e20c45609978a46089fccc13a181971ef540fc9d}
     name: prosemirror-tables
     version: 1.3.5
-    prepare: true
     requiresBuild: true
     dependencies:
       prosemirror-keymap: 1.2.2
