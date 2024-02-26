@@ -42,7 +42,6 @@
     "lint:js:fix": "eslint . --fix",
     "lint:types": "tsc --noEmit",
     "prepack": "tsc --project tsconfig.declarations.json",
-    "prepare": "workaround-broken-npm-prepack-behavior prepack",
     "postpack": "rimraf declarations",
     "start": "concurrently -c \"auto\" -P \"npm:serve -- {@}\" \"npm:typecheck\" --",
     "typecheck": "tsc --noEmit --watch",
@@ -71,7 +70,7 @@
     "@embroider/macros": "^1.13.1",
     "@glimmer/tracking": "^1.1.2",
     "@graphy/memory.dataset.fast": "4.3.3",
-    "@guardian/prosemirror-invisibles": "github:lblod/prosemirror-invisibles#8bea0374be1295f8f32b1b6d66ba119dfc712124",
+    "@guardian/prosemirror-invisibles": "./tarballs/guardian-prosemirror-invisibles-3.0.3.tgz",
     "@lblod/marawa": "^0.8.0-beta.2",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
@@ -99,7 +98,7 @@
     "prosemirror-schema-basic": "^1.2.1",
     "prosemirror-schema-list": "^1.2.2",
     "prosemirror-state": "^1.4.2",
-    "prosemirror-tables": "github:lblod/prosemirror-tables#d997c41b53a3f35233904a1f0bb1727c1fd01993",
+    "prosemirror-tables": "./tarballs/prosemirror-tables-1.3.5.tgz",
     "prosemirror-transform": "^1.8.0",
     "prosemirror-view": "^1.32.4",
     "rdf-data-factory": "^1.1.2",
@@ -201,8 +200,7 @@
     "sass": "^1.69.7",
     "sinon": "^17.0.1",
     "typescript": "~5.3.0",
-    "webpack": "^5.78.0",
-    "workaround-broken-npm-prepack-behavior": "github:cspotcode/workaround-broken-npm-prepack-behavior#1a7adbbb8a527784daf97edad6ba42d6e96611f6"
+    "webpack": "^5.78.0"
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^2.15.0",

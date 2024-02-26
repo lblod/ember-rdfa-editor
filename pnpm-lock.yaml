@@ -39,8 +39,8 @@ dependencies:
     specifier: 4.3.3
     version: 4.3.3
   '@guardian/prosemirror-invisibles':
-    specifier: github:lblod/prosemirror-invisibles#8bea0374be1295f8f32b1b6d66ba119dfc712124
-    version: github.com/lblod/prosemirror-invisibles/8bea0374be1295f8f32b1b6d66ba119dfc712124(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7)
+    specifier: ./tarballs/guardian-prosemirror-invisibles-3.0.3.tgz
+    version: file:tarballs/guardian-prosemirror-invisibles-3.0.3.tgz(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7)
   '@lblod/marawa':
     specifier: ^0.8.0-beta.2
     version: 0.8.0-beta.6
@@ -123,8 +123,8 @@ dependencies:
     specifier: ^1.4.2
     version: 1.4.3
   prosemirror-tables:
-    specifier: github:lblod/prosemirror-tables#d997c41b53a3f35233904a1f0bb1727c1fd01993
-    version: github.com/lblod/prosemirror-tables/d997c41b53a3f35233904a1f0bb1727c1fd01993
+    specifier: ./tarballs/prosemirror-tables-1.3.5.tgz
+    version: file:tarballs/prosemirror-tables-1.3.5.tgz
   prosemirror-transform:
     specifier: ^1.8.0
     version: 1.8.0
@@ -427,9 +427,6 @@ devDependencies:
   webpack:
     specifier: ^5.78.0
     version: 5.89.0
-  workaround-broken-npm-prepack-behavior:
-    specifier: github:cspotcode/workaround-broken-npm-prepack-behavior#1a7adbbb8a527784daf97edad6ba42d6e96611f6
-    version: github.com/cspotcode/workaround-broken-npm-prepack-behavior/1a7adbbb8a527784daf97edad6ba42d6e96611f6
 
 packages:
 
@@ -16525,20 +16522,11 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
 
-  github.com/cspotcode/workaround-broken-npm-prepack-behavior/1a7adbbb8a527784daf97edad6ba42d6e96611f6:
-    resolution: {tarball: https://codeload.github.com/cspotcode/workaround-broken-npm-prepack-behavior/tar.gz/1a7adbbb8a527784daf97edad6ba42d6e96611f6}
-    name: workaround-broken-npm-prepack-behavior
-    version: 0.0.1
-    hasBin: true
-    dev: true
-
-  github.com/lblod/prosemirror-invisibles/8bea0374be1295f8f32b1b6d66ba119dfc712124(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7):
-    resolution: {tarball: https://codeload.github.com/lblod/prosemirror-invisibles/tar.gz/8bea0374be1295f8f32b1b6d66ba119dfc712124}
-    id: github.com/lblod/prosemirror-invisibles/8bea0374be1295f8f32b1b6d66ba119dfc712124
+  file:tarballs/guardian-prosemirror-invisibles-3.0.3.tgz(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7):
+    resolution: {integrity: sha512-CzwKfUh1wpy+buLKZ4ohIZ232wsvWf2a1BacDnoGe5il2tx+nz6Wl8//I5AzmV08sWRFN1Vg/L30GPNyL1YXPA==, tarball: file:tarballs/guardian-prosemirror-invisibles-3.0.3.tgz}
+    id: file:tarballs/guardian-prosemirror-invisibles-3.0.3.tgz
     name: '@guardian/prosemirror-invisibles'
     version: 3.0.3
-    prepare: true
-    requiresBuild: true
     peerDependencies:
       prosemirror-model: ^1.18.2
       prosemirror-state: ^1.4.2
@@ -16549,12 +16537,10 @@ packages:
       prosemirror-view: 1.32.7
     dev: false
 
-  github.com/lblod/prosemirror-tables/d997c41b53a3f35233904a1f0bb1727c1fd01993:
-    resolution: {tarball: https://codeload.github.com/lblod/prosemirror-tables/tar.gz/d997c41b53a3f35233904a1f0bb1727c1fd01993}
+  file:tarballs/prosemirror-tables-1.3.5.tgz:
+    resolution: {integrity: sha512-rDhgPpnvKpgGQSVQO5kzGLwnrljo7UHBNdLB10XTEkkVGyL3lZN3G66X6E1ieBcCMCsffJWJqNvzOFpqqUd0bw==, tarball: file:tarballs/prosemirror-tables-1.3.5.tgz}
     name: prosemirror-tables
     version: 1.3.5
-    prepare: true
-    requiresBuild: true
     dependencies:
       prosemirror-keymap: 1.2.2
       prosemirror-model: 1.19.4
