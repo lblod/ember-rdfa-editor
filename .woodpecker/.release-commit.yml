@@ -7,7 +7,7 @@ steps:
   version:
     image: node:20-slim
     commands:
-      - npm version --no-git-tag-version $(npm pkg get version | sed 's/"//g')-$(git rev-parse HEAD)
+      - npm version --no-git-tag-version $(npm pkg get version | sed 's/"//g')-${CI_COMMIT_SHA}
   release:
     image: plugins/npm
     settings:
