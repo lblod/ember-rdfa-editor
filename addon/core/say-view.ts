@@ -5,7 +5,7 @@ import { htmlToDoc, htmlToFragment } from '../utils/_private/html-utils';
 import { DOMSerializer, ProseParser } from '..';
 import { SetDocAttributesStep } from '../utils/steps';
 
-export type EditorRange = {
+export type DocumentRange = {
   from: number;
   to: number;
 };
@@ -38,7 +38,7 @@ export default class SayView extends EditorView {
    */
   setHtmlContent(
     content: string,
-    options: { shouldFocus?: boolean; range?: EditorRange } = {},
+    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
   ) {
     const parser =
       this.props.domParser ?? ProseParser.fromSchema(this.state.schema);

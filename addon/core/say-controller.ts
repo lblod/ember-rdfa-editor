@@ -5,7 +5,7 @@ import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-uti
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
 import SayView, {
-  type EditorRange,
+  type DocumentRange,
 } from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
@@ -103,7 +103,7 @@ export default class SayController {
    */
   setHtmlContent(
     content: string,
-    options: { shouldFocus?: boolean; range?: EditorRange } = {},
+    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
   ) {
     this.mainEditorView.setHtmlContent(content, options);
   }
