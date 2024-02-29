@@ -6,7 +6,6 @@ RUN corepack enable
 RUN corepack prepare pnpm@latest-8 --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-COPY tarballs ./tarballs/
 COPY public ./public/
 RUN pnpm i --frozen-lockfile
 COPY . .
