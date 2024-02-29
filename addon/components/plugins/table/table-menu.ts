@@ -9,6 +9,8 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+  mergeCells,
+  splitCell,
   toggleHeader,
 } from 'prosemirror-tables';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
@@ -100,6 +102,18 @@ export default class TableMenu extends Component<Args> {
   removeTableColumn() {
     this.controller?.focus();
     this.controller?.doCommand(deleteColumn);
+  }
+
+  @action
+  mergeCells() {
+    this.controller?.focus();
+    this.controller?.doCommand(mergeCells);
+  }
+
+  @action
+  splitCell() {
+    this.controller?.focus();
+    this.controller?.doCommand(splitCell);
   }
 
   @action

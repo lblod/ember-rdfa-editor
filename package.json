@@ -81,7 +81,7 @@
     "prosemirror-schema-basic": "^1.2.1",
     "prosemirror-schema-list": "^1.2.2",
     "prosemirror-state": "^1.4.2",
-    "prosemirror-tables": "lblod/prosemirror-tables#289fb59ede8c605767af9ef3a106a62aae223220",
+    "prosemirror-tables": "https://github.com/lblod/prosemirror-tables/raw/9262189b211287f5516286705e6c7baac6d2ed18/prosemirror-tables-1.3.5.tgz",
     "prosemirror-transform": "^1.8.0",
     "prosemirror-view": "^1.32.4",
     "rdf-data-factory": "^1.1.0",
