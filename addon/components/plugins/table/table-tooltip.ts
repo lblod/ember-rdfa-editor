@@ -112,12 +112,12 @@ export default class TableTooltip extends Component<Args> {
       [
         {
           title: this.intl.t('ember-rdfa-editor.table.merge-cells'),
-          label: 'Merge cells',
+          label: this.intl.t('ember-rdfa-editor.table.merge-cells'),
           command: mergeCells,
         },
         {
           title: this.intl.t('ember-rdfa-editor.table.split-cell'),
-          label: 'Split cell',
+          label: this.intl.t('ember-rdfa-editor.table.split-cell'),
           command: splitCell,
         },
       ],
