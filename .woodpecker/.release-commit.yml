@@ -1,0 +1,19 @@
+steps:
+  install:
+    image: node:20-slim
+    commands:
+      - corepack enable
+      - pnpm i --frozen-lockfile
+  version:
+    image: node:20-slim
+    commands:
+      - npm version --no-git-tag-version $(npm pkg get version | sed 's/"//g')-$(git rev-parse HEAD)
+  release:
+    image: plugins/npm
+    settings:
+      token:
+        from_secret: npm_access_token
+when:
+  - event: push
+    branch: master
+  - event: pull_request
