@@ -59,6 +59,10 @@ export default class SayController {
     return !!this.activeEditorView.parent;
   }
 
+  get domParser() {
+    return this.mainEditorView.domParser;
+  }
+
   clone() {
     return new SayController(this.editor);
   }

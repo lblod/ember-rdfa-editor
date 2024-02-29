@@ -13,7 +13,7 @@ export default class SayView extends EditorView {
   isSayView = true;
   @tracked declare state: EditorState;
   @tracked parent?: SayView;
-  domParser?: ProseParser;
+  domParser: ProseParser;
 
   constructor(
     place:
@@ -27,7 +27,8 @@ export default class SayView extends EditorView {
     parent?: SayView,
   ) {
     super(place, props);
-    this.domParser = props.domParser;
+    this.domParser =
+      props.domParser ?? ProseParser.fromSchema(this.state.schema);
     this.parent = parent;
   }
 
@@ -40,8 +41,6 @@ export default class SayView extends EditorView {
     content: string,
     options: { shouldFocus?: boolean; range?: DocumentRange } = {},
   ) {
-    const parser =
-      this.props.domParser ?? ProseParser.fromSchema(this.state.schema);
     const { shouldFocus = true } = options;
     if (shouldFocus) {
       this.focus();
@@ -50,14 +49,14 @@ export default class SayView extends EditorView {
     const tr = this.state.tr;
     if (range) {
       const fragment = htmlToFragment(content, {
-        parser: parser,
+        parser: this.domParser,
         editorView: this,
       });
       tr.replaceRange(range.from, range.to, fragment);
     } else {
       const doc = htmlToDoc(content, {
         schema: this.state.schema,
-        parser: parser,
+        parser: this.domParser,
         editorView: this,
       });
       tr.step(new SetDocAttributesStep(doc.attrs));
