@@ -1,13 +1,9 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { basicSetup } from 'codemirror';
-import { html } from '@codemirror/lang-html';
 import sampleData from '../config/sample-data';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { modifier } from 'ember-modifier';
-import CodeMirrorModifier from '../modifiers/_private/code-mirror';
-import beautify from 'js-beautify';
 
 interface DebugToolArgs {
   controller?: SayController;
