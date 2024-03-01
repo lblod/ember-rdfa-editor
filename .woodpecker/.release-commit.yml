@@ -15,5 +15,3 @@ steps:
         from_secret: npm_access_token
 when:
   - event: push
-    branch: master
-  - event: pull_request
