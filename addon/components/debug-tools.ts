@@ -1,13 +1,13 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import xmlFormat from 'xml-formatter';
 import { basicSetup } from 'codemirror';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../config/sample-data';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { modifier } from 'ember-modifier';
 import CodeMirrorModifier from '../modifiers/_private/code-mirror';
+import beautify from 'js-beautify';
 
 interface DebugToolArgs {
   controller?: SayController;
@@ -39,10 +39,18 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   );
 
   get formattedDebuggerContent() {
-    return xmlFormat(this.debuggerContent, {
-      throwOnFailure: false,
-      collapseContent: true,
-      ignoredPaths: ['p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    return beautify.html(this.debuggerContent, {
+      content_unformatted: [
+        'p',
+        'span',
+        'a',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+      ],
     });
   }
 
