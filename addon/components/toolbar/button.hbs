@@ -7,10 +7,7 @@
     ...attributes
   >
     <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large'/>
-    <span class='au-u-hidden-visually'>
-      {{@title}}
-    </span>
-
+    {{yield}}
   </button>
   {{#if (has-block "options")}}
     <Toolbar::Dropdown @disabled={{@disabled}} @icon={{this.optionsIcon}} @iconSize="" @controller={{@controller}} class="options"
