@@ -29,6 +29,19 @@ export function htmlToDoc(
   return doc;
 }
 
+export function htmlToFragment(
+  html: string,
+  options: { parser: ProseParser; editorView: EditorView },
+) {
+  const { parser, editorView } = options;
+  const htmlCleaner = new HTMLInputParser({ editorView: editorView });
+  const cleanedHTML = htmlCleaner.prepareHTML(html);
+  const domParser = new DOMParser();
+  const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
+  preprocessRDFa(parsed);
+  return parser.parseSlice(parsed, { preserveWhitespace: true });
+}
+
 function matchTopNode(
   node: HTMLElement,
   options: { schema: Schema },
