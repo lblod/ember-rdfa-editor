@@ -6,7 +6,7 @@
   @modalOpen={{true}}
   @size="large"
 >
-  <:title>HTML Editor</:title>
+  <:title>{{t "ember-rdfa-editor.html-editor.modal.title"}}</:title>
   <:body>
     <div
       class="say-html-editor"
@@ -19,8 +19,12 @@
   </:body>
   <:footer>
     <AuButtonGroup>
-      <AuButton {{on 'click' this.save}}>Save</AuButton>
-      <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+      <AuButton {{on "click" this.save}}>
+        {{t "ember-rdfa-editor.utils.save"}}
+      </AuButton>
+      <AuButton @skin="secondary" {{on "click" this.cancel}}>
+        {{t "ember-rdfa-editor.utils.cancel"}}
+      </AuButton>
     </AuButtonGroup>
   </:footer>
 </AuModal>

@@ -1,6 +1,4 @@
 ember-rdfa-editor:
-  utils:
-    back: Terug
   undo: Ongedaan maken
   redo: Herstellen
   bold: Vetgedrukt
@@ -74,3 +72,12 @@ ember-rdfa-editor:
       center: Centreren
       right: Rechts uitlijnen
       justify: Uitvullen
+  utils:
+    save: Opslaan
+    cancel: Annuleren
+    back: Terug
+  html-editor:
+    toolbar-button:
+      label: HTML bewerken
+    modal:
+      title: HTML bewerken
