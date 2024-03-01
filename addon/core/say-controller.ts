@@ -4,7 +4,9 @@ import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
-import SayView from '@lblod/ember-rdfa-editor/core/say-view';
+import SayView, {
+  type DocumentRange,
+} from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
 import { type Attrs, MarkType, Schema } from 'prosemirror-model';
@@ -57,6 +59,10 @@ export default class SayController {
     return !!this.activeEditorView.parent;
   }
 
+  get domParser() {
+    return this.mainEditorView.domParser;
+  }
+
   clone() {
     return new SayController(this.editor);
   }
@@ -99,7 +105,10 @@ export default class SayController {
    * Note: it does not create a new `doc` node and does not update the `doc` node based on the provided html
    * (e.g. `lang` attributes on the `doc` node are not parsed)
    */
-  setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
+  setHtmlContent(
+    content: string,
+    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
+  ) {
     this.mainEditorView.setHtmlContent(content, options);
   }
 
