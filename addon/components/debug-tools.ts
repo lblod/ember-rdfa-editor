@@ -3,88 +3,47 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import xmlFormat from 'xml-formatter';
 import { basicSetup } from 'codemirror';
-import { EditorView } from '@codemirror/view';
-import { xml } from '@codemirror/lang-xml';
 import { html } from '@codemirror/lang-html';
 import sampleData from '../config/sample-data';
-import { EditorState } from '@codemirror/state';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import ApplicationInstance from '@ember/application/instance';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { modifier } from 'ember-modifier';
+import CodeMirrorModifier from '../modifiers/_private/code-mirror';
+
 interface DebugToolArgs {
   controller?: SayController;
 }
 
 export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
-  @tracked debug: unknown;
-  @tracked xmlDebuggerOpen = false;
+  CodeMirror = CodeMirrorModifier;
+
   @tracked debuggerContent = '';
   @tracked htmlDebuggerOpen = false;
   @tracked sampleData = sampleData;
-  @tracked exportContent = '';
-  private unloadListener?: () => void;
-  private xmlEditor?: EditorView;
-  private htmlEditor?: EditorView;
+  codemirrorExtensions = [basicSetup, html()];
 
   get controller() {
     return this.args.controller;
   }
 
-  constructor(owner: ApplicationInstance, args: DebugToolArgs) {
-    super(owner, args);
-    this.unloadListener = () => {
-      this.saveEditorContentToLocalStorage();
-    };
-    window.addEventListener('beforeunload', this.unloadListener);
-  }
-
-  willDestroy(): void {
-    super.willDestroy();
-    if (this.unloadListener) {
-      window.removeEventListener('beforeunload', this.unloadListener);
-    }
-  }
-
-  @action
-  initDebug(info: unknown) {
-    this.debug = info;
-  }
-
-  @action
-  setupXmlEditor(element: HTMLElement) {
-    this.xmlEditor = new EditorView({
-      state: EditorState.create({
-        extensions: [basicSetup, xml()],
-      }),
-      parent: element,
-    });
-    this.xmlEditor.dispatch({
-      changes: { from: 0, insert: this.formattedDebuggerContent },
-    });
-  }
-
-  @action
-  setupHtmlEditor(element: HTMLElement) {
-    this.htmlEditor = new EditorView({
-      state: EditorState.create({
-        extensions: [basicSetup, html()],
-      }),
-      parent: element,
-    });
-    this.htmlEditor.dispatch({
-      changes: { from: 0, insert: this.formattedDebuggerContent },
-    });
-  }
+  setUpListeners = modifier(
+    () => {
+      const unloadListener = () => {
+        this.saveEditorContentToLocalStorage();
+      };
+      window.addEventListener('beforeunload', unloadListener);
+      return () => {
+        window.removeEventListener('beforeunload', unloadListener);
+      };
+    },
+    { eager: false },
+  );
 
   get formattedDebuggerContent() {
-    if (this.debuggerContent) {
-      try {
-        return xmlFormat(this.debuggerContent);
-      } catch (e) {
-        return this.debuggerContent;
-      }
-    }
-    return this.debuggerContent;
+    return xmlFormat(this.debuggerContent, {
+      throwOnFailure: false,
+      collapseContent: true,
+      ignoredPaths: ['p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    });
   }
 
   @action
@@ -93,43 +52,30 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   }
 
   @action
-  setEditorContent(type: 'xml' | 'html', content: string) {
+  setEditorContent(content: string) {
     if (this.controller) {
-      if (type === 'html') {
-        this.controller.initialize(content);
-        this.saveEditorContentToLocalStorage();
-      }
+      this.controller.initialize(content);
+      this.saveEditorContentToLocalStorage();
     }
   }
 
-  @action openContentDebugger(type: 'xml' | 'html') {
+  @action openContentDebugger() {
     if (this.controller) {
-      if (type === 'xml') {
-        this.debuggerContent = 'Coming soon!';
-        this.xmlDebuggerOpen = true;
-      } else {
-        this.debuggerContent = this.controller.htmlContent;
-        this.htmlDebuggerOpen = true;
-      }
+      this.debuggerContent = this.controller.htmlContent;
+      this.htmlDebuggerOpen = true;
     }
   }
 
-  @action closeContentDebugger(type: 'xml' | 'html', save: boolean) {
-    if (type === 'xml') {
-      this.debuggerContent = 'Coming soon!';
-      this.xmlDebuggerOpen = false;
-    } else {
-      this.debuggerContent = unwrap(this.htmlEditor).state.sliceDoc();
-      this.htmlDebuggerOpen = false;
-    }
+  @action closeContentDebugger(save: boolean) {
+    this.htmlDebuggerOpen = false;
+
     if (save) {
-      const content = this.debuggerContent;
-      if (!content) {
-        //xml parser doesn't accept an empty string
-        this.setEditorContent('html', '');
-      } else {
-        this.setEditorContent(type, content);
-      }
+      this.setEditorContent(this.debuggerContent);
+
+      // const content = this.debuggerContent;
+      // if (!content) {
+      //   //xml parser doesn't accept an empty string
+      // }
     }
   }
 
