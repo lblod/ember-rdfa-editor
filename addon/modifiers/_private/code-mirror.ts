@@ -1,6 +1,8 @@
 import { EditorState, type Extension } from '@codemirror/state';
 import { registerDestructor } from '@ember/destroyable';
 import type Owner from '@ember/owner';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { EditorView, basicSetup } from 'codemirror';
 import { type ArgsFor, type NamedArgs } from 'ember-modifier';
 import Modifier from 'ember-modifier';
@@ -26,6 +28,9 @@ const DEFAULT_EXTENSIONS = [basicSetup];
 export default class CodeMirrorModifier extends Modifier<CodeMirrorSignature> {
   rootElement?: HTMLElement;
   view?: EditorView;
+  extensions?: Extension[];
+  onUpdate?: (content: string) => void;
+
   isUpdating = false;
 
   constructor(owner: Owner, args: ArgsFor<CodeMirrorSignature>) {
@@ -33,15 +38,11 @@ export default class CodeMirrorModifier extends Modifier<CodeMirrorSignature> {
     registerDestructor(this, cleanup);
   }
 
-  initializeEditor(
-    element: HTMLElement,
-    {
-      extensions = DEFAULT_EXTENSIONS,
-      content = '',
-      onUpdate,
-    }: NamedArgs<CodeMirrorSignature>,
-  ) {
-    this.rootElement = element;
+  createEditorState({
+    extensions = DEFAULT_EXTENSIONS,
+    content = '',
+    onUpdate,
+  }: NamedArgs<CodeMirrorSignature>) {
     if (onUpdate) {
       extensions = [
         ...extensions,
@@ -56,16 +57,45 @@ export default class CodeMirrorModifier extends Modifier<CodeMirrorSignature> {
       doc: content,
       extensions,
     });
+    return state;
+  }
+
+  initializeEditor(
+    element: HTMLElement,
+    {
+      extensions = DEFAULT_EXTENSIONS,
+      content = '',
+      onUpdate,
+    }: NamedArgs<CodeMirrorSignature>,
+  ) {
+    this.rootElement = element;
+    this.extensions = extensions;
+    this.onUpdate = onUpdate;
+    const state = this.createEditorState({ extensions, content, onUpdate });
     this.view = new EditorView({
       state,
       parent: element,
     });
   }
 
-  updateEditor({ content = '' }: NamedArgs<CodeMirrorSignature>) {
+  updateEditor({
+    content = '',
+    extensions = DEFAULT_EXTENSIONS,
+    onUpdate,
+  }: NamedArgs<CodeMirrorSignature>) {
     if (this.view) {
-      if (content !== this.view.state.sliceDoc()) {
-        this.isUpdating = true;
+      this.isUpdating = true;
+      if (
+        !ArrayUtils.deepEqual(extensions, unwrap(this.extensions)) ||
+        onUpdate !== this.onUpdate
+      ) {
+        // Extensions or onUpdate method have changed: create a new codemirror state
+        this.extensions = extensions;
+        this.onUpdate = onUpdate;
+        const state = this.createEditorState({ content, extensions, onUpdate });
+        this.view.setState(state);
+      } else if (content !== this.view.state.sliceDoc()) {
+        // Only the content has changed, just update the state
         this.view.dispatch({
           changes: {
             from: 0,
@@ -73,8 +103,8 @@ export default class CodeMirrorModifier extends Modifier<CodeMirrorSignature> {
             insert: content,
           },
         });
-        this.isUpdating = false;
       }
+      this.isUpdating = false;
     }
   }
 
