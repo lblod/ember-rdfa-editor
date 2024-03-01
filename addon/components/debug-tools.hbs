@@ -28,28 +28,9 @@
   {{/if}}
 </div>
 {{#if this.htmlDebuggerOpen}}
-  <div class="rdfa-debugger-panel-wrapper">
-    <div class="rdfa-debugger-content">
-      <h1>HTML representation</h1>
-      <button
-        type="button"
-        {{on "click" (fn this.closeContentDebugger true)}}
-      >Set HTML</button>
-      <button
-        type="button"
-        {{on "click" (fn this.closeContentDebugger false)}}
-      >Cancel</button>
-      <hr />
-      <div class="rdfa-debugger-textarea-wrapper">
-        <div>Enter html here</div>
-        <div
-          {{this.CodeMirror
-            content=this.formattedDebuggerContent
-            extensions=this.codemirrorExtensions
-            onUpdate=this.setDebuggerContent
-          }}
-        ></div>
-      </div>
-    </div>
-  </div>
+  <Plugins::HtmlEditor::Modal
+    @content={{this.controller.htmlContent}}
+    @onSave={{this.onSave}}
+    @onCancel={{this.onCancel}}
+  />
 {{/if}}

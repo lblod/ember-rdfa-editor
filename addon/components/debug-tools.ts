@@ -14,12 +14,8 @@ interface DebugToolArgs {
 }
 
 export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
-  CodeMirror = CodeMirrorModifier;
-
-  @tracked debuggerContent = '';
   @tracked htmlDebuggerOpen = false;
   @tracked sampleData = sampleData;
-  codemirrorExtensions = [basicSetup, html()];
 
   get controller() {
     return this.args.controller;
@@ -38,53 +34,27 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
     { eager: false },
   );
 
-  get formattedDebuggerContent() {
-    return beautify.html(this.debuggerContent, {
-      content_unformatted: [
-        'p',
-        'span',
-        'a',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-      ],
-    });
-  }
-
-  @action
-  setDebuggerContent(content: string) {
-    this.debuggerContent = content;
-  }
-
   @action
   setEditorContent(content: string) {
     if (this.controller) {
-      this.controller.initialize(content);
+      this.controller.setHtmlContent(content);
       this.saveEditorContentToLocalStorage();
     }
   }
 
   @action openContentDebugger() {
     if (this.controller) {
-      this.debuggerContent = this.controller.htmlContent;
       this.htmlDebuggerOpen = true;
     }
   }
 
-  @action closeContentDebugger(save: boolean) {
+  @action onSave(content: string) {
     this.htmlDebuggerOpen = false;
+    this.setEditorContent(content);
+  }
 
-    if (save) {
-      this.setEditorContent(this.debuggerContent);
-
-      // const content = this.debuggerContent;
-      // if (!content) {
-      //   //xml parser doesn't accept an empty string
-      // }
-    }
+  @action onCancel() {
+    this.htmlDebuggerOpen = false;
   }
 
   @action

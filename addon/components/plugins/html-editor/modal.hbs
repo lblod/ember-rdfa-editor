@@ -1,0 +1,26 @@
+<AuModal
+  class="say-html-editor-modal"
+  @title="HTML Editor"
+  @closable={{true}}
+  @closeModal={{this.cancel}}
+  @modalOpen={{true}}
+  @size="large"
+>
+  <:title>HTML Editor</:title>
+  <:body>
+    <div
+      class="say-html-editor"
+      {{this.CodeMirror
+        content=this.formattedContent
+        extensions=this.cmExtensions
+        onUpdate=this.setContent
+      }}
+    ></div>
+  </:body>
+  <:footer>
+    <AuButtonGroup>
+      <AuButton {{on 'click' this.save}}>Save</AuButton>
+      <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+    </AuButtonGroup>
+  </:footer>
+</AuModal>
