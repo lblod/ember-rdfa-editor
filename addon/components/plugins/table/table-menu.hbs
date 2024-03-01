@@ -7,79 +7,18 @@
   as |Menu|
 >
   {{#if this.isInTable}}
-    <Menu.Item
-      @menuAction={{this.insertRowBelow}}
-      title={{t 'ember-rdfa-editor.table.add-row-below'}}
-    >
-      <AuIcon @icon='table-row-end-add' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.add-row-below'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.insertRowAbove}}
-      title={{t 'ember-rdfa-editor.table.add-row-above'}}
-    >
-      <AuIcon @icon='table-row-start-add' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.add-row-above'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.insertColumnAfter}}
-      title={{t 'ember-rdfa-editor.table.add-column-after'}}
-    >
-      <AuIcon @icon='table-column-end-add' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.add-column-after'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.insertColumnBefore}}
-      title={{t 'ember-rdfa-editor.table.add-column-before'}}
-    >
-      <AuIcon @icon='table-column-start-add' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.add-column-before'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.removeTableRow}}
-      title={{t 'ember-rdfa-editor.table.delete-row'}}
-    >
-      <AuIcon @icon='table-row-remove' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.delete-row'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.removeTableColumn}}
-      title={{t 'ember-rdfa-editor.table.delete-column'}}
-    >
-      <AuIcon @icon='table-column-remove' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.delete-column'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.removeTable}}
-      title={{t 'ember-rdfa-editor.table.delete-table'}}
-    >
-      <AuIcon @icon='bin' @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.delete-table'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.toggleHeaderRow}}
-      title={{t 'ember-rdfa-editor.table.toggle-header-row'}}
-    >
-      {{t 'ember-rdfa-editor.table.toggle-header-row'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.toggleHeaderColumn}}
-      title={{t 'ember-rdfa-editor.table.toggle-header-column'}}
-    >
-      {{t 'ember-rdfa-editor.table.toggle-header-column'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.mergeCells}}
-      title={{t 'ember-rdfa-editor.table.merge-cells'}}
-    >
-      {{t 'ember-rdfa-editor.table.merge-cells'}}
-    </Menu.Item>
-    <Menu.Item
-      @menuAction={{this.splitCell}}
-      title={{t 'ember-rdfa-editor.table.split-cell'}}
-    >
-      {{t 'ember-rdfa-editor.table.split-cell'}}
-    </Menu.Item>
+    {{#each this.tableActions as |action|}}
+      <Menu.Item
+        @menuAction={{(fn this.executeAction action)}}
+        title={{action.title}}
+        disabled={{not (this.canExecuteAction action)}}
+      >
+        {{#if action.icon}}
+          <AuIcon @icon={{action.icon}} @ariaHidden={{true}} />
+        {{/if}}
+        {{action.title}}
+      </Menu.Item>
+    {{/each}}
   {{else}}
     <div role='group'>
       <div role='menuitem' class='say-dropdown__menu-with-inputs'>
