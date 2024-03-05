@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
+import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { unwrap } from '../utils/_private/option';
 import type {
@@ -233,13 +233,20 @@ export type RdfaRenderArgs = {
   contentContainerAttrs?: Record<string, unknown>;
 } & ({ content: DOMOutputSpec | 0 } | { contentArray: unknown[] });
 
+function determineChildTag(renderable: Mark | PNode) {
+  if (renderable instanceof Mark) {
+    return 'span';
+  } else {
+    return renderable.inlineContent || renderable.isInline ? 'span' : 'div';
+  }
+}
 export function renderRdfaAware({
   renderable,
   tag,
   attrs = {},
-  rdfaContainerTag = tag,
+  rdfaContainerTag = determineChildTag(renderable),
   rdfaContainerAttrs,
-  contentContainerTag = tag,
+  contentContainerTag = determineChildTag(renderable),
   contentContainerAttrs = {},
   ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
