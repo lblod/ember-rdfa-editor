@@ -72,7 +72,7 @@ const nodes = {
   doc: doc({ rdfaAware: true }),
   paragraph,
 
-  repaired_block,
+  repaired_block: repaired_block({ rdfaAware: true }),
 
   list_item: list_item({ rdfaAware: true }),
   ordered_list: ordered_list({ rdfaAware: true }),
