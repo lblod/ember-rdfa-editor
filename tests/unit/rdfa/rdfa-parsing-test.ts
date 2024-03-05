@@ -76,9 +76,9 @@ const schema = new Schema({
 
     repaired_block,
 
-    list_item,
-    ordered_list,
-    bullet_list,
+    list_item: list_item({ rdfaAware: true }),
+    ordered_list: ordered_list({ rdfaAware: true }),
+    bullet_list: bullet_list({ rdfaAware: true }),
     placeholder,
     ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
     heading: heading({ rdfaAware: true }),

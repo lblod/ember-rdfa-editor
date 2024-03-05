@@ -1,12 +1,14 @@
-import type { Node as PNode, NodeSpec } from 'prosemirror-model';
+import type { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
-  renderRdfaAttrs,
-  renderInvisibleRdfa,
-  type RdfaAttrs,
+  renderRdfaAware,
+  getClassicRdfaAttrs,
+  classicRdfaAttrSpec,
+  getRdfaContentElement,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
 
@@ -24,82 +26,166 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
     | undefined;
 };
 
-export const ordered_list: NodeSpec = {
-  attrs: { order: { default: 1 }, style: { default: null }, ...rdfaAttrSpec },
-  content: 'list_item+',
-  group: 'block list',
-  parseDOM: [
-    {
-      tag: 'ol',
-      getAttrs(dom: string | HTMLElement) {
-        if (typeof dom === 'string') {
-          return false;
-        }
-        const start = dom.getAttribute('start');
-        return {
-          order: optionMapOr(1, (val) => Number(val), start),
-          style: getListStyleFromDomElement(dom),
-          ...getRdfaAttrs(dom),
-        };
-      },
-      consuming: false,
-    },
-  ],
-  toDOM(node) {
-    const { style, order, ...attrs } = node.attrs as OrderedListAttrs;
+type Options = {
+  rdfaAware?: boolean;
+};
 
-    return [
-      'ol',
+export const ordered_list: (options?: Options) => SayNodeSpec = ({
+  rdfaAware = false,
+} = {}) => {
+  return {
+    get attrs() {
+      const baseAttrs = {
+        order: { default: 1 },
+        style: { default: null },
+      };
+      if (rdfaAware) {
+        return {
+          ...baseAttrs,
+          ...rdfaAttrSpec,
+        };
+      } else {
+        return {
+          ...baseAttrs,
+          ...classicRdfaAttrSpec,
+        };
+      }
+    },
+    content: 'list_item+',
+    group: 'block list',
+    parseDOM: [
       {
-        ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+        tag: 'ol',
+        getAttrs(dom: string | HTMLElement) {
+          if (typeof dom === 'string') {
+            return false;
+          }
+          const start = dom.getAttribute('start');
+          const baseAttrs = {
+            order: optionMapOr(1, (val) => Number(val), start),
+            style: getListStyleFromDomElement(dom),
+          };
+          if (rdfaAware) {
+            return {
+              ...baseAttrs,
+              ...getRdfaAttrs(dom),
+            };
+          } else {
+            return {
+              ...baseAttrs,
+              ...getClassicRdfaAttrs(dom),
+            };
+          }
+        },
+        consuming: false,
+        contentElement: getRdfaContentElement,
+      },
+    ],
+    toDOM(node) {
+      const { style, order, ...attrs } = node.attrs as OrderedListAttrs;
+      const baseAttrs = {
         ...(order !== 1 && { start: order }),
         ...(style && {
           style: `list-style-type: ${style};`,
         }),
-        ...attrs,
-      },
-      0,
-    ];
-  },
-};
-export const bullet_list: NodeSpec = {
-  content: 'list_item+',
-  group: 'block list',
-  attrs: { ...rdfaAttrSpec },
-  parseDOM: [
-    {
-      tag: 'ul',
-      getAttrs(node: string | HTMLElement) {
-        if (typeof node === 'string') {
-          return false;
-        }
-        return {
-          ...getRdfaAttrs(node),
-        };
-      },
-      consuming: false,
+      };
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'ol',
+          attrs: baseAttrs,
+          content: 0,
+        });
+      } else {
+        return ['ol', { ...baseAttrs, ...attrs }, 0];
+      }
     },
-  ],
-  toDOM(node: PNode) {
-    return ['ul', { ...node.attrs }, 0];
-  },
+  };
 };
 
-export const list_item: NodeSpec = {
-  content: 'paragraphGroup+ block*',
-  defining: true,
-  attrs: { ...rdfaAttrSpec },
-  parseDOM: [
-    {
-      tag: 'li',
+export const bullet_list: (options?: Options) => SayNodeSpec = ({
+  rdfaAware = false,
+} = {}) => {
+  return {
+    content: 'list_item+',
+    group: 'block list',
+    get attrs() {
+      if (rdfaAware) {
+        return rdfaAttrSpec;
+      } else {
+        return classicRdfaAttrSpec;
+      }
     },
-  ],
-  toDOM(node: PNode) {
-    return [
-      'li',
-      { ...renderRdfaAttrs(node.attrs as RdfaAttrs), ...node.attrs },
-      renderInvisibleRdfa(node, 'div'),
-      ['div', {}, 0],
-    ];
-  },
+    parseDOM: [
+      {
+        tag: 'ul',
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
+          if (rdfaAware) {
+            return { ...getRdfaAttrs(node) };
+          } else {
+            return { ...getClassicRdfaAttrs(node) };
+          }
+        },
+        consuming: false,
+        contentElement: getRdfaContentElement,
+      },
+    ],
+    toDOM(node: PNode) {
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'ul',
+          content: 0,
+        });
+      } else {
+        return ['ul', node.attrs, 0];
+      }
+    },
+  };
+};
+
+export const list_item: (options?: Options) => SayNodeSpec = ({
+  rdfaAware = false,
+} = {}) => {
+  return {
+    content: 'paragraphGroup+ block*',
+    defining: true,
+    get attrs() {
+      if (rdfaAware) {
+        return rdfaAttrSpec;
+      } else {
+        return classicRdfaAttrSpec;
+      }
+    },
+    parseDOM: [
+      {
+        tag: 'li',
+        getAttrs(node: HTMLElement | string) {
+          if (typeof node === 'string') {
+            return false;
+          }
+          if (rdfaAware) {
+            return { ...getRdfaAttrs(node) };
+          } else {
+            return { ...getClassicRdfaAttrs(node) };
+          }
+        },
+        contentElement: getRdfaContentElement,
+      },
+    ],
+    toDOM(node: PNode) {
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'li',
+          content: 0,
+        });
+      } else {
+        return ['li', node.attrs, 0];
+      }
+    },
+  };
 };

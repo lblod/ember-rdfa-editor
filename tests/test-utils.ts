@@ -74,9 +74,9 @@ const nodes = {
 
   repaired_block,
 
-  list_item,
-  ordered_list,
-  bullet_list,
+  list_item: list_item({ rdfaAware: true }),
+  ordered_list: ordered_list({ rdfaAware: true }),
+  bullet_list: bullet_list({ rdfaAware: true }),
   ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
   heading: heading({ rdfaAware: true }),
   blockquote,
