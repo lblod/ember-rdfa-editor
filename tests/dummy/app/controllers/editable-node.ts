@@ -99,6 +99,7 @@ export default class EditableBlockController extends Controller {
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rdfaAware: true,
       }),
       heading: heading({ rdfaAware: true }),
       blockquote,

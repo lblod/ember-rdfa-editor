@@ -71,7 +71,11 @@ export const SAMPLE_SCHEMA = new Schema({
     ordered_list: ordered_list({ rdfaAware: true }),
     bullet_list: bullet_list({ rdfaAware: true }),
     placeholder,
-    ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
+    ...tableNodes({
+      tableGroup: 'block',
+      cellContent: 'block+',
+      rdfaAware: true,
+    }),
     heading: heading({ rdfaAware: true }),
     blockquote,
 
