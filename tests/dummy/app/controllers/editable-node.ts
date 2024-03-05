@@ -12,7 +12,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
-  docWithConfig,
+  doc,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -83,8 +83,9 @@ export default class EditableBlockController extends Controller {
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
-      doc: docWithConfig({
+      doc: doc({
         defaultLanguage: 'nl-BE',
+        rdfaAware: true,
       }),
       paragraph,
 

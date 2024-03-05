@@ -10,7 +10,7 @@ import {
 import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
   block_rdfa,
-  docWithConfig,
+  doc,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -70,7 +70,7 @@ export async function renderEditor() {
 }
 
 const nodes = {
-  doc: docWithConfig(),
+  doc: doc({ rdfaAware: true }),
   paragraph,
 
   repaired_block,
