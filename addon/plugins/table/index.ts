@@ -13,7 +13,7 @@ import {
   selectedRect,
   tableEditing,
   TableView as PluginTableView,
-} from 'prosemirror-tables';
+} from '@say-editor/prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
 
 export { tableNodes } from './nodes/table';

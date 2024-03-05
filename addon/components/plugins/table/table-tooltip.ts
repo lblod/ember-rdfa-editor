@@ -13,7 +13,7 @@ import {
   splitCell,
   toggleHeaderColumn,
   toggleHeaderRow,
-} from 'prosemirror-tables';
+} from '@say-editor/prosemirror-tables';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
