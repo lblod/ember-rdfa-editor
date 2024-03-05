@@ -4,6 +4,7 @@ import {
   rdfaAttrSpec,
   renderRdfaAttrs,
   renderInvisibleRdfa,
+  type RdfaAttrs,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
@@ -50,7 +51,7 @@ export const ordered_list: NodeSpec = {
     return [
       'ol',
       {
-        ...renderRdfaAttrs(node),
+        ...renderRdfaAttrs(node.attrs as RdfaAttrs),
         ...(order !== 1 && { start: order }),
         ...(style && {
           style: `list-style-type: ${style};`,
@@ -96,7 +97,7 @@ export const list_item: NodeSpec = {
   toDOM(node: PNode) {
     return [
       'li',
-      { ...renderRdfaAttrs(node), ...node.attrs },
+      { ...renderRdfaAttrs(node.attrs as RdfaAttrs), ...node.attrs },
       renderInvisibleRdfa(node, 'div'),
       ['div', {}, 0],
     ];

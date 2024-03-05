@@ -178,20 +178,16 @@ export function renderInvisibleRdfa(
 }
 
 export function renderRdfaAttrs(
-  nodeOrMark: NodeOrMark,
+  rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
-  if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
-    const contentTriple: ContentTriple | null = (
-      nodeOrMark.attrs['properties'] as OutgoingTriple[]
-    ).find(
+  if (rdfaAttrs.rdfaNodeType === 'resource') {
+    const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
     ) as ContentTriple | null;
 
     return contentTriple
       ? {
-          about: (nodeOrMark.attrs['subject'] ||
-            nodeOrMark.attrs['about'] ||
-            nodeOrMark.attrs['resource']) as string,
+          about: rdfaAttrs.subject,
           property: contentTriple.predicate,
           datatype: contentTriple.object.language.length
             ? null
@@ -201,15 +197,11 @@ export function renderRdfaAttrs(
           resource: null,
         }
       : {
-          about: (nodeOrMark.attrs['subject'] ||
-            nodeOrMark.attrs['about'] ||
-            nodeOrMark.attrs['resource']) as string,
+          about: rdfaAttrs.subject,
           resource: null,
         };
   } else {
-    const backlinks = nodeOrMark.attrs[
-      'backlinks'
-    ] as IncomingLiteralNodeTriple[];
+    const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {};
     }
@@ -240,6 +232,7 @@ export type RdfaRenderArgs = {
   contentContainerTag?: string;
   contentContainerAttrs?: Record<string, unknown>;
 } & ({ content: DOMOutputSpec | 0 } | { contentArray: unknown[] });
+
 export function renderRdfaAware({
   renderable,
   tag,
@@ -251,15 +244,18 @@ export function renderRdfaAware({
   ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
   const clone = { ...attrs };
+
+  //TODO: this should not be needed
   delete clone['properties'];
   delete clone['backlinks'];
   delete clone['subject'];
   delete clone['resource'];
   delete clone['__rdfaId'];
   delete clone['rdfaNodeType'];
+
   return [
     tag,
-    { ...clone, ...renderRdfaAttrs(renderable) },
+    { ...clone, ...renderRdfaAttrs(renderable.attrs as RdfaAttrs) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,
