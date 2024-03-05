@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { unwrap } from '../utils/_private/option';
+import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
   IncomingLiteralNodeTriple,
@@ -11,6 +11,44 @@ import type {
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 // const logger = createLogger('core/schema');
+
+export const classicRdfaAttrSpec = {
+  vocab: { default: undefined },
+  typeof: { default: undefined },
+  prefix: { default: undefined },
+  property: { default: undefined },
+  rel: { default: undefined },
+  rev: { default: undefined },
+  href: { default: undefined },
+  about: { default: undefined },
+  resource: { default: undefined },
+  content: { default: undefined },
+  datatype: { default: undefined },
+  lang: { default: undefined },
+  xmlns: { default: undefined },
+  src: { default: undefined },
+  role: { default: undefined },
+  inlist: { default: undefined },
+  datetime: { default: undefined },
+};
+
+export function getClassicRdfaAttrs(
+  node: Element,
+): Record<string, string> | false {
+  const attrs: Record<string, string> = {};
+  let hasAnyRdfaAttributes = false;
+  for (const key of Object.keys(classicRdfaAttrSpec)) {
+    const value = node.attributes.getNamedItem(key)?.value;
+    if (isSome(value)) {
+      attrs[key] = value;
+      hasAnyRdfaAttributes = true;
+    }
+  }
+  if (hasAnyRdfaAttributes) {
+    return attrs;
+  }
+  return false;
+}
 
 export const rdfaAttrSpec = {
   properties: { default: [] },
