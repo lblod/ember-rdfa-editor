@@ -85,17 +85,25 @@ table.ProseMirror-selectednode,
   display: flex;
   flex-direction: column;
 }
+
 .say-table-tooltip--actions {
   display: flex;
   flex-direction: row;
+
   button {
     outline: none;
     border: 0;
     color: var(--au-gray-600);
     padding: $au-unit-small;
+
     &:hover,
     &:focus {
       color: var(--au-gray-700);
+    }
+
+    &:disabled {
+      color: var(--au-gray-400);
+      cursor: not-allowed;
     }
   }
 }

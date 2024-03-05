@@ -19,19 +19,22 @@ ember-rdfa-editor:
       upper-roman: Romeinse Cijfers
   unindent-list: Lijstniveau hoger
   indent-list: Lijstniveau lager
-  table-options: Tabelopties
-  insert-table: Tabel invoegen
-  add-row-below: Rij onder invoegen
-  add-row-above: Rij boven invoegen
-  add-column-after: Kolom rechts invoegen
-  add-column-before: Kolom links invoegen
-  delete-row: Rij verwijderen
-  delete-column: Kolom verwijderen
-  delete-table: Tabel verwijderen
-  toggle-header-row: Kopregel aan/uit
-  toggle-header-column: Kopkolom aan/uit
-  columns: Kolommen
-  rows: Rijen
+  table:
+    table-options: Tabelopties
+    insert-table: Tabel invoegen
+    add-row-below: Rij onder invoegen
+    add-row-above: Rij boven invoegen
+    add-column-after: Kolom rechts invoegen
+    add-column-before: Kolom links invoegen
+    delete-row: Rij verwijderen
+    delete-column: Kolom verwijderen
+    delete-table: Tabel verwijderen
+    toggle-header-row: Kopregel aan/uit
+    toggle-header-column: Kopkolom aan/uit
+    merge-cells: Cellen samenvoegen
+    split-cell: Cel splitsen
+    columns: Kolommen
+    rows: Rijen
   normalText: Gewone tekst
   heading: Koptitel
   insert-heading: Voeg koptitel toe

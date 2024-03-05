@@ -9,6 +9,8 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+  mergeCells,
+  splitCell,
   toggleHeaderColumn,
   toggleHeaderRow,
 } from 'prosemirror-tables';
@@ -58,53 +60,65 @@ export default class TableTooltip extends Component<Args> {
     return [
       [
         {
-          title: this.intl.t('ember-rdfa-editor.toggle-header-row'),
-          label: this.intl.t('ember-rdfa-editor.toggle-header-row'),
+          title: this.intl.t('ember-rdfa-editor.table.toggle-header-row'),
+          label: this.intl.t('ember-rdfa-editor.table.toggle-header-row'),
           command: toggleHeaderRow,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.toggle-header-column'),
-          label: this.intl.t('ember-rdfa-editor.toggle-header-column'),
+          title: this.intl.t('ember-rdfa-editor.table.toggle-header-column'),
+          label: this.intl.t('ember-rdfa-editor.table.toggle-header-column'),
           command: toggleHeaderColumn,
         },
       ],
       [
         {
-          title: this.intl.t('ember-rdfa-editor.add-row-below'),
+          title: this.intl.t('ember-rdfa-editor.table.add-row-below'),
           icon: 'table-row-end-add',
           command: addRowAfter,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.add-row-above'),
+          title: this.intl.t('ember-rdfa-editor.table.add-row-above'),
           icon: 'table-row-start-add',
           command: addRowBefore,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.add-column-after'),
+          title: this.intl.t('ember-rdfa-editor.table.add-column-after'),
           icon: 'table-column-end-add',
           command: addColumnAfter,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.add-column-before'),
+          title: this.intl.t('ember-rdfa-editor.table.add-column-before'),
           icon: 'table-column-start-add',
           command: addColumnBefore,
         },
       ],
       [
         {
-          title: this.intl.t('ember-rdfa-editor.delete-row'),
+          title: this.intl.t('ember-rdfa-editor.table.delete-row'),
           icon: 'table-row-remove',
           command: deleteRow,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.delete-column'),
+          title: this.intl.t('ember-rdfa-editor.table.delete-column'),
           icon: 'table-column-remove',
           command: deleteColumn,
         },
         {
-          title: this.intl.t('ember-rdfa-editor.delete-table'),
+          title: this.intl.t('ember-rdfa-editor.table.delete-table'),
           icon: 'bin',
           command: deleteTable,
+        },
+      ],
+      [
+        {
+          title: this.intl.t('ember-rdfa-editor.table.merge-cells'),
+          label: this.intl.t('ember-rdfa-editor.table.merge-cells'),
+          command: mergeCells,
+        },
+        {
+          title: this.intl.t('ember-rdfa-editor.table.split-cell'),
+          label: this.intl.t('ember-rdfa-editor.table.split-cell'),
+          command: splitCell,
         },
       ],
     ];
