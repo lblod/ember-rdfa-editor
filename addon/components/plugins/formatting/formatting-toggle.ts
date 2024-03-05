@@ -1,6 +1,9 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { commands, selectActiveState } from '@guardian/prosemirror-invisibles';
+import {
+  commands,
+  selectActiveState,
+} from '@say-editor/prosemirror-invisibles';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 
 type Args = {

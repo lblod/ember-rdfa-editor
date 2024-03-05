@@ -12,7 +12,7 @@ import {
   mergeCells,
   splitCell,
   toggleHeader,
-} from 'prosemirror-tables';
+} from '@say-editor/prosemirror-tables';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table';
 import { Command } from '@lblod/ember-rdfa-editor';
