@@ -88,7 +88,7 @@ export default class SpaceInvisibleController extends Controller {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading,
+      heading: heading(),
       blockquote,
 
       horizontal_rule,

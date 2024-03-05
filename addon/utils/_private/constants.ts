@@ -3,6 +3,8 @@
  * we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
  * we've removed br from the list to be inline with editor behaviour, which treats it as a block
  **/
+
+export const HEADING_ELEMENTS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 export const PHRASING_CONTENT = [
   'a',
   'abbr',

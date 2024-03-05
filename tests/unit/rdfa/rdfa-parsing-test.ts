@@ -81,7 +81,7 @@ const schema = new Schema({
     bullet_list,
     placeholder,
     ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-    heading,
+    heading: heading({ rdfaAware: true }),
     blockquote,
 
     horizontal_rule,

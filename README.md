@@ -96,7 +96,7 @@ export default class EditorComponent extends Component {
           cellContent: 'block+',
           inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
         }),
-        heading,
+        heading: heading(),
         blockquote,
         horizontal_rule,
         code_block,

@@ -79,7 +79,7 @@ const nodes = {
   ordered_list,
   bullet_list,
   ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
-  heading,
+  heading: heading({ rdfaAware: true }),
   blockquote,
 
   horizontal_rule,
