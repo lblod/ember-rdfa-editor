@@ -113,7 +113,7 @@ export default class EditableBlockController extends Controller {
 
       hard_break,
       block_rdfa: block_rdfa({ rdfaAware: true }),
-      inline_rdfa,
+      inline_rdfa: inline_rdfa({ rdfaAware: true }),
       link: link(this.linkOptions),
     },
     marks: {
@@ -160,7 +160,7 @@ export default class EditableBlockController extends Controller {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
-      inline_rdfa: inlineRdfaView(controller),
+      inline_rdfa: inlineRdfaView({ rdfaAware: true })(controller),
     };
   };
 
