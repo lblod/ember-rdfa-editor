@@ -104,7 +104,7 @@ export default class IndexController extends Controller {
 
       hard_break,
       invisible_rdfa,
-      block_rdfa,
+      block_rdfa: block_rdfa(),
       card,
       counter,
       dropdown,

@@ -91,7 +91,7 @@ const nodes = {
 
   hard_break,
   invisible_rdfa,
-  block_rdfa,
+  block_rdfa: block_rdfa({ rdfaAware: true }),
 };
 const marks = {
   inline_rdfa,

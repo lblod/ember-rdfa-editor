@@ -82,7 +82,7 @@ export const SAMPLE_SCHEMA = new Schema({
     image,
 
     hard_break,
-    block_rdfa,
+    block_rdfa: block_rdfa({ rdfaAware: true }),
   },
   marks: {
     inline_rdfa,
