@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 9.4.0
+
+### Minor Changes
+
+- [#1149](https://github.com/lblod/ember-rdfa-editor/pull/1149) [`850abee`](https://github.com/lblod/ember-rdfa-editor/commit/850abeed8d69d5edab8ff9ac7dec2062b646ac3c) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4704: Merge/Split table cells
+
+### Patch Changes
+
+- [#1152](https://github.com/lblod/ember-rdfa-editor/pull/1152) [`d840802`](https://github.com/lblod/ember-rdfa-editor/commit/d840802c8b0162072d409b8feef496656fad2bca) Thanks [@dkozickis](https://github.com/dkozickis)! - Move to "@say-editor" packages for invisibles and tables plugin
+
 ## 9.3.0
 
 ### Minor Changes
