@@ -7,7 +7,6 @@ import {
   strong,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
-import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
   block_rdfa,
   doc,
@@ -96,7 +95,6 @@ const nodes = {
 const marks = {
   inline_rdfa,
   code,
-  link,
   em,
   strong,
   underline,

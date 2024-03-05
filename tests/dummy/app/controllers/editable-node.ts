@@ -131,6 +131,7 @@ export default class EditableBlockController extends Controller {
   get linkOptions() {
     return {
       interactive: true,
+      rdfaAware: true,
     };
   }
 

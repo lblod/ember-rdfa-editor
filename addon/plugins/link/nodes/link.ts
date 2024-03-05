@@ -1,5 +1,8 @@
 import {
+  classicRdfaAttrSpec,
+  getClassicRdfaAttrs,
   getRdfaAttrs,
+  getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
 } from '../../../core/schema';
@@ -12,16 +15,17 @@ import type { ComponentLike } from '@glint/template';
 import Link from '@lblod/ember-rdfa-editor/components/ember-node/link';
 
 type LinkOptions = {
-  interactive: boolean;
+  interactive?: boolean;
+  rdfaAware?: boolean;
 };
 
 // TODO this spec doesn't play well with RDFa editing tools. It has been modified so that any
 // additional RDFa annotations are not striped. This is for example, used by the citation plugin in
 // lblod-plugins
-const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
-  options,
-) => {
-  const { interactive } = options;
+const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
+  interactive = false,
+  rdfaAware = false,
+} = {}) => {
   return {
     name: 'link',
     component: Link as unknown as ComponentLike,
@@ -31,47 +35,69 @@ const emberNodeConfig: (options: LinkOptions) => EmberNodeConfig = (
     atom: true,
     defining: true,
     draggable: false,
-    attrs: {
-      ...rdfaAttrSpec,
-      href: {
-        default: null,
-      },
-      interactive: {
-        default: interactive,
-      },
+    get attrs() {
+      const baseAttrs = {
+        href: {
+          default: null,
+        },
+        interactive: {
+          default: interactive,
+        },
+      };
+      if (rdfaAware) {
+        return {
+          ...rdfaAttrSpec,
+          ...baseAttrs,
+        };
+      } else {
+        return { ...classicRdfaAttrSpec, ...baseAttrs };
+      }
     },
     needsFFKludge: true,
     needsChromeCursorFix: true,
-    parseDOM: [
-      {
-        tag: 'a',
-        getAttrs(dom: string | HTMLElement) {
-          if (typeof dom === 'string') {
-            return false;
-          }
-          return {
-            ...getRdfaAttrs(dom),
-            href: dom.getAttribute('href'),
-          };
+    get parseDOM() {
+      return [
+        {
+          tag: 'a',
+          getAttrs(dom: string | HTMLElement) {
+            if (typeof dom === 'string') {
+              return false;
+            }
+            const href = dom.getAttribute('href');
+            if (rdfaAware) {
+              return {
+                ...getRdfaAttrs(dom),
+                href,
+              };
+            } else {
+              return {
+                ...getClassicRdfaAttrs(dom),
+                href,
+              };
+            }
+          },
+          contentElement: getRdfaContentElement,
         },
-      },
-    ],
+      ];
+    },
     toDOM(node) {
       const { interactive: _, placeholder: __, ...attrs } = node.attrs;
-      return renderRdfaAware({
-        renderable: node,
-        tag: 'a',
-        attrs,
-        rdfaContainerTag: 'span',
-        contentContainerTag: 'span',
-        content: 0,
-      });
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'a',
+          attrs,
+          content: 0,
+        });
+      } else {
+        return ['a', attrs, 0];
+      }
     },
   };
 };
 
-export const link = (options: LinkOptions) =>
+export const link = (options?: LinkOptions) =>
   createEmberNodeSpec(emberNodeConfig(options));
 
-export const linkView = (options: LinkOptions) =>
+export const linkView = (options?: LinkOptions) =>
   createEmberNodeView(emberNodeConfig(options));
