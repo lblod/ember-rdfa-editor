@@ -14,6 +14,15 @@ export interface SayAttributeSpec {
  */
 export default interface SayNodeSpec extends NodeSpec {
   editable?: boolean;
+  /**
+   * `serialize` method which is used by an instance of a `SaySerializer`.
+   * When defined, this method takes precedence over `toDOM` when serializing using a `SaySerializer`.
+   *
+   * Note: this method is not a replacement to `toDOM`, `toDOM` is still used by Prosemirror to construct the node-view for this node,
+   * `serialize` is only used when `SaySerializer` is explicitly used in our code to serialize something.
+   * e.g. copying a part of the editor (see `clipboardSerializer`) or extracting the document html using the 'SayController.htmlContent` method.
+   *
+   */
   serialize?: NodeSerializer;
   attrs?: {
     [name: string]: SayAttributeSpec;

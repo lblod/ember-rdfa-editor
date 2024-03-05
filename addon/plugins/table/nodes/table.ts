@@ -88,6 +88,17 @@ interface TableNodeOptions {
   tableGroup?: string;
   cellContent: string;
   cellAttributes?: Record<string, ExtraAttribute>;
+  /**
+   * Style to be applied inline to elements in order to mark the rows and columns of the table.
+   * If not supplied, the default stylesheets apply a border to ensure that it is visible.
+   * This is not maintained when exporting the markup (e.g. when copy-pasting a table).
+   * Style defaults to 'solid'.
+   */
+  inlineBorderStyle?: {
+    width: string;
+    style?: string;
+    color: string;
+  };
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
@@ -107,13 +118,25 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
   for (const [key, attr] of Object.entries(extraAttrs)) {
     cellAttrs[key] = { default: attr.default };
   }
+  const inlineBorderStyle =
+    options.inlineBorderStyle &&
+    `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
+  const tableStyle =
+    inlineBorderStyle &&
+    `border: ${inlineBorderStyle}; border-collapse: collapse;`;
+  const rowStyle = inlineBorderStyle && `border-top: ${inlineBorderStyle};`;
+  const cellStyle = inlineBorderStyle && `border-left: ${inlineBorderStyle};`;
 
   return {
     table: {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
-      attrs: { ...rdfaAttrSpec, class: { default: 'say-table' } },
+      attrs: {
+        ...rdfaAttrSpec,
+        class: { default: 'say-table' },
+        style: { default: tableStyle },
+      },
       group: options.tableGroup,
       allowGapCursor: false,
       parseDOM: [
@@ -133,7 +156,15 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node: PNode) {
-        return ['table', { ...node.attrs, class: 'say-table' }, ['tbody', 0]];
+        return [
+          'table',
+          {
+            ...node.attrs,
+            class: 'say-table',
+            style: tableStyle,
+          },
+          ['tbody', 0],
+        ];
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
@@ -143,7 +174,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           {
             ...node.attrs,
             class: 'say-table',
-            style: 'min-width: 100%',
+            style: `width: 100%; ${tableStyle || ''}`,
           },
           tableView.colgroupElement,
           ['tbody', 0],
@@ -172,7 +203,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node: PNode) {
-        return ['tr', node.attrs, 0];
+        return ['tr', { ...node.attrs, style: rowStyle }, 0];
       },
     },
     table_cell: {
@@ -193,7 +224,11 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['td', setCellAttrs(node, extraAttrs), 0];
+        return [
+          'td',
+          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
+          0,
+        ];
       },
     },
     table_header: {
@@ -213,7 +248,11 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['th', setCellAttrs(node, extraAttrs), 0];
+        return [
+          'th',
+          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
+          0,
+        ];
       },
     },
   };

@@ -9,10 +9,15 @@ import {
   deleteColumn,
   deleteRow,
   deleteTable,
+  mergeCells,
+  splitCell,
   toggleHeader,
-} from 'prosemirror-tables';
+} from '@say-editor/prosemirror-tables';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table';
+import { type Command } from '@lblod/ember-rdfa-editor';
+import { service } from '@ember/service';
+import IntlService from 'ember-intl/services/intl';
 
 interface Args {
   controller?: SayController;
@@ -20,9 +25,82 @@ interface Args {
 
 const DEFAULT_COLUMNS_ROWS = 2;
 
+type Action = {
+  title: string;
+  command: Command;
+  icon?: string;
+};
+
 export default class TableMenu extends Component<Args> {
+  @service declare intl: IntlService;
+
   @tracked tableAddRows = DEFAULT_COLUMNS_ROWS;
   @tracked tableAddColumns = DEFAULT_COLUMNS_ROWS;
+
+  get tableActions() {
+    return [
+      {
+        command: addRowAfter,
+        title: this.intl.t('ember-rdfa-editor.table.add-row-below'),
+        icon: 'table-row-end-add',
+      },
+      {
+        command: addRowBefore,
+        title: this.intl.t('ember-rdfa-editor.table.add-row-above'),
+        icon: 'table-row-start-add',
+      },
+      {
+        command: addColumnAfter,
+        title: this.intl.t('ember-rdfa-editor.table.add-column-after'),
+        icon: 'table-column-end-add',
+      },
+      {
+        command: addColumnBefore,
+        title: this.intl.t('ember-rdfa-editor.table.add-column-before'),
+        icon: 'table-column-start-add',
+      },
+      {
+        command: deleteRow,
+        title: this.intl.t('ember-rdfa-editor.table.delete-row'),
+        icon: 'table-row-remove',
+      },
+      {
+        command: deleteColumn,
+        title: this.intl.t('ember-rdfa-editor.table.delete-column'),
+        icon: 'table-column-remove',
+      },
+      {
+        command: deleteTable,
+        title: this.intl.t('ember-rdfa-editor.table.delete-table'),
+        icon: 'bin',
+      },
+      {
+        command: toggleHeader('row'),
+        title: this.intl.t('ember-rdfa-editor.table.toggle-header-row'),
+      },
+      {
+        command: toggleHeader('column'),
+        title: this.intl.t('ember-rdfa-editor.table.toggle-header-column'),
+      },
+      {
+        command: mergeCells,
+        title: this.intl.t('ember-rdfa-editor.table.merge-cells'),
+      },
+      {
+        command: splitCell,
+        title: this.intl.t('ember-rdfa-editor.table.split-cell'),
+      },
+    ];
+  }
+
+  canExecuteAction = (action: Action): boolean => {
+    return !!this.controller?.checkCommand(action.command);
+  };
+
+  executeAction = (action: Action) => {
+    this.controller?.focus();
+    this.controller?.doCommand(action.command);
+  };
 
   // Table commands
   get controller(): SayController | undefined {
@@ -73,50 +151,8 @@ export default class TableMenu extends Component<Args> {
   }
 
   @action
-  insertRowAbove() {
-    this.controller?.focus();
-    this.controller?.doCommand(addRowBefore);
-  }
-
-  @action
   insertColumnAfter() {
     this.controller?.focus();
     this.controller?.doCommand(addColumnAfter);
-  }
-
-  @action
-  insertColumnBefore() {
-    this.controller?.focus();
-    this.controller?.doCommand(addColumnBefore);
-  }
-
-  @action
-  removeTableRow() {
-    this.controller?.focus();
-    this.controller?.doCommand(deleteRow);
-  }
-
-  @action
-  removeTableColumn() {
-    this.controller?.focus();
-    this.controller?.doCommand(deleteColumn);
-  }
-
-  @action
-  removeTable() {
-    this.controller?.focus();
-    this.controller?.doCommand(deleteTable);
-  }
-
-  @action
-  toggleHeaderRow() {
-    this.controller?.focus();
-    this.controller?.doCommand(toggleHeader('row'));
-  }
-
-  @action
-  toggleHeaderColumn() {
-    this.controller?.focus();
-    this.controller?.doCommand(toggleHeader('column'));
   }
 }
