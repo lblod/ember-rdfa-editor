@@ -33,7 +33,6 @@ export const doc = ({
         return baseAttrs;
       }
     },
-    editable: true,
     parseDOM: [
       {
         tag: 'div',
