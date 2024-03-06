@@ -99,7 +99,7 @@ const schema = new Schema({
     block_rdfa: block_rdfa({ rdfaAware: true }),
   },
   marks: {
-    inline_rdfa,
+    inline_rdfa: inline_rdfa({ rdfaAware: true }),
     code,
     em,
     strong,

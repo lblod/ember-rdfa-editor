@@ -105,7 +105,7 @@ export default class EditorComponent extends Component {
         block_rdfa: block_rdfa(),
       },
       marks: {
-        inline_rdfa,
+        inline_rdfa: inline_rdfa(),
         em,
         strikethrough,
         strong,

@@ -97,7 +97,7 @@ const nodes = {
   block_rdfa: block_rdfa({ rdfaAware: true }),
 };
 const marks = {
-  inline_rdfa,
+  inline_rdfa: inline_rdfa({ rdfaAware: true }),
   code,
   em,
   strong,
