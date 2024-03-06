@@ -102,7 +102,7 @@
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
     "@glint/template": "1.1.0",
-    "@playwright/test": "^1.41.2",
+    "@playwright/test": "^1.42.1",
     "@rdfjs/types": "^1.1.0",
     "@release-it/keep-a-changelog": "^4.0.0",
     "@types/common-tags": "^1.8.4",

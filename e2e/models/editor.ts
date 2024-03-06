@@ -23,7 +23,9 @@ export class EditorPage {
   }
 
   async compareEditorSnapshot(name: string) {
-    await expect(this.editorContainer).toHaveScreenshot(`${name}.png`);
+    await expect(this.editorContainer).toHaveScreenshot(`${name}.png`, {
+      stylePath: path.join(__dirname, 'screenshot.css'),
+    });
   }
 
   async setEditorContentFromHtml(file: string) {
