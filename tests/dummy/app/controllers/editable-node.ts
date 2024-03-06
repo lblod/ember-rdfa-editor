@@ -73,6 +73,7 @@ import {
   inlineRdfaView,
   inline_rdfa,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { sharedRdfaNodeSpec } from '@lblod/ember-rdfa-editor/core/schema';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -83,10 +84,13 @@ export default class EditableBlockController extends Controller {
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
-      doc: doc({
-        defaultLanguage: 'nl-BE',
-        rdfaAware: true,
-      }),
+      doc: {
+        ...doc({
+          defaultLanguage: 'nl-BE',
+          rdfaAware: true,
+        }),
+        ...sharedRdfaNodeSpec,
+      },
       paragraph,
 
       repaired_block: repaired_block({ rdfaAware: true }),
@@ -101,7 +105,7 @@ export default class EditableBlockController extends Controller {
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
         rdfaAware: true,
       }),
-      heading: heading({ rdfaAware: true }),
+      heading: { ...heading({ rdfaAware: true }), ...sharedRdfaNodeSpec },
       blockquote,
 
       horizontal_rule,
@@ -112,8 +116,11 @@ export default class EditableBlockController extends Controller {
       image,
 
       hard_break,
-      block_rdfa: block_rdfa({ rdfaAware: true }),
-      inline_rdfa: inline_rdfa({ rdfaAware: true }),
+      block_rdfa: { ...block_rdfa({ rdfaAware: true }), ...sharedRdfaNodeSpec },
+      inline_rdfa: {
+        ...inline_rdfa({ rdfaAware: true }),
+        ...sharedRdfaNodeSpec,
+      },
       link: link(this.linkOptions),
     },
     marks: {

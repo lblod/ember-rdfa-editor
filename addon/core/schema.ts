@@ -94,6 +94,7 @@ export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
 export const sharedRdfaNodeSpec = {
   isolating: true,
   selectable: true,
+  editable: true,
 };
 
 export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
