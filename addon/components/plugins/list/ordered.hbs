@@ -10,7 +10,11 @@
   >
     <:options as |Menu|>
       {{#each this.styles as |style|}}
-        <Menu.Item disabled={{this.styleIsActive style.name}} @menuAction={{(fn this.setStyle style.name)}}>
+        <Menu.Item
+          disabled={{this.styleIsActive style.name}}
+          title={{style.title}}
+          @menuAction={{(fn this.setStyle style.name)}}
+        >
           {{#if (this.styleIsActive style.name)}}
             <AuIcon @icon='check' @ariaHidden={{true}} />
           {{/if}}

@@ -25,18 +25,35 @@ export default class ListOrdered extends Component<Args> {
         description: this.intl.t(
           'ember-rdfa-editor.ordered-list.styles.decimal',
         ),
+        title: '1',
       },
       {
         name: 'lower-alpha',
         description: this.intl.t(
           'ember-rdfa-editor.ordered-list.styles.lower-alpha',
         ),
+        title: 'a',
       },
       {
         name: 'upper-roman',
         description: this.intl.t(
           'ember-rdfa-editor.ordered-list.styles.upper-roman',
         ),
+        title: 'I',
+      },
+      {
+        name: 'hierarchical-numbering',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.hierarchical',
+        ),
+        title: '1.2.3',
+      },
+      {
+        name: 'hierarchical-numbering-alternating',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.hierarchical-alternating',
+        ),
+        title: '1.A.I',
       },
     ];
   }
