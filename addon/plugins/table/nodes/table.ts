@@ -183,6 +183,30 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           contentElement: getRdfaContentElement,
         },
       ],
+      toDOM(node: PNode) {
+        if (rdfaAware) {
+          return [
+            'table',
+            {
+              ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+              class: 'say-table',
+              style: `width: 100%; ${tableStyle || ''}`,
+            },
+            renderInvisibleRdfa(node, 'div'),
+            ['tbody', { 'data-content-container': true }, 0],
+          ];
+        } else {
+          return [
+            'table',
+            {
+              ...node.attrs,
+              class: 'say-table',
+              style: `width: 100%; ${tableStyle || ''}`,
+            },
+            ['tbody', 0],
+          ];
+        }
+      },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
         if (rdfaAware) {
