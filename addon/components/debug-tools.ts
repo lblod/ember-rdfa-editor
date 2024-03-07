@@ -94,6 +94,7 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   }
 
   saveEditorContentToLocalStorage() {
+    console.log('save editor content to local storage!!!');
     if (this.controller) {
       localStorage.setItem('EDITOR_CONTENT', this.controller.htmlContent);
     }
