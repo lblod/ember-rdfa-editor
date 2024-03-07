@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.4.1
+
+### Patch Changes
+
+- [#1153](https://github.com/lblod/ember-rdfa-editor/pull/1153) [`e76e321`](https://github.com/lblod/ember-rdfa-editor/commit/e76e321763a4095b79a3a0930770cdee8a7acc2a) Thanks [@elpoelma](https://github.com/elpoelma)! - Correctly disable sidebar when `hideSidebar` property is passed, or when `aside` block is not used
+
 ## 9.4.0
 
 ### Minor Changes

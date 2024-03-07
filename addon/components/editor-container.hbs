@@ -23,9 +23,10 @@
       {{yield}}
 
     </div>
-
-    <div class={{if (has-block 'aside') 'say-container__aside'}}>
-      {{yield to='aside'}}
-    </div>
+    {{#if (and (has-block "aside") (not @hideSidebar))}}
+      <div class='say-container__aside'>
+        {{yield to='aside'}}
+      </div>
+    {{/if}}
   </div>
 </div>
