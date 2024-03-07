@@ -43,7 +43,7 @@ $styles: decimal, upper-alpha, upper-roman;
 
 @mixin hierarchical-numbering($altering: false) {
   // Setup our own counter at top level
-  counter-reset: l1;
+  counter-reset: l1 0;
 
   li::marker {
     content: counters(l1, ".") ". "
@@ -65,7 +65,7 @@ $styles: decimal, upper-alpha, upper-roman;
     #{$selector} {
       // setup counter for each level
       // useful for alternating style
-      counter-reset: l#{$i+1};
+      counter-reset: l#{$i+1} 0;
 
       li {
         counter-increment: l#{$i+1};
