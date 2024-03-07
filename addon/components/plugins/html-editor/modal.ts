@@ -5,6 +5,8 @@ import { action } from '@ember/object';
 import { basicSetup } from 'codemirror';
 import { html } from '@codemirror/lang-html';
 import CodeMirrorModifier from '@lblod/ember-rdfa-editor/modifiers/_private/code-mirror';
+import { keymap } from '@codemirror/view';
+import { indentWithTab } from '@codemirror/commands';
 
 type Args = {
   content: string;
@@ -34,7 +36,7 @@ export default class HTMLEditorModal extends Component<Args> {
   }
 
   get cmExtensions() {
-    return [basicSetup, html()];
+    return [basicSetup, keymap.of([indentWithTab]), html()];
   }
 
   @action setContent(content: string) {
