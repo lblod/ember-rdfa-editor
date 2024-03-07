@@ -1,1 +1,1 @@
-export * from '@guardian/prosemirror-invisibles';
+export * from '@say-editor/prosemirror-invisibles';

@@ -17,19 +17,22 @@ ember-rdfa-editor:
       upper-roman: Roman Numbers
   unindent-list: List level higher
   indent-list: List level lower
-  table-options: Table options
-  insert-table: Insert table
-  add-row-below: Add row below
-  add-row-above: Add row above
-  add-column-after: Add column after
-  add-column-before: Add column before
-  delete-row: Delete row
-  delete-column: Delete column
-  delete-table: Delete table
-  toggle-header-row: Toggle header row
-  toggle-header-column: Toggle header column
-  columns: Columns
-  rows: Rows
+  table:
+    table-options: Table options
+    insert-table: Insert table
+    add-row-below: Add row below
+    add-row-above: Add row above
+    add-column-after: Add column after
+    add-column-before: Add column before
+    delete-row: Delete row
+    delete-column: Delete column
+    delete-table: Delete table
+    toggle-header-row: Toggle header row
+    toggle-header-column: Toggle header column
+    merge-cells: Merge cells
+    split-cell: Split cell
+    columns: Columns
+    rows: Rows
   normalText: Normal text
   heading: Heading
   insert-heading: Insert heading
