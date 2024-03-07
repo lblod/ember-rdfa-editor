@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { localCopy } from 'tracked-toolbox';
+import { trackedReset } from 'tracked-toolbox';
 import beautify from 'js-beautify';
 import { action } from '@ember/object';
 import { basicSetup } from 'codemirror';
@@ -17,23 +17,28 @@ type Args = {
 export default class HTMLEditorModal extends Component<Args> {
   CodeMirror = CodeMirrorModifier;
 
-  @localCopy('args.content') declare content: string;
-
-  get formattedContent() {
-    return beautify.html(this.content, {
-      content_unformatted: [
-        'p',
-        'span',
-        'a',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-      ],
-    });
-  }
+  @trackedReset<HTMLEditorModal, string>({
+    memo: 'args.content',
+    update(component) {
+      return beautify.html(component.args.content, {
+        content_unformatted: [
+          'p',
+          'span',
+          'a',
+          'h1',
+          'h2',
+          'h3',
+          'h4',
+          'h5',
+          'h6',
+        ],
+        indent_body_inner_html: true,
+        indent_inner_html: true,
+        wrap_attributes: 'force-expand-multiline',
+      });
+    },
+  })
+  declare content: string;
 
   get cmExtensions() {
     return [basicSetup, keymap.of([indentWithTab]), html()];
