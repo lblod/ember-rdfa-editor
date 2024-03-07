@@ -1,29 +1,24 @@
-<div>
+<div {{this.setUpListeners}}>
   <p>
-    <button type='button' {{on 'click' this.showExportPreview}}>Show Export
+    <button type="button" {{on "click" this.showExportPreview}}>Show Export
       Preview</button>
   </p>
   {{#if @controller}}
     <p>Sample data:
       <button
-        type='button'
-        {{on 'click' (fn this.setEditorContent 'html' '')}}
+        type="button"
+        {{on "click" (fn this.setEditorContent "")}}
       >Empty</button>
       |
       <button
-        type='button'
-        {{on 'click' (fn this.openContentDebugger 'html')}}
+        type="button"
+        {{on "click" this.openContentDebugger}}
       >CustomHTML</button>
-      |
-      <button
-        type='button'
-        {{on 'click' (fn this.openContentDebugger 'xml')}}
-      >CustomXML</button>
       |
       {{#each-in this.sampleData as |name data|}}
         <button
-          type='button'
-          {{on 'click' (fn this.setEditorContent 'html' data)}}
+          type="button"
+          {{on "click" (fn this.setEditorContent data)}}
         >{{name}}</button>
         |
       {{/each-in}}
@@ -32,43 +27,10 @@
     Waiting for editor init
   {{/if}}
 </div>
-{{#if this.xmlDebuggerOpen}}
-  <div class='rdfa-debugger-panel-wrapper'>
-    <div class='rdfa-debugger-content'>
-      <h1>XML representation</h1>
-      <button
-        type='button'
-        {{on 'click' (fn this.closeContentDebugger 'xml' true)}}
-      >Set Xml</button>
-      <button
-        type='button'
-        {{on 'click' (fn this.closeContentDebugger 'xml' false)}}
-      >Cancel</button>
-      <hr />
-      <div class='rdfa-debugger-textarea-wrapper'>
-        <div>Enter xml here</div>
-        <div {{did-insert this.setupXmlEditor}}></div>
-      </div>
-    </div>
-  </div>
-{{/if}}
 {{#if this.htmlDebuggerOpen}}
-  <div class='rdfa-debugger-panel-wrapper'>
-    <div class='rdfa-debugger-content'>
-      <h1>HTML representation</h1>
-      <button
-        type='button'
-        {{on 'click' (fn this.closeContentDebugger 'html' true)}}
-      >Set HTML</button>
-      <button
-        type='button'
-        {{on 'click' (fn this.closeContentDebugger 'html' false)}}
-      >Cancel</button>
-      <hr />
-      <div class='rdfa-debugger-textarea-wrapper'>
-        <div>Enter html here</div>
-        <div {{did-insert this.setupHtmlEditor}}></div>
-      </div>
-    </div>
-  </div>
+  <Plugins::HtmlEditor::Modal
+    @content={{this.controller.htmlContent}}
+    @onSave={{this.onSave}}
+    @onCancel={{this.onCancel}}
+  />
 {{/if}}

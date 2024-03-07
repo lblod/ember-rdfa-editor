@@ -39,7 +39,7 @@ $say-toolbar-height: 44px !default;
     align-items: center;
     flex-shrink: 1;
   }
-  
+
   *[data-hidden='true'] {
     display: none;
   }
@@ -76,6 +76,7 @@ $say-toolbar-height: 44px !default;
 
 .say-toolbar__group {
   display: flex;
+  height: $say-toolbar-height;
   padding-left: .1rem;
   padding-right: .1rem;
   flex-shrink: 0;
@@ -95,7 +96,7 @@ $say-toolbar-height: 44px !default;
 .say-toolbar__button {
   @include au-font-size($au-base, 1);
   height: $say-toolbar-height;
-  width: $say-toolbar-height;
+  min-width: $say-toolbar-height;
   display: inline-flex;
   flex-direction: row;
   flex-shrink: 0;

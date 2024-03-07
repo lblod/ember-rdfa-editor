@@ -1,0 +1,30 @@
+<AuModal
+  class="say-html-editor-modal"
+  @title="HTML Editor"
+  @closable={{true}}
+  @closeModal={{this.cancel}}
+  @modalOpen={{true}}
+  @size="large"
+>
+  <:title>{{t "ember-rdfa-editor.html-editor.modal.title"}}</:title>
+  <:body>
+    <div
+      class="say-html-editor"
+      {{this.CodeMirror
+        content=this.content
+        extensions=this.cmExtensions
+        onUpdate=this.setContent
+      }}
+    ></div>
+  </:body>
+  <:footer>
+    <AuButtonGroup>
+      <AuButton {{on "click" this.save}}>
+        {{t "ember-rdfa-editor.utils.save"}}
+      </AuButton>
+      <AuButton @skin="secondary" {{on "click" this.cancel}}>
+        {{t "ember-rdfa-editor.utils.cancel"}}
+      </AuButton>
+    </AuButtonGroup>
+  </:footer>
+</AuModal>
