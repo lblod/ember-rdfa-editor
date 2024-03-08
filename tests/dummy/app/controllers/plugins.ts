@@ -83,9 +83,9 @@ export default class IndexController extends Controller {
 
       repaired_block: repaired_block(),
 
-      list_item: list_item(),
-      ordered_list: ordered_list(),
-      bullet_list: bullet_list(),
+      list_item,
+      ordered_list,
+      bullet_list,
       placeholder,
       ...tableNodes({
         tableGroup: 'block',

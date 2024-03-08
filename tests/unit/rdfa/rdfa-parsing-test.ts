@@ -10,10 +10,10 @@ import {
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
-  bullet_list,
+  bulletListWithConfig,
   bullet_list_input_rule,
-  list_item,
-  ordered_list,
+  listItemWithConfig,
+  orderedListWithConfig,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -76,9 +76,9 @@ const schema = new Schema({
 
     repaired_block: repaired_block({ rdfaAware: true }),
 
-    list_item: list_item({ rdfaAware: true }),
-    ordered_list: ordered_list({ rdfaAware: true }),
-    bullet_list: bullet_list({ rdfaAware: true }),
+    list_item: listItemWithConfig({ rdfaAware: true }),
+    ordered_list: orderedListWithConfig({ rdfaAware: true }),
+    bullet_list: bulletListWithConfig({ rdfaAware: true }),
     placeholder,
     ...tableNodes({
       tableGroup: 'block',

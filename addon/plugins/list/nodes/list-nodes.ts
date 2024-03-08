@@ -19,11 +19,11 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
     | undefined;
 };
 
-type Options = {
+type Config = {
   rdfaAware?: boolean;
 };
 
-export const ordered_list: (options?: Options) => SayNodeSpec = ({
+export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -82,7 +82,9 @@ export const ordered_list: (options?: Options) => SayNodeSpec = ({
   };
 };
 
-export const bullet_list: (options?: Options) => SayNodeSpec = ({
+export const ordered_list = orderedListWithConfig();
+
+export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -116,7 +118,9 @@ export const bullet_list: (options?: Options) => SayNodeSpec = ({
   };
 };
 
-export const list_item: (options?: Options) => SayNodeSpec = ({
+export const bullet_list = bulletListWithConfig();
+
+export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -148,3 +152,5 @@ export const list_item: (options?: Options) => SayNodeSpec = ({
     },
   };
 };
+
+export const list_item = listItemWithConfig();

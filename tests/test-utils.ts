@@ -19,9 +19,9 @@ import {
 
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
@@ -74,9 +74,9 @@ const nodes = {
 
   repaired_block: repaired_block({ rdfaAware: true }),
 
-  list_item: list_item({ rdfaAware: true }),
-  ordered_list: ordered_list({ rdfaAware: true }),
-  bullet_list: bullet_list({ rdfaAware: true }),
+  list_item: listItemWithConfig({ rdfaAware: true }),
+  ordered_list: orderedListWithConfig({ rdfaAware: true }),
+  bullet_list: bulletListWithConfig({ rdfaAware: true }),
   ...tableNodes({
     tableGroup: 'block',
     cellContent: 'inline*',

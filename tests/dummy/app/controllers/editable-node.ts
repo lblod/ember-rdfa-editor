@@ -31,9 +31,9 @@ import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
@@ -95,9 +95,9 @@ export default class EditableBlockController extends Controller {
 
       repaired_block: repaired_block({ rdfaAware: true }),
 
-      list_item: list_item({ rdfaAware: true }),
-      ordered_list: ordered_list({ rdfaAware: true }),
-      bullet_list: bullet_list({ rdfaAware: true }),
+      list_item: listItemWithConfig({ rdfaAware: true }),
+      ordered_list: orderedListWithConfig({ rdfaAware: true }),
+      bullet_list: bulletListWithConfig({ rdfaAware: true }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
