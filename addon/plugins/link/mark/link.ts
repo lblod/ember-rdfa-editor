@@ -1,6 +1,9 @@
 import type { MarkSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 
+/**
+ * @deprecated use the `link` node-spec instead
+ */
 export const link: MarkSpec = {
   attrs: {
     ...rdfaAttrSpec({ rdfaAware: false }),
