@@ -4,7 +4,7 @@ import {
   type RdfaAttrs,
   getClassicRdfaAttrs,
   getRdfaAttrs,
-  rdfaAttrSpec,
+  rdfaAwareAttrSpec,
   renderInvisibleRdfa,
   renderRdfaAttrs,
   renderRdfaAware,
@@ -155,7 +155,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         };
         if (rdfaAware) {
           return {
-            ...rdfaAttrSpec,
+            ...rdfaAwareAttrSpec,
             ...baseAttrs,
           };
         } else {
@@ -240,7 +240,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       tableRole: 'row',
       get attrs() {
         if (rdfaAware) {
-          return rdfaAttrSpec;
+          return rdfaAwareAttrSpec;
         } else {
           return classicRdfaAttrSpec;
         }
@@ -282,7 +282,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       get attrs() {
         if (rdfaAware) {
           return {
-            ...rdfaAttrSpec,
+            ...rdfaAwareAttrSpec,
             ...cellAttrs,
           };
         } else {
@@ -337,7 +337,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       get attrs() {
         if (rdfaAware) {
           return {
-            ...rdfaAttrSpec,
+            ...rdfaAwareAttrSpec,
             ...cellAttrs,
           };
         } else {

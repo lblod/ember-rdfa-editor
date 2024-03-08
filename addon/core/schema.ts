@@ -32,6 +32,17 @@ export const classicRdfaAttrSpec = {
   datetime: { default: undefined },
 };
 
+export const rdfaAwareAttrSpec = {
+  properties: { default: [] },
+  backlinks: { default: [] },
+  __rdfaId: { default: undefined },
+  rdfaNodeType: { default: undefined },
+  subject: { default: null },
+};
+
+/** @deprecated Renamed to rdfaAttrSpec */
+export const rdfaAttrs = rdfaAwareAttrSpec;
+
 export function getClassicRdfaAttrs(
   node: Element,
 ): Record<string, string> | false {
@@ -50,15 +61,6 @@ export function getClassicRdfaAttrs(
   return false;
 }
 
-export const rdfaAttrSpec = {
-  properties: { default: [] },
-  backlinks: { default: [] },
-  __rdfaId: { default: undefined },
-  rdfaNodeType: { default: undefined },
-  subject: { default: null },
-};
-/** @deprecated Renamed to rdfaAttrSpec */
-export const rdfaAttrs = rdfaAttrSpec;
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },

@@ -4,7 +4,7 @@ import {
   getClassicRdfaAttrs,
   getRdfaAttrs,
   getRdfaContentElement,
-  rdfaAttrSpec,
+  rdfaAwareAttrSpec,
   renderRdfaAware,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import type SayNodeSpec from '../core/say-node-spec';
@@ -21,7 +21,7 @@ export const block_rdfa: (config?: Config) => SayNodeSpec = ({
     group: 'block',
     get attrs() {
       if (rdfaAware) {
-        return rdfaAttrSpec;
+        return rdfaAwareAttrSpec;
       } else {
         return classicRdfaAttrSpec;
       }

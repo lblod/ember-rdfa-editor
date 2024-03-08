@@ -3,7 +3,7 @@ import {
   getClassicRdfaAttrs,
   getRdfaAttrs,
   getRdfaContentElement,
-  rdfaAttrSpec,
+  rdfaAwareAttrSpec,
   renderRdfaAware,
 } from '../../../core/schema';
 import {
@@ -46,7 +46,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
       };
       if (rdfaAware) {
         return {
-          ...rdfaAttrSpec,
+          ...rdfaAwareAttrSpec,
           ...baseAttrs,
         };
       } else {

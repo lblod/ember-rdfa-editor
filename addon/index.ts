@@ -8,7 +8,7 @@ import { isNone } from './utils/_private/option';
 export {
   getRdfaAttrs,
   rdfaAttrs,
-  rdfaAttrSpec,
+  rdfaAwareAttrSpec as rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 export type { RdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 

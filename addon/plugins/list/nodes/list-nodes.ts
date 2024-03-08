@@ -1,7 +1,7 @@
 import type { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
-  rdfaAttrSpec,
+  rdfaAwareAttrSpec,
   renderRdfaAware,
   getClassicRdfaAttrs,
   classicRdfaAttrSpec,
@@ -12,7 +12,7 @@ import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
 
-type OrderedListAttrs = typeof rdfaAttrSpec & {
+type OrderedListAttrs = typeof rdfaAwareAttrSpec & {
   order: number;
   style?: OrderListStyle;
 };
@@ -42,7 +42,7 @@ export const ordered_list: (options?: Options) => SayNodeSpec = ({
       if (rdfaAware) {
         return {
           ...baseAttrs,
-          ...rdfaAttrSpec,
+          ...rdfaAwareAttrSpec,
         };
       } else {
         return {
@@ -111,7 +111,7 @@ export const bullet_list: (options?: Options) => SayNodeSpec = ({
     group: 'block list',
     get attrs() {
       if (rdfaAware) {
-        return rdfaAttrSpec;
+        return rdfaAwareAttrSpec;
       } else {
         return classicRdfaAttrSpec;
       }
@@ -155,7 +155,7 @@ export const list_item: (options?: Options) => SayNodeSpec = ({
     defining: true,
     get attrs() {
       if (rdfaAware) {
-        return rdfaAttrSpec;
+        return rdfaAwareAttrSpec;
       } else {
         return classicRdfaAttrSpec;
       }
