@@ -82,6 +82,9 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `orderedListWithConfig` instead
+ */
 export const ordered_list = orderedListWithConfig();
 
 export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
@@ -118,6 +121,9 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `bulletListWithConfig` instead
+ */
 export const bullet_list = bulletListWithConfig();
 
 export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
@@ -153,4 +159,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `listItemWithConfig` instead
+ */
 export const list_item = listItemWithConfig();

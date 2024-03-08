@@ -59,4 +59,7 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `invisibleRdfaWithConfig` instead
+ */
 export const invisible_rdfa = invisibleRdfaWithConfig();

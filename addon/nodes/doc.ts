@@ -84,4 +84,7 @@ export const docWithConfig = ({
   };
 };
 
+/**
+ * @deprecated use `docWithConfig` instead
+ */
 export const doc = docWithConfig();

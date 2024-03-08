@@ -54,4 +54,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `blockRdfaWithConfig` instead
+ */
 export const block_rdfa = blockRdfaWithConfig();

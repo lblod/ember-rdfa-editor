@@ -41,4 +41,7 @@ export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `repairedBlockWithConfig` instead
+ */
 export const repaired_block = repairedBlockWithConfig();

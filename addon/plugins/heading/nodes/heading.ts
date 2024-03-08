@@ -93,4 +93,7 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
   };
 };
 
+/**
+ * @deprecated use `headingWithConfig` instead
+ */
 export const heading = headingWithConfig();
