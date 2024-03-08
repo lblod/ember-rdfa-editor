@@ -4,7 +4,6 @@
  * we've removed br from the list to be inline with editor behaviour, which treats it as a block
  **/
 
-export const HEADING_ELEMENTS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 export const PHRASING_CONTENT = [
   'a',
   'abbr',
@@ -56,6 +55,9 @@ export const PHRASING_CONTENT = [
   'video',
   'wbr',
 ];
+
+export const HEADING_ELEMENTS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+
 /**
  * List of element types which can be used in non-block (phrasing) context.
  * Unlike PHRASING_CONTENT also includes br tag as while it's normally handled as a block by the
