@@ -5,13 +5,13 @@ import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
-  invisible_rdfa,
+  invisibleRdfaWithConfig,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -35,9 +35,9 @@ import {
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import {
   bullet_list_input_rule,
@@ -81,11 +81,11 @@ export default class IndexController extends Controller {
       }),
       paragraph,
 
-      repaired_block,
+      repaired_block: repairedBlockWithConfig(),
 
-      list_item,
-      ordered_list,
-      bullet_list,
+      list_item: listItemWithConfig(),
+      ordered_list: orderedListWithConfig(),
+      bullet_list: bulletListWithConfig(),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
@@ -103,8 +103,8 @@ export default class IndexController extends Controller {
       image,
 
       hard_break,
-      invisible_rdfa,
-      block_rdfa,
+      invisible_rdfa: invisibleRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig(),
       card,
       counter,
       dropdown,
