@@ -1,49 +1,36 @@
 import type { Mark } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
-import { getRdfaContentElement, renderRdfaAware } from '../core/schema';
+import { getRdfaContentElement } from '../core/schema';
 import type SayMarkSpec from '../core/say-mark-spec';
 
-type Options = {
-  rdfaAware?: boolean;
-};
-
-export const inline_rdfa: (options?: Options) => SayMarkSpec = ({
-  rdfaAware = false,
-} = {}) => {
-  return {
-    attrs: rdfaAttrSpec({ rdfaAware }),
-    group: 'rdfa',
-    excludes: '',
-    parseDOM: [
-      {
-        tag: 'span',
-        // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
-        priority: 10,
-        getAttrs(node: string | HTMLElement) {
-          if (typeof node === 'string') {
-            return false;
-          }
-          const attrs = getRdfaAttrs(node, { rdfaAware });
-          if (attrs) {
-            return attrs;
-          }
+/**
+ * @deprecated use `inlineRdfaWithConfig` instead
+ */
+export const inline_rdfa: SayMarkSpec = {
+  attrs: rdfaAttrSpec({ rdfaAware: false }),
+  group: 'rdfa',
+  excludes: '',
+  parseDOM: [
+    {
+      tag: 'span',
+      // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
+      priority: 10,
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
           return false;
-        },
-        contentElement: getRdfaContentElement,
+        }
+        const attrs = getRdfaAttrs(node, { rdfaAware: false });
+        if (attrs) {
+          return attrs;
+        }
+        return false;
       },
-    ],
-    toDOM(mark: Mark) {
-      if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: mark,
-          tag: 'span',
-          content: 0,
-        });
-      } else {
-        return ['span', mark.attrs, 0];
-      }
+      contentElement: getRdfaContentElement,
     },
-    hasRdfa: true,
-    parseTag: 'span',
-  };
+  ],
+  toDOM(mark: Mark) {
+    return ['span', mark.attrs, 0];
+  },
+  hasRdfa: true,
+  parseTag: 'span',
 };

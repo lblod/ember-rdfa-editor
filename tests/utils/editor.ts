@@ -90,7 +90,7 @@ export const SAMPLE_SCHEMA = new Schema({
     block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
   },
   marks: {
-    inline_rdfa: inline_rdfa({ rdfaAware: true }),
+    inline_rdfa,
     code,
     em,
     strong,

@@ -104,7 +104,7 @@ export default class SpaceInvisibleController extends Controller {
       link: link(this.linkOptions),
     },
     marks: {
-      inline_rdfa: inline_rdfa(),
+      inline_rdfa,
       code,
       em,
       strong,
