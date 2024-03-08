@@ -2,7 +2,6 @@
 import { Node as PNode, type NodeSpec } from 'prosemirror-model';
 import {
   type RdfaAttrs,
-  getClassicRdfaAttrs,
   getRdfaAttrs,
   rdfaAwareAttrSpec,
   renderInvisibleRdfa,
@@ -43,6 +42,7 @@ const fixupColWidth = (number: string) => {
 function getCellAttrs(
   dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
+  rdfaAware: boolean,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
 
@@ -65,7 +65,7 @@ function getCellAttrs(
       result[key] = value;
     }
   }
-  return { ...getRdfaAttrs(dom), ...result };
+  return { ...getRdfaAttrs(dom, { rdfaAware }), ...result };
 }
 
 function setCellAttrs(
@@ -174,11 +174,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof node === 'string') {
               return false;
             }
-            if (rdfaAware) {
-              return { ...getRdfaAttrs(node) };
-            } else {
-              return { ...getClassicRdfaAttrs(node) };
-            }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
           contentElement: getRdfaContentElement,
         },
@@ -253,11 +249,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof node === 'string') {
               return false;
             }
-            if (rdfaAware) {
-              return { ...getRdfaAttrs(node) };
-            } else {
-              return { ...getClassicRdfaAttrs(node) };
-            }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
           contentElement: getRdfaContentElement,
         },
@@ -302,18 +294,11 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            const cellAttrs = getCellAttrs(dom, extraAttrs);
-            if (rdfaAware) {
-              return {
-                ...getRdfaAttrs(dom),
-                ...cellAttrs,
-              };
-            } else {
-              return {
-                ...getClassicRdfaAttrs(dom),
-                ...cellAttrs,
-              };
-            }
+            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
           },
           contentElement: getRdfaContentElement,
         },
@@ -356,18 +341,11 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            const cellAttrs = getCellAttrs(dom, extraAttrs);
-            if (rdfaAware) {
-              return {
-                ...getRdfaAttrs(dom),
-                ...cellAttrs,
-              };
-            } else {
-              return {
-                ...getClassicRdfaAttrs(dom),
-                ...cellAttrs,
-              };
-            }
+            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
           },
           contentElement: getRdfaContentElement,
         },

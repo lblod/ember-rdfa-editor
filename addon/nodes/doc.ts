@@ -1,6 +1,10 @@
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
-import { getRdfaAttrs, rdfaAwareAttrSpec, renderRdfaAware } from '../core/schema';
+import {
+  getRdfaAttrs,
+  rdfaAwareAttrSpec,
+  renderRdfaAware,
+} from '../core/schema';
 
 interface DocumentConfig {
   defaultLanguage?: string;
@@ -44,7 +48,7 @@ export const doc = ({
             if (rdfaAware) {
               return {
                 lang: node.getAttribute('lang'),
-                ...getRdfaAttrs(node),
+                ...getRdfaAttrs(node, { rdfaAware: true }),
               };
             } else {
               return {

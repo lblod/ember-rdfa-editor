@@ -16,7 +16,7 @@ export const link: MarkSpec = {
           return false;
         }
         return {
-          ...getRdfaAttrs(dom),
+          ...getRdfaAttrs(dom, { rdfaAware: false }),
         };
       },
     },

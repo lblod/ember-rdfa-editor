@@ -12,6 +12,10 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 // const logger = createLogger('core/schema');
 
+export type RdfaAttrConfig = {
+  rdfaAware: boolean;
+};
+
 export const classicRdfaAttrSpec = {
   vocab: { default: undefined },
   typeof: { default: undefined },
@@ -39,13 +43,10 @@ export const rdfaAwareAttrSpec = {
   rdfaNodeType: { default: undefined },
   subject: { default: null },
 };
-
 /** @deprecated Renamed to rdfaAttrSpec */
 export const rdfaAttrs = rdfaAwareAttrSpec;
 
-export function getClassicRdfaAttrs(
-  node: Element,
-): Record<string, string> | false {
+function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
   const attrs: Record<string, string> = {};
   let hasAnyRdfaAttributes = false;
   for (const key of Object.keys(classicRdfaAttrSpec)) {
@@ -61,45 +62,7 @@ export function getClassicRdfaAttrs(
   return false;
 }
 
-export const rdfaDomAttrs = {
-  'data-incoming-props': { default: [] },
-  'data-outgoing-props': { default: [] },
-  'data-subject': { default: null },
-  __rdfaId: { default: undefined },
-  'data-rdfa-node-type': { default: undefined },
-};
-
-export const rdfaNodeTypes = ['resource', 'literal'] as const;
-export interface RdfaAwareAttrs {
-  __rdfaId: string;
-  rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: IncomingTriple[];
-}
-export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'literal';
-}
-export interface RdfaResourceAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'resource';
-  subject: string;
-  properties: OutgoingTriple[];
-}
-export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
-
-export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
-  return (
-    '__rdfaId' in attrs &&
-    'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'])
-  );
-}
-
-export const sharedRdfaNodeSpec = {
-  isolating: true,
-  selectable: true,
-  editable: true,
-};
-
-export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
+function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   const rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
@@ -144,6 +107,51 @@ export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
     };
   }
 }
+
+export function getRdfaAttrs(node: HTMLElement, { rdfaAware }: RdfaAttrConfig) {
+  if (rdfaAware) {
+    return getRdfaAwareAttrs(node);
+  } else {
+    return getClassicRdfaAttrs(node);
+  }
+}
+export const rdfaDomAttrs = {
+  'data-incoming-props': { default: [] },
+  'data-outgoing-props': { default: [] },
+  'data-subject': { default: null },
+  __rdfaId: { default: undefined },
+  'data-rdfa-node-type': { default: undefined },
+};
+
+export const rdfaNodeTypes = ['resource', 'literal'] as const;
+export interface RdfaAwareAttrs {
+  __rdfaId: string;
+  rdfaNodeType: (typeof rdfaNodeTypes)[number];
+  backlinks: IncomingTriple[];
+}
+export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'literal';
+}
+export interface RdfaResourceAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'resource';
+  subject: string;
+  properties: OutgoingTriple[];
+}
+export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
+
+export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
+  return (
+    '__rdfaId' in attrs &&
+    'backlinks' in attrs &&
+    rdfaNodeTypes.includes(attrs['rdfaNodeType'])
+  );
+}
+
+export const sharedRdfaNodeSpec = {
+  isolating: true,
+  selectable: true,
+  editable: true,
+};
 
 type NodeOrMark = PNode | Mark;
 

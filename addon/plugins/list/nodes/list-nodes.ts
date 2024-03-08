@@ -3,7 +3,6 @@ import {
   getRdfaAttrs,
   rdfaAwareAttrSpec,
   renderRdfaAware,
-  getClassicRdfaAttrs,
   classicRdfaAttrSpec,
   getRdfaContentElement,
 } from '@lblod/ember-rdfa-editor/core/schema';
@@ -65,17 +64,10 @@ export const ordered_list: (options?: Options) => SayNodeSpec = ({
             order: optionMapOr(1, (val) => Number(val), start),
             style: getListStyleFromDomElement(dom),
           };
-          if (rdfaAware) {
-            return {
-              ...baseAttrs,
-              ...getRdfaAttrs(dom),
-            };
-          } else {
-            return {
-              ...baseAttrs,
-              ...getClassicRdfaAttrs(dom),
-            };
-          }
+          return {
+            ...baseAttrs,
+            ...getRdfaAttrs(dom, { rdfaAware }),
+          };
         },
         consuming: false,
         contentElement: getRdfaContentElement,
@@ -123,11 +115,7 @@ export const bullet_list: (options?: Options) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          if (rdfaAware) {
-            return { ...getRdfaAttrs(node) };
-          } else {
-            return { ...getClassicRdfaAttrs(node) };
-          }
+          return { ...getRdfaAttrs(node, { rdfaAware }) };
         },
         consuming: false,
         contentElement: getRdfaContentElement,
@@ -167,11 +155,7 @@ export const list_item: (options?: Options) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          if (rdfaAware) {
-            return { ...getRdfaAttrs(node) };
-          } else {
-            return { ...getClassicRdfaAttrs(node) };
-          }
+          return { ...getRdfaAttrs(node, { rdfaAware }) };
         },
         contentElement: getRdfaContentElement,
       },

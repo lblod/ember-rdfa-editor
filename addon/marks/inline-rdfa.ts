@@ -2,7 +2,6 @@ import type { Mark } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import {
   classicRdfaAttrSpec,
-  getClassicRdfaAttrs,
   getRdfaContentElement,
   renderRdfaAware,
 } from '../core/schema';
@@ -34,9 +33,7 @@ export const inline_rdfa: (options?: Options) => SayMarkSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          const attrs = rdfaAware
-            ? getRdfaAttrs(node)
-            : getClassicRdfaAttrs(node);
+          const attrs = getRdfaAttrs(node, { rdfaAware });
           if (attrs) {
             return attrs;
           }

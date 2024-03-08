@@ -6,7 +6,6 @@ import {
   type RdfaAttrs,
   renderInvisibleRdfa,
   renderRdfaAttrs,
-  getClassicRdfaAttrs,
 } from '../core/schema';
 
 type Options = {
@@ -43,9 +42,7 @@ export const invisible_rdfa: (options?: Options) => SayNodeSpec = ({
             return false;
           }
           if (!node.hasChildNodes()) {
-            const attrs = rdfaAware
-              ? getRdfaAttrs(node)
-              : getClassicRdfaAttrs(node);
+            const attrs = getRdfaAttrs(node, { rdfaAware });
             if (attrs) {
               return {
                 ...attrs,

@@ -3,7 +3,6 @@ import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import type SayNodeSpec from '../core/say-node-spec';
 import {
   classicRdfaAttrSpec,
-  getClassicRdfaAttrs,
   getRdfaContentElement,
   renderRdfaAware,
 } from '../core/schema';
@@ -34,15 +33,9 @@ export const repaired_block: (options?: Options) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          if (rdfaAware) {
-            return {
-              ...getRdfaAttrs(node),
-            };
-          } else {
-            return {
-              ...getClassicRdfaAttrs(node),
-            };
-          }
+          return {
+            ...getRdfaAttrs(node, { rdfaAware }),
+          };
         },
         contentElement: getRdfaContentElement,
         context: 'inline/',

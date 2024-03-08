@@ -81,7 +81,7 @@ export const paragraphWithConfig: (
           if (typeof node === 'string') {
             return false;
           }
-          const myAttrs = getRdfaAttrs(node);
+          const myAttrs = getRdfaAttrs(node, { rdfaAware: false });
           if (myAttrs) {
             return false;
           }

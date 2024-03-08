@@ -1,7 +1,6 @@
 import { Node as PNode } from 'prosemirror-model';
 import {
   classicRdfaAttrSpec,
-  getClassicRdfaAttrs,
   getRdfaAttrs,
   getRdfaContentElement,
   rdfaAwareAttrSpec,
@@ -36,9 +35,7 @@ export const block_rdfa: (config?: Config) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          const attrs = rdfaAware
-            ? getRdfaAttrs(node)
-            : getClassicRdfaAttrs(node);
+          const attrs = getRdfaAttrs(node, { rdfaAware });
           if (attrs) {
             return attrs;
           }

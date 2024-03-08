@@ -1,6 +1,5 @@
 import {
   classicRdfaAttrSpec,
-  getClassicRdfaAttrs,
   getRdfaAttrs,
   getRdfaContentElement,
   rdfaAwareAttrSpec,
@@ -64,17 +63,10 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
               return false;
             }
             const href = dom.getAttribute('href');
-            if (rdfaAware) {
-              return {
-                ...getRdfaAttrs(dom),
-                href,
-              };
-            } else {
-              return {
-                ...getClassicRdfaAttrs(dom),
-                href,
-              };
-            }
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              href,
+            };
           },
           contentElement: getRdfaContentElement,
         },
