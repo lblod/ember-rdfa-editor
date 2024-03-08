@@ -178,7 +178,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             {
               ...renderRdfaAttrs(node.attrs as RdfaAttrs),
               class: 'say-table',
-              style: `width: 100%; ${tableStyle || ''}`,
+              style: tableStyle,
             },
             renderInvisibleRdfa(node, 'div'),
             ['tbody', { 'data-content-container': true }, 0],
@@ -189,7 +189,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             {
               ...node.attrs,
               class: 'say-table',
-              style: `width: 100%; ${tableStyle || ''}`,
+              style: tableStyle,
             },
             ['tbody', 0],
           ];
