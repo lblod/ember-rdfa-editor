@@ -29,6 +29,8 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
     atom: true,
     draggable: false,
     selectable: true,
+    editable: rdfaAware,
+    isolating: rdfaAware,
     toDOM(node: PNode) {
       if (rdfaAware) {
         return renderRdfaAware({

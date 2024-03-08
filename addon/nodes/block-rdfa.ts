@@ -19,6 +19,9 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     group: 'block',
     attrs: rdfaAttrSpec({ rdfaAware }),
     defining: true,
+    editable: rdfaAware,
+    isolating: rdfaAware,
+    selectable: rdfaAware,
     parseDOM: [
       {
         tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,

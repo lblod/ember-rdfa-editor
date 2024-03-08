@@ -33,6 +33,9 @@ export const docWithConfig = ({
         return baseAttrs;
       }
     },
+    editable: rdfaAware,
+    isolating: rdfaAware,
+    selectable: rdfaAware,
     parseDOM: [
       {
         tag: 'div',

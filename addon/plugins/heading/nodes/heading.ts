@@ -40,6 +40,9 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
     content: 'inline*',
     group: 'block',
     defining: true,
+    editable: rdfaAware,
+    isolating: rdfaAware,
+    selectable: rdfaAware,
     parseDOM: [
       {
         tag: HEADING_ELEMENTS.join(','),
