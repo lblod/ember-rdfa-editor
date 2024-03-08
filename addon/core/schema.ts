@@ -47,7 +47,17 @@ const rdfaAwareAttrSpec = {
 /** @deprecated Renamed to rdfaAwareAttrSpec */
 export const rdfaAttrs = rdfaAwareAttrSpec;
 
-export function rdfaAttrSpec({ rdfaAware }: RdfaAttrConfig) {
+export function rdfaAttrSpec<T extends RdfaAttrConfig>({
+  rdfaAware,
+}: T): T extends { rdfaAware: true }
+  ? typeof rdfaAwareAttrSpec
+  : typeof classicRdfaAttrSpec;
+export function rdfaAttrSpec({
+  rdfaAware,
+}: RdfaAttrConfig):
+  | false
+  | typeof rdfaAwareAttrSpec
+  | typeof classicRdfaAttrSpec {
   if (rdfaAware) {
     return rdfaAwareAttrSpec;
   } else {
@@ -117,7 +127,16 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   }
 }
 
-export function getRdfaAttrs(node: HTMLElement, { rdfaAware }: RdfaAttrConfig) {
+export function getRdfaAttrs<T extends RdfaAttrConfig>(
+  node: HTMLElement,
+  { rdfaAware }: T,
+): T extends { rdfaAware: true }
+  ? false | RdfaAttrs
+  : false | Record<string, string>;
+export function getRdfaAttrs(
+  node: HTMLElement,
+  { rdfaAware }: RdfaAttrConfig,
+): false | RdfaAttrs | Record<string, string> {
   if (rdfaAware) {
     return getRdfaAwareAttrs(node);
   } else {
