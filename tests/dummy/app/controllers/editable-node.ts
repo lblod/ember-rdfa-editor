@@ -11,7 +11,7 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
@@ -116,7 +116,10 @@ export default class EditableBlockController extends Controller {
       image,
 
       hard_break,
-      block_rdfa: { ...block_rdfa({ rdfaAware: true }), ...sharedRdfaNodeSpec },
+      block_rdfa: {
+        ...blockRdfaWithConfig({ rdfaAware: true }),
+        ...sharedRdfaNodeSpec,
+      },
       inline_rdfa: {
         ...inline_rdfa({ rdfaAware: true }),
         ...sharedRdfaNodeSpec,

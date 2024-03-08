@@ -8,7 +8,7 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
@@ -94,7 +94,7 @@ const nodes = {
 
   hard_break,
   invisible_rdfa: invisible_rdfa(),
-  block_rdfa: block_rdfa({ rdfaAware: true }),
+  block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
 };
 const marks = {
   inline_rdfa: inline_rdfa({ rdfaAware: true }),

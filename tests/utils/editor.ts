@@ -1,6 +1,6 @@
 import type Owner from '@ember/owner';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
@@ -87,7 +87,7 @@ export const SAMPLE_SCHEMA = new Schema({
     image,
 
     hard_break,
-    block_rdfa: block_rdfa({ rdfaAware: true }),
+    block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
   },
   marks: {
     inline_rdfa: inline_rdfa({ rdfaAware: true }),

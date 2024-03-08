@@ -1,4 +1,4 @@
-export { block_rdfa } from './block-rdfa';
+export { blockRdfaWithConfig, block_rdfa } from './block-rdfa';
 export { doc, docWithConfig } from './doc';
 export { hard_break } from './hard-break';
 export { horizontal_rule } from './horizontal-rule';

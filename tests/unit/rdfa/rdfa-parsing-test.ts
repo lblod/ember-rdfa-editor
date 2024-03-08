@@ -1,7 +1,7 @@
 import { oneLineTrim } from 'common-tags';
 import { module, test } from 'qunit';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
@@ -96,7 +96,7 @@ const schema = new Schema({
     image,
 
     hard_break,
-    block_rdfa: block_rdfa({ rdfaAware: true }),
+    block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
   },
   marks: {
     inline_rdfa: inline_rdfa({ rdfaAware: true }),

@@ -11,7 +11,7 @@ type Config = {
   rdfaAware?: boolean;
 };
 
-export const block_rdfa: (config?: Config) => SayNodeSpec = ({
+export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -53,3 +53,5 @@ export const block_rdfa: (config?: Config) => SayNodeSpec = ({
     },
   };
 };
+
+export const block_rdfa = blockRdfaWithConfig();
