@@ -1,9 +1,8 @@
 import { Node as PNode } from 'prosemirror-model';
 import {
-  classicRdfaAttrSpec,
   getRdfaAttrs,
   getRdfaContentElement,
-  rdfaAwareAttrSpec,
+  rdfaAttrSpec,
   renderRdfaAware,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import type SayNodeSpec from '../core/say-node-spec';
@@ -18,13 +17,7 @@ export const block_rdfa: (config?: Config) => SayNodeSpec = ({
   return {
     content: 'block+',
     group: 'block',
-    get attrs() {
-      if (rdfaAware) {
-        return rdfaAwareAttrSpec;
-      } else {
-        return classicRdfaAttrSpec;
-      }
-    },
+    attrs: rdfaAttrSpec({ rdfaAware }),
     defining: true,
     parseDOM: [
       {

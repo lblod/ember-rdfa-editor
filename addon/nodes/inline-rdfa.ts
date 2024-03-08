@@ -1,9 +1,8 @@
 import { Node as PNode } from 'prosemirror-model';
 import {
-  classicRdfaAttrSpec,
   getRdfaAttrs,
   getRdfaContentElement,
-  rdfaAwareAttrSpec,
+  rdfaAttrSpec,
   renderRdfaAware,
 } from '../core/schema';
 import {
@@ -60,13 +59,7 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
         contentElement: getRdfaContentElement,
       },
     ],
-    get attrs() {
-      if (rdfaAware) {
-        return rdfaAwareAttrSpec;
-      } else {
-        return classicRdfaAttrSpec;
-      }
-    },
+    attrs: rdfaAttrSpec({ rdfaAware }),
   };
 };
 

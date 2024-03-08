@@ -1,6 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
 import {
-  classicRdfaAttrSpec,
   getRdfaAttrs,
   getRdfaContentElement,
   renderRdfaAware,
@@ -36,11 +35,7 @@ export const heading: (config?: Config) => SayNodeSpec = ({
         },
         alignment: { default: DEFAULT_ALIGNMENT },
       };
-      if (rdfaAware) {
-        return { ...commonAttrs, ...rdfaAttrSpec };
-      } else {
-        return { ...commonAttrs, ...classicRdfaAttrSpec };
-      }
+      return { ...commonAttrs, ...rdfaAttrSpec({ rdfaAware }) };
     },
     content: 'inline*',
     group: 'block',

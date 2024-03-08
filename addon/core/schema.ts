@@ -16,7 +16,7 @@ export type RdfaAttrConfig = {
   rdfaAware: boolean;
 };
 
-export const classicRdfaAttrSpec = {
+const classicRdfaAttrSpec = {
   vocab: { default: undefined },
   typeof: { default: undefined },
   prefix: { default: undefined },
@@ -36,15 +36,24 @@ export const classicRdfaAttrSpec = {
   datetime: { default: undefined },
 };
 
-export const rdfaAwareAttrSpec = {
+const rdfaAwareAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
 };
-/** @deprecated Renamed to rdfaAttrSpec */
+
+/** @deprecated Renamed to rdfaAwareAttrSpec */
 export const rdfaAttrs = rdfaAwareAttrSpec;
+
+export function rdfaAttrSpec({ rdfaAware }: RdfaAttrConfig) {
+  if (rdfaAware) {
+    return rdfaAwareAttrSpec;
+  } else {
+    return classicRdfaAttrSpec;
+  }
+}
 
 function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
   const attrs: Record<string, string> = {};

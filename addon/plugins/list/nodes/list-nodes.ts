@@ -1,20 +1,14 @@
 import type { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
-  rdfaAwareAttrSpec,
   renderRdfaAware,
-  classicRdfaAttrSpec,
   getRdfaContentElement,
+  rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
-
-type OrderedListAttrs = typeof rdfaAwareAttrSpec & {
-  order: number;
-  style?: OrderListStyle;
-};
 
 const getListStyleFromDomElement = (dom: HTMLElement) => {
   const { listStyleType } = dom.style;
@@ -38,17 +32,10 @@ export const ordered_list: (options?: Options) => SayNodeSpec = ({
         order: { default: 1 },
         style: { default: null },
       };
-      if (rdfaAware) {
-        return {
-          ...baseAttrs,
-          ...rdfaAwareAttrSpec,
-        };
-      } else {
-        return {
-          ...baseAttrs,
-          ...classicRdfaAttrSpec,
-        };
-      }
+      return {
+        ...baseAttrs,
+        ...rdfaAttrSpec({ rdfaAware }),
+      };
     },
     content: 'list_item+',
     group: 'block list',
@@ -74,7 +61,7 @@ export const ordered_list: (options?: Options) => SayNodeSpec = ({
       },
     ],
     toDOM(node) {
-      const { style, order, ...attrs } = node.attrs as OrderedListAttrs;
+      const { style, order, ...attrs } = node.attrs;
       const baseAttrs = {
         ...(order !== 1 && { start: order }),
         ...(style && {
@@ -101,13 +88,7 @@ export const bullet_list: (options?: Options) => SayNodeSpec = ({
   return {
     content: 'list_item+',
     group: 'block list',
-    get attrs() {
-      if (rdfaAware) {
-        return rdfaAwareAttrSpec;
-      } else {
-        return classicRdfaAttrSpec;
-      }
-    },
+    attrs: rdfaAttrSpec({ rdfaAware }),
     parseDOM: [
       {
         tag: 'ul',
@@ -141,13 +122,7 @@ export const list_item: (options?: Options) => SayNodeSpec = ({
   return {
     content: 'paragraphGroup+ block*',
     defining: true,
-    get attrs() {
-      if (rdfaAware) {
-        return rdfaAwareAttrSpec;
-      } else {
-        return classicRdfaAttrSpec;
-      }
-    },
+    attrs: rdfaAttrSpec({ rdfaAware }),
     parseDOM: [
       {
         tag: 'li',

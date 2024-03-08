@@ -1,8 +1,7 @@
 import {
-  classicRdfaAttrSpec,
   getRdfaAttrs,
   getRdfaContentElement,
-  rdfaAwareAttrSpec,
+  rdfaAttrSpec,
   renderRdfaAware,
 } from '../../../core/schema';
 import {
@@ -43,14 +42,10 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
           default: interactive,
         },
       };
-      if (rdfaAware) {
-        return {
-          ...rdfaAwareAttrSpec,
-          ...baseAttrs,
-        };
-      } else {
-        return { ...classicRdfaAttrSpec, ...baseAttrs };
-      }
+      return {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...baseAttrs,
+      };
     },
     needsFFKludge: true,
     needsChromeCursorFix: true,

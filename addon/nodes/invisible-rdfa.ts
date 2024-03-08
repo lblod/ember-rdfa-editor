@@ -2,7 +2,6 @@ import { getRdfaAttrs, PNode, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import type SayNodeSpec from '../core/say-node-spec';
 import {
-  classicRdfaAttrSpec,
   type RdfaAttrs,
   renderInvisibleRdfa,
   renderRdfaAttrs,
@@ -21,18 +20,9 @@ export const invisible_rdfa: (options?: Options) => SayNodeSpec = ({
     atom: true,
     defining: true,
     isolating: true,
-    get attrs() {
-      if (rdfaAware) {
-        return {
-          ...rdfaAttrSpec,
-          __tag: { default: 'span' },
-        };
-      } else {
-        return {
-          ...classicRdfaAttrSpec,
-          __tag: { default: 'span' },
-        };
-      }
+    attrs: {
+      ...rdfaAttrSpec({ rdfaAware }),
+      __tag: { default: 'span' },
     },
     parseDOM: [
       {

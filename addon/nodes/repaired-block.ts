@@ -1,11 +1,7 @@
 import type { DOMOutputSpec, Node as PNode } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import type SayNodeSpec from '../core/say-node-spec';
-import {
-  classicRdfaAttrSpec,
-  getRdfaContentElement,
-  renderRdfaAware,
-} from '../core/schema';
+import { getRdfaContentElement, renderRdfaAware } from '../core/schema';
 
 type Options = {
   rdfaAware?: boolean;
@@ -18,13 +14,7 @@ export const repaired_block: (options?: Options) => SayNodeSpec = ({
     inline: true,
     content: 'inline*',
     group: 'inline',
-    get attrs() {
-      if (rdfaAware) {
-        return rdfaAttrSpec;
-      } else {
-        return classicRdfaAttrSpec;
-      }
-    },
+    attrs: rdfaAttrSpec({ rdfaAware }),
     // defining: true,
     parseDOM: [
       {

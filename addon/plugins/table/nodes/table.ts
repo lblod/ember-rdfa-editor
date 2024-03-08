@@ -3,12 +3,11 @@ import { Node as PNode, type NodeSpec } from 'prosemirror-model';
 import {
   type RdfaAttrs,
   getRdfaAttrs,
-  rdfaAwareAttrSpec,
   renderInvisibleRdfa,
   renderRdfaAttrs,
   renderRdfaAware,
-  classicRdfaAttrSpec,
   getRdfaContentElement,
+  rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
@@ -91,7 +90,7 @@ function setCellAttrs(
   }
   if (useClassicRdfa) {
     // The node is still using classic RDFa attributes, set them here
-    for (const key of Object.keys(classicRdfaAttrSpec)) {
+    for (const key of Object.keys(rdfaAttrSpec({ rdfaAware: false }))) {
       attrs[key] = node.attrs[key];
     }
   }
@@ -153,17 +152,10 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           class: { default: 'say-table' },
           style: { default: tableStyle },
         };
-        if (rdfaAware) {
-          return {
-            ...rdfaAwareAttrSpec,
-            ...baseAttrs,
-          };
-        } else {
-          return {
-            ...classicRdfaAttrSpec,
-            ...baseAttrs,
-          };
-        }
+        return {
+          ...rdfaAttrSpec({ rdfaAware }),
+          ...baseAttrs,
+        };
       },
       group: options.tableGroup,
       allowGapCursor: false,
@@ -234,13 +226,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
-      get attrs() {
-        if (rdfaAware) {
-          return rdfaAwareAttrSpec;
-        } else {
-          return classicRdfaAttrSpec;
-        }
-      },
+      attrs: rdfaAttrSpec({ rdfaAware }),
       allowGapCursor: false,
       parseDOM: [
         {
@@ -271,18 +257,9 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_cell: {
       content: options.cellContent,
-      get attrs() {
-        if (rdfaAware) {
-          return {
-            ...rdfaAwareAttrSpec,
-            ...cellAttrs,
-          };
-        } else {
-          return {
-            ...classicRdfaAttrSpec,
-            ...cellAttrs,
-          };
-        }
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
       },
       tableRole: 'cell',
       isolating: true,
@@ -319,18 +296,9 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_header: {
       content: options.cellContent,
-      get attrs() {
-        if (rdfaAware) {
-          return {
-            ...rdfaAwareAttrSpec,
-            ...cellAttrs,
-          };
-        } else {
-          return {
-            ...classicRdfaAttrSpec,
-            ...cellAttrs,
-          };
-        }
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
       },
       tableRole: 'header_cell',
       isolating: true,
