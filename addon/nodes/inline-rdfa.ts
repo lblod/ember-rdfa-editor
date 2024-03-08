@@ -63,8 +63,8 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
   };
 };
 
-export const inline_rdfa = (options?: Options) =>
+export const inlineRdfaWithConfig = (options?: Options) =>
   createEmberNodeSpec(emberNodeConfig(options));
 
-export const inlineRdfaView = (options?: Options) =>
+export const inlineRdfaWithConfigView = (options?: Options) =>
   createEmberNodeView(emberNodeConfig(options));

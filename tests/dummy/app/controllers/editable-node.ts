@@ -70,8 +70,8 @@ import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
 import {
-  inlineRdfaView,
-  inline_rdfa,
+  inlineRdfaWithConfigView,
+  inlineRdfaWithConfig,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { sharedRdfaNodeSpec } from '@lblod/ember-rdfa-editor/core/schema';
 
@@ -124,7 +124,7 @@ export default class EditableBlockController extends Controller {
         ...sharedRdfaNodeSpec,
       },
       inline_rdfa: {
-        ...inline_rdfa({ rdfaAware: true }),
+        ...inlineRdfaWithConfig({ rdfaAware: true }),
         ...sharedRdfaNodeSpec,
       },
       link: link(this.linkOptions),
@@ -173,7 +173,7 @@ export default class EditableBlockController extends Controller {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
-      inline_rdfa: inlineRdfaView({ rdfaAware: true })(controller),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
     };
   };
 
