@@ -1,5 +1,5 @@
 export { block_rdfa } from './block-rdfa';
-export { doc } from './doc';
+export { doc, docWithConfig } from './doc';
 export { hard_break } from './hard-break';
 export { horizontal_rule } from './horizontal-rule';
 export { invisible_rdfa } from './invisible-rdfa';

@@ -2,7 +2,7 @@ import { oneLineTrim } from 'common-tags';
 import { module, test } from 'qunit';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -68,7 +68,7 @@ import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 const schema = new Schema({
   nodes: {
-    doc: doc({
+    doc: docWithConfig({
       defaultLanguage: 'nl-BE',
       rdfaAware: true,
     }),

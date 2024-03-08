@@ -9,7 +9,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -69,7 +69,7 @@ export async function renderEditor() {
 }
 
 const nodes = {
-  doc: doc({ rdfaAware: true }),
+  doc: docWithConfig({ rdfaAware: true }),
   paragraph,
 
   repaired_block: repaired_block({ rdfaAware: true }),

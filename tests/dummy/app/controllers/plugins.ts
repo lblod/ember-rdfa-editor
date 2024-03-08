@@ -6,7 +6,7 @@ import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   invisible_rdfa,
@@ -76,7 +76,7 @@ export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
   schema = new Schema({
     nodes: {
-      doc: doc({
+      doc: docWithConfig({
         defaultLanguage: 'nl-BE',
       }),
       paragraph,

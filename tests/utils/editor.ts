@@ -1,7 +1,7 @@
 import type Owner from '@ember/owner';
 import {
   block_rdfa,
-  doc,
+  docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
@@ -59,7 +59,7 @@ import sinon from 'sinon';
 
 export const SAMPLE_SCHEMA = new Schema({
   nodes: {
-    doc: doc({
+    doc: docWithConfig({
       defaultLanguage: 'nl-BE',
       rdfaAware: true,
     }),

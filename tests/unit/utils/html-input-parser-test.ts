@@ -8,7 +8,7 @@ import { Schema } from 'prosemirror-model';
 
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 import { SayView } from '@lblod/ember-rdfa-editor';
-import { doc, paragraph, text } from '@lblod/ember-rdfa-editor/nodes';
+import { docWithConfig, paragraph, text } from '@lblod/ember-rdfa-editor/nodes';
 
 const editorContainerMock = document.createElement('div');
 sinon.stub(editorContainerMock, 'clientWidth').get(() => 800);
@@ -17,7 +17,7 @@ const editorView = new SayView(document.createElement('div'), {
   state: EditorState.create({
     schema: new Schema({
       nodes: {
-        doc: doc({
+        doc: docWithConfig({
           defaultLanguage: 'nl-BE',
           rdfaAware: true,
         }),
