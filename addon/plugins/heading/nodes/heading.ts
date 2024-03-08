@@ -17,7 +17,7 @@ type Config = {
   rdfaAware?: boolean;
 };
 
-export const heading: (config?: Config) => SayNodeSpec = ({
+export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -92,3 +92,5 @@ export const heading: (config?: Config) => SayNodeSpec = ({
     },
   };
 };
+
+export const heading = headingWithConfig();

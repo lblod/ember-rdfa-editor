@@ -21,7 +21,6 @@ import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import {
@@ -71,6 +70,7 @@ import {
   dropdown,
   dropdownView,
 } from '../dummy-nodes';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -92,7 +92,7 @@ export default class IndexController extends Controller {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading: heading(),
+      heading,
       blockquote,
 
       horizontal_rule,

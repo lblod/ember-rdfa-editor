@@ -28,7 +28,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bullet_list,
@@ -105,7 +105,10 @@ export default class EditableBlockController extends Controller {
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
         rdfaAware: true,
       }),
-      heading: { ...heading({ rdfaAware: true }), ...sharedRdfaNodeSpec },
+      heading: {
+        ...headingWithConfig({ rdfaAware: true }),
+        ...sharedRdfaNodeSpec,
+      },
       blockquote,
 
       horizontal_rule,

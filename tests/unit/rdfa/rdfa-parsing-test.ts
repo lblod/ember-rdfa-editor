@@ -22,7 +22,7 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
@@ -85,7 +85,7 @@ const schema = new Schema({
       cellContent: 'block+',
       rdfaAware: true,
     }),
-    heading: heading({ rdfaAware: true }),
+    heading: headingWithConfig({ rdfaAware: true }),
     blockquote,
 
     horizontal_rule,

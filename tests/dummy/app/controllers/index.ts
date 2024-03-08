@@ -29,7 +29,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bullet_list,
@@ -65,6 +64,7 @@ import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks
 import type { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -87,7 +87,7 @@ export default class IndexController extends Controller {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading: heading(),
+      heading,
       blockquote,
 
       horizontal_rule,

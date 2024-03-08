@@ -26,7 +26,7 @@ import {
 import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
@@ -82,7 +82,7 @@ const nodes = {
     cellContent: 'inline*',
     rdfaAware: true,
   }),
-  heading: heading({ rdfaAware: true }),
+  heading: headingWithConfig({ rdfaAware: true }),
   blockquote,
 
   horizontal_rule,
