@@ -87,7 +87,7 @@ export default class EditorComponent extends Component {
     // A prosemirror schema which determines how documents are parsed and written to the DOM.
     return new Schema({
       nodes: {
-        doc: doc({
+        doc: docWithConfig({
           defaultLanguage: 'nl-BE',
         }),
         paragraph,
@@ -96,16 +96,15 @@ export default class EditorComponent extends Component {
           cellContent: 'block+',
           inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
         }),
-        heading: heading(),
+        heading: headingWithConfig(),
         blockquote,
         horizontal_rule,
         code_block,
         text,
         hard_break,
-        block_rdfa: block_rdfa(),
+        block_rdfa: blockRdfaWithConfig(),
       },
       marks: {
-        inline_rdfa,
         em,
         strikethrough,
         strong,
