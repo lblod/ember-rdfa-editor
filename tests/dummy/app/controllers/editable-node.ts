@@ -16,7 +16,7 @@ import {
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
@@ -93,7 +93,7 @@ export default class EditableBlockController extends Controller {
       },
       paragraph,
 
-      repaired_block: repaired_block({ rdfaAware: true }),
+      repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
       list_item: listItemWithConfig({ rdfaAware: true }),
       ordered_list: orderedListWithConfig({ rdfaAware: true }),

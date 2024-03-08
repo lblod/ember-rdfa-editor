@@ -81,7 +81,7 @@ export default class IndexController extends Controller {
       }),
       paragraph,
 
-      repaired_block: repaired_block(),
+      repaired_block,
 
       list_item,
       ordered_list,

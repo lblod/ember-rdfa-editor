@@ -7,7 +7,7 @@ type Options = {
   rdfaAware?: boolean;
 };
 
-export const repaired_block: (options?: Options) => SayNodeSpec = ({
+export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -40,3 +40,5 @@ export const repaired_block: (options?: Options) => SayNodeSpec = ({
     },
   };
 };
+
+export const repaired_block = repairedBlockWithConfig();
