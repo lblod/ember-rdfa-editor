@@ -93,7 +93,7 @@ const nodes = {
   image,
 
   hard_break,
-  invisible_rdfa: invisible_rdfa(),
+  invisible_rdfa,
   block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
 };
 const marks = {

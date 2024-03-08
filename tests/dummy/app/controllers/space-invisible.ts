@@ -99,7 +99,7 @@ export default class SpaceInvisibleController extends Controller {
       image,
 
       hard_break,
-      invisible_rdfa: invisible_rdfa(),
+      invisible_rdfa,
       block_rdfa,
       link: link(this.linkOptions),
     },

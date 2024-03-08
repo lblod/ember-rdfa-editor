@@ -11,7 +11,7 @@ type Options = {
   rdfaAware?: boolean;
 };
 
-export const invisible_rdfa: (options?: Options) => SayNodeSpec = ({
+export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
   rdfaAware = false,
 } = {}) => {
   return {
@@ -58,3 +58,5 @@ export const invisible_rdfa: (options?: Options) => SayNodeSpec = ({
     },
   };
 };
+
+export const invisible_rdfa = invisibleRdfaWithConfig();
