@@ -46,6 +46,7 @@ $styles: decimal, upper-alpha, upper-roman;
   counter-reset: l1 0;
 
   li::marker {
+    font-variant-numeric: normal;
     content: counters(l1, ".") ". "
   }
 
@@ -72,6 +73,8 @@ $styles: decimal, upper-alpha, upper-roman;
       }
 
       li::marker {
+        font-variant-numeric: normal;
+
         $counter: '';
         @for $k from 1 through $i+1 {
           $counter: if($altering, #{$counter} #{counters(l#{$k}, ".", nth($styles, ($k - 1) % 3 + 1))} #{"'.'"}, #{$counter} #{counters(l#{$k}, ".")} #{"'.'"});
