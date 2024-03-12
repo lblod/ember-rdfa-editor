@@ -13,7 +13,7 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 // const logger = createLogger('core/schema');
 
 export type RdfaAttrConfig = {
-  rdfaAware: boolean;
+  rdfaAware?: boolean;
 };
 
 const classicRdfaAttrSpec = {
@@ -47,14 +47,12 @@ const rdfaAwareAttrSpec = {
 /** @deprecated Renamed to rdfaAwareAttrSpec */
 export const rdfaAttrs = rdfaAwareAttrSpec;
 
-export function rdfaAttrSpec<T extends RdfaAttrConfig>({
-  rdfaAware,
-}: T): T extends { rdfaAware: true }
+export function rdfaAttrSpec<T extends RdfaAttrConfig>(
+  config?: T,
+): T extends { rdfaAware: true }
   ? typeof rdfaAwareAttrSpec
   : typeof classicRdfaAttrSpec;
-export function rdfaAttrSpec({
-  rdfaAware,
-}: RdfaAttrConfig):
+export function rdfaAttrSpec({ rdfaAware = false }: RdfaAttrConfig = {}):
   | false
   | typeof rdfaAwareAttrSpec
   | typeof classicRdfaAttrSpec {
@@ -129,13 +127,13 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
 
 export function getRdfaAttrs<T extends RdfaAttrConfig>(
   node: HTMLElement,
-  { rdfaAware }: T,
+  config?: T,
 ): T extends { rdfaAware: true }
   ? false | RdfaAttrs
   : false | Record<string, string>;
 export function getRdfaAttrs(
   node: HTMLElement,
-  { rdfaAware }: RdfaAttrConfig,
+  { rdfaAware = false }: RdfaAttrConfig = {},
 ): false | RdfaAttrs | Record<string, string> {
   if (rdfaAware) {
     return getRdfaAwareAttrs(node);
