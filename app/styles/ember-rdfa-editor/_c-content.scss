@@ -39,7 +39,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 /* Component
   ========================================================================== */
 
-$styles: decimal, upper-alpha, upper-roman;
+$styles: decimal, lower-alpha, upper-roman;
 
 @mixin hierarchical-numbering($altering: false) {
   // Setup our own counter at top level
