@@ -1,11 +1,13 @@
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
+import type { AttributeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
   defaultLanguage?: string;
   content?: string;
   rdfaAware?: boolean;
+  extraAttributes?: Record<string, AttributeSpec>;
 }
 
 // Note: the `doc` node-spec does not have any parsing rules, as the parsing of the doc node is done in the `initalize` method
@@ -14,6 +16,7 @@ export const docWithConfig = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
   rdfaAware = false,
+  extraAttributes = {},
 }: DocumentConfig = {}): SayNodeSpec => {
   return {
     content,
@@ -23,6 +26,7 @@ export const docWithConfig = ({
           default: defaultLanguage,
           editable: true,
         },
+        ...extraAttributes,
       };
       if (rdfaAware) {
         return {
@@ -69,10 +73,13 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
-      const attrs = {
+      const attrs: Record<string, unknown> = {
         lang: node.attrs['lang'] as string,
         'data-say-document': true,
       };
+      Object.keys(extraAttributes).forEach((attr) => {
+        attrs[attr] = node.attrs[attr];
+      });
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,
