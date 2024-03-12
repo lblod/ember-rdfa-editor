@@ -45,7 +45,7 @@ const rdfaAwareAttrSpec = {
 };
 
 /** @deprecated Renamed to rdfaAwareAttrSpec */
-export const rdfaAttrs = rdfaAwareAttrSpec;
+export const rdfaAttrs = rdfaAttrSpec();
 
 export function rdfaAttrSpec<T extends RdfaAttrConfig>(
   config?: T,
