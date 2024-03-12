@@ -35,3 +35,15 @@ export function htmlToDoc(
   }
   return doc;
 }
+
+export function constructInlineStyles(
+  styles: Record<string, string | undefined>,
+) {
+  let result = '';
+  Object.entries(styles).forEach(([key, value]) => {
+    if (value) {
+      result += `${key}: ${value};`;
+    }
+  });
+  return result;
+}
