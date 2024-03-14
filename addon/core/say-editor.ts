@@ -95,6 +95,12 @@ export default class SayEditor {
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
           {
+            attribute: '__guid',
+            generator() {
+              return uuidv4();
+            },
+          },
+          {
             attribute: '__rdfaId',
             generator() {
               return uuidv4();

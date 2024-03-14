@@ -2,12 +2,16 @@ import type { Mark } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import { getRdfaContentElement } from '../core/schema';
 import type SayMarkSpec from '../core/say-mark-spec';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * @deprecated use `inlineRdfaWithConfig` instead
  */
 export const inline_rdfa: SayMarkSpec = {
-  attrs: rdfaAttrSpec({ rdfaAware: false }),
+  attrs: {
+    ...rdfaAttrSpec({ rdfaAware: false }),
+    _guid: { default: false },
+  },
   group: 'rdfa',
   excludes: '',
   parseDOM: [
@@ -21,7 +25,7 @@ export const inline_rdfa: SayMarkSpec = {
         }
         const attrs = getRdfaAttrs(node, { rdfaAware: false });
         if (attrs) {
-          return attrs;
+          return { ...attrs, _guid: uuidv4() };
         }
         return false;
       },
@@ -29,7 +33,8 @@ export const inline_rdfa: SayMarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
-    return ['span', mark.attrs, 0];
+    const { _guid, ...rdfaAttrs } = mark.attrs;
+    return ['span', rdfaAttrs, 0];
   },
   hasRdfa: true,
   parseTag: 'span',
