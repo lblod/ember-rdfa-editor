@@ -8,18 +8,19 @@
       <this.Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.main.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
-            <Toolbar::Button 
-              @icon="three-dots" 
-              {{on 'click' this.toggleMainDropdown}} 
+            <Toolbar::Button
+              @icon="three-dots"
+              title={{t "ember-rdfa-editor.utils.more-options"}}
+              {{on 'click' this.toggleMainDropdown}}
               @active={{this.main.showDropdown}}
             />
           </Toolbar::Group>
         {{/if}}
-        <div 
-          class="say-toolbar__main-dropdown" 
-          data-ignore-resize 
-          data-hidden={{if this.main.showDropdown 'false' 'true'}} 
-          {{velcro.loop}} 
+        <div
+          class="say-toolbar__main-dropdown"
+          data-ignore-resize
+          data-hidden={{if this.main.showDropdown 'false' 'true'}}
+          {{velcro.loop}}
           {{this.setUpMainDropdown}}
         >
           {{yield (hash
@@ -39,18 +40,19 @@
       <this.Velcro @placement="bottom-end" @offsetOptions={{hash mainAxis=10}} as |velcro|>
         {{#if this.side.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
-            <Toolbar::Button 
-              @icon="nav-down" 
+            <Toolbar::Button
+              @icon="nav-down"
+              title={{t "ember-rdfa-editor.utils.more-options"}}
               {{on 'click' this.toggleSideDropdown}}
               @active={{this.side.showDropdown}}
             />
           </Toolbar::Group>
         {{/if}}
-        <div 
-          class="say-toolbar__side-dropdown" 
-          data-ignore-resize 
-          data-hidden={{if this.side.showDropdown 'false' 'true'}} 
-          {{velcro.loop}} 
+        <div
+          class="say-toolbar__side-dropdown"
+          data-ignore-resize
+          data-hidden={{if this.side.showDropdown 'false' 'true'}}
+          {{velcro.loop}}
           {{this.setUpSideDropdown}}
         >
           {{yield (hash
