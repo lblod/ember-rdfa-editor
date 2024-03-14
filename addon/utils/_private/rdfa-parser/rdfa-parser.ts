@@ -34,6 +34,7 @@ import {
   languageOrDataType,
   sayDataFactory,
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { LANG_STRING } from '../constants';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -1014,6 +1015,12 @@ export class RdfaParser<N> {
     contentDatatype?: ModelNamedNode<N>,
     contentLanguage?: string,
   ) => {
+    if (
+      contentDatatype &&
+      !contentDatatype.equals(sayDataFactory.namedNode(LANG_STRING))
+    ) {
+      contentLanguage = undefined;
+    }
     this.resourceNodeMapping.set(node, {
       subject: this.util.getResourceOrBaseIri(resource, activeTag),
       contentPredicate: contentPredicate
