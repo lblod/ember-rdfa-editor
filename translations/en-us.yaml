@@ -10,9 +10,9 @@ ember-rdfa-editor:
   strikethrough: Strikethrough
   subscript: Subscript
   superscript: Superscript
-  unordered-list: Unordered list
+  unordered-list: Bulleted list
   ordered-list:
-    button-label: Ordered list
+    button-label: Numbered list
     options-label: List styles
     styles:
       decimal: Numbers
