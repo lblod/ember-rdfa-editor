@@ -10,7 +10,10 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import { baseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
+import {
+  baseKeymap,
+  type KeymapOptions,
+} from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
@@ -63,6 +66,13 @@ export default class SayEditor {
   private logger: Logger;
   parser: ProseParser;
 
+  constructor(options: SayEditorArgs);
+  /**
+   *
+   * @deprecated providing the `options` option when instantiating a `SayEditor` object is deprecated.
+   * The behaviour of `selectBlockRdfaNode` is included by default.
+   */
+  constructor(options: SayEditorArgs & { keyMapOptions?: KeymapOptions });
   constructor({
     owner,
     target,
@@ -73,7 +83,8 @@ export default class SayEditor {
       return {};
     },
     defaultAttrGenerators = [],
-  }: SayEditorArgs) {
+    keyMapOptions,
+  }: SayEditorArgs & { keyMapOptions?: KeymapOptions }) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
     this.root = target;
@@ -90,7 +101,7 @@ export default class SayEditor {
         ...pluginArr,
         dropCursor(),
         gapCursor(),
-        keymap(baseKeymap(schema)),
+        keymap(baseKeymap(schema, keyMapOptions)),
         history(),
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([

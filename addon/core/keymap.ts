@@ -27,13 +27,33 @@ import {
   liftEmptyBlockChecked,
   selectNodeBackward,
   selectNodeForward,
+  selectBlockRdfaNode,
 } from '@lblod/ember-rdfa-editor/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { setAlignment } from '../plugins/alignment/commands';
 
-export type Keymap = (schema: Schema) => Record<string, Command>;
+/**
+ * @deprecated KeymapOptions is deprecated.
+ * The behaviour of `selectBlockRdfaNode` is now enabled by default.
+ */
+export type KeymapOptions = {
+  backspace?: {
+    /**
+     * Enables alternative behaviour for backspace.
+     * Instead of deleting into the preceding block_rdfa node, it will select the preceding block_rdfa node.
+     *
+     * `block_rdfa` node has to enhanced with `isolating: true, selectable: true` in the schema.
+     */
+    selectBlockRdfaNode: boolean;
+  };
+};
+
+export type Keymap = (
+  schema: Schema,
+  options?: KeymapOptions,
+) => Record<string, Command>;
 
 const backspaceBase: Command[] = [
   undoInputRule,
@@ -58,6 +78,14 @@ const backspaceBase: Command[] = [
   },
   selectNodeBackward,
 ];
+
+const getBackspaceCommand = (options?: KeymapOptions) => {
+  if (options?.backspace?.selectBlockRdfaNode) {
+    return chainCommands(selectBlockRdfaNode, ...backspaceBase);
+  }
+
+  return chainCommands(...backspaceBase);
+};
 
 const del = chainCommands(
   deleteSelection,
@@ -92,48 +120,69 @@ const del = chainCommands(
 /// * **Mod-a** to `selectAll`
 ///
 /// `undo` and `redo` pc keybindings are overwritten in embedded-controller!
-export const pcBaseKeymap: Keymap = (schema) => ({
-  'Mod-z': undo,
-  'Mod-Z': undo,
-  'Mod-y': redo,
-  'Mod-Y': redo,
-  'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
-  'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
-  'Mod-i': toggleMarkAddFirst(schema.marks['em']),
-  'Mod-I': toggleMarkAddFirst(schema.marks['em']),
-  'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
-  'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
-  Enter: chainCommands(
-    splitListItem(schema.nodes['list_item']),
-    newlineInCode,
-    createParagraphNear,
-    liftEmptyBlockChecked,
-    splitBlock,
-    insertHardBreak,
-  ),
-  'Shift-Enter': chainCommands(exitCode, insertHardBreak),
-  'Mod-Enter': exitCode,
-  Backspace: chainCommands(...backspaceBase),
-  'Mod-Backspace': chainCommands(...backspaceBase),
-  'Shift-Backspace': chainCommands(...backspaceBase),
-  Delete: del,
-  'Mod-Delete': del,
-  'Mod-a': selectAll,
-  Tab: sinkListItem(schema.nodes['list_item']),
-  'Shift-Tab': liftListItem(schema.nodes['list_item']),
-  // Alignment shortcuts
-  'Mod-Shift-L': setAlignment({ option: 'left' }),
-  'Mod-Shift-E': setAlignment({ option: 'center' }),
-  'Mod-Shift-R': setAlignment({ option: 'right' }),
-  'Mod-Shift-J': setAlignment({ option: 'justify' }),
-});
+
+export function pcBaseKeymap(schema: Schema): Record<string, Command>;
+/**
+ * @deprecated providing the `options` argument to `pcBaseKeymap` is deprecated.
+ * The behaviour of `selectBlockRdfaNode` is included by default.
+ */
+export function pcBaseKeymap(
+  schema: Schema,
+  options?: KeymapOptions,
+): Record<string, Command>;
+export function pcBaseKeymap(schema: Schema, options?: KeymapOptions) {
+  return {
+    'Mod-z': undo,
+    'Mod-Z': undo,
+    'Mod-y': redo,
+    'Mod-Y': redo,
+    'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
+    'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
+    'Mod-i': toggleMarkAddFirst(schema.marks['em']),
+    'Mod-I': toggleMarkAddFirst(schema.marks['em']),
+    'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
+    'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
+    Enter: chainCommands(
+      splitListItem(schema.nodes['list_item']),
+      newlineInCode,
+      createParagraphNear,
+      liftEmptyBlockChecked,
+      splitBlock,
+      insertHardBreak,
+    ),
+    'Shift-Enter': chainCommands(exitCode, insertHardBreak),
+    'Mod-Enter': exitCode,
+    Backspace: getBackspaceCommand(options),
+    'Mod-Backspace': getBackspaceCommand(options),
+    'Shift-Backspace': getBackspaceCommand(options),
+    Delete: del,
+    'Mod-Delete': del,
+    'Mod-a': selectAll,
+    Tab: sinkListItem(schema.nodes['list_item']),
+    'Shift-Tab': liftListItem(schema.nodes['list_item']),
+    // Alignment shortcuts
+    'Mod-Shift-L': setAlignment({ option: 'left' }),
+    'Mod-Shift-E': setAlignment({ option: 'center' }),
+    'Mod-Shift-R': setAlignment({ option: 'right' }),
+    'Mod-Shift-J': setAlignment({ option: 'justify' }),
+  };
+}
 
 /// A copy of `pcBaseKeymap` that also binds **Ctrl-h** like Backspace,
 /// **Ctrl-d** like Delete, **Alt-Backspace** like Ctrl-Backspace, and
 /// **Ctrl-Alt-Backspace**, **Alt-Delete**, and **Alt-d** like
 /// Ctrl-Delete.
-export const macBaseKeymap: Keymap = (schema) => {
-  const pcmap = pcBaseKeymap(schema);
+export function macBaseKeymap(schema: Schema): Record<string, Command>;
+/**
+ * @deprecated providing the `options` argument to `macBaseKeymap` is deprecated.
+ * The behaviour of `selectBlockRdfaNode` is included by default.
+ */
+export function macBaseKeymap(
+  schema: Schema,
+  options?: KeymapOptions,
+): Record<string, Command>;
+export function macBaseKeymap(schema: Schema, options?: KeymapOptions) {
+  const pcmap = pcBaseKeymap(schema, options);
   return {
     ...pcmap,
     'Ctrl-h': pcmap['Backspace'],
@@ -145,7 +194,7 @@ export const macBaseKeymap: Keymap = (schema) => {
     'Ctrl-a': selectTextblockStart,
     'Ctrl-e': selectTextblockEnd,
   };
-};
+}
 
 export const embeddedEditorBaseKeymap: Keymap = (schema) => {
   return {
@@ -177,4 +226,15 @@ if (typeof navigator !== 'undefined') {
     mac = false;
   }
 }
-export const baseKeymap: Keymap = mac ? macBaseKeymap : pcBaseKeymap;
+export function baseKeymap(schema: Schema): Record<string, Command>;
+/**
+ * @deprecated providing the `options` argument to `baseKeymap` is deprecated.
+ * The behaviour of `selectBlockRdfaNode` is included by default.
+ */
+export function baseKeymap(
+  schema: Schema,
+  options?: KeymapOptions,
+): Record<string, Command>;
+export function baseKeymap(schema: Schema, options?: KeymapOptions) {
+  return mac ? macBaseKeymap(schema, options) : pcBaseKeymap(schema, options);
+}
