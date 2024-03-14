@@ -218,7 +218,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       serialize(node, state) {
         const pos = getPos(node, state.doc) as ResolvedPos;
         // table rows are 1-indexed
-        const isEven = (pos.index() + 1) % 2 === 0;
+        const isEven = pos.index() % 2 === 1;
         const style = {
           ...rowStyle,
           ...(isEven ? evenRowStyle : oddRowStyle),
