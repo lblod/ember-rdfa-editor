@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { htmlSafe } from '@ember/template';
 import { Command, SayController } from '@lblod/ember-rdfa-editor';
 import SelectionTooltip from '../../_private/selection-tooltip';
 import {
@@ -10,6 +11,7 @@ import {
   deleteRow,
   deleteTable,
   mergeCells,
+  setCellAttr,
   splitCell,
   toggleHeaderColumn,
   toggleHeaderRow,
@@ -19,6 +21,7 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import { defaultColors } from '@lblod/ember-rdfa-editor/config/colors';
 
 type Args = {
   controller: SayController;
@@ -29,13 +32,17 @@ type Action = {
   icon?: string;
   label?: string;
   command: Command;
+  checkCommand?: Command;
 };
+
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
 
   SelectionTooltip = SelectionTooltip;
 
   @tracked _justClicked = false;
+
+  htmlSafe = htmlSafe;
 
   setUpListeners = modifier(
     () => {
@@ -56,7 +63,7 @@ export default class TableTooltip extends Component<Args> {
     { eager: false },
   );
 
-  get tableActions() {
+  get tableActions(): Action[][] {
     return [
       [
         {
@@ -124,6 +131,10 @@ export default class TableTooltip extends Component<Args> {
     ];
   }
 
+  get presetColors() {
+    return defaultColors;
+  }
+
   get controller() {
     return this.args.controller;
   }
@@ -137,12 +148,20 @@ export default class TableTooltip extends Component<Args> {
   }
 
   canExecuteAction = (action: Action) => {
-    return this.controller.checkCommand(action.command);
+    const checkCommand = action.checkCommand ?? action.command;
+
+    return this.controller.checkCommand(checkCommand);
   };
 
   @action
   executeAction(action: Action) {
     this.controller.focus();
     this.controller.doCommand(action.command);
+  }
+
+  @action
+  selectColor(color: string) {
+    this.controller.focus();
+    this.controller.doCommand(setCellAttr('background', color));
   }
 }

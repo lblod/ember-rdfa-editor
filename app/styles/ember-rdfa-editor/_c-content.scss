@@ -366,7 +366,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
 
     .selectedCell {
-      background-color: var(--au-blue-100);
+      // Have to use !important here to override background-color set on the cell
+      background-color: var(--au-blue-100) !important;
     }
   }
 }

@@ -2,6 +2,7 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
+import { defaultColors } from '@lblod/ember-rdfa-editor/config/colors';
 
 type Args = {
   onChange: (color?: string) => unknown;
@@ -19,16 +20,7 @@ export default class ColorSelector extends Component<Args> {
   htmlSafe = htmlSafe;
 
   get presetColors() {
-    return (
-      this.args.presetColors ?? [
-        '#ff8000',
-        '#ffff00',
-        '#00ff00',
-        '#00ffff',
-        '#0000ff',
-        '#ff0000',
-      ]
-    );
+    return this.args.presetColors ?? defaultColors;
   }
   @action
   openColorPicker() {

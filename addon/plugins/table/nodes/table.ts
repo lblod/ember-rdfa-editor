@@ -8,12 +8,13 @@ import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 interface ExtraAttribute {
   default: unknown;
 
-  getFromDOM?(this: void, node: Element): unknown;
+  getFromDOM?(this: void, node: HTMLElement): unknown;
 
   setDOMAttr?(this: void, value: unknown, attrs: Record<string, unknown>): void;
 }
 
 type CellAttributes = {
+  background?: string;
   colspan?: number;
   rowspan?: number;
   colwidth?: number[] | null;
@@ -32,7 +33,7 @@ const fixupColWidth = (number: string) => {
 };
 
 function getCellAttrs(
-  dom: Element,
+  dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
@@ -49,6 +50,7 @@ function getCellAttrs(
     rowspan: Number(dom.getAttribute('rowspan') || 1),
     colwidth: widths && widths.length == colspan ? widths : null,
   };
+
   for (const [key, attr] of Object.entries(extraAttrs)) {
     const getter = attr.getFromDOM;
     const value = getter && getter(dom);
@@ -56,6 +58,7 @@ function getCellAttrs(
       result[key] = value;
     }
   }
+
   return { ...getRdfaAttrs(dom), ...result };
 }
 
@@ -79,6 +82,7 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
   for (const key of Object.keys(rdfaAttrs)) {
     attrs[key] = node.attrs[key];
   }
+
   return attrs;
 }
 
@@ -106,24 +110,78 @@ interface TableNodes extends Record<string, NodeSpec> {
   table_header: NodeSpec;
 }
 
+const appendToStyleAttribute = (
+  attributes: Record<string, unknown>,
+  value: string,
+) => {
+  if (!attributes.style) {
+    attributes.style = value;
+    return;
+  }
+
+  if (typeof attributes.style === 'string') {
+    attributes.style = `${attributes.style}; ${value};`;
+    return;
+  }
+
+  return;
+};
+
+const getDefaultCellAttributes = ({
+  inlineBorderStyle,
+}: {
+  inlineBorderStyle?: string;
+} = {}): Record<string, ExtraAttribute> => ({
+  background: {
+    default: null,
+    getFromDOM(dom) {
+      return dom.style.backgroundColor || null;
+    },
+    setDOMAttr(value, attrs) {
+      if (typeof value === 'string') {
+        appendToStyleAttribute(attrs, `background-color: ${value}`);
+      }
+    },
+  },
+  borderLeft: {
+    default: inlineBorderStyle ?? null,
+    getFromDOM(dom) {
+      return dom.style.borderLeft || null;
+    },
+    setDOMAttr(value, attrs) {
+      if (typeof value === 'string') {
+        appendToStyleAttribute(attrs, `border-left: ${value}`);
+      }
+    },
+  },
+});
+
 export function tableNodes(options: TableNodeOptions): TableNodes {
-  const extraAttrs = options.cellAttributes || {};
+  const inlineBorderStyle =
+    options.inlineBorderStyle &&
+    `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
+
+  const extraAttrs = options.cellAttributes
+    ? {
+        ...options.cellAttributes,
+        ...getDefaultCellAttributes({ inlineBorderStyle }),
+      }
+    : getDefaultCellAttributes({ inlineBorderStyle });
+
   const cellAttrs: Record<string, { default: unknown }> = {
     colspan: { default: 1 },
     rowspan: { default: 1 },
     colwidth: { default: null },
   };
+
   for (const [key, attr] of Object.entries(extraAttrs)) {
     cellAttrs[key] = { default: attr.default };
   }
-  const inlineBorderStyle =
-    options.inlineBorderStyle &&
-    `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
+
   const tableStyle =
     inlineBorderStyle &&
     `border: ${inlineBorderStyle}; border-collapse: collapse;`;
   const rowStyle = inlineBorderStyle && `border-top: ${inlineBorderStyle};`;
-  const cellStyle = inlineBorderStyle && `border-left: ${inlineBorderStyle};`;
 
   return {
     table: {
@@ -211,11 +269,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return [
-          'td',
-          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
-          0,
-        ];
+        return ['td', setCellAttrs(node, extraAttrs), 0];
       },
     },
     table_header: {
@@ -230,11 +284,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return [
-          'th',
-          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
-          0,
-        ];
+        return ['th', setCellAttrs(node, extraAttrs), 0];
       },
     },
   };

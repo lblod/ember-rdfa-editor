@@ -23,5 +23,22 @@
         {{/each}}
       </div>
     {{/each}}
+    <div class="color-selector__grid">
+      <button
+        type='button'
+        role="menuitem"
+        {{on "click" (fn this.selectColor null)}}
+      >
+        <AuIcon @icon='circle-x' @ariaHidden={{true}} @size="large" />
+      </button>
+      {{#each this.presetColors as |presetColor|}}
+        <button
+          type="button"
+          style={{this.htmlSafe (concat "background-color: " presetColor)}}
+          title={{presetColor}}
+          {{on "click" (fn this.selectColor presetColor)}}
+        />
+      {{/each}}
+    </div>
   </this.SelectionTooltip>
 </div>
