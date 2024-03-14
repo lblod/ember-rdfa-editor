@@ -1,6 +1,7 @@
 ember-rdfa-editor:
   utils:
     back: Back
+    more-options: More options
   undo: Undo
   redo: Redo
   bold: Bold
