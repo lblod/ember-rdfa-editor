@@ -268,6 +268,10 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
+  *:not(li) > ol {
+    contain: style;
+  }
+
   ol.decimal,
   ol.lower-alpha,
   ol.upper-roman {
