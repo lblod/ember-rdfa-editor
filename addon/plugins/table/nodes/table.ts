@@ -137,12 +137,6 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
   const cellStyle = {
     'border-left': inlineBorderStyle,
   };
-  const evenRowStyle = {
-    background: 'var(--say-even-row-background)',
-  };
-  const oddRowStyle = {
-    background: 'var(--say-odd-row-background)',
-  };
   return {
     table: {
       content: 'table_row+',
@@ -181,9 +175,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
+        // Delete variables as we do not need them in serialized version
         const style = {
           width: '100%',
           ...tableStyle,
+          '--say-even-row-background': undefined,
+          '--say-odd-row-background': undefined,
         };
         return [
           'table',
@@ -221,7 +218,9 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         const isEven = pos.index() % 2 === 1;
         const style = {
           ...rowStyle,
-          ...(isEven ? evenRowStyle : oddRowStyle),
+          background: isEven
+            ? options.rowBackground?.even
+            : options.rowBackground?.odd,
         };
         return [
           'tr',
