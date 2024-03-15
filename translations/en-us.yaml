@@ -1,6 +1,7 @@
 ember-rdfa-editor:
   utils:
     back: Back
+    more-options: More options
   undo: Undo
   redo: Redo
   bold: Bold
@@ -9,9 +10,9 @@ ember-rdfa-editor:
   strikethrough: Strikethrough
   subscript: Subscript
   superscript: Superscript
-  unordered-list: Unordered list
+  unordered-list: Bulleted list
   ordered-list:
-    button-label: Ordered list
+    button-label: Numbered list
     options-label: List styles
     styles:
       decimal: Numbers
@@ -78,3 +79,4 @@ ember-rdfa-editor:
       center: Center align
       right: Right align
       justify: Justify
+  text-styles: Text styles
