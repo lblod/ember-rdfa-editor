@@ -5,7 +5,7 @@
         type='button'
         class='main {{if @active "is-active"}}'
         disabled={{not this.canSetColor}}
-        title={{t 'ember-rdfa-editor.color.button-label'}}
+        title={{t 'ember-rdfa-editor.table.background-color'}}
         {{velcro.hook}}
         {{on 'click' this.toggleDropdown}}
         {{this.setupDropdownButton}}
