@@ -4,6 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import sampleData from '../config/sample-data';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { modifier } from 'ember-modifier';
+import { generatePageForExport } from '@lblod/ember-rdfa-editor/utils/export-utils';
 
 interface DebugToolArgs {
   controller?: SayController;
@@ -54,42 +55,18 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   }
 
   @action
-  showExportPreview() {
+  showStyledExportPreview() {
     const wnd = window.open('about:blank', '', '_blank');
+    if (this.controller && wnd) {
+      wnd.document.write(generatePageForExport(this.controller, true));
+    }
+  }
 
-    if (wnd) {
-      const parser = new DOMParser();
-      const basicDocument = parser.parseFromString(
-        '<html><head></head><body class="say-content"></body></html>',
-        'text/html',
-      );
-
-      const styleSheets = Array.from(document.styleSheets);
-
-      styleSheets.forEach((styleSheet) => {
-        if (styleSheet.href) {
-          const linkElement = basicDocument.createElement('link');
-
-          linkElement.rel = 'stylesheet';
-          linkElement.href = styleSheet.href;
-          linkElement.type = 'text/css';
-
-          basicDocument.head.appendChild(linkElement);
-        }
-      });
-
-      const contentDocument = parser.parseFromString(
-        this.controller?.htmlContent || '',
-        'text/html',
-      );
-
-      if (contentDocument.body.firstChild) {
-        basicDocument.body.appendChild(contentDocument.body.firstChild);
-      }
-
-      wnd.document.write(
-        '<!DOCTYPE html>' + basicDocument.documentElement.outerHTML,
-      );
+  @action
+  showRawExportPreview() {
+    const wnd = window.open('about:blank', '', '_blank');
+    if (this.controller && wnd) {
+      wnd.document.write(generatePageForExport(this.controller, false));
     }
   }
 
