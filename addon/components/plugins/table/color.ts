@@ -13,6 +13,8 @@ type Args = {
   defaultColor?: string;
 };
 
+const DEFAULT_COLOR = '#ffffff';
+
 export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
@@ -43,6 +45,10 @@ export default class ColorMenu extends Component<Args> {
 
   get currentColor() {
     if (this.controller) {
+      if (!this.canSetColor) {
+        return DEFAULT_COLOR;
+      }
+
       const state = this.controller.mainEditorState;
 
       try {
@@ -50,9 +56,9 @@ export default class ColorMenu extends Component<Args> {
         const background = $cell.nodeAfter?.attrs['background'] as
           | string
           | undefined;
-        return background || this.args.defaultColor || '#ffffff';
+        return background || this.args.defaultColor || DEFAULT_COLOR;
       } catch {
-        return this.args.defaultColor || '#ffffff';
+        return this.args.defaultColor || DEFAULT_COLOR;
       }
     }
 

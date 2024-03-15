@@ -175,3 +175,15 @@ $say-toolbar-height: 44px !default;
     }
   }
 }
+
+.say-toolbar__table-cell-background-button {
+  --default-background-color: #ffff00;
+
+  width: 19px;
+  height: 19px;
+
+  margin-top: -3px;
+
+  background-color: var(--selected-background-color, var(--default-background-color));
+  border: 1px solid var(--au-gray-600);
+}

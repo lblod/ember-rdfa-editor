@@ -1,5 +1,5 @@
 {{#if @controller}}
-  <div class="say-toolbar__button say-toolbar__highlight-button">
+  <div class="say-toolbar__button">
     <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
       <button
         type='button'
@@ -10,11 +10,9 @@
         {{on 'click' this.toggleDropdown}}
         {{this.setupDropdownButton}}
       >
-        <AuIcon
-          @icon='pencil'
-          @ariaHidden={{true}}
-          @size='large'
-          style={{this.htmlSafe (concat "border-bottom-color: " this.currentColor)}}
+        <div
+          class="say-toolbar__table-cell-background-button"
+          style={{this.htmlSafe (concat "--selected-background-color: " this.currentColor)}}
         />
       </button>
 
