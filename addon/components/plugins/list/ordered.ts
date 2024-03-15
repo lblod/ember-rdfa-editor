@@ -48,13 +48,6 @@ export default class ListOrdered extends Component<Args> {
         ),
         title: '1.2.3',
       },
-      {
-        name: 'hierarchical-numbering-alternating',
-        description: this.intl.t(
-          'ember-rdfa-editor.ordered-list.styles.hierarchical-alternating',
-        ),
-        title: '1.A.I',
-      },
     ];
   }
 
