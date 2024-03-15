@@ -21,19 +21,16 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
-import { defaultColors } from '@lblod/ember-rdfa-editor/config/colors';
+import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color';
+import type { ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;
 };
 
-type Action = {
-  title: string;
-  icon?: string;
-  label?: string;
-  command: Command;
-  checkCommand?: Command;
-};
+type Action =
+  | { title: string; icon?: string; label?: string; command: Command }
+  | { component: ComponentLike };
 
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
@@ -115,6 +112,7 @@ export default class TableTooltip extends Component<Args> {
           icon: 'bin',
           command: deleteTable,
         },
+        { component: ColorMenu as unknown as ComponentLike },
       ],
       [
         {
@@ -131,10 +129,6 @@ export default class TableTooltip extends Component<Args> {
     ];
   }
 
-  get presetColors() {
-    return defaultColors;
-  }
-
   get controller() {
     return this.args.controller;
   }
@@ -148,15 +142,21 @@ export default class TableTooltip extends Component<Args> {
   }
 
   canExecuteAction = (action: Action) => {
-    const checkCommand = action.checkCommand ?? action.command;
+    if ('command' in action) {
+      return this.controller.checkCommand(action.command);
+    }
 
-    return this.controller.checkCommand(checkCommand);
+    return false;
   };
 
   @action
   executeAction(action: Action) {
-    this.controller.focus();
-    this.controller.doCommand(action.command);
+    if ('command' in action) {
+      this.controller.focus();
+      this.controller.doCommand(action.command);
+    }
+
+    return;
   }
 
   @action

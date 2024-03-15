@@ -7,38 +7,27 @@
     {{#each this.tableActions as |row|}}
       <div class="say-table-tooltip--actions">
         {{#each row as |action|}}
-          <button
-            type="button"
-            title={{action.title}}
-            disabled={{not (this.canExecuteAction action)}}
-            {{on "click" (fn this.executeAction action)}}
-          >
-            {{#if action.icon}}
-              <AuIcon @icon={{action.icon}} @size="large" />
-            {{/if}}
-            {{#if action.label}}
-              <span>{{action.label}}</span>
-            {{/if}}
-          </button>
+          {{#if action.command}}
+            <button
+              type="button"
+              title={{action.title}}
+              disabled={{not (this.canExecuteAction action)}}
+              {{on "click" (fn this.executeAction action)}}
+            >
+              {{#if action.icon}}
+                <AuIcon @icon={{action.icon}} @size="large" />
+              {{/if}}
+              {{#if action.label}}
+                <span>{{action.label}}</span>
+              {{/if}}
+            </button>
+          {{else}}
+            <action.component
+              @controller={{this.controller}}
+            />
+          {{/if}}
         {{/each}}
       </div>
     {{/each}}
-    <div class="color-selector__grid">
-      <button
-        type='button'
-        role="menuitem"
-        {{on "click" (fn this.selectColor null)}}
-      >
-        <AuIcon @icon='circle-x' @ariaHidden={{true}} @size="large" />
-      </button>
-      {{#each this.presetColors as |presetColor|}}
-        <button
-          type="button"
-          style={{this.htmlSafe (concat "background-color: " presetColor)}}
-          title={{presetColor}}
-          {{on "click" (fn this.selectColor presetColor)}}
-        />
-      {{/each}}
-    </div>
   </this.SelectionTooltip>
 </div>

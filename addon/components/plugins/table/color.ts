@@ -10,7 +10,6 @@ import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
 
 type Args = {
   controller: SayController;
-  defaultColor?: string;
 };
 
 const DEFAULT_COLOR = '#ffffff';
@@ -56,9 +55,9 @@ export default class ColorMenu extends Component<Args> {
         const background = $cell.nodeAfter?.attrs['background'] as
           | string
           | undefined;
-        return background || this.args.defaultColor || DEFAULT_COLOR;
+        return background || DEFAULT_COLOR;
       } catch {
-        return this.args.defaultColor || DEFAULT_COLOR;
+        return DEFAULT_COLOR;
       }
     }
 
