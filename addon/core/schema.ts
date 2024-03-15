@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Attrs, DOMOutputSpec, Mark } from 'prosemirror-model';
+import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '@lblod/ember-rdfa-editor/index';
-import { unwrap } from '../utils/_private/option';
+import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
   IncomingLiteralNodeTriple,
@@ -12,53 +12,74 @@ import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 // const logger = createLogger('core/schema');
 
-export const rdfaAttrSpec = {
+export type RdfaAttrConfig = {
+  rdfaAware?: boolean;
+};
+
+const classicRdfaAttrSpec = {
+  vocab: { default: undefined },
+  typeof: { default: undefined },
+  prefix: { default: undefined },
+  property: { default: undefined },
+  rel: { default: undefined },
+  rev: { default: undefined },
+  href: { default: undefined },
+  about: { default: undefined },
+  resource: { default: undefined },
+  content: { default: undefined },
+  datatype: { default: undefined },
+  lang: { default: undefined },
+  xmlns: { default: undefined },
+  src: { default: undefined },
+  role: { default: undefined },
+  inlist: { default: undefined },
+  datetime: { default: undefined },
+};
+
+const rdfaAwareAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
 };
-/** @deprecated Renamed to rdfaAttrSpec */
-export const rdfaAttrs = rdfaAttrSpec;
-export const rdfaDomAttrs = {
-  'data-incoming-props': { default: [] },
-  'data-outgoing-props': { default: [] },
-  'data-subject': { default: null },
-  __rdfaId: { default: undefined },
-  'data-rdfa-node-type': { default: undefined },
-};
 
-export const rdfaNodeTypes = ['resource', 'literal'] as const;
-export interface RdfaAwareAttrs {
-  __rdfaId: string;
-  rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: IncomingTriple[];
-}
-export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'literal';
-}
-export interface RdfaResourceAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'resource';
-  subject: string;
-  properties: OutgoingTriple[];
-}
-export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
+/** @deprecated Renamed to rdfaAwareAttrSpec */
+export const rdfaAttrs = rdfaAttrSpec();
 
-export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
-  return (
-    '__rdfaId' in attrs &&
-    'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'])
-  );
+export function rdfaAttrSpec<T extends RdfaAttrConfig>(
+  config?: T,
+): T extends { rdfaAware: true }
+  ? typeof rdfaAwareAttrSpec
+  : typeof classicRdfaAttrSpec;
+export function rdfaAttrSpec({ rdfaAware = false }: RdfaAttrConfig = {}):
+  | false
+  | typeof rdfaAwareAttrSpec
+  | typeof classicRdfaAttrSpec {
+  if (rdfaAware) {
+    return rdfaAwareAttrSpec;
+  } else {
+    return classicRdfaAttrSpec;
+  }
 }
 
-export const sharedRdfaNodeSpec = {
-  isolating: true,
-  selectable: true,
-};
+function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
+  const attrs: Record<string, string> = {};
+  let hasAnyRdfaAttributes = false;
+  for (const key of Object.keys(classicRdfaAttrSpec)) {
+    const value = node.attributes.getNamedItem(key)?.value;
+    if (isSome(value)) {
+      attrs[key] = value;
+      hasAnyRdfaAttributes = true;
+    }
+  }
+  if (hasAnyRdfaAttributes) {
+    return attrs;
+  }
+  return false;
+}
 
-export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
+function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   const rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
@@ -103,6 +124,60 @@ export function getRdfaAttrs(node: HTMLElement): RdfaAttrs | false {
     };
   }
 }
+
+export function getRdfaAttrs<T extends RdfaAttrConfig>(
+  node: HTMLElement,
+  config?: T,
+): T extends { rdfaAware: true }
+  ? false | RdfaAttrs
+  : false | Record<string, string>;
+export function getRdfaAttrs(
+  node: HTMLElement,
+  { rdfaAware = false }: RdfaAttrConfig = {},
+): false | RdfaAttrs | Record<string, string> {
+  if (rdfaAware) {
+    return getRdfaAwareAttrs(node);
+  } else {
+    return getClassicRdfaAttrs(node);
+  }
+}
+export const rdfaDomAttrs = {
+  'data-incoming-props': { default: [] },
+  'data-outgoing-props': { default: [] },
+  'data-subject': { default: null },
+  __rdfaId: { default: undefined },
+  'data-rdfa-node-type': { default: undefined },
+};
+
+export const rdfaNodeTypes = ['resource', 'literal'] as const;
+export interface RdfaAwareAttrs {
+  __rdfaId: string;
+  rdfaNodeType: (typeof rdfaNodeTypes)[number];
+  backlinks: IncomingTriple[];
+}
+export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'literal';
+}
+export interface RdfaResourceAttrs extends RdfaAwareAttrs {
+  rdfaNodeType: 'resource';
+  subject: string;
+  properties: OutgoingTriple[];
+}
+export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
+
+export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
+  return (
+    '__rdfaId' in attrs &&
+    'backlinks' in attrs &&
+    rdfaNodeTypes.includes(attrs['rdfaNodeType'])
+  );
+}
+
+export const sharedRdfaNodeSpec = {
+  isolating: true,
+  selectable: true,
+  editable: true,
+};
 
 type NodeOrMark = PNode | Mark;
 
@@ -178,20 +253,16 @@ export function renderInvisibleRdfa(
 }
 
 export function renderRdfaAttrs(
-  nodeOrMark: NodeOrMark,
+  rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
-  if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
-    const contentTriple: ContentTriple | null = (
-      nodeOrMark.attrs['properties'] as OutgoingTriple[]
-    ).find(
+  if (rdfaAttrs.rdfaNodeType === 'resource') {
+    const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
     ) as ContentTriple | null;
 
     return contentTriple
       ? {
-          about: (nodeOrMark.attrs['subject'] ||
-            nodeOrMark.attrs['about'] ||
-            nodeOrMark.attrs['resource']) as string,
+          about: rdfaAttrs.subject,
           property: contentTriple.predicate,
           datatype: contentTriple.object.language.length
             ? null
@@ -201,15 +272,11 @@ export function renderRdfaAttrs(
           resource: null,
         }
       : {
-          about: (nodeOrMark.attrs['subject'] ||
-            nodeOrMark.attrs['about'] ||
-            nodeOrMark.attrs['resource']) as string,
+          about: rdfaAttrs.subject,
           resource: null,
         };
   } else {
-    const backlinks = nodeOrMark.attrs[
-      'backlinks'
-    ] as IncomingLiteralNodeTriple[];
+    const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {};
     }
@@ -240,26 +307,37 @@ export type RdfaRenderArgs = {
   contentContainerTag?: string;
   contentContainerAttrs?: Record<string, unknown>;
 } & ({ content: DOMOutputSpec | 0 } | { contentArray: unknown[] });
+
+function determineChildTag(renderable: Mark | PNode) {
+  if (renderable instanceof Mark) {
+    return 'span';
+  } else {
+    return renderable.inlineContent || renderable.isInline ? 'span' : 'div';
+  }
+}
 export function renderRdfaAware({
   renderable,
   tag,
   attrs = {},
-  rdfaContainerTag = tag,
+  rdfaContainerTag = determineChildTag(renderable),
   rdfaContainerAttrs,
-  contentContainerTag = tag,
+  contentContainerTag = determineChildTag(renderable),
   contentContainerAttrs = {},
   ...rest
 }: RdfaRenderArgs): DOMOutputSpec {
   const clone = { ...attrs };
+
+  //TODO: this should not be needed
   delete clone['properties'];
   delete clone['backlinks'];
   delete clone['subject'];
   delete clone['resource'];
   delete clone['__rdfaId'];
   delete clone['rdfaNodeType'];
+
   return [
     tag,
-    { ...clone, ...renderRdfaAttrs(renderable) },
+    { ...clone, ...renderRdfaAttrs(renderable.attrs as RdfaAttrs) },
     renderInvisibleRdfa(renderable, rdfaContainerTag, rdfaContainerAttrs),
     [
       contentContainerTag,

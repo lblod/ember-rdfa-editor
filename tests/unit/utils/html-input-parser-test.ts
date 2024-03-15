@@ -19,6 +19,7 @@ const editorView = new SayView(document.createElement('div'), {
       nodes: {
         doc: docWithConfig({
           defaultLanguage: 'nl-BE',
+          rdfaAware: true,
         }),
         paragraph,
         text,

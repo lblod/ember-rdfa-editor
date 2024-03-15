@@ -11,12 +11,12 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
@@ -28,12 +28,12 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
@@ -70,8 +70,8 @@ import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
 import {
-  inlineRdfaView,
-  inline_rdfa,
+  inlineRdfaWithConfigView,
+  inlineRdfaWithConfig,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
 export default class EditableBlockController extends Controller {
@@ -85,21 +85,23 @@ export default class EditableBlockController extends Controller {
     nodes: {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
+        rdfaAware: true,
       }),
       paragraph,
 
-      repaired_block,
+      repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
-      list_item,
-      ordered_list,
-      bullet_list,
+      list_item: listItemWithConfig({ rdfaAware: true }),
+      ordered_list: orderedListWithConfig({ rdfaAware: true }),
+      bullet_list: bulletListWithConfig({ rdfaAware: true }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rdfaAware: true,
       }),
-      heading,
+      heading: headingWithConfig({ rdfaAware: true }),
       blockquote,
 
       horizontal_rule,
@@ -110,8 +112,8 @@ export default class EditableBlockController extends Controller {
       image,
 
       hard_break,
-      block_rdfa,
-      inline_rdfa,
+      block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+      inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
       link: link(this.linkOptions),
     },
     marks: {
@@ -130,6 +132,7 @@ export default class EditableBlockController extends Controller {
   get linkOptions() {
     return {
       interactive: true,
+      rdfaAware: true,
     };
   }
 
@@ -157,7 +160,7 @@ export default class EditableBlockController extends Controller {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
-      inline_rdfa: inlineRdfaView(controller),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
     };
   };
 

@@ -5,10 +5,7 @@ import {
   createEmberNodeView,
   type EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
-import {
-  optionMapOr,
-  unwrap,
-} from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import Counter from 'dummy/components/sample-ember-nodes/counter';
 import type IntlService from 'ember-intl/services/intl';
 
@@ -33,8 +30,7 @@ const emberNodeConfig: EmberNodeConfig = {
   stopEvent() {
     return false;
   },
-  serialize: (node, maybeState) => {
-    const state = unwrap(maybeState);
+  serialize: (node, state) => {
     const intl = emberApplicationPluginKey
       .getState(state)
       ?.application.lookup('service:intl') as IntlService | undefined;

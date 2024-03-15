@@ -14,6 +14,8 @@ import { getOwner } from '@ember/application';
 import type Owner from '@ember/owner';
 import type { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import type { KeymapOptions } from '../core/keymap';
+import { deprecate } from '@ember/debug';
 
 export interface RdfaEditorArgs {
   /**
@@ -32,6 +34,7 @@ export interface RdfaEditorArgs {
     [node: string]: NodeViewConstructor;
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
+  keyMapOptions?: KeymapOptions;
 }
 
 /**
@@ -83,6 +86,22 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       this.logger(`Awaited ${this.initializers.length} initializers.`);
     }
 
+    if (this.args.keyMapOptions) {
+      deprecate(
+        '@keyMapOptions is deprecated. The behaviour of `selectBlockRdfaNode` is included by default.',
+        false,
+        {
+          id: '@lblod/ember-rdfa-editor.editor.keyMapOptions-argument',
+          until: '10.0.0',
+          for: '@lblod/ember-rdfa-editor',
+          since: {
+            available: '9.4.2',
+            enabled: '9.4.2',
+          },
+        },
+      );
+    }
+
     this.prosemirror = new SayEditor({
       owner: getOwner(this) as Owner,
       target,
@@ -91,6 +110,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       plugins: this.args.plugins,
       nodeViews: this.args.nodeViews,
       defaultAttrGenerators: this.args.defaultAttrGenerators,
+      keyMapOptions: this.args.keyMapOptions,
     });
     window.__PM = this.prosemirror;
     window.__PC = new SayController(this.prosemirror);

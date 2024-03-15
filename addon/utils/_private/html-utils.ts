@@ -4,6 +4,7 @@ import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
 import { tagName } from './dom-helpers';
 import { EditorView } from 'prosemirror-view';
+import type { HEADING_ELEMENTS } from './constants';
 
 export function htmlToDoc(
   html: string,
@@ -101,4 +102,9 @@ function matchTopNode(
     }
   }
   return;
+}
+
+export function getHeadingLevel(headingElement: HTMLHeadingElement) {
+  const tagName = headingElement.tagName as (typeof HEADING_ELEMENTS)[number];
+  return Number(tagName.substring(1));
 }

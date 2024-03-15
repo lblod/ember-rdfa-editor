@@ -1,11 +1,12 @@
-import type { AttributeSpec } from 'prosemirror-model';
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
+import type { AttributeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
   defaultLanguage?: string;
   content?: string;
+  rdfaAware?: boolean;
   extraAttributes?: Record<string, AttributeSpec>;
 }
 
@@ -14,19 +15,31 @@ interface DocumentConfig {
 export const docWithConfig = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
+  rdfaAware = false,
+  extraAttributes = {},
 }: DocumentConfig = {}): SayNodeSpec => {
-  const attrs: SayNodeSpec['attrs'] = {
-    lang: {
-      default: defaultLanguage,
-      editable: true,
-    },
-    ...rdfaAttrSpec,
-  };
-
   return {
     content,
-    attrs,
-    editable: true,
+    get attrs() {
+      const baseAttrs = {
+        lang: {
+          default: defaultLanguage,
+          editable: true,
+        },
+        ...extraAttributes,
+      };
+      if (rdfaAware) {
+        return {
+          ...rdfaAttrSpec({ rdfaAware }),
+          ...baseAttrs,
+        };
+      } else {
+        return baseAttrs;
+      }
+    },
+    editable: rdfaAware,
+    isolating: rdfaAware,
+    selectable: rdfaAware,
     parseDOM: [
       {
         tag: 'div',
@@ -35,10 +48,16 @@ export const docWithConfig = ({
             return false;
           }
           if (node.dataset['sayDocument']) {
-            return {
-              lang: node.getAttribute('lang'),
-              ...getRdfaAttrs(node),
-            };
+            if (rdfaAware) {
+              return {
+                lang: node.getAttribute('lang'),
+                ...getRdfaAttrs(node, { rdfaAware: true }),
+              };
+            } else {
+              return {
+                lang: node.getAttribute('lang'),
+              };
+            }
           } else {
             return false;
           }
@@ -54,18 +73,28 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
-      const lang = node.attrs['lang'] as string;
-      return renderRdfaAware({
-        renderable: node,
-        tag: 'div',
-        attrs: {
-          lang,
-          'data-say-document': true,
-        },
-        content: 0,
+      const attrs: Record<string, unknown> = {
+        lang: node.attrs['lang'] as string,
+        'data-say-document': true,
+      };
+      Object.keys(extraAttributes).forEach((attr) => {
+        attrs[attr] = node.attrs[attr];
       });
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'div',
+          attrs,
+          content: 0,
+        });
+      } else {
+        return ['div', attrs, 0];
+      }
     },
   };
 };
 
+/**
+ * @deprecated use `docWithConfig` instead
+ */
 export const doc = docWithConfig();

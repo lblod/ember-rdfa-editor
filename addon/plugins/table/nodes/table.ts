@@ -1,7 +1,12 @@
 // Helper for creating a schema that supports tables.
 import { Node as PNode, type NodeSpec } from 'prosemirror-model';
 import {
+  type RdfaAttrs,
   getRdfaAttrs,
+  renderInvisibleRdfa,
+  renderRdfaAttrs,
+  renderRdfaAware,
+  getRdfaContentElement,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
@@ -36,6 +41,7 @@ const fixupColWidth = (number: string) => {
 function getCellAttrs(
   dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
+  rdfaAware: boolean,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
 
@@ -58,10 +64,14 @@ function getCellAttrs(
       result[key] = value;
     }
   }
-  return { ...getRdfaAttrs(dom), ...result };
+  return { ...getRdfaAttrs(dom, { rdfaAware }), ...result };
 }
 
-function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
+function setCellAttrs(
+  node: PNode,
+  extraAttrs: Record<string, ExtraAttribute>,
+  useClassicRdfa: boolean,
+) {
   const attrs: CellAttributes = {};
   if (Number(node.attrs['colspan']) !== 1) {
     attrs.colspan = node.attrs['colspan'] as number;
@@ -78,8 +88,11 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
       setter(node.attrs[key], attrs);
     }
   }
-  for (const key of Object.keys(rdfaAttrSpec)) {
-    attrs[key] = node.attrs[key];
+  if (useClassicRdfa) {
+    // The node is still using classic RDFa attributes, set them here
+    for (const key of Object.keys(rdfaAttrSpec({ rdfaAware: false }))) {
+      attrs[key] = node.attrs[key];
+    }
   }
   return attrs;
 }
@@ -99,6 +112,7 @@ interface TableNodeOptions {
     style?: string;
     color: string;
   };
+  rdfaAware?: boolean;
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
@@ -109,6 +123,7 @@ interface TableNodes extends Record<string, NodeSpec> {
 }
 
 export function tableNodes(options: TableNodeOptions): TableNodes {
+  const rdfaAware = options.rdfaAware ?? false;
   const extraAttrs = options.cellAttributes || {};
   const cellAttrs: Record<string, { default: unknown }> = {
     colspan: { default: 1 },
@@ -132,10 +147,15 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
-      attrs: {
-        ...rdfaAttrSpec,
-        class: { default: 'say-table' },
-        style: { default: tableStyle },
+      get attrs() {
+        const baseAttrs = {
+          class: { default: 'say-table' },
+          style: { default: tableStyle },
+        };
+        return {
+          ...rdfaAttrSpec({ rdfaAware }),
+          ...baseAttrs,
+        };
       },
       group: options.tableGroup,
       allowGapCursor: false,
@@ -146,45 +166,67 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof node === 'string') {
               return false;
             }
-            const rdfaAttrs = getRdfaAttrs(node);
-            if (rdfaAttrs) {
-              return rdfaAttrs;
-            } else {
-              return null;
-            }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node: PNode) {
-        return [
-          'table',
-          {
-            ...node.attrs,
-            class: 'say-table',
-            style: tableStyle,
-          },
-          ['tbody', 0],
-        ];
+        if (rdfaAware) {
+          return [
+            'table',
+            {
+              ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+              class: 'say-table',
+              style: tableStyle,
+            },
+            renderInvisibleRdfa(node, 'div'),
+            ['tbody', { 'data-content-container': true }, 0],
+          ];
+        } else {
+          return [
+            'table',
+            {
+              ...node.attrs,
+              class: 'say-table',
+              style: tableStyle,
+            },
+            ['tbody', 0],
+          ];
+        }
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
-
-        return [
-          'table',
-          {
-            ...node.attrs,
-            class: 'say-table',
-            style: `width: 100%; ${tableStyle || ''}`,
-          },
-          tableView.colgroupElement,
-          ['tbody', 0],
-        ];
+        if (rdfaAware) {
+          return [
+            'table',
+            {
+              ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+              class: 'say-table',
+              style: `width: 100%; ${tableStyle || ''}`,
+            },
+            tableView.colgroupElement,
+            renderInvisibleRdfa(node, 'div'),
+            ['tbody', { 'data-content-container': true }, 0],
+          ];
+        } else {
+          return [
+            'table',
+            {
+              ...node.attrs,
+              class: 'say-table',
+              style: `width: 100%; ${tableStyle || ''}`,
+            },
+            tableView.colgroupElement,
+            ['tbody', 0],
+          ];
+        }
       },
     },
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
-      attrs: { ...rdfaAttrSpec },
+      attrs: rdfaAttrSpec({ rdfaAware }),
       allowGapCursor: false,
       parseDOM: [
         {
@@ -193,22 +235,32 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof node === 'string') {
               return false;
             }
-            const rdfaAttrs = getRdfaAttrs(node);
-            if (rdfaAttrs) {
-              return rdfaAttrs;
-            } else {
-              return null;
-            }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node: PNode) {
-        return ['tr', { ...node.attrs, style: rowStyle }, 0];
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'tr',
+            attrs: {
+              style: rowStyle,
+            },
+            content: 0,
+          });
+        } else {
+          return ['tr', { ...node.attrs, style: rowStyle }, 0];
+        }
       },
     },
     table_cell: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrSpec, ...cellAttrs },
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
+      },
       tableRole: 'cell',
       isolating: true,
       allowGapCursor: false,
@@ -219,21 +271,35 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            return getCellAttrs(dom, extraAttrs);
+            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node) {
-        return [
-          'td',
-          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
-          0,
-        ];
+        const cellAttrs = setCellAttrs(node, extraAttrs, !rdfaAware);
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'td',
+            attrs: { ...cellAttrs, style: cellStyle },
+            content: 0,
+          });
+        } else {
+          return ['td', { ...cellAttrs, style: cellStyle }, 0];
+        }
       },
     },
     table_header: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrSpec, ...cellAttrs },
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
+      },
       tableRole: 'header_cell',
       isolating: true,
       parseDOM: [
@@ -243,16 +309,27 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            return getCellAttrs(dom, extraAttrs);
+            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node) {
-        return [
-          'th',
-          { ...setCellAttrs(node, extraAttrs), style: cellStyle },
-          0,
-        ];
+        const cellAttrs = setCellAttrs(node, extraAttrs, !rdfaAware);
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'th',
+            attrs: { ...cellAttrs, style: cellStyle },
+            content: 0,
+          });
+        } else {
+          return ['th', { ...cellAttrs, style: cellStyle }, 0];
+        }
       },
     },
   };

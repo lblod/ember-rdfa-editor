@@ -5,13 +5,13 @@ import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
-  invisible_rdfa,
+  invisibleRdfaWithConfig,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
@@ -21,7 +21,6 @@ import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import {
@@ -36,9 +35,9 @@ import {
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import {
   bullet_list_input_rule,
@@ -71,6 +70,7 @@ import {
   dropdown,
   dropdownView,
 } from '../dummy-nodes';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -81,11 +81,11 @@ export default class IndexController extends Controller {
       }),
       paragraph,
 
-      repaired_block,
+      repaired_block: repairedBlockWithConfig(),
 
-      list_item,
-      ordered_list,
-      bullet_list,
+      list_item: listItemWithConfig(),
+      ordered_list: orderedListWithConfig(),
+      bullet_list: bulletListWithConfig(),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
@@ -103,8 +103,8 @@ export default class IndexController extends Controller {
       image,
 
       hard_break,
-      invisible_rdfa,
-      block_rdfa,
+      invisible_rdfa: invisibleRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig(),
       card,
       counter,
       dropdown,

@@ -1,19 +1,19 @@
 import { oneLineTrim } from 'common-tags';
 import { module, test } from 'qunit';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import {
-  bullet_list,
+  bulletListWithConfig,
   bullet_list_input_rule,
-  list_item,
-  ordered_list,
+  listItemWithConfig,
+  orderedListWithConfig,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -22,7 +22,7 @@ import {
   tableNodes,
   tablePlugin,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
@@ -70,17 +70,22 @@ const schema = new Schema({
   nodes: {
     doc: docWithConfig({
       defaultLanguage: 'nl-BE',
+      rdfaAware: true,
     }),
     paragraph,
 
-    repaired_block,
+    repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
-    list_item,
-    ordered_list,
-    bullet_list,
+    list_item: listItemWithConfig({ rdfaAware: true }),
+    ordered_list: orderedListWithConfig({ rdfaAware: true }),
+    bullet_list: bulletListWithConfig({ rdfaAware: true }),
     placeholder,
-    ...tableNodes({ tableGroup: 'block', cellContent: 'block+' }),
-    heading,
+    ...tableNodes({
+      tableGroup: 'block',
+      cellContent: 'block+',
+      rdfaAware: true,
+    }),
+    heading: headingWithConfig({ rdfaAware: true }),
     blockquote,
 
     horizontal_rule,
@@ -91,7 +96,7 @@ const schema = new Schema({
     image,
 
     hard_break,
-    block_rdfa,
+    block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
   },
   marks: {
     inline_rdfa,
