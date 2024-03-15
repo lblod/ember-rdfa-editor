@@ -7,9 +7,9 @@ ember-rdfa-editor:
   strikethrough: Strikethrough
   subscript: Subscript
   superscript: Superscript
-  unordered-list: Unordered list
+  unordered-list: Bulleted list
   ordered-list:
-    button-label: Ordered list
+    button-label: Numbered list
     options-label: List styles
     styles:
       decimal: Numbers
@@ -80,8 +80,10 @@ ember-rdfa-editor:
     save: Save
     cancel: Cancel
     back: Back
+    more-options: More options
   html-editor:
     toolbar-button:
       label: Edit HTML
     modal:
       title: Edit HTML
+  text-styles: Text styles

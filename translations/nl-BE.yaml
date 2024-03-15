@@ -1,15 +1,15 @@
 ember-rdfa-editor:
   undo: Ongedaan maken
-  redo: Herstellen
+  redo: Opnieuw uitvoeren
   bold: Vetgedrukt
-  italic: Schuingedrukt
+  italic: Cursief
   underline: Onderstreept
-  strikethrough: Doorstreept
+  strikethrough: Doorgehaald
   subscript: Subscript
   superscript: Superscript
-  unordered-list: Ongeordende lijst
+  unordered-list: Lijst met opsommingstekens
   ordered-list:
-    button-label: Geordende lijst
+    button-label: Genummerde lijst
     options-label: Lijststijlen
     styles:
       decimal: Getallen
@@ -33,7 +33,7 @@ ember-rdfa-editor:
     split-cell: Cel splitsen
     columns: Kolommen
     rows: Rijen
-  normalText: Gewone tekst
+  normalText: Normale tekst
   heading: Koptitel
   insert-heading: Voeg koptitel toe
 
@@ -53,7 +53,7 @@ ember-rdfa-editor:
       title: Snelkoppeling wijzigen
       uncouple: Snelkoppeling loskoppelen
   highlight:
-    button-label: Markering
+    button-label: Markeringskleur
     options-label: Markeringsopties
   color:
       button-label: Tekstkleur
@@ -79,8 +79,10 @@ ember-rdfa-editor:
     save: Opslaan
     cancel: Annuleren
     back: Terug
+    more-options: Meer opties
   html-editor:
     toolbar-button:
       label: HTML bewerken
     modal:
       title: HTML bewerken
+  text-styles: Tekststijlen
