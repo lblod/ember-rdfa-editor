@@ -86,6 +86,9 @@ export default class IndexController extends Controller {
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rowBackground: {
+          odd: 'whitesmoke',
+        },
       }),
       heading,
       blockquote,
