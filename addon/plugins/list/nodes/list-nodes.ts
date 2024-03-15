@@ -35,14 +35,10 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
 const buildStyleAttr = (style?: OrderListStyle) => {
   if (!style) return {};
 
-  if (isSpecialListStyle(style)) {
-    return {
-      style: `list-style-type: ${style};`,
-      class: style,
-    };
-  }
-
-  return { style: `list-style-type: ${style};` };
+  return {
+    style: `list-style-type: ${style};`,
+    class: style,
+  };
 };
 
 export const ordered_list: NodeSpec = {
