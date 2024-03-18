@@ -5,6 +5,7 @@ import type {
   BlankNode,
   DefaultGraph,
   Variable,
+  Quad,
 } from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
 import type { Option } from '../utils/_private/option';
@@ -93,6 +94,43 @@ export class SayDataFactory extends DataFactory {
   }
   variable(value: string): SayVariable {
     return super.variable(value);
+  }
+
+  fromJson(serialized: Omit<SayTerm, 'equals'>): SayTerm {
+    switch (serialized.termType) {
+      case 'BlankNode':
+        return this.blankNode(serialized.value);
+      case 'NamedNode':
+        return this.namedNode(serialized.value);
+      case 'Literal': {
+        const { datatype, language } = <SayLiteral>serialized;
+        return this.literal(
+          serialized.value,
+          languageOrDataType(language, <SayNamedNode>this.fromJson(datatype)),
+        );
+      }
+      case 'Variable':
+        return this.variable(serialized.value);
+      case 'ResourceNode':
+        return this.resourceNode(serialized.value);
+      case 'LiteralNode': {
+        const { datatype, language } = <SayLiteral>serialized;
+        return this.literalNode(
+          serialized.value,
+          languageOrDataType(language, <SayNamedNode>this.fromJson(datatype)),
+        );
+      }
+      case 'ContentLiteral': {
+        const { datatype, language } = <ContentLiteralTerm>serialized;
+        return this.contentLiteral(
+          languageOrDataType(language, <SayNamedNode>this.fromJson(datatype)),
+        );
+      }
+      case 'Quad':
+        return this.fromTerm(<Quad>serialized);
+      case 'DefaultGraph':
+        return this.defaultGraph();
+    }
   }
 }
 
