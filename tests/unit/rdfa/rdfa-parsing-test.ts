@@ -64,7 +64,8 @@ import type {
   IncomingTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 const schema = new Schema({
   nodes: {
@@ -155,21 +156,15 @@ module('rdfa | parsing', function () {
   test('it should convert rdfa correctly', function (assert) {
     const { controller } = testEditor(schema, plugins);
     const htmlContent = oneLineTrim`
-    <div resource="http://test/1"
-         __rdfaid="727c6ea9-b15f-4c64-be4e-f1b666ed78fb"
-         __tag="div"
-         class="say-editable">
+    <div resource="http://test/1" class="say-editable">
          <span style="display: none">
            <span property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                 content="besluit:Besluit">
+                 resource="besluit:Besluit">
           </span>
         </span>
         <span>
           <p data-indentation-level="0"> H   </p>
-          <div __rdfaid="ef0c2983-ccd9-4924-a640-42d2426a77bf"
-               __tag="div"
-               property="http://www.w3.org/ns/prov#value"
-               about="http://test/1"
+          <div property="http://www.w3.org/ns/prov#value"
                class="say-editable">
                <span style="display: none"></span>
                <span><p data-indentation-level="0">test</p></span>
@@ -179,47 +174,44 @@ module('rdfa | parsing', function () {
     `;
     controller.initialize(htmlContent);
     const { doc } = controller.mainEditorState;
-    const { node: decisionNode } = findNodeById(
-      doc,
-      '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
-    );
-    const actualProps = decisionNode.attrs['properties'] as
-      | OutgoingTriple[]
-      | undefined;
-    const actualBacklinks = decisionNode.attrs['backlinks'] as
-      | IncomingTriple[]
-      | undefined;
-    const expectedProps: OutgoingTriple[] = [
-      {
-        object: sayDataFactory.namedNode('besluit:Besluit'),
-        predicate: rdf('type'),
-      },
-      {
-        predicate: prov('value'),
-        object: sayDataFactory.literalNode(
-          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        ),
-      },
-    ];
-    const expectedBacklinks: IncomingTriple[] = [];
+    const decisionNode = findNodesBySubject(doc, 'http://test/1')[0].value;
+    const actualProps = decisionNode.attrs['properties'] as OutgoingTriple[];
+    const actualBacklinks = decisionNode.attrs['backlinks'] as IncomingTriple[];
 
-    assert.deepEqual(actualProps, expectedProps);
+    assert.strictEqual(actualProps.length, 2);
+    assert.deepArrayContains(actualProps, {
+      object: {
+        termType: 'NamedNode',
+        value: 'besluit:Besluit',
+      },
+      predicate: rdf('type'),
+    });
+
+    const expectedBacklinks: IncomingTriple[] = [];
     assert.deepEqual(actualBacklinks, expectedBacklinks);
 
-    const { node: valueNode } = findNodeById(
-      doc,
-      'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+    const propertyToLiteralNode = actualProps.find(
+      (prop) => prop.object.termType === 'LiteralNode',
     );
-    const valueProps = valueNode.attrs['properties'] as
-      | OutgoingTriple[]
-      | undefined;
-    const valueBacklinks = valueNode.attrs['backlinks'] as
-      | IncomingTriple[]
-      | undefined;
+    assert.ok(propertyToLiteralNode);
+
+    const contentId = unwrap(propertyToLiteralNode).object.value;
+
+    const { node: valueNode } = findNodeById(doc, contentId);
+    const valueProps = valueNode.attrs['properties'];
+    const valueBacklinks = valueNode.attrs['backlinks'];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks: IncomingTriple[] = [
+    const expectedValueBacklinks = [
       {
-        subject: sayDataFactory.resourceNode('http://test/1'),
+        subject: {
+          termType: 'LiteralNode',
+          value: 'http://test/1',
+          datatype: {
+            termType: 'NamedNode',
+            value: 'http://www.w3.org/2001/XMLSchema#string',
+          },
+          language: '',
+        },
         predicate: prov('value'),
       },
     ];
@@ -230,25 +222,17 @@ module('rdfa | parsing', function () {
   test('it should convert rdfa with property spans correctly', function (assert): void {
     const { controller } = testEditor(schema, plugins);
     const htmlContent = oneLineTrim`
-    <div resource="http://test/1"
-         __rdfaid="727c6ea9-b15f-4c64-be4e-f1b666ed78fb"
-         __tag="div"
-         class="say-editable">
+    <div resource="http://test/1" class="say-editable">
         <span style="display: none">
-          <span property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" content="ext:BesluitNieuweStijl"></span>
-          <span property="eli:language" content="http://publications.europa.eu/resource/authority/language/NLD"></span>
+          <span property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" resource="ext:BesluitNieuweStijl"></span>
+          <span property="eli:language" resource="http://publications.europa.eu/resource/authority/language/NLD"></span>
         </span>
         <span>
           <p data-indentation-level="0"> H   </p>
-          <div __rdfaid="ef0c2983-ccd9-4924-a640-42d2426a77bf"
-               __tag="div"
-               class="say-editable"
+          <div class="say-editable"
                property="http://www.w3.org/ns/prov#value"
-               about="http://test/1"
                >
-               <span style="display: none">
-
-</span>
+               <span style="display: none"></span>
                <span><p data-indentation-level="0">test</p></span>
          </div>
        </span>
@@ -256,55 +240,51 @@ module('rdfa | parsing', function () {
     `;
     controller.initialize(htmlContent);
     const { doc } = controller.mainEditorState;
-    const { node: decisionNode } = findNodeById(
-      doc,
-      '727c6ea9-b15f-4c64-be4e-f1b666ed78fb',
-    );
-    const actualProps = decisionNode.attrs['properties'] as
-      | OutgoingTriple[]
-      | undefined;
-    const actualBacklinks = decisionNode.attrs['backlinks'] as
-      | IncomingTriple[]
-      | undefined;
+    const decisionNode = findNodesBySubject(doc, 'http://test/1')[0].value;
+    const actualProps = decisionNode.attrs['properties'] as OutgoingTriple[];
+    const actualBacklinks = decisionNode.attrs['backlinks'] as IncomingTriple[];
+    assert.strictEqual(actualProps.length, 3);
 
-    const expectedProps: OutgoingTriple[] = [
-      {
-        object: sayDataFactory.namedNode('ext:BesluitNieuweStijl'),
-        predicate: rdf('type'),
-      },
-      {
-        object: sayDataFactory.namedNode(
-          'http://publications.europa.eu/resource/authority/language/NLD',
-        ),
-        predicate: 'eli:language',
-      },
-      {
-        object: sayDataFactory.literalNode(
-          'ef0c2983-ccd9-4924-a640-42d2426a77bf',
-        ),
-
-        predicate: prov('value'),
-      },
-    ];
     const expectedBacklinks: IncomingTriple[] = [];
+    assert.deepArrayContains(actualProps, {
+      object: {
+        termType: 'NamedNode',
+        value: 'ext:BesluitNieuweStijl',
+      },
+      predicate: rdf('type'),
+    });
+    assert.deepArrayContains(actualProps, {
+      object: {
+        termType: 'NamedNode',
+        value: 'http://publications.europa.eu/resource/authority/language/NLD',
+      },
+      predicate: 'eli:language',
+    });
 
-    assert.deepEqual(actualProps, expectedProps);
     assert.deepEqual(actualBacklinks, expectedBacklinks);
 
-    const { node: valueNode } = findNodeById(
-      doc,
-      'ef0c2983-ccd9-4924-a640-42d2426a77bf',
+    const propertyToLiteralNode = actualProps.find(
+      (prop) => prop.object.termType === 'LiteralNode',
     );
-    const valueProps = valueNode.attrs['properties'] as
-      | OutgoingTriple[]
-      | undefined;
-    const valueBacklinks = valueNode.attrs['backlinks'] as
-      | IncomingTriple[]
-      | undefined;
+    assert.ok(propertyToLiteralNode);
+
+    const contentId = unwrap(propertyToLiteralNode).object.value;
+
+    const { node: valueNode } = findNodeById(doc, contentId);
+    const valueProps = valueNode.attrs['properties'];
+    const valueBacklinks = valueNode.attrs['backlinks'];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks: IncomingTriple[] = [
+    const expectedValueBacklinks = [
       {
-        subject: sayDataFactory.resourceNode('http://test/1'),
+        subject: {
+          termType: 'LiteralNode',
+          value: 'http://test/1',
+          datatype: {
+            termType: 'NamedNode',
+            value: 'http://www.w3.org/2001/XMLSchema#string',
+          },
+          language: '',
+        },
         predicate: prov('value'),
       },
     ];

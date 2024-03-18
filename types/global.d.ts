@@ -19,3 +19,13 @@ declare module 'yup' {
     curie(options?: CurieOptions): this;
   }
 }
+
+declare global {
+  interface Assert {
+    deepArrayContains(
+      array: unknown[],
+      element: unknown,
+      message?: string,
+    ): void;
+  }
+}

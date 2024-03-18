@@ -7,7 +7,7 @@ import config from 'dummy/config/environment';
 import { setApplication } from '@ember/test-helpers';
 import { start } from 'ember-qunit';
 import { setup } from 'qunit-dom';
-
+import { equiv } from 'qunit';
 setup(QUnit.assert);
 const defaultDumpDepth = QUnit.dump.maxDepth;
 
@@ -99,6 +99,20 @@ QUnit.dump.setParser('node', nodeParser);
 QUnit.hooks.afterEach(() => {
   QUnit.dump.maxDepth = defaultDumpDepth;
 });
+
+QUnit.assert.deepArrayContains = function (
+  array: unknown[],
+  element: unknown,
+  message?: string,
+) {
+  const result = array.some((val) => equiv(val, element));
+  this.pushResult({
+    result,
+    actual: array,
+    expected: element,
+    message,
+  });
+},
 
 setApplication(Application.create(config.APP));
 
