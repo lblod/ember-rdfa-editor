@@ -11,40 +11,42 @@ import type { Option } from '../utils/_private/option';
 import { LANG_STRING } from '../utils/_private/constants';
 
 export interface SayDefaultGraph extends DefaultGraph {
-  equals(other?: SayTerm | null): boolean;
+  equals(other?: Option<SayTerm>): boolean;
 }
 export interface SayVariable extends Variable {
-  equals(other?: SayTerm | null): boolean;
+  equals(other?: Option<SayTerm>): boolean;
 }
 export interface SayLiteral extends Literal {
-  equals(other?: SayTerm | null): boolean;
+  equals(other?: Option<SayTerm>): boolean;
 }
 export interface SayNamedNode<S extends string = string> extends NamedNode<S> {
-  equals(other?: SayTerm | null): boolean;
+  equals(other?: Option<SayTerm>): boolean;
 }
 export interface SayBlankNode extends BlankNode {
-  equals(other?: SayTerm | null): boolean;
+  equals(other?: Option<SayTerm>): boolean;
 }
+
 export interface LiteralNodeTerm {
   termType: 'LiteralNode';
   value: string;
   datatype: NamedNode;
   language: string;
-  equals(other?: Option<SayTerm>): boolean;
 }
 export interface ResourceNodeTerm {
   termType: 'ResourceNode';
   value: string;
-  equals(other?: Option<SayTerm>): boolean;
 }
 export interface ContentLiteralTerm {
   termType: 'ContentLiteral';
   value: '';
   datatype: NamedNode;
   language: string;
-  equals(other?: Option<SayTerm>): boolean;
 }
-export type SayTerm = Term | LiteralNodeTerm | ResourceNodeTerm;
+export type SayTerm =
+  | Term
+  | LiteralNodeTerm
+  | ResourceNodeTerm
+  | ContentLiteralTerm;
 
 export class SayDataFactory extends DataFactory {
   blankNode(value?: string | undefined): SayBlankNode {
@@ -53,8 +55,13 @@ export class SayDataFactory extends DataFactory {
   contentLiteral(
     languageOrDataType?: string | SayNamedNode<string>,
   ): ContentLiteralTerm {
-    const literal = this.literal('', languageOrDataType);
-    return { ...literal, value: '', termType: 'ContentLiteral' };
+    // TODO: we need to be careful with using spread operators here:
+    // the `equals` prototype method is not preserved.
+    return {
+      ...this.literal('', languageOrDataType),
+      value: '',
+      termType: 'ContentLiteral',
+    };
   }
   defaultGraph(): SayDefaultGraph {
     return super.defaultGraph();
@@ -72,13 +79,16 @@ export class SayDataFactory extends DataFactory {
     value: string,
     languageOrDataType?: string | SayNamedNode<string>,
   ): LiteralNodeTerm {
-    const literal = this.literal(value, languageOrDataType);
+    // TODO: we need to be careful with using spread operators here:
+    // the `equals` prototype method is not preserved.
     return {
-      ...literal,
+      ...this.literal(value, languageOrDataType),
       termType: 'LiteralNode',
     };
   }
   resourceNode(value: string): ResourceNodeTerm {
+    // TODO: we need to be careful with using spread operators here:
+    // the `equals` prototype method is not preserved.
     return { ...this.namedNode(value), termType: 'ResourceNode' };
   }
   variable(value: string): SayVariable {
