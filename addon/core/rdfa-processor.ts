@@ -211,8 +211,10 @@ function quadToProperties(
       return [
         {
           predicate: quad.predicate.value,
-          // need to copy the object here or weird stuff happens
-          object: { ...quad.object, termType: 'Literal' },
+          object: sayDataFactory.literal(
+            quad.object.value,
+            languageOrDataType(quad.object.language, quad.object.datatype),
+          ),
         },
       ];
     }
