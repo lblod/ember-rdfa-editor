@@ -34,6 +34,11 @@ ember-rdfa-editor:
     background-color: Achtergrondkleur
     columns: Kolommen
     rows: Rijen
+    vertical-align: Verticale uitlijning
+    vertical-align-options:
+      top: Boven
+      middle: Midden
+      bottom: Onder
   normalText: Normale tekst
   heading: Koptitel
   insert-heading: Voeg koptitel toe

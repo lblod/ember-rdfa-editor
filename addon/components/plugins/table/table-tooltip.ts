@@ -23,6 +23,7 @@ import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color';
 import type { ComponentLike } from '@glint/template';
+import VerticalAlign from '@lblod/ember-rdfa-editor/components/plugins/table/vertical-align';
 
 type Args = {
   controller: SayController;
@@ -113,6 +114,7 @@ export default class TableTooltip extends Component<Args> {
           command: deleteTable,
         },
         { component: ColorMenu as unknown as ComponentLike },
+        { component: VerticalAlign as unknown as ComponentLike },
       ],
       [
         {
