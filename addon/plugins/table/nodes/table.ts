@@ -1,9 +1,11 @@
 // Helper for creating a schema that supports tables.
 
-import { Node as PNode, NodeSpec } from 'prosemirror-model';
+import { Node as PNode, NodeSpec, ResolvedPos } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 interface ExtraAttribute {
   default: unknown;
@@ -101,13 +103,17 @@ interface TableNodeOptions {
     style?: string;
     color: string;
   };
+  rowBackground?: {
+    even?: string;
+    odd?: string;
+  };
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
   table: SayNodeSpec;
-  table_row: NodeSpec;
-  table_cell: NodeSpec;
-  table_header: NodeSpec;
+  table_row: SayNodeSpec;
+  table_cell: SayNodeSpec;
+  table_header: SayNodeSpec;
 }
 
 const appendToStyleAttribute = (
@@ -161,7 +167,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     options.inlineBorderStyle &&
     `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
 
-  const extraAttrs = options.cellAttributes
+  const extraCellAttributes = options.cellAttributes
     ? {
         ...options.cellAttributes,
         ...getDefaultCellAttributes({ inlineBorderStyle }),
@@ -174,14 +180,20 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     colwidth: { default: null },
   };
 
-  for (const [key, attr] of Object.entries(extraAttrs)) {
+  for (const [key, attr] of Object.entries(extraCellAttributes)) {
     cellAttrs[key] = { default: attr.default };
   }
 
-  const tableStyle =
-    inlineBorderStyle &&
-    `border: ${inlineBorderStyle}; border-collapse: collapse;`;
-  const rowStyle = inlineBorderStyle && `border-top: ${inlineBorderStyle};`;
+  const tableStyle = {
+    border: inlineBorderStyle,
+    'border-collapse': inlineBorderStyle && 'collapse',
+    '--say-even-row-background': options.rowBackground?.even,
+    '--say-odd-row-background': options.rowBackground?.odd,
+  };
+
+  const rowStyle = {
+    'border-top': inlineBorderStyle,
+  };
 
   return {
     table: {
@@ -214,20 +226,26 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           {
             ...node.attrs,
             class: 'say-table',
-            style: tableStyle,
+            style: constructInlineStyles(tableStyle),
           },
           ['tbody', 0],
         ];
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
-
+        // Delete variables as we do not need them in serialized version
+        const style = {
+          width: '100%',
+          ...tableStyle,
+          '--say-even-row-background': undefined,
+          '--say-odd-row-background': undefined,
+        };
         return [
           'table',
           {
             ...node.attrs,
             class: 'say-table',
-            style: `width: 100%; ${tableStyle || ''}`,
+            style: constructInlineStyles(style),
           },
           tableView.colgroupElement,
           ['tbody', 0],
@@ -252,8 +270,28 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           },
         },
       ],
+      serialize(node, state) {
+        const pos = getPos(node, state.doc) as ResolvedPos;
+        // table rows are 1-indexed
+        const isEven = pos.index() % 2 === 1;
+        const style = {
+          ...rowStyle,
+          background: isEven
+            ? options.rowBackground?.even
+            : options.rowBackground?.odd,
+        };
+        return [
+          'tr',
+          { ...node.attrs, style: constructInlineStyles(style) },
+          0,
+        ];
+      },
       toDOM(node: PNode) {
-        return ['tr', { ...node.attrs, style: rowStyle }, 0];
+        return [
+          'tr',
+          { ...node.attrs, style: constructInlineStyles(rowStyle) },
+          0,
+        ];
       },
     },
     table_cell: {
@@ -265,11 +303,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'td',
-          getAttrs: (dom: HTMLElement) => getCellAttrs(dom, extraAttrs),
+          getAttrs: (dom: HTMLElement) =>
+            getCellAttrs(dom, extraCellAttributes),
         },
       ],
       toDOM(node) {
-        return ['td', setCellAttrs(node, extraAttrs), 0];
+        return ['td', setCellAttrs(node, extraCellAttributes), 0];
       },
     },
     table_header: {
@@ -280,11 +319,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'th',
-          getAttrs: (dom: HTMLElement) => getCellAttrs(dom, extraAttrs),
+          getAttrs: (dom: HTMLElement) =>
+            getCellAttrs(dom, extraCellAttributes),
         },
       ],
       toDOM(node) {
-        return ['th', setCellAttrs(node, extraAttrs), 0];
+        return ['th', setCellAttrs(node, extraCellAttributes), 0];
       },
     },
   };

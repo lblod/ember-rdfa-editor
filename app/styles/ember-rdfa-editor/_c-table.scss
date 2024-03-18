@@ -34,6 +34,13 @@
     border-top: 0.1rem solid var(--au-gray-300);
   }
 
+  tr:nth-child(even){
+    background: var(--say-even-row-background);
+  }
+  tr:nth-child(odd){
+    background: var(--say-odd-row-background);
+  }
+
   th + th,
   td + td,
   th + td,
