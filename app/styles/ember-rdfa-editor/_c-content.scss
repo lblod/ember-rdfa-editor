@@ -255,27 +255,14 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     list-style-type: upper-roman;
   }
 
-  ol.hierarchical-numbering {
-    counter-reset: list-item;
-    --marker-content: counters(list-item, ".") ". ";
-
-    ol {
-      counter-reset: list-item;
-    }
-
-    li {
-      counter-increment: list-item;
-    }
-  }
-
-  *:not(li) > ol {
-    contain: style;
-  }
-
   ol.decimal,
   ol.lower-alpha,
   ol.upper-roman {
     --marker-content: initial;
+  }
+
+  ol.hierarchical-numbering {
+    --marker-content: counters(list-item, ".") ". ";
   }
 
   ul.article-list {
