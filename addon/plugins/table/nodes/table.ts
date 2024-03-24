@@ -1,5 +1,4 @@
 // Helper for creating a schema that supports tables.
-import { Node as PNode, type NodeSpec } from 'prosemirror-model';
 import {
   type RdfaAttrs,
   getRdfaAttrs,
@@ -9,18 +8,23 @@ import {
   getRdfaContentElement,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
+
+import { Node as PNode, NodeSpec, ResolvedPos } from 'prosemirror-model';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 interface ExtraAttribute {
   default: unknown;
 
-  getFromDOM?(this: void, node: Element): unknown;
+  getFromDOM?(this: void, node: HTMLElement): unknown;
 
   setDOMAttr?(this: void, value: unknown, attrs: Record<string, unknown>): void;
 }
 
 type CellAttributes = {
+  background?: string;
   colspan?: number;
   rowspan?: number;
   colwidth?: number[] | null;
@@ -57,6 +61,7 @@ function getCellAttrs(
     rowspan: Number(dom.getAttribute('rowspan') || 1),
     colwidth: widths && widths.length == colspan ? widths : null,
   };
+
   for (const [key, attr] of Object.entries(extraAttrs)) {
     const getter = attr.getFromDOM;
     const value = getter && getter(dom);
@@ -94,6 +99,7 @@ function setCellAttrs(
       attrs[key] = node.attrs[key];
     }
   }
+
   return attrs;
 }
 
@@ -113,34 +119,98 @@ interface TableNodeOptions {
     color: string;
   };
   rdfaAware?: boolean;
+  rowBackground?: {
+    even?: string;
+    odd?: string;
+  };
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
   table: SayNodeSpec;
-  table_row: NodeSpec;
-  table_cell: NodeSpec;
-  table_header: NodeSpec;
+  table_row: SayNodeSpec;
+  table_cell: SayNodeSpec;
+  table_header: SayNodeSpec;
 }
+
+const appendToStyleAttribute = (
+  attributes: Record<string, unknown>,
+  value: string,
+) => {
+  if (!attributes.style) {
+    attributes.style = value;
+    return;
+  }
+
+  if (typeof attributes.style === 'string') {
+    attributes.style = `${attributes.style}; ${value};`;
+    return;
+  }
+
+  return;
+};
+
+const getDefaultCellAttributes = ({
+  inlineBorderStyle,
+}: {
+  inlineBorderStyle?: string;
+} = {}): Record<string, ExtraAttribute> => ({
+  background: {
+    default: null,
+    getFromDOM(dom) {
+      return dom.style.backgroundColor || null;
+    },
+    setDOMAttr(value, attrs) {
+      if (typeof value === 'string') {
+        appendToStyleAttribute(attrs, `background-color: ${value}`);
+      }
+    },
+  },
+  borderLeft: {
+    default: inlineBorderStyle ?? null,
+    getFromDOM(dom) {
+      return dom.style.borderLeft || null;
+    },
+    setDOMAttr(value, attrs) {
+      if (typeof value === 'string') {
+        appendToStyleAttribute(attrs, `border-left: ${value}`);
+      }
+    },
+  },
+});
 
 export function tableNodes(options: TableNodeOptions): TableNodes {
   const rdfaAware = options.rdfaAware ?? false;
-  const extraAttrs = options.cellAttributes || {};
+  const inlineBorderStyle =
+    options.inlineBorderStyle &&
+    `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
+
+  const extraCellAttributes = options.cellAttributes
+    ? {
+        ...options.cellAttributes,
+        ...getDefaultCellAttributes({ inlineBorderStyle }),
+      }
+    : getDefaultCellAttributes({ inlineBorderStyle });
+
   const cellAttrs: Record<string, { default: unknown }> = {
     colspan: { default: 1 },
     rowspan: { default: 1 },
     colwidth: { default: null },
   };
-  for (const [key, attr] of Object.entries(extraAttrs)) {
+
+  for (const [key, attr] of Object.entries(extraCellAttributes)) {
     cellAttrs[key] = { default: attr.default };
   }
-  const inlineBorderStyle =
-    options.inlineBorderStyle &&
-    `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
-  const tableStyle =
-    inlineBorderStyle &&
-    `border: ${inlineBorderStyle}; border-collapse: collapse;`;
-  const rowStyle = inlineBorderStyle && `border-top: ${inlineBorderStyle};`;
-  const cellStyle = inlineBorderStyle && `border-left: ${inlineBorderStyle};`;
+
+  const tableStyle = {
+    border: inlineBorderStyle,
+    'border-collapse': inlineBorderStyle && 'collapse',
+    '--say-even-row-background': options.rowBackground?.even,
+    '--say-odd-row-background': options.rowBackground?.odd,
+  };
+
+  const rowStyle = {
+    'border-top': inlineBorderStyle,
+  };
 
   return {
     table: {
@@ -178,7 +248,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             {
               ...renderRdfaAttrs(node.attrs as RdfaAttrs),
               class: 'say-table',
-              style: tableStyle,
+              style: constructInlineStyles(tableStyle),
             },
             renderInvisibleRdfa(node, 'div'),
             ['tbody', { 'data-content-container': true }, 0],
@@ -189,7 +259,8 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             {
               ...node.attrs,
               class: 'say-table',
-              style: tableStyle,
+
+              style: constructInlineStyles(tableStyle),
             },
             ['tbody', 0],
           ];
@@ -197,13 +268,19 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
+        const style = {
+          width: '100%',
+          ...tableStyle,
+          '--say-even-row-background': undefined,
+          '--say-odd-row-background': undefined,
+        };
         if (rdfaAware) {
           return [
             'table',
             {
               ...renderRdfaAttrs(node.attrs as RdfaAttrs),
               class: 'say-table',
-              style: `width: 100%; ${tableStyle || ''}`,
+              style: constructInlineStyles(style),
             },
             tableView.colgroupElement,
             renderInvisibleRdfa(node, 'div'),
@@ -215,7 +292,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             {
               ...node.attrs,
               class: 'say-table',
-              style: `width: 100%; ${tableStyle || ''}`,
+              style: constructInlineStyles(style),
             },
             tableView.colgroupElement,
             ['tbody', 0],
@@ -240,13 +317,29 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           contentElement: getRdfaContentElement,
         },
       ],
+      serialize(node, state) {
+        const pos = getPos(node, state.doc) as ResolvedPos;
+        // table rows are 1-indexed
+        const isEven = pos.index() % 2 === 1;
+        const style = {
+          ...rowStyle,
+          background: isEven
+            ? options.rowBackground?.even
+            : options.rowBackground?.odd,
+        };
+        return [
+          'tr',
+          { ...node.attrs, style: constructInlineStyles(style) },
+          0,
+        ];
+      },
       toDOM(node: PNode) {
         if (rdfaAware) {
           return renderRdfaAware({
             renderable: node,
             tag: 'tr',
             attrs: {
-              style: rowStyle,
+              style: constructInlineStyles(rowStyle),
             },
             content: 0,
           });
@@ -271,7 +364,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            const cellAttrs = getCellAttrs(dom, extraCellAttributes, rdfaAware);
             return {
               ...getRdfaAttrs(dom, { rdfaAware }),
               ...cellAttrs,
@@ -281,16 +374,16 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        const cellAttrs = setCellAttrs(node, extraAttrs, !rdfaAware);
+        const cellAttrs = setCellAttrs(node, extraCellAttributes, !rdfaAware);
         if (rdfaAware) {
           return renderRdfaAware({
             renderable: node,
             tag: 'td',
-            attrs: { ...cellAttrs, style: cellStyle },
+            attrs: { ...cellAttrs },
             content: 0,
           });
         } else {
-          return ['td', { ...cellAttrs, style: cellStyle }, 0];
+          return ['td', { ...cellAttrs }, 0];
         }
       },
     },
@@ -309,7 +402,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             if (typeof dom === 'string') {
               return false;
             }
-            const cellAttrs = getCellAttrs(dom, extraAttrs, rdfaAware);
+            const cellAttrs = getCellAttrs(dom, extraCellAttributes, rdfaAware);
             return {
               ...getRdfaAttrs(dom, { rdfaAware }),
               ...cellAttrs,
@@ -319,16 +412,16 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        const cellAttrs = setCellAttrs(node, extraAttrs, !rdfaAware);
+        const cellAttrs = setCellAttrs(node, extraCellAttributes, !rdfaAware);
         if (rdfaAware) {
           return renderRdfaAware({
             renderable: node,
             tag: 'th',
-            attrs: { ...cellAttrs, style: cellStyle },
+            attrs: { ...cellAttrs },
             content: 0,
           });
         } else {
-          return ['th', { ...cellAttrs, style: cellStyle }, 0];
+          return ['th', { ...cellAttrs }, 0];
         }
       },
     },

@@ -34,6 +34,13 @@
     border-top: 0.1rem solid var(--au-gray-300);
   }
 
+  tr:nth-child(even){
+    background: var(--say-even-row-background);
+  }
+  tr:nth-child(odd){
+    background: var(--say-odd-row-background);
+  }
+
   th + th,
   td + td,
   th + td,
@@ -84,6 +91,23 @@ table.ProseMirror-selectednode,
 .say-table-tooltip {
   display: flex;
   flex-direction: column;
+
+  .color-selector__grid {
+    padding: 0 12px;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: $au-unit-small;
+    margin-bottom: $au-unit-small;
+
+    button {
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+    }
+  }
 }
 
 .say-table-tooltip--actions {

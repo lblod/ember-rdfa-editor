@@ -299,9 +299,6 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Table styling
-  table th {
-    background-color: var(--au-white);
-  }
 
   .data-table th,
   .data-table td {
@@ -367,7 +364,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
 
     .selectedCell {
-      background-color: var(--au-blue-100);
+      background-image: linear-gradient(0deg, var(--au-blue-200) 0%, var(--au-blue-200) 100%);
+      background-blend-mode: multiply;
     }
   }
 

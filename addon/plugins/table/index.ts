@@ -15,6 +15,7 @@ import {
   TableView as PluginTableView,
 } from '@say-editor/prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
+import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
 export { tableNodes } from './nodes/table';
 export { insertTable } from './commands/insertTable';
@@ -33,13 +34,10 @@ export class TableView extends PluginTableView {
   }
 
   private addAttrs(node: Node): void {
-    const { class: nodeClasses, style } = node.attrs as Record<string, unknown>;
-    if (typeof nodeClasses === 'string') {
-      this.table.classList.add(...nodeClasses.split(' '));
-    }
-    if (typeof style === 'string') {
-      this.table.style.cssText = `${this.table.style.cssText} ${style}`;
-    }
+    const nodeClasses = node.attrs.class as string;
+    const style = node.attrs.style as Record<string, string | undefined>;
+    this.table.classList.add(...nodeClasses.split(' '));
+    this.table.style.cssText = `${this.table.style.cssText} ${constructInlineStyles(style)}`;
   }
 
   get colgroupElement(): HTMLTableColElement {
