@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { htmlSafe } from '@ember/template';
 import { Command, SayController } from '@lblod/ember-rdfa-editor';
 import SelectionTooltip from '../../_private/selection-tooltip';
 import {
@@ -10,6 +11,7 @@ import {
   deleteRow,
   deleteTable,
   mergeCells,
+  setCellAttr,
   splitCell,
   toggleHeaderColumn,
   toggleHeaderRow,
@@ -19,23 +21,25 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color';
+import type { ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;
 };
 
-type Action = {
-  title: string;
-  icon?: string;
-  label?: string;
-  command: Command;
-};
+type Action =
+  | { title: string; icon?: string; label?: string; command: Command }
+  | { component: ComponentLike };
+
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
 
   SelectionTooltip = SelectionTooltip;
 
   @tracked _justClicked = false;
+
+  htmlSafe = htmlSafe;
 
   setUpListeners = modifier(
     () => {
@@ -56,7 +60,7 @@ export default class TableTooltip extends Component<Args> {
     { eager: false },
   );
 
-  get tableActions() {
+  get tableActions(): Action[][] {
     return [
       [
         {
@@ -108,6 +112,7 @@ export default class TableTooltip extends Component<Args> {
           icon: 'bin',
           command: deleteTable,
         },
+        { component: ColorMenu as unknown as ComponentLike },
       ],
       [
         {
@@ -137,12 +142,26 @@ export default class TableTooltip extends Component<Args> {
   }
 
   canExecuteAction = (action: Action) => {
-    return this.controller.checkCommand(action.command);
+    if ('command' in action) {
+      return this.controller.checkCommand(action.command);
+    }
+
+    return false;
   };
 
   @action
   executeAction(action: Action) {
+    if ('command' in action) {
+      this.controller.focus();
+      this.controller.doCommand(action.command);
+    }
+
+    return;
+  }
+
+  @action
+  selectColor(color: string) {
     this.controller.focus();
-    this.controller.doCommand(action.command);
+    this.controller.doCommand(setCellAttr('background', color));
   }
 }
