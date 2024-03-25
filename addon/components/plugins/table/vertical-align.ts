@@ -1,5 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
+import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
@@ -49,6 +50,7 @@ export default class VerticalAlign extends Component<Args> {
 
   dropdownButton?: HTMLElement;
   Velcro = Velcro;
+  htmlSafe = htmlSafe;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {
@@ -120,6 +122,11 @@ export default class VerticalAlign extends Component<Args> {
     }
 
     return null;
+  }
+
+  @action
+  verticalAlignActive(align: VerticalAlignment) {
+    return this.currentVerticalAlign === align;
   }
 
   get currentVerticalAlignIcon() {
