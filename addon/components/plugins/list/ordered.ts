@@ -51,12 +51,50 @@ export default class ListOrdered extends Component<Args> {
     ];
   }
 
+  get firstListParentWithHierarchicalNumbering() {
+    return findParentNode(
+      (node) =>
+        node.type === this.schema.nodes.ordered_list &&
+        node.attrs.style === 'hierarchical-numbering',
+    )(this.selection);
+  }
+
+  get firstListParentWithStyle() {
+    return findParentNode((node) => {
+      if (!node.attrs.style) return false;
+
+      return (
+        node.type === this.schema.nodes.ordered_list ||
+        node.type === this.schema.nodes.bullet_list
+      );
+    })(this.selection);
+  }
+
   get firstListParent() {
     return findParentNode(
       (node) =>
         node.type === this.schema.nodes.ordered_list ||
         node.type === this.schema.nodes.bullet_list,
     )(this.selection);
+  }
+
+  get lastListParent() {
+    const $pos = this.selection.$from;
+
+    for (let i = 0; i < $pos.depth; i++) {
+      const node = $pos.node(i);
+      if (
+        node.type === this.schema.nodes.ordered_list ||
+        node.type === this.schema.nodes.bullet_list
+      ) {
+        return {
+          node,
+          pos: $pos.before(i),
+        };
+      }
+    }
+
+    return undefined;
   }
 
   get isActive() {
@@ -102,29 +140,95 @@ export default class ListOrdered extends Component<Args> {
     );
   }
 
+  setStyleOnPosition = ({
+    style,
+    pos,
+  }: {
+    style: OrderListStyle;
+    pos: number;
+  }) => {
+    this.controller.withTransaction((tr) => {
+      return tr.setNodeAttribute(pos, 'style', style);
+    });
+  };
+
   @action
   setStyle(style: OrderListStyle) {
+    /**
+     * If we want to set the style to hierarchical numbering,
+     * then we need to find the topmost list parent,
+     * and set the style on that position.
+     */
+    const lastListParentWithStyle = this.lastListParent;
+
+    if (style === 'hierarchical-numbering' && lastListParentWithStyle) {
+      return this.setStyleOnPosition({
+        style,
+        pos: lastListParentWithStyle.pos,
+      });
+    }
+
+    /**
+     * If we want to set the style to something else than hierarchical numbering,
+     * and there is a parent with hierarchical numbering, then we need to set the
+     * style on that position.
+     */
+    const firstListParentWithHierarchicalNumbering =
+      this.firstListParentWithHierarchicalNumbering;
+
+    if (
+      style !== 'hierarchical-numbering' &&
+      firstListParentWithHierarchicalNumbering
+    ) {
+      return this.setStyleOnPosition({
+        style,
+        pos: firstListParentWithHierarchicalNumbering.pos,
+      });
+    }
+
+    /**
+     * Normal case, without considering hierarchical numbering.
+     */
     const firstListParent = this.firstListParent;
+
     if (
       firstListParent?.node.type === this.controller.schema.nodes.ordered_list
     ) {
-      const pos = firstListParent.pos;
-      this.controller.withTransaction((tr) => {
-        return tr.setNodeAttribute(pos, 'style', style);
+      return this.setStyleOnPosition({
+        style,
+        pos: firstListParent.pos,
       });
-    } else {
-      this.toggle(style);
     }
+
+    this.toggle(style);
   }
 
-  styleIsActive = (style: string) => {
-    const firstListParent = this.firstListParent;
+  styleIsActive = (style: OrderListStyle) => {
+    const firstListParentWithStyle = this.firstListParentWithStyle;
+
+    /**
+     * If there is a parent with the same style, then we should return true,
+     * as we are "inheriting" the style from the parent.
+     */
     if (
-      firstListParent?.node.type === this.controller.schema.nodes.ordered_list
+      firstListParentWithStyle?.node.type ===
+        this.controller.schema.nodes.ordered_list &&
+      firstListParentWithStyle.node.attrs.style === style
     ) {
-      return firstListParent.node.attrs.style === style;
-    } else {
-      return false;
+      return true;
     }
+
+    /**
+     * If we are looking for hierarchical numbering, and there is a parent with
+     * hierarchical numbering, then we should return true, to mark the button as active.
+     */
+    if (
+      style === 'hierarchical-numbering' &&
+      this.firstListParentWithHierarchicalNumbering
+    ) {
+      return true;
+    }
+
+    return false;
   };
 }
