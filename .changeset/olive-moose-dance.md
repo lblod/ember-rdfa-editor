@@ -1,5 +1,5 @@
 ---
-"@lblod/ember-rdfa-editor": major
+"@lblod/ember-rdfa-editor": minor
 ---
 
 Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
