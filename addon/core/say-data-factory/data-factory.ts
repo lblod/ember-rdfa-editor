@@ -90,38 +90,47 @@ export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
       case 'BlankNode':
         return this.blankNode(original.value);
       case 'Literal': {
-        const { datatype, language } = <WithoutEquals<SayLiteral>>original;
+        const { datatype, language } = original as WithoutEquals<SayLiteral>;
         return this.literal(
           original.value,
-          languageOrDataType(language, <SayNamedNode>this.fromTerm(datatype)),
+          languageOrDataType(language, this.fromTerm(datatype) as SayNamedNode),
         );
       }
       case 'Variable':
         return this.variable(original.value);
       case 'DefaultGraph':
         return this.defaultGraph();
-      case 'Quad':
+      case 'Quad': {
+        const { subject, predicate, object, graph } = original as unknown as Q;
         return this.quad(
-          <Q['subject']>this.fromTerm((<Q>(<unknown>original)).subject),
-          <Q['predicate']>this.fromTerm((<Q>(<unknown>original)).predicate),
-          <Q['object']>this.fromTerm((<Q>(<unknown>original)).object),
-          <Q['graph']>this.fromTerm((<Q>(<unknown>original)).graph),
+          this.fromTerm(subject) as Q['subject'],
+          this.fromTerm(predicate) as Q['predicate'],
+          this.fromTerm(object) as Q['object'],
+          this.fromTerm(graph) as Q['graph'],
         );
+      }
+
       case 'ResourceNode':
         return this.resourceNode(original.value);
       case 'LiteralNode': {
-        const { datatype, language } = <WithoutEquals<LiteralNodeTerm>>original;
+        const { datatype, language } =
+          original as WithoutEquals<LiteralNodeTerm>;
         return this.literalNode(
           original.value,
-          languageOrDataType(language, <RDF.NamedNode>this.fromTerm(datatype)),
+          languageOrDataType(
+            language,
+            this.fromTerm(datatype) as RDF.NamedNode,
+          ),
         );
       }
       case 'ContentLiteral': {
-        const { datatype, language } = <WithoutEquals<ContentLiteralTerm>>(
-          original
-        );
+        const { datatype, language } =
+          original as WithoutEquals<ContentLiteralTerm>;
         return this.contentLiteral(
-          languageOrDataType(language, <RDF.NamedNode>this.fromTerm(datatype)),
+          languageOrDataType(
+            language,
+            this.fromTerm(datatype) as RDF.NamedNode,
+          ),
         );
       }
     }
