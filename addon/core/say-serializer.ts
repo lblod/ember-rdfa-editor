@@ -123,7 +123,7 @@ export default class SaySerializer extends DOMSerializer {
           editor,
         );
       }
-      return schema.cached.saySerializer;
+      return schema.cached.saySerializer as SaySerializer;
     } else {
       return (
         (schema.cached.domSerializer as DOMSerializer) ||
