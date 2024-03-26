@@ -108,3 +108,15 @@ export function getHeadingLevel(headingElement: HTMLHeadingElement) {
   const tagName = headingElement.tagName as (typeof HEADING_ELEMENTS)[number];
   return Number(tagName.substring(1));
 }
+
+export function constructInlineStyles(
+  styles: Record<string, string | undefined>,
+) {
+  let result = '';
+  Object.entries(styles).forEach(([key, value]) => {
+    if (value) {
+      result += `${key}: ${value};`;
+    }
+  });
+  return result;
+}

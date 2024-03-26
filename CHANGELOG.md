@@ -1,5 +1,33 @@
 # @lblod/ember-rdfa-editor
 
+## 9.5.0
+
+### Minor Changes
+
+- [#1162](https://github.com/lblod/ember-rdfa-editor/pull/1162) [`32543f8`](https://github.com/lblod/ember-rdfa-editor/commit/32543f88d3da1848ed45263dd318642fd84dbcea) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4706: Table cell background
+
+- [#1160](https://github.com/lblod/ember-rdfa-editor/pull/1160) [`99ad291`](https://github.com/lblod/ember-rdfa-editor/commit/99ad2910e8b098c256b82e2735f82a195837834b) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduce option to configure alternating row background styles
+
+- [#1160](https://github.com/lblod/ember-rdfa-editor/pull/1160) [`99ad291`](https://github.com/lblod/ember-rdfa-editor/commit/99ad2910e8b098c256b82e2735f82a195837834b) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `constructInlineStyles` utility function
+
+### Patch Changes
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`091ce6f`](https://github.com/lblod/ember-rdfa-editor/commit/091ce6fe3aafd15cfaa6bdd83aa7d79f9ce5eb33) Thanks [@elpoelma](https://github.com/elpoelma)! - Add title attribute to heading-menu
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`50d50f2`](https://github.com/lblod/ember-rdfa-editor/commit/50d50f25cbb2af24e79446a746aa44555ba5e845) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `title` attribute to more-options toolbar button
+
+- [#1154](https://github.com/lblod/ember-rdfa-editor/pull/1154) [`cdce71f`](https://github.com/lblod/ember-rdfa-editor/commit/cdce71ff29142b3e408da97a57d4ddebf38848b2) Thanks [@dkozickis](https://github.com/dkozickis)! - Remove prosemirror debug icon from screenshots
+
+- [#1154](https://github.com/lblod/ember-rdfa-editor/pull/1154) [`cdce71f`](https://github.com/lblod/ember-rdfa-editor/commit/cdce71ff29142b3e408da97a57d4ddebf38848b2) Thanks [@dkozickis](https://github.com/dkozickis)! - Bump `@playwright/test` to `1.42.1` to allow for overriding styles in tests.
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`6c11568`](https://github.com/lblod/ember-rdfa-editor/commit/6c11568a83f0e1742a6a7dead856b46eb4e34c6c) Thanks [@elpoelma](https://github.com/elpoelma)! - Improve translations of toolbar button labels/titles
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`3e2457c`](https://github.com/lblod/ember-rdfa-editor/commit/3e2457cd70c28fb8450e3124969c6719c5356cb1) Thanks [@elpoelma](https://github.com/elpoelma)! - Add title attribute to table menu
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`99b741b`](https://github.com/lblod/ember-rdfa-editor/commit/99b741b217df7e0489db7ab7415e19aad9808245) Thanks [@elpoelma](https://github.com/elpoelma)! - Add title attribute for rdfa-toggle
+
+- [#1164](https://github.com/lblod/ember-rdfa-editor/pull/1164) [`88c30ab`](https://github.com/lblod/ember-rdfa-editor/commit/88c30ab7177b68095abbb473a555f52951aa9301) Thanks [@elpoelma](https://github.com/elpoelma)! - Add title attribute to formatting toggle
+
 ## 9.4.1
 
 ### Patch Changes

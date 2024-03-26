@@ -1,10 +1,12 @@
 <div {{this.setUpListeners}}>
-  <p>
-    <button type="button" {{on "click" this.showExportPreview}}>Show Export
-      Preview</button>
-  </p>
+  <button type="button" {{on "click" this.showStyledExportPreview}}>
+    Show Styled Export
+  </button>
+  <button type="button" {{on "click" this.showRawExportPreview}}>
+    Show Raw Export
+  </button>
   {{#if @controller}}
-    <p>Sample data:
+    <span>Sample data:
       <button
         type="button"
         {{on "click" (fn this.setEditorContent "")}}
@@ -22,7 +24,7 @@
         >{{name}}</button>
         |
       {{/each-in}}
-    </p>
+    </span>
   {{else}}
     Waiting for editor init
   {{/if}}

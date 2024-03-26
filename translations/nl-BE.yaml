@@ -31,6 +31,7 @@ ember-rdfa-editor:
     toggle-header-column: Kopkolom aan/uit
     merge-cells: Cellen samenvoegen
     split-cell: Cel splitsen
+    background-color: Achtergrondkleur
     columns: Kolommen
     rows: Rijen
   normalText: Normale tekst
