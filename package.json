@@ -72,8 +72,9 @@
     "@floating-ui/dom": "^1.6.3",
     "@glimmer/tracking": "^1.1.2",
     "@graphy/memory.dataset.fast": "4.3.3",
-    "@say-editor/prosemirror-invisibles": "^0.1.0",
     "@lblod/marawa": "^0.8.0-beta.2",
+    "@say-editor/prosemirror-invisibles": "^0.1.0",
+    "@say-editor/prosemirror-tables": "^0.2.0",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
     "crypto-browserify": "^3.12.0",
@@ -101,7 +102,6 @@
     "prosemirror-schema-basic": "^1.2.1",
     "prosemirror-schema-list": "^1.2.2",
     "prosemirror-state": "^1.4.2",
-    "@say-editor/prosemirror-tables": "^0.2.0",
     "prosemirror-transform": "^1.8.0",
     "prosemirror-view": "^1.32.4",
     "rdf-data-factory": "^1.1.2",
@@ -113,7 +113,7 @@
     "yup": "^1.3.3"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "2.15.0",
+    "@appuniversum/ember-appuniversum": "3.4.0",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.26.2",
     "@ember/string": "^3.0.1",
@@ -121,7 +121,7 @@
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
     "@glint/environment-ember-loose": "^1.3.0",
-    "@glint/template": "1.1.0",
+    "@glint/template": "1.3.0",
     "@graphy/content.ttl.write": "^4.3.7",
     "@playwright/test": "^1.41.2",
     "@rdfjs/types": "^1.1.0",
@@ -206,7 +206,7 @@
     "webpack": "^5.78.0"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^2.15.0",
+    "@appuniversum/ember-appuniversum": "^3.4.0",
     "@glint/template": "^1.1.0",
     "ember-changeset": "^4.1.2",
     "ember-cli-sass": "^11.0.1",
