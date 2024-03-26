@@ -45,7 +45,7 @@ const rdfaAwareAttrSpec = {
   subject: { default: null },
 };
 
-/** @deprecated Renamed to rdfaAwareAttrSpec */
+/** @deprecated `rdfaAttrs` is deprecated, use the `rdfaAttrSpec` function instead */
 export const rdfaAttrs = rdfaAttrSpec();
 
 export function rdfaAttrSpec<T extends RdfaAttrConfig>(
