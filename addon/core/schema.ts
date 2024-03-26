@@ -92,7 +92,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   if (node.dataset['incomingProps']) {
     backlinks = JSON.parse(node.dataset['incomingProps'], (key, value) => {
       if (key === 'object' || key === 'subject') {
-        return sayDataFactory.fromJson(value);
+        return sayDataFactory.fromTerm(value);
       } else {
         return value;
       }
@@ -118,7 +118,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     if (node.dataset['outgoingProps']) {
       properties = JSON.parse(node.dataset['outgoingProps'], (key, value) => {
         if (key === 'object' || key === 'subject') {
-          return sayDataFactory.fromJson(value);
+          return sayDataFactory.fromTerm(value);
         } else {
           return value;
         }
