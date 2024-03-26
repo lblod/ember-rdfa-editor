@@ -11,7 +11,7 @@
     <:options as |Menu|>
       {{#each this.styles as |style|}}
         <Menu.Item
-          disabled={{this.styleIsActive style.name}}
+          disabled={{this.isStyleButtonDisabled style.name}}
           title={{style.title}}
           @menuAction={{(fn this.setStyle style.name)}}
         >

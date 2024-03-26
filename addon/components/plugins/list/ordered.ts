@@ -169,24 +169,6 @@ export default class ListOrdered extends Component<Args> {
     }
 
     /**
-     * If we want to set the style to something else than hierarchical numbering,
-     * and there is a parent with hierarchical numbering, then we need to set the
-     * style on that position.
-     */
-    const firstListParentWithHierarchicalNumbering =
-      this.firstListParentWithHierarchicalNumbering;
-
-    if (
-      style !== 'hierarchical-numbering' &&
-      firstListParentWithHierarchicalNumbering
-    ) {
-      return this.setStyleOnPosition({
-        style,
-        pos: firstListParentWithHierarchicalNumbering.pos,
-      });
-    }
-
-    /**
      * Normal case, without considering hierarchical numbering.
      */
     const firstListParent = this.firstListParent;
@@ -203,6 +185,22 @@ export default class ListOrdered extends Component<Args> {
     this.toggle(style);
   }
 
+  isStyleButtonDisabled = (style: OrderListStyle) => {
+    /**
+     * If we want to enable `hierarchical-numbering`, but there is already a parent
+     * with hierarchical numbering, then we should not allow it.
+     */
+    if (
+      style === 'hierarchical-numbering' &&
+      // Checking if the first list parent is not the same as the last (top most) list parent
+      this.firstListParent?.node !== this.lastListParent?.node
+    ) {
+      return true;
+    }
+
+    return this.styleIsActive(style);
+  };
+
   styleIsActive = (style: OrderListStyle) => {
     const firstListParentWithStyle = this.firstListParentWithStyle;
 
@@ -214,17 +212,6 @@ export default class ListOrdered extends Component<Args> {
       firstListParentWithStyle?.node.type ===
         this.controller.schema.nodes.ordered_list &&
       firstListParentWithStyle.node.attrs.style === style
-    ) {
-      return true;
-    }
-
-    /**
-     * If we are looking for hierarchical numbering, and there is a parent with
-     * hierarchical numbering, then we should return true, to mark the button as active.
-     */
-    if (
-      style === 'hierarchical-numbering' &&
-      this.firstListParentWithHierarchicalNumbering
     ) {
       return true;
     }
