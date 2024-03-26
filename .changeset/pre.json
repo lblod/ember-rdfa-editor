@@ -2,7 +2,7 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@lblod/ember-rdfa-editor": "7.0.2"
+    "@lblod/ember-rdfa-editor": "9.5.0"
   },
   "changesets": [
     "clever-walls-yawn",
