@@ -51,8 +51,8 @@ dependencies:
     specifier: ^0.1.0
     version: 0.1.0(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.7)
   '@say-editor/prosemirror-tables':
-    specifier: ^0.1.0
-    version: 0.1.0
+    specifier: ^0.2.0
+    version: 0.2.0
   codemirror:
     specifier: ^6.0.1
     version: 6.0.1(@lezer/common@1.2.0)
@@ -2980,8 +2980,8 @@ packages:
       prosemirror-view: 1.32.7
     dev: false
 
-  /@say-editor/prosemirror-tables@0.1.0:
-    resolution: {integrity: sha512-YC+a4sJzoWSQ4ZsxnYktAjTUB7FEJ6EMobLGfk4deAtW+nrEcp5ByrUY0eOpebcILwY8RTK4vINzo+qgN123LQ==}
+  /@say-editor/prosemirror-tables@0.2.0:
+    resolution: {integrity: sha512-dkbJQhAO6TpurDW+LNek4yCZBsAY0KpXJLtSeibSkWYNQ/PFHgbjyNXsmd6kCuv637qqDu+kY+vm6wZhpIJaTw==}
     dependencies:
       prosemirror-keymap: 1.2.2
       prosemirror-model: 1.19.4
