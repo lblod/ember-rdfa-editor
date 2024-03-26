@@ -9,7 +9,7 @@ import {
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 
-import { Node as PNode, NodeSpec, ResolvedPos } from 'prosemirror-model';
+import { Node as PNode, type NodeSpec, ResolvedPos } from 'prosemirror-model';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
@@ -136,13 +136,13 @@ const appendToStyleAttribute = (
   attributes: Record<string, unknown>,
   value: string,
 ) => {
-  if (!attributes.style) {
-    attributes.style = value;
+  if (!attributes['style']) {
+    attributes['style'] = value;
     return;
   }
 
-  if (typeof attributes.style === 'string') {
-    attributes.style = `${attributes.style}; ${value};`;
+  if (typeof attributes['style'] === 'string') {
+    attributes['style'] = `${attributes['style']}; ${value};`;
     return;
   }
 

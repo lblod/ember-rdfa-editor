@@ -34,8 +34,8 @@ export class TableView extends PluginTableView {
   }
 
   private addAttrs(node: Node): void {
-    const nodeClasses = node.attrs.class as string;
-    const style = node.attrs.style as Record<string, string | undefined>;
+    const nodeClasses = node.attrs['class'] as string;
+    const style = node.attrs['style'] as Record<string, string | undefined>;
     this.table.classList.add(...nodeClasses.split(' '));
     this.table.style.cssText = `${this.table.style.cssText} ${constructInlineStyles(style)}`;
   }
