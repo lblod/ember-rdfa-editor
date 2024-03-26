@@ -11,17 +11,16 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
@@ -29,15 +28,14 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   link,
@@ -60,40 +58,50 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules, PluginConfig } from '@lblod/ember-rdfa-editor';
-import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
+import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
+import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
+import {
+  editableNodePlugin,
+  getActiveEditableNode,
+} from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
+import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
+import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
+import {
+  inlineRdfaWithConfigView,
+  inlineRdfaWithConfig,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 
-export default class BackspaceController extends Controller {
+export default class EditableBlockController extends Controller {
+  DebugInfo = DebugInfo;
+  AttributeEditor = AttributeEditor;
+  RdfaEditor = RdfaEditor;
+
   @tracked rdfaEditor?: SayController;
-
-  keyMapOptions: KeymapOptions = {
-    backspace: {
-      selectBlockRdfaNode: true,
-    },
-  };
-
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
+        rdfaAware: true,
       }),
       paragraph,
 
-      repaired_block,
+      repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
-      list_item,
-      ordered_list,
-      bullet_list,
+      list_item: listItemWithConfig({ rdfaAware: true }),
+      ordered_list: orderedListWithConfig({ rdfaAware: true }),
+      bullet_list: bulletListWithConfig({ rdfaAware: true }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rdfaAware: true,
       }),
-      heading,
+      heading: headingWithConfig({ rdfaAware: true }),
       blockquote,
 
       horizontal_rule,
@@ -104,16 +112,11 @@ export default class BackspaceController extends Controller {
       image,
 
       hard_break,
-      invisible_rdfa,
-      block_rdfa: {
-        ...block_rdfa,
-        isolating: true,
-        selectable: true,
-      },
+      block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+      inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
       link: link(this.linkOptions),
     },
     marks: {
-      inline_rdfa,
       code,
       em,
       strong,
@@ -129,11 +132,13 @@ export default class BackspaceController extends Controller {
   get linkOptions() {
     return {
       interactive: true,
+      rdfaAware: true,
     };
   }
 
   @tracked plugins: PluginConfig = [
     firefoxCursorFix(),
+    chromeHacksPlugin(),
     lastKeyPressedPlugin,
     ...tablePlugins,
     tableKeymap,
@@ -148,13 +153,24 @@ export default class BackspaceController extends Controller {
       ],
     }),
     emberApplication({ application: getOwner(this) }),
+    editableNodePlugin(),
   ];
+
   @tracked nodeViews = (controller: SayController) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
     };
   };
+
+  get activeNode() {
+    if (this.rdfaEditor) {
+      const result = getActiveEditableNode(this.rdfaEditor.activeEditorState);
+      return result;
+    }
+    return;
+  }
 
   get showRdfaBlocks() {
     return this.rdfaEditor?.showRdfaBlocks;

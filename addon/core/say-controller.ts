@@ -1,15 +1,17 @@
 import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
-import SayView from '@lblod/ember-rdfa-editor/core/say-view';
+import SayView, {
+  type DocumentRange,
+} from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
-import { Attrs, MarkType, Schema } from 'prosemirror-model';
+import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
-  Command,
+  type Command,
   EditorState,
   Selection,
   Transaction,
@@ -27,6 +29,38 @@ export default class SayController {
   get externalContextStore(): SayStore {
     return unwrap(datastoreKey.getState(this.editor.mainView.state))
       .contextStore;
+  }
+
+  get showRdfaBlocks() {
+    return this.editor.showRdfaBlocks;
+  }
+
+  get mainEditorView() {
+    return this.editor.mainView;
+  }
+
+  get activeEditorView() {
+    return this.editor.activeView;
+  }
+
+  get mainEditorState() {
+    return this.editor.mainView.state;
+  }
+
+  get activeEditorState() {
+    return this.editor.activeView.state;
+  }
+
+  get htmlContent(): string {
+    return this.editor.htmlContent;
+  }
+
+  get inEmbeddedView(): boolean {
+    return !!this.activeEditorView.parent;
+  }
+
+  get domParser() {
+    return this.mainEditorView.domParser;
   }
 
   clone() {
@@ -50,6 +84,7 @@ export default class SayController {
     const doc = htmlToDoc(html, {
       schema: this.schema,
       editorView: this.editor.mainView,
+      parser: this.editor.parser,
     });
 
     this.editor.mainView.updateState(
@@ -70,19 +105,11 @@ export default class SayController {
    * Note: it does not create a new `doc` node and does not update the `doc` node based on the provided html
    * (e.g. `lang` attributes on the `doc` node are not parsed)
    */
-  setHtmlContent(content: string, options: { shouldFocus?: boolean } = {}) {
-    const { shouldFocus = true } = options;
-    if (shouldFocus) {
-      this.focus();
-    }
-    const doc = htmlToDoc(content, {
-      schema: this.schema,
-      editorView: this.mainEditorView,
-    });
-    const tr = this.mainEditorState.tr;
-    tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
-    tr.setSelection(Selection.atEnd(tr.doc));
-    this.editor.mainView.dispatch(tr);
+  setHtmlContent(
+    content: string,
+    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
+  ) {
+    this.mainEditorView.setHtmlContent(content, options);
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
@@ -176,33 +203,5 @@ export default class SayController {
         this.withTransaction((tr) => tr.scrollIntoView());
       });
     }, 0);
-  }
-
-  get showRdfaBlocks() {
-    return this.editor.showRdfaBlocks;
-  }
-
-  get mainEditorView() {
-    return this.editor.mainView;
-  }
-
-  get activeEditorView() {
-    return this.editor.activeView;
-  }
-
-  get mainEditorState() {
-    return this.editor.mainView.state;
-  }
-
-  get activeEditorState() {
-    return this.editor.activeView.state;
-  }
-
-  get htmlContent(): string {
-    return this.editor.htmlContent;
-  }
-
-  get inEmbeddedView(): boolean {
-    return !!this.activeEditorView.parent;
   }
 }

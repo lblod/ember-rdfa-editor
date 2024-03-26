@@ -27,11 +27,11 @@ import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import {
   AttrStep,
-  Command,
+  type Command,
   EditorState,
   keymap,
   NodeSelection,
-  NodeViewConstructor,
+  type NodeViewConstructor,
   SayView,
   Selection,
   Step,
@@ -39,7 +39,7 @@ import {
   TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';
@@ -119,6 +119,10 @@ export default class EmbeddedEditor extends Component<Args> {
     }
   }
 
+  get nodeViews() {
+    return this.outerView.props.nodeViews;
+  }
+
   @action
   didInsertContentWrapper(target: Element) {
     this.contentWrapper = target;
@@ -188,7 +192,7 @@ export default class EmbeddedEditor extends Component<Args> {
             }
           }
         },
-        nodeViews: this.args.nodeViews,
+        nodeViews: this.nodeViews,
       },
       this.outerView,
     );
@@ -236,6 +240,8 @@ export default class EmbeddedEditor extends Component<Args> {
       const state = this.innerView.state;
       const start = this.node.content.findDiffStart(state.doc.content);
       const end = this.node.content.findDiffEnd(state.doc.content);
+      const tr = state.tr;
+      let trChanged = false;
       if (isSome(start) && isSome(end)) {
         let { a: endA, b: endB } = end;
         const overlap = start - Math.min(endA, endB);
@@ -243,11 +249,24 @@ export default class EmbeddedEditor extends Component<Args> {
           endA += overlap;
           endB += overlap;
         }
-        this.innerView.dispatch(
-          state.tr
-            .replace(start, endB, this.node.slice(start, endA))
-            .setMeta('fromOutside', this.editorId),
+        tr.replace(start, endB, this.node.slice(start, endA)).setMeta(
+          'fromOutside',
+          this.editorId,
         );
+        trChanged = true;
+      }
+      // check if our top node has new attributes, and update the state
+      // if so
+      if (!this.node.hasMarkup(state.doc.type, state.doc.attrs)) {
+        for (const [key, val] of Object.entries(this.node.attrs)) {
+          tr.setDocAttribute(key, val);
+        }
+
+        tr.setMeta('fromOutside', this.editorId);
+        trChanged = true;
+      }
+      if (trChanged) {
+        this.innerView.dispatch(tr);
       }
     }
   }

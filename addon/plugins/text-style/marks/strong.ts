@@ -1,4 +1,4 @@
-import { MarkSpec } from 'prosemirror-model';
+import type { MarkSpec } from 'prosemirror-model';
 
 export const strong: MarkSpec = {
   parseDOM: [
@@ -8,13 +8,22 @@ export const strong: MarkSpec = {
     // tags with a font-weight normal.
     {
       tag: 'b',
-      getAttrs: (node: HTMLElement) =>
-        node.style.fontWeight != 'normal' && null,
+      getAttrs: (node: string | HTMLElement) => {
+        if (typeof node === 'string') {
+          return false;
+        }
+        return node.style.fontWeight != 'normal' && null;
+      },
     },
     {
       style: 'font-weight',
-      getAttrs: (value: string) =>
-        /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null,
+      getAttrs: (value: string | HTMLElement) => {
+        if (typeof value !== 'string') {
+          return false;
+        }
+
+        return /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null;
+      },
     },
   ],
   toDOM() {

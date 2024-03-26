@@ -1,9 +1,17 @@
 // Helper for creating a schema that supports tables.
+import {
+  type RdfaAttrs,
+  getRdfaAttrs,
+  renderInvisibleRdfa,
+  renderRdfaAttrs,
+  renderRdfaAware,
+  getRdfaContentElement,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 
-import { Node as PNode, NodeSpec, ResolvedPos } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
+import { Node as PNode, type NodeSpec, ResolvedPos } from 'prosemirror-model';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 
@@ -37,6 +45,7 @@ const fixupColWidth = (number: string) => {
 function getCellAttrs(
   dom: HTMLElement,
   extraAttrs: Record<string, ExtraAttribute>,
+  rdfaAware: boolean,
 ): CellAttributes {
   const widthAttr = dom.getAttribute('data-colwidth');
 
@@ -60,20 +69,23 @@ function getCellAttrs(
       result[key] = value;
     }
   }
-
-  return { ...getRdfaAttrs(dom), ...result };
+  return { ...getRdfaAttrs(dom, { rdfaAware }), ...result };
 }
 
-function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
+function setCellAttrs(
+  node: PNode,
+  extraAttrs: Record<string, ExtraAttribute>,
+  useClassicRdfa: boolean,
+) {
   const attrs: CellAttributes = {};
-  if (Number(node.attrs.colspan) !== 1) {
-    attrs.colspan = node.attrs.colspan as number;
+  if (Number(node.attrs['colspan']) !== 1) {
+    attrs.colspan = node.attrs['colspan'] as number;
   }
-  if (Number(node.attrs.rowspan) !== 1) {
-    attrs.rowspan = node.attrs.rowspan as number;
+  if (Number(node.attrs['rowspan']) !== 1) {
+    attrs.rowspan = node.attrs['rowspan'] as number;
   }
-  if (node.attrs.colwidth) {
-    attrs['data-colwidth'] = (node.attrs.colwidth as number[]).join(',');
+  if (node.attrs['colwidth']) {
+    attrs['data-colwidth'] = (node.attrs['colwidth'] as number[]).join(',');
   }
   for (const [key, attr] of Object.entries(extraAttrs)) {
     const setter = attr.setDOMAttr;
@@ -81,8 +93,11 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
       setter(node.attrs[key], attrs);
     }
   }
-  for (const key of Object.keys(rdfaAttrs)) {
-    attrs[key] = node.attrs[key];
+  if (useClassicRdfa) {
+    // The node is still using classic RDFa attributes, set them here
+    for (const key of Object.keys(rdfaAttrSpec({ rdfaAware: false }))) {
+      attrs[key] = node.attrs[key];
+    }
   }
 
   return attrs;
@@ -103,6 +118,7 @@ interface TableNodeOptions {
     style?: string;
     color: string;
   };
+  rdfaAware?: boolean;
   rowBackground?: {
     even?: string;
     odd?: string;
@@ -120,13 +136,13 @@ const appendToStyleAttribute = (
   attributes: Record<string, unknown>,
   value: string,
 ) => {
-  if (!attributes.style) {
-    attributes.style = value;
+  if (!attributes['style']) {
+    attributes['style'] = value;
     return;
   }
 
-  if (typeof attributes.style === 'string') {
-    attributes.style = `${attributes.style}; ${value};`;
+  if (typeof attributes['style'] === 'string') {
+    attributes['style'] = `${attributes['style']}; ${value};`;
     return;
   }
 
@@ -163,6 +179,7 @@ const getDefaultCellAttributes = ({
 });
 
 export function tableNodes(options: TableNodeOptions): TableNodes {
+  const rdfaAware = options.rdfaAware ?? false;
   const inlineBorderStyle =
     options.inlineBorderStyle &&
     `${options.inlineBorderStyle.width} ${options.inlineBorderStyle.style || 'solid'} ${options.inlineBorderStyle.color}`;
@@ -200,74 +217,104 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
-      attrs: {
-        ...rdfaAttrs,
-        class: { default: 'say-table' },
-        style: { default: tableStyle },
+      get attrs() {
+        const baseAttrs = {
+          class: { default: 'say-table' },
+          style: { default: tableStyle },
+        };
+        return {
+          ...rdfaAttrSpec({ rdfaAware }),
+          ...baseAttrs,
+        };
       },
       group: options.tableGroup,
       allowGapCursor: false,
       parseDOM: [
         {
           tag: 'table',
-          getAttrs(node: HTMLElement) {
-            const rdfaAttrs = getRdfaAttrs(node);
-            if (rdfaAttrs) {
-              return rdfaAttrs;
-            } else {
-              return null;
+          getAttrs(node: string | HTMLElement) {
+            if (typeof node === 'string') {
+              return false;
             }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node: PNode) {
-        return [
-          'table',
-          {
-            ...node.attrs,
-            class: 'say-table',
-            style: constructInlineStyles(tableStyle),
-          },
-          ['tbody', 0],
-        ];
+        if (rdfaAware) {
+          return [
+            'table',
+            {
+              ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+              class: 'say-table',
+              style: constructInlineStyles(tableStyle),
+            },
+            renderInvisibleRdfa(node, 'div'),
+            ['tbody', { 'data-content-container': true }, 0],
+          ];
+        } else {
+          return [
+            'table',
+            {
+              ...node.attrs,
+              class: 'say-table',
+
+              style: constructInlineStyles(tableStyle),
+            },
+            ['tbody', 0],
+          ];
+        }
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
-        // Delete variables as we do not need them in serialized version
         const style = {
           width: '100%',
           ...tableStyle,
           '--say-even-row-background': undefined,
           '--say-odd-row-background': undefined,
         };
-        return [
-          'table',
-          {
-            ...node.attrs,
-            class: 'say-table',
-            style: constructInlineStyles(style),
-          },
-          tableView.colgroupElement,
-          ['tbody', 0],
-        ];
+        if (rdfaAware) {
+          return [
+            'table',
+            {
+              ...renderRdfaAttrs(node.attrs as RdfaAttrs),
+              class: 'say-table',
+              style: constructInlineStyles(style),
+            },
+            tableView.colgroupElement,
+            renderInvisibleRdfa(node, 'div'),
+            ['tbody', { 'data-content-container': true }, 0],
+          ];
+        } else {
+          return [
+            'table',
+            {
+              ...node.attrs,
+              class: 'say-table',
+              style: constructInlineStyles(style),
+            },
+            tableView.colgroupElement,
+            ['tbody', 0],
+          ];
+        }
       },
     },
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
-      attrs: { ...rdfaAttrs },
+      attrs: rdfaAttrSpec({ rdfaAware }),
       allowGapCursor: false,
       parseDOM: [
         {
           tag: 'tr',
-          getAttrs(node: HTMLElement) {
-            const rdfaAttrs = getRdfaAttrs(node);
-            if (rdfaAttrs) {
-              return rdfaAttrs;
-            } else {
-              return null;
+          getAttrs(node: string | HTMLElement) {
+            if (typeof node === 'string') {
+              return false;
             }
+            return { ...getRdfaAttrs(node, { rdfaAware }) };
           },
+          contentElement: getRdfaContentElement,
         },
       ],
       serialize(node, state) {
@@ -287,44 +334,95 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         ];
       },
       toDOM(node: PNode) {
-        return [
-          'tr',
-          { ...node.attrs, style: constructInlineStyles(rowStyle) },
-          0,
-        ];
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'tr',
+            attrs: {
+              style: constructInlineStyles(rowStyle),
+            },
+            content: 0,
+          });
+        } else {
+          return ['tr', { ...node.attrs, style: rowStyle }, 0];
+        }
       },
     },
     table_cell: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrs, ...cellAttrs },
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
+      },
       tableRole: 'cell',
       isolating: true,
       allowGapCursor: false,
       parseDOM: [
         {
           tag: 'td',
-          getAttrs: (dom: HTMLElement) =>
-            getCellAttrs(dom, extraCellAttributes),
+          getAttrs: (dom: string | HTMLElement) => {
+            if (typeof dom === 'string') {
+              return false;
+            }
+            const cellAttrs = getCellAttrs(dom, extraCellAttributes, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
+          },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node) {
-        return ['td', setCellAttrs(node, extraCellAttributes), 0];
+        const cellAttrs = setCellAttrs(node, extraCellAttributes, !rdfaAware);
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'td',
+            attrs: { ...cellAttrs },
+            content: 0,
+          });
+        } else {
+          return ['td', { ...cellAttrs }, 0];
+        }
       },
     },
     table_header: {
       content: options.cellContent,
-      attrs: { ...rdfaAttrs, ...cellAttrs },
+      attrs: {
+        ...rdfaAttrSpec({ rdfaAware }),
+        ...cellAttrs,
+      },
       tableRole: 'header_cell',
       isolating: true,
       parseDOM: [
         {
           tag: 'th',
-          getAttrs: (dom: HTMLElement) =>
-            getCellAttrs(dom, extraCellAttributes),
+          getAttrs: (dom: string | HTMLElement) => {
+            if (typeof dom === 'string') {
+              return false;
+            }
+            const cellAttrs = getCellAttrs(dom, extraCellAttributes, rdfaAware);
+            return {
+              ...getRdfaAttrs(dom, { rdfaAware }),
+              ...cellAttrs,
+            };
+          },
+          contentElement: getRdfaContentElement,
         },
       ],
       toDOM(node) {
-        return ['th', setCellAttrs(node, extraCellAttributes), 0];
+        const cellAttrs = setCellAttrs(node, extraCellAttributes, !rdfaAware);
+        if (rdfaAware) {
+          return renderRdfaAware({
+            renderable: node,
+            tag: 'th',
+            attrs: { ...cellAttrs },
+            content: 0,
+          });
+        } else {
+          return ['th', { ...cellAttrs }, 0];
+        }
       },
     },
   };

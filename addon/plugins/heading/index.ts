@@ -1,1 +1,1 @@
-export { heading } from './nodes/heading';
+export { headingWithConfig, heading } from './nodes/heading';

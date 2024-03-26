@@ -1,3 +1,5 @@
+import { PNode } from '@lblod/ember-rdfa-editor';
+
 export type HtmlTag = keyof HTMLElementTagNameMap;
 
 export interface Cloneable<T> {
@@ -33,3 +35,8 @@ export function isTextOrElement(
 }
 
 export type ValuesOf<T> = T[keyof T];
+
+export type ResolvedPNode = {
+  value: PNode;
+  pos: number;
+};

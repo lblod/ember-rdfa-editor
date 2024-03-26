@@ -3,6 +3,7 @@
  * we've added a, del, ins to the list since we assume they only contain phrasing content in the editor
  * we've removed br from the list to be inline with editor behaviour, which treats it as a block
  **/
+
 export const PHRASING_CONTENT = [
   'a',
   'abbr',
@@ -54,6 +55,9 @@ export const PHRASING_CONTENT = [
   'video',
   'wbr',
 ];
+
+export const HEADING_ELEMENTS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+
 /**
  * List of element types which can be used in non-block (phrasing) context.
  * Unlike PHRASING_CONTENT also includes br tag as while it's normally handled as a block by the
@@ -118,6 +122,8 @@ export const LUMP_NODE_PROPERTY =
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const NOOP = () => {};
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';
+export const LANG_STRING =
+  'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString';
 export const RDFA_ATTRIBUTES = [
   'resource',
   'about',

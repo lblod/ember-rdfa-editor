@@ -1,6 +1,6 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { NodeViewConstructor } from 'prosemirror-view';
-import { DOMParser as ProseParser, Schema } from 'prosemirror-model';
+import type { NodeViewConstructor } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
 import {
   getPathFromRoot,
   isElement,
@@ -12,38 +12,40 @@ import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
 import {
   baseKeymap,
-  KeymapOptions,
+  type KeymapOptions,
 } from '@lblod/ember-rdfa-editor/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
-import { createLogger, Logger } from '../utils/_private/logging-utils';
+import { createLogger, type Logger } from '../utils/_private/logging-utils';
 import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
 import {
   datastore,
   isElementPNode,
-  ResolvedPNode,
+  type ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 import {
-  DefaultAttrGenPuginOptions,
+  type DefaultAttrGenPuginOptions,
   defaultAttributeValueGeneration,
 } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayView from '@lblod/ember-rdfa-editor/core/say-view';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import { ProseParser } from '..';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
+
 interface SayEditorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
   baseIRI: string;
   plugins?: PluginConfig;
-
-  keyMapOptions?: KeymapOptions;
   nodeViews?: (
     controller: SayController,
   ) => Record<string, NodeViewConstructor>;
@@ -62,7 +64,15 @@ export default class SayEditor {
   serializer: SaySerializer;
 
   private logger: Logger;
+  parser: ProseParser;
 
+  constructor(options: SayEditorArgs);
+  /**
+   *
+   * @deprecated providing the `options` option when instantiating a `SayEditor` object is deprecated.
+   * The behaviour of `selectBlockRdfaNode` is included by default.
+   */
+  constructor(options: SayEditorArgs & { keyMapOptions?: KeymapOptions });
   constructor({
     owner,
     target,
@@ -74,7 +84,7 @@ export default class SayEditor {
     },
     defaultAttrGenerators = [],
     keyMapOptions,
-  }: SayEditorArgs) {
+  }: SayEditorArgs & { keyMapOptions?: KeymapOptions }) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
     this.root = target;
@@ -96,18 +106,27 @@ export default class SayEditor {
         recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
           {
-            attribute: '_guid',
+            attribute: '__guid',
+            generator() {
+              return uuidv4();
+            },
+          },
+          {
+            attribute: '__rdfaId',
             generator() {
               return uuidv4();
             },
           },
           ...defaultAttrGenerators,
         ]),
+        removePropertiesOfDeletedNodes(),
+        rdfaInfoPlugin(),
       ];
     }
 
+    this.parser = ProseParser.fromSchema(this.schema);
     const state = EditorState.create({
-      doc: ProseParser.fromSchema(this.schema).parse(target),
+      doc: this.parser.parse(target),
       plugins: pluginConf,
     });
     this.serializer = SaySerializer.fromSchema(this.schema, this);
@@ -124,6 +143,7 @@ export default class SayEditor {
           this.setActiveView(this.mainView);
         },
       },
+      domParser: this.parser,
       transformPastedHTML: (html, editorView) => {
         const htmlCleaner = new HTMLInputParser({ editorView });
 
@@ -139,13 +159,7 @@ export default class SayEditor {
   }
 
   get htmlContent(): string {
-    const div = document.createElement('div');
-    const doc = this.serializer.serializeNode(
-      this.mainView.state.doc,
-      undefined,
-    );
-    div.appendChild(doc);
-    return div.innerHTML;
+    return this.mainView.htmlContent;
   }
 }
 

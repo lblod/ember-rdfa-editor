@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
+import { type Command, SayController } from '@lblod/ember-rdfa-editor';
 import { htmlSafe } from '@ember/template';
-import { Command, SayController } from '@lblod/ember-rdfa-editor';
 import SelectionTooltip from '../../_private/selection-tooltip';
 import {
   addColumnAfter,

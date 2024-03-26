@@ -45,10 +45,17 @@
   </:main>
   <:side as |Tb|>
     <Tb.Group>
-      <Plugins::Formatting::FormattingToggle @controller={{@controller}}/>
+      <this.DocumentLanguagePill @controller={{@controller}} />
+      <this.DocumentInfoPill @controller={{@controller}} />
     </Tb.Group>
     <Tb.Group>
-      <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}}/>
+      {{#if @controller}}
+        <Plugins::HtmlEditor::Menu @controller={{@controller}} />
+      {{/if}}
+    </Tb.Group>
+    <Tb.Group>
+      <Plugins::Formatting::FormattingToggle @controller={{@controller}} />
+      <Plugins::RdfaBlockRender::RdfaBlocksToggle @controller={{@controller}} />
     </Tb.Group>
   </:side>
 </ResponsiveToolbar>

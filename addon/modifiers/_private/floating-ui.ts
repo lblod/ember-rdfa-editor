@@ -13,14 +13,14 @@
 
 import { assert } from '@ember/debug';
 import {
-  Middleware,
-  Placement,
-  ReferenceElement,
-  Strategy,
+  type Middleware,
+  type Placement,
+  type ReferenceElement,
+  type Strategy,
   autoUpdate,
   computePosition,
 } from '@floating-ui/dom';
-import { modifier } from 'ember-modifier';
+import { modifier, type FunctionBasedModifier } from 'ember-modifier';
 
 export type FloatingUISignature = {
   Element: HTMLElement;
@@ -32,74 +32,76 @@ export type FloatingUISignature = {
       useTransform?: boolean;
       middleware?: Middleware[];
     };
+    Positional: [];
   };
 };
 
-const floatingUI = modifier<FloatingUISignature>(
-  (
-    floatingElement,
-    _positional,
-    {
-      strategy = 'absolute',
-      referenceElement,
-      placement,
-      useTransform = true,
-      middleware,
-    },
-  ) => {
-    if (typeof referenceElement === 'string') {
-      const refElement = document.querySelector(referenceElement);
-      assert(
-        `Reference element ${referenceElement} is undefined`,
-        refElement instanceof HTMLElement,
-      );
-      referenceElement = refElement;
-    }
-
-    Object.assign(floatingElement.style, {
-      position: strategy,
-      top: '0',
-      left: '0',
-    });
-
-    const update = () => {
-      computePosition(referenceElement as ReferenceElement, floatingElement, {
+const floatingUI: FunctionBasedModifier<FloatingUISignature> =
+  modifier<FloatingUISignature>(
+    (
+      floatingElement,
+      _positional,
+      {
+        strategy = 'absolute',
+        referenceElement,
         placement,
-        strategy: strategy,
+        useTransform = true,
         middleware,
-      })
-        .then(({ x, y, middlewareData }) => {
-          const visibility = middlewareData.hide?.referenceHidden
-            ? 'hidden'
-            : 'visible';
-          const xVal = Math.round(x);
-          const yVal = Math.round(y);
-          if (useTransform) {
-            Object.assign(floatingElement.style, {
-              transform: `translate(${xVal}px, ${yVal}px)`,
-              visibility,
-            });
-          } else {
-            Object.assign(floatingElement.style, {
-              top: `${y}px`,
-              left: `${x}px`,
-              visibility,
-            });
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    };
+      },
+    ) => {
+      if (typeof referenceElement === 'string') {
+        const refElement = document.querySelector(referenceElement);
+        assert(
+          `Reference element ${referenceElement} is undefined`,
+          refElement instanceof HTMLElement,
+        );
+        referenceElement = refElement;
+      }
 
-    const cleanup = autoUpdate(referenceElement, floatingElement, update);
-    return () => {
-      cleanup();
-    };
-  },
-  {
-    eager: false,
-  },
-);
+      Object.assign(floatingElement.style, {
+        position: strategy,
+        top: '0',
+        left: '0',
+      });
+
+      const update = () => {
+        computePosition(referenceElement as ReferenceElement, floatingElement, {
+          placement,
+          strategy: strategy,
+          middleware,
+        })
+          .then(({ x, y, middlewareData }) => {
+            const visibility = middlewareData.hide?.referenceHidden
+              ? 'hidden'
+              : 'visible';
+            const xVal = Math.round(x);
+            const yVal = Math.round(y);
+            if (useTransform) {
+              Object.assign(floatingElement.style, {
+                transform: `translate(${xVal}px, ${yVal}px)`,
+                visibility,
+              });
+            } else {
+              Object.assign(floatingElement.style, {
+                top: `${y}px`,
+                left: `${x}px`,
+                visibility,
+              });
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      };
+
+      const cleanup = autoUpdate(referenceElement, floatingElement, update);
+      return () => {
+        cleanup();
+      };
+    },
+    {
+      eager: false,
+    },
+  );
 
 export default floatingUI;

@@ -1,5 +1,3 @@
-import { Selection, NodeSelection } from 'prosemirror-state';
-import { Slice, ResolvedPos, Node } from 'prosemirror-model';
 /**
  * Based on code from https://github.com/ProseMirror/prosemirror-gapcursor
  *
@@ -23,8 +21,9 @@ import { Slice, ResolvedPos, Node } from 'prosemirror-model';
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-import { Mappable } from 'prosemirror-transform';
+import { Selection, NodeSelection } from 'prosemirror-state';
+import { Slice, ResolvedPos, Node } from 'prosemirror-model';
+import type { Mappable } from 'prosemirror-transform';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 /// Gap cursor selections are represented using this class. Its
@@ -70,7 +69,7 @@ export class GapCursor extends Selection {
     const parent = $pos.parent;
     if (parent.isTextblock || !closedBefore($pos) || !closedAfter($pos))
       return false;
-    const override = parent.type.spec.allowGapCursor as boolean | null;
+    const override = parent.type.spec['allowGapCursor'] as boolean | null;
     if (override != null) return override;
     const deflt = parent.contentMatchAt($pos.index()).defaultType;
     return deflt && deflt.isTextblock;

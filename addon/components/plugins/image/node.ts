@@ -28,7 +28,7 @@
 
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { NodeSelection } from 'prosemirror-state';
 import { modifier } from 'ember-modifier';
 import { updateSize } from '@lblod/ember-rdfa-editor/plugins/image/utils/resize-functions';
@@ -147,11 +147,11 @@ export default class ImageNode extends Component<EmberNodeArgs> {
   }
 
   get width() {
-    return this.args.node.attrs.width as number;
+    return this.args.node.attrs['width'] as number;
   }
 
   get height() {
-    return this.args.node.attrs.height as number;
+    return this.args.node.attrs['height'] as number;
   }
 
   get style() {

@@ -1,21 +1,22 @@
-import { Attrs, NodeRange, NodeType } from 'prosemirror-model';
-import { Command, NodeSelection } from 'prosemirror-state';
+import { type Attrs, NodeRange, NodeType } from 'prosemirror-model';
+import { type Command, NodeSelection } from 'prosemirror-state';
 import { findWrapping } from 'prosemirror-transform';
 
 /**
  * Wrap the selection in the given node type. Optionally define arbitrary attrs from the wrapped
- * nodes
+ * nodes (undefined if selection is empty).
  **/
 export function wrapSelection(
   nodeType: NodeType,
-  attrsFromWrapped?: (nodeRange: NodeRange) => Attrs,
+  attrsFromWrapped?: (nodeRange?: NodeRange) => Attrs | null,
 ): Command {
   return function (state, dispatch) {
     if (state.selection.empty) {
       if (dispatch) {
         const { from } = state.selection;
         const tr = state.tr;
-        tr.insert(from, nodeType.create());
+        const attrs = attrsFromWrapped && attrsFromWrapped();
+        tr.insert(from, nodeType.create(attrs));
         const selection = NodeSelection.create(tr.doc, from);
         tr.setSelection(selection);
         dispatch(tr);

@@ -1,7 +1,5 @@
-import { Command, TextSelection } from 'prosemirror-state';
+import { type Command, TextSelection } from 'prosemirror-state';
 import { selectNodeBackward } from 'prosemirror-commands';
-
-import { block_rdfa } from '../nodes';
 
 export const selectBlockRdfaNode: Command = (state, dispatch, view) => {
   if (!(state.selection instanceof TextSelection)) {
@@ -20,7 +18,7 @@ export const selectBlockRdfaNode: Command = (state, dispatch, view) => {
         state.doc.resolve($cursor.before($cursor.depth)).nodeBefore
       : $cursor.nodeBefore;
 
-  const isBlockRdfaNode = nodeBefore && nodeBefore.type.spec === block_rdfa;
+  const isBlockRdfaNode = nodeBefore && nodeBefore.type.name === 'block_rdfa';
 
   if (isBlockRdfaNode) {
     return selectNodeBackward(state, dispatch, view);

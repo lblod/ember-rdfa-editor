@@ -28,7 +28,7 @@ import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import {
   cellAround,
   CellSelection,
-  Direction,
+  type Direction,
 } from '@say-editor/prosemirror-tables';
 
 export function findNextCell(
@@ -76,7 +76,7 @@ export function selectionCell(sel: CellSelection | NodeSelection): ResolvedPos {
   } else if (
     'node' in sel &&
     sel.node &&
-    sel.node.type.spec.tableRole == 'cell'
+    sel.node.type.spec['tableRole'] == 'cell'
   ) {
     return sel.$anchor;
   }
@@ -93,7 +93,7 @@ function cellNear($pos: ResolvedPos): ResolvedPos | undefined {
     after;
     after = after.firstChild, pos++
   ) {
-    const role = after.type.spec.tableRole as string;
+    const role = after.type.spec['tableRole'] as string;
     if (role == 'cell' || role == 'header_cell') return $pos.doc.resolve(pos);
   }
   for (
@@ -101,7 +101,7 @@ function cellNear($pos: ResolvedPos): ResolvedPos | undefined {
     before;
     before = before.lastChild, pos--
   ) {
-    const role = before.type.spec.tableRole as string;
+    const role = before.type.spec['tableRole'] as string;
     if (role == 'cell' || role == 'header_cell')
       return $pos.doc.resolve(pos - before.nodeSize);
   }

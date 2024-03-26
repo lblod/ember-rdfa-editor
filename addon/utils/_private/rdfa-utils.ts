@@ -1,5 +1,16 @@
+import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
+import type {
+  IncomingTriple,
+  LinkTriple,
+  OutgoingTriple,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { Mapping, PNode } from '@lblod/ember-rdfa-editor';
+import { v4 as uuidv4 } from 'uuid';
+import type { ResolvedPNode } from './types';
 
 export type RdfaAttr =
   | 'vocab'
@@ -97,4 +108,206 @@ export function mapPositionFrom(
     curPos = mapping.maps[i].map(curPos, assoc);
   }
   return curPos;
+}
+
+export function findNodeByRdfaId(
+  doc: PNode,
+  rdfaId: string,
+): ResolvedPNode | undefined {
+  let result: ResolvedPNode | undefined;
+  doc.descendants((node, pos) => {
+    if (result) return false;
+    if (node.attrs['__rdfaId'] === rdfaId) {
+      result = {
+        pos: pos,
+        value: node,
+      };
+      return false;
+    }
+    return true;
+  });
+  return result;
+}
+
+export function findNodesBySubject(
+  doc: PNode,
+  subject: string,
+): ResolvedPNode[] {
+  const result: ResolvedPNode[] = [];
+  doc.descendants((node, pos) => {
+    if (node.attrs['subject'] === subject) {
+      result.push({ pos, value: node });
+    }
+    return true;
+  });
+  return result;
+}
+
+export function getRdfaId(node: PNode): string | undefined {
+  return node.attrs['__rdfaId'] as string | undefined;
+}
+
+export function getSubject(node: PNode): string | undefined {
+  return (node.attrs['subject'] ??
+    node.attrs['about'] ??
+    node.attrs['resource']) as string | undefined;
+}
+
+export function getProperties(node: PNode): OutgoingTriple[] | undefined {
+  return node.attrs['properties'] as OutgoingTriple[] | undefined;
+}
+
+export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
+  return node.attrs['backlinks'] as IncomingTriple[] | undefined;
+}
+
+/**
+ * Calculates a set of subject attributes present in the provided node and its children
+ */
+export function getSubjects(node: PNode): Set<string> {
+  const result = new Set<string>();
+  const subject = getSubject(node);
+  if (subject) {
+    result.add(subject);
+  }
+  node.descendants((child) => {
+    const subject = getSubject(child);
+    if (subject) {
+      result.add(subject);
+    }
+    return true;
+  });
+  return result;
+}
+
+export function findRdfaIdsInSelection(selection: Selection) {
+  const result = new Set<string>();
+  const range = selection.$from.blockRange(selection.$to);
+  if (!range) return result;
+  selection.content().content.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      result.add(id);
+    }
+    return true;
+  });
+  return result;
+}
+
+/**
+ * Get the first external property of nodes which are children of the given node, without recursing
+ * into resource nodes
+ */
+export function getRdfaChildren(node: PNode) {
+  const result = new Set<LinkTriple>();
+  node.descendants((child) => {
+    const id = getRdfaId(child);
+    if (id) {
+      const backlinks = getBacklinks(child);
+      const subject = getSubject(child);
+      if (backlinks?.[0]) {
+        if (subject) {
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: sayDataFactory.resourceNode(subject),
+          });
+        } else {
+          const incomingTriple = backlinks[0];
+          if (incomingTriple.subject.termType !== 'LiteralNode') {
+            throw new Error(
+              'Unexpected type of incoming triple of a literal node',
+            );
+          }
+          result.add({
+            predicate: backlinks[0].predicate,
+            object: sayDataFactory.literalNode(
+              id,
+              languageOrDataType(
+                incomingTriple.subject.language,
+                incomingTriple.subject.datatype,
+              ),
+            ),
+          });
+        }
+      }
+      // We don't want to recurse, so stop descending
+      return false;
+    }
+    return true;
+  });
+  return result;
+}
+
+/**
+ * Generate a new URI using the passed base (must include terminating / or #, etc).
+ * Also returns an rdfaId for convenience
+ */
+export function generateNewUri(uriBase: string) {
+  const __rdfaId = uuidv4();
+  return {
+    __rdfaId,
+    resource: `${uriBase}${__rdfaId}`,
+  };
+}
+
+export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
+  if (a.predicate === b.predicate) {
+    switch (a.object.termType) {
+      case 'NamedNode': {
+        if (b.object.termType === 'NamedNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'BlankNode': {
+        if (b.object.termType === 'BlankNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'ResourceNode': {
+        if (b.object.termType === 'ResourceNode') {
+          return a.object.value === b.object.value;
+        }
+        break;
+      }
+      case 'Literal': {
+        if (b.object.termType === 'Literal') {
+          return (
+            a.object.value === b.object.value &&
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+      case 'LiteralNode': {
+        if (b.object.termType === 'LiteralNode') {
+          return (
+            a.object.value === b.object.value &&
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+      case 'ContentLiteral': {
+        if (b.object.termType === 'ContentLiteral') {
+          return (
+            a.object.datatype.value === b.object.datatype.value &&
+            a.object.language === b.object.language
+          );
+        }
+        break;
+      }
+    }
+  }
+  return false;
+}
+
+export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
+  return (
+    triple.object.termType === 'LiteralNode' ||
+    triple.object.termType === 'ResourceNode'
+  );
 }

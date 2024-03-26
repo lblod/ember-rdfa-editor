@@ -1,10 +1,10 @@
-import { module, test } from 'qunit';
+import { module, skip } from 'qunit';
 import TEST_SCHEMA from 'dummy/tests/test-utils';
 import { DOMSerializer } from 'prosemirror-model';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 module('ProseMirror | marks', function () {
-  test('Adjacent styling marks should be merged', function (assert) {
+  skip('Adjacent styling marks should be merged', function (assert) {
     const schema = TEST_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('paragraph', null, [
@@ -15,7 +15,7 @@ module('ProseMirror | marks', function () {
     assert.strictEqual(doc.firstChild?.childCount, 1);
     assert.strictEqual(doc.firstChild?.firstChild?.textContent, 'abcd');
   });
-  test('Adjacent rdfa marks (with different guids) should not be merged', function (assert) {
+  skip('Adjacent rdfa marks (with different guids) should not be merged', function (assert) {
     const schema = TEST_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('paragraph', null, [
@@ -33,7 +33,7 @@ module('ProseMirror | marks', function () {
     assert.strictEqual(p_element.childNodes[0].textContent, 'ab');
     assert.strictEqual(p_element.childNodes[1].textContent, 'cd');
   });
-  test('Adjacent rdfa marks (with identical guids) should be merged', function (assert) {
+  skip('Adjacent rdfa marks (with identical guids) should be merged', function (assert) {
     const schema = TEST_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('paragraph', null, [

@@ -1,4 +1,11 @@
-import { VirtualElement, flip, hide, offset, shift } from '@floating-ui/dom';
+import {
+  type VirtualElement,
+  flip,
+  hide,
+  offset,
+  shift,
+  type Middleware,
+} from '@floating-ui/dom';
 import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import floatingUI from '@lblod/ember-rdfa-editor/modifiers/_private/floating-ui';
@@ -49,7 +56,7 @@ export default class SelectionTooltip extends Component<Args> {
     };
     return virtualElement;
   }
-  get tooltipMiddleWare() {
+  get tooltipMiddleWare(): Middleware[] {
     return [
       offset(10),
       flip(),

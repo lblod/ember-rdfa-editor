@@ -1,75 +1,20 @@
 {
+  "extends": "@tsconfig/ember/tsconfig.json",
   "compilerOptions": {
-    "target": "es2020",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": true,
-    "noEmitOnError": false,
-    "noEmit": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
+    "noUncheckedIndexedAccess": false,
+    // The combination of `baseUrl` with `paths` allows Ember's classic package
+    // layout, which is not resolvable with the Node resolution algorithm, to
+    // work with TypeScript.
     "baseUrl": ".",
-    "module": "es2020",
-    "experimentalDecorators": true,
-    "lib": [
-      "ES2017",
-      "ES2019.Object",
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "skipLibCheck": true,
     "paths": {
-      "dummy/tests/*": [
-        "tests/*"
-      ],
-      "dummy/*": [
-        "tests/dummy/app/*",
-        "app/*",
-        "lib/plugin-system-dispatcher/app/*",
-        "lib/rdfa-parser/app/*"
-      ],
-      "@lblod/ember-rdfa-editor": [
-        "addon"
-      ],
-      "@lblod/ember-rdfa-editor/*": [
-        "addon/*"
-      ],
-      "@lblod/ember-rdfa-editor/test-support": [
-        "addon-test-support"
-      ],
-      "@lblod/ember-rdfa-editor/test-support/*": [
-        "addon-test-support/*"
-      ],
-      "plugin-system-dispatcher": [
-        "lib/plugin-system-dispatcher/addon"
-      ],
-      "plugin-system-dispatcher/*": [
-        "lib/plugin-system-dispatcher/addon/*"
-      ],
-      "plugin-system-dispatcher/test-support": [
-        "lib/plugin-system-dispatcher/addon-test-support"
-      ],
-      "plugin-system-dispatcher/test-support/*": [
-        "lib/plugin-system-dispatcher/addon-test-support/*"
-      ],
-      "*": [
-        "types/*"
-      ],
-      "rdfa-parser/test-support": [
-        "lib/rdfa-parser/addon-test-support"
-      ],
-      "rdfa-parser/test-support/*": [
-        "lib/rdfa-parser/addon-test-support/*"
-      ]
+      "dummy/tests/*": ["tests/*"],
+      "dummy/*": ["tests/dummy/app/*", "app/*"],
+      "@lblod/ember-rdfa-editor": ["addon"],
+      "@lblod/ember-rdfa-editor/*": ["addon/*"],
+      "@lblod/ember-rdfa-editor/test-support": ["addon-test-support"],
+      "@lblod/ember-rdfa-editor/test-support/*": ["addon-test-support/*"],
+      "*": ["types/*"]
     }
   },
   "include": [

@@ -1,5 +1,5 @@
-import { Attrs, MarkType } from 'prosemirror-model';
-import { Command, TextSelection } from 'prosemirror-state';
+import type { Attrs, MarkType } from 'prosemirror-model';
+import type { Command, TextSelection } from 'prosemirror-state';
 import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
 import {
   fromToWithoutEdgeSpaces,

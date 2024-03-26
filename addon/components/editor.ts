@@ -2,19 +2,20 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import {
   createLogger,
-  Logger,
+  type Logger,
 } from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
 import SayEditor, {
-  PluginConfig,
+  type PluginConfig,
 } from '@lblod/ember-rdfa-editor/core/say-editor';
-import { NodeViewConstructor } from 'prosemirror-view';
+import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { getOwner } from '@ember/application';
-import Owner from '@ember/owner';
-import { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
+import type Owner from '@ember/owner';
+import type { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { KeymapOptions } from '@lblod/ember-rdfa-editor/core/keymap';
+import type { KeymapOptions } from '../core/keymap';
+import { deprecate } from '@ember/debug';
 
 export interface RdfaEditorArgs {
   /**
@@ -83,6 +84,22 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     if (this.initializers.length) {
       await Promise.all(this.initializers);
       this.logger(`Awaited ${this.initializers.length} initializers.`);
+    }
+
+    if (this.args.keyMapOptions) {
+      deprecate(
+        '@keyMapOptions is deprecated. The behaviour of `selectBlockRdfaNode` is included by default.',
+        false,
+        {
+          id: '@lblod/ember-rdfa-editor.editor.keyMapOptions-argument',
+          until: '10.0.0',
+          for: '@lblod/ember-rdfa-editor',
+          since: {
+            available: '9.4.2',
+            enabled: '9.4.2',
+          },
+        },
+      );
     }
 
     this.prosemirror = new SayEditor({

@@ -22,7 +22,7 @@
  */
 
 import { ResolvedPos } from 'prosemirror-model';
-import { Command, NodeSelection } from 'prosemirror-state';
+import { type Command, NodeSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 export const selectNodeForward: Command = (state, dispatch, view) => {

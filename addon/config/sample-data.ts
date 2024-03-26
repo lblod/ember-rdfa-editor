@@ -527,4 +527,52 @@ world
   TableSelection: `
     Before the table​<table class="say-table"><tbody><tr><td>c1​</td><td>c2​</td></tr></tbody></table>​After the table
   `,
+  RdfaTest: `
+  <div resource="http://test/1" typeof="ext:Decision">
+    <h3 property="ext:title">Decision title</h3>
+    random text, unlinked, to make it easier to get access to the toplevel decision node
+    we still need to add a good way to "go up" a level with the selection
+
+    <div resource="http://articles/1" typeof="ext:Article" property="ext:article">
+      text
+      <h3 property="ext:title">Article title</h3>
+      <p property="ext:content">article content</p>
+    </div>
+  </div>
+  <div resource="http://test/1" typeof="ext:Decision">
+    <h3 property="ext:title">Decision title 1</h3>
+    <h3 property="ext:title">Decision title 2</h3>
+    duplicate! but should still work
+
+    random text, unlinked, to make it easier to get access to the toplevel decision node
+    we still need to add a good way to "go up" a level with the selection
+
+
+    <div resource="http://articles/1" typeof="ext:Article" property="ext:article">
+      text
+      <h3 property="ext:title">Article title</h3>
+      <p property="ext:content">article content</p>
+    </div>
+  </div>
+  `,
+  RdfaWithDocAttrs: `
+  <div data-say-document="true" lang="en-US" resource="http://doc/1" typeof="ext:Document">
+    <span property="dct:conformsTo" content="http://datamodel/1"/>
+    <span property="ext:anotherPredicate" content="test"/>
+    <div data-content-container="true">
+      <div property="ext:hasDecision" resource="http://test/1" typeof="ext:Decision">
+        <h3 property="ext:title">Decision title</h3>
+        random text, unlinked, to make it easier to get access to the toplevel decision node
+        we still need to add a good way to "go up" a level with the selection
+
+        <div resource="http://articles/1" typeof="ext:Article" property="ext:article">
+          text
+          <h3 property="ext:title">Article title</h3>
+          <p property="ext:content">article content</p>
+        </div>
+      </div>
+    </div>
+    <p>test</p>
+  </div>
+  `,
 };

@@ -1,4 +1,4 @@
-import { Mark, MarkSpec } from 'prosemirror-model';
+import type { Mark, MarkSpec } from 'prosemirror-model';
 
 export const color: MarkSpec = {
   attrs: {

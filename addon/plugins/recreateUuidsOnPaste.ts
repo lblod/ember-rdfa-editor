@@ -36,10 +36,10 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
   let attrs = node.attrs;
   const type = node.type;
   const spec = type.spec;
-  if (spec.recreateUri) {
-    if (spec.uriAttributes) {
+  if (spec['recreateUri']) {
+    if (spec['uriAttributes']) {
       const newAttributes: Record<string, string> = {};
-      for (const uriAttribute of spec.uriAttributes) {
+      for (const uriAttribute of spec['uriAttributes']) {
         const oldUri = node.attrs[uriAttribute as string] as string;
         const oldUriParts = oldUri.split('/');
         oldUriParts[oldUriParts.length - 1] = uuidv4();

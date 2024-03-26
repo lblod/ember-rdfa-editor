@@ -154,6 +154,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   // No margin
   li p + *,
+  li div + *,
   p * + *,
   p + br,
   div + br,
@@ -228,7 +229,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   ol.numbered-list {
     list-style-type: decimal;
 
-    & > li > ol {
+    & > li ol {
       list-style-type: inherit;
     }
 
@@ -366,6 +367,10 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       background-image: linear-gradient(0deg, var(--au-blue-200) 0%, var(--au-blue-200) 100%);
       background-blend-mode: multiply;
     }
+  }
+
+  &.say-selection-all {
+    background-color: var(--au-blue-200);
   }
 }
 

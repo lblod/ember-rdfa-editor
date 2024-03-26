@@ -1,0 +1,23 @@
+{{#let (unique-id) as |formId|}}
+  <AuModal
+    @modalOpen={{@modalOpen}}
+    @closable={{true}}
+    @closeModal={{this.cancel}}
+  >
+    <:title>{{this.title}}</:title>
+    <:body>
+      <this.OutgoingTripleForm
+        id={{formId}}
+        @onSubmit={{this.save}}
+        @termTypes={{(array "NamedNode" "Literal" "ContentLiteral")}}
+        @triple={{@property}}
+      />
+    </:body>
+    <:footer>
+      <AuButtonGroup>
+        <AuButton form={{formId}} type="submit">Save</AuButton>
+        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+      </AuButtonGroup>
+    </:footer>
+  </AuModal>
+{{/let}}

@@ -11,17 +11,17 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
+import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
@@ -29,12 +29,11 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
@@ -63,9 +62,10 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import { PluginConfig } from '@lblod/ember-rdfa-editor';
+import type { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 
 export default class SpaceInvisibleController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -77,18 +77,18 @@ export default class SpaceInvisibleController extends Controller {
       }),
       paragraph,
 
-      repaired_block,
+      repaired_block: repairedBlockWithConfig(),
 
-      list_item,
-      ordered_list,
-      bullet_list,
+      list_item: listItemWithConfig(),
+      ordered_list: orderedListWithConfig(),
+      bullet_list: bulletListWithConfig(),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading,
+      heading: headingWithConfig(),
       blockquote,
 
       horizontal_rule,
@@ -99,8 +99,8 @@ export default class SpaceInvisibleController extends Controller {
       image,
 
       hard_break,
-      invisible_rdfa,
-      block_rdfa,
+      invisible_rdfa: invisibleRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig(),
       link: link(this.linkOptions),
     },
     marks: {

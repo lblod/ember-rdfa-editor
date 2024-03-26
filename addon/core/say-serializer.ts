@@ -2,7 +2,7 @@
  *
  * Baed on https://github.com/ProseMirror/prosemirror-model/blob/master/src/to_dom.ts
  * This modified version of the `DOMSerialize` takes an optional `serialize` method into account.
- * 
+ *
  * Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +26,10 @@
 
 import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec';
-import SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import {
-  DOMOutputSpec,
+  type DOMOutputSpec,
   DOMSerializer,
   Mark,
   MarkType,
@@ -37,13 +37,15 @@ import {
   Schema,
 } from 'prosemirror-model';
 
-type NodeSerializer = (node: PNode, state?: EditorState) => DOMOutputSpec;
-type MarkSerializer = (
+export type NodeSerializer = (node: PNode, state: EditorState) => DOMOutputSpec;
+export type MarkSerializer = (
   mark: Mark,
   inline: boolean,
-  state?: EditorState,
+  state: EditorState,
 ) => DOMOutputSpec;
 
+type NodeToDOM = NonNullable<SayNodeSpec['toDOM']>;
+type MarkToDOM = NonNullable<SayMarkSpec['toDOM']>;
 /**
  * ProseMirror DOMSerializer which serializes nodes and marks based on their `serialize` or `toDOM` method.
  * If the node/mark has a `serialize` method, the current editor state is passed to that method.
@@ -53,17 +55,19 @@ type MarkSerializer = (
  */
 export default class SaySerializer extends DOMSerializer {
   declare nodes: {
-    [node: string]: NodeSerializer;
+    [node: string]: NodeToDOM;
   };
-  declare marks: { [mark: string]: MarkSerializer };
+  declare marks: {
+    [mark: string]: MarkToDOM;
+  };
 
   constructor(
     /// The node serialization functions.
     nodes: {
-      [node: string]: NodeSerializer;
+      [node: string]: NodeToDOM;
     },
     /// The mark serialization functions.
-    marks: { [mark: string]: MarkSerializer },
+    marks: { [mark: string]: MarkToDOM },
     readonly editor: SayEditor,
   ) {
     super(nodes, marks);
@@ -77,7 +81,7 @@ export default class SaySerializer extends DOMSerializer {
   serializeNodeInner(node: PNode, options: { document?: Document }) {
     const { dom, contentDOM } = DOMSerializer.renderSpec(
       doc(options),
-      this.nodes[node.type.name](node, this.state),
+      this.nodes[node.type.name](node),
     );
     if (contentDOM) {
       if (node.isLeaf)
@@ -96,10 +100,7 @@ export default class SaySerializer extends DOMSerializer {
     const serializer = this.marks[mark.type.name];
     return (
       serializer &&
-      DOMSerializer.renderSpec(
-        doc(options),
-        serializer(mark, inline, this.state),
-      )
+      DOMSerializer.renderSpec(doc(options), serializer(mark, inline))
     );
   }
 
@@ -113,17 +114,17 @@ export default class SaySerializer extends DOMSerializer {
   static fromSchema(schema: Schema, editor?: SayEditor): DOMSerializer {
     if (editor) {
       return (
-        (schema.cached.saySerializer as SaySerializer) ||
-        (schema.cached.saySerializer = new SaySerializer(
-          SaySerializer.nodesFromSchema(schema),
-          SaySerializer.marksFromSchema(schema),
+        (schema.cached['saySerializer'] as SaySerializer) ||
+        (schema.cached['saySerializer'] = new SaySerializer(
+          SaySerializer.nodesFromSchema(schema, editor),
+          SaySerializer.marksFromSchema(schema, editor),
           editor,
         ))
       );
     } else {
       return (
-        (schema.cached.domSerializer as DOMSerializer) ||
-        (schema.cached.domSerializer = new DOMSerializer(
+        (schema.cached['domSerializer'] as DOMSerializer) ||
+        (schema.cached['domSerializer'] = new DOMSerializer(
           DOMSerializer.nodesFromSchema(schema),
           DOMSerializer.marksFromSchema(schema),
         ))
@@ -131,37 +132,85 @@ export default class SaySerializer extends DOMSerializer {
     }
   }
 
-  static nodesFromSchema(schema: Schema) {
-    const result = gatherToDOM(schema.nodes);
-    if (!result.text) result.text = (node) => node.text as string;
-    return result;
+  static nodesFromSchema(schema: Schema): {
+    [node: string]: NodeToDOM;
+  };
+  static nodesFromSchema(
+    schema: Schema,
+    editor: SayEditor,
+  ): {
+    [node: string]: NodeToDOM;
+  };
+  static nodesFromSchema(schema: Schema, editor?: SayEditor) {
+    if (editor) {
+      const result = gatherToDOM(schema.nodes, editor);
+      if (!result['text'])
+        result['text'] = (node: PNode) => node.text as string;
+      return result;
+    } else {
+      return super.nodesFromSchema(schema);
+    }
   }
 
   /// Gather the serializers in a schema's mark specs into an object.
-  static marksFromSchema(schema: Schema) {
-    return gatherToDOM(schema.marks) as {
-      [mark: string]: (mark: Mark, inline: boolean) => DOMOutputSpec;
-    };
+  static marksFromSchema(schema: Schema): {
+    [mark: string]: MarkToDOM;
+  };
+
+  static marksFromSchema(
+    schema: Schema,
+    editor: SayEditor,
+  ): {
+    [mark: string]: MarkToDOM;
+  };
+
+  static marksFromSchema(schema: Schema, editor?: SayEditor) {
+    if (editor) {
+      return gatherToDOM(schema.marks, editor);
+    } else {
+      return super.marksFromSchema(schema);
+    }
   }
 }
 
-function gatherToDOM(obj: { [node: string]: NodeType }): {
-  [node: string]: NodeSerializer;
+function gatherToDOM(
+  obj: { [node: string]: NodeType },
+  editor: SayEditor,
+): {
+  [node: string]: NodeToDOM;
 };
-function gatherToDOM(obj: { [node: string]: MarkType }): {
-  [node: string]: MarkSerializer;
+function gatherToDOM(
+  obj: { [node: string]: MarkType },
+  editor: SayEditor,
+): {
+  [node: string]: MarkToDOM;
 };
-function gatherToDOM(obj: { [node: string]: NodeType | MarkType }) {
+function gatherToDOM(
+  obj: { [node: string]: NodeType | MarkType },
+  editor: SayEditor,
+) {
   const result: {
-    [node: string]: NodeSerializer | MarkSerializer;
+    [node: string]: NodeToDOM | MarkToDOM;
   } = {};
   for (const name in obj) {
-    const spec = obj[name].spec as SayNodeSpec | SayMarkSpec;
-    // The `serialize` method gets priority over the `toDOM` method.
-    if (spec.serialize) {
-      result[name] = spec.serialize;
-    } else if (spec.toDOM) {
-      result[name] = spec.toDOM;
+    const type = obj[name];
+    if (type instanceof NodeType) {
+      const spec = obj[name].spec as SayNodeSpec;
+      const { serialize, toDOM } = spec;
+      if (serialize) {
+        result[name] = (node: PNode) => serialize(node, editor.mainView.state);
+      } else if (toDOM) {
+        result[name] = toDOM;
+      }
+    } else {
+      const spec = obj[name].spec as SayMarkSpec;
+      const { serialize, toDOM } = spec;
+      if (serialize) {
+        result[name] = (mark: Mark, inline: boolean) =>
+          serialize(mark, inline, editor.mainView.state);
+      } else if (toDOM) {
+        result[name] = toDOM;
+      }
     }
   }
   return result;

@@ -1,0 +1,19 @@
+<AuList @divider={{true}} as |Item|>
+  {{#each this.contentPredicates as |entry|}}
+    <Item
+      class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+    >{{entry.prop.predicate}}
+      <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+        <AuButton
+          @skin="link"
+          @icon="bin"
+          role="menuitem"
+          class="au-c-button--alert"
+          {{on "click" (fn @removeProperty entry.index)}}
+        >
+          Remove content predicate
+        </AuButton>
+      </AuDropdown>
+    </Item>
+  {{/each}}
+</AuList>

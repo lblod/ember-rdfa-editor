@@ -19,7 +19,7 @@ export default class LinkMenu extends Component<Args> {
   get canInsert() {
     return (
       !this.controller.inEmbeddedView &&
-      this.controller.checkCommand(wrapSelection(this.schema.nodes.link))
+      this.controller.checkCommand(wrapSelection(this.schema.nodes['link']))
     );
   }
 
@@ -27,13 +27,17 @@ export default class LinkMenu extends Component<Args> {
   insert() {
     if (!this.controller.inEmbeddedView) {
       this.controller.doCommand(
-        wrapSelection(this.schema.nodes.link, (nodeRange) => {
-          const text = nodeRange.$from.doc.textBetween(
-            nodeRange.$from.pos,
-            nodeRange.$to.pos,
-          );
-          const href = linkToHref(text);
-          return { href };
+        wrapSelection(this.schema.nodes['link'], (nodeRange) => {
+          if (nodeRange) {
+            const text = nodeRange.$from.doc.textBetween(
+              nodeRange.$from.pos,
+              nodeRange.$to.pos,
+            );
+            const href = linkToHref(text);
+            return { href };
+          } else {
+            return null;
+          }
         }),
       );
       this.controller.focus();

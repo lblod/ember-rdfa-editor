@@ -1,5 +1,5 @@
 import * as RDF from '@rdfjs/types';
-import dataset, { FastDataset } from '@graphy/memory.dataset.fast';
+import dataset, { type FastDataset } from '@graphy/memory.dataset.fast';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 
 function isFastDataset(thing: unknown): thing is FastDataset {
@@ -94,6 +94,11 @@ export class GraphyDataset implements QuadDataSet {
   difference(other: QuadDataSet): QuadDataSet {
     const gds = new GraphyDataset(other);
     return new GraphyDataset(this.fastDataset.difference(gds.fastDataset));
+  }
+
+  minus(other: QuadDataSet): QuadDataSet {
+    const gds = new GraphyDataset(other);
+    return new GraphyDataset(this.fastDataset.minus(gds.fastDataset));
   }
 
   equals(other: RDF.Dataset<RDF.Quad, RDF.Quad>): boolean {

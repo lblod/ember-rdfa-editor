@@ -9,6 +9,14 @@ export function hasGroups(node: PNode, ...groups: string[]) {
   return groups.every((group) => nodeGroups.includes(group));
 }
 
+export function isResourceNode(node: PNode) {
+  return node.attrs['rdfaNodeType'] === 'resource';
+}
+
+export function supportsAttribute(node: PNode, attribute: string) {
+  return !!node.type.spec.attrs?.[attribute];
+}
+
 export function getParent(node: PNode, doc: PNode) {
   const pos = getPos(node, doc);
   if (!pos) {

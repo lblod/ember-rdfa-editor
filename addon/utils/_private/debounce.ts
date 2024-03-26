@@ -25,7 +25,7 @@ export function debounced<A extends unknown[], R>(
     lastArgs = null;
     lastThis = null;
     lastInvokeTime = time;
-    result = func.apply(thisArg, args) as R;
+    result = func.apply(thisArg, args as A) as R;
     return result;
   }
 

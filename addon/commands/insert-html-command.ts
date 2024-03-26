@@ -1,18 +1,21 @@
-import { Command } from 'prosemirror-state';
+import type { Command } from 'prosemirror-state';
 import { isTextNode } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
 import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { PNode } from '..';
+
 export function insertHtml(
   html: Node | string,
   from: number,
   to: number,
   marks?: Mark[],
   preserveWhitespace = false,
+  shouldPreprocessRdfa = false,
 ): Command {
   return function (state, dispatch, view) {
     if (dispatch) {
-      let htmlNode: Node;
+      let htmlNode: Node | Document;
       if (typeof html === 'string') {
         const domParser = new DOMParser();
         htmlNode = domParser.parseFromString(html, 'text/html');
@@ -21,6 +24,9 @@ export function insertHtml(
       }
       if (!preserveWhitespace) {
         cleanUpNode(htmlNode);
+      }
+      if (shouldPreprocessRdfa) {
+        preprocessRDFa('body' in htmlNode ? htmlNode.body : htmlNode);
       }
       let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {
         preserveWhitespace,

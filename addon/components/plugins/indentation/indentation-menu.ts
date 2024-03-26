@@ -20,11 +20,11 @@ export default class IndentationMenuComponent extends Component<Args> {
 
   get indentCommand() {
     return chainCommands(
-      sinkListItem(this.schema.nodes.list_item),
+      sinkListItem(this.schema.nodes['list_item']),
       indentNode({
         direction: 1,
         predicate: (node, pos, parent) => {
-          return parent?.type !== this.schema.nodes.list_item;
+          return parent?.type !== this.schema.nodes['list_item'];
         },
       }),
     );
@@ -32,11 +32,11 @@ export default class IndentationMenuComponent extends Component<Args> {
 
   get unindentCommand() {
     return chainCommands(
-      liftListItem(this.controller.schema.nodes.list_item),
+      liftListItem(this.controller.schema.nodes['list_item']),
       indentNode({
         direction: -1,
         predicate: (node, pos, parent) => {
-          return parent?.type !== this.schema.nodes.list_item;
+          return parent?.type !== this.schema.nodes['list_item'];
         },
       }),
     );

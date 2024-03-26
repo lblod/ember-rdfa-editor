@@ -22,6 +22,7 @@ export default class FormattingToggleComponent extends Component<Args> {
       return false;
     }
   }
+
   @action
   toggle() {
     if (this.controller) {

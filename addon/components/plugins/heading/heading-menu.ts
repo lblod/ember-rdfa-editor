@@ -36,14 +36,14 @@ export default class HeadingsMenu extends Component<Args> {
   @action
   enableText() {
     if (this.schema) {
-      this.enable(this.schema.nodes.paragraph);
+      this.enable(this.schema.nodes['paragraph']);
     }
   }
 
   @action
   enableHeading(level: number) {
     if (this.schema) {
-      this.enable(this.schema.nodes.heading, { level });
+      this.enable(this.schema.nodes['heading'], { level });
     }
   }
 
@@ -54,7 +54,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   get canEnableText() {
     if (this.schema) {
-      return this.canEnable(this.schema.nodes.paragraph);
+      return this.canEnable(this.schema.nodes['paragraph']);
     } else {
       return false;
     }
@@ -62,7 +62,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   canEnableHeading = (level: number) => {
     if (this.schema) {
-      return this.canEnable(this.schema.nodes.heading, { level });
+      return this.canEnable(this.schema.nodes['heading'], { level });
     } else {
       return false;
     }
@@ -77,7 +77,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   get textIsActive() {
     if (this.schema) {
-      return this.isActive(this.schema.nodes.paragraph);
+      return this.isActive(this.schema.nodes['paragraph']);
     } else {
       return false;
     }
@@ -85,7 +85,7 @@ export default class HeadingsMenu extends Component<Args> {
 
   headingIsActive = (level: number) => {
     if (this.schema) {
-      return this.isActive(this.schema.nodes.heading, { level });
+      return this.isActive(this.schema.nodes['heading'], { level });
     } else {
       return false;
     }

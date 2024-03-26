@@ -1,11 +1,16 @@
-import { Mark, MarkSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor';
+import type { Mark } from 'prosemirror-model';
+import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
+import { getRdfaContentElement } from '../core/schema';
+import type SayMarkSpec from '../core/say-mark-spec';
 import { v4 as uuidv4 } from 'uuid';
 
-export const inline_rdfa: MarkSpec = {
+/**
+ * @deprecated use `inlineRdfaWithConfig` instead
+ */
+export const inline_rdfa: SayMarkSpec = {
   attrs: {
-    ...rdfaAttrs,
-    _guid: { default: null },
+    ...rdfaAttrSpec({ rdfaAware: false }),
+    _guid: { default: false },
   },
   group: 'rdfa',
   excludes: '',
@@ -14,17 +19,20 @@ export const inline_rdfa: MarkSpec = {
       tag: 'span',
       // default prio is 50, highest prio comes first, and this parserule should at least come after all other nodes
       priority: 10,
-      getAttrs(node: HTMLElement) {
-        const attrs = getRdfaAttrs(node);
+      getAttrs(node: string | HTMLElement) {
+        if (typeof node === 'string') {
+          return false;
+        }
+        const attrs = getRdfaAttrs(node, { rdfaAware: false });
         if (attrs) {
           return { ...attrs, _guid: uuidv4() };
         }
         return false;
       },
+      contentElement: getRdfaContentElement,
     },
   ],
   toDOM(mark: Mark) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _guid, ...rdfaAttrs } = mark.attrs;
     return ['span', rdfaAttrs, 0];
   },

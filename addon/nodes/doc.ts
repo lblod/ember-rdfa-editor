@@ -1,8 +1,12 @@
-import { AttributeSpec, NodeSpec } from 'prosemirror-model';
+import type SayNodeSpec from '../core/say-node-spec';
+import { isElement } from '../utils/_private/dom-helpers';
+import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
+import type { AttributeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
   defaultLanguage?: string;
   content?: string;
+  rdfaAware?: boolean;
   extraAttributes?: Record<string, AttributeSpec>;
 }
 
@@ -11,34 +15,86 @@ interface DocumentConfig {
 export const docWithConfig = ({
   defaultLanguage = 'nl-BE',
   content = 'block+',
+  rdfaAware = false,
   extraAttributes = {},
-}: DocumentConfig = {}): NodeSpec => {
-  const attrs: NodeSpec['attrs'] = {
-    lang: {
-      default: defaultLanguage,
-    },
-  };
-
-  Object.entries(extraAttributes).forEach(([attributeName, value]) => {
-    attrs[attributeName] = value;
-  });
-
+}: DocumentConfig = {}): SayNodeSpec => {
   return {
     content,
-    attrs,
+    get attrs() {
+      const baseAttrs = {
+        lang: {
+          default: defaultLanguage,
+          editable: true,
+        },
+        ...extraAttributes,
+      };
+      if (rdfaAware) {
+        return {
+          ...rdfaAttrSpec({ rdfaAware }),
+          ...baseAttrs,
+        };
+      } else {
+        return baseAttrs;
+      }
+    },
+    editable: rdfaAware,
+    isolating: rdfaAware,
+    selectable: rdfaAware,
+    parseDOM: [
+      {
+        tag: 'div',
+        getAttrs(node: string | HTMLElement) {
+          if (typeof node === 'string') {
+            return false;
+          }
+          if (node.dataset['sayDocument']) {
+            if (rdfaAware) {
+              return {
+                lang: node.getAttribute('lang'),
+                ...getRdfaAttrs(node, { rdfaAware: true }),
+              };
+            } else {
+              return {
+                lang: node.getAttribute('lang'),
+              };
+            }
+          } else {
+            return false;
+          }
+        },
+        contentElement(node: Node) {
+          if (!isElement(node)) {
+            throw new Error('node is not an element');
+          }
+          const result: HTMLElement =
+            node.querySelector('[data-content-container="true"]') ?? node;
+          return result;
+        },
+      },
+    ],
     toDOM(node) {
-      const toDOMAttributes: Record<string, unknown> = {
-        lang: node.attrs.lang as string,
+      const attrs: Record<string, unknown> = {
+        lang: node.attrs['lang'] as string,
         'data-say-document': true,
       };
-
       Object.keys(extraAttributes).forEach((attr) => {
-        toDOMAttributes[attr] = node.attrs[attr];
+        attrs[attr] = node.attrs[attr];
       });
-
-      return ['div', toDOMAttributes, 0];
+      if (rdfaAware) {
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'div',
+          attrs,
+          content: 0,
+        });
+      } else {
+        return ['div', attrs, 0];
+      }
     },
   };
 };
 
+/**
+ * @deprecated use `docWithConfig` instead
+ */
 export const doc = docWithConfig();

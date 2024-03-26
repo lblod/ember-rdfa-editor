@@ -2,6 +2,7 @@ import {
   Decoration,
   DecorationSet,
   EditorState,
+  EditorView,
   ProsePlugin,
   SayView,
   TextSelection,
@@ -29,7 +30,7 @@ export function firefoxCursorFix(): ProsePlugin {
           // so we have to check one position in advance
           const $posToCheck = view.state.doc.resolve($from.pos - 1);
           const nodeBefore = $posToCheck.nodeBefore;
-          if (nodeBefore && nodeBefore.type.spec.needsFFKludge) {
+          if (nodeBefore && nodeBefore.type.spec['needsFFKludge']) {
             const tr = view.state.tr;
             tr.deleteRange($posToCheck.pos, from);
             view.dispatch(tr);
@@ -46,22 +47,22 @@ export function firefoxCursorFix(): ProsePlugin {
           }
           const $posToCheck = view.state.doc.resolve($from.pos + 1);
           const nodeAfter = $posToCheck.nodeAfter;
-          if (nodeAfter && nodeAfter.type.spec.needsFFKludge) {
+          if (nodeAfter && nodeAfter.type.spec['needsFFKludge']) {
             view.dispatch(view.state.tr.deleteRange(from, $posToCheck.pos));
             return true;
           }
         }
         return false;
       },
-      handleClick(view: SayView, pos: number, event: MouseEvent) {
+      handleClick(view: EditorView | SayView, pos: number, event: MouseEvent) {
         const $pos = view.state.doc.resolve(pos);
         let cur = $pos.nodeAfter;
         let insertPos = $pos.pos;
-        while (cur && !cur.type.spec.needsFFKludge) {
+        while (cur && !cur.type.spec['needsFFKludge']) {
           cur = cur.firstChild;
           insertPos++;
         }
-        if (cur?.type.spec.needsFFKludge) {
+        if (cur?.type.spec['needsFFKludge']) {
           event.preventDefault();
           view.dispatch(
             view.state.tr
@@ -85,8 +86,8 @@ export function firefoxCursorFix(): ProsePlugin {
         const nextNode = $from.nodeAfter;
         const prevNode = $from.nodeBefore;
         if (
-          (nextNode?.type.spec.needsFFKludge && !prevNode) ||
-          prevNode?.type.spec.needsFFKludge
+          (nextNode?.type.spec['needsFFKludge'] && !prevNode) ||
+          prevNode?.type.spec['needsFFKludge']
         ) {
           return DecorationSet.create(state.doc, [
             Decoration.widget(

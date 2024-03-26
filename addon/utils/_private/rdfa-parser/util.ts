@@ -6,10 +6,10 @@
 
 import * as RDF from '@rdfjs/types';
 import { resolve } from 'relative-to-absolute-iri';
-import { IActiveTag } from './active-tag';
-import { RDFA_CONTENTTYPES, RdfaProfile } from './rdfa-profile';
+import type { IActiveTag } from './active-tag';
+import { RDFA_CONTENTTYPES, type RdfaProfile } from './rdfa-profile';
 import { DataFactory } from 'rdf-data-factory';
-import {
+import type {
   ModelBlankNode,
   ModelLiteral,
   ModelNamedNode,
@@ -128,14 +128,14 @@ export class Util<N> {
       }
     }
 
-    if (attributes.prefix || Object.keys(additionalPrefixes).length > 0) {
+    if (attributes['prefix'] || Object.keys(additionalPrefixes).length > 0) {
       const prefixes: { [prefix: string]: string } = {
         ...parentPrefixes,
         ...additionalPrefixes,
       };
 
-      if (attributes.prefix) {
-        let prefixMatch = Util.PREFIX_REGEX.exec(attributes.prefix);
+      if (attributes['prefix']) {
+        let prefixMatch = Util.PREFIX_REGEX.exec(attributes['prefix']);
         while (prefixMatch) {
           prefixes[prefixMatch[1]] = prefixMatch[2];
           if (globallySeenPrefixes) {
@@ -149,7 +149,7 @@ export class Util<N> {
             }
             globallySeenPrefixes.set(key, uri);
           }
-          prefixMatch = Util.PREFIX_REGEX.exec(attributes.prefix);
+          prefixMatch = Util.PREFIX_REGEX.exec(attributes['prefix']);
         }
       }
 

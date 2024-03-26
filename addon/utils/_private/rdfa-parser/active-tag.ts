@@ -3,8 +3,8 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import { IRdfaPattern } from './rdfa-pattern';
-import {
+import type { IRdfaPattern } from './rdfa-pattern';
+import type {
   ModelBlankNode,
   ModelNamedNode,
   ModelQuadPredicate,

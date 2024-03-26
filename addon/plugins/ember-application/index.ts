@@ -1,6 +1,6 @@
 import { PluginKey } from 'prosemirror-state';
 import { ProsePlugin } from '@lblod/ember-rdfa-editor';
-import Owner from '@ember/owner';
+import type Owner from '@ember/owner';
 
 export const emberApplicationPluginKey = new PluginKey<DatastorePluginState>(
   'ember_application',

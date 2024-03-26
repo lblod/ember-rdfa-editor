@@ -2,7 +2,7 @@ import type { ComponentLike } from '@glint/template';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
-  EmberNodeConfig,
+  type EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import Image from '@lblod/ember-rdfa-editor/components/plugins/image/node';
 import { Node as PNode } from 'prosemirror-model';
@@ -23,12 +23,15 @@ const emberNodeConfig: EmberNodeConfig = {
   parseDOM: [
     {
       tag: 'img[src]:not([src^="data:"])',
-      getAttrs(dom: HTMLElement) {
+      getAttrs(dom: string | HTMLElement) {
+        if (typeof dom === 'string') {
+          return false;
+        }
         return {
           src: dom.getAttribute('src'),
           alt: dom.getAttribute('alt'),
-          width: dom.dataset.width ? Number(dom.dataset.width) : null,
-          height: dom.dataset.height ? Number(dom.dataset.height) : null,
+          width: dom.dataset['width'] ? Number(dom.dataset['width']) : null,
+          height: dom.dataset['height'] ? Number(dom.dataset['height']) : null,
         };
       },
     },

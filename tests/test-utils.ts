@@ -7,27 +7,26 @@ import {
   strong,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
-import { link } from '@lblod/ember-rdfa-editor/plugins/link';
 import {
-  block_rdfa,
+  blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
   paragraph,
-  repaired_block,
+  repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
 
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import {
-  bullet_list,
-  list_item,
-  ordered_list,
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { tableNodes } from '@lblod/ember-rdfa-editor/plugins/table';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
@@ -70,16 +69,20 @@ export async function renderEditor() {
 }
 
 const nodes = {
-  doc: docWithConfig(),
+  doc: docWithConfig({ rdfaAware: true }),
   paragraph,
 
-  repaired_block,
+  repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
-  list_item,
-  ordered_list,
-  bullet_list,
-  ...tableNodes({ tableGroup: 'block', cellContent: 'inline*' }),
-  heading,
+  list_item: listItemWithConfig({ rdfaAware: true }),
+  ordered_list: orderedListWithConfig({ rdfaAware: true }),
+  bullet_list: bulletListWithConfig({ rdfaAware: true }),
+  ...tableNodes({
+    tableGroup: 'block',
+    cellContent: 'inline*',
+    rdfaAware: true,
+  }),
+  heading: headingWithConfig({ rdfaAware: true }),
   blockquote,
 
   horizontal_rule,
@@ -91,12 +94,11 @@ const nodes = {
 
   hard_break,
   invisible_rdfa,
-  block_rdfa,
+  block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
 };
 const marks = {
   inline_rdfa,
   code,
-  link,
   em,
   strong,
   underline,

@@ -54,6 +54,51 @@
 
 - [#1144](https://github.com/lblod/ember-rdfa-editor/pull/1144) [`d5b46bd`](https://github.com/lblod/ember-rdfa-editor/commit/d5b46bd77c56d7d50aeefacaadc90f92eee6f6ee) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a `table-tooltip` component which allows users to quickly access table-editing features
 
+## 10.0.0-next.1
+
+### Major Changes
+
+- [#1136](https://github.com/lblod/ember-rdfa-editor/pull/1136) [`7e88d94`](https://github.com/lblod/ember-rdfa-editor/commit/7e88d94cd1495ee566b1053a0405d5bdf5d8f706) Thanks [@elpoelma](https://github.com/elpoelma)! - Replace all instances of `resource` node-attribute by `subject` node-attribute
+
+### Minor Changes
+
+- [#1136](https://github.com/lblod/ember-rdfa-editor/pull/1136) [`7e88d94`](https://github.com/lblod/ember-rdfa-editor/commit/7e88d94cd1495ee566b1053a0405d5bdf5d8f706) Thanks [@elpoelma](https://github.com/elpoelma)! - Simplify implementation of `getRdfaAttrs` function
+
+### Patch Changes
+
+- [#1124](https://github.com/lblod/ember-rdfa-editor/pull/1124) [`979719d`](https://github.com/lblod/ember-rdfa-editor/commit/979719da9fce6e08b05ae940677ce56009796559) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix `looseMatches` is undefined error
+
+- [#1133](https://github.com/lblod/ember-rdfa-editor/pull/1133) [`57e11d6`](https://github.com/lblod/ember-rdfa-editor/commit/57e11d610e2f048c1e4acb8322cff3b0f3633c04) Thanks [@abeforgit](https://github.com/abeforgit)! - migrate off of ember-cli-typescript
+
+## 10.0.0-next.0
+
+### Major Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
+
+  - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+  - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
+    - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
+    - If a node is not found: a default `topNode` node is created. The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove `extraAttributes` parameter/option of `doc` node-spec. The `doc` node-spec can be easily extended/overriden using spread operators/custom `node-specs`.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - When using the `setHTMLContent` method to also update the attributes of the topNode correctly. This should make `setHTMLContent` more-or-less equivalent with the `initialize` method. The main difference is that `initialize` creates a new state and `setHTMLContent` does not.
+
+### Minor Changes
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update rdfa components and attribute-editor to take the `topNode` node into account.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `rdfa-commands` to take document attributes into account
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a `document-info` toolbar pill. It opens a modal in which it is possible to edit the attributes of the `topNode` node.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a POC `document-language` pill to the editor toolbar. It opens a modal in which it is possible to select the document language.
+
+### Patch Changes
+
+- [#1067](https://github.com/lblod/ember-rdfa-editor/pull/1067) [`ac443a57`](https://github.com/lblod/ember-rdfa-editor/commit/ac443a57bd9fdc8f17402ad0957603424185f141) Thanks [@abeforgit](https://github.com/abeforgit)! - Improved parser based on a better definition of resource and literal nodes
+
 ## 9.2.1
 
 ### Patch Changes
@@ -293,6 +338,28 @@
 
 - [#1059](https://github.com/lblod/ember-rdfa-editor/pull/1059) [`ef22d026`](https://github.com/lblod/ember-rdfa-editor/commit/ef22d0261fefd28dbb086fd49990d3b8d5e46b04) Thanks [@elpoelma](https://github.com/elpoelma)! - Focus editor-view explicitely in `mousedown` handler of gap-cursor plugin
 
+## 8.0.0-next.0
+
+### Major Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`70be7734`](https://github.com/lblod/ember-rdfa-editor/commit/70be77349c45e369a57de7ab1404f947057dd6f8) Thanks [@elpoelma](https://github.com/elpoelma)! - RDFa UI/logic improvements
+
+### Minor Changes
+
+- [#1022](https://github.com/lblod/ember-rdfa-editor/pull/1022) [`67d5edb4`](https://github.com/lblod/ember-rdfa-editor/commit/67d5edb49f940f205dbb23b2888c525d1a01c202) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4583: Allow to remove node via button with confirmation modal
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`9e6a5b9d`](https://github.com/lblod/ember-rdfa-editor/commit/9e6a5b9d7fb64eb6464368b8a83f6bcb8fe8c60c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add RDFa blackbox tests based on test cases from the [RDFa test suite](https://www.w3.org/2006/07/SWD/RDFa/testsuite/)
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`ca418d90`](https://github.com/lblod/ember-rdfa-editor/commit/ca418d90e398411c106d5a985140583d262ac98d) Thanks [@elpoelma](https://github.com/elpoelma)! - make relationship selection list a bit nicer to use
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`2d9fa6cc`](https://github.com/lblod/ember-rdfa-editor/commit/2d9fa6cc5a304af2d7d64afe109275163419163a) Thanks [@elpoelma](https://github.com/elpoelma)! - allow creating rdfa nodes from scratch
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+
 ## 7.0.2
 
 ### Patch Changes
@@ -357,6 +424,48 @@
 - [#1044](https://github.com/lblod/ember-rdfa-editor/pull/1044) [`6d75850a`](https://github.com/lblod/ember-rdfa-editor/commit/6d75850a449928b99d17dc3b22d269d89961593e) Thanks [@elpoelma](https://github.com/elpoelma)! - Only run `leave-on-enter` modifier when `Enter` has been pressed without modifier keys
 
 - [#1032](https://github.com/lblod/ember-rdfa-editor/pull/1032) [`f31699aa`](https://github.com/lblod/ember-rdfa-editor/commit/f31699aacf91d240ff744a60d5696463ca96f15e) Thanks [@elpoelma](https://github.com/elpoelma)! - Update prosemirror-view to 1.32.4
+
+## 7.0.0-next.3
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`c0023f39`](https://github.com/lblod/ember-rdfa-editor/commit/c0023f3916c17ef7660fb8a474a3f10e397e2eca) Thanks [@elpoelma](https://github.com/elpoelma)! - also add rdfaIds to resources in relationship selector
+
+## 7.0.0-next.2
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`ca418d90`](https://github.com/lblod/ember-rdfa-editor/commit/ca418d90e398411c106d5a985140583d262ac98d) Thanks [@elpoelma](https://github.com/elpoelma)! - make relationship selection list a bit nicer to use
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`923423e5`](https://github.com/lblod/ember-rdfa-editor/commit/923423e5cc1273e12bcc17a9cad1029e7be3d044) Thanks [@elpoelma](https://github.com/elpoelma)! - improve child rdfa node detection
+
+## 7.0.0-next.1
+
+### Patch Changes
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`2d9fa6cc`](https://github.com/lblod/ember-rdfa-editor/commit/2d9fa6cc5a304af2d7d64afe109275163419163a) Thanks [@elpoelma](https://github.com/elpoelma)! - allow creating rdfa nodes from scratch
+
+## 7.0.0-next.0
+
+### Major Changes
+
+- [`951fe78e`](https://github.com/lblod/ember-rdfa-editor/commit/951fe78ee96a07ac9d4f83c5433788d66c1499a7) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4130: Remove "data-editor-highlight" styled
+
+  Removes styles that were affecting elements with the "data-editor-highlight" attribute.
+  Styles are moved to [ember-rdfa-editor-lblod-plugins](https://github.com/lblod/ember-rdfa-editor-lblod-plugins) and are
+  applied through the `citation-plugin`.
+
+### Minor Changes
+
+- [#1027](https://github.com/lblod/ember-rdfa-editor/pull/1027) [`8d310cf1`](https://github.com/lblod/ember-rdfa-editor/commit/8d310cf1a3421935a858ad8a9483c4f83c4d7f66) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a custom gap-cursor plugin containing several fixes compared to the original version:
+
+  - The click handler has been replaced by a mousedown handler in order to intercept a click event earlier
+  - The types of the GapCursor class have been fixed
+  - Addition of a fix when resolving the position returned by view.posAtCoords.
+
+- [#1022](https://github.com/lblod/ember-rdfa-editor/pull/1022) [`67d5edb4`](https://github.com/lblod/ember-rdfa-editor/commit/67d5edb49f940f205dbb23b2888c525d1a01c202) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4583: Allow to remove node via button with confirmation modal
+
+- [#1021](https://github.com/lblod/ember-rdfa-editor/pull/1021) [`9e6a5b9d`](https://github.com/lblod/ember-rdfa-editor/commit/9e6a5b9d7fb64eb6464368b8a83f6bcb8fe8c60c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add RDFa blackbox tests based on test cases from the [RDFa test suite](https://www.w3.org/2006/07/SWD/RDFa/testsuite/)
 
 ## 6.4.0
 

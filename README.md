@@ -96,16 +96,15 @@ export default class EditorComponent extends Component {
           cellContent: 'block+',
           inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
         }),
-        heading,
+        heading: headingWithConfig(),
         blockquote,
         horizontal_rule,
         code_block,
         text,
         hard_break,
-        block_rdfa,
+        block_rdfa: blockRdfaWithConfig(),
       },
       marks: {
-        inline_rdfa,
         em,
         strikethrough,
         strong,
@@ -159,38 +158,6 @@ The above sample toolbar component includes options for:
 The callback provided to `rdfaEditorInit` is called when the editor element is inserted and provides an instance of a `ProseController` which can be used to insert documents inside the editor and execute commands.
 
 The dummy application of this addon includes an extended example on how to include an editor.
-
-### Alternative backspace behavior for `block_rdfa`
-
-To use alternative backspace behavior for `block_rdfa`, which instead of deleting into the preceding `block_rdfa` node, selects the preceding `block_rdfa` node, do the following
-
-```js
-return new Schema({
-  nodes: {
-    // ...
-    // Same schema as in the previous example
-    block_rdfa: {
-      ...block_rdfa,
-      isolating: true,
-      selectable: true,
-    }
-    // ...
-    // Same schema as in the previous example
-  },
-});
-```
-
-```handlebars
-<!-- your-application/components/editor.hbs -->
-<Editor
-  <!-- Same as in the main example -->
-  @keyMapOptions={{this.keyMapOptions}}
->
-    <!-- Same as in the main example -->
-</Editor>
-```
-
-Where `this.keyMapOptions` is of type `KeymapOptions`
 
 ## The `Rdfa:RdfaEditor` component
 
