@@ -95,8 +95,8 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
           until: '10.0.0',
           for: '@lblod/ember-rdfa-editor',
           since: {
-            available: '9.4.2',
-            enabled: '9.4.2',
+            available: '9.6.0',
+            enabled: '9.6.0',
           },
         },
       );
