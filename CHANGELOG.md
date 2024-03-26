@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.5.1
+
+### Patch Changes
+
+- [#1177](https://github.com/lblod/ember-rdfa-editor/pull/1177) [`903c528`](https://github.com/lblod/ember-rdfa-editor/commit/903c52889770d5fbed3980be22ca4041a9d390e5) Thanks [@abeforgit](https://github.com/abeforgit)! - make sure to update editor ref in cached serializer
+
 ## 9.5.0
 
 ### Minor Changes
