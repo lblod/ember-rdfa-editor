@@ -9,6 +9,7 @@ import type {
   OutgoingTriple,
 } from './rdfa-processor';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { sayDataFactory } from './say-data-factory';
 
 // const logger = createLogger('core/schema');
 
@@ -89,7 +90,13 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   const __rdfaId = node.getAttribute('__rdfaId') ?? uuidv4();
   let backlinks: IncomingTriple[];
   if (node.dataset['incomingProps']) {
-    backlinks = JSON.parse(node.dataset['incomingProps']) as IncomingTriple[];
+    backlinks = JSON.parse(node.dataset['incomingProps'], (key, value) => {
+      if (key === 'object' || key === 'subject') {
+        return sayDataFactory.fromTerm(value);
+      } else {
+        return value;
+      }
+    }) as IncomingTriple[];
   } else {
     backlinks = [];
   }
@@ -109,9 +116,13 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     }
     let properties: OutgoingTriple[];
     if (node.dataset['outgoingProps']) {
-      properties = JSON.parse(
-        node.dataset['outgoingProps'],
-      ) as OutgoingTriple[];
+      properties = JSON.parse(node.dataset['outgoingProps'], (key, value) => {
+        if (key === 'object' || key === 'subject') {
+          return sayDataFactory.fromTerm(value);
+        } else {
+          return value;
+        }
+      }) as OutgoingTriple[];
     } else {
       properties = [];
     }

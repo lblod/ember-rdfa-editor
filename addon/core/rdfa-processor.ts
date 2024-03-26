@@ -10,15 +10,15 @@ import {
   type SubAndContentPred,
 } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
 import type { Quad } from '@rdfjs/types';
+import type { SayLiteral } from './say-data-factory';
+import type { SayNamedNode } from './say-data-factory';
 import {
-  type ContentLiteralTerm,
-  type LiteralNodeTerm,
-  type ResourceNodeTerm,
-  type SayBlankNode,
-  type SayLiteral,
-  type SayNamedNode,
-  languageOrDataType,
+  SayBlankNode,
+  ResourceNodeTerm,
+  LiteralNodeTerm,
+  ContentLiteralTerm,
   sayDataFactory,
+  languageOrDataType,
 } from './say-data-factory';
 
 export type SayTermType =
@@ -211,8 +211,10 @@ function quadToProperties(
       return [
         {
           predicate: quad.predicate.value,
-          // need to copy the object here or weird stuff happens
-          object: { ...quad.object, termType: 'Literal' },
+          object: sayDataFactory.literal(
+            quad.object.value,
+            languageOrDataType(quad.object.language, quad.object.datatype),
+          ),
         },
       ];
     }

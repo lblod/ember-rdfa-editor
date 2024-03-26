@@ -66,6 +66,7 @@ import type {
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 
 const schema = new Schema({
   nodes: {
@@ -180,10 +181,7 @@ module('rdfa | parsing', function () {
 
     assert.strictEqual(actualProps.length, 2);
     assert.deepArrayContains(actualProps, {
-      object: {
-        termType: 'NamedNode',
-        value: 'besluit:Besluit',
-      },
+      object: sayDataFactory.namedNode('besluit:Besluit'),
       predicate: rdf('type'),
     });
 
@@ -203,15 +201,7 @@ module('rdfa | parsing', function () {
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks = [
       {
-        subject: {
-          termType: 'LiteralNode',
-          value: 'http://test/1',
-          datatype: {
-            termType: 'NamedNode',
-            value: 'http://www.w3.org/2001/XMLSchema#string',
-          },
-          language: '',
-        },
+        subject: sayDataFactory.literalNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -247,17 +237,13 @@ module('rdfa | parsing', function () {
 
     const expectedBacklinks: IncomingTriple[] = [];
     assert.deepArrayContains(actualProps, {
-      object: {
-        termType: 'NamedNode',
-        value: 'ext:BesluitNieuweStijl',
-      },
+      object: sayDataFactory.namedNode('ext:BesluitNieuweStijl'),
       predicate: rdf('type'),
     });
     assert.deepArrayContains(actualProps, {
-      object: {
-        termType: 'NamedNode',
-        value: 'http://publications.europa.eu/resource/authority/language/NLD',
-      },
+      object: sayDataFactory.namedNode(
+        'http://publications.europa.eu/resource/authority/language/NLD',
+      ),
       predicate: 'eli:language',
     });
 
@@ -276,15 +262,7 @@ module('rdfa | parsing', function () {
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks = [
       {
-        subject: {
-          termType: 'LiteralNode',
-          value: 'http://test/1',
-          datatype: {
-            termType: 'NamedNode',
-            value: 'http://www.w3.org/2001/XMLSchema#string',
-          },
-          language: '',
-        },
+        subject: sayDataFactory.literalNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
