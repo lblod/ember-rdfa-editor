@@ -6,7 +6,7 @@
   ========================================================================== */
 
 $say-font-family: BlinkMacSystemFont, -apple-system, 'Segoe UI', Roboto,
-  Helvetica, Arial, sans-serif !default;
+Helvetica, Arial, sans-serif !default;
 $say-h1-font-family: var(--au-font) !default;
 $say-h1-font-weight: var(--au-medium) !default;
 $say-h1-font-size: $au-h1 !default;
@@ -115,7 +115,6 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       @include au-font-size($say-smallest-font-size, 1.5);
     }
   }
-
 
 
   // Setup some margin rules
@@ -239,6 +238,33 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
+  li::marker {
+    font-variant-numeric: normal;
+    content: var(--marker-content, initial);
+  }
+
+  ol.decimal {
+    list-style-type: decimal;
+  }
+
+  ol.lower-alpha {
+    list-style-type: lower-alpha;
+  }
+
+  ol.upper-roman {
+    list-style-type: upper-roman;
+  }
+
+  ol.decimal,
+  ol.lower-alpha,
+  ol.upper-roman {
+    --marker-content: initial;
+  }
+
+  ol.hierarchical-numbering {
+    --marker-content: counters(list-item, ".") ". ";
+  }
+
   ul.article-list {
     padding-left: 0;
 
@@ -346,8 +372,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     margin-left: $au-unit-tiny;
   }
 
-  [typeof="besluit:Artikel"] >[property='say:heading'],
-  [typeof="say:Article"] >[property='say:heading'] {
+  [typeof="besluit:Artikel"] > [property='say:heading'],
+  [typeof="say:Article"] > [property='say:heading'] {
     font-weight: var(--au-medium);
   }
 }

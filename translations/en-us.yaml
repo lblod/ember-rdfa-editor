@@ -18,6 +18,7 @@ ember-rdfa-editor:
       decimal: Numbers
       lower-alpha: Lowercase letters
       upper-roman: Roman Numbers
+      hierarchical: Hierarchical
   unindent-list: List level higher
   indent-list: List level lower
   table:

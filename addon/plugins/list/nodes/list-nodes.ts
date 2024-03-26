@@ -2,7 +2,20 @@ import { Node as PNode, NodeSpec } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
-export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
+const specialListStyles = ['hierarchical-numbering'] as const;
+
+export type SpecialListStyle = (typeof specialListStyles)[number];
+
+export const isSpecialListStyle = (
+  style: string | null | undefined,
+): style is SpecialListStyle =>
+  specialListStyles.includes(style as SpecialListStyle);
+
+export type OrderListStyle =
+  | 'decimal'
+  | 'upper-roman'
+  | 'lower-alpha'
+  | SpecialListStyle;
 
 type OrderedListAttrs = typeof rdfaAttrs & {
   order: number;
@@ -13,7 +26,16 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
   const { listStyleType } = dom.style;
 
   // Falling back to dataset for back-compatability
-  return (listStyleType || dom.dataset.listStyle) as OrderListStyle | undefined;
+  return listStyleType || dom.dataset.listStyle;
+};
+
+const buildStyleAttr = (style?: OrderListStyle) => {
+  if (!style) return {};
+
+  return {
+    style: `list-style-type: ${style};`,
+    class: style,
+  };
 };
 
 export const ordered_list: NodeSpec = {
@@ -41,10 +63,8 @@ export const ordered_list: NodeSpec = {
       'ol',
       {
         ...(order !== 1 && { start: order }),
-        ...(style && {
-          style: `list-style-type: ${style};`,
-        }),
         ...attrs,
+        ...buildStyleAttr(style),
       },
       0,
     ];
