@@ -60,6 +60,7 @@ export default class SaySerializer extends DOMSerializer {
   declare marks: {
     [mark: string]: MarkToDOM;
   };
+  editor: SayEditor;
 
   constructor(
     /// The node serialization functions.
@@ -68,9 +69,10 @@ export default class SaySerializer extends DOMSerializer {
     },
     /// The mark serialization functions.
     marks: { [mark: string]: MarkToDOM },
-    readonly editor: SayEditor,
+    editor: SayEditor,
   ) {
     super(nodes, marks);
+    this.editor = editor;
   }
 
   get state() {
@@ -113,14 +115,16 @@ export default class SaySerializer extends DOMSerializer {
   static fromSchema(schema: Schema, editor: SayEditor): SaySerializer;
   static fromSchema(schema: Schema, editor?: SayEditor): DOMSerializer {
     if (editor) {
-      return (
-        (schema.cached['saySerializer'] as SaySerializer) ||
-        (schema.cached['saySerializer'] = new SaySerializer(
+      if (schema.cached['saySerializer']) {
+        (schema.cached['saySerializer'] as SaySerializer).editor = editor;
+      } else {
+        schema.cached['saySerializer'] = new SaySerializer(
           SaySerializer.nodesFromSchema(schema, editor),
           SaySerializer.marksFromSchema(schema, editor),
           editor,
-        ))
-      );
+        );
+      }
+      return schema.cached['saySerializer'] as SaySerializer;
     } else {
       return (
         (schema.cached['domSerializer'] as DOMSerializer) ||
