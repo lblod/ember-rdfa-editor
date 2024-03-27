@@ -34,6 +34,11 @@ ember-rdfa-editor:
     background-color: Background color
     columns: Columns
     rows: Rows
+    vertical-align: Vertical align
+    vertical-align-options:
+      top: Top
+      middle: Middle
+      bottom: Bottom
   normalText: Normal text
   heading: Heading
   insert-heading: Insert heading

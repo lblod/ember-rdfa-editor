@@ -177,6 +177,10 @@ $say-toolbar-height: 44px !default;
   }
 }
 
+.local-icon {
+  pointer-events: none;
+}
+
 .say-toolbar__table-cell-background-button {
   --default-background-color: #ffff00;
 

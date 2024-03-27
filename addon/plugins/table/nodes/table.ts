@@ -24,10 +24,11 @@ interface ExtraAttribute {
 }
 
 type CellAttributes = {
-  background?: string;
   colspan?: number;
   rowspan?: number;
   colwidth?: number[] | null;
+  background?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 } & Record<string, unknown>;
 
 // A naive way to fix the colwidths attribute, from pixels to percentage
@@ -173,6 +174,17 @@ const getDefaultCellAttributes = ({
     setDOMAttr(value, attrs) {
       if (typeof value === 'string') {
         appendToStyleAttribute(attrs, `border-left: ${value}`);
+      }
+    },
+  },
+  verticalAlign: {
+    default: null,
+    getFromDOM(dom) {
+      return dom.style.verticalAlign || null;
+    },
+    setDOMAttr(value, attrs) {
+      if (typeof value === 'string') {
+        appendToStyleAttribute(attrs, `vertical-align: ${value}`);
       }
     },
   },
