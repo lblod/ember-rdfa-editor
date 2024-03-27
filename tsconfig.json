@@ -26,5 +26,9 @@
     "addon-test-support/**/*",
     "lib/dummy-plugin",
     "playwright.config.ts"
-  ]
+  ],
+  "glint": {
+    "environment": ["ember-loose", "ember-template-imports"],
+    "checkStandaloneTemplates": false
+  }
 }
