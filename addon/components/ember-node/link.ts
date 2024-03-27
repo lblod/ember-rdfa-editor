@@ -6,7 +6,10 @@ import { Velcro } from 'ember-velcro';
 import { EditorState } from '@lblod/ember-rdfa-editor';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
-import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+// Some AU icon components are broken on v3.4.0 as they have `fill="none"` set. Workaround until
+// fixed, see https://github.com/appuniversum/ember-appuniversum/pull/488
+// import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+import { LinkBrokenIcon } from '@lblod/ember-rdfa-editor/components/ember-node/link-broken-fix';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
