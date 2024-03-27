@@ -1,9 +1,9 @@
 import { action } from '@ember/object';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
 import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { tracked } from 'tracked-built-ins';
+import { ImageIcon } from '@appuniversum/ember-appuniversum/components/icons/image';
 
 const DEFAULT_SVG_HEIGHT = 100;
 
@@ -13,6 +13,8 @@ type Args = {
 };
 
 export default class ImageInsertMenu extends Component<Args> {
+  ImageIcon = ImageIcon;
+
   @tracked modalOpen = false;
   @tracked url = '';
   @tracked altText = '';
@@ -40,18 +42,6 @@ export default class ImageInsertMenu extends Component<Args> {
       return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
     } catch (_) {
       return false;
-    }
-  }
-
-  get imageIcon() {
-    if (
-      macroCondition(
-        dependencySatisfies('@appuniversum/ember-appuniversum', '>=2.16.0'),
-      )
-    ) {
-      return 'image';
-    } else {
-      return 'website';
     }
   }
 

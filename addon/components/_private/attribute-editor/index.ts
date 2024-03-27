@@ -7,6 +7,10 @@ import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-ut
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 
 type Args = {
   controller: SayController;
@@ -14,6 +18,11 @@ type Args = {
 };
 
 export default class AttributeEditor extends Component<Args> {
+  CheckIcon = CheckIcon;
+  PencilIcon = PencilIcon;
+  ChevronDownIcon = ChevronDownIcon;
+  ChevronUpIcon = ChevronUpIcon;
+
   @tracked collapsed = false;
   @trackedReset<AttributeEditor, boolean>({
     memo: 'node',

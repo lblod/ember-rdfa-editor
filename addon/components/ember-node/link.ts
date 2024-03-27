@@ -4,9 +4,15 @@ import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
 import { EditorState } from '@lblod/ember-rdfa-editor';
+import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
+import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
+import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
+  LinkIcon = LinkIcon;
+  LinkExternalIcon = LinkExternalIcon;
+  LinkBrokenIcon = LinkBrokenIcon;
 
   get href() {
     return this.args.node.attrs['href'] as string;

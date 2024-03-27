@@ -10,6 +10,8 @@ import {
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 
 type Args = {
   controller: SayController;
@@ -20,6 +22,8 @@ export default class HighlightMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
   Velcro = Velcro;
+  PencilIcon = PencilIcon;
+  ChevronDownIcon = ChevronDownIcon;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {

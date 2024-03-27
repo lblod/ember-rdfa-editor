@@ -18,6 +18,15 @@ import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table';
 import { type Command } from '@lblod/ember-rdfa-editor';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { TableIcon } from '@appuniversum/ember-appuniversum/components/icons/table';
+import { TableInsertIcon } from '@appuniversum/ember-appuniversum/components/icons/table-insert';
+import { TableColumnEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-end-add';
+import { TableColumnStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-start-add';
+import { TableColumnRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-remove';
+import { TableRowEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-end-add';
+import { TableRowStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-start-add';
+import { TableRowRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-remove';
 
 interface Args {
   controller?: SayController;
@@ -32,6 +41,11 @@ type Action = {
 };
 
 export default class TableMenu extends Component<Args> {
+  TableIcon = TableIcon;
+  TableInsertIcon = TableInsertIcon;
+  TableColumnEndAddIcon = TableColumnEndAddIcon;
+  TableRowEndAddIcon = TableRowEndAddIcon;
+
   @service declare intl: IntlService;
 
   @tracked tableAddRows = DEFAULT_COLUMNS_ROWS;
@@ -42,37 +56,37 @@ export default class TableMenu extends Component<Args> {
       {
         command: addRowAfter,
         title: this.intl.t('ember-rdfa-editor.table.add-row-below'),
-        icon: 'table-row-end-add',
+        icon: TableRowEndAddIcon,
       },
       {
         command: addRowBefore,
         title: this.intl.t('ember-rdfa-editor.table.add-row-above'),
-        icon: 'table-row-start-add',
+        icon: TableRowStartAddIcon,
       },
       {
         command: addColumnAfter,
         title: this.intl.t('ember-rdfa-editor.table.add-column-after'),
-        icon: 'table-column-end-add',
+        icon: TableColumnEndAddIcon,
       },
       {
         command: addColumnBefore,
         title: this.intl.t('ember-rdfa-editor.table.add-column-before'),
-        icon: 'table-column-start-add',
+        icon: TableColumnStartAddIcon,
       },
       {
         command: deleteRow,
         title: this.intl.t('ember-rdfa-editor.table.delete-row'),
-        icon: 'table-row-remove',
+        icon: TableRowRemoveIcon,
       },
       {
         command: deleteColumn,
         title: this.intl.t('ember-rdfa-editor.table.delete-column'),
-        icon: 'table-column-remove',
+        icon: TableColumnRemoveIcon,
       },
       {
         command: deleteTable,
         title: this.intl.t('ember-rdfa-editor.table.delete-table'),
-        icon: 'bin',
+        icon: BinIcon,
       },
       {
         command: toggleHeader('row'),

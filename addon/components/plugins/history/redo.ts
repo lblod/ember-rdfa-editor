@@ -2,11 +2,14 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { redo } from '@lblod/ember-rdfa-editor/plugins/history';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { RedoIcon } from '@appuniversum/ember-appuniversum/components/icons/redo';
 
 type Args = {
   controller?: SayController;
 };
 export default class RedoComponent extends Component<Args> {
+  RedoIcon = RedoIcon;
+
   get mainEditorView() {
     return this.args.controller?.mainEditorView;
   }

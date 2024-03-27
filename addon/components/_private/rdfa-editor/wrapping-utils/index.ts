@@ -9,6 +9,7 @@ import {
 import WrappingModal from './modal';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { wrapInlineLiteral } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/wrap-inline-literal';
+import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 
 type Args = {
   controller?: SayController;
@@ -16,6 +17,8 @@ type Args = {
 };
 
 export default class WrappingUtils extends Component<Args> {
+  PlusIcon = PlusIcon;
+
   @tracked modalOpen = false;
   @tracked wrapWithResource;
 

@@ -2,6 +2,8 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { liftListItem, sinkListItem } from 'prosemirror-schema-list';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { ReverseIndentIcon } from '@appuniversum/ember-appuniversum/components/icons/reverse-indent';
+import { IndentIcon } from '@appuniversum/ember-appuniversum/components/icons/indent';
 
 type Args = {
   controller: SayController;
@@ -11,6 +13,9 @@ type Args = {
  * @deprecated
  */
 export default class ListIndentationControls extends Component<Args> {
+  ReverseIndentIcon = ReverseIndentIcon;
+  IndentIcon = IndentIcon;
+
   get controller() {
     return this.args.controller;
   }

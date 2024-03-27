@@ -3,6 +3,8 @@ import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { tracked } from 'tracked-built-ins';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 
 type ToolbarSection = {
   reference?: HTMLElement;
@@ -12,6 +14,9 @@ type ToolbarSection = {
 };
 
 export default class ResponsiveToolbar extends Component {
+  ThreeDotsIcon = ThreeDotsIcon;
+  NavDownIcon = NavDownIcon;
+
   toolbar?: HTMLElement;
   Velcro = Velcro;
 

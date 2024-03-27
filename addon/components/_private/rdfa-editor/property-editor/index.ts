@@ -11,6 +11,10 @@ import type {
   PlainTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 
 type CreationStatus = {
   mode: 'creation';
@@ -27,6 +31,10 @@ type Args = {
 };
 export default class RdfaPropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;
+  PlusIcon = PlusIcon;
+  PencilIcon = PencilIcon;
+  BinIcon = BinIcon;
+  ThreeDotsIcon = ThreeDotsIcon;
 
   @tracked status?: Status;
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);

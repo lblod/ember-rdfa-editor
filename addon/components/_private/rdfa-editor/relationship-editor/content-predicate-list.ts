@@ -1,6 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 
 interface Args {
   properties: OutgoingTriple[];
@@ -8,6 +10,9 @@ interface Args {
   removeProperty: (index: number) => void;
 }
 export default class ContentPredicateListComponent extends Component<Args> {
+  ThreeDotsIcon = ThreeDotsIcon;
+  BinIcon = BinIcon;
+
   @tracked
   newPredicate = '';
   get contentPredicates() {

@@ -6,12 +6,15 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { UnorderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/unordered-list';
 
 type Args = {
   controller: SayController;
 };
 
 export default class ListUnordered extends Component<Args> {
+  UnorderedListIcon = UnorderedListIcon;
+
   get firstListParent() {
     return findParentNode(
       (node) =>

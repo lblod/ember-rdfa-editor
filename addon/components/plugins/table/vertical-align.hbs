@@ -1,3 +1,4 @@
+{{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
   <div class="say-dropdown options">
     <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
@@ -11,7 +12,7 @@
         {{this.setupDropdownButton}}
       >
         {{this.htmlSafe this.currentVerticalAlignIcon}}
-        <AuIcon @icon='chevron-down' @ariaHidden={{true}} @size='large' />
+        <AuIcon @icon={{this.ChevronDownIcon}} @ariaHidden={{true}} @size='large' />
       </button>
       {{#if this.dropdownOpen}}
         <div
@@ -33,7 +34,7 @@
               {{on 'click' (fn this.setVerticalAlign style.value)}}
             >
               {{#if (this.verticalAlignActive style.value)}}
-                <AuIcon @icon='check' @ariaHidden={{true}} />
+                <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />
               {{/if}}
               {{this.htmlSafe style.icon}}
               {{style.label}}

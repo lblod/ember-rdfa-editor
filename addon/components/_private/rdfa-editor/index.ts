@@ -7,6 +7,8 @@ import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
 import RemoveNode from './remove-node';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 
 type Args = {
   controller?: SayController;
@@ -19,6 +21,8 @@ export default class RdfaEditor extends Component<Args> {
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
   RemoveNode = RemoveNode;
+  ChevronDownIcon = ChevronDownIcon;
+  ChevronUpIcon = ChevronUpIcon;
 
   @tracked collapsed = false;
 

@@ -4,11 +4,16 @@ import Component from '@glimmer/component';
 import { NodeType, SayController } from '@lblod/ember-rdfa-editor';
 import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type';
 import IntlService from 'ember-intl/services/intl';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 
 type Args = {
   controller?: SayController;
 };
 export default class HeadingsMenu extends Component<Args> {
+  CheckIcon = CheckIcon;
+  NavDownIcon = NavDownIcon;
+
   @service declare intl: IntlService;
   levels = [1, 2, 3, 4, 5, 6];
 

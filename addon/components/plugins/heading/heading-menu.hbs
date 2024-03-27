@@ -1,10 +1,11 @@
+{{! @glint-nocheck: not typesafe yet }}
 <Toolbar::Dropdown
   @label={{this.currentStyle}}
-  @icon="nav-down"
-  @iconSize="small"
+  @icon={{this.NavDownIcon}}
+  @iconSize='small'
   @controller={{@controller}}
   @disabled={{not this.enabled}}
-  title={{t "ember-rdfa-editor.text-styles"}}
+  title={{t 'ember-rdfa-editor.text-styles'}}
   as |Menu|
 >
   <Menu.Item
@@ -13,7 +14,7 @@
     disabled={{not this.canEnableText}}
   >
     {{#if this.textIsActive}}
-      <AuIcon @icon='check' @ariaHidden={{true}} />
+      <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />
     {{/if}}
     {{t 'ember-rdfa-editor.normalText'}}
   </Menu.Item>
@@ -24,7 +25,7 @@
       disabled={{not (this.canEnableHeading level)}}
     >
       {{#if (this.headingIsActive level)}}
-        <AuIcon @icon='check' @ariaHidden={{true}} />
+        <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />
       {{/if}}
       {{t 'ember-rdfa-editor.heading'}} {{level}}
     </Menu.Item>

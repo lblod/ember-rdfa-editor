@@ -7,6 +7,7 @@ import { clearColor, setColor } from '@lblod/ember-rdfa-editor/plugins/color';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
+import { WordIcon } from '@appuniversum/ember-appuniversum/components/icons/word';
 
 type Args = {
   controller: SayController;
@@ -17,6 +18,7 @@ export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
   Velcro = Velcro;
+  WordIcon = WordIcon;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {

@@ -3,11 +3,16 @@ import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
+import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
+import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 
 type Args = {
   controller?: SayController;
 };
 export default class LinkEditor extends Component<Args> {
+  LinkExternalIcon = LinkExternalIcon;
+  LinkBrokenIcon = LinkBrokenIcon;
+
   get controller() {
     return this.args.controller;
   }

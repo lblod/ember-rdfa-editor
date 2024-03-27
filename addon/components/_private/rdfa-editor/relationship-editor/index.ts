@@ -20,6 +20,11 @@ import type {
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
+import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 
 type Args = {
   controller?: SayController;
@@ -44,6 +49,12 @@ type UpdateStatus = {
 type Status = CreationStatus | UpdateStatus;
 
 export default class RdfaRelationshipEditor extends Component<Args> {
+  PlusIcon = PlusIcon;
+  ExternalLinkIcon = ExternalLinkIcon;
+  ThreeDotsIcon = ThreeDotsIcon;
+  PencilIcon = PencilIcon;
+  BinIcon = BinIcon;
+
   @tracked modalOpen = false;
   @tracked _statusMessage: StatusMessageForNode | null = null;
 

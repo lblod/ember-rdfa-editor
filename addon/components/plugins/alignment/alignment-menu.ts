@@ -8,11 +8,14 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/alignment';
 import { setAlignment } from '@lblod/ember-rdfa-editor/plugins/alignment/commands';
 import IntlService from 'ember-intl/services/intl';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 
 type Args = {
   controller?: SayController;
 };
 export default class AlignmentMenu extends Component<Args> {
+  NavDownIcon = NavDownIcon;
+
   @service declare intl: IntlService;
   options = ALIGNMENT_OPTIONS;
 

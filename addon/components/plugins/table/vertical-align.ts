@@ -9,6 +9,8 @@ import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 
 type Args = {
   controller: SayController;
@@ -46,6 +48,9 @@ const icons: Record<VerticalAlignment, string> = {
 };
 
 export default class VerticalAlign extends Component<Args> {
+  ChevronDownIcon = ChevronDownIcon;
+  CheckIcon = CheckIcon;
+
   @service declare intl: IntlService;
 
   dropdownButton?: HTMLElement;

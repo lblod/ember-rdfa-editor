@@ -3,6 +3,8 @@ import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { defaultColors } from '@lblod/ember-rdfa-editor/config/colors';
+import { AddIcon } from '@appuniversum/ember-appuniversum/components/icons/add';
+import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 
 type Args = {
   onChange: (color?: string) => unknown;
@@ -10,6 +12,8 @@ type Args = {
 };
 
 export default class ColorSelector extends Component<Args> {
+  AddIcon = AddIcon;
+  CircleXIcon = CircleXIcon;
   colorPicker?: HTMLElement;
   setUpColorPicker = modifier(
     (element: HTMLElement) => {

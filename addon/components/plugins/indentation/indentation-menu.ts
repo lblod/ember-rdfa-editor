@@ -4,12 +4,17 @@ import { liftListItem, sinkListItem } from 'prosemirror-schema-list';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { chainCommands } from 'prosemirror-commands';
 import { indentNode } from '@lblod/ember-rdfa-editor/commands';
+import { ReverseIndentIcon } from '@appuniversum/ember-appuniversum/components/icons/reverse-indent';
+import { IndentIcon } from '@appuniversum/ember-appuniversum/components/icons/indent';
 
 type Args = {
   controller: SayController;
 };
 
 export default class IndentationMenuComponent extends Component<Args> {
+  ReverseIndentIcon = ReverseIndentIcon;
+  IndentIcon = IndentIcon;
+
   get controller() {
     return this.args.controller;
   }

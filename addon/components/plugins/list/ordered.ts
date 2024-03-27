@@ -11,11 +11,16 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { OrderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/ordered-list';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 
 type Args = {
   controller: SayController;
 };
 export default class ListOrdered extends Component<Args> {
+  OrderedListIcon = OrderedListIcon;
+  CheckIcon = CheckIcon;
+
   @service declare intl: IntlService;
 
   get styles() {

@@ -6,7 +6,7 @@
     <Group>
       <AuButton
         @skin="naked"
-        @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+        @icon={{if this.collapsed this.ChevronDownIcon this.ChevronUpIcon}}
         {{on "click" this.toggleSection}}
       />
     </Group>
@@ -26,7 +26,7 @@
       <Group>
         <AuButton
           @skin="naked"
-          @icon={{if this.collapsed "chevron-down" "chevron-up"}}
+          @icon={{if this.collapsed this.ChevronDownIcon this.ChevronUpIcon}}
           {{on "click" this.toggleSection}}
         />
       </Group>
