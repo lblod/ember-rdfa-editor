@@ -33,6 +33,7 @@ import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bulletListWithConfig,
   listItemWithConfig,
+  listTrackingPlugin,
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -126,6 +127,7 @@ export default class IndexController extends Controller {
   }
 
   @tracked plugins: PluginConfig = [
+    listTrackingPlugin(),
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,

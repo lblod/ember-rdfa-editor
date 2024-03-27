@@ -93,7 +93,7 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
   return {
     content: 'list_item+',
     group: 'block list',
-    attrs: rdfaAttrSpec({ rdfaAware }),
+    attrs: { ...rdfaAttrSpec({ rdfaAware }), style: { default: 'unordered' } },
     parseDOM: [
       {
         tag: 'ul',
@@ -132,7 +132,11 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
   return {
     content: 'paragraphGroup+ block*',
     defining: true,
-    attrs: rdfaAttrSpec({ rdfaAware }),
+    attrs: {
+      ...rdfaAttrSpec({ rdfaAware }),
+      listPath: { default: [] },
+      listStyle: { default: 'unordered' },
+    },
     parseDOM: [
       {
         tag: 'li',
@@ -151,14 +155,69 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           renderable: node,
           tag: 'li',
           content: 0,
+          attrs: {
+            'data-list-marker': renderListMarker(
+              node.attrs['listStyle'],
+              node.attrs['listPath'],
+            ),
+          },
         });
       } else {
-        return ['li', node.attrs, 0];
+        return [
+          'li',
+          {
+            ...node.attrs,
+            'data-list-marker': renderListMarker(
+              node.attrs['listStyle'],
+              node.attrs['listPath'],
+            ),
+          },
+          0,
+        ];
       }
     },
   };
 };
 
+const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+function romanize(num: number) {
+  const lookup = {
+    M: 1000,
+    CM: 900,
+    D: 500,
+    CD: 400,
+    C: 100,
+    XC: 90,
+    L: 50,
+    XL: 40,
+    X: 10,
+    IX: 9,
+    V: 5,
+    IV: 4,
+    I: 1,
+  };
+  let roman = '';
+  for (const [i, value] of Object.entries(lookup)) {
+    while (num >= value) {
+      roman += i;
+      num -= value;
+    }
+  }
+  return roman;
+}
+function renderListMarker(style: string, path: number[]): string {
+  const length = path.length;
+  const lastIndex = length - 1;
+  if (style === 'decimal') {
+    return `${path[lastIndex] + 1}. `;
+  } else if (style === 'lower-alpha') {
+    return `${alphabet[path[lastIndex] % 26]}. `;
+  } else if (style === 'upper-roman') {
+    return `${romanize(path[lastIndex] + 1)}. `
+  } else {
+    return `${path.map((index) => index + 1).join('.')} `;
+  }
+}
 /**
  * @deprecated use `listItemWithConfig` instead
  */
