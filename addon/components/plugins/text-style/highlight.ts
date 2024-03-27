@@ -32,6 +32,8 @@ export default class HighlightMenu extends Component<Args> {
     { eager: false },
   );
   @tracked dropdownOpen = false;
+  // defaultColor isn't expected to change, so this works fine.
+  // eslint-disable-next-line ember/no-tracked-properties-from-args
   @tracked selectedColor = this.args.defaultColor;
 
   get controller() {

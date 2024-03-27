@@ -40,7 +40,7 @@
     "lint:js": "eslint . --cache",
     "lint:errors": "eslint . --quiet",
     "lint:js:fix": "eslint . --fix",
-    "lint:types": "tsc --noEmit",
+    "lint:types": "glint",
     "prepack": "tsc --project tsconfig.declarations.json",
     "postpack": "rimraf declarations",
     "start": "concurrently -c \"auto\" -P \"npm:serve -- {@}\" \"npm:typecheck\" --",
