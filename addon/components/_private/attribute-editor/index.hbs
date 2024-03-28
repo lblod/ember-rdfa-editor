@@ -63,7 +63,7 @@
                       <AuTextarea
                         @width='block'
                         id={{id}}
-                        @value={{get this.changeset key}}
+                        value={{get this.changeset key}}
                         {{on 'change' (fn this.updateChangeset key)}}
                       />
                     {{/if}}
