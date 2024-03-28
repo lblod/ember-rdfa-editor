@@ -1,32 +1,13 @@
+// This is the config for running glint in watch mode
 {
-  "extends": "@tsconfig/ember/tsconfig.json",
+  "extends": "./tsconfig.main.json",
   "compilerOptions": {
-    "noUncheckedIndexedAccess": false,
-    // The combination of `baseUrl` with `paths` allows Ember's classic package
-    // layout, which is not resolvable with the Node resolution algorithm, to
-    // work with TypeScript.
-    "baseUrl": ".",
-    "skipLibCheck": true,
-    "paths": {
-      "dummy/tests/*": ["tests/*"],
-      "dummy/*": ["tests/dummy/app/*", "app/*"],
-      "@lblod/ember-rdfa-editor": ["addon"],
-      "@lblod/ember-rdfa-editor/*": ["addon/*"],
-      "@lblod/ember-rdfa-editor/test-support": ["addon-test-support"],
-      "@lblod/ember-rdfa-editor/test-support/*": ["addon-test-support/*"],
-      "*": ["types/*"]
-    }
+    // Glint in watch mode seems to use slightly different interpretation of "include" paths, so it
+    // picks up js where non-watch mode and TS do not. Rather than change these, we can just allow
+    // JS instead. See https://github.com/typed-ember/glint/issues/649
+    "allowJs": true,
+    "rootDir": ".",
   },
-  "include": [
-    "app/**/*",
-    "addon/**/*",
-    "tests/**/*",
-    "types/**/*",
-    "test-support/**/*",
-    "addon-test-support/**/*",
-    "lib/dummy-plugin",
-    "playwright.config.ts"
-  ],
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"],
     "checkStandaloneTemplates": false
