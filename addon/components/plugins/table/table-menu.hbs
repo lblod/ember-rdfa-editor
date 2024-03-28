@@ -1,6 +1,7 @@
+{{! @glint-nocheck: not typesafe yet }}
 <Toolbar::Dropdown
   @controller={{@controller}}
-  @icon="table"
+  @icon={{this.TableIcon}}
   @label={{t 'ember-rdfa-editor.table.table-options'}}
   title={{t 'ember-rdfa-editor.table.table-options'}}
   @hideLabel={{true}}
@@ -53,20 +54,20 @@
       @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}}
       title={{t 'ember-rdfa-editor.table.insert-table'}}
     >
-      <AuIcon @icon='table-insert' @ariaHidden={{true}} />
+      <AuIcon @icon={{this.TableInsertIcon}} @ariaHidden={{true}} />
       {{t 'ember-rdfa-editor.table.insert-table'}}
     </Menu.Item>
   {{/if}}
 </Toolbar::Dropdown>
 <Toolbar::Button
   @title={{t 'ember-rdfa-editor.table.add-column-after'}}
-  @icon='table-column-end-add'
+  @icon={{this.TableColumnEndAddIcon}}
   {{on 'click' this.insertColumnAfter}}
   @disabled={{not this.isInTable}}
 />
 <Toolbar::Button
   @title={{t 'ember-rdfa-editor.table.add-row-below'}}
-  @icon='table-row-end-add'
+  @icon={{this.TableRowEndAddIcon}}
   {{on 'click' this.insertRowBelow}}
   @disabled={{not this.isInTable}}
 />

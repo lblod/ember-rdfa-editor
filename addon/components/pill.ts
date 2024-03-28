@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import type { ComponentLike } from '@glint/template';
 
 const PILL_SIZES = ['small'] as const;
 
@@ -13,7 +14,7 @@ type PillComponentArgs = {
     | 'error';
   size?: (typeof PILL_SIZES)[number];
   iconAlignment?: 'left' | 'right';
-  icon?: string;
+  icon?: ComponentLike;
 };
 
 export default class PillComponent extends Component<PillComponentArgs> {

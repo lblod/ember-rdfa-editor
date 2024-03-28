@@ -1,7 +1,8 @@
+{{! @glint-nocheck: not typesafe yet }}
 <this.Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
   <Pill
     class='say-link'
-    @icon='link'
+    @icon={{this.LinkIcon}}
     @iconAlignment='right'
     @skin='link'
     title={{t 'ember-rdfa-editor.link.ctrlClickDescription'}}
@@ -31,8 +32,8 @@
     >
       <AuLinkExternal
         href={{this.href}}
-        @skin='naked'
-        @icon='link-external'
+        @skin='button-naked'
+        @icon={{this.LinkExternalIcon}}
         title={{t "ember-rdfa-editor.link.open"}}
       />
       <AuInput
@@ -43,7 +44,7 @@
         {{leave-on-enter-key this.controller @getPos}}
       />
       <AuButton
-        @icon='link-broken'
+        @icon={{this.LinkBrokenIcon}}
         @skin='naked'
         @size='small'
         {{on 'click' this.remove}}

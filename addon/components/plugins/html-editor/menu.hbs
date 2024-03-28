@@ -1,10 +1,11 @@
+{{! @glint-nocheck: not typesafe yet }}
 <Toolbar::Button
-  {{on "click" this.openEditor}}
-  @icon="html"
-  class="au-u-margin-left-tiny au-u-margin-right-tiny"
-  @title={{t "ember-rdfa-editor.html-editor.toolbar-button.label"}}
+  {{on 'click' this.openEditor}}
+  @icon={{this.HtmlIcon}}
+  class='au-u-margin-left-tiny au-u-margin-right-tiny'
+  @title={{t 'ember-rdfa-editor.html-editor.toolbar-button.label'}}
 >
-  {{t "ember-rdfa-editor.html-editor.toolbar-button.label"}}
+  {{t 'ember-rdfa-editor.html-editor.toolbar-button.label'}}
 </Toolbar::Button>
 {{#if this.htmlEditorOpen}}
   <Plugins::HtmlEditor::Modal

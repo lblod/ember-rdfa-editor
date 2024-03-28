@@ -1,3 +1,4 @@
+{{! @glint-nocheck: not typesafe yet }}
 <div class='say-editor-hints__insert'>
   <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
     <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}as |Group|>
@@ -16,7 +17,7 @@
       <Group>
         {{#if this.expanded}}
           <AuIcon
-            @icon='remove'
+            @icon={{this.RemoveIcon}}
             @alignment='left'
             @size='large'
             @ariaHidden='true'
@@ -26,7 +27,7 @@
           </span>
         {{else}}
           <AuIcon
-            @icon='add'
+            @icon={{this.AddIcon}}
             @alignment='left'
             @size='large'
             @ariaHidden='true'

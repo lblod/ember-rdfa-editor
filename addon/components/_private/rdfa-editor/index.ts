@@ -7,6 +7,22 @@ import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
 import RemoveNode from './remove-node';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const ChevronDownIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/chevron-down')
+      .ChevronDownIcon
+  : 'chevron-down';
+const ChevronUpIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/chevron-up')
+      .ChevronUpIcon
+  : 'chevron-up';
 
 type Args = {
   controller?: SayController;
@@ -19,6 +35,8 @@ export default class RdfaEditor extends Component<Args> {
   // Disable the rdfa-type convertor for now
   // RdfaTypeConvertor = RdfaTypeConvertor;
   RemoveNode = RemoveNode;
+  ChevronDownIcon = ChevronDownIcon;
+  ChevronUpIcon = ChevronUpIcon;
 
   @tracked collapsed = false;
 

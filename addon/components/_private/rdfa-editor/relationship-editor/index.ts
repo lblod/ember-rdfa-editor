@@ -20,6 +20,43 @@ import type {
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const PlusIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/plus')
+      .PlusIcon
+  : 'plus';
+const ExternalLinkIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/external-link',
+    ).ExternalLinkIcon
+  : 'external-link';
+const ThreeDotsIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/three-dots')
+      .ThreeDotsIcon
+  : 'three-dots';
+const PencilIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/pencil')
+      .PencilIcon
+  : 'pencil';
+const BinIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
+  : 'bin';
 
 type Args = {
   controller?: SayController;
@@ -44,6 +81,12 @@ type UpdateStatus = {
 type Status = CreationStatus | UpdateStatus;
 
 export default class RdfaRelationshipEditor extends Component<Args> {
+  PlusIcon = PlusIcon;
+  ExternalLinkIcon = ExternalLinkIcon;
+  ThreeDotsIcon = ThreeDotsIcon;
+  PencilIcon = PencilIcon;
+  BinIcon = BinIcon;
+
   @tracked modalOpen = false;
   @tracked _statusMessage: StatusMessageForNode | null = null;
 

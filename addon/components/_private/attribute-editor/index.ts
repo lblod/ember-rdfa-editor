@@ -7,6 +7,36 @@ import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-ut
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const CheckIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/check')
+      .CheckIcon
+  : 'check';
+const PencilIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/pencil')
+      .PencilIcon
+  : 'pencil';
+const ChevronDownIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/chevron-down')
+      .ChevronDownIcon
+  : 'chevron-down';
+const ChevronUpIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/chevron-up')
+      .ChevronUpIcon
+  : 'chevron-up';
 
 type Args = {
   controller: SayController;
@@ -14,6 +44,11 @@ type Args = {
 };
 
 export default class AttributeEditor extends Component<Args> {
+  CheckIcon = CheckIcon;
+  PencilIcon = PencilIcon;
+  ChevronDownIcon = ChevronDownIcon;
+  ChevronUpIcon = ChevronUpIcon;
+
   @tracked collapsed = false;
   @trackedReset<AttributeEditor, boolean>({
     memo: 'node',

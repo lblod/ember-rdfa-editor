@@ -7,6 +7,15 @@ import { clearColor, setColor } from '@lblod/ember-rdfa-editor/plugins/color';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const WordIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/word')
+      .WordIcon
+  : 'word';
 
 type Args = {
   controller: SayController;
@@ -17,6 +26,7 @@ export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
   Velcro = Velcro;
+  WordIcon = WordIcon;
 
   setupDropdownButton = modifier(
     (element: HTMLElement) => {

@@ -5,9 +5,11 @@ import { modifier } from 'ember-modifier';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { Velcro } from 'ember-velcro';
+import { type ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;
+  icon: ComponentLike;
 };
 export default class ToolbarDropdown extends Component<Args> {
   @tracked referenceElement?: Element = undefined;
