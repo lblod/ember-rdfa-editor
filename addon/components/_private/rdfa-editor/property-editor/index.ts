@@ -11,10 +11,35 @@ import type {
   PlainTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
-import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
-import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
-import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const PlusIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/plus')
+      .PlusIcon
+  : 'plus';
+const PencilIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/pencil')
+      .PencilIcon
+  : 'pencil';
+const BinIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
+  : 'bin';
+const ThreeDotsIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/three-dots')
+      .ThreeDotsIcon
+  : 'three-dots';
 
 type CreationStatus = {
   mode: 'creation';

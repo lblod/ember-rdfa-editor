@@ -4,8 +4,22 @@ import Component from '@glimmer/component';
 import { NodeType, SayController } from '@lblod/ember-rdfa-editor';
 import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type';
 import IntlService from 'ember-intl/services/intl';
-import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
-import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const CheckIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/check')
+      .CheckIcon
+  : 'check';
+const NavDownIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/nav-down')
+      .NavDownIcon
+  : 'nav-down';
 
 type Args = {
   controller?: SayController;

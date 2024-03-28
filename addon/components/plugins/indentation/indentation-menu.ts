@@ -4,8 +4,23 @@ import { liftListItem, sinkListItem } from 'prosemirror-schema-list';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { chainCommands } from 'prosemirror-commands';
 import { indentNode } from '@lblod/ember-rdfa-editor/commands';
-import { ReverseIndentIcon } from '@appuniversum/ember-appuniversum/components/icons/reverse-indent';
-import { IndentIcon } from '@appuniversum/ember-appuniversum/components/icons/indent';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const ReverseIndentIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/reverse-indent',
+    ).ReverseIndentIcon
+  : 'reverse-indent';
+const IndentIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/indent')
+      .IndentIcon
+  : 'indent';
 
 type Args = {
   controller: SayController;

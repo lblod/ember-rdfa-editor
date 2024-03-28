@@ -4,9 +4,30 @@ import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
 import { EditorState } from '@lblod/ember-rdfa-editor';
-import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
-import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
-import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const LinkIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/link')
+      .LinkIcon
+  : 'link';
+const LinkExternalIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/link-external',
+    ).LinkExternalIcon
+  : 'link-external';
+const LinkBrokenIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/link-broken')
+      .LinkBrokenIcon
+  : 'link-broken';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;

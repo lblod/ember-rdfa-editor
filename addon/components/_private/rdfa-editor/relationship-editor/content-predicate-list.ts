@@ -1,8 +1,21 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
-import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const ThreeDotsIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/three-dots')
+      .ThreeDotsIcon
+  : 'three-dots';
+const BinIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
+  : 'bin';
 
 interface Args {
   properties: OutgoingTriple[];

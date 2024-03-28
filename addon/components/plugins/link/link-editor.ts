@@ -3,8 +3,23 @@ import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
-import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
-import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const LinkExternalIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/link-external',
+    ).LinkExternalIcon
+  : 'link-external';
+const LinkBrokenIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/link-broken')
+      .LinkBrokenIcon
+  : 'link-broken';
 
 type Args = {
   controller?: SayController;

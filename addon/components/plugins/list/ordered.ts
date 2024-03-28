@@ -11,8 +11,22 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { OrderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/ordered-list';
-import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const OrderedListIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/ordered-list')
+      .OrderedListIcon
+  : 'ordered-list';
+const CheckIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/check')
+      .CheckIcon
+  : 'check';
 
 type Args = {
   controller: SayController;

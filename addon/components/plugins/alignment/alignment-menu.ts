@@ -8,7 +8,15 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/alignment';
 import { setAlignment } from '@lblod/ember-rdfa-editor/plugins/alignment/commands';
 import IntlService from 'ember-intl/services/intl';
-import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const NavDownIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/nav-down')
+      .NavDownIcon
+  : 'nav-down';
 
 type Args = {
   controller?: SayController;
