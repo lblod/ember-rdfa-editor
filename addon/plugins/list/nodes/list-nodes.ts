@@ -215,7 +215,7 @@ function renderListMarker(style: string, path: number[]): string {
   } else if (style === 'upper-roman') {
     return `${romanize(path[lastIndex] + 1)}. `
   } else {
-    return `${path.map((index) => index + 1).join('.')} `;
+    return `${path.map((index) => index + 1).join('.')}. `;
   }
 }
 /**

@@ -27,6 +27,7 @@ export function listTrackingPlugin(): ProsePlugin {
       newState: EditorState,
     ) {
       if (transactions.some((tr) => tr.docChanged)) {
+        console.log('running changedDescs', transactions, oldState, newState);
         const changedLists: { node: PNode; pos: number }[] = [];
         changedDescendants(
           oldState.doc,

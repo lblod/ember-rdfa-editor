@@ -38,6 +38,12 @@ export default class ListOrdered extends Component<Args> {
           'ember-rdfa-editor.ordered-list.styles.upper-roman',
         ),
       },
+      {
+        name: 'hierarchical',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.hierarchical',
+        ),
+      },
     ];
   }
 
