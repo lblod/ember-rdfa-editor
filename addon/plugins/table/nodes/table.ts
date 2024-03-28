@@ -1,8 +1,14 @@
-import { Node as PNode, type NodeSpec, ResolvedPos } from 'prosemirror-model';
+// Helper for creating a schema that supports tables.
+
+import { Node as PNode, ResolvedPos, type NodeSpec } from 'prosemirror-model';
+import {
+  getRdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema';
 import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 
 interface ExtraAttribute {
   default: unknown;
@@ -58,7 +64,8 @@ function getCellAttrs(
       result[key] = value;
     }
   }
-  return result;
+
+  return { ...getRdfaAttrs(dom), ...result };
 }
 
 function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
@@ -77,6 +84,9 @@ function setCellAttrs(node: PNode, extraAttrs: Record<string, ExtraAttribute>) {
     if (setter) {
       setter(node.attrs[key], attrs);
     }
+  }
+  for (const key of Object.keys(rdfaAttrSpec({ rdfaAware: false }))) {
+    attrs[key] = node.attrs[key];
   }
 
   return attrs;
@@ -206,6 +216,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       tableRole: 'table',
       isolating: true,
       attrs: {
+        ...rdfaAttrSpec({ rdfaAware: false }),
         class: { default: 'say-table' },
         style: { default: tableStyle },
       },
@@ -214,11 +225,12 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       parseDOM: [
         {
           tag: 'table',
-          getAttrs(node: string | HTMLElement) {
+          getAttrs(node: HTMLElement | string) {
             if (typeof node === 'string') {
               return false;
             }
-            return null;
+            const rdfaAttrs = getRdfaAttrs(node);
+            return { ...rdfaAttrs };
           },
         },
       ],
@@ -235,6 +247,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       },
       serialize(node: PNode) {
         const tableView = new TableView(node, 25);
+        // Delete variables as we do not need them in serialized version
         const style = {
           width: '100%',
           ...tableStyle,
@@ -256,15 +269,17 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
+      attrs: { ...rdfaAttrSpec({ rdfaAware: false }) },
       allowGapCursor: false,
       parseDOM: [
         {
           tag: 'tr',
-          getAttrs(node: string | HTMLElement) {
+          getAttrs(node: HTMLElement | string) {
             if (typeof node === 'string') {
               return false;
             }
-            return null;
+            const rdfaAttrs = getRdfaAttrs(node);
+            return { ...rdfaAttrs };
           },
         },
       ],
@@ -278,22 +293,30 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
             ? options.rowBackground?.even
             : options.rowBackground?.odd,
         };
-        return ['tr', { style: constructInlineStyles(style) }, 0];
+        return [
+          'tr',
+          { ...node.attrs, style: constructInlineStyles(style) },
+          0,
+        ];
       },
-      toDOM() {
-        return ['tr', { style: constructInlineStyles(rowStyle) }, 0];
+      toDOM(node: PNode) {
+        return [
+          'tr',
+          { ...node.attrs, style: constructInlineStyles(rowStyle) },
+          0,
+        ];
       },
     },
     table_cell: {
       content: options.cellContent,
-      attrs: cellAttrs,
+      attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
       allowGapCursor: false,
       parseDOM: [
         {
           tag: 'td',
-          getAttrs: (dom: string | HTMLElement) => {
+          getAttrs: (dom: HTMLElement | string) => {
             if (typeof dom === 'string') {
               return false;
             }
@@ -307,13 +330,13 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     },
     table_header: {
       content: options.cellContent,
-      attrs: cellAttrs,
+      attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'header_cell',
       isolating: true,
       parseDOM: [
         {
           tag: 'th',
-          getAttrs: (dom: string | HTMLElement) => {
+          getAttrs: (dom: HTMLElement | string) => {
             if (typeof dom === 'string') {
               return false;
             }
