@@ -80,7 +80,6 @@ const nodes = {
   ...tableNodes({
     tableGroup: 'block',
     cellContent: 'inline*',
-    rdfaAware: true,
   }),
   heading: headingWithConfig({ rdfaAware: true }),
   blockquote,

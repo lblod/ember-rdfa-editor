@@ -74,7 +74,6 @@ export const SAMPLE_SCHEMA = new Schema({
     ...tableNodes({
       tableGroup: 'block',
       cellContent: 'block+',
-      rdfaAware: true,
     }),
     heading: headingWithConfig({ rdfaAware: true }),
     blockquote,
