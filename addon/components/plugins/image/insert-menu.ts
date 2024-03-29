@@ -11,7 +11,11 @@ const ImageIcon = macroCondition(
   ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
     importSync('@appuniversum/ember-appuniversum/components/icons/image')
       .ImageIcon
-  : 'image';
+  : macroCondition(
+        dependencySatisfies('@appuniversum/ember-appuniversum', '>=2.16.0'),
+      )
+    ? 'image'
+    : 'website';
 
 const DEFAULT_SVG_HEIGHT = 100;
 
