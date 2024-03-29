@@ -18,6 +18,76 @@ import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table';
 import { type Command } from '@lblod/ember-rdfa-editor';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const BinIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
+  : 'bin';
+const TableIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/table')
+      .TableIcon
+  : 'table';
+const TableInsertIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/table-insert')
+      .TableInsertIcon
+  : 'table-insert';
+const TableColumnEndAddIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-column-end-add',
+    ).TableColumnEndAddIcon
+  : 'table-column-end-add';
+const TableColumnStartAddIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-column-start-add',
+    ).TableColumnStartAddIcon
+  : 'table-column-start-add';
+const TableColumnRemoveIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-column-remove',
+    ).TableColumnRemoveIcon
+  : 'table-column-remove';
+const TableRowEndAddIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-row-end-add',
+    ).TableRowEndAddIcon
+  : 'table-row-end-add';
+const TableRowStartAddIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-row-start-add',
+    ).TableRowStartAddIcon
+  : 'table-row-start-add';
+const TableRowRemoveIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/table-row-remove',
+    ).TableRowRemoveIcon
+  : 'table-row-remove';
 
 interface Args {
   controller?: SayController;
@@ -32,6 +102,11 @@ type Action = {
 };
 
 export default class TableMenu extends Component<Args> {
+  TableIcon = TableIcon;
+  TableInsertIcon = TableInsertIcon;
+  TableColumnEndAddIcon = TableColumnEndAddIcon;
+  TableRowEndAddIcon = TableRowEndAddIcon;
+
   @service declare intl: IntlService;
 
   @tracked tableAddRows = DEFAULT_COLUMNS_ROWS;
@@ -42,37 +117,37 @@ export default class TableMenu extends Component<Args> {
       {
         command: addRowAfter,
         title: this.intl.t('ember-rdfa-editor.table.add-row-below'),
-        icon: 'table-row-end-add',
+        icon: TableRowEndAddIcon,
       },
       {
         command: addRowBefore,
         title: this.intl.t('ember-rdfa-editor.table.add-row-above'),
-        icon: 'table-row-start-add',
+        icon: TableRowStartAddIcon,
       },
       {
         command: addColumnAfter,
         title: this.intl.t('ember-rdfa-editor.table.add-column-after'),
-        icon: 'table-column-end-add',
+        icon: TableColumnEndAddIcon,
       },
       {
         command: addColumnBefore,
         title: this.intl.t('ember-rdfa-editor.table.add-column-before'),
-        icon: 'table-column-start-add',
+        icon: TableColumnStartAddIcon,
       },
       {
         command: deleteRow,
         title: this.intl.t('ember-rdfa-editor.table.delete-row'),
-        icon: 'table-row-remove',
+        icon: TableRowRemoveIcon,
       },
       {
         command: deleteColumn,
         title: this.intl.t('ember-rdfa-editor.table.delete-column'),
-        icon: 'table-column-remove',
+        icon: TableColumnRemoveIcon,
       },
       {
         command: deleteTable,
         title: this.intl.t('ember-rdfa-editor.table.delete-table'),
-        icon: 'bin',
+        icon: BinIcon,
       },
       {
         command: toggleHeader('row'),
