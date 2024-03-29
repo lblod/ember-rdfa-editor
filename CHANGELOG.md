@@ -1,5 +1,76 @@
 # @lblod/ember-rdfa-editor
 
+## 9.6.0-next.0
+
+### Minor Changes
+
+- [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`b76b5f7`](https://github.com/lblod/ember-rdfa-editor/commit/b76b5f744ed0681ed04626e5c0086258a70859ab) Thanks [@elpoelma](https://github.com/elpoelma)! - Add codemirror modifier with support for custom extensions
+
+- [#1145](https://github.com/lblod/ember-rdfa-editor/pull/1145) [`207b588`](https://github.com/lblod/ember-rdfa-editor/commit/207b58892e1adbd0dc19ca0685f18af6b9c2fba9) Thanks [@elpoelma](https://github.com/elpoelma)! - Migrate to pnpm
+
+- [#1148](https://github.com/lblod/ember-rdfa-editor/pull/1148) [`d310875`](https://github.com/lblod/ember-rdfa-editor/commit/d310875b4d17465e3ff79acafc92420c4fb95c43) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option to provide `EditorRange` object to `setHtmlContent` method in order to only replace a part of the document
+
+- [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`4d0e54c`](https://github.com/lblod/ember-rdfa-editor/commit/4d0e54ca52268a6eac653f006ee9300ce97e2f56) Thanks [@elpoelma](https://github.com/elpoelma)! - Clean-up debug-tools component:
+
+  - Usage of new `codemirror` modifier
+  - Removal of `xml` support
+
+- [#1148](https://github.com/lblod/ember-rdfa-editor/pull/1148) [`4ba9fb5`](https://github.com/lblod/ember-rdfa-editor/commit/4ba9fb5d2a8e57b4cabe94db0a05ac5f8111d513) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `domParser` getter to `SayController` class.
+
+  The `domParser` getter provides access to an instance of the `ProseMirror` parser.
+  This parser allows you to parse html nodes into prosemirror nodes/fragments.
+
+  To get more information on the `DomParser` class, visit https://prosemirror.net/docs/ref/#model.DOMParser
+
+- [#1170](https://github.com/lblod/ember-rdfa-editor/pull/1170) [`16e083e`](https://github.com/lblod/ember-rdfa-editor/commit/16e083eb0a401c47d30581e5d701db3206b82902) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4707: Vertical alignment in table cells
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e15912`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
+
+  - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+  - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
+    - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
+    - If a node is not found: a default `topNode` node is created. The html provided to `setHTMLContent` or `intialize` is parsed as its content.
+
+- [#1178](https://github.com/lblod/ember-rdfa-editor/pull/1178) [`20af37e`](https://github.com/lblod/ember-rdfa-editor/commit/20af37e1bfeb52ecbe32e779b29841c2a01b3d8e) Thanks [@piemonkey](https://github.com/piemonkey)! - Update to latest ember-appuniversum v3.4.0
+
+- [`cd3d200`](https://github.com/lblod/ember-rdfa-editor/commit/cd3d200eaea700bd2c685501a692a77c28c46f73) Thanks [@elpoelma](https://github.com/elpoelma)! - This release contains experimental support for the new `rdfaAware` system and API.
+  For more information, check out [A new approach to handle RDFa in documents](https://github.com/lblod/ember-rdfa-editor/blob/9c32a9dea0da13df4092c39d9a092ba0803a3f42/README.md#experimental-a-new-approach-to-handle-rdfa-in-documents)
+
+  #### Deprecations
+
+  - Passing the `keyMapOptions` argument to the `RdfaEditor` is deprecated. The behaviour of `selectBlockRdfaNode` is included by default. This feature will be removed in the next major release.
+  - The `rdfaAttrs` constant is deprecated, use the `rdfaAttrSpec` function instead
+  - `inline_rdfa` is deprecated, use `inlineRdfaWithConfig` instead
+  - `block_rdfa` is deprecated, use `blockRdfaWithConfig` instead
+  - `doc` is deprecated, use `docWithConfig` instead
+  - `invisible_rdfa` is deprecated, use `invisibleRdfaWithConfig` instead
+  - `repaired_block` is deprecated, use `repairedBlockWithConfig` instead
+  - `heading` is deprecated, use `headingWithConfig` instead
+  - `ordered_list` is deprecated, use `orderedListWithConfig` instead
+  - `bullet_list` is deprecated, use `bulletListWithConfig` instead
+  - `list_item` is deprecated, use `listItemWithConfig` instead
+
+- [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`69cf55c`](https://github.com/lblod/ember-rdfa-editor/commit/69cf55c80fb4bd8da7c8161bbe3a8f368e53b519) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of a reworked html-editor modal component
+
+- [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`6971f12`](https://github.com/lblod/ember-rdfa-editor/commit/6971f12b7dad0bcc08fa0d9944b9b5ed4f31d546) Thanks [@elpoelma](https://github.com/elpoelma)! - Replace `xml-formatter` by `js-beautify`.
+  Improve formatting of html in debug-tools.
+
+- [#1166](https://github.com/lblod/ember-rdfa-editor/pull/1166) [`f918748`](https://github.com/lblod/ember-rdfa-editor/commit/f918748be0b3f4a01622379b403901024f03eeec) Thanks [@piemonkey](https://github.com/piemonkey)! - Expose helper method to export document as a HTML page
+
+- [#1178](https://github.com/lblod/ember-rdfa-editor/pull/1178) [`14331f0`](https://github.com/lblod/ember-rdfa-editor/commit/14331f04741c2be15ba1bd3d805951f4c51eba3f) Thanks [@piemonkey](https://github.com/piemonkey)! - Update icon usage to inline SVGs instead of using svgiconset.
+  If using ember-appuniversum version greater than 3.4.1, icon components are now used instead of string icon names, this uses inline SVGs that can be supported in unusual hosting environments.
+
+- [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e15912`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - When using the `setHTMLContent` method to also update the attributes of the topNode correctly. This should make `setHTMLContent` more-or-less equivalent with the `initialize` method. The main difference is that `initialize` creates a new state and `setHTMLContent` does not.
+
+### Patch Changes
+
+- [#1175](https://github.com/lblod/ember-rdfa-editor/pull/1175) [`87913bc`](https://github.com/lblod/ember-rdfa-editor/commit/87913bc121a85da65c5dcd33a788271f58a93332) Thanks [@dkozickis](https://github.com/dkozickis)! - Bump `@say-editor/prosemirror-tables` to `0.2.0` to fix the behaviour
+  of setting background color on table cells.
+
+- [#1147](https://github.com/lblod/ember-rdfa-editor/pull/1147) [`43ef4ba`](https://github.com/lblod/ember-rdfa-editor/commit/43ef4ba006d18626d674a0d308579b706069d628) Thanks [@elpoelma](https://github.com/elpoelma)! - Removing top margin from `div` elements inside `li` elements
+
+- [#1133](https://github.com/lblod/ember-rdfa-editor/pull/1133) [`57e11d6`](https://github.com/lblod/ember-rdfa-editor/commit/57e11d610e2f048c1e4acb8322cff3b0f3633c04) Thanks [@abeforgit](https://github.com/abeforgit)! - migrate off of ember-cli-typescript
+
 ## 9.5.1
 
 ### Patch Changes
