@@ -85,7 +85,6 @@ const schema = new Schema({
     ...tableNodes({
       tableGroup: 'block',
       cellContent: 'block+',
-      rdfaAware: true,
     }),
     heading: headingWithConfig({ rdfaAware: true }),
     blockquote,
