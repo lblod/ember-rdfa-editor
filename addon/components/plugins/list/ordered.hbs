@@ -1,22 +1,35 @@
 {{#if @controller}}
   <Toolbar::Button
     @active={{this.isActive}}
-    @title={{t 'ember-rdfa-editor.ordered-list.button-label'}}
-    @optionsLabel={{t 'ember-rdfa-editor.ordered-list.options-label'}}
+    @title={{t "ember-rdfa-editor.ordered-list.button-label"}}
+    @optionsLabel={{t "ember-rdfa-editor.ordered-list.options-label"}}
     @icon="ordered-list"
-    {{on "click" (fn this.toggle 'decimal')}}
+    {{on "click" (fn this.toggle "decimal")}}
     @controller={{@controller}}
     @disabled={{not this.canToggle}}
   >
     <:options as |Menu|>
       {{#each this.styles as |style|}}
-        <Menu.Item disabled={{this.styleIsActive style.name}} @menuAction={{(fn this.setStyle style.name)}}>
+        <Menu.Item
+          disabled={{this.styleIsActive style.name}}
+          @menuAction={{(fn this.setStyle style.name)}}
+        >
           {{#if (this.styleIsActive style.name)}}
-            <AuIcon @icon='check' @ariaHidden={{true}} />
+            <AuIcon @icon="check" @ariaHidden={{true}} />
           {{/if}}
           {{style.description}}
         </Menu.Item>
       {{/each}}
+      <Menu.Item @menuAction={{this.toggleHierarchical}}>
+        <AuToggleSwitch
+          class="say-toolbar__toggle-switch"
+          @checked={{this.isHierarchical}}
+        >
+          <span class="say-toolbar__toggle-switch__label">
+            {{t "ember-rdfa-editor.ordered-list.styles.hierarchical"}}
+          </span>
+        </AuToggleSwitch>
+      </Menu.Item>
     </:options>
   </Toolbar::Button>
 {{/if}}

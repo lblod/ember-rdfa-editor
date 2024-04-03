@@ -5,9 +5,11 @@ import {
   getRdfaContentElement,
   rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
-import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  optionMapOr,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import type { Schema } from 'inspector';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
@@ -33,6 +35,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
       const baseAttrs = {
         order: { default: 1 },
         style: { default: null },
+        hierarchical: { default: null },
       };
       return {
         ...baseAttrs,
@@ -52,6 +55,9 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
           const baseAttrs = {
             order: optionMapOr(1, (val) => Number(val), start),
             style: getListStyleFromDomElement(dom),
+            hierarchical: dom.dataset['hierarchical']
+              ? dom.dataset['hierarchical'] !== 'false'
+              : null,
           };
           return {
             ...baseAttrs,
@@ -63,11 +69,12 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node) {
-      const { style, order, ...attrs } = node.attrs;
+      const { style, order, hierarchical, ...attrs } = node.attrs;
       const baseAttrs = {
         ...(order !== 1 && { start: order }),
         ...(style && {
           style: `list-style-type: ${style};`,
+          'data-hierarchical': hierarchical,
         }),
       };
       if (rdfaAware) {
@@ -95,7 +102,11 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
   return {
     content: 'list_item+',
     group: 'block list',
-    attrs: { ...rdfaAttrSpec({ rdfaAware }), style: { default: 'unordered' } },
+    attrs: {
+      ...rdfaAttrSpec({ rdfaAware }),
+      style: { default: 'unordered' },
+      hierarchical: { default: false },
+    },
     parseDOM: [
       {
         tag: 'ul',
@@ -137,7 +148,6 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     attrs: {
       ...rdfaAttrSpec({ rdfaAware }),
       listPath: { default: [] },
-      listStyle: { default: 'unordered' },
     },
     parseDOM: [
       {
@@ -148,14 +158,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           }
           const mapping = getListItemMapping(this);
           const listPath = calculateListItemPath(node, mapping);
-          console.log(mapping.get(node));
-          let cur = node;
-          let listStyle = cur.attributes.getNamedItem('listStyle')?.value ;
-          while (!listStyle && cur.parentElement) {
-            cur = cur.parentElement;
-            listStyle = cur.attributes.getNamedItem('style')?.value;
-          }
-          return { ...getRdfaAttrs(node, { rdfaAware }), listPath, listStyle };
+          return { ...getRdfaAttrs(node, { rdfaAware }), listPath };
         },
         sayListItemMapping: new WeakMap<Node, number[]>(),
         contentElement: getRdfaContentElement,
@@ -168,21 +171,14 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           tag: 'li',
           content: 0,
           attrs: {
-            'data-list-marker': renderListMarker(
-              node.attrs['listStyle'],
-              node.attrs['listPath'],
-            ),
+            'data-list-marker': renderListMarker(node.attrs['listPath']),
           },
         });
       } else {
         return [
           'li',
           {
-            ...node.attrs,
-            'data-list-marker': renderListMarker(
-              node.attrs['listStyle'],
-              node.attrs['listPath'],
-            ),
+            'data-list-marker': renderListMarker(node.attrs['listPath']),
           },
           0,
         ];
@@ -190,7 +186,12 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     },
   };
 };
-type ListItemMapping = WeakMap<Node, number[]>;
+export interface ListPathEntry {
+  pos: number;
+  style: string;
+  hierarchical: boolean;
+}
+type ListItemMapping = WeakMap<Node, ListPathEntry[]>;
 /**
  * a utility to conveniently get the list mapping out of a parseRule in a typesafe way
  */
@@ -208,7 +209,10 @@ function getListItemMapping(
 /**
  * Use dynamic programming to efficiently determine the hierarchy of a given <li> node
  */
-function calculateListItemPath(node: Node, mapping: ListItemMapping): number[] {
+function calculateListItemPath(
+  node: Node,
+  mapping: ListItemMapping,
+): ListPathEntry[] {
   if (tagName(node) !== 'li') {
     throw new Error('Tried to calculate the list path of a non-li node');
   }
@@ -217,7 +221,7 @@ function calculateListItemPath(node: Node, mapping: ListItemMapping): number[] {
     return cached;
   }
   // first, get the path of the li higher up the tree, if there is one
-  let basePath: number[] = [];
+  let basePath: ListPathEntry[] = [];
   const grandParent = node.parentNode?.parentNode;
   if (grandParent && tagName(grandParent) === 'li') {
     basePath = calculateListItemPath(grandParent, mapping);
@@ -234,17 +238,44 @@ function calculateListItemPath(node: Node, mapping: ListItemMapping): number[] {
   let index = 0;
   if (prevSiblingLi) {
     const prevSiblingPath = calculateListItemPath(prevSiblingLi, mapping);
-    index = prevSiblingPath[prevSiblingPath.length - 1] + 1;
+    index = prevSiblingPath[prevSiblingPath.length - 1].pos + 1;
+  }
+
+  // then we calculate the style and hierarchy of this level
+  // if we have a parent OL that has style and hierarchy, we use it (treating ULs as style=unordered and not hierarchical)
+  // if not, we copy over the styles from the grandparent LI, or use a default
+
+  const parent = unwrap(node.parentNode) as HTMLElement;
+  let style = 'decimal';
+  let hierarchical = false;
+  if (tagName(parent) === 'ul') {
+    style = 'unordered';
+  } else if (tagName(parent) === 'ol') {
+    style =
+      getListStyleFromDomElement(parent) ??
+      basePath[basePath.length - 1]?.style ??
+      style;
+    if (parent.dataset['hierarchical']) {
+      hierarchical = parent.dataset['hierarchical'] !== 'false';
+    } else {
+      hierarchical =
+        basePath[basePath.length - 1]?.hierarchical ?? hierarchical;
+    }
+  } else {
+    throw new Error('li with non-list parent');
   }
 
   // the result is simply the path of our ancestor li concatenated with our index
-  const resultPath = [...basePath, index];
+  const resultPath: ListPathEntry[] = [
+    ...basePath,
+    { pos: index, hierarchical, style },
+  ];
   // and we store the result so we don't fibonnacci ourselves into exponential complexity
   mapping.set(node, resultPath);
   return resultPath;
 }
 
-const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+const alphabet = [...'abcdefghijklmnopqrstuvwxyz'];
 
 function romanize(num: number) {
   const lookup = {
@@ -277,7 +308,7 @@ function romanize(num: number) {
  */
 function indexToAlpha(index: number): string {
   let cur = index;
-  let result = [];
+  const result = [];
   result.push(cur % 26);
   while (cur > 25) {
     // -1 here cause we're 0-based
@@ -291,17 +322,24 @@ function indexToAlpha(index: number): string {
  * Given a path and a style, render a human-readable representation which the css rule can
  * simply render without extra processing
  */
-function renderListMarker(style: string, path: number[]): string {
+function renderListMarker(path: ListPathEntry[]): string {
   const length = path.length;
   const lastIndex = length - 1;
-  if (style === 'decimal') {
-    return `${path[lastIndex] + 1}. `;
-  } else if (style === 'lower-alpha') {
-    return `${indexToAlpha(path[lastIndex])}. `;
-  } else if (style === 'upper-roman') {
-    return `${romanize(path[lastIndex] + 1)}. `;
+  const lastEntry = path[lastIndex];
+  if (lastEntry.hierarchical) {
+    return `${path.map(renderEntry).join('.')}. `;
   } else {
-    return `${path.map((index) => index + 1).join('.')}. `;
+    return `${renderEntry(lastEntry)}. `;
+  }
+}
+function renderEntry(entry: ListPathEntry) {
+  const { style, pos } = entry;
+  if (style === 'lower-alpha') {
+    return indexToAlpha(pos);
+  } else if (style === 'upper-roman') {
+    return romanize(pos + 1);
+  } else {
+    return pos + 1;
   }
 }
 /**

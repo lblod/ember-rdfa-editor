@@ -192,3 +192,7 @@ $say-toolbar-height: 44px !default;
   background-color: var(--selected-background-color, var(--default-background-color));
   border: 1px solid var(--au-gray-600);
 }
+
+.say-toolbar__toggle-switch__label {
+  color: var(--au-gray-700);
+}

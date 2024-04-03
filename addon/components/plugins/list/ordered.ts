@@ -38,12 +38,6 @@ export default class ListOrdered extends Component<Args> {
           'ember-rdfa-editor.ordered-list.styles.upper-roman',
         ),
       },
-      {
-        name: 'hierarchical',
-        description: this.intl.t(
-          'ember-rdfa-editor.ordered-list.styles.hierarchical',
-        ),
-      },
     ];
   }
 
@@ -52,6 +46,11 @@ export default class ListOrdered extends Component<Args> {
       (node) =>
         node.type === this.schema.nodes['ordered_list'] ||
         node.type === this.schema.nodes['bullet_list'],
+    )(this.selection);
+  }
+  get firstListItemParent() {
+    return findParentNode(
+      (node) => node.type === this.schema.nodes['list_item'],
     )(this.selection);
   }
 
@@ -72,6 +71,16 @@ export default class ListOrdered extends Component<Args> {
 
   get schema() {
     return this.controller.schema;
+  }
+  get isHierarchical() {
+    const listItem = this.firstListItemParent;
+    if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
+      const path = listItem.node.attrs['listPath'];
+
+      return path[path.length - 1].hierarchical;
+    } else {
+      return false;
+    }
   }
 
   toggleCommand(listStyle?: OrderListStyle): Command {
@@ -118,13 +127,29 @@ export default class ListOrdered extends Component<Args> {
     }
   }
 
-  styleIsActive = (style: string) => {
+  @action
+  toggleHierarchical() {
     const firstListParent = this.firstListParent;
     if (
       firstListParent?.node.type ===
       this.controller.schema.nodes['ordered_list']
     ) {
-      return firstListParent.node.attrs['style'] === style;
+      this.controller.withTransaction((tr) => {
+        return tr.setNodeAttribute(
+          firstListParent.pos,
+          'hierarchical',
+          !this.isHierarchical,
+        );
+      });
+    }
+  }
+  styleIsActive = (style: string) => {
+    const listItem = this.firstListItemParent;
+
+    if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
+      const path = listItem.node.attrs['listPath'];
+
+      return path[path.length - 1].style === style;
     } else {
       return false;
     }

@@ -5,6 +5,7 @@ import {
   Transaction,
 } from '@lblod/ember-rdfa-editor';
 import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
+import type { ListPathEntry } from './nodes/list-nodes';
 
 export { toggleList } from './commands/toggle-list';
 export { liftOutOfNestedLists } from './commands/lift-out-of-nested-lists';
@@ -27,7 +28,6 @@ export function listTrackingPlugin(): ProsePlugin {
       newState: EditorState,
     ) {
       if (transactions.some((tr) => tr.docChanged)) {
-        console.log('running changedDescs', transactions, oldState, newState);
         const changedLists: { node: PNode; pos: number }[] = [];
         changedDescendants(
           oldState.doc,
@@ -60,34 +60,39 @@ export function listTrackingPlugin(): ProsePlugin {
 }
 
 function calculateListTree(node: PNode, offset: number, tr: Transaction) {
-  const path: number[] = [];
-  updateListItems(node, path, offset, tr, node.attrs['style'] || 'unordered');
+  const path: ListPathEntry[] = [];
+  updateListItems(
+    node,
+    path,
+    offset,
+    tr,
+    node.attrs['style'] ?? 'unordered',
+    node.attrs['hierarchical'] ?? false,
+  );
 }
 function updateListItems(
   node: PNode,
-  path: number[],
+  path: ListPathEntry[],
   docPosOffset: number,
   tr: Transaction,
   style: string,
+  hierarchical: boolean,
 ) {
   if (node.isLeaf) {
     return;
   }
   let counter = 0;
-  let currentStyle = '';
-  node.content.forEach((child: PNode, offset: number, index: number) => {
+  node.content.forEach((child: PNode, offset: number) => {
     if (child.type.name === 'list_item') {
-      tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', [
-        ...path,
-        counter,
-      ]);
-      tr.setNodeAttribute(docPosOffset + offset + 1, 'listStyle', style);
+      const newPath = [...path, { pos: counter, hierarchical, style }];
+      tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
       updateListItems(
         child,
-        [...path, counter],
+        newPath,
         docPosOffset + offset + 1,
         tr,
         style,
+        hierarchical,
       );
       counter++;
     } else if (
@@ -100,9 +105,17 @@ function updateListItems(
         docPosOffset + offset + 1,
         tr,
         child.attrs['style'] ?? style,
+        child.attrs['hierarchical'] ?? hierarchical,
       );
     } else {
-      updateListItems(child, path, docPosOffset + offset + 1, tr, style);
+      updateListItems(
+        child,
+        path,
+        docPosOffset + offset + 1,
+        tr,
+        style,
+        hierarchical,
+      );
     }
   });
 }
