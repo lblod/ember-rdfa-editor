@@ -1,4 +1,4 @@
-import type { Node as PNode } from 'prosemirror-model';
+import type { Node as PNode, ParseRule } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   renderRdfaAware,
@@ -7,6 +7,8 @@ import {
 } from '@lblod/ember-rdfa-editor/core/schema';
 import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import type { Schema } from 'inspector';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
 
@@ -144,8 +146,18 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          return { ...getRdfaAttrs(node, { rdfaAware }) };
+          const mapping = getListItemMapping(this);
+          const listPath = calculateListItemPath(node, mapping);
+          console.log(mapping.get(node));
+          let cur = node;
+          let listStyle = cur.attributes.getNamedItem('listStyle')?.value ;
+          while (!listStyle && cur.parentElement) {
+            cur = cur.parentElement;
+            listStyle = cur.attributes.getNamedItem('style')?.value;
+          }
+          return { ...getRdfaAttrs(node, { rdfaAware }), listPath, listStyle };
         },
+        sayListItemMapping: new WeakMap<Node, number[]>(),
         contentElement: getRdfaContentElement,
       },
     ],
@@ -178,8 +190,62 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     },
   };
 };
+type ListItemMapping = WeakMap<Node, number[]>;
+/**
+ * a utility to conveniently get the list mapping out of a parseRule in a typesafe way
+ */
+function getListItemMapping(
+  parseRule: ParseRule & { sayListItemMapping?: ListItemMapping },
+): ListItemMapping {
+  const mapping = parseRule.sayListItemMapping;
+  if (mapping) {
+    return mapping;
+  } else {
+    throw new Error('no list item mapping found on parserule');
+  }
+}
+
+/**
+ * Use dynamic programming to efficiently determine the hierarchy of a given <li> node
+ */
+function calculateListItemPath(node: Node, mapping: ListItemMapping): number[] {
+  if (tagName(node) !== 'li') {
+    throw new Error('Tried to calculate the list path of a non-li node');
+  }
+  const cached = mapping.get(node);
+  if (cached) {
+    return cached;
+  }
+  // first, get the path of the li higher up the tree, if there is one
+  let basePath: number[] = [];
+  const grandParent = node.parentNode?.parentNode;
+  if (grandParent && tagName(grandParent) === 'li') {
+    basePath = calculateListItemPath(grandParent, mapping);
+  }
+
+  // then we calculate our index relative to the previous li items at our level
+  // we specifically skip all non-li siblings. Technically these should not exist, but
+  // out-of-spec html is extremely common
+  let prevSiblingLi = node.previousSibling;
+  while (prevSiblingLi && tagName(prevSiblingLi) !== 'li') {
+    prevSiblingLi = prevSiblingLi.previousSibling;
+  }
+
+  let index = 0;
+  if (prevSiblingLi) {
+    const prevSiblingPath = calculateListItemPath(prevSiblingLi, mapping);
+    index = prevSiblingPath[prevSiblingPath.length - 1] + 1;
+  }
+
+  // the result is simply the path of our ancestor li concatenated with our index
+  const resultPath = [...basePath, index];
+  // and we store the result so we don't fibonnacci ourselves into exponential complexity
+  mapping.set(node, resultPath);
+  return resultPath;
+}
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
 function romanize(num: number) {
   const lookup = {
     M: 1000,
@@ -205,15 +271,35 @@ function romanize(num: number) {
   }
   return roman;
 }
+/**
+ * Turns index into a base 26 number and maps it onto the alphabet, resulting
+ * in "aa" for index 26, "ab" for 27, "ba" for 52, etc
+ */
+function indexToAlpha(index: number): string {
+  let cur = index;
+  let result = [];
+  result.push(cur % 26);
+  while (cur > 25) {
+    // -1 here cause we're 0-based
+    cur = Math.floor(cur / 26) - 1;
+    result.push(cur % 26);
+  }
+  result.reverse();
+  return result.map((index) => alphabet[index]).join('');
+}
+/**
+ * Given a path and a style, render a human-readable representation which the css rule can
+ * simply render without extra processing
+ */
 function renderListMarker(style: string, path: number[]): string {
   const length = path.length;
   const lastIndex = length - 1;
   if (style === 'decimal') {
     return `${path[lastIndex] + 1}. `;
   } else if (style === 'lower-alpha') {
-    return `${alphabet[path[lastIndex] % 26]}. `;
+    return `${indexToAlpha(path[lastIndex])}. `;
   } else if (style === 'upper-roman') {
-    return `${romanize(path[lastIndex] + 1)}. `
+    return `${romanize(path[lastIndex] + 1)}. `;
   } else {
     return `${path.map((index) => index + 1).join('.')}. `;
   }
