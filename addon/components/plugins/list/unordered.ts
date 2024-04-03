@@ -6,12 +6,24 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const UnorderedListIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync(
+      '@appuniversum/ember-appuniversum/components/icons/unordered-list',
+    ).UnorderedListIcon
+  : 'unordered-list';
 
 type Args = {
   controller: SayController;
 };
 
 export default class ListUnordered extends Component<Args> {
+  UnorderedListIcon = UnorderedListIcon;
+
   get firstListParent() {
     return findParentNode(
       (node) =>

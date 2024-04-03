@@ -11,6 +11,35 @@ import type {
   PlainTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { dependencySatisfies, macroCondition } from '@embroider/macros';
+import { importSync } from '@embroider/macros';
+const PlusIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/plus')
+      .PlusIcon
+  : 'plus';
+const PencilIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/pencil')
+      .PencilIcon
+  : 'pencil';
+const BinIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
+  : 'bin';
+const ThreeDotsIcon = macroCondition(
+  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
+)
+  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
+    importSync('@appuniversum/ember-appuniversum/components/icons/three-dots')
+      .ThreeDotsIcon
+  : 'three-dots';
 
 type CreationStatus = {
   mode: 'creation';
@@ -27,6 +56,10 @@ type Args = {
 };
 export default class RdfaPropertyEditor extends Component<Args> {
   Modal = PropertyEditorModal;
+  PlusIcon = PlusIcon;
+  PencilIcon = PencilIcon;
+  BinIcon = BinIcon;
+  ThreeDotsIcon = ThreeDotsIcon;
 
   @tracked status?: Status;
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);

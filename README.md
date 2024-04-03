@@ -205,6 +205,45 @@ It may contain the following entries:
 Instances of the `ProseController` class can be used to control different aspects of the editor.
 🚧 interface docs under construction, refer to the source files for now 🚧
 
+## Experimental: a new approach to handle RDFa in documents
+This package also contains an opt-in, experimental way in how RDFa is handled.
+
+### Changes
+Instead of using and dealing with plain RDFa attributes, this approach introduces an new `rdfaAware` API:
+Two types of RDFa-aware node types are introduced: `resource` nodes and `literal` nodes.
+
+#### Resource nodes
+Resource nodes as the name suggests, define a `resource` in a document. This resource is always represented by a URI.
+A document may contain multiple resource nodes, which may define the same or different resources.
+In equivalent RDFa, a resource node will typically be serialized to an html element with the RDFa `about` attribute.
+Resource nodes may contain the following prosemirror attributes:
+- `subject`: the URI of the resource
+- `properties`: a list of properties defined on the subject/resource. These properties correspond with RDF triples for which the resource URI is the subject.
+- `backlinks`: contains the 'inverses' of properties. Corresponds with RDF triples for which the resource URI is the object. The `subject` of these backlinks will typically also be defined in the document using a resource node.
+- `__rdfaId`: a unique id representing the resource node. You can use this id to search specific nodes in a document.
+
+#### Literal nodes
+Literal nodes define a `literal` in a document. This node will typically be the target of a property defined by a resource node. The content of the `literal` is defined by the content inside a literal node.
+Literal nodes may contain the following prosemirror attributes:
+- `backlinks`: contains the 'inverses' of properties. Corresponds with RDF triples for which the literal is the object. The `subject` of these backlinks will typically also be defined in the document using a resource node. Literal nodes will typically only have 1 backlink.
+- `__rdfaId`: a unique id representing the literal node. You can use this id to search specific nodes in a document.
+Note: literal nodes do not have `subject` or `properties` attributes. Literals can not define the subject of an RDF triple.
+
+#### Changes to existing node-specs
+Most of the nodes contained in this package (`block_rdfa`, `inline_rdfa`, `heading` etc.) are now provided in two versions: an `rdfaAware` version an a non-`rdfaAware` version:
+`blockRdfaWithConfig` replaces `block_rdfa`: `blockRdfaWithConfig` is a configurable node-spec which allows developers to specify whether the node-spec should work in an `rdfaAware` way or not.
+Similar to `blockRdfaWithConfig`, other node-specs have also been replaced by a configurable version.
+The configurable node-specs are by default non-`rdfaAware`.
+
+#### Other changes included as part of the `rdfaAware` system
+Apart from the changes included to the node-specs and the ways we handle RDFa, the `rdfaAware` system also comes with several new (experimental) tools and APIs.
+Some of these tools are marked as private (such as experimental GUI tools and API) and are thus not part of the public API.
+Among these, the following tools/API are included:
+- A new parser/serializer system that allows to correctly parse and serialize `rdfaAware` nodes and documents
+- New prosemirror commands to work with the `rdfaAware` system
+- GUI tools (some of these are private API) to operate and interact with `rdfaAware` nodes and documents
+
+
 ## More examples
 More examples on how to integrate this editor in your application can be found in the dummy app of this addon or in the plugins repository of the LBLOD project (https://github.com/lblod/ember-rdfa-editor-lblod-plugins).
 

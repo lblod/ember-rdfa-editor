@@ -142,6 +142,7 @@ class EmberNodeView implements NodeView {
     this.config = emberNodeConfig;
     const { name, component: componentClass, atom, inline } = emberNodeConfig;
 
+    // @ts-expect-error not typesafe yet
     this.template = hbs`<this.component
                           @getPos={{this.getPos}}
                           @node={{this.node}}
@@ -152,6 +153,7 @@ class EmberNodeView implements NodeView {
                           @contentDecorations={{this.contentDecorations}}
                         >
                           {{#unless this.atom}}
+                            {{! @glint-expect-error: not typesafe yet }}
                             <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
                           {{/unless}}
                         </this.component>`;

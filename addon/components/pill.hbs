@@ -1,16 +1,17 @@
+{{! @glint-nocheck: not typesafe yet }}
 <span
   class='au-c-pill {{this.skin}} {{this.size}}'
   ...attributes
 >
   {{#if @icon}}
     {{#if (not-eq @iconAlignment 'right')}}
-      <AuIcon @icon='{{@icon}}' />
+      <AuIcon @icon={{@icon}} />
     {{/if}}
   {{/if}}
   {{yield}}
   {{#if @icon}}
     {{#if (eq @iconAlignment 'right')}}
-      <AuIcon @icon='{{@icon}}' />
+      <AuIcon @icon={{@icon}} />
     {{/if}}
   {{/if}}
 </span>

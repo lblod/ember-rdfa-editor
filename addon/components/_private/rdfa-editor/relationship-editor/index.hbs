@@ -1,14 +1,15 @@
-<AuContent @skin="tiny">
+{{! @glint-nocheck: not typesafe yet }}
+<AuContent @skin='tiny'>
   <AuToolbar as |Group|>
     <Group>
-      <AuHeading @level="5" @skin="5">Relationships</AuHeading>
+      <AuHeading @level='5' @skin='5'>Relationships</AuHeading>
     </Group>
     <Group>
       <AuButton
-        @icon="plus"
-        @skin="naked"
+        @icon={{this.PlusIcon}}
+        @skin='naked'
         @disabled={{not this.canAddRelationship}}
-        {{on "click" this.addRelationship}}
+        {{on 'click' this.addRelationship}}
       >
         Add relationship
       </AuButton>
@@ -17,37 +18,37 @@
   {{#if this.showOutgoingSection}}
     <div>
       <AuHeading
-        @level="6"
-        @skin="6"
-        class="au-u-margin-bottom-small"
+        @level='6'
+        @skin='6'
+        class='au-u-margin-bottom-small'
       >Outgoing</AuHeading>
       {{#if this.hasOutgoing}}
         <AuList @divider={{true}} as |Item|>
           {{#each this.properties as |prop index|}}
             {{#if (this.isNodeLink prop)}}
               <Item
-                class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+                class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
               >
                 <AuButton
-                  @icon="external-link"
-                  @skin="link"
-                  {{on "click" (fn this.goToOutgoing prop)}}
+                  @icon={{this.ExternalLinkIcon}}
+                  @skin='link'
+                  {{on 'click' (fn this.goToOutgoing prop)}}
                 >{{prop.predicate}}</AuButton>
-                <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+                <AuDropdown @icon={{this.ThreeDotsIcon}} role='menu' @alignment='left'>
                   <AuButton
-                    @skin="link"
-                    @icon="pencil"
-                    role="menuitem"
-                    {{on "click" (fn this.editRelationship index)}}
+                    @skin='link'
+                    @icon={{this.PencilIcon}}
+                    role='menuitem'
+                    {{on 'click' (fn this.editRelationship index)}}
                   >
                     Edit relationship
                   </AuButton>
                   <AuButton
-                    @skin="link"
-                    @icon="bin"
-                    role="menuitem"
-                    class="au-c-button--alert"
-                    {{on "click" (fn this.removeProperty index)}}
+                    @skin='link'
+                    @icon={{this.BinIcon}}
+                    role='menuitem'
+                    class='au-c-button--alert'
+                    {{on 'click' (fn this.removeProperty index)}}
                   >
                     Remove outgoing
                   </AuButton>
@@ -63,28 +64,28 @@
   {{/if}}
   <div>
     <AuHeading
-      @level="6"
-      @skin="6"
-      class="au-u-margin-bottom-small"
+      @level='6'
+      @skin='6'
+      class='au-u-margin-bottom-small'
     >Backlinks</AuHeading>
     {{#if this.backlinks}}
       <AuList @divider={{true}} as |Item|>
         {{#each this.backlinks as |backlink index|}}
           <Item
-            class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+            class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
           >
             <AuButton
-              @icon="external-link"
-              @skin="link"
-              {{on "click" (fn this.goToBacklink backlink)}}
+              @icon={{this.ExternalLinkIcon}}
+              @skin='link'
+              {{on 'click' (fn this.goToBacklink backlink)}}
             >{{backlink.predicate}}</AuButton>
-            <AuDropdown @icon="three-dots" role="menu" @alignment="left">
+            <AuDropdown @icon={{this.ThreeDotsIcon}} role='menu' @alignment='left'>
               <AuButton
-                @skin="link"
-                @icon="bin"
-                role="menuitem"
-                class="au-c-button--alert"
-                {{on "click" (fn this.removeBacklink index)}}
+                @skin='link'
+                @icon={{this.BinIcon}}
+                role='menuitem'
+                class='au-c-button--alert'
+                {{on 'click' (fn this.removeBacklink index)}}
               >
                 Remove backlink
               </AuButton>
@@ -98,7 +99,7 @@
   </div>
   {{#if this.isResource}}
     <div>
-      <AuHeading @level="6" @skin="6" class="au-u-margin-bottom-small">
+      <AuHeading @level='6' @skin='6' class='au-u-margin-bottom-small'>
         Content Predicate
       </AuHeading>
       <this.ContentPredicateList
