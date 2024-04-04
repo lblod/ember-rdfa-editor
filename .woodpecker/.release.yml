@@ -4,11 +4,23 @@ steps:
     commands:
       - corepack enable
       - pnpm i --frozen-lockfile
+  release-next:
+    image: plugins/npm
+    settings:
+      token:
+        from_secret: npm_access_token
+      tag: next
+    when:
+      ref:
+        include: refs/tags/*-next.*
   release:
     image: plugins/npm
     settings:
       token:
         from_secret: npm_access_token
+    when:
+      ref:
+        exclude: refs/tags/*-*
   push-tagged-build:
     image: plugins/docker
     settings:
