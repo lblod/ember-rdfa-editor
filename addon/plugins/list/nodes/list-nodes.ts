@@ -25,18 +25,22 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
 
 type Config = {
   rdfaAware?: boolean;
+  enableHierarchicalList?: boolean;
 };
 
 export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
   rdfaAware = false,
+  enableHierarchicalList = false,
 } = {}) => {
   return {
     get attrs() {
-      const baseAttrs = {
+      const baseAttrs: Record<string, { default: unknown }> = {
         order: { default: 1 },
         style: { default: null },
-        hierarchical: { default: null },
       };
+      if (enableHierarchicalList) {
+        baseAttrs['hierarchical'] = { default: null };
+      }
       return {
         ...baseAttrs,
         ...rdfaAttrSpec({ rdfaAware }),
@@ -52,13 +56,15 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
             return false;
           }
           const start = dom.getAttribute('start');
-          const baseAttrs = {
+          const baseAttrs: Record<string, unknown> = {
             order: optionMapOr(1, (val) => Number(val), start),
             style: getListStyleFromDomElement(dom),
-            hierarchical: dom.dataset['hierarchical']
-              ? dom.dataset['hierarchical'] !== 'false'
-              : null,
           };
+          if (enableHierarchicalList) {
+            baseAttrs['hierarchical'] = dom.dataset['hierarchical']
+              ? dom.dataset['hierarchical'] !== 'false'
+              : null;
+          }
           return {
             ...baseAttrs,
             ...getRdfaAttrs(dom, { rdfaAware }),
@@ -74,9 +80,11 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
         ...(order !== 1 && { start: order }),
         ...(style && {
           style: `list-style-type: ${style};`,
-          'data-hierarchical': hierarchical,
         }),
       };
+      if (enableHierarchicalList) {
+        baseAttrs['data-hierarchical'] = hierarchical;
+      }
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,
@@ -141,14 +149,19 @@ export const bullet_list = bulletListWithConfig();
 
 export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
   rdfaAware = false,
+  enableHierarchicalList = false,
 } = {}) => {
   return {
     content: 'paragraphGroup+ block*',
     defining: true,
-    attrs: {
-      ...rdfaAttrSpec({ rdfaAware }),
-      listPath: { default: [] },
-    },
+    attrs: enableHierarchicalList
+      ? {
+          ...rdfaAttrSpec({ rdfaAware }),
+          listPath: { default: [] },
+        }
+      : {
+          ...rdfaAttrSpec({ rdfaAware }),
+        },
     parseDOM: [
       {
         tag: 'li',
@@ -156,11 +169,16 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          const mapping = getListItemMapping(this);
-          const listPath = calculateListItemPath(node, mapping);
-          return { ...getRdfaAttrs(node, { rdfaAware }), listPath };
+          if (enableHierarchicalList) {
+            const mapping = getListItemMapping(this);
+            const listPath = calculateListItemPath(node, mapping);
+            return { ...getRdfaAttrs(node, { rdfaAware }), listPath };
+          }
+          return { ...getRdfaAttrs(node, { rdfaAware }) };
         },
-        sayListItemMapping: new WeakMap<Node, number[]>(),
+        sayListItemMapping: enableHierarchicalList
+          ? new WeakMap<Node, number[]>()
+          : undefined,
         contentElement: getRdfaContentElement,
       },
     ],
@@ -170,16 +188,20 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           renderable: node,
           tag: 'li',
           content: 0,
-          attrs: {
-            'data-list-marker': renderListMarker(node.attrs['listPath']),
-          },
+          attrs: enableHierarchicalList
+            ? {
+                'data-list-marker': renderListMarker(node.attrs['listPath']),
+              }
+            : {},
         });
       } else {
         return [
           'li',
-          {
-            'data-list-marker': renderListMarker(node.attrs['listPath']),
-          },
+          enableHierarchicalList
+            ? {
+                'data-list-marker': renderListMarker(node.attrs['listPath']),
+              }
+            : {},
           0,
         ];
       }
@@ -222,7 +244,17 @@ function calculateListItemPath(
   }
   // first, get the path of the li higher up the tree, if there is one
   let basePath: ListPathEntry[] = [];
-  const grandParent = node.parentNode?.parentNode;
+  let parent = unwrap(node.parentNode) as HTMLElement;
+  // skip contentContainer divs if rdfaAware
+  if (parent.dataset['contentContainer']) {
+    parent = parent.parentElement as HTMLElement;
+  }
+
+  let grandParent = parent.parentElement as HTMLElement | null;
+  // skip contentContainer divs if rdfaAware
+  if (grandParent?.dataset['contentContainer']) {
+    grandParent = grandParent.parentElement as HTMLElement | null;
+  }
   if (grandParent && tagName(grandParent) === 'li') {
     basePath = calculateListItemPath(grandParent, mapping);
   }
@@ -245,7 +277,6 @@ function calculateListItemPath(
   // if we have a parent OL that has style and hierarchy, we use it (treating ULs as style=unordered and not hierarchical)
   // if not, we copy over the styles from the grandparent LI, or use a default
 
-  const parent = unwrap(node.parentNode) as HTMLElement;
   let style = 'decimal';
   let hierarchical = false;
   if (tagName(parent) === 'ul') {

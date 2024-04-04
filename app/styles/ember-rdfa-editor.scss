@@ -61,7 +61,7 @@
   background: yellow;
 }
 
-ol > li[data-list-marker]::marker {
+ol li[data-list-marker]::marker {
   content: attr(data-list-marker);
   font-variant-numeric: tabular-nums;
 }

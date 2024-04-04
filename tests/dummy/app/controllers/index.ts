@@ -79,9 +79,9 @@ export default class IndexController extends Controller {
 
       repaired_block: repairedBlockWithConfig(),
 
-      list_item: listItemWithConfig(),
-      ordered_list: orderedListWithConfig(),
-      bullet_list: bulletListWithConfig(),
+      list_item: listItemWithConfig({ enableHierarchicalList: true }),
+      ordered_list: orderedListWithConfig({ enableHierarchicalList: true }),
+      bullet_list: bulletListWithConfig({ enableHierarchicalList: true }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',

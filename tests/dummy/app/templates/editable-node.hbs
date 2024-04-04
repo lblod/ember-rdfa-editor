@@ -15,7 +15,10 @@
       @showRdfaBlocks={{this.showRdfaBlocks}}
     >
       <:top>
-        <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
+        <SampleToolbarResponsive
+          @controller={{this.rdfaEditor}}
+          @enableHierarchicalList={{true}}
+        />
       </:top>
       <:default>
         <Editor
@@ -28,10 +31,10 @@
       <:aside>
         <Sidebar>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
-            <this.RdfaEditor
-              @node={{this.activeNode}}
-              @controller={{this.rdfaEditor}}
-            />
+          <this.RdfaEditor
+            @node={{this.activeNode}}
+            @controller={{this.rdfaEditor}}
+          />
           {{#if this.activeNode}}
             <this.DebugInfo @node={{this.activeNode}} />
             <this.AttributeEditor

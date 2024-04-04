@@ -30,6 +30,7 @@ const CheckIcon = macroCondition(
 
 type Args = {
   controller: SayController;
+  enableHierarchicalList?: boolean;
 };
 export default class ListOrdered extends Component<Args> {
   OrderedListIcon = OrderedListIcon;
@@ -92,6 +93,9 @@ export default class ListOrdered extends Component<Args> {
     return this.controller.schema;
   }
   get isHierarchical() {
+    if (!this.args.enableHierarchicalList) {
+      return false;
+    }
     const listItem = this.firstListItemParent;
     if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
       const path = listItem.node.attrs['listPath'];
@@ -163,14 +167,25 @@ export default class ListOrdered extends Component<Args> {
     }
   }
   styleIsActive = (style: string) => {
-    const listItem = this.firstListItemParent;
+    if (this.args.enableHierarchicalList) {
+      const listItem = this.firstListItemParent;
+      if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
+        const path = listItem.node.attrs['listPath'];
 
-    if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
-      const path = listItem.node.attrs['listPath'];
-
-      return path[path.length - 1].style === style;
+        return path[path.length - 1].style === style;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      const firstListParent = this.firstListParent;
+      if (
+        firstListParent?.node.type ===
+        this.controller.schema.nodes['ordered_list']
+      ) {
+        return firstListParent.node.attrs['style'] === style;
+      } else {
+        return false;
+      }
     }
   };
 }
