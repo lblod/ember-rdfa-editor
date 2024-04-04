@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 9.6.0-next.1
+
+### Patch Changes
+
+- [#1182](https://github.com/lblod/ember-rdfa-editor/pull/1182) [`d939e0c`](https://github.com/lblod/ember-rdfa-editor/commit/d939e0c9d7f8070b3c6a948620d87eebca5d29a9) Thanks [@elpoelma](https://github.com/elpoelma)! - Release to npm with tag `next` if the semantic version qualifier is equal to `next`
+
+- [#1182](https://github.com/lblod/ember-rdfa-editor/pull/1182) [`d939e0c`](https://github.com/lblod/ember-rdfa-editor/commit/d939e0c9d7f8070b3c6a948620d87eebca5d29a9) Thanks [@elpoelma](https://github.com/elpoelma)! - Do not perform a stable release when tag contains semantic version qualifier (used for prereleases)
+
+- [#1183](https://github.com/lblod/ember-rdfa-editor/pull/1183) [`61a9941`](https://github.com/lblod/ember-rdfa-editor/commit/61a9941227b251d147a4f081ef7e26e99f5a76ce) Thanks [@piemonkey](https://github.com/piemonkey)! - Remove caching of SaySerializer
+
 ## 9.6.0-next.0
 
 ### Minor Changes
