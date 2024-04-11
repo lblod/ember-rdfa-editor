@@ -110,22 +110,20 @@ export default class SaySerializer extends DOMSerializer {
    * If an instance of `SayEditor` is provided to this method, an instance of `SaySerializer` is returned.
    * Otherwise an instance of the default `DOMSerializer` is returned.
    * `SaySerializer` needs an instance of `SayEditor` to properly work.
+   * NOTE: the behaviour of this differs from `DOMSerializer` as the ProseMirror version caches the
+   * serializer, whereas we do not.
    */
   static fromSchema(schema: Schema): DOMSerializer;
   static fromSchema(schema: Schema, editor: SayEditor): SaySerializer;
   static fromSchema(schema: Schema, editor?: SayEditor): DOMSerializer {
     if (editor) {
-      if (schema.cached['saySerializer']) {
-        (schema.cached['saySerializer'] as SaySerializer).editor = editor;
-      } else {
-        schema.cached['saySerializer'] = new SaySerializer(
-          SaySerializer.nodesFromSchema(schema, editor),
-          SaySerializer.marksFromSchema(schema, editor),
-          editor,
-        );
-      }
-      return schema.cached['saySerializer'] as SaySerializer;
+      return new SaySerializer(
+        SaySerializer.nodesFromSchema(schema, editor),
+        SaySerializer.marksFromSchema(schema, editor),
+        editor,
+      );
     } else {
+      // Use the cached stock `DOMSerializer` to mimic ProseMirror code
       return (
         (schema.cached['domSerializer'] as DOMSerializer) ||
         (schema.cached['domSerializer'] = new DOMSerializer(

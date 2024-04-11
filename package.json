@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "9.6.0-next.0",
+  "version": "9.6.1",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -74,7 +74,7 @@
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "^0.8.0-beta.2",
     "@say-editor/prosemirror-invisibles": "^0.1.0",
-    "@say-editor/prosemirror-tables": "^0.2.0",
+    "@say-editor/prosemirror-tables": "^0.3.0",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.0",
     "crypto-browserify": "^3.12.0",
