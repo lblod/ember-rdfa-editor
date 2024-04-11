@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.6.1
+
+### Patch Changes
+
+- [#1186](https://github.com/lblod/ember-rdfa-editor/pull/1186) [`ac0eac5`](https://github.com/lblod/ember-rdfa-editor/commit/ac0eac579ca9bf81e36db4716ca5c2ae81201546) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4758: Bump `@say-editor/prosemirror-tables` to fix the size of the newly created column.
+
 ## 9.6.0
 
 ### Minor Changes
