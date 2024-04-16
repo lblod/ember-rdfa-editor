@@ -33,6 +33,7 @@ import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bulletListWithConfig,
   listItemWithConfig,
+  listTrackingPlugin,
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -91,9 +92,18 @@ export default class EditableBlockController extends Controller {
 
       repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
-      list_item: listItemWithConfig({ rdfaAware: true }),
-      ordered_list: orderedListWithConfig({ rdfaAware: true }),
-      bullet_list: bulletListWithConfig({ rdfaAware: true }),
+      list_item: listItemWithConfig({
+        rdfaAware: true,
+        enableHierarchicalList: true,
+      }),
+      ordered_list: orderedListWithConfig({
+        rdfaAware: true,
+        enableHierarchicalList: true,
+      }),
+      bullet_list: bulletListWithConfig({
+        rdfaAware: true,
+        enableHierarchicalList: true,
+      }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
@@ -136,6 +146,7 @@ export default class EditableBlockController extends Controller {
   }
 
   @tracked plugins: PluginConfig = [
+    listTrackingPlugin(),
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,

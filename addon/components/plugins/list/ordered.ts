@@ -30,6 +30,7 @@ const CheckIcon = macroCondition(
 
 type Args = {
   controller: SayController;
+  enableHierarchicalList?: boolean;
 };
 export default class ListOrdered extends Component<Args> {
   OrderedListIcon = OrderedListIcon;
@@ -67,6 +68,11 @@ export default class ListOrdered extends Component<Args> {
         node.type === this.schema.nodes['bullet_list'],
     )(this.selection);
   }
+  get firstListItemParent() {
+    return findParentNode(
+      (node) => node.type === this.schema.nodes['list_item'],
+    )(this.selection);
+  }
 
   get isActive() {
     return (
@@ -85,6 +91,19 @@ export default class ListOrdered extends Component<Args> {
 
   get schema() {
     return this.controller.schema;
+  }
+  get isHierarchical() {
+    if (!this.args.enableHierarchicalList) {
+      return false;
+    }
+    const listItem = this.firstListItemParent;
+    if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
+      const path = listItem.node.attrs['listPath'];
+
+      return path[path.length - 1].hierarchical;
+    } else {
+      return false;
+    }
   }
 
   toggleCommand(listStyle?: OrderListStyle): Command {
@@ -131,15 +150,42 @@ export default class ListOrdered extends Component<Args> {
     }
   }
 
-  styleIsActive = (style: string) => {
+  @action
+  toggleHierarchical() {
     const firstListParent = this.firstListParent;
     if (
       firstListParent?.node.type ===
       this.controller.schema.nodes['ordered_list']
     ) {
-      return firstListParent.node.attrs['style'] === style;
+      this.controller.withTransaction((tr) => {
+        return tr.setNodeAttribute(
+          firstListParent.pos,
+          'hierarchical',
+          !this.isHierarchical,
+        );
+      });
+    }
+  }
+  styleIsActive = (style: string) => {
+    if (this.args.enableHierarchicalList) {
+      const listItem = this.firstListItemParent;
+      if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
+        const path = listItem.node.attrs['listPath'];
+
+        return path[path.length - 1].style === style;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      const firstListParent = this.firstListParent;
+      if (
+        firstListParent?.node.type ===
+        this.controller.schema.nodes['ordered_list']
+      ) {
+        return firstListParent.node.attrs['style'] === style;
+      } else {
+        return false;
+      }
     }
   };
 }

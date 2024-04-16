@@ -51,14 +51,21 @@
 }
 
 // CUSTOM COMPONENTS
-@import 'ember-rdfa-editor/a-custom-components';
-
+@import "ember-rdfa-editor/a-custom-components";
 
 // SHAME
-@import 'ember-rdfa-editor/shame';
+@import "ember-rdfa-editor/shame";
 .u-hidden {
   visibility: visible;
   display: inline-block;
   background: yellow;
 }
 
+ol > li[data-list-marker]::marker {
+  content: attr(data-list-marker);
+  font-variant-numeric: tabular-nums;
+}
+ol > *[data-content-container] > li[data-list-marker]::marker {
+  content: attr(data-list-marker);
+  font-variant-numeric: tabular-nums;
+}
