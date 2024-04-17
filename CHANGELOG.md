@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.7.0
+
+### Minor Changes
+
+- [#1184](https://github.com/lblod/ember-rdfa-editor/pull/1184) [`a9cf618`](https://github.com/lblod/ember-rdfa-editor/commit/a9cf61864749b54203f0cf70b31a352e33c4e175) Thanks [@abeforgit](https://github.com/abeforgit)! - feature: hierarchical lists
+
 ## 9.6.1
 
 ### Patch Changes
