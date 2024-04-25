@@ -26,10 +26,8 @@
  *
  */
 
-import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
-import { NodeSelection } from 'prosemirror-state';
 import { modifier } from 'ember-modifier';
 import { updateSize } from '@lblod/ember-rdfa-editor/plugins/image/utils/resize-functions';
 
@@ -158,19 +156,6 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     const widthStyle = this.width ? `width: ${this.width}px;` : '';
     const heightStyle = this.height ? `height: ${this.height}px;` : '';
     return widthStyle + heightStyle;
-  }
-
-  @action
-  select(event: InputEvent) {
-    event.preventDefault();
-    if (!this.args.selected) {
-      const pos = this.args.getPos();
-      if (pos !== undefined) {
-        this.args.controller.withTransaction((tr) => {
-          return tr.setSelection(NodeSelection.create(tr.doc, pos));
-        });
-      }
-    }
   }
 
   onMouseDown = (event: MouseEvent, handlePosition: HandlePosition) => {

@@ -29,7 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
-import { SayView } from '@lblod/ember-rdfa-editor';
+import { NodeSelection, SayView } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import type { NodeSerializer } from '@lblod/ember-rdfa-editor/core/say-serializer';
@@ -41,7 +41,17 @@ export interface EmberInlineComponent extends Component, EmberNodeArgs {
 export interface EmberNodeArgs {
   getPos: () => number | undefined;
   node: PNode;
+  /**
+   *  Util method to help with keeping state in `attrs` of the node.
+   *    Instead of a tracked property, you'll often use the following logic to keep state inside the node:
+   *    `get someText() { return this.args.node.attrs.someText; }`
+   *    `set someText(value) { return this.args.updateAttribute('someText', value); }`
+   */
   updateAttribute: (attr: string, value: unknown) => void;
+  /**
+   * Util method which selects the node within the editor
+   */
+  selectNode: () => void;
   controller: SayController;
   view: SayView;
   selected: boolean;
@@ -55,7 +65,7 @@ function emberComponent(
   template: TemplateFactory,
   props: EmberNodeArgs & {
     atom: boolean;
-    component: ComponentLike;
+    component: ComponentLike<{ Args: EmberNodeArgs }>;
     contentDOM?: HTMLElement;
   },
 ): { node: HTMLElement; component: EmberInlineComponent } {
@@ -151,6 +161,7 @@ class EmberNodeView implements NodeView {
                           @view={{this.view}}
                           @selected={{this.selected}}
                           @contentDecorations={{this.contentDecorations}}
+                          @selectNode={{this.selectNode}}
                         >
                           {{#unless this.atom}}
                             {{! @glint-expect-error: not typesafe yet }}
@@ -179,6 +190,16 @@ class EmberNodeView implements NodeView {
             const transaction = view.state.tr;
             transaction.setNodeAttribute(pos, attr, value);
             view.dispatch(transaction);
+          }
+        },
+        selectNode: () => {
+          const pos = getPos();
+          if (pos) {
+            const tr = controller.activeEditorState.tr;
+            tr.setSelection(
+              NodeSelection.create(controller.activeEditorState.doc, pos),
+            );
+            controller.activeEditorView.dispatch(tr);
           }
         },
         controller,
@@ -301,7 +322,7 @@ interface NonAtomConfig {
 export type EmberNodeConfig = {
   name: string;
   /** ember component to render as a Node View */
-  component: ComponentLike;
+  component: ComponentLike<{ Args: EmberNodeArgs }>;
   inline: boolean;
   /** ProseMirror 'group' property for the created node */
   group: string;
