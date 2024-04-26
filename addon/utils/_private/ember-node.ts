@@ -194,7 +194,7 @@ class EmberNodeView implements NodeView {
         },
         selectNode: () => {
           const pos = getPos();
-          if (pos) {
+          if (pos !== undefined) {
             const tr = controller.activeEditorState.tr;
             tr.setSelection(
               NodeSelection.create(controller.activeEditorState.doc, pos),
