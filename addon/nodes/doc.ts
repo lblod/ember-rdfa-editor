@@ -48,13 +48,19 @@ export const docWithConfig = ({
             return false;
           }
           if (node.dataset['sayDocument']) {
+            const extraAttrs: Record<string, unknown> = {};
+            Object.keys(extraAttributes).forEach((attr) => {
+              extraAttrs[attr] = node.getAttribute(attr);
+            });
             if (rdfaAware) {
               return {
+                ...extraAttrs,
                 lang: node.getAttribute('lang'),
                 ...getRdfaAttrs(node, { rdfaAware: true }),
               };
             } else {
               return {
+                ...extraAttrs,
                 lang: node.getAttribute('lang'),
               };
             }
