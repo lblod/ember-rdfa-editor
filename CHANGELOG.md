@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 9.7.1
+
+### Patch Changes
+
+- [#1189](https://github.com/lblod/ember-rdfa-editor/pull/1189) [`a49b707`](https://github.com/lblod/ember-rdfa-editor/commit/a49b707492d041d3685ed260d765f2e96e8e4f37) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix regression in parsing logic of `extraAttributes` of `doc` node-spec.
+  This regression was introduced in version [9.6.0](https://github.com/lblod/ember-rdfa-editor/releases/tag/v9.6.0).
+  This fix ensures that the `extraAttributes` are now once again correctly parsed when loading a document.
+
 ## 9.7.0
 
 ### Minor Changes
