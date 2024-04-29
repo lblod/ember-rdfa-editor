@@ -78,8 +78,8 @@ dependencies:
     specifier: ^6.2.0
     version: 6.3.0
   ember-focus-trap:
-    specifier: ~1.0.1
-    version: 1.0.2
+    specifier: ^1.1.0
+    version: 1.1.0(ember-source@4.12.0)
   ember-template-imports:
     specifier: ^3.4.2
     version: 3.4.2
@@ -7959,16 +7959,6 @@ packages:
       - webpack
     dev: true
 
-  /ember-focus-trap@1.0.2:
-    resolution: {integrity: sha512-/8Cx9KI7uqoMaNN4Iyxc24P2JIvAcCL3cI1tYdZRHTwTd1sG6esEZWOnpxZOSE7m4xHww8HVUSiXzgyqD8YIhA==}
-    engines: {node: 12.* || >= 14}
-    dependencies:
-      '@embroider/addon-shim': 1.8.7
-      focus-trap: 6.9.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /ember-focus-trap@1.1.0(ember-source@4.12.0):
     resolution: {integrity: sha512-KxbCKpAJaBVZm+bW4tHPoBJAZThmxa6pI+WQusL+bj0RtAnGUNkWsVy6UBMZ5QqTQzf4EvGHkCVACVp5lbAWMQ==}
     engines: {node: 12.* || >= 14}
@@ -7980,7 +7970,6 @@ packages:
       focus-trap: 6.9.4
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /ember-functions-as-helper-polyfill@2.1.2(ember-source@4.12.0):
     resolution: {integrity: sha512-yvW6xykvZEIYzzwlrC/g9yu6LtLkkj5F+ho6U+BDxN1uREMgoMOZnji7sSILn5ITVpaJ055DPcO+utEFD7IZOA==}
