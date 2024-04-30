@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 9.8.0
+
+### Minor Changes
+
+- [#1188](https://github.com/lblod/ember-rdfa-editor/pull/1188) [`1097b8b`](https://github.com/lblod/ember-rdfa-editor/commit/1097b8b2a09c9b7e34c46c9ae26c233833a25a2f) Thanks [@piemonkey](https://github.com/piemonkey)! - Add an argument passed to ember nodes to select the node within the editor, to avoid implementations having to implement this logic
+
+### Patch Changes
+
+- [#1188](https://github.com/lblod/ember-rdfa-editor/pull/1188) [`67f7224`](https://github.com/lblod/ember-rdfa-editor/commit/67f7224891c720868d2e8ef0e92ce46d76959257) Thanks [@piemonkey](https://github.com/piemonkey)! - Upgrade ember-focus-trap to v1.1.0 now that we no longer support Ember 3
+
 ## 9.7.1
 
 ### Patch Changes
