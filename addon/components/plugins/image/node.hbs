@@ -4,7 +4,7 @@
   <img
     src={{@node.attrs.src}}
     alt={{@node.attrs.alt}}
-    {{on 'click' this.select}}
+    {{on 'click' @selectNode}}
     {{this.setUpImage}}
     style={{this.style}}
   />
