@@ -16,6 +16,12 @@ steps:
     commands:
       - corepack enable
       - pnpm lint:hbs
+  lint-prettier:
+    image: node:20-slim
+    group: lint
+    commands:
+      - corepack enable
+      - pnpm lint:prettier
   test:
     image: danlynn/ember-cli:4.12.1
     commands:

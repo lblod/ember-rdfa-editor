@@ -19,8 +19,10 @@
   position: relative;
   z-index: 1;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba($au-gray-900, .1),
-    0 4px 20px rgba($au-gray-900, .035), 0 1px 1px rgba($au-gray-900, .025);
+  box-shadow:
+    0 1px 3px rgba($au-gray-900, 0.1),
+    0 4px 20px rgba($au-gray-900, 0.035),
+    0 1px 1px rgba($au-gray-900, 0.025);
 
   > h1 {
     font-size: 2.6rem;
@@ -38,7 +40,9 @@
 
   > a,
   > p > a {
-    transition: color 0.3s ease-in-out, text-decoration 3s ease-in-out;
+    transition:
+      color 0.3s ease-in-out,
+      text-decoration 3s ease-in-out;
     font-weight: 500;
     text-decoration-color: var(--au-blue-300);
   }
@@ -87,7 +91,7 @@
 // Navigation
 .navigation-link {
   color: black;
-  padding: .5em;
+  padding: 0.5em;
 }
 
 .navbar {
@@ -113,7 +117,6 @@
   margin: auto;
 }
 
-
 // RDFA Debugger
 .rdfa-debugger-content {
   background-color: #fefefe;
@@ -133,7 +136,7 @@
   width: 100%;
   height: 100%;
   overflow: none;
-  background-color: rgba(0, 0, 0, .4); /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .rdfa-debugger-textarea-wrapper {

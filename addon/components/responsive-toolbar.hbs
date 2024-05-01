@@ -2,11 +2,18 @@
 <div class='say-toolbar' {{this.setUpToolbar}}>
   {{#if (has-block 'main')}}
     <div class='say-toolbar__main' {{this.setUpMainToolbar}}>
-      {{yield (hash
-      Group=(component 'toolbar/group')
-      Divider=(component 'toolbar/divider')
-      ) to='main'}}
-      <this.Velcro @placement='bottom-end' @offsetOptions={{hash mainAxis=10}} as |velcro|>
+      {{yield
+        (hash
+          Group=(component 'toolbar/group')
+          Divider=(component 'toolbar/divider')
+        )
+        to='main'
+      }}
+      <this.Velcro
+        @placement='bottom-end'
+        @offsetOptions={{hash mainAxis=10}}
+        as |velcro|
+      >
         {{#if this.main.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button
@@ -24,21 +31,31 @@
           {{velcro.loop}}
           {{this.setUpMainDropdown}}
         >
-          {{yield (hash
-          Group=(component 'toolbar/group')
-          Divider=(component 'toolbar/divider')
-          ) to='main'}}
+          {{yield
+            (hash
+              Group=(component 'toolbar/group')
+              Divider=(component 'toolbar/divider')
+            )
+            to='main'
+          }}
         </div>
       </this.Velcro>
     </div>
   {{/if}}
   {{#if (has-block 'side')}}
     <div class='say-toolbar__side' {{this.setUpSideToolbar}}>
-      {{yield (hash
-      Group=(component 'toolbar/group')
-      Divider=(component 'toolbar/divider')
-      ) to='side'}}
-      <this.Velcro @placement='bottom-end' @offsetOptions={{hash mainAxis=10}} as |velcro|>
+      {{yield
+        (hash
+          Group=(component 'toolbar/group')
+          Divider=(component 'toolbar/divider')
+        )
+        to='side'
+      }}
+      <this.Velcro
+        @placement='bottom-end'
+        @offsetOptions={{hash mainAxis=10}}
+        as |velcro|
+      >
         {{#if this.side.enableDropdown}}
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button
@@ -56,10 +73,13 @@
           {{velcro.loop}}
           {{this.setUpSideDropdown}}
         >
-          {{yield (hash
-          Group=(component 'toolbar/group')
-          Divider=(component 'toolbar/divider')
-          ) to='side'}}
+          {{yield
+            (hash
+              Group=(component 'toolbar/group')
+              Divider=(component 'toolbar/divider')
+            )
+            to='side'
+          }}
         </div>
       </this.Velcro>
     </div>

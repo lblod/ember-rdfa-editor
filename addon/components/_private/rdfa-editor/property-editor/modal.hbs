@@ -10,14 +10,14 @@
       <this.OutgoingTripleForm
         id={{formId}}
         @onSubmit={{this.save}}
-        @termTypes={{(array "NamedNode" "Literal" "ContentLiteral")}}
+        @termTypes={{(array 'NamedNode' 'Literal' 'ContentLiteral')}}
         @triple={{@property}}
       />
     </:body>
     <:footer>
       <AuButtonGroup>
-        <AuButton form={{formId}} type="submit">Save</AuButton>
-        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+        <AuButton form={{formId}} type='submit'>Save</AuButton>
+        <AuButton @skin='secondary' {{on 'click' this.cancel}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

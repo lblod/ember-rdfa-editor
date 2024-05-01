@@ -2,7 +2,11 @@
 <AuContent @skin='tiny'>
   <AuToolbar as |Group|>
     <Group>
-      <AuButton @icon={{this.PlusIcon}} @skin='naked' {{on 'click' (fn this.openModal false)}}>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin='naked'
+        {{on 'click' (fn this.openModal false)}}
+      >
         Wrap With Block Resource
       </AuButton>
     </Group>
@@ -18,7 +22,11 @@
     </Group>
 
     <Group>
-      <AuButton @icon={{this.PlusIcon}} @skin='naked' {{on 'click' (fn this.openModal true)}}>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin='naked'
+        {{on 'click' (fn this.openModal true)}}
+      >
         Wrap With Inline Resource
       </AuButton>
     </Group>

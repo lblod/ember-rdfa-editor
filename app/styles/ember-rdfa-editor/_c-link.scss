@@ -6,7 +6,8 @@
   padding: 0;
   width: 28rem;
 
-  a, button {
+  a,
+  button {
     padding: 0;
     flex: 1;
     border: 0;
@@ -24,8 +25,6 @@
     border-width: 0 0 !important;
   }
 }
-
-
 
 .say-link {
   gap: 0;

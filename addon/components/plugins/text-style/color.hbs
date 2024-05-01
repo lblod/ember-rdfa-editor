@@ -1,7 +1,11 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
-  <div class="say-toolbar__button say-toolbar__highlight-button">
-    <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+  <div class='say-toolbar__button say-toolbar__highlight-button'>
+    <this.Velcro
+      @placement='bottom'
+      @offsetOptions={{hash mainAxis=6}}
+      as |velcro|
+    >
       <button
         type='button'
         class='main {{if @active "is-active"}} {{if @disabled "is-disabled"}}'
@@ -14,7 +18,9 @@
           @icon={{this.WordIcon}}
           @ariaHidden={{true}}
           @size='large'
-          style={{this.htmlSafe (concat "border-bottom-color: " this.currentColor)}}
+          style={{this.htmlSafe
+            (concat 'border-bottom-color: ' this.currentColor)
+          }}
         />
       </button>
 
@@ -28,7 +34,7 @@
               clickOutsideDeactivates=this.clickOutsideDropdown
             )
           }}
-          tabindex="-1"
+          tabindex='-1'
           @onChange={{this.setColor}}
           @color={{this.currentColor}}
           @presetColors={{@presetColors}}

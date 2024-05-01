@@ -1,8 +1,9 @@
 {{! @glint-nocheck: not typesafe yet }}
-<span 
-  {{did-insert this.didInsertContentWrapper}} 
-  {{did-update this.onNodeUpdate @node}} 
-  {{did-update this.onSelected @selected}} 
+<span
+  {{did-insert this.didInsertContentWrapper}}
+  {{did-update this.onNodeUpdate @node}}
+  {{did-update this.onSelected @selected}}
   {{did-update this.onDecorationsUpdate @contentDecorations}}
-  ...attributes>
+  ...attributes
+>
 </span>

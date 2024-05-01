@@ -1,27 +1,27 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div {{this.setUpListeners}}>
-  <button type="button" {{on "click" this.showStyledExportPreview}}>
+  <button type='button' {{on 'click' this.showStyledExportPreview}}>
     Show Styled Export
   </button>
-  <button type="button" {{on "click" this.showRawExportPreview}}>
+  <button type='button' {{on 'click' this.showRawExportPreview}}>
     Show Raw Export
   </button>
   {{#if @controller}}
     <span>Sample data:
       <button
-        type="button"
-        {{on "click" (fn this.setEditorContent "")}}
+        type='button'
+        {{on 'click' (fn this.setEditorContent '')}}
       >Empty</button>
       |
       <button
-        type="button"
-        {{on "click" this.openContentDebugger}}
+        type='button'
+        {{on 'click' this.openContentDebugger}}
       >CustomHTML</button>
       |
       {{#each-in this.sampleData as |name data|}}
         <button
-          type="button"
-          {{on "click" (fn this.setEditorContent data)}}
+          type='button'
+          {{on 'click' (fn this.setEditorContent data)}}
         >{{name}}</button>
         |
       {{/each-in}}

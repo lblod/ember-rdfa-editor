@@ -1,8 +1,5 @@
 {{! @glint-nocheck: not typesafe yet }}
-<span
-  class='au-c-pill {{this.skin}} {{this.size}}'
-  ...attributes
->
+<span class='au-c-pill {{this.skin}} {{this.size}}' ...attributes>
   {{#if @icon}}
     {{#if (not-eq @iconAlignment 'right')}}
       <AuIcon @icon={{@icon}} />

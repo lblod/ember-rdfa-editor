@@ -60,7 +60,9 @@
 
     &:before {
       position: absolute;
-      transition: opacity $au-easing 0.5s, left $au-easing 0.2s;
+      transition:
+        opacity $au-easing 0.5s,
+        left $au-easing 0.2s;
       right: calc(100% + #{$say-annotation-offset});
       opacity: 0;
     }
@@ -108,7 +110,7 @@
 
     &[data-editor-position-level='1']:before,
     &:hover:before,
-    [property="say:hasPart"]:hover > [property="say:heading"]:before {
+    [property='say:hasPart']:hover > [property='say:heading']:before {
       right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
     }
@@ -128,7 +130,6 @@
       z-index: var(--au-z-index-gamma);
     }
   }
-
 
   // Hide empty properties or flagged as noHighlight
   [property=""],

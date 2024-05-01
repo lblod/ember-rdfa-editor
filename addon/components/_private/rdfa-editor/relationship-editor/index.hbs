@@ -34,7 +34,11 @@
                   @skin='link'
                   {{on 'click' (fn this.goToOutgoing prop)}}
                 >{{prop.predicate}}</AuButton>
-                <AuDropdown @icon={{this.ThreeDotsIcon}} role='menu' @alignment='left'>
+                <AuDropdown
+                  @icon={{this.ThreeDotsIcon}}
+                  role='menu'
+                  @alignment='left'
+                >
                   <AuButton
                     @skin='link'
                     @icon={{this.PencilIcon}}
@@ -79,7 +83,11 @@
               @skin='link'
               {{on 'click' (fn this.goToBacklink backlink)}}
             >{{backlink.predicate}}</AuButton>
-            <AuDropdown @icon={{this.ThreeDotsIcon}} role='menu' @alignment='left'>
+            <AuDropdown
+              @icon={{this.ThreeDotsIcon}}
+              role='menu'
+              @alignment='left'
+            >
               <AuButton
                 @skin='link'
                 @icon={{this.BinIcon}}

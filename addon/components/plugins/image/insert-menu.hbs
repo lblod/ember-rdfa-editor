@@ -23,11 +23,13 @@
             @width='block'
             value={{this.url}}
             @error={{this.showError}}
-            {{on "change" this.onChangeUrl}}
-            {{on "focus" this.hideError}}
+            {{on 'change' this.onChangeUrl}}
+            {{on 'focus' this.hideError}}
           />
           {{#if this.showError}}
-            <AuHelpText @error={{true}}>{{t 'ember-rdfa-editor.image.url-error'}}</AuHelpText>
+            <AuHelpText @error={{true}}>{{t
+                'ember-rdfa-editor.image.url-error'
+              }}</AuHelpText>
           {{/if}}
         {{/let}}
       </AuFormRow>
@@ -40,7 +42,7 @@
             id={{id}}
             @width='block'
             value={{this.altText}}
-            {{on "change" this.onChangeAltText}}
+            {{on 'change' this.onChangeAltText}}
           />
         {{/let}}
       </AuFormRow>
@@ -62,7 +64,9 @@
       >
         {{t 'ember-rdfa-editor.image.insert'}}
       </AuButton>
-      <AuButton @skin='secondary' {{on 'click' this.onCancel}}>{{t 'ember-rdfa-editor.utils.back' }}</AuButton>
+      <AuButton @skin='secondary' {{on 'click' this.onCancel}}>{{t
+          'ember-rdfa-editor.utils.back'
+        }}</AuButton>
     </AuButtonGroup>
   </:footer>
 </AuModal>

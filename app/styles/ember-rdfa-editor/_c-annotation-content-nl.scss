@@ -215,23 +215,27 @@
     content: 'Nummer';
   }
 
-  [property="ext:hasParagraph"]:before {
+  [property='ext:hasParagraph']:before {
     content: 'Paragraaf';
   }
 
-  [resource="http://mu.semte.ch/vocabularies/ext/Title"] + [property="say:heading"]:before {
+  [resource="http://mu.semte.ch/vocabularies/ext/Title"] + [property="say:heading"]:before
+  {
     content: 'Titel';
   }
 
-  [resource="http://mu.semte.ch/vocabularies/ext/Chapter"] + [property="say:heading"]:before {
+  [resource="http://mu.semte.ch/vocabularies/ext/Chapter"] + [property="say:heading"]:before
+  {
     content: 'Hoofdstuk';
   }
 
-  [resource="http://mu.semte.ch/vocabularies/ext/Section"] + [property="say:heading"]:before {
+  [resource="http://mu.semte.ch/vocabularies/ext/Section"] + [property="say:heading"]:before
+  {
     content: 'Afdeling';
   }
 
-  [resource="http://mu.semte.ch/vocabularies/ext/Subsection"] + [property="say:heading"]:before {
+  [resource="http://mu.semte.ch/vocabularies/ext/Subsection"] + [property="say:heading"]:before
+  {
     content: 'Onderafdeling';
   }
 
@@ -281,7 +285,6 @@
   [property='mobiliteit:realiseert']:before {
     content: 'Realisatie';
   }
-
 
   [data-flagged-remove='complete'][data-editor-position-level='0'],
   [data-flagged-remove='complete'] {

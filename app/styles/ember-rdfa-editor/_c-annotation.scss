@@ -67,13 +67,37 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     transition: border var(--au-transition);
 
     // Hide certain underlines
-    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] .mark-highlight-manual,
-    [property] [property] [property] [property] [property] [property] .mark-highlight-manual,
+    [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      .mark-highlight-manual,
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      .mark-highlight-manual,
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
-    [property] [property] [property] [property] [property] [property] [property] [data-type],
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [data-type],
     [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
-    [property] [property] [property] [property] [property] [property] [property],
-    {
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property] {
       border-bottom: 0;
     }
   }
@@ -112,7 +136,9 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     margin-right: 0.5rem !important;
     padding: 0 0.2rem !important;
     line-height: 1.2rem !important;
-    transition: border 0.1s ease-in-out, background-color 0.1s ease-in-out;
+    transition:
+      border 0.1s ease-in-out,
+      background-color 0.1s ease-in-out;
 
     &[data-editor-position-level='1'],
     &:hover,
@@ -156,7 +182,9 @@ $say-annotation-background-color: var(--au-gray-100) !default;
       color: var(--vl-picton-120);
       border-radius: 0.3rem;
       background-color: rgba(#16465b, 0.15);
-      transition: border 0.1s ease-in-out, background-color 0.1s ease-in-out;
+      transition:
+        border 0.1s ease-in-out,
+        background-color 0.1s ease-in-out;
 
       &:hover,
       &:focus,
@@ -242,7 +270,6 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   span.mark-highlight-manual {
     background-color: transparent;
   }
-
 }
 
 .show-rdfa-path {

@@ -3,9 +3,7 @@
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "version": "0.42.0-rc1.7",
   "options": {
-    "paths": [
-      "addon"
-    ],
+    "paths": ["addon"],
     "exclude": "vendor",
     "outdir": "docs",
     "linkNatives": true,
@@ -13,8 +11,6 @@
     "parseOnly": false,
     "lint": false,
     "themedir": "node_modules/yuidoc-ember-theme",
-    "helpers": [
-      "node_modules/yuidoc-ember-theme/helpers/helpers.js"
-    ]
+    "helpers": ["node_modules/yuidoc-ember-theme/helpers/helpers.js"]
   }
 }

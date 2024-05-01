@@ -1,9 +1,5 @@
 {{! @glint-nocheck: not typesafe yet }}
-<AuDropdown
-  @title={{this.title}}
-  @alignment='left'
-  role='menu'
->
+<AuDropdown @title={{this.title}} @alignment='left' role='menu'>
   {{#each this.articles as |article|}}
     <AuLinkExternal role='menuitem'>{{article}}</AuLinkExternal>
   {{/each}}

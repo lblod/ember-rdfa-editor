@@ -16,7 +16,7 @@ const defaultParse: (
   this: unknown,
   data: unknown,
   objType: unknown,
-  stack: unknown
+  stack: unknown,
 ) => string = QUnit.dump.parse;
 
 /**
@@ -100,7 +100,7 @@ QUnit.hooks.afterEach(() => {
   QUnit.dump.maxDepth = defaultDumpDepth;
 });
 
-QUnit.assert.deepArrayContains = function (
+(QUnit.assert.deepArrayContains = function (
   array: unknown[],
   element: unknown,
   message?: string,
@@ -112,8 +112,7 @@ QUnit.assert.deepArrayContains = function (
     expected: element,
     message,
   });
-},
-
-setApplication(Application.create(config.APP));
+}),
+  setApplication(Application.create(config.APP));
 
 start();

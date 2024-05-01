@@ -1,17 +1,17 @@
 {{! @glint-nocheck: not typesafe yet }}
-<AuPanel class="au-u-margin-bottom-tiny" as |Section|>
+<AuPanel class='au-u-margin-bottom-tiny' as |Section|>
   <Section>
     <AuToolbar as |Group|>
       <Group>
-        <AuHeading @level="4" @skin="4">RDFa</AuHeading>
+        <AuHeading @level='4' @skin='4'>RDFa</AuHeading>
       </Group>
       {{#if @node}}
         <Group>
           <AuPill>{{this.type}}</AuPill>
           <AuButton
-            @skin="naked"
+            @skin='naked'
             @icon={{if this.collapsed this.ChevronDownIcon this.ChevronUpIcon}}
-            {{on "click" this.toggleSection}}
+            {{on 'click' this.toggleSection}}
           />
         </Group>
       {{/if}}
