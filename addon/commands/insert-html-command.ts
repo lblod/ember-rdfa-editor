@@ -1,5 +1,8 @@
 import type { Command } from 'prosemirror-state';
-import { isTextNode } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import {
+  getPathFromRoot,
+  isTextNode,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
 import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing';
 import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -26,7 +29,10 @@ export function insertHtml(
         cleanUpNode(htmlNode);
       }
       if (shouldPreprocessRdfa) {
-        preprocessRDFa('body' in htmlNode ? htmlNode.body : htmlNode);
+        preprocessRDFa(
+          'body' in htmlNode ? htmlNode.body : htmlNode,
+          view ? getPathFromRoot(view.dom, false) : [],
+        );
       }
       let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {
         preserveWhitespace,

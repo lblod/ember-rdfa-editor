@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
+  getPathFromRoot,
   isElement,
   isTextNode,
   tagName,
@@ -79,7 +80,7 @@ export type IncomingTriple =
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
  */
-export function preprocessRDFa(dom: Node) {
+export function preprocessRDFa(dom: Node, pathFromRoot: Node[]) {
   // parse the html
   const datastore = EditorStore.fromParse<Node>({
     parseRoot: true,
@@ -100,7 +101,7 @@ export function preprocessRDFa(dom: Node) {
     children(node: Node): Iterable<Node> {
       return node.childNodes;
     },
-    pathFromDomRoot: [],
+    pathFromDomRoot: pathFromRoot,
     textContent(node: Node): string {
       return node.textContent || '';
     },
