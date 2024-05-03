@@ -1,6 +1,11 @@
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
-import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema';
+import {
+  getRdfaAttrs,
+  getRdfaContentElement,
+  rdfaAttrSpec,
+  renderRdfaAware,
+} from '../core/schema';
 import type { AttributeSpec } from 'prosemirror-model';
 
 interface DocumentConfig {
@@ -72,9 +77,10 @@ export const docWithConfig = ({
           if (!isElement(node)) {
             throw new Error('node is not an element');
           }
-          const result: HTMLElement =
-            node.querySelector('[data-content-container="true"]') ?? node;
-          return result;
+          if (rdfaAware) {
+            return getRdfaContentElement(node);
+          }
+          return node;
         },
       },
     ],
