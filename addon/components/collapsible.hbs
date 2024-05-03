@@ -1,7 +1,12 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div class='say-editor-hints__insert'>
   <div class='au-c-accordion au-c-accordion--reverse au-c-accordion--border'>
-    <AuToolbar @nowrap={{true}} @reverse={{true}} {{on 'click' this.toggle}}as |Group|>
+    <AuToolbar
+      @nowrap={{true}}
+      @reverse={{true}}
+      {{on 'click' this.toggle}}
+      as |Group|
+    >
       <Group>
         <div>
           <AuButton

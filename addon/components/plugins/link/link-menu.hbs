@@ -1,7 +1,7 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
   <Toolbar::Button
-    @title={{t "ember-rdfa-editor.link.insert"}}
+    @title={{t 'ember-rdfa-editor.link.insert'}}
     @icon={{this.LinkIcon}}
     {{on 'click' this.insert}}
     @disabled={{not this.canInsert}}

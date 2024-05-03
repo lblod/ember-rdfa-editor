@@ -26,8 +26,6 @@ $say-toolbar-height: 44px !default;
     border-top: 1px solid $say-toolbar-border;
   }
 
-
-
   .say-toolbar__main {
     display: flex;
     flex-grow: 1;
@@ -45,9 +43,8 @@ $say-toolbar-height: 44px !default;
   }
 }
 
-
-
-.say-toolbar__main-dropdown, .say-toolbar__side-dropdown {
+.say-toolbar__main-dropdown,
+.say-toolbar__side-dropdown {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -57,8 +54,6 @@ $say-toolbar-height: 44px !default;
   background-color: $say-toolbar-background;
   z-index: 1;
 }
-
-
 
 .say-toolbar img {
   max-width: inherit;
@@ -77,8 +72,8 @@ $say-toolbar-height: 44px !default;
 .say-toolbar__group {
   display: flex;
   height: $say-toolbar-height;
-  padding-left: .1rem;
-  padding-right: .1rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
   flex-shrink: 0;
   align-items: center;
 }
@@ -87,7 +82,8 @@ $say-toolbar-height: 44px !default;
   border-left: 1px solid var(--au-gray-300);
 }
 
-.say-toolbar__main-dropdown, .say-toolbar__side-dropdown {
+.say-toolbar__main-dropdown,
+.say-toolbar__side-dropdown {
   .say-toolbar__group + .say-toolbar__group {
     border-left: 0;
   }
@@ -104,7 +100,8 @@ $say-toolbar-height: 44px !default;
     border-left: 0.1rem solid var(--au-gray-200);
   }
 
-  .main, .options {
+  .main,
+  .options {
     appearance: none;
     outline: none;
     border: 0;
@@ -117,7 +114,6 @@ $say-toolbar-height: 44px !default;
     transition: color var(--au-transition);
     padding: 0;
     margin: 0;
-
 
     &:hover,
     &:focus {
@@ -153,15 +149,16 @@ $say-toolbar-height: 44px !default;
       padding: 0;
     }
   }
-
 }
 
 .say-toolbar__button img {
-  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg) brightness(91%) contrast(85%);
+  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg)
+    brightness(91%) contrast(85%);
 
   &:hover,
   &:focus {
-    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg) brightness(97%) contrast(94%);
+    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+      brightness(97%) contrast(94%);
   }
 }
 
@@ -189,7 +186,10 @@ $say-toolbar-height: 44px !default;
 
   margin-top: -3px;
 
-  background-color: var(--selected-background-color, var(--default-background-color));
+  background-color: var(
+    --selected-background-color,
+    var(--default-background-color)
+  );
   border: 1px solid var(--au-gray-600);
 }
 

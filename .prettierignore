@@ -24,3 +24,16 @@
 /package.json.ember-try
 /package-lock.json.ember-try
 /yarn.lock.ember-try
+
+
+# CI/CD
+.changeset/
+.github/
+.woodpecker/
+pnpm-lock.yaml
+
+# Docs
+*.md
+
+# E2E HTML
+e2e/files/*.html

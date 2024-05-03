@@ -2,7 +2,10 @@
   class='say-container
     {{if @editorOptions.showRdfaHover "say-container--sidebar-left"}}
     {{if @editorOptions.showPaper "say-container--paper"}}
-    {{if (and (has-block "aside") (not @hideSidebar)) "say-container--sidebar-right"}}
+    {{if
+      (and (has-block "aside") (not @hideSidebar))
+      "say-container--sidebar-right"
+    }}
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
 >
   {{yield to='top'}}
@@ -18,12 +21,12 @@
         {{if @editorOptions.showRdfaHighlight "rdfa-annotations-highlight"}}
         {{if @editorOptions.showRdfaHover "rdfa-annotations-hover"}}
         {{if @loading "au-u-hidden-visually"}}
-        {{if @showRdfaBlocks 'show-rdfa-blocks'}}'
+        {{if @showRdfaBlocks "show-rdfa-blocks"}}'
     >
       {{yield}}
 
     </div>
-    {{#if (and (has-block "aside") (not @hideSidebar))}}
+    {{#if (and (has-block 'aside') (not @hideSidebar))}}
       <div class='say-container__aside'>
         {{yield to='aside'}}
       </div>

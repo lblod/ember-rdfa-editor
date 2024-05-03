@@ -70,13 +70,13 @@
   }
 
   .au-c-help-text {
-    grid-column: span 3
+    grid-column: span 3;
   }
 }
 
 // show tooltips above everything else
 .say-tooltip {
- z-index: 3;
+  z-index: 3;
 }
 
 .say-number-tooltip {

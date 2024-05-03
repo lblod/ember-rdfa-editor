@@ -1,7 +1,11 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
-  <div class="say-toolbar__button">
-    <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+  <div class='say-toolbar__button'>
+    <this.Velcro
+      @placement='bottom'
+      @offsetOptions={{hash mainAxis=6}}
+      as |velcro|
+    >
       <button
         type='button'
         class='main {{if @active "is-active"}}'
@@ -12,8 +16,10 @@
         {{this.setupDropdownButton}}
       >
         <div
-          class="say-toolbar__table-cell-background-button"
-          style={{this.htmlSafe (concat "--selected-background-color: " this.currentColor)}}
+          class='say-toolbar__table-cell-background-button'
+          style={{this.htmlSafe
+            (concat '--selected-background-color: ' this.currentColor)
+          }}
         />
       </button>
 
@@ -27,7 +33,7 @@
               clickOutsideDeactivates=this.clickOutsideDropdown
             )
           }}
-          tabindex="-1"
+          tabindex='-1'
           @onChange={{this.setColor}}
           @color={{this.currentColor}}
           @presetColors={{@presetColors}}

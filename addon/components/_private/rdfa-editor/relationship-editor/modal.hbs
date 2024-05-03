@@ -1,23 +1,24 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#let (unique-id) as |formId|}}
-  <AuModal @modalOpen={{@modalOpen}} @closable={{true}} @closeModal={{this.cancel}}>
+  <AuModal
+    @modalOpen={{@modalOpen}}
+    @closable={{true}}
+    @closeModal={{this.cancel}}
+  >
     <:title>Add Relationship</:title>
     <:body>
       <this.OutgoingTripleForm
         id={{formId}}
         @onSubmit={{this.save}}
         @controller={{this.controller}}
-        @termTypes={{(array "LiteralNode" "ResourceNode")}}
+        @termTypes={{(array 'LiteralNode' 'ResourceNode')}}
         @triple={{@triple}}
       />
     </:body>
     <:footer>
       <AuButtonGroup>
-        <AuButton
-          form={{formId}}
-          type="submit"
-        >Save</AuButton>
-        <AuButton @skin="secondary" {{on "click" this.cancel}}>Cancel</AuButton>
+        <AuButton form={{formId}} type='submit'>Save</AuButton>
+        <AuButton @skin='secondary' {{on 'click' this.cancel}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

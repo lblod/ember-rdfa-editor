@@ -18,7 +18,8 @@ $say-smaller-font-size: 1.4rem !default;
   flex-shrink: 0;
 }
 
-.say-toolbar__button {}
+.say-toolbar__button {
+}
 
 .say-dropdown__button {
   @include au-font-size($au-base, 1);
@@ -37,7 +38,7 @@ $say-smaller-font-size: 1.4rem !default;
   padding: $au-unit-tiny;
   margin: 0;
 
-  &+& {
+  & + & {
     border-left: 0.1rem solid var(--au-gray-200);
   }
 
@@ -65,11 +66,13 @@ $say-smaller-font-size: 1.4rem !default;
 }
 
 .say-dropdown__button img {
-  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg) brightness(91%) contrast(85%);
+  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg)
+    brightness(91%) contrast(85%);
 
   &:hover,
   &:focus {
-    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg) brightness(97%) contrast(94%);
+    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+      brightness(97%) contrast(94%);
   }
 }
 
@@ -83,7 +86,9 @@ $say-smaller-font-size: 1.4rem !default;
   flex-direction: column;
   flex-wrap: nowrap;
   width: auto;
-  box-shadow: 0 0 12px rgba($au-gray-900, 0.15), 0 0 2px rgba($au-gray-900, 0.1);
+  box-shadow:
+    0 0 12px rgba($au-gray-900, 0.15),
+    0 0 2px rgba($au-gray-900, 0.1);
   border-radius: 0.3rem;
   display: none;
 
@@ -98,7 +103,7 @@ $say-smaller-font-size: 1.4rem !default;
     position: absolute;
     pointer-events: none;
     border-width: $say-dropdown-caret-size;
-    margin-left: -$say-dropdown-caret-size * .5;
+    margin-left: -$say-dropdown-caret-size * 0.5;
   }
 
   &:before {
@@ -162,7 +167,7 @@ $say-smaller-font-size: 1.4rem !default;
   }
 }
 
-.say-dropdown__menu [role='menuitem']+[role='menuitem'] {
+.say-dropdown__menu [role='menuitem'] + [role='menuitem'] {
   border-top: 1px dotted var(--au-gray-300);
 }
 
@@ -172,12 +177,14 @@ $say-smaller-font-size: 1.4rem !default;
 }
 
 .say-dropdown__menu [role='menuitem'] img {
-  filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg) brightness(97%) contrast(94%);
+  filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+    brightness(97%) contrast(94%);
 }
 
 .say-dropdown__menu [role='menuitem']:hover img,
 .say-dropdown__menu [role='menuitem']:focus img {
-  filter: invert(35%) sepia(14%) saturate(463%) hue-rotate(175deg) brightness(92%) contrast(91%);
+  filter: invert(35%) sepia(14%) saturate(463%) hue-rotate(175deg)
+    brightness(92%) contrast(91%);
 }
 
 .say-dropdown__menu .say-dropdown__menu-with-inputs {

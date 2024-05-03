@@ -1,9 +1,13 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
-  <div class="say-dropdown options">
-    <this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=6}} as |velcro|>
+  <div class='say-dropdown options'>
+    <this.Velcro
+      @placement='bottom'
+      @offsetOptions={{hash mainAxis=6}}
+      as |velcro|
+    >
       <button
-        type="button"
+        type='button'
         class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
         title={{t 'ember-rdfa-editor.table.vertical-align'}}
         disabled={{not this.canSetVerticalAlign}}
@@ -12,13 +16,17 @@
         {{this.setupDropdownButton}}
       >
         {{this.htmlSafe this.currentVerticalAlignIcon}}
-        <AuIcon @icon={{this.ChevronDownIcon}} @ariaHidden={{true}} @size='large' />
+        <AuIcon
+          @icon={{this.ChevronDownIcon}}
+          @ariaHidden={{true}}
+          @size='large'
+        />
       </button>
       {{#if this.dropdownOpen}}
         <div
-          class="say-dropdown__menu is-visible"
-          role="menu"
-          tabindex="-1"
+          class='say-dropdown__menu is-visible'
+          role='menu'
+          tabindex='-1'
           {{velcro.loop}}
           {{focus-trap
             shouldSelfFocus=true

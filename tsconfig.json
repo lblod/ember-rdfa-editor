@@ -6,7 +6,7 @@
     // picks up js where non-watch mode and TS do not. Rather than change these, we can just allow
     // JS instead. See https://github.com/typed-ember/glint/issues/649
     "allowJs": true,
-    "rootDir": ".",
+    "rootDir": "."
   },
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"],

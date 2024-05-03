@@ -75,9 +75,12 @@
     .au-c-accordion__content {
       padding: $au-unit-tiny;
       border-radius: var(--au-radius);
-      border: .1rem solid var(--au-gray-200);
+      border: 0.1rem solid var(--au-gray-200);
       background-color: var(--au-white);
-      box-shadow: 0 1px 3px rgba($au-gray-900, 0.1), 0 4px 20px rgba($au-gray-900, 0.035), 0 1px 1px rgba($au-gray-900, 0.025);
+      box-shadow:
+        0 1px 3px rgba($au-gray-900, 0.1),
+        0 4px 20px rgba($au-gray-900, 0.035),
+        0 1px 1px rgba($au-gray-900, 0.025);
     }
   }
 }

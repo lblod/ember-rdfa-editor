@@ -1,7 +1,7 @@
 {{! @glint-nocheck: not typesafe yet }}
 <DummyContainer>
   <:header>
-    <DebugTools @controller={{this.rdfaEditor}}/>
+    <DebugTools @controller={{this.rdfaEditor}} />
   </:header>
   <:content>
     <EditorContainer
@@ -15,18 +15,19 @@
       @showRdfaBlocks={{this.showRdfaBlocks}}
     >
       <:top>
-        <SampleToolbarResponsive @controller={{this.rdfaEditor}}/>
+        <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
       </:top>
       <:default>
         <Editor
           @plugins={{this.plugins}}
           @schema={{this.schema}}
           @nodeViews={{this.nodeViews}}
-          @rdfaEditorInit={{this.rdfaEditorInit}}/>
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+        />
       </:default>
       <:aside>
         <Sidebar>
-            <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}}/>
+          <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
         </Sidebar>
       </:aside>
     </EditorContainer>

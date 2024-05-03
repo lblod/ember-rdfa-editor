@@ -15,7 +15,7 @@
       "@lblod/ember-rdfa-editor/test-support": ["addon-test-support"],
       "@lblod/ember-rdfa-editor/test-support/*": ["addon-test-support/*"],
       "*": ["types/*"]
-    },
+    }
   },
   "include": [
     "app/**/*",
