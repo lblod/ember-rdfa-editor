@@ -1,5 +1,5 @@
 ---
-"@lblod/ember-rdfa-editor-lblod-plugins": patch
+"@lblod/ember-rdfa-editor": patch
 ---
 
 Apply Prettier to the codebase
