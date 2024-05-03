@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 9.9.0
+
+### Minor Changes
+
+- [#1191](https://github.com/lblod/ember-rdfa-editor/pull/1191) [`bb04105`](https://github.com/lblod/ember-rdfa-editor/commit/bb041057d0018723815bbaba7e2d0a7ebbbe73a5) Thanks [@abeforgit](https://github.com/abeforgit)! - Parse full doc context when parsing rdfa
+
+### Patch Changes
+
+- [#1190](https://github.com/lblod/ember-rdfa-editor/pull/1190) [`455c4bb`](https://github.com/lblod/ember-rdfa-editor/commit/455c4bb39820ce84593af1b6fdc20b42d226f97a) Thanks [@dkozickis](https://github.com/dkozickis)! - Apply Prettier to the codebase
+
+- [#1191](https://github.com/lblod/ember-rdfa-editor/pull/1191) [`bb04105`](https://github.com/lblod/ember-rdfa-editor/commit/bb041057d0018723815bbaba7e2d0a7ebbbe73a5) Thanks [@abeforgit](https://github.com/abeforgit)! - Fix doc-node content container parsing
+
 ## 9.8.0
 
 ### Minor Changes
