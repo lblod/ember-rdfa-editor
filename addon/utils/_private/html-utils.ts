@@ -2,7 +2,7 @@ import { PNode, ProseParser } from '@lblod/ember-rdfa-editor';
 import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser';
-import { tagName } from './dom-helpers';
+import { getPathFromRoot, tagName } from './dom-helpers';
 import { EditorView } from 'prosemirror-view';
 import type { HEADING_ELEMENTS } from './constants';
 
@@ -15,7 +15,7 @@ export function htmlToDoc(
   const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(parsed);
+  preprocessRDFa(parsed, getPathFromRoot(options.editorView.dom, false));
   const topNodeMatch = matchTopNode(parsed, { schema: options.schema });
   let doc: PNode;
   if (topNodeMatch) {
@@ -39,7 +39,7 @@ export function htmlToFragment(
   const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(parsed);
+  preprocessRDFa(parsed, getPathFromRoot(editorView.dom, false));
   return parser.parseSlice(parsed, { preserveWhitespace: true });
 }
 
