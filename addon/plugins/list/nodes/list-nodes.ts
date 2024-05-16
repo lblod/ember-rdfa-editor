@@ -1,9 +1,7 @@
 import type { Node as PNode, ParseRule } from 'prosemirror-model';
 import {
   getRdfaAttrs,
-  renderRdfaAware,
   getRdfaContentElement,
-  rdfaAttrSpec,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import {
   optionMapOr,
@@ -24,12 +22,10 @@ const getListStyleFromDomElement = (dom: HTMLElement) => {
 };
 
 type Config = {
-  rdfaAware?: boolean;
   enableHierarchicalList?: boolean;
 };
 
 export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
-  rdfaAware = false,
   enableHierarchicalList = false,
 } = {}) => {
   return {
@@ -41,10 +37,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
       if (enableHierarchicalList) {
         baseAttrs['hierarchical'] = { default: null };
       }
-      return {
-        ...baseAttrs,
-        ...rdfaAttrSpec({ rdfaAware }),
-      };
+      return baseAttrs;
     },
     content: 'list_item+',
     group: 'block list',
@@ -65,13 +58,9 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
               ? dom.dataset['hierarchical'] !== 'false'
               : null;
           }
-          return {
-            ...baseAttrs,
-            ...getRdfaAttrs(dom, { rdfaAware }),
-          };
+          return baseAttrs;
         },
         consuming: false,
-        contentElement: getRdfaContentElement,
       },
     ],
     toDOM(node) {
@@ -85,16 +74,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
       if (enableHierarchicalList) {
         baseAttrs['data-hierarchical'] = hierarchical;
       }
-      if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: node,
-          tag: 'ol',
-          attrs: baseAttrs,
-          content: 0,
-        });
-      } else {
-        return ['ol', { ...baseAttrs, ...attrs }, 0];
-      }
+      return ['ol', { ...baseAttrs, ...attrs }, 0];
     },
   };
 };
@@ -104,14 +84,11 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
  */
 export const ordered_list = orderedListWithConfig();
 
-export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
-  rdfaAware = false,
-} = {}) => {
+export const bulletListWithConfig: (options?: Config) => SayNodeSpec = () => {
   return {
     content: 'list_item+',
     group: 'block list',
     attrs: {
-      ...rdfaAttrSpec({ rdfaAware }),
       style: { default: 'unordered' },
       hierarchical: { default: false },
     },
@@ -122,22 +99,14 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
           if (typeof node === 'string') {
             return false;
           }
-          return { ...getRdfaAttrs(node, { rdfaAware }) };
+          return { ...getRdfaAttrs(node, { rdfaAware: false }) };
         },
         consuming: false,
         contentElement: getRdfaContentElement,
       },
     ],
     toDOM(node: PNode) {
-      if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: node,
-          tag: 'ul',
-          content: 0,
-        });
-      } else {
-        return ['ul', node.attrs, 0];
-      }
+      return ['ul', node.attrs, 0];
     },
   };
 };
@@ -148,20 +117,16 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = ({
 export const bullet_list = bulletListWithConfig();
 
 export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
-  rdfaAware = false,
   enableHierarchicalList = false,
 } = {}) => {
   return {
+    // The `+` requirement is taken from the Prosemirror provided list schema nodes.
+    // It's likely that we may want to drop this in the future but it may require increasing the
+    // complexity of the commands to operate on lists.
+    // See https://github.com/ProseMirror/prosemirror-schema-list/blob/master/src/schema-list.ts
     content: 'paragraphGroup+ block*',
     defining: true,
-    attrs: enableHierarchicalList
-      ? {
-          ...rdfaAttrSpec({ rdfaAware }),
-          listPath: { default: [] },
-        }
-      : {
-          ...rdfaAttrSpec({ rdfaAware }),
-        },
+    attrs: enableHierarchicalList ? { listPath: { default: [] } } : undefined,
     parseDOM: [
       {
         tag: 'li',
@@ -172,9 +137,9 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
           if (enableHierarchicalList) {
             const mapping = getListItemMapping(this);
             const listPath = calculateListItemPath(node, mapping);
-            return { ...getRdfaAttrs(node, { rdfaAware }), listPath };
+            return { ...getRdfaAttrs(node, { rdfaAware: false }), listPath };
           }
-          return { ...getRdfaAttrs(node, { rdfaAware }) };
+          return { ...getRdfaAttrs(node, { rdfaAware: false }) };
         },
         sayListItemMapping: enableHierarchicalList
           ? new WeakMap<Node, number[]>()
@@ -183,28 +148,15 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node: PNode) {
-      if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: node,
-          tag: 'li',
-          content: 0,
-          attrs: enableHierarchicalList
-            ? {
-                'data-list-marker': renderListMarker(node.attrs['listPath']),
-              }
-            : {},
-        });
-      } else {
-        return [
-          'li',
-          enableHierarchicalList
-            ? {
-                'data-list-marker': renderListMarker(node.attrs['listPath']),
-              }
-            : {},
-          0,
-        ];
-      }
+      return [
+        'li',
+        enableHierarchicalList
+          ? {
+              'data-list-marker': renderListMarker(node.attrs['listPath']),
+            }
+          : {},
+        0,
+      ];
     },
   };
 };
