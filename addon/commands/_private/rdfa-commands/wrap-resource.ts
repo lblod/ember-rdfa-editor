@@ -1,7 +1,7 @@
 import { addProperty } from '../../rdfa-commands/add-property';
 import type { Command } from 'prosemirror-state';
-import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
+import { wrapIncludingParents } from '@lblod/ember-rdfa-editor/commands';
 import {
   findNodeByRdfaId,
   generateNewUri,
@@ -18,11 +18,11 @@ export function wrapResource(
       rdfaNodeType: 'resource',
       subject: 'another placeholder',
     };
-    const wrapArgs: Parameters<typeof wrapIn> = [
+    const wrapArgs: Parameters<typeof wrapIncludingParents> = [
       state.schema.nodes['block_rdfa'],
       attrs,
     ];
-    if (!wrapIn(...wrapArgs)(state)) {
+    if (!wrapIncludingParents(...wrapArgs)(state)) {
       return false;
     }
     if (dispatch) {
@@ -35,7 +35,7 @@ export function wrapResource(
         attrs.subject = resource;
       }
 
-      const wrapStatus = wrapIn(...wrapArgs)(state, (tr) => {
+      const wrapStatus = wrapIncludingParents(...wrapArgs)(state, (tr) => {
         // pass the state after this transaction to addProperty so the node exists
         let newState = state.apply(tr);
         const createdWrappingNode = findNodeByRdfaId(
