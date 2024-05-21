@@ -93,15 +93,12 @@ export default class EditableBlockController extends Controller {
       repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
       list_item: listItemWithConfig({
-        rdfaAware: true,
         enableHierarchicalList: true,
       }),
       ordered_list: orderedListWithConfig({
-        rdfaAware: true,
         enableHierarchicalList: true,
       }),
       bullet_list: bulletListWithConfig({
-        rdfaAware: true,
         enableHierarchicalList: true,
       }),
       placeholder,

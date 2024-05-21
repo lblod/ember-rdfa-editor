@@ -184,13 +184,17 @@ export function findRdfaIdsInSelection(selection: Selection) {
   const result = new Set<string>();
   const range = selection.$from.blockRange(selection.$to);
   if (!range) return result;
-  selection.content().content.descendants((child) => {
-    const id = getRdfaId(child);
-    if (id) {
-      result.add(id);
-    }
-    return true;
-  });
+  // Could use selection.content() here, but this uses doc.slice() internally but with the 'include
+  // parents' flag true, which then includes too much of the document
+  selection.$from.doc
+    .slice(selection.from, selection.to, false)
+    .content.descendants((child) => {
+      const id = getRdfaId(child);
+      if (id) {
+        result.add(id);
+      }
+      return true;
+    });
   return result;
 }
 

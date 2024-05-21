@@ -1,6 +1,6 @@
 import type { Command } from 'prosemirror-state';
-import { wrapIn } from 'prosemirror-commands';
 import { v4 as uuidv4 } from 'uuid';
+import { wrapIncludingParents } from '@lblod/ember-rdfa-editor/commands';
 import { findRdfaIdsInSelection } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 
 export function wrapLiteral(): Command {
@@ -15,10 +15,13 @@ export function wrapLiteral(): Command {
 
     if (dispatch) {
       const objectId = uuidv4();
-      const wrapStatus = wrapIn(state.schema.nodes['block_rdfa'], {
-        __rdfaId: objectId,
-        rdfaNodeType: 'literal',
-      })(state, dispatch);
+      const wrapStatus = wrapIncludingParents(
+        state.schema.nodes['block_rdfa'],
+        {
+          __rdfaId: objectId,
+          rdfaNodeType: 'literal',
+        },
+      )(state, dispatch);
 
       return wrapStatus;
     }

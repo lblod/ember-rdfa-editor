@@ -17,8 +17,10 @@ export function wrapSelection(
         const tr = state.tr;
         const attrs = attrsFromWrapped && attrsFromWrapped();
         tr.insert(from, nodeType.create(attrs));
-        const selection = NodeSelection.create(tr.doc, from);
-        tr.setSelection(selection);
+        if (tr.doc.resolve(from).nodeAfter) {
+          const selection = NodeSelection.create(tr.doc, from);
+          tr.setSelection(selection);
+        }
         dispatch(tr);
       }
       return true;
