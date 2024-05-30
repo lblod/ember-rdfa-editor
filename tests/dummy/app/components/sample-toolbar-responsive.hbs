@@ -37,9 +37,11 @@
       <Plugins::Link::LinkMenu @controller={{@controller}} />
       <Plugins::Image::InsertMenu @controller={{@controller}} />
     </Tb.Group>
-    <Tb.Group>
-      <Plugins::Table::TableMenu @controller={{@controller}} />
-    </Tb.Group>
+    {{#if this.supportsTables}}
+      <Tb.Group>
+        <Plugins::Table::TableMenu @controller={{@controller}} />
+      </Tb.Group>
+    {{/if}}
     <Tb.Group>
       <Plugins::Heading::HeadingMenu @controller={{@controller}} />
     </Tb.Group>
