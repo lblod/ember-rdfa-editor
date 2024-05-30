@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 9.10.0
+
+### Minor Changes
+
+- [#1192](https://github.com/lblod/ember-rdfa-editor/pull/1192) [`7066efb`](https://github.com/lblod/ember-rdfa-editor/commit/7066efb76dfdbf1f14dba7a888d07d957bf2cd9b) Thanks [@piemonkey](https://github.com/piemonkey)! - Better handle wrapping with RDFa blocks for nested node structures
+
+- [#1192](https://github.com/lblod/ember-rdfa-editor/pull/1192) [`4ee2311`](https://github.com/lblod/ember-rdfa-editor/commit/4ee2311b8ec44ab063c43f0778453d9aedb077a3) Thanks [@piemonkey](https://github.com/piemonkey)! - Make lists no longer RDFa aware
+
+### Patch Changes
+
+- [#1193](https://github.com/lblod/ember-rdfa-editor/pull/1193) [`e779c40`](https://github.com/lblod/ember-rdfa-editor/commit/e779c40b8bf38b73accfff015cfe80d829b3c9dd) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Move mark-highlight-manual outside of rdfa-annotations class
+
+- [#1192](https://github.com/lblod/ember-rdfa-editor/pull/1192) [`dd462b2`](https://github.com/lblod/ember-rdfa-editor/commit/dd462b2751133359a9503b9475ab11d12f236674) Thanks [@piemonkey](https://github.com/piemonkey)! - Improve scoping of findRdfaIdsInSelection rdfa-util
+
 ## 9.9.0
 
 ### Minor Changes
