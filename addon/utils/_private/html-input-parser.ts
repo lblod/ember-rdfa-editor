@@ -280,9 +280,13 @@ export default class HTMLInputParser {
    * Returns the cleaned html string with any extra attributes we need.
    *
    * @method prepareHTML
+   *
    * @param htmlString {string}
+   * @param asHTMLElement {boolean}
    */
-  prepareHTML(htmlString: string): string {
+  prepareHTML(htmlString: string): string;
+  prepareHTML(htmlString: string, asHTMLDocument?: boolean): Document;
+  prepareHTML(htmlString: string, asHTMLDocument?: boolean): string | Document {
     const parser = new DOMParser();
 
     const document = parser.parseFromString(
@@ -295,6 +299,10 @@ export default class HTMLInputParser {
     this.cleanDocx({ element: bodyElement });
     this.setTableColWidthDataset({ element: bodyElement });
     this.sanitizeHTML({ element: bodyElement });
+
+    if (asHTMLDocument) {
+      return document;
+    }
 
     return bodyElement.innerHTML;
   }
