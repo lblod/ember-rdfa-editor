@@ -10,7 +10,11 @@ import {
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
-export type OrderListStyle = 'decimal' | 'upper-roman' | 'lower-alpha';
+export type OrderListStyle =
+  | 'decimal'
+  | 'upper-roman'
+  | 'lower-alpha'
+  | 'upper-alpha';
 
 const getListStyleFromDomElement = (dom: HTMLElement) => {
   const { listStyleType } = dom.style;
@@ -319,6 +323,8 @@ function renderEntry(entry: ListPathEntry) {
   const { style, pos } = entry;
   if (style === 'lower-alpha') {
     return indexToAlpha(pos);
+  } else if (style === 'upper-alpha') {
+    return indexToAlpha(pos).toUpperCase();
   } else if (style === 'upper-roman') {
     return romanize(pos + 1);
   } else {
