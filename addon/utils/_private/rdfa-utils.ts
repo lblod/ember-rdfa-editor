@@ -344,10 +344,17 @@ export interface TransactionResult<R> {
   transaction: Transaction;
   result: R;
 }
+
+export type AddPropertyToNodeArgs = {
+  /** The resource to which to add a property */
+  resource: string;
+  /** Property to add */
+  property: OutgoingTriple;
+};
 export function addPropertyToNode({
   resource,
   property,
-}: AddPropertyArgs): TransactionMonad<boolean> {
+}: AddPropertyToNodeArgs): TransactionMonad<boolean> {
   return function (state: EditorState): TransactionResult<boolean> {
     const tr = state.tr;
     const resourceNodes = getNodesBySubject(state, resource);
