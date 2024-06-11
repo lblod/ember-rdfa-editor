@@ -141,11 +141,11 @@ export default class SayController {
   }
 
   withTransaction(
-    callback: (tr: Transaction) => Transaction | null,
+    callback: (tr: Transaction, state: EditorState) => Transaction | null,
     { view = this.activeEditorView } = {},
   ) {
     const tr = view.state.tr;
-    const result = callback(tr);
+    const result = callback(tr, view.state);
     if (result) {
       view.dispatch(result);
     }
