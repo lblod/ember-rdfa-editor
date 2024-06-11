@@ -53,6 +53,12 @@ export default class ListOrdered extends Component<Args> {
         ),
       },
       {
+        name: 'upper-alpha',
+        description: this.intl.t(
+          'ember-rdfa-editor.ordered-list.styles.upper-alpha',
+        ),
+      },
+      {
         name: 'upper-roman',
         description: this.intl.t(
           'ember-rdfa-editor.ordered-list.styles.upper-roman',
