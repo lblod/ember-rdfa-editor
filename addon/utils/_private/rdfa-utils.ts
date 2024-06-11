@@ -3,7 +3,6 @@ import {
   Mapping,
   PNode,
   Selection,
-  Transaction,
 } from '@lblod/ember-rdfa-editor';
 import type {
   IncomingTriple,
@@ -22,6 +21,7 @@ import {
   getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from './transform-utils';
+import type { TransactionMonad, TransactionResult } from '../transaction-utils';
 
 export type RdfaAttr =
   | 'vocab'
@@ -339,11 +339,6 @@ export type AddPropertyArgs = {
   */
   state: EditorState;
 };
-export interface TransactionResult<R> {
-  initialState: EditorState;
-  transaction: Transaction;
-  result: R;
-}
 
 export type AddPropertyToNodeArgs = {
   /** The resource to which to add a property */
@@ -416,38 +411,5 @@ export function addPropertyToNode({
       });
     }
     return { initialState: state, transaction: tr, result: true };
-  };
-}
-export type TransactionMonad<R> = (state: EditorState) => TransactionResult<R>;
-export function transactionCombinator<R>(
-  initialState: EditorState,
-  initialTransaction?: Transaction,
-) {
-  return function (
-    transactionMonads: TransactionMonad<R>[],
-  ): TransactionResult<R[]> {
-    const tr = initialState.tr;
-    if (initialTransaction) {
-      for (const step of initialTransaction.steps) {
-        tr.step(step);
-      }
-      if (initialTransaction.selectionSet) {
-        tr.setSelection(initialTransaction.selection.map(tr.doc, tr.mapping));
-      }
-    }
-    let state = initialState.apply(tr);
-    const results: R[] = [];
-    for (const monad of transactionMonads) {
-      const { transaction, result } = monad(state);
-      state = state.apply(transaction);
-      results.push(result);
-      for (const step of transaction.steps) {
-        tr.step(step);
-      }
-      if (transaction.selectionSet) {
-        tr.setSelection(transaction.selection.map(tr.doc, tr.mapping));
-      }
-    }
-    return { transaction: tr, result: results, initialState };
   };
 }
