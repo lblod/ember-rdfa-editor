@@ -431,6 +431,9 @@ export function transactionCombinator<R>(
       for (const step of initialTransaction.steps) {
         tr.step(step);
       }
+      if (initialTransaction.selectionSet) {
+        tr.setSelection(initialTransaction.selection.map(tr.doc, tr.mapping));
+      }
     }
     let state = initialState.apply(tr);
     const results: R[] = [];
@@ -440,6 +443,9 @@ export function transactionCombinator<R>(
       results.push(result);
       for (const step of transaction.steps) {
         tr.step(step);
+      }
+      if (transaction.selectionSet) {
+        tr.setSelection(transaction.selection.map(tr.doc, tr.mapping));
       }
     }
     return { transaction: tr, result: results, initialState };
