@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.11.0
+
+### Minor Changes
+
+- [#1196](https://github.com/lblod/ember-rdfa-editor/pull/1196) [`f1af4a9`](https://github.com/lblod/ember-rdfa-editor/commit/f1af4a96cce38bde8f1cbcb2a49c13dc1c94551e) Thanks [@brenner-company](https://github.com/brenner-company)! - Add upper-alpha list style
+
 ## 9.10.0
 
 ### Minor Changes
