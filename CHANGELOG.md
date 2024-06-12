@@ -1,5 +1,14 @@
 # @lblod/ember-rdfa-editor
 
+## 9.12.0
+
+### Minor Changes
+
+- [#1195](https://github.com/lblod/ember-rdfa-editor/pull/1195) [`1b7a7fc`](https://github.com/lblod/ember-rdfa-editor/commit/1b7a7fca607c41cbbfb9477cde19c30d710be2e1) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4820: Preprocess RDFa on paste
+
+  - Preprocess RDFa on paste
+  - Expose `recreateUuidsOnPaste` plugin `key` to allow overriding the plugin
+
 ## 9.11.0
 
 ### Minor Changes
