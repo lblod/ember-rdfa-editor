@@ -21,7 +21,10 @@ import {
   getNodesBySubject,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import TransformUtils from './transform-utils';
-import type { TransactionMonad, TransactionResult } from '../transaction-utils';
+import type {
+  TransactionMonad,
+  TransactionMonadResult,
+} from '../transaction-utils';
 
 export type RdfaAttr =
   | 'vocab'
@@ -337,7 +340,7 @@ export function addPropertyToNode({
   resource,
   property,
 }: AddPropertyToNodeArgs): TransactionMonad<boolean> {
-  return function (state: EditorState): TransactionResult<boolean> {
+  return function (state: EditorState): TransactionMonadResult<boolean> {
     const tr = state.tr;
     const resourceNodes = getNodesBySubject(state, resource);
     if (!resourceNodes?.length) {
