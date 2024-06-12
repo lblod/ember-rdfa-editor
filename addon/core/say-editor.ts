@@ -23,7 +23,9 @@ import {
   type ResolvedPNode,
 } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { tracked } from 'tracked-built-ins';
-import recreateUuidsOnPaste from '../plugins/recreateUuidsOnPaste';
+import recreateUuidsOnPaste, {
+  recreateUuidsOnPasteKey,
+} from '../plugins/recreateUuidsOnPaste';
 import type Owner from '@ember/owner';
 import {
   type DefaultAttrGenPuginOptions,
@@ -37,6 +39,7 @@ import { gapCursor } from '../plugins/gap-cursor';
 import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
 import { ProseParser } from '..';
 import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -91,19 +94,29 @@ export default class SayEditor {
     this.pathFromRoot = getPathFromRoot(this.root, false);
     this.baseIRI = baseIRI;
     this.schema = schema;
+
     const pluginArr = plugins instanceof Array ? plugins : plugins.plugins;
     let pluginConf;
+
     if ('override' in plugins && plugins.override) {
       pluginConf = pluginArr;
     } else {
+      const recreateUuidsOnPastePlugin = pluginArr.find(
+        (plugin) => plugin.spec.key === recreateUuidsOnPasteKey,
+      );
+
+      const filteredPluginArr = pluginArr.filter(
+        (plugin) => plugin.spec.key !== recreateUuidsOnPasteKey,
+      );
+
       pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
-        ...pluginArr,
+        ...filteredPluginArr,
         dropCursor(),
         gapCursor(),
         keymap(baseKeymap(schema, keyMapOptions)),
         history(),
-        recreateUuidsOnPaste,
+        recreateUuidsOnPastePlugin ?? recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
           {
             attribute: '__guid',
@@ -125,6 +138,7 @@ export default class SayEditor {
     }
 
     this.parser = ProseParser.fromSchema(this.schema);
+
     const state = EditorState.create({
       doc: this.parser.parse(target),
       plugins: pluginConf,
@@ -146,8 +160,14 @@ export default class SayEditor {
       domParser: this.parser,
       transformPastedHTML: (html, editorView) => {
         const htmlCleaner = new HTMLInputParser({ editorView });
+        const cleanedDocument = htmlCleaner.prepareHTML(html, true);
 
-        return htmlCleaner.prepareHTML(html);
+        preprocessRDFa(
+          cleanedDocument.body,
+          editorView ? getPathFromRoot(editorView.dom, false) : [],
+        );
+
+        return cleanedDocument.body.innerHTML;
       },
       clipboardSerializer: this.serializer,
     });

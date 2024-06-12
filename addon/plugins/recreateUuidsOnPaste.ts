@@ -1,8 +1,11 @@
 import { Fragment, Slice, Node, Schema } from '@lblod/ember-rdfa-editor';
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 
+export const recreateUuidsOnPasteKey = new PluginKey('RECREATE_UUIDS_ON_PASTE');
+
 const recreateUuidsOnPaste = new Plugin({
+  key: recreateUuidsOnPasteKey,
   props: {
     transformPasted(slice, view) {
       const schema = view.state.schema;
