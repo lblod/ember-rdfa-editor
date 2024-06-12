@@ -327,19 +327,6 @@ export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
   );
 }
 
-export type AddPropertyArgs = {
-  /** The resource to which to add a property */
-  resource: string;
-  /** Property to add */
-  property: OutgoingTriple;
-  /**
-    A transaction to use in place of getting a new one from state.tr
-    This can be used to call this command from within another, but care must be taken to not use
-    the passed transaction between passing it in and when the callback is called.
-  */
-  state: EditorState;
-};
-
 export type AddPropertyToNodeArgs = {
   /** The resource to which to add a property */
   resource: string;
