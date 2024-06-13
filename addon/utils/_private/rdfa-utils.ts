@@ -1,4 +1,9 @@
-import { Mapping, PNode, Selection } from '@lblod/ember-rdfa-editor';
+import {
+  EditorState,
+  Mapping,
+  PNode,
+  Selection,
+} from '@lblod/ember-rdfa-editor';
 import type {
   IncomingTriple,
   LinkTriple,
@@ -11,6 +16,15 @@ import {
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 import type { ResolvedPNode } from './types';
+import {
+  getNodeByRdfaId,
+  getNodesBySubject,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import TransformUtils from './transform-utils';
+import type {
+  TransactionMonad,
+  TransactionMonadResult,
+} from '../transaction-utils';
 
 export type RdfaAttr =
   | 'vocab'
@@ -314,4 +328,78 @@ export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
     triple.object.termType === 'LiteralNode' ||
     triple.object.termType === 'ResourceNode'
   );
+}
+
+export type AddPropertyToNodeArgs = {
+  /** The resource to which to add a property */
+  resource: string;
+  /** Property to add */
+  property: OutgoingTriple;
+};
+export function addPropertyToNode({
+  resource,
+  property,
+}: AddPropertyToNodeArgs): TransactionMonad<boolean> {
+  return function (state: EditorState): TransactionMonadResult<boolean> {
+    const tr = state.tr;
+    const resourceNodes = getNodesBySubject(state, resource);
+    if (!resourceNodes?.length) {
+      return { initialState: state, transaction: tr, result: false };
+    }
+
+    const properties = getProperties(resourceNodes[0].value);
+    const updatedProperties = properties
+      ? [...properties, property]
+      : [property];
+
+    // Update the properties of each node that defines the given resource
+    resourceNodes.forEach((node) => {
+      TransformUtils.setAttribute(
+        tr,
+        node.pos,
+        'properties',
+        updatedProperties,
+      );
+    });
+
+    if (isLinkToNode(property)) {
+      const { object } = property;
+      let targets: ResolvedPNode[] | undefined;
+      /**
+       * We need two make two cases here
+       * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
+       * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
+       */
+      let newBacklink: IncomingTriple;
+      if (object.termType === 'LiteralNode') {
+        newBacklink = {
+          subject: sayDataFactory.literalNode(
+            resource,
+            languageOrDataType(object.language, object.datatype),
+          ),
+          predicate: property.predicate,
+        };
+        const target = getNodeByRdfaId(state, object.value);
+        if (target) {
+          targets = [target];
+        }
+      } else {
+        newBacklink = {
+          subject: sayDataFactory.resourceNode(resource),
+          predicate: property.predicate,
+        };
+        targets = getNodesBySubject(state, object.value);
+      }
+      targets?.forEach((target) => {
+        const backlinks = target.value.attrs['backlinks'] as
+          | IncomingTriple[]
+          | undefined;
+        const newBacklinks = backlinks
+          ? [...backlinks, newBacklink]
+          : [newBacklink];
+        TransformUtils.setAttribute(tr, target.pos, 'backlinks', newBacklinks);
+      });
+    }
+    return { initialState: state, transaction: tr, result: true };
+  };
 }

@@ -17,12 +17,15 @@ export default class MarkComponent extends Component<Args> {
   }
 
   get mark(): MarkType | undefined {
-    if (this.controller && !this.controller.schema.marks[this.args.mark]) {
+    if (
+      this.controller &&
+      !this.controller.activeEditorState.schema.marks[this.args.mark]
+    ) {
       console.error(
         `Can't find mark '${this.args.mark}', did you add it to your schema?`,
       );
     }
-    return this.controller.schema.marks[this.args.mark];
+    return this.controller.activeEditorState.schema.marks[this.args.mark];
   }
 
   get isActive() {
