@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 9.13.0
+
+### Minor Changes
+
+- [#1197](https://github.com/lblod/ember-rdfa-editor/pull/1197) [`90384c3`](https://github.com/lblod/ember-rdfa-editor/commit/90384c3cef57220d52c98e7dee9ec1f6aef87cef) Thanks [@abeforgit](https://github.com/abeforgit)! - Add some transaction and rdfa utils
+
+### Patch Changes
+
+- [#1199](https://github.com/lblod/ember-rdfa-editor/pull/1199) [`3e69150`](https://github.com/lblod/ember-rdfa-editor/commit/3e691509a4938cc919b1eef17ecb05d679541126) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix crash in sample-toolbar-responsive when controller is initially undefined
+
+- [#1198](https://github.com/lblod/ember-rdfa-editor/pull/1198) [`3ff82d4`](https://github.com/lblod/ember-rdfa-editor/commit/3ff82d453f10f9cd9d0f750f36a0f4ecb240966c) Thanks [@piemonkey](https://github.com/piemonkey)! - Correct peer-dependency range of ember-modifier to include 4.x
+
 ## 9.12.0
 
 ### Minor Changes
