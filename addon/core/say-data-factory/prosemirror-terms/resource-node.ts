@@ -12,9 +12,9 @@ export class ResourceNodeTerm<Iri extends string = string> {
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other && other.termType === 'ResourceNode' && other.value === this.value
     );
-  };
+  }
 }
