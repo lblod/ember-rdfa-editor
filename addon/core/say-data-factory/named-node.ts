@@ -15,9 +15,9 @@ export class SayNamedNode<Iri extends string = string>
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other && other.termType === 'NamedNode' && other.value === this.value
     );
-  };
+  }
 }
