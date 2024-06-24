@@ -86,7 +86,7 @@
     "ember-cli-babel": "^8.2.0",
     "ember-cli-htmlbars": "^6.2.0",
     "ember-focus-trap": "^1.1.0",
-    "ember-template-imports": "^3.4.2",
+    "ember-template-imports": "^4.1.1",
     "ember-truth-helpers": "^3.0.0",
     "ember-velcro": "^2.2.0",
     "handlebars": "^4.7.7",
@@ -225,6 +225,11 @@
     "@formatjs/ecma402-abstract": "1.18.2",
     "ember-intl@5.7.2": {
       "typescript": "$typescript"
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "babel-plugin-ember-template-compilation": "^2.2.5"
     }
   },
   "engines": {
