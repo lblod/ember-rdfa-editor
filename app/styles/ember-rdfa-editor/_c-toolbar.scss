@@ -47,12 +47,19 @@ $say-toolbar-height: 44px !default;
 .say-toolbar__side-dropdown {
   display: flex;
   justify-content: flex-start;
-  flex-wrap: wrap;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
   border-radius: $au-unit-tiny;
   padding: 0.1rem $au-unit-tiny 0; // Visually center the text in the pill
   background-color: $say-toolbar-background;
   z-index: 1;
+}
+
+.say-toolbar__main-dropdown {
+  flex-wrap: wrap;
+}
+
+.say-toolbar__side-dropdown {
+  flex-direction: column;
 }
 
 .say-toolbar img {
@@ -75,6 +82,7 @@ $say-toolbar-height: 44px !default;
   padding-left: 0.1rem;
   padding-right: 0.1rem;
   flex-shrink: 0;
+  flex-grow: 1;
   align-items: center;
 }
 
@@ -164,6 +172,7 @@ $say-toolbar-height: 44px !default;
 
 .say-rdfa-toggle {
   padding: 0 1.2rem;
+  white-space: nowrap;
 }
 
 .say-toolbar__highlight-button {
