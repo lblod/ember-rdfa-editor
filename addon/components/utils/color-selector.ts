@@ -28,12 +28,9 @@ export default class ColorSelector extends Component<Args> {
   AddIcon = AddIcon;
   CircleXIcon = CircleXIcon;
   colorPicker?: HTMLElement;
-  setUpColorPicker = modifier(
-    (element: HTMLElement) => {
-      this.colorPicker = element;
-    },
-    { eager: false },
-  );
+  setUpColorPicker = modifier((element: HTMLElement) => {
+    this.colorPicker = element;
+  });
   htmlSafe = htmlSafe;
 
   get presetColors() {

@@ -28,12 +28,9 @@ export default class ColorMenu extends Component<Args> {
   Velcro = Velcro;
   WordIcon = WordIcon;
 
-  setupDropdownButton = modifier(
-    (element: HTMLElement) => {
-      this.dropdownButton = element;
-    },
-    { eager: false },
-  );
+  setupDropdownButton = modifier((element: HTMLElement) => {
+    this.dropdownButton = element;
+  });
   @tracked dropdownOpen = false;
 
   get controller() {

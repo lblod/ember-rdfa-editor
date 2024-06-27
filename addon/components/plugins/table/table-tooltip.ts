@@ -98,24 +98,21 @@ export default class TableTooltip extends Component<Args> {
 
   htmlSafe = htmlSafe;
 
-  setUpListeners = modifier(
-    () => {
-      const handleMouseDown = () => {
-        this._justClicked = true;
-      };
-      const handleKeyDown = () => {
-        this._justClicked = false;
-      };
-      const viewDom = this.controller.mainEditorView.dom;
-      viewDom.addEventListener('mousedown', handleMouseDown);
-      viewDom.addEventListener('keydown', handleKeyDown);
-      return () => {
-        viewDom.removeEventListener('mousedown', handleMouseDown);
-        viewDom.removeEventListener('keydown', handleKeyDown);
-      };
-    },
-    { eager: false },
-  );
+  setUpListeners = modifier(() => {
+    const handleMouseDown = () => {
+      this._justClicked = true;
+    };
+    const handleKeyDown = () => {
+      this._justClicked = false;
+    };
+    const viewDom = this.controller.mainEditorView.dom;
+    viewDom.addEventListener('mousedown', handleMouseDown);
+    viewDom.addEventListener('keydown', handleKeyDown);
+    return () => {
+      viewDom.removeEventListener('mousedown', handleMouseDown);
+      viewDom.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
   get tableActions(): Action[][] {
     return [

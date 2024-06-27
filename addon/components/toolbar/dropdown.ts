@@ -16,12 +16,9 @@ export default class ToolbarDropdown extends Component<Args> {
   @tracked dropdownOpen = false;
   Velcro = Velcro;
 
-  reference = modifier(
-    (element) => {
-      this.referenceElement = element;
-    },
-    { eager: false },
-  );
+  reference = modifier((element) => {
+    this.referenceElement = element;
+  });
 
   @action
   openDropdown() {

@@ -99,9 +99,6 @@ const floatingUI: FunctionBasedModifier<FloatingUISignature> =
         cleanup();
       };
     },
-    {
-      eager: false,
-    },
   );
 
 export default floatingUI;

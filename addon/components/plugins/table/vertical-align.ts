@@ -71,12 +71,9 @@ export default class VerticalAlign extends Component<Args> {
   Velcro = Velcro;
   htmlSafe = htmlSafe;
 
-  setupDropdownButton = modifier(
-    (element: HTMLElement) => {
-      this.dropdownButton = element;
-    },
-    { eager: false },
-  );
+  setupDropdownButton = modifier((element: HTMLElement) => {
+    this.dropdownButton = element;
+  });
   @tracked dropdownOpen = false;
 
   @action

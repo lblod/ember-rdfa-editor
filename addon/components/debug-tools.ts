@@ -18,18 +18,15 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
     return this.args.controller;
   }
 
-  setUpListeners = modifier(
-    () => {
-      const unloadListener = () => {
-        this.saveEditorContentToLocalStorage();
-      };
-      window.addEventListener('beforeunload', unloadListener);
-      return () => {
-        window.removeEventListener('beforeunload', unloadListener);
-      };
-    },
-    { eager: false },
-  );
+  setUpListeners = modifier(() => {
+    const unloadListener = () => {
+      this.saveEditorContentToLocalStorage();
+    };
+    window.addEventListener('beforeunload', unloadListener);
+    return () => {
+      window.removeEventListener('beforeunload', unloadListener);
+    };
+  });
 
   @action
   setEditorContent(content: string) {

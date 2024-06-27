@@ -39,12 +39,9 @@ export default class HighlightMenu extends Component<Args> {
   PencilIcon = PencilIcon;
   ChevronDownIcon = ChevronDownIcon;
 
-  setupDropdownButton = modifier(
-    (element: HTMLElement) => {
-      this.dropdownButton = element;
-    },
-    { eager: false },
-  );
+  setupDropdownButton = modifier((element: HTMLElement) => {
+    this.dropdownButton = element;
+  });
   @tracked dropdownOpen = false;
   // defaultColor isn't expected to change, so this works fine.
   // eslint-disable-next-line ember/no-tracked-properties-from-args
