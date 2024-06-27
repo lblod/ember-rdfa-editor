@@ -24,62 +24,13 @@ import IntlService from 'ember-intl/services/intl';
 import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color';
 import type { ComponentLike } from '@glint/template';
 import VerticalAlign from '@lblod/ember-rdfa-editor/components/plugins/table/vertical-align';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const BinIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/bin').BinIcon
-  : 'bin';
-const TableColumnEndAddIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-column-end-add',
-    ).TableColumnEndAddIcon
-  : 'table-column-end-add';
-const TableColumnStartAddIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-column-start-add',
-    ).TableColumnStartAddIcon
-  : 'table-column-start-add';
-const TableColumnRemoveIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-column-remove',
-    ).TableColumnRemoveIcon
-  : 'table-column-remove';
-const TableRowEndAddIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-row-end-add',
-    ).TableRowEndAddIcon
-  : 'table-row-end-add';
-const TableRowStartAddIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-row-start-add',
-    ).TableRowStartAddIcon
-  : 'table-row-start-add';
-const TableRowRemoveIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync(
-      '@appuniversum/ember-appuniversum/components/icons/table-row-remove',
-    ).TableRowRemoveIcon
-  : 'table-row-remove';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { TableColumnEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-end-add';
+import { TableColumnStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-start-add';
+import { TableColumnRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-remove';
+import { TableRowEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-end-add';
+import { TableRowStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-start-add';
+import { TableRowRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-remove';
 
 type Args = {
   controller: SayController;

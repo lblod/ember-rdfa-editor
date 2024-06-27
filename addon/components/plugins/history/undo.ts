@@ -2,15 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { undo } from '@lblod/ember-rdfa-editor/plugins/history';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const UndoIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/undo')
-      .UndoIcon
-  : 'undo';
+import { UndoIcon } from '@appuniversum/ember-appuniversum/components/icons/undo';
 
 type Args = {
   controller?: SayController;

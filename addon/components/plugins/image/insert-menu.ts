@@ -3,19 +3,7 @@ import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
 import { tracked } from 'tracked-built-ins';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const ImageIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/image')
-      .ImageIcon
-  : macroCondition(
-        dependencySatisfies('@appuniversum/ember-appuniversum', '>=2.16.0'),
-      )
-    ? 'image'
-    : 'website';
+import { ImageIcon } from '@appuniversum/ember-appuniversum/components/icons/image';
 
 const DEFAULT_SVG_HEIGHT = 100;
 
