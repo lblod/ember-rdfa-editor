@@ -9,15 +9,7 @@ import {
 import WrappingModal from './modal';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { wrapInlineLiteral } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/wrap-inline-literal';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const PlusIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/plus')
-      .PlusIcon
-  : 'plus';
+import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 
 type Args = {
   controller?: SayController;

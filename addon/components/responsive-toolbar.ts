@@ -3,22 +3,8 @@ import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { tracked } from 'tracked-built-ins';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const ThreeDotsIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/three-dots')
-      .ThreeDotsIcon
-  : 'three-dots';
-const NavDownIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/nav-down')
-      .NavDownIcon
-  : 'nav-down';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 
 type ToolbarSection = {
   reference?: HTMLElement;
