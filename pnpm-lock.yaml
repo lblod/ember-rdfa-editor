@@ -91,7 +91,7 @@ dependencies:
     version: 3.1.1
   ember-velcro:
     specifier: ^2.2.0
-    version: 2.2.0(ember-modifier@3.2.7)(ember-source@4.12.0)
+    version: 2.2.0(ember-modifier@4.1.0)(ember-source@4.12.0)
   handlebars:
     specifier: ^4.7.7
     version: 4.7.8
@@ -195,7 +195,7 @@ devDependencies:
     version: 1.4.0(typescript@5.3.3)
   '@glint/environment-ember-loose':
     specifier: ^1.4.0
-    version: 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@3.2.7)
+    version: 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.1.0)
   '@glint/environment-ember-template-imports':
     specifier: ^1.4.0
     version: 1.4.0(@glint/environment-ember-loose@1.4.0)(@glint/template@1.4.0)(@types/ember__component@4.0.21)(@types/ember__routing@4.0.19)
@@ -365,8 +365,8 @@ devDependencies:
     specifier: ^2.1.2
     version: 2.1.2(@babel/core@7.23.7)
   ember-modifier:
-    specifier: 3.2.7
-    version: 3.2.7(@babel/core@7.23.7)
+    specifier: ^4.1.0
+    version: 4.1.0(ember-source@4.12.0)
   ember-page-title:
     specifier: ^8.0.0
     version: 8.2.0(ember-source@4.12.0)
@@ -2283,7 +2283,7 @@ packages:
         optional: true
     dependencies:
       '@embroider/macros': 1.13.4(@glint/template@1.4.0)
-      '@glint/environment-ember-loose': 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@3.2.7)
+      '@glint/environment-ember-loose': 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.1.0)
       '@glint/template': 1.4.0
       broccoli-funnel: 3.0.8
       ember-cli-babel: 7.26.11
@@ -2523,7 +2523,7 @@ packages:
       - supports-color
     dev: true
 
-  /@glint/environment-ember-loose@1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@3.2.7):
+  /@glint/environment-ember-loose@1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.1.0):
     resolution: {integrity: sha512-vFR3qgPTisGzS36e04195wTUrtUc6GuVwm6hsC/XXx6PeRw/6rtMxhK08Aw/VtDc00UqQzM9sIEghPVKHwqVVQ==}
     peerDependencies:
       '@glimmer/component': ^1.1.2
@@ -2559,7 +2559,7 @@ packages:
       '@types/ember__object': 4.0.11(@babel/core@7.23.7)
       '@types/ember__routing': 4.0.19(@babel/core@7.23.7)
       ember-cli-htmlbars: 6.3.0
-      ember-modifier: 3.2.7(@babel/core@7.23.7)
+      ember-modifier: 4.1.0(ember-source@4.12.0)
     dev: true
 
   /@glint/environment-ember-template-imports@1.4.0(@glint/environment-ember-loose@1.4.0)(@glint/template@1.4.0)(@types/ember__component@4.0.21)(@types/ember__routing@4.0.19):
@@ -2581,7 +2581,7 @@ packages:
       '@types/ember__routing':
         optional: true
     dependencies:
-      '@glint/environment-ember-loose': 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@3.2.7)
+      '@glint/environment-ember-loose': 1.4.0(@glimmer/component@1.1.2)(@glint/template@1.4.0)(@types/ember__array@4.0.9)(@types/ember__component@4.0.21)(@types/ember__controller@4.0.11)(@types/ember__object@4.0.11)(@types/ember__routing@4.0.19)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.1.0)
       '@glint/template': 1.4.0
       '@types/ember__component': 4.0.21(@babel/core@7.23.7)
       '@types/ember__routing': 4.0.19(@babel/core@7.23.7)
@@ -7228,9 +7228,9 @@ packages:
       ember-element-helper: 0.8.5(@glint/environment-ember-loose@1.4.0)(@glint/template@1.4.0)(ember-source@4.12.0)
       ember-get-config: 2.1.1(@glint/template@1.4.0)
       ember-maybe-in-element: 2.1.0
-      ember-modifier: 3.2.7(@babel/core@7.23.7)
+      ember-modifier: 4.1.0(ember-source@4.12.0)
       ember-source: 4.12.0(@babel/core@7.23.7)(@glimmer/component@1.1.2)(@glint/template@1.4.0)(webpack@5.89.0)
-      ember-style-modifier: 3.0.1(@babel/core@7.23.7)(@ember/string@3.1.1)(@glint/template@1.4.0)(webpack@5.89.0)
+      ember-style-modifier: 3.0.1(@ember/string@3.1.1)(@glint/template@1.4.0)(ember-source@4.12.0)(webpack@5.89.0)
       ember-truth-helpers: 3.1.1
     transitivePeerDependencies:
       - '@babel/core'
@@ -7955,7 +7955,7 @@ packages:
       '@glimmer/component': 1.1.2(@babel/core@7.23.7)
       '@glimmer/tracking': 1.1.2
       ember-auto-import: 2.7.2(@glint/template@1.4.0)(webpack@5.89.0)
-      ember-modifier: 3.2.7(@babel/core@7.23.7)
+      ember-modifier: 4.1.0(ember-source@4.12.0)
       tracked-built-ins: 3.3.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -8098,6 +8098,22 @@ packages:
       ember-compatibility-helpers: 1.2.7(@babel/core@7.23.7)
     transitivePeerDependencies:
       - '@babel/core'
+      - supports-color
+    dev: true
+
+  /ember-modifier@4.1.0(ember-source@4.12.0):
+    resolution: {integrity: sha512-YFCNpEYj6jdyy3EjslRb2ehNiDvaOrXTilR9+ngq+iUqSHYto2zKV0rleiA1XJQ27ELM1q8RihT29U6Lq5EyqQ==}
+    peerDependencies:
+      ember-source: '*'
+    peerDependenciesMeta:
+      ember-source:
+        optional: true
+    dependencies:
+      '@embroider/addon-shim': 1.8.7
+      ember-cli-normalize-entity-name: 1.0.0
+      ember-cli-string-utils: 1.1.0
+      ember-source: 4.12.0(@babel/core@7.23.7)(@glimmer/component@1.1.2)(@glint/template@1.4.0)(webpack@5.89.0)
+    transitivePeerDependencies:
       - supports-color
 
   /ember-page-title@8.2.0(ember-source@4.12.0):
@@ -8243,7 +8259,7 @@ packages:
       - supports-color
       - webpack
 
-  /ember-style-modifier@3.0.1(@babel/core@7.23.7)(@ember/string@3.1.1)(@glint/template@1.4.0)(webpack@5.89.0):
+  /ember-style-modifier@3.0.1(@ember/string@3.1.1)(@glint/template@1.4.0)(ember-source@4.12.0)(webpack@5.89.0):
     resolution: {integrity: sha512-WHRVIiqY/dpwDtVWlnHW0P4Z+Jha8QEwfaQdIF2ckJL77ZKdjbV2j1XZymS0Nzj61EGx5BM+YEsGL16r3hLv2A==}
     engines: {node: 14.* || 16.* || >= 18}
     peerDependencies:
@@ -8252,10 +8268,10 @@ packages:
       '@ember/string': 3.1.1
       ember-auto-import: 2.7.2(@glint/template@1.4.0)(webpack@5.89.0)
       ember-cli-babel: 7.26.11
-      ember-modifier: 3.2.7(@babel/core@7.23.7)
+      ember-modifier: 4.1.0(ember-source@4.12.0)
     transitivePeerDependencies:
-      - '@babel/core'
       - '@glint/template'
+      - ember-source
       - supports-color
       - webpack
     dev: true
@@ -8417,7 +8433,7 @@ packages:
       - supports-color
     dev: true
 
-  /ember-velcro@2.2.0(ember-modifier@3.2.7)(ember-source@4.12.0):
+  /ember-velcro@2.2.0(ember-modifier@4.1.0)(ember-source@4.12.0):
     resolution: {integrity: sha512-+5qVN0xGgr5N+CVEK1cKBGsfUNBfOQrakfz/4qOdE8YYFc0Prlo8ZXs8Je/Juop4OcZTGXMa5QlY/2okMo+X8A==}
     engines: {node: 14.* || >= 16}
     peerDependencies:
@@ -8427,7 +8443,7 @@ packages:
       '@embroider/addon-shim': 1.8.7
       '@floating-ui/dom': 1.6.3
       ember-functions-as-helper-polyfill: 2.1.2(ember-source@4.12.0)
-      ember-modifier: 3.2.7(@babel/core@7.23.7)
+      ember-modifier: 4.1.0(ember-source@4.12.0)
       ember-source: 4.12.0(@babel/core@7.23.7)(@glimmer/component@1.1.2)(@glint/template@1.4.0)(webpack@5.89.0)
     transitivePeerDependencies:
       - supports-color

@@ -44,75 +44,60 @@ export default class ResponsiveToolbar extends Component {
     showDropdown: false,
   });
 
-  setUpToolbar = modifier(
-    (element: HTMLElement) => {
-      const observer = new ResizeObserver(this.handleResize.bind(this));
-      observer.observe(element);
-      this.toolbar = element;
-      return () => {
-        observer.disconnect();
-      };
-    },
-    { eager: false },
-  );
+  setUpToolbar = modifier((element: HTMLElement) => {
+    const observer = new ResizeObserver(this.handleResize.bind(this));
+    observer.observe(element);
+    this.toolbar = element;
+    return () => {
+      observer.disconnect();
+    };
+  });
 
-  setUpMainToolbar = modifier(
-    (element: HTMLElement) => {
-      const observer = new ResizeObserver(this.handleResize.bind(this));
-      observer.observe(element);
-      if (element.children.length) {
-        const childs = element.children;
-        for (const child of childs) {
-          observer.observe(child);
-        }
+  setUpMainToolbar = modifier((element: HTMLElement) => {
+    const observer = new ResizeObserver(this.handleResize.bind(this));
+    observer.observe(element);
+    if (element.children.length) {
+      const childs = element.children;
+      for (const child of childs) {
+        observer.observe(child);
       }
-      this.main.reference = element;
-      // Call handleResize to ensure the toolbar is correctly initialized
-      this.handleResize();
-      return () => {
-        observer.disconnect();
-      };
-    },
-    { eager: false },
-  );
+    }
+    this.main.reference = element;
+    // Call handleResize to ensure the toolbar is correctly initialized
+    this.handleResize();
+    return () => {
+      observer.disconnect();
+    };
+  });
 
-  setUpSideToolbar = modifier(
-    (element: HTMLElement) => {
-      const observer = new ResizeObserver(this.handleResize.bind(this));
-      observer.observe(element);
-      if (element.children.length) {
-        const childs = element.children;
-        for (const child of childs) {
-          observer.observe(child);
-        }
+  setUpSideToolbar = modifier((element: HTMLElement) => {
+    const observer = new ResizeObserver(this.handleResize.bind(this));
+    observer.observe(element);
+    if (element.children.length) {
+      const childs = element.children;
+      for (const child of childs) {
+        observer.observe(child);
       }
-      this.side.reference = element;
-      // Call handleResize to ensure the toolbar is correctly initialized
-      this.handleResize();
-      return () => {
-        observer.disconnect();
-      };
-    },
-    { eager: false },
-  );
+    }
+    this.side.reference = element;
+    // Call handleResize to ensure the toolbar is correctly initialized
+    this.handleResize();
+    return () => {
+      observer.disconnect();
+    };
+  });
 
-  setUpMainDropdown = modifier(
-    (element: HTMLElement) => {
-      this.main.dropdown = element;
-      // Call handleResize to ensure the toolbar is correctly initialized
-      this.handleResize();
-    },
-    { eager: false },
-  );
+  setUpMainDropdown = modifier((element: HTMLElement) => {
+    this.main.dropdown = element;
+    // Call handleResize to ensure the toolbar is correctly initialized
+    this.handleResize();
+  });
 
-  setUpSideDropdown = modifier(
-    (element: HTMLElement) => {
-      this.side.dropdown = element;
-      // Call handleResize to ensure the toolbar is correctly initialized
-      this.handleResize();
-    },
-    { eager: false },
-  );
+  setUpSideDropdown = modifier((element: HTMLElement) => {
+    this.side.dropdown = element;
+    // Call handleResize to ensure the toolbar is correctly initialized
+    this.handleResize();
+  });
 
   @action
   toggleMainDropdown() {
