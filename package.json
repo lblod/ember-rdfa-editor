@@ -123,10 +123,10 @@
     "@ember/test-helpers": "^2.9.3",
     "@embroider/test-setup": "^3.0.1",
     "@glimmer/component": "^1.1.2",
-    "@glint/core": "^1.4.0",
-    "@glint/environment-ember-loose": "^1.4.0",
-    "@glint/environment-ember-template-imports": "^1.4.0",
-    "@glint/template": "^1.4.0",
+    "@glint/core": "~1.4.0",
+    "@glint/environment-ember-loose": "~1.4.0",
+    "@glint/environment-ember-template-imports": "~1.4.0",
+    "@glint/template": "~1.4.0",
     "@graphy/content.ttl.write": "^4.3.7",
     "@playwright/test": "^1.41.2",
     "@rdfjs/types": "^1.1.0",
@@ -169,19 +169,19 @@
     "broccoli-asset-rev": "^3.0.0",
     "changesets-release-it-plugin": "^0.1.1",
     "concurrently": "^8.0.1",
-    "ember-changeset": "^4.1.2",
+    "ember-changeset": "~4.1.2",
     "ember-cli": "~5.6.0",
     "ember-cli-autoprefixer": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.1",
     "ember-cli-inject-live-reload": "^2.1.0",
-    "ember-cli-sass": "11.0.1",
+    "ember-cli-sass": "~11.0.1",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
     "ember-cli-typescript-blueprints": "^3.0.0",
     "ember-eslint-parser": "^0.3.8",
-    "ember-intl": "5.7.2",
+    "ember-intl": "~6.4.1",
     "ember-load-initializers": "^2.1.2",
-    "ember-modifier": "^4.1.0",
+    "ember-modifier": "~4.1.0",
     "ember-page-title": "^8.0.0",
     "ember-power-select": "^7.1.2",
     "ember-qunit": "^6.2.0",
@@ -214,19 +214,14 @@
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^3.4.2",
-    "@glint/template": "^1.1.0",
+    "@glint/template": "^1.4.0",
     "ember-changeset": "^4.1.2",
     "ember-cli-sass": "^11.0.1",
-    "ember-intl": "^5.7.2 || ^6.1.0",
+    "ember-intl": "^6.4.0 || ^7.0.2",
     "ember-modifier": "^4.1.0",
     "ember-source": "^4.12.0"
   },
-  "overrides": {
-    "@formatjs/ecma402-abstract": "1.18.2",
-    "ember-intl@5.7.2": {
-      "typescript": "$typescript"
-    }
-  },
+  "overrides": {},
   "pnpm": {
     "overrides": {
       "babel-plugin-ember-template-compilation": "^2.2.5"
