@@ -228,9 +228,6 @@ importers:
       '@types/ember':
         specifier: ~4.0.11
         version: 4.0.11(@babel/core@7.24.7)
-      '@types/ember-resolver':
-        specifier: ^9.0.0
-        version: 9.0.0(ember-source@4.12.0(@babel/core@7.24.7)(@glimmer/component@1.1.2(@babel/core@7.24.7))(@glint/template@1.4.0)(webpack@5.92.1))
       '@types/ember__application':
         specifier: ~4.0.11
         version: 4.0.11(@babel/core@7.24.7)
@@ -355,8 +352,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       ember-eslint-parser:
-        specifier: ^0.3.8
-        version: 0.3.8(@babel/core@7.24.7)(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)
+        specifier: ^0.4.3
+        version: 0.4.3(@babel/core@7.24.7)(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)
       ember-intl:
         specifier: ~6.4.1
         version: 6.4.1(@babel/core@7.24.7)(@glint/template@1.4.0)(typescript@5.3.3)(webpack@5.92.1)
@@ -1864,10 +1861,6 @@ packages:
 
   '@types/dompurify@3.0.5':
     resolution: {integrity: sha512-1Wg0g3BtQF7sSb27fJQAKck1HECM6zV1EB66j8JH9i3LCjYabJa0FSdiSgsD5K/RbrsR0SiraKacLB+T8ZVYAg==}
-
-  '@types/ember-resolver@9.0.0':
-    resolution: {integrity: sha512-lEuC2QD8K6rRAbELMejrALFBgelRPt6OQtapny4Oke07ZtK/Lbf9zn5KIDl7PNkirxMD0AStsQTdUqFu6eVbVw==}
-    deprecated: This is a stub types definition. ember-resolver provides its own type definitions, so you do not need this installed.
 
   '@types/ember@4.0.11':
     resolution: {integrity: sha512-v7VIex0YILK8fP87LkIfzeeYKNnu74+xwf6U56v6MUDDGfSs9q/6NCxiUfwkxD+z5nQiUcwvfKVokX8qzZFRLw==}
@@ -3994,14 +3987,6 @@ packages:
     engines: {node: 14.* || 16.* || >= 18}
     peerDependencies:
       ember-source: ^3.8 || ^4.0.0 || >= 5.0.0
-
-  ember-eslint-parser@0.3.8:
-    resolution: {integrity: sha512-P1VEHlbL8RZ/2GcdwaiG/jySWJzY6eBPkzQoA3g4lSDSG6CH0Xwmlem38wIdYy/lN28EBu++vlJvRm2KROpDRw==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@babel/core': ^7.23.6
-      '@typescript-eslint/parser': ^6.15.0
-      typescript: ^5.3.3
 
   ember-eslint-parser@0.4.3:
     resolution: {integrity: sha512-wMPoaaA+i/F/tPPxURRON9XXJH5MRUOZ5x/9CVJTSpL+0n4EWphyztb20gR+ZJeShnOACQpAdFy6YSS1/JSHKw==}
@@ -10685,13 +10670,6 @@ snapshots:
     dependencies:
       '@types/trusted-types': 2.0.7
 
-  '@types/ember-resolver@9.0.0(ember-source@4.12.0(@babel/core@7.24.7)(@glimmer/component@1.1.2(@babel/core@7.24.7))(@glint/template@1.4.0)(webpack@5.92.1))':
-    dependencies:
-      ember-resolver: 11.0.1(ember-source@4.12.0(@babel/core@7.24.7)(@glimmer/component@1.1.2(@babel/core@7.24.7))(@glint/template@1.4.0)(webpack@5.92.1))
-    transitivePeerDependencies:
-      - ember-source
-      - supports-color
-
   '@types/ember@4.0.11(@babel/core@7.24.7)':
     dependencies:
       '@types/ember__application': 4.0.11(@babel/core@7.24.7)
@@ -13835,20 +13813,6 @@ snapshots:
       - '@glint/environment-ember-loose'
       - '@glint/template'
       - supports-color
-
-  ember-eslint-parser@0.3.8(@babel/core@7.24.7)(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3):
-    dependencies:
-      '@babel/core': 7.24.7
-      '@babel/eslint-parser': 7.23.10(@babel/core@7.24.7)(eslint@8.57.0)
-      '@glimmer/syntax': 0.88.1
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.3.3)
-      '@typescript-eslint/scope-manager': 6.21.0
-      content-tag: 1.2.2
-      eslint-scope: 7.2.2
-      html-tags: 3.3.1
-      typescript: 5.3.3
-    transitivePeerDependencies:
-      - eslint
 
   ember-eslint-parser@0.4.3(@babel/core@7.24.7)(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0):
     dependencies:
