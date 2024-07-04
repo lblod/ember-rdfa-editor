@@ -36,16 +36,16 @@ type Args = {
 };
 
 const icons: Record<AlignmentOption, string> = {
-  left: `<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+  left: `<svg class="local-icon" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1.33333 2.71594H13.3333V4.04928H1.33333V2.71594ZM1.33333 5.38261H10.6667V6.71594H1.33333V5.38261ZM14.6667 8.04928H1.33333V9.38261H14.6667V8.04928ZM1.33333 10.7159H10.6667V12.0493H1.33333V10.7159ZM13.3333 13.3826H1.33333V14.7159H13.3333V13.3826Z" fill="currentColor"/>
         </svg>`,
-  right: `<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+  right: `<svg class="local-icon" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2.66666 2.60394H14.6667V3.93728H2.66666V2.60394ZM5.33333 5.27061H14.6667V6.60394H5.33333V5.27061ZM14.6667 7.93728H1.33333V9.27061H14.6667V7.93728ZM5.33333 10.6039H14.6667V11.9373H5.33333V10.6039ZM14.6667 13.2706H2.66666V14.6039H14.6667V13.2706Z" fill="currentColor"/>
           </svg>`,
-  center: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  center: `<svg class="local-icon" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M1.99999 2H14V3.33333H1.99999V2ZM3.33333 4.66667H12.6667V6H3.33333V4.66667ZM14.6667 7.33333H1.33333V8.66667H14.6667V7.33333ZM3.33333 10H12.6667V11.3333H3.33333V10ZM14 12.6667H1.99999V14H14V12.6667Z" fill="currentColor"/>
           </svg>`,
-  justify: `<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+  justify: `<svg class="local-icon" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M1.33333 2.88794H14.6667V4.22127H1.33333V2.88794ZM1.33333 5.55461H14.6667V6.88794H1.33333V5.55461ZM14.6667 8.22127H1.33333V9.55461H14.6667V8.22127ZM1.33333 10.8879H14.6667V12.2213H1.33333V10.8879ZM10.6667 13.5546H1.33333V14.8879H10.6667V13.5546Z" fill="currentColor"/>
           </svg>`,
 };
