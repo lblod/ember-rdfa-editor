@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 9.14.0
+
+### Minor Changes
+
+- [#1201](https://github.com/lblod/ember-rdfa-editor/pull/1201) [`11b2ff0`](https://github.com/lblod/ember-rdfa-editor/commit/11b2ff07409ca566652b1db4f94e9ac112711c9b) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Convert horizontal alignment menu into icons
+
+### Patch Changes
+
+- [#1203](https://github.com/lblod/ember-rdfa-editor/pull/1203) [`1335dcf`](https://github.com/lblod/ember-rdfa-editor/commit/1335dcfc856ac8d573912847de466304e3cb6605) Thanks [@dkozickis](https://github.com/dkozickis)! - Fix behaviour of responsive toolbar
+
 ## 9.13.0
 
 ### Minor Changes
