@@ -100,7 +100,7 @@ QUnit.hooks.afterEach(() => {
   QUnit.dump.maxDepth = defaultDumpDepth;
 });
 
-(QUnit.assert.deepArrayContains = function (
+QUnit.assert.deepArrayContains = function (
   array: unknown[],
   element: unknown,
   message?: string,
@@ -112,7 +112,8 @@ QUnit.hooks.afterEach(() => {
     expected: element,
     message,
   });
-}),
-  setApplication(Application.create(config.APP));
+};
+
+setApplication(Application.create(config.APP));
 
 start();
