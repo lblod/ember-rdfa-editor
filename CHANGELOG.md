@@ -1,5 +1,25 @@
 # @lblod/ember-rdfa-editor
 
+## 10.0.0
+
+### Major Changes
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`4b89711`](https://github.com/lblod/ember-rdfa-editor/commit/4b89711d8e5000e919aa88391e5a420dfbb1e335) Thanks [@piemonkey](https://github.com/piemonkey)! - Update all dependency minor updates. Unfortunately changes some of the types from those libraries.
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`3d2d419`](https://github.com/lblod/ember-rdfa-editor/commit/3d2d41962a3171ec3631b57fffa09d508b799d0b) Thanks [@piemonkey](https://github.com/piemonkey)! - Remove support for @appuniversum/ember-appuniversum <3.4.2
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`a4dccbf`](https://github.com/lblod/ember-rdfa-editor/commit/a4dccbf1f4e53ff2684103205e4a8da6054e0962) Thanks [@piemonkey](https://github.com/piemonkey)! - Remove support for ember-intl <6.4
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`baf99fb`](https://github.com/lblod/ember-rdfa-editor/commit/baf99fb80accd68101d442ac6b2dcdb479e0316b) Thanks [@piemonkey](https://github.com/piemonkey)! - Move ember-truth-helpers and ember-power-select to peer dependencies
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`7197edd`](https://github.com/lblod/ember-rdfa-editor/commit/7197eddda0fbcc3f536150275ed52232f57e25dd) Thanks [@piemonkey](https://github.com/piemonkey)! - Drop support for ember-modifier <4.1
+
+### Patch Changes
+
+- [#1205](https://github.com/lblod/ember-rdfa-editor/pull/1205) [`6067c6f`](https://github.com/lblod/ember-rdfa-editor/commit/6067c6fe55b0826b2cc600d72f2b629d2dc20fb2) Thanks [@Krinkle](https://github.com/Krinkle)! - Fix formatting of test-helpers file
+
+- [#1204](https://github.com/lblod/ember-rdfa-editor/pull/1204) [`6c72c23`](https://github.com/lblod/ember-rdfa-editor/commit/6c72c23dd46693c3131f70a1ae63761360340558) Thanks [@piemonkey](https://github.com/piemonkey)! - Update ember-template-imports to 4.1.1
+
 ## 9.14.0
 
 ### Minor Changes
@@ -793,14 +813,14 @@
   ```js
   createEmberNodeView({
     // ... other options
-    componentPath: "foo",
+    componentPath: 'foo',
   });
   ```
 
   After:
 
   ```js
-  import Foo from "app-name/components/foo";
+  import Foo from 'app-name/components/foo';
 
   createEmberNodeView({
     // ... other options
