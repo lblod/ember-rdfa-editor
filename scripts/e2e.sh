@@ -18,5 +18,5 @@ docker run -it --rm \
 -e DISPLAY=$DISPLAY_ENV \
 -w /e2e \
 --platform linux/amd64 \
-mcr.microsoft.com/playwright:v1.41.2-jammy \
+mcr.microsoft.com/playwright:v1.45.0-jammy \
 npx playwright "$@"

@@ -118,23 +118,14 @@ export default class ImageNode extends Component<EmberNodeArgs> {
         this.onMouseDown(event, position),
       );
     },
-    {
-      eager: false,
-    },
   );
 
-  setUpImageContainer = modifier(
-    (element: HTMLElement) => {
-      this.imageContainer = element;
-    },
-    { eager: false },
-  );
-  setUpImage = modifier(
-    (element: HTMLElement) => {
-      this.image = element;
-    },
-    { eager: false },
-  );
+  setUpImageContainer = modifier((element: HTMLElement) => {
+    this.imageContainer = element;
+  });
+  setUpImage = modifier((element: HTMLElement) => {
+    this.image = element;
+  });
 
   get node() {
     return this.args.node;

@@ -8,29 +8,15 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/alignment';
 import { setAlignment } from '@lblod/ember-rdfa-editor/plugins/alignment/commands';
 import IntlService from 'ember-intl/services/intl';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { Velcro } from 'ember-velcro';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
 import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
-const NavDownIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/nav-down')
-      .NavDownIcon
-  : 'nav-down';
 
-const CheckIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/check')
-      .CheckIcon
-  : 'check';
 type Args = {
   controller?: SayController;
 };
@@ -57,12 +43,9 @@ export default class AlignmentMenu extends Component<Args> {
   Velcro = Velcro;
   htmlSafe = htmlSafe;
 
-  setupDropdownButton = modifier(
-    (element: HTMLElement) => {
-      this.dropdownButton = element;
-    },
-    { eager: false },
-  );
+  setupDropdownButton = modifier((element: HTMLElement) => {
+    this.dropdownButton = element;
+  });
   @tracked dropdownOpen = false;
 
   @service declare intl: IntlService;

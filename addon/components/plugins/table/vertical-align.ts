@@ -9,22 +9,8 @@ import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
 import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
-import { dependencySatisfies, macroCondition } from '@embroider/macros';
-import { importSync } from '@embroider/macros';
-const ChevronDownIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/chevron-down')
-      .ChevronDownIcon
-  : 'chevron-down';
-const CheckIcon = macroCondition(
-  dependencySatisfies('@appuniversum/ember-appuniversum', '>=3.4.1'),
-)
-  ? // @ts-expect-error TS/glint doesn't seem to treat this as an import
-    importSync('@appuniversum/ember-appuniversum/components/icons/check')
-      .CheckIcon
-  : 'check';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 
 type Args = {
   controller: SayController;
@@ -71,12 +57,9 @@ export default class VerticalAlign extends Component<Args> {
   Velcro = Velcro;
   htmlSafe = htmlSafe;
 
-  setupDropdownButton = modifier(
-    (element: HTMLElement) => {
-      this.dropdownButton = element;
-    },
-    { eager: false },
-  );
+  setupDropdownButton = modifier((element: HTMLElement) => {
+    this.dropdownButton = element;
+  });
   @tracked dropdownOpen = false;
 
   @action

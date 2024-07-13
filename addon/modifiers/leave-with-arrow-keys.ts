@@ -1,4 +1,5 @@
 import Modifier, { type ArgsFor, type PositionalArgs } from 'ember-modifier';
+import type Owner from '@ember/owner';
 import { SayController, TextSelection } from '..';
 import { registerDestructor } from '@ember/destroyable';
 
@@ -31,7 +32,7 @@ export default class LeaveWithArrowKeysModifier extends Modifier<ModifierArgs> {
   controller: SayController | null = null;
   getPos: () => number | undefined = () => undefined;
 
-  constructor(owner: unknown, args: ArgsFor<ModifierArgs>) {
+  constructor(owner: Owner, args: ArgsFor<ModifierArgs>) {
     super(owner, args);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call

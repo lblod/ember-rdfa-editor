@@ -3,7 +3,7 @@ FROM node:20-slim AS builder
 LABEL maintainer="info@redpencil.io"
 
 RUN corepack enable
-RUN corepack prepare pnpm@latest-8 --activate
+RUN corepack prepare pnpm@9.4 --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY public ./public/

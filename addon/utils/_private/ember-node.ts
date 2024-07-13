@@ -16,7 +16,7 @@ import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
 import type {
   AttributeSpec,
   DOMOutputSpec,
-  ParseRule,
+  TagParseRule,
   Node as PNode,
 } from 'prosemirror-model';
 import {
@@ -342,7 +342,7 @@ export type EmberNodeConfig = {
     };
   };
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
-  parseDOM?: readonly ParseRule[];
+  parseDOM?: readonly TagParseRule[];
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} */
   toDOM?: (node: PNode) => DOMOutputSpec;
   /**
