@@ -69,6 +69,7 @@ import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/node
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
+  @tracked editable = true;
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
@@ -125,6 +126,10 @@ export default class IndexController extends Controller {
       interactive: true,
     };
   }
+
+  toggleEditable = () => {
+    this.editable = !this.editable;
+  };
 
   @tracked plugins: PluginConfig = [
     listTrackingPlugin(),
