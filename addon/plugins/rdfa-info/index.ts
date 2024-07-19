@@ -8,6 +8,13 @@ import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
+export const snippetRdfaPluginKey = new PluginKey<SnippetRdfaState>(
+  'snippet-rdfa-plugin',
+);
+export interface SnippetRdfaState {
+  imported: string[];
+}
+
 class RdfaInfo {
   private state: EditorState;
   private _rdfaIdMapping?: Map<string, ResolvedPNode>;
@@ -20,6 +27,16 @@ class RdfaInfo {
     const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
     const subjectMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
+    const plugState = snippetRdfaPluginKey.getState(this.state);
+    if (plugState?.imported) {
+      // We're editing a snippet, so import the resources
+      plugState.imported.forEach((imported) => {
+        MapUtils.setOrPush(subjectMapping, imported, {
+          pos: 0,
+          value: doc,
+        });
+      });
+    }
     doc.descendants((node, pos) => {
       const rdfaId = getRdfaId(node);
       const subject = getSubject(node);
@@ -34,6 +51,28 @@ class RdfaInfo {
           pos,
           value: node,
         });
+        if (plugState) {
+          const plug = snippetRdfaPluginKey.get(this.state);
+          const importedResources = plug?.spec['extractImportedResources']?.(
+            node,
+            pos,
+          );
+          (importedResources || []).forEach((imported: string) => {
+            // MapUtils.setOrPush(subjectMapping, imported, {
+            //   pos,
+            //   value: node,
+            // });
+            rdfaIdMapping.set(imported, {
+              pos,
+              value: node,
+            });
+          });
+          console.log(
+            'Extra resources from snippet placeholders',
+            plug,
+            importedResources,
+          );
+        }
       }
       return true;
     });

@@ -146,7 +146,10 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     }
     const result: string[] = [];
     rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
-      if (resolvedNode.value.attrs['rdfaNodeType'] === 'literal') {
+      if (
+        resolvedNode.value.attrs['rdfaNodeType'] === 'literal' ||
+        resolvedNode.value.type.name === 'snippet_placeholder'
+      ) {
         result.push(rdfaId);
       }
     });
