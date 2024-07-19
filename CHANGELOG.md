@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 9.14.1
+
+### Patch Changes
+
+- [#1207](https://github.com/lblod/ember-rdfa-editor/pull/1207) [`4edc7c6`](https://github.com/lblod/ember-rdfa-editor/commit/4edc7c65f16fd25697580c8d2f6ce94a652ecbd9) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove css rule from toolbar which breaks toolbar spacing on bigger screens
+
 ## 9.14.0
 
 ### Minor Changes
