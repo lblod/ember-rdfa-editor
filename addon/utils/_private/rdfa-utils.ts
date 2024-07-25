@@ -348,6 +348,10 @@ export function addPropertyToNode({
     }
 
     const properties = getProperties(resourceNodes[0].value);
+    // Do not add the property if it is already present
+    if (properties?.some((prop) => deepEqualProperty(prop, property))) {
+      return { initialState: state, transaction: tr, result: false };
+    }
     const updatedProperties = properties
       ? [...properties, property]
       : [property];
