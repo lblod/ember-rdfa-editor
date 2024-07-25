@@ -1,5 +1,12 @@
 # @lblod/ember-rdfa-editor
 
+## 10.0.3
+
+### Patch Changes
+
+- [`5d87134`](https://github.com/lblod/ember-rdfa-editor/commit/5d871341dd51606c48b8a3d24152feb33f452214) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of `vm-browserify` dependency. This dependency is required as one of the other dependencies (`parse-asn1`) now depends on `vm` (which is built in into node and requires a polyfill on the browser).
+  For more information on this subject, check out https://github.com/browserify/parse-asn1/issues/46
+
 ## 10.0.2
 
 ### Patch Changes
