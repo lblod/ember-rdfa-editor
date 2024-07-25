@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.0.2
+
+### Patch Changes
+
+- [#1208](https://github.com/lblod/ember-rdfa-editor/pull/1208) [`0310750`](https://github.com/lblod/ember-rdfa-editor/commit/03107503598681e5cb8fbb5c307b2a760fe63a20) Thanks [@elpoelma](https://github.com/elpoelma)! - fix in `addPropertyToNode` function: when property is already included, do not add it a second time (this prevents duplications)
+
 ## 10.0.1
 
 ### Patch Changes
@@ -825,14 +831,14 @@
   ```js
   createEmberNodeView({
     // ... other options
-    componentPath: "foo",
+    componentPath: 'foo',
   });
   ```
 
   After:
 
   ```js
-  import Foo from "app-name/components/foo";
+  import Foo from 'app-name/components/foo';
 
   createEmberNodeView({
     // ... other options
