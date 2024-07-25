@@ -37,7 +37,7 @@ export class LiteralNodeTerm {
     }
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other &&
       other.termType === 'LiteralNode' &&
@@ -45,5 +45,5 @@ export class LiteralNodeTerm {
       other.language === this.language &&
       this.datatype.equals(other.datatype)
     );
-  };
+  }
 }

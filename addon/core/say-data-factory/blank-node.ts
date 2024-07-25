@@ -13,9 +13,9 @@ export class SayBlankNode implements RDF.BlankNode {
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other && other.termType === 'BlankNode' && other.value === this.value
     );
-  };
+  }
 }
