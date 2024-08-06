@@ -2,6 +2,7 @@
 <DummyContainer>
   <:header>
     <DebugTools @controller={{this.rdfaEditor}} />
+    <button type='button' {{on 'click' this.toggleEditable}}>Toggle editable</button>
   </:header>
   <:content>
     <EditorContainer
@@ -27,6 +28,7 @@
           @schema={{this.schema}}
           @nodeViews={{this.nodeViews}}
           @rdfaEditorInit={{this.rdfaEditorInit}}
+          @editable={{this.editable}}
         />
         {{#if this.rdfaEditor}}
           <Plugins::Table::TableTooltip @controller={{this.rdfaEditor}} />

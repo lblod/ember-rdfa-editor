@@ -63,6 +63,18 @@ export default class SayController {
     return this.mainEditorView.domParser;
   }
 
+  get editable() {
+    return this.mainEditorView.editable;
+  }
+
+  setEditable(editable: boolean) {
+    this.mainEditorView.setProps({
+      editable: () => {
+        return editable;
+      },
+    });
+  }
+
   clone() {
     return new SayController(this.editor);
   }
