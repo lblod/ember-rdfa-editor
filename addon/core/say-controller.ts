@@ -67,11 +67,10 @@ export default class SayController {
     return this.mainEditorView.editable;
   }
 
-  toggleEditable() {
-    const editable = this.mainEditorView.editable;
+  setEditable(editable: boolean) {
     this.mainEditorView.setProps({
       editable: () => {
-        return !editable;
+        return editable;
       },
     });
   }
