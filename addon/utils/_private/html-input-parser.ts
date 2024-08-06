@@ -373,14 +373,9 @@ export default class HTMLInputParser {
         return;
       }
 
-      const scaleFactor = this.editorViewWidth / totalWidth;
-
-      for (let i = 0; i < cellWidths.length; i++) {
-        cellWidths[i] = Math.round(cellWidths[i] * scaleFactor);
-      }
-
       for (let i = 0; i < cellElements.length; i++) {
-        cellElements[i].dataset['colwidth'] = `${cellWidths[i]}`;
+        cellElements[i].dataset['colwidth'] =
+          `${(cellWidths[i] / totalWidth) * 100}`;
       }
     });
 

@@ -1243,7 +1243,7 @@ module('Utils | CS | HTMLInputParser', function () {
   test('It should display formatted table as HTML', function (assert) {
     const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="25"><p><span>Column 1</span></p></td><td data-colwidth="25"><p><span>Column 2</span></p></td><td data-colwidth="25"><p><span>Column 3</span></p></td><td data-colwidth="25"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
 
@@ -1506,7 +1506,7 @@ module('Utils | CS | HTMLInputParser', function () {
   test('It should display formatted list in a table', function (assert) {
     const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="25"><p><span>Column 1</span></p></td><td data-colwidth="25"><p><span>Column 2</span></p></td><td data-colwidth="25"><p><span>Column 3</span></p></td><td data-colwidth="25"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1653,7 +1653,7 @@ module('Utils | CS | HTMLInputParser', function () {
   test('It should display table in a list', function (assert) {
     const inputParser = new HTMLInputParser({ editorView });
     const expectedHtml = oneLineTrim`
-<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
+<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="50"><p><span>Table column 1</span></p></td><td data-colwidth="50"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="50"><p><span>Table column 1</span></p></td><td data-colwidth="50"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
     `;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
