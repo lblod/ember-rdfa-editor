@@ -79,7 +79,7 @@ export type IncomingTriple =
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
  */
-export function preprocessRDFa(dom: Node, pathFromRoot: Node[]) {
+export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
   // parse the html
   const datastore = EditorStore.fromParse<Node>({
     parseRoot: true,
