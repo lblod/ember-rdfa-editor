@@ -1,8 +1,6 @@
 import DOMPurify from 'dompurify';
-import { EditorView } from 'prosemirror-view';
 import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx';
 import { preCleanHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions';
-import { getEditorViewWidth } from './editor-view';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',
@@ -239,7 +237,6 @@ const DEFAULT_SAFE_TAGS = [
 ];
 
 interface HTMLInputParserArguments {
-  editorView: EditorView;
   safeAttributes?: string[];
   safeTags?: string[];
   uriSafeAttributes?: string[];
@@ -255,8 +252,6 @@ interface HTMLInputParserArguments {
  * @class HTMLInputParser
  */
 export default class HTMLInputParser {
-  private readonly editorViewWidth: number;
-
   private readonly safeAttributes: string[];
 
   private readonly safeTags: string[];
@@ -264,12 +259,10 @@ export default class HTMLInputParser {
   private readonly uriSafeAttributes: string[];
 
   constructor({
-    editorView,
     safeAttributes = DEFAULT_SAFE_ATTRIBUTES,
     safeTags = DEFAULT_SAFE_TAGS,
     uriSafeAttributes = DEFAULT_URI_SAFE_ATTRIBUTES,
-  }: HTMLInputParserArguments) {
-    this.editorViewWidth = getEditorViewWidth(editorView);
+  }: HTMLInputParserArguments = {}) {
     this.safeAttributes = safeAttributes;
     this.safeTags = safeTags;
     this.uriSafeAttributes = uriSafeAttributes;
