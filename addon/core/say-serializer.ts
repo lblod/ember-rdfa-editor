@@ -46,6 +46,8 @@ export type MarkSerializer = (
 
 type NodeToDOM = NonNullable<SayNodeSpec['toDOM']>;
 type MarkToDOM = NonNullable<SayMarkSpec['toDOM']>;
+
+type StateGenerator = () => EditorState;
 /**
  * ProseMirror DOMSerializer which serializes nodes and marks based on their `serialize` or `toDOM` method.
  * If the node/mark has a `serialize` method, the current editor state is passed to that method.
@@ -53,6 +55,7 @@ type MarkToDOM = NonNullable<SayMarkSpec['toDOM']>;
  * Note, for the `SaySerializer` to work, an instance of `SayEditor` is required.
  * If such an instance is not passed to the `fromSchema` static function, a default ProseMirror `DOMSerializer` is created.
  */
+
 export default class SaySerializer extends DOMSerializer {
   declare nodes: {
     [node: string]: NodeToDOM;
@@ -60,8 +63,18 @@ export default class SaySerializer extends DOMSerializer {
   declare marks: {
     [mark: string]: MarkToDOM;
   };
-  editor: SayEditor;
+  stateGenerator: StateGenerator;
 
+  constructor(
+    nodes: {
+      [node: string]: NodeToDOM;
+    },
+    marks: { [mark: string]: MarkToDOM },
+    stateGenerator: StateGenerator,
+  );
+  /**
+   * @deprecated passing an instance of {SayEditor} to this constructor is deprecated, use a {StateGenerator} instead
+   */
   constructor(
     /// The node serialization functions.
     nodes: {
@@ -70,13 +83,21 @@ export default class SaySerializer extends DOMSerializer {
     /// The mark serialization functions.
     marks: { [mark: string]: MarkToDOM },
     editor: SayEditor,
+  );
+  constructor(
+    nodes: {
+      [node: string]: NodeToDOM;
+    },
+    /// The mark serialization functions.
+    marks: { [mark: string]: MarkToDOM },
+    stateGeneratorOrEditor: SayEditor | StateGenerator,
   ) {
     super(nodes, marks);
-    this.editor = editor;
+    this.stateGenerator = toStateGenerator(stateGeneratorOrEditor);
   }
 
   get state() {
-    return this.editor.mainView.state;
+    return this.stateGenerator();
   }
 
   /// @internal
@@ -114,13 +135,24 @@ export default class SaySerializer extends DOMSerializer {
    * serializer, whereas we do not.
    */
   static fromSchema(schema: Schema): DOMSerializer;
+  static fromSchema(
+    schema: Schema,
+    stateGenerator: StateGenerator,
+  ): SaySerializer;
+  /**
+   * @deprecated passing an instance of {SayEditor} to this function is deprecated, use a {StateGenerator} instead
+   */
   static fromSchema(schema: Schema, editor: SayEditor): SaySerializer;
-  static fromSchema(schema: Schema, editor?: SayEditor): DOMSerializer {
-    if (editor) {
+  static fromSchema(
+    schema: Schema,
+    editorOrStateGenerator?: SayEditor | StateGenerator,
+  ): DOMSerializer {
+    if (editorOrStateGenerator) {
+      const stateGenerator = toStateGenerator(editorOrStateGenerator);
       return new SaySerializer(
-        SaySerializer.nodesFromSchema(schema, editor),
-        SaySerializer.marksFromSchema(schema, editor),
-        editor,
+        SaySerializer.nodesFromSchema(schema, stateGenerator),
+        SaySerializer.marksFromSchema(schema, stateGenerator),
+        stateGenerator,
       );
     } else {
       // Use the cached stock `DOMSerializer` to mimic ProseMirror code
@@ -137,15 +169,30 @@ export default class SaySerializer extends DOMSerializer {
   static nodesFromSchema(schema: Schema): {
     [node: string]: NodeToDOM;
   };
+  /**
+   * @deprecated passing an instance of {SayEditor} to this function is deprecated, use a {StateGenerator} instead
+   */
   static nodesFromSchema(
     schema: Schema,
     editor: SayEditor,
   ): {
     [node: string]: NodeToDOM;
   };
-  static nodesFromSchema(schema: Schema, editor?: SayEditor) {
-    if (editor) {
-      const result = gatherToDOM(schema.nodes, editor);
+  static nodesFromSchema(
+    schema: Schema,
+    stateGenerator: StateGenerator,
+  ): {
+    [node: string]: NodeToDOM;
+  };
+  static nodesFromSchema(
+    schema: Schema,
+    editorOrStateGenerator?: SayEditor | StateGenerator,
+  ) {
+    if (editorOrStateGenerator) {
+      const result = gatherToDOM(
+        schema.nodes,
+        toStateGenerator(editorOrStateGenerator),
+      );
       if (!result['text'])
         result['text'] = (node: PNode) => node.text as string;
       return result;
@@ -158,17 +205,31 @@ export default class SaySerializer extends DOMSerializer {
   static marksFromSchema(schema: Schema): {
     [mark: string]: MarkToDOM;
   };
-
+  /**
+   * @deprecated passing an instance of {SayEditor} to this function is deprecated, use a {StateGenerator} instead
+   */
   static marksFromSchema(
     schema: Schema,
     editor: SayEditor,
   ): {
     [mark: string]: MarkToDOM;
   };
+  static marksFromSchema(
+    schema: Schema,
+    stateGenerator: StateGenerator,
+  ): {
+    [mark: string]: MarkToDOM;
+  };
 
-  static marksFromSchema(schema: Schema, editor?: SayEditor) {
-    if (editor) {
-      return gatherToDOM(schema.marks, editor);
+  static marksFromSchema(
+    schema: Schema,
+    editorOrStateGenerator?: SayEditor | StateGenerator,
+  ) {
+    if (editorOrStateGenerator) {
+      return gatherToDOM(
+        schema.marks,
+        toStateGenerator(editorOrStateGenerator),
+      );
     } else {
       return super.marksFromSchema(schema);
     }
@@ -177,19 +238,19 @@ export default class SaySerializer extends DOMSerializer {
 
 function gatherToDOM(
   obj: { [node: string]: NodeType },
-  editor: SayEditor,
+  stateGenerator: StateGenerator,
 ): {
   [node: string]: NodeToDOM;
 };
 function gatherToDOM(
   obj: { [node: string]: MarkType },
-  editor: SayEditor,
+  stateGenerator: StateGenerator,
 ): {
   [node: string]: MarkToDOM;
 };
 function gatherToDOM(
   obj: { [node: string]: NodeType | MarkType },
-  editor: SayEditor,
+  stateGenerator: StateGenerator,
 ) {
   const result: {
     [node: string]: NodeToDOM | MarkToDOM;
@@ -200,7 +261,7 @@ function gatherToDOM(
       const spec = obj[name].spec as SayNodeSpec;
       const { serialize, toDOM } = spec;
       if (serialize) {
-        result[name] = (node: PNode) => serialize(node, editor.mainView.state);
+        result[name] = (node: PNode) => serialize(node, stateGenerator());
       } else if (toDOM) {
         result[name] = toDOM;
       }
@@ -209,7 +270,7 @@ function gatherToDOM(
       const { serialize, toDOM } = spec;
       if (serialize) {
         result[name] = (mark: Mark, inline: boolean) =>
-          serialize(mark, inline, editor.mainView.state);
+          serialize(mark, inline, stateGenerator());
       } else if (toDOM) {
         result[name] = toDOM;
       }
@@ -220,4 +281,12 @@ function gatherToDOM(
 
 function doc(options: { document?: Document }) {
   return options.document || window.document;
+}
+
+function toStateGenerator(editorOrStateGenerator: SayEditor | StateGenerator) {
+  if (editorOrStateGenerator instanceof SayEditor) {
+    return () => editorOrStateGenerator.mainView.state;
+  } else {
+    return editorOrStateGenerator;
+  }
 }
