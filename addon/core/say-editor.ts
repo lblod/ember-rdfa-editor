@@ -143,7 +143,10 @@ export default class SayEditor {
       doc: this.parser.parse(target),
       plugins: pluginConf,
     });
-    this.serializer = SaySerializer.fromSchema(this.schema, this);
+    this.serializer = SaySerializer.fromSchema(
+      this.schema,
+      () => this.mainView.state,
+    );
     this.mainView = new SayView(target, {
       state,
       attributes: { class: 'say-editor__inner say-content' },
