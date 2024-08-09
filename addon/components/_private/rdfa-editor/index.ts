@@ -35,6 +35,9 @@ export default class RdfaEditor extends Component<Args> {
   }
 
   get type() {
+    if (this.args.node.value.type === this.controller?.schema.nodes['doc']) {
+      return 'document';
+    }
     return this.isResourceNode ? 'resource' : 'literal';
   }
 

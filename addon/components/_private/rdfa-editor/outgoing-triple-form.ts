@@ -33,13 +33,17 @@ const allTermTypes: SupportedTermType[] = [
   'ContentLiteral',
 ];
 
-interface Args {
-  triple: OutgoingTriple;
-  termTypes?: SupportedTermType[];
-  defaultTermType?: SupportedTermType;
-  controller?: SayController;
-  onInput?(newTriple: Partial<OutgoingTriple>): void;
-  onSubmit?(newTriple: OutgoingTriple): void;
+interface Sig {
+  Args: {
+    triple?: OutgoingTriple;
+    termTypes?: SupportedTermType[];
+    defaultTermType?: SupportedTermType;
+    controller?: SayController;
+    onInput?(newTriple: Partial<OutgoingTriple>): void;
+    onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
+    importedResources?: string[] | undefined;
+  };
+  Element: HTMLFormElement;
 }
 const datatypeSchema = object({
   termType: string<'NamedNode'>().required(),
@@ -90,7 +94,7 @@ const DEFAULT_TRIPLE: OutgoingTriple = {
   predicate: '',
   object: sayDataFactory.namedNode(''),
 };
-export default class OutgoingTripleFormComponent extends Component<Args> {
+export default class OutgoingTripleFormComponent extends Component<Sig> {
   @localCopy('args.triple.object.termType')
   selectedTermType?: SayTermType;
 
@@ -99,6 +103,9 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
 
   @localCopy('args.triple.object.value')
   linkedLiteralNode?: string;
+
+  @tracked
+  subject: string | undefined = undefined;
 
   @tracked
   errors: ValidationError[] = [];
@@ -209,9 +216,16 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   validateFormData(
     formData: FormData,
   ):
-    | { valid: true; triple: OutgoingTriple }
+    | { valid: true; triple: OutgoingTriple; subject?: string }
     | { valid: false; errors: ValidationError[] } {
     try {
+      if (this.args.importedResources && !this.subject) {
+        throw new ValidationError(
+          'Need to specify subject to link from when importing resources',
+          this.subject,
+          'subject',
+        );
+      }
       switch (this.termType) {
         case 'NamedNode': {
           const validated = namedNodeSchema.validateSync(
@@ -231,6 +245,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
               predicate: validated.predicate,
               object: sayDataFactory.namedNode(validated.object.value),
             },
+            subject: this.subject,
           };
         }
         case 'Literal': {
@@ -263,6 +278,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         case 'LiteralNode': {
@@ -298,6 +314,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         case 'ResourceNode': {
@@ -318,6 +335,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
           return {
             valid: true,
             triple: { predicate, object: sayDataFactory.resourceNode(value) },
+            subject: this.subject,
           };
         }
         case 'ContentLiteral': {
@@ -350,6 +368,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         // ts apparently not smart enough to see this can't happen
@@ -369,6 +388,10 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     return this.errors.find((error) => error.path === path)?.message ?? null;
   };
 
+  @action
+  setSubject(subject: string) {
+    this.subject = subject;
+  }
   @action
   setTermType(termType: SayTermType) {
     this.selectedTermType = termType;
@@ -394,7 +417,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
     if (validated.valid) {
-      this.args.onSubmit?.(validated.triple);
+      this.args.onSubmit?.(validated.triple, validated.subject);
     } else {
       this.errors = validated.errors;
     }

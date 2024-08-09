@@ -20,6 +20,7 @@ import type {
 import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
@@ -45,6 +46,7 @@ type UpdateStatus = {
   mode: 'update';
   index: number;
   triple: LinkTriple;
+  subject?: string;
 };
 type Status = CreationStatus | UpdateStatus;
 
@@ -88,7 +90,10 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get showOutgoingSection() {
-    return isResourceNode(this.node);
+    return (
+      isResourceNode(this.node) ||
+      (this.type === 'document' && this.documentImportedResources)
+    );
   }
 
   get currentResource(): string | undefined {
@@ -97,8 +102,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       this.node.attrs['resource']) as string | undefined;
   }
   get type() {
+    if (this.node.type === this.controller?.schema.nodes['doc']) {
+      return 'document';
+    }
     return this.node.attrs['rdfaNodeType'] as 'resource' | 'literal';
   }
+  get documentImportedResources() {
+    return this.type === 'document' && this.node.attrs[IMPORTED_RESOURCES_ATTR];
+  }
+
   get isResource() {
     return this.type === 'resource';
   }
@@ -235,11 +247,6 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.status = { mode: 'creation' };
   };
 
-  saveNewRelationship = (triple: LinkTriple) => {
-    this.addProperty(triple);
-    this.status = undefined;
-  };
-
   cancel = () => {
     this.status = undefined;
   };
@@ -248,13 +255,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     throw new NotImplementedError();
   };
 
-  addProperty = (property: OutgoingTriple) => {
-    // This function can only be called when the selected node defines a resource
-    if (this.currentResource) {
-      this.controller?.doCommand(
-        addProperty({ resource: this.currentResource, property }),
-        { view: this.controller.mainEditorView },
-      );
+  addProperty = (property: OutgoingTriple, subject?: string) => {
+    // This function can only be called when the selected node defines a resource or the selected
+    // node is a document that imports resources (e.g. a snippet)
+    const resource = this.currentResource || subject;
+    if (resource) {
+      this.controller?.doCommand(addProperty({ resource, property }), {
+        view: this.controller.mainEditorView,
+      });
       this.status = undefined;
     }
   };
@@ -263,6 +271,10 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       mode: 'update',
       index,
       triple: this.properties?.[index] as LinkTriple,
+      // TODO For doc nodes, need to either look up the target, to get which resource is backlinked
+      // to, or it may be cleaner just to split out this case into a different component instead of
+      // lumping it in to 'relationsip editor'
+      // subject: ...
     };
   };
 
