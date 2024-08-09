@@ -15,6 +15,38 @@
       </AuButton>
     </Group>
   </AuToolbar>
+  {{#if this.importedResources}}
+    <div>
+      <AuHeading @level='6' @skin='6' class='au-u-margin-bottom-small'>Imported
+        Resources</AuHeading>
+      <AuList @divider={{true}} as |Item|>
+        {{#each-in this.importedResources as |imported linked|}}
+          <Item
+            class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+          >
+            {{imported}}
+            <AuDropdown
+              @icon={{if linked this.ChevronDownIcon this.PlusIcon}}
+              @title={{linked}}
+              role='menu'
+              @alignment='left'
+            >
+              {{#each this.resources as |res|}}
+                <AuButton
+                  @skin='link'
+                  @icon={{this.PencilIcon}}
+                  role='menuitem'
+                  {{on 'click' (fn this.linkImported imported res)}}
+                >
+                  {{res}}
+                </AuButton>
+              {{/each}}
+            </AuDropdown>
+          </Item>
+        {{/each-in}}
+      </AuList>
+    </div>
+  {{/if}}
   {{#if this.showOutgoingSection}}
     <div>
       <AuHeading

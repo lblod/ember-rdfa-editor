@@ -10,7 +10,10 @@ import {
 import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
 import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
 import RelationshipEditorModal from './modal';
-import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getNodeByRdfaId,
+  getSubjects,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import type {
   IncomingTriple,
@@ -26,6 +29,7 @@ import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/ic
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 
 type Args = {
   controller?: SayController;
@@ -56,6 +60,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   ThreeDotsIcon = ThreeDotsIcon;
   PencilIcon = PencilIcon;
   BinIcon = BinIcon;
+  ChevronDownIcon = ChevronDownIcon;
 
   @tracked modalOpen = false;
   @tracked _statusMessage: StatusMessageForNode | null = null;
@@ -144,6 +149,26 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     this.statusMessage = null;
   };
   isNodeLink = isLinkToNode;
+
+  get importedResources(): Record<string, string | undefined> | undefined {
+    return this.node.attrs['importedResources'];
+  }
+  get allResources(): string[] {
+    if (!this.controller) {
+      return [];
+    }
+    return getSubjects(this.controller.mainEditorState);
+  }
+
+  linkImportedResource = (imported: string, linked: string) => {
+    const newImported = {
+      ...this.importedResources,
+      [imported]: linked,
+    };
+    this.controller?.withTransaction((tr) =>
+      tr.setNodeAttribute(this.args.node.pos, 'importedResources', newImported),
+    );
+  };
 
   goToOutgoing = (outgoing: OutgoingTriple) => {
     this.closeStatusMessage();
