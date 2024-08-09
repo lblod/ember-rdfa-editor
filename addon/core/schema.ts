@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
-import { PNode } from '@lblod/ember-rdfa-editor/index';
+import { type PNode } from '@lblod/ember-rdfa-editor';
 import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
@@ -8,8 +8,9 @@ import type {
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { isElement } from '../utils/_private/dom-helpers';
 import { sayDataFactory } from './say-data-factory';
+import { IMPORTED_RESOURCES_ATTR } from '../plugins/imported-resources';
 
 // const logger = createLogger('core/schema');
 
@@ -292,15 +293,28 @@ export function renderRdfaAttrs(
       return {};
     }
 
-    return {
-      about: backlinks[0].subject.value,
-      property: backlinks[0].predicate,
-      datatype: backlinks[0].subject.language.length
-        ? null
-        : backlinks[0].subject.datatype.value,
-      lang: backlinks[0].subject.language,
-      'data-literal-node': 'true',
-    };
+    // @ts-expect-error rdfaAttrs can actually contain any Attrs, but since this is temporary, just
+    // ignore the type error
+    if (rdfaAttrs[IMPORTED_RESOURCES_ATTR]) {
+      // TODO figure out how to add links from resources in the snippet TO imported resources in a
+      // way that doesn't break tooling or require manually typing URIs into a NamedNode
+      // relationship.
+      // For now just warn and avoid crashing.
+      console.warn(
+        'Do not add relationships pointing TO an imported resource as a ResourceNode, use a NamedNode with the correct URI',
+      );
+      return {};
+    } else {
+      return {
+        about: backlinks[0].subject.value,
+        property: backlinks[0].predicate,
+        datatype: backlinks[0].subject.language.length
+          ? null
+          : backlinks[0].subject.datatype.value,
+        lang: backlinks[0].subject.language,
+        'data-literal-node': 'true',
+      };
+    }
   }
 }
 
