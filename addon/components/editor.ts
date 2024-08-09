@@ -25,7 +25,7 @@ export interface RdfaEditorArgs {
    */
   rdfaEditorInit(editor: SayController): void;
 
-  initializers?: Array<() => Promise<void>>;
+  initializers?: Array<Promise<void>>;
   schema: Schema;
   baseIRI?: string;
   plugins?: PluginConfig;
