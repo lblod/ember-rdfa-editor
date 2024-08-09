@@ -7,6 +7,7 @@ import {
 import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
 
 class RdfaInfo {
   private state: EditorState;
@@ -20,6 +21,18 @@ class RdfaInfo {
     const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
     const subjectMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
+    const importedResources: string[] | undefined =
+      this.state.doc.attrs[IMPORTED_RESOURCES_ATTR];
+    if (importedResources) {
+      // This document defines additional external resources that can be used in RDFa relationships,
+      // such as when editing a snippet. Add those resources to those available in the document.
+      importedResources.forEach((imported) => {
+        MapUtils.setOrPush(subjectMapping, imported, {
+          pos: -1,
+          value: doc,
+        });
+      });
+    }
     doc.descendants((node, pos) => {
       const rdfaId = getRdfaId(node);
       const subject = getSubject(node);
