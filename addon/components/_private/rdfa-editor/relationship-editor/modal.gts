@@ -46,7 +46,7 @@ export default class RelationshipEditorModal extends Component<Sig> {
             id={{formId}}
             @onSubmit={{this.save}}
             @controller={{@controller}}
-            @termTypes={{(array 'LiteralNode' 'ResourceNode')}}
+            @termTypes={{(array 'LiteralNode' 'ResourceNode' 'NamedNode')}}
             @triple={{@triple}}
             @importedResources={{@importedResources}}
           />
