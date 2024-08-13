@@ -303,11 +303,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     };
   };
 
-  updateProperty = (newProperty: LinkTriple) => {
+  updateProperty = (newProperty: LinkTriple, subject?: string) => {
     // TODO: make a command to do this in one go
     if (this.status?.mode === 'update') {
       this.removeProperty(this.status.index);
-      this.addProperty(newProperty);
+      this.addProperty(newProperty, subject);
       this.status = undefined;
     }
   };
