@@ -164,7 +164,9 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
     if (!this.controller) {
       return [];
     }
-    return getSubjects(this.controller.mainEditorState);
+    return getSubjects(this.controller.mainEditorState).filter(
+      (resource) => !this.args.importedResources?.includes(resource),
+    );
   }
 
   get initialDatatypeValue(): string {
