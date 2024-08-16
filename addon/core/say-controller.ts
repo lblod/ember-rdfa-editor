@@ -24,7 +24,7 @@ export default class SayController {
 
   constructor(pm: SayEditor) {
     this.editor = pm;
-    console.log('hello');
+    console.log('hello2');
   }
 
   get externalContextStore(): SayStore {
