@@ -18,7 +18,7 @@ type Sig = {
     onSave: RdfaRelationshipEditor['addProperty'];
     controller?: SayController;
     modalOpen: boolean;
-    importedResources?: string[] | undefined;
+    importedResources?: string[] | false;
   };
 };
 

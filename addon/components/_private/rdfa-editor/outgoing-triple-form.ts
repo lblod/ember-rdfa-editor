@@ -1,6 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import { type Select } from 'ember-power-select/components/power-select';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import type {
   OutgoingTriple,
@@ -41,7 +42,7 @@ interface Sig {
     controller?: SayController;
     onInput?(newTriple: Partial<OutgoingTriple>): void;
     onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
-    importedResources?: string[] | undefined;
+    importedResources?: string[] | false;
   };
   Element: HTMLFormElement;
 }
@@ -165,7 +166,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
       return [];
     }
     return getSubjects(this.controller.mainEditorState).filter(
-      (resource) => !this.args.importedResources?.includes(resource),
+      (resource) => !(this.args.importedResources || [])?.includes(resource),
     );
   }
 
@@ -200,6 +201,11 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
       this.currentFormData?.get('object.language')?.toString().length,
     );
   }
+
+  get hasImportedResources(): boolean {
+    return !!this.args.importedResources;
+  }
+
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -393,6 +399,19 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   @action
   setSubject(subject: string) {
     this.subject = subject;
+  }
+  @action
+  onSubjectKeydown(select: Select, event: KeyboardEvent) {
+    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
+    // entry by typing in the power-select 'search' and hitting 'enter'
+    if (
+      event.key === 'Enter' &&
+      select.isOpen &&
+      !select.highlighted &&
+      !!select.searchText
+    ) {
+      select.actions.choose(select.searchText);
+    }
   }
   @action
   setTermType(termType: SayTermType) {

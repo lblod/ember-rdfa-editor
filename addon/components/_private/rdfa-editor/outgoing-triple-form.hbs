@@ -5,7 +5,7 @@
   {{on 'input' this.handleInput}}
   {{did-insert this.afterInsert}}
 >
-  {{#if @importedResources}}
+  {{#if this.hasImportedResources}}
     <AuFormRow>
       {{#let (unique-id) 'subject' as |id name|}}
         {{#let (this.findError name) as |error|}}
@@ -18,10 +18,11 @@
             id={{id}}
             {{! For some reason need to manually set width }}
             class='au-u-1-1'
-            @searchEnabled={{false}}
+            @searchEnabled={{true}}
             @options={{@importedResources}}
             @selected={{this.subject}}
             @onChange={{this.setSubject}}
+            @onKeydown={{this.onSubjectKeydown}}
             @allowClear={{true}}
             as |obj|
           >

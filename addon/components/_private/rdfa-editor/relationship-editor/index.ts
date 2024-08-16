@@ -20,7 +20,11 @@ import type {
   LinkTriple,
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import {
+  isLinkToNode,
+  getBacklinks,
+  getProperties,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import ContentPredicateListComponent from './content-predicate-list';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
@@ -74,11 +78,11 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   }
 
   get backlinks() {
-    return this.node.attrs['backlinks'] as IncomingTriple[] | undefined;
+    return getBacklinks(this.node);
   }
 
   get properties() {
-    return this.node.attrs['properties'] as OutgoingTriple[] | undefined;
+    return getProperties(this.node);
   }
 
   get hasOutgoing() {
@@ -112,8 +116,14 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
     return this.node.attrs['rdfaNodeType'] as 'resource' | 'literal';
   }
-  get documentImportedResources() {
-    return this.type === 'document' && this.node.attrs[IMPORTED_RESOURCES_ATTR];
+  get documentImportedResources(): string[] | false {
+    return (
+      this.type === 'document' &&
+      !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
+        IMPORTED_RESOURCES_ATTR
+      ] &&
+      (this.node.attrs[IMPORTED_RESOURCES_ATTR] || [])
+    );
   }
 
   get isResource() {
@@ -285,9 +295,17 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     // node is a document that imports resources (e.g. a snippet)
     const resource = this.currentResource || subject;
     if (resource) {
-      this.controller?.doCommand(addProperty({ resource, property }), {
-        view: this.controller.mainEditorView,
-      });
+      const isNewImportedResource =
+        (subject &&
+          this.documentImportedResources &&
+          !this.documentImportedResources.includes(subject)) ||
+        false;
+      this.controller?.doCommand(
+        addProperty({ resource, property, isNewImportedResource }),
+        {
+          view: this.controller.mainEditorView,
+        },
+      );
       this.status = undefined;
     }
   };
