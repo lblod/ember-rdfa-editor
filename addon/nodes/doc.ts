@@ -2,6 +2,7 @@ import type { AttributeSpec } from 'prosemirror-model';
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import {
+  findRdfaHiddenElements,
   getRdfaAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
@@ -65,15 +66,34 @@ export const docWithConfig = ({
               extraAttrs[attr] = node.getAttribute(attr);
             });
             if (rdfaAware) {
+              const extraProps = [];
               if (hasResourceImports) {
                 extraAttrs[IMPORTED_RESOURCES_ATTR] = jsonParse(
                   node.getAttribute(IMPORTED_RESOURCES_ATTR),
                 );
+                const hidden = findRdfaHiddenElements(node);
+                if (hidden) {
+                  for (const hid of hidden) {
+                    const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
+                      rdfaAware: true,
+                    });
+                    if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
+                      extraProps.push(...hiddenRdfaAttrs.properties);
+                    }
+                  }
+                }
               }
+              const rdfaAttrs = getRdfaAttrs(node, { rdfaAware: true });
               return {
                 ...extraAttrs,
                 lang: node.getAttribute('lang'),
-                ...getRdfaAttrs(node, { rdfaAware: true }),
+                ...rdfaAttrs,
+                properties: [
+                  ...(rdfaAttrs && 'properties' in rdfaAttrs
+                    ? rdfaAttrs.properties
+                    : []),
+                  ...extraProps,
+                ],
               };
             } else {
               return {
@@ -100,6 +120,7 @@ export const docWithConfig = ({
       const attrs: Record<string, unknown> = {
         lang: node.attrs['lang'] as string,
         'data-say-document': true,
+        properties: node.attrs['properties'],
       };
       Object.keys(extraAttributes).forEach((attr) => {
         attrs[attr] = node.attrs[attr];
