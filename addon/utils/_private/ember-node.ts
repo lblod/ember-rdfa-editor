@@ -184,12 +184,12 @@ class EmberNodeView implements NodeView {
       {
         getPos,
         node: pNode,
-        updateAttribute: (attr: string, value: any, ignoreHistory: boolean) => {
+        updateAttribute: (attr: string, value, ignoreHistory: boolean) => {
           const pos = getPos();
           if (pos !== undefined) {
             const transaction = view.state.tr;
-            if(ignoreHistory) {
-              transaction.setMeta('addToHistory', false)
+            if (ignoreHistory) {
+              transaction.setMeta('addToHistory', false);
             }
             transaction.setNodeAttribute(pos, attr, value);
             view.dispatch(transaction);
