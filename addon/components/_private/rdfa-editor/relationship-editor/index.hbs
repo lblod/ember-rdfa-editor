@@ -31,12 +31,12 @@
               role='menu'
               @alignment='left'
             >
-              {{#each this.resources as |res|}}
+              {{#each this.allResources as |res|}}
                 <AuButton
                   @skin='link'
                   @icon={{this.PencilIcon}}
                   role='menuitem'
-                  {{on 'click' (fn this.linkImported imported res)}}
+                  {{on 'click' (fn this.linkImportedResource imported res)}}
                 >
                   {{res}}
                 </AuButton>
