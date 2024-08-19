@@ -47,7 +47,11 @@ export interface EmberNodeArgs {
    *    `get someText() { return this.args.node.attrs.someText; }`
    *    `set someText(value) { return this.args.updateAttribute('someText', value); }`
    */
-  updateAttribute: (attr: string, value: unknown, ignoreHistory?: boolean) => void;
+  updateAttribute: (
+    attr: string,
+    value: unknown,
+    ignoreHistory?: boolean,
+  ) => void;
   /**
    * Util method which selects the node within the editor
    */
