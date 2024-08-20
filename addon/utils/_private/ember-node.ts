@@ -47,7 +47,11 @@ export interface EmberNodeArgs {
    *    `get someText() { return this.args.node.attrs.someText; }`
    *    `set someText(value) { return this.args.updateAttribute('someText', value); }`
    */
-  updateAttribute: (attr: string, value: unknown) => void;
+  updateAttribute: (
+    attr: string,
+    value: unknown,
+    ignoreHistory?: boolean,
+  ) => void;
   /**
    * Util method which selects the node within the editor
    */
@@ -184,10 +188,13 @@ class EmberNodeView implements NodeView {
       {
         getPos,
         node: pNode,
-        updateAttribute: (attr, value) => {
+        updateAttribute: (attr, value, ignoreHistory) => {
           const pos = getPos();
           if (pos !== undefined) {
             const transaction = view.state.tr;
+            if (ignoreHistory) {
+              transaction.setMeta('addToHistory', false);
+            }
             transaction.setNodeAttribute(pos, attr, value);
             view.dispatch(transaction);
           }
