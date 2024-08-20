@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.1.0
+
+### Minor Changes
+
+- [#1214](https://github.com/lblod/ember-rdfa-editor/pull/1214) [`96fcb5d`](https://github.com/lblod/ember-rdfa-editor/commit/96fcb5db6823780b62cf32227faaf4dd640ebb62) Thanks [@lagartoverde](https://github.com/lagartoverde)! - updateAttribute now allows a third argument to avoid adding the change to the history
+
 ## 10.0.3
 
 ### Patch Changes
