@@ -175,6 +175,32 @@ export function getBacklinks(node: PNode): IncomingTriple[] | undefined {
   return node.attrs['backlinks'] as IncomingTriple[] | undefined;
 }
 
+export function addProperty(
+  properties: OutgoingTriple[],
+  property: OutgoingTriple,
+) {
+  // TODO: probably better to use a set of some kind for this data
+  // Do not add the property if it is already present
+  if (properties.some((prop) => deepEqualProperty(prop, property))) {
+    return properties;
+  } else {
+    return [...properties, property];
+  }
+}
+
+export function addBacklink(
+  backlinks: IncomingTriple[],
+  backlink: IncomingTriple,
+) {
+  // TODO: probably better to use a set of some kind for this data
+  // Do not add the backlink if it is already present
+  if (backlinks.some((bl) => deepEqualBacklink(bl, backlink))) {
+    return backlinks;
+  } else {
+    return [...backlinks, backlink];
+  }
+}
+
 /**
  * Calculates a set of subject attributes present in the provided node and its children
  */
@@ -323,6 +349,30 @@ export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
   return false;
 }
 
+export function deepEqualBacklink(a: IncomingTriple, b: IncomingTriple) {
+  if (a.predicate === b.predicate) {
+    switch (a.subject.termType) {
+      case 'ResourceNode': {
+        if (b.subject.termType === 'ResourceNode') {
+          return a.subject.value === b.subject.value;
+        }
+        break;
+      }
+      case 'LiteralNode': {
+        if (b.subject.termType === 'LiteralNode') {
+          return (
+            a.subject.value === b.subject.value &&
+            a.subject.datatype.value === b.subject.datatype.value &&
+            a.subject.language === b.subject.language
+          );
+        }
+        break;
+      }
+    }
+  }
+  return false;
+}
+
 export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
   return (
     triple.object.termType === 'LiteralNode' ||
@@ -348,13 +398,7 @@ export function addPropertyToNode({
     }
 
     const properties = getProperties(resourceNodes[0].value);
-    // Do not add the property if it is already present
-    if (properties?.some((prop) => deepEqualProperty(prop, property))) {
-      return { initialState: state, transaction: tr, result: false };
-    }
-    const updatedProperties = properties
-      ? [...properties, property]
-      : [property];
+    const updatedProperties = addProperty(properties ?? [], property);
 
     // Update the properties of each node that defines the given resource
     resourceNodes.forEach((node) => {
@@ -398,9 +442,7 @@ export function addPropertyToNode({
         const backlinks = target.value.attrs['backlinks'] as
           | IncomingTriple[]
           | undefined;
-        const newBacklinks = backlinks
-          ? [...backlinks, newBacklink]
-          : [newBacklink];
+        const newBacklinks = addBacklink(backlinks ?? [], newBacklink);
         TransformUtils.setAttribute(tr, target.pos, 'backlinks', newBacklinks);
       });
     }
