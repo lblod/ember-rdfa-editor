@@ -159,7 +159,7 @@ export default class SayEditor {
       },
       domParser: this.parser,
       transformPastedHTML: (html, editorView) => {
-        const htmlCleaner = new HTMLInputParser({ editorView });
+        const htmlCleaner = new HTMLInputParser();
         const cleanedDocument = htmlCleaner.prepareHTML(html, true);
 
         preprocessRDFa(

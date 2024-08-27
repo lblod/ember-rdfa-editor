@@ -33,7 +33,7 @@ sinon.stub(editorView, 'dom').get(() => editorContainerMock);
 module('Utils | CS | HTMLInputParser', function () {
   test('It should not change simple html', function (assert) {
     const expectedHtml = oneLineTrim`<span>Lorem Ipsum</span>`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`
             <!--StartFragment--><span>Lorem Ipsum</span><!--EndFragment-->
     `;
@@ -44,7 +44,7 @@ module('Utils | CS | HTMLInputParser', function () {
 
   test('It should not remove inline styles', function (assert) {
     const expectedHtml = oneLineTrim`<span style="color:green">Lorem Ipsum</span>`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`
             <!--StartFragment--><span style="color:green">Lorem Ipsum</span><!--EndFragment-->
     `;
@@ -55,7 +55,7 @@ module('Utils | CS | HTMLInputParser', function () {
 
   test('it should not remove empty element with rdfa attributes', function (assert) {
     const expectedHtml = oneLineTrim`<span property="schema:name"></span><br><span>Lorem Ipsum</span>`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`
             <!--StartFragment--><span property="schema:name"></span><br/><span>Lorem Ipsum</span><!--EndFragment-->
     `;
@@ -66,7 +66,7 @@ module('Utils | CS | HTMLInputParser', function () {
 
   test('it should not remove empty table cells and rows', function (assert) {
     const expectedHtml = oneLineTrim`<table><tbody><tr><td></td></tr></tbody></table>`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`
             <!--StartFragment--><table><tbody><tr><td></td></tr></tbody></table><!--EndFragment-->
     `;
@@ -77,7 +77,7 @@ module('Utils | CS | HTMLInputParser', function () {
 
   test('It should remove unsafe url schemes', function (assert) {
     const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`<a href="javascript:console.log('this should not work')" style="color:green">Lorem Ipsum</a>`;
 
     const actualHtml = inputParser.prepareHTML(htmlContent);
@@ -86,7 +86,7 @@ module('Utils | CS | HTMLInputParser', function () {
 
   test('It should remove src tags', function (assert) {
     const expectedHtml = oneLineTrim`console.log('test')`;
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const htmlContent = oneLineTrim`<src>console.log('test')</src>`;
 
     const actualHtml = inputParser.prepareHTML(htmlContent);
@@ -109,14 +109,14 @@ module('Utils | CS | HTMLInputParser', function () {
     </html>
     `;
 
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const actualHtml = inputParser.prepareHTML(htmlContent);
 
     assert.strictEqual(actualHtml, expectedHtml);
   });
 
   test('It should display formatted list as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
      <ul>
        <li>
@@ -164,7 +164,7 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
        <ol>
          <li>
@@ -684,7 +684,7 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display a complex nested list correctly as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`<ol>
     <li>
         <span style="font-size:18.0pt;mso-ansi-language:EN-US" lang="EN-US">1</span>
@@ -1241,9 +1241,9 @@ module('Utils | CS | HTMLInputParser', function () {
     assert.strictEqual(actualHtml, expectedHtml);
   });
   test('It should display formatted table as HTML', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="25"><p><span>Column 1</span></p></td><td data-colwidth="25"><p><span>Column 2</span></p></td><td data-colwidth="25"><p><span>Column 3</span></p></td><td data-colwidth="25"><p><span>Column4</span></p></td></tr><tr><td><p><span>Test1</span></p></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><p><span>Test7</span></p></td><td><p><span>Test8</span></p></td></tr><tr><td><p><span>Test9</span></p></td><td><p><span>Test10</span></p></td><td><p><span>Test11</span></p></td><td><p><span>Test12</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
 
@@ -1408,7 +1408,7 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display bold text', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><b><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></b></p>
     `;
@@ -1440,7 +1440,7 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display italic text', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><i><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></i></p>
     `;
@@ -1472,7 +1472,7 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display underlined text', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
       <p class=\"MsoNormal\"><u><span style=\"font-size:14.0pt;mso-ansi-language: EN-US\" lang=\"EN-US\">Lorem Ipsum Bold</span></u></p>
     `;
@@ -1504,9 +1504,9 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display formatted list in a table', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
-<table><tbody><tr><td data-colwidth="199"><p><span>Column 1</span></p></td><td data-colwidth="199"><p><span>Column 2</span></p></td><td data-colwidth="199"><p><span>Column 3</span></p></td><td data-colwidth="199"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
+<table><tbody><tr><td data-colwidth="25"><p><span>Column 1</span></p></td><td data-colwidth="25"><p><span>Column 2</span></p></td><td data-colwidth="25"><p><span>Column 3</span></p></td><td data-colwidth="25"><p><span>Column4</span></p></td></tr><tr><td><ul><li><span>List 1</span></li><li><span>List 2</span></li></ul></td><td><p><span>Test2</span></p></td><td><p><span>Test3</span></p></td><td><p><span>Test4</span></p></td></tr><tr><td><p><span>Test5</span></p></td><td><p><span>Test6</span></p></td><td><ul><li><span>List 3</span></li><li><span>List 4</span></li></ul></td><td><p><span>Test8</span></p></td></tr></tbody></table>
 `;
     const htmlContent = oneLineTrim`
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1651,9 +1651,9 @@ module('Utils | CS | HTMLInputParser', function () {
   });
 
   test('It should display table in a list', function (assert) {
-    const inputParser = new HTMLInputParser({ editorView });
+    const inputParser = new HTMLInputParser();
     const expectedHtml = oneLineTrim`
-<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="398"><p><span>Table column 1</span></p></td><td data-colwidth="398"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
+<ul><li><span>List table 1</span></li></ul><table><tbody><tr><td data-colwidth="50"><p><span>Table column 1</span></p></td><td data-colwidth="50"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data2</span></p></td></tr></tbody></table><ul><li><span>List table 2</span></li></ul><table><tbody><tr><td data-colwidth="50"><p><span>Table column 1</span></p></td><td data-colwidth="50"><p><span>Table column 2</span></p></td></tr><tr><td><p><span>Data 1</span></p></td><td><p><span>Data 2</span></p></td></tr></tbody></table>
     `;
     const htmlContent = oneLineTrim`
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40">
