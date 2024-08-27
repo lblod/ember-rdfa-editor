@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 10.2.0
+
+### Minor Changes
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`fd2885b`](https://github.com/lblod/ember-rdfa-editor/commit/fd2885b7c2f972f947c59a2a2447a4ecc2332b39) Thanks [@elpoelma](https://github.com/elpoelma)! - Make `pathFromRoot` argument of `prepocessRDFa` optional
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`2c2d92b`](https://github.com/lblod/ember-rdfa-editor/commit/2c2d92b2cf00b5d6bdf1d8321a10580a2c1b181b) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop `editorView` dependency of html-input-parser
+
+### Patch Changes
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`b52d2bd`](https://github.com/lblod/ember-rdfa-editor/commit/b52d2bd45bf97ba6da78e7942449681ae3ece3c2) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust approach to parse tables coming from other editors
+
 ## 10.1.0
 
 ### Minor Changes
