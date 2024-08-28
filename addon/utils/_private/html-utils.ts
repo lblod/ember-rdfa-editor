@@ -8,14 +8,17 @@ import type { HEADING_ELEMENTS } from './constants';
 
 export function htmlToDoc(
   html: string,
-  options: { schema: Schema; parser: ProseParser; editorView: EditorView },
+  options: { schema: Schema; parser: ProseParser; editorView?: EditorView },
 ) {
   const { parser } = options;
-  const htmlCleaner = new HTMLInputParser({ editorView: options.editorView });
+  const htmlCleaner = new HTMLInputParser();
   const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(parsed, getPathFromRoot(options.editorView.dom, false));
+  preprocessRDFa(
+    parsed,
+    options.editorView && getPathFromRoot(options.editorView.dom, false),
+  );
   const topNodeMatch = matchTopNode(parsed, { schema: options.schema });
   let doc: PNode;
   if (topNodeMatch) {
@@ -35,7 +38,7 @@ export function htmlToFragment(
   options: { parser: ProseParser; editorView: EditorView },
 ) {
   const { parser, editorView } = options;
-  const htmlCleaner = new HTMLInputParser({ editorView: editorView });
+  const htmlCleaner = new HTMLInputParser();
   const cleanedHTML = htmlCleaner.prepareHTML(html);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;

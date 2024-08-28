@@ -1,5 +1,29 @@
 # @lblod/ember-rdfa-editor
 
+## 10.3.0
+
+### Minor Changes
+
+- [#1215](https://github.com/lblod/ember-rdfa-editor/pull/1215) [`310bb3a`](https://github.com/lblod/ember-rdfa-editor/commit/310bb3a6c826fcb56d1983f37ad2837e62b06ec2) Thanks [@elpoelma](https://github.com/elpoelma)! - Ensure `SaySerializer` can be used in a headless way.
+  - Deprecation of passing instance of `SayEditor` to `SaySerializer` constructor and its static functions.
+  - Add option to pass instance of `StateGenerator` instead of `SayEditor` to `SaySerializer` constructor and its static functions. This is the preffered way of using the serializer going forward and removes its dependency on a view.
+
+### Patch Changes
+
+- [#1215](https://github.com/lblod/ember-rdfa-editor/pull/1215) [`65afeb1`](https://github.com/lblod/ember-rdfa-editor/commit/65afeb14086f4c5384cb13b2512551a0d270dfb2) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix issue in `addPropertyToNode` transaction-monad: ensure backlinks are added when needed
+
+## 10.2.0
+
+### Minor Changes
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`fd2885b`](https://github.com/lblod/ember-rdfa-editor/commit/fd2885b7c2f972f947c59a2a2447a4ecc2332b39) Thanks [@elpoelma](https://github.com/elpoelma)! - Make `pathFromRoot` argument of `prepocessRDFa` optional
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`2c2d92b`](https://github.com/lblod/ember-rdfa-editor/commit/2c2d92b2cf00b5d6bdf1d8321a10580a2c1b181b) Thanks [@elpoelma](https://github.com/elpoelma)! - Drop `editorView` dependency of html-input-parser
+
+### Patch Changes
+
+- [#1209](https://github.com/lblod/ember-rdfa-editor/pull/1209) [`b52d2bd`](https://github.com/lblod/ember-rdfa-editor/commit/b52d2bd45bf97ba6da78e7942449681ae3ece3c2) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust approach to parse tables coming from other editors
+
 ## 10.1.0
 
 ### Minor Changes
