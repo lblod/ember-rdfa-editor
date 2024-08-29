@@ -164,7 +164,7 @@
 
 {{! Creation modal }}
 <this.Modal
-  @importedResources={{this.documentImportedResources}}
+  @importedResources={{this.allImportedResources}}
   @modalOpen={{this.isCreating}}
   @onSave={{this.addProperty}}
   @onCancel={{this.cancel}}
@@ -172,7 +172,7 @@
 />
 {{! Update modal }}
 <this.Modal
-  @importedResources={{this.documentImportedResources}}
+  @importedResources={{this.allImportedResources}}
   @modalOpen={{this.isUpdating}}
   @onSave={{this.updateProperty}}
   @onCancel={{this.cancel}}

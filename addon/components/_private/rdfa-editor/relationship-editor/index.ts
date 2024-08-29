@@ -123,9 +123,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
       ] &&
+      (this.node.attrs[IMPORTED_RESOURCES_ATTR] || [])
+    );
+  }
+  get allImportedResources(): string[] | false {
+    return (
+      this.documentImportedResources &&
       Array.from(
         new Set<string>([
-          ...(this.node.attrs[IMPORTED_RESOURCES_ATTR] || []),
+          ...(this.documentImportedResources || []),
           ...(this.args.additionalImportedResources || []),
         ]).values(),
       )
