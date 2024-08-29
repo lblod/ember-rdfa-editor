@@ -13,6 +13,7 @@ import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons
 type Args = {
   controller?: SayController;
   node: ResolvedPNode;
+  additionalImportedResources?: string[];
 };
 export default class RdfaEditor extends Component<Args> {
   PropertyEditor = RdfaPropertyEditor;

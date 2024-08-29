@@ -38,6 +38,7 @@ import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/ico
 type Args = {
   controller?: SayController;
   node: ResolvedPNode;
+  additionalImportedResources?: string[];
 };
 
 interface StatusMessage {
@@ -122,7 +123,12 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
       ] &&
-      (this.node.attrs[IMPORTED_RESOURCES_ATTR] || [])
+      Array.from(
+        new Set<string>([
+          ...(this.node.attrs[IMPORTED_RESOURCES_ATTR] || []),
+          ...(this.args.additionalImportedResources || []),
+        ]).values(),
+      )
     );
   }
 

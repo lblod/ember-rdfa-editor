@@ -25,7 +25,11 @@
         </Section>
       {{/if}}
       <Section>
-        <this.RelationshipEditor @node={{@node}} @controller={{@controller}} />
+        <this.RelationshipEditor
+          @node={{@node}}
+          @controller={{@controller}}
+          @additionalImportedResources={{@additionalImportedResources}}
+        />
       </Section>
       <Section>
         <this.WrappingUtils @node={{@node}} @controller={{@controller}} />
