@@ -1,5 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+import { not } from 'ember-truth-helpers';
 import { PNode, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import {
@@ -25,9 +28,16 @@ import {
   getBacklinks,
   getProperties,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import ContentPredicateListComponent from './content-predicate-list';
+import ContentPredicateList from './content-predicate-list';
 import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
 import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
+import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
+import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
+import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import AuList from '@appuniversum/ember-appuniversum/components/au-list';
+import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
+import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
@@ -59,21 +69,15 @@ type UpdateStatus = {
 };
 type Status = CreationStatus | UpdateStatus;
 
-export default class RdfaRelationshipEditor extends Component<Args> {
-  PlusIcon = PlusIcon;
-  ExternalLinkIcon = ExternalLinkIcon;
-  ThreeDotsIcon = ThreeDotsIcon;
-  PencilIcon = PencilIcon;
-  BinIcon = BinIcon;
-  ChevronDownIcon = ChevronDownIcon;
+function statusTriple(status: Status | undefined): LinkTriple | undefined {
+  return status?.mode === 'update' ? status.triple : undefined;
+}
 
+export default class RdfaRelationshipEditor extends Component<Args> {
   @tracked modalOpen = false;
   @tracked _statusMessage: StatusMessageForNode | null = null;
-
-  Modal = RelationshipEditorModal;
-
-  ContentPredicateList = ContentPredicateListComponent;
   @tracked status?: Status;
+
   get node(): PNode {
     return this.args.node.value;
   }
@@ -272,12 +276,20 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   removeProperty = (index: number) => {
-    // This function can only be called when the selected node defines a resource
-    if (this.currentResource) {
-      this.controller?.doCommand(
-        removeProperty({ resource: this.currentResource, index }),
-        { view: this.controller.mainEditorView },
-      );
+    // This function can only be called when the selected node defines a resource or the selected
+    // node is a document that imports resources (e.g. a snippet)
+    if (this.currentResource || this.type === 'document') {
+      const propertyToRemove =
+        this.type !== 'document' && this.currentResource
+          ? { resource: this.currentResource, index }
+          : {
+              documentResourceNode: this.node,
+              importedResources: this.documentImportedResources || [],
+              index,
+            };
+      this.controller?.doCommand(removeProperty(propertyToRemove), {
+        view: this.controller.mainEditorView,
+      });
     }
   };
 
@@ -333,7 +345,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     };
   };
 
-  updateProperty = (newProperty: LinkTriple, subject?: string) => {
+  updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
     // TODO: make a command to do this in one go
     if (this.status?.mode === 'update') {
       this.removeProperty(this.status.index);
@@ -360,4 +372,191 @@ export default class RdfaRelationshipEditor extends Component<Args> {
     }
     return getNodeByRdfaId(this.controller.mainEditorState, rdfaid);
   };
+
+  <template>
+    <AuContent @skin='tiny'>
+      <AuToolbar as |Group|>
+        <Group>
+          <AuHeading @level='5' @skin='5'>Relationships</AuHeading>
+        </Group>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin='naked'
+            @disabled={{not this.canAddRelationship}}
+            {{on 'click' this.addRelationship}}
+          >
+            Add relationship
+          </AuButton>
+        </Group>
+      </AuToolbar>
+      {{#if this.importedResources}}
+        <div>
+          <AuHeading
+            @level='6'
+            @skin='6'
+            class='au-u-margin-bottom-small'
+          >Imported Resources</AuHeading>
+          <AuList @divider={{true}} as |Item|>
+            {{#each-in this.importedResources as |imported linked|}}
+              <Item
+                class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+              >
+                {{imported}}
+                <AuDropdown
+                  @icon={{if linked ChevronDownIcon PlusIcon}}
+                  @title={{linked}}
+                  role='menu'
+                  @alignment='left'
+                >
+                  {{#each this.allResources as |res|}}
+                    <AuButton
+                      @skin='link'
+                      @icon={{PencilIcon}}
+                      role='menuitem'
+                      {{on 'click' (fn this.linkImportedResource imported res)}}
+                    >
+                      {{res}}
+                    </AuButton>
+                  {{/each}}
+                </AuDropdown>
+              </Item>
+            {{/each-in}}
+          </AuList>
+        </div>
+      {{/if}}
+      {{#if this.showOutgoingSection}}
+        <div>
+          <AuHeading
+            @level='6'
+            @skin='6'
+            class='au-u-margin-bottom-small'
+          >Outgoing</AuHeading>
+          {{#if this.hasOutgoing}}
+            <AuList @divider={{true}} as |Item|>
+              {{#each this.properties as |prop index|}}
+                {{#if (this.isNodeLink prop)}}
+                  <Item
+                    class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+                  >
+                    <AuButton
+                      @icon={{ExternalLinkIcon}}
+                      @skin='link'
+                      {{on 'click' (fn this.goToOutgoing prop)}}
+                    >{{prop.predicate}}</AuButton>
+                    <AuDropdown
+                      @icon={{ThreeDotsIcon}}
+                      role='menu'
+                      @alignment='left'
+                    >
+                      <AuButton
+                        @skin='link'
+                        @icon={{PencilIcon}}
+                        role='menuitem'
+                        {{on 'click' (fn this.editRelationship index)}}
+                      >
+                        Edit relationship
+                      </AuButton>
+                      <AuButton
+                        @skin='link'
+                        @icon={{BinIcon}}
+                        role='menuitem'
+                        class='au-c-button--alert'
+                        {{on 'click' (fn this.removeProperty index)}}
+                      >
+                        Remove outgoing
+                      </AuButton>
+                    </AuDropdown>
+                  </Item>
+                {{/if}}
+              {{/each}}
+            </AuList>
+          {{else}}
+            <p>This node doesn't have any outgoing relationships</p>
+          {{/if}}
+        </div>
+      {{/if}}
+      <div>
+        <AuHeading
+          @level='6'
+          @skin='6'
+          class='au-u-margin-bottom-small'
+        >Backlinks</AuHeading>
+        {{#if this.backlinks}}
+          <AuList @divider={{true}} as |Item|>
+            {{#each this.backlinks as |backlink index|}}
+              <Item
+                class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+              >
+                <AuButton
+                  @icon={{ExternalLinkIcon}}
+                  @skin='link'
+                  {{on 'click' (fn this.goToBacklink backlink)}}
+                >{{backlink.predicate}}</AuButton>
+                <AuDropdown
+                  @icon={{ThreeDotsIcon}}
+                  role='menu'
+                  @alignment='left'
+                >
+                  <AuButton
+                    @skin='link'
+                    @icon={{BinIcon}}
+                    role='menuitem'
+                    class='au-c-button--alert'
+                    {{on 'click' (fn this.removeBacklink index)}}
+                  >
+                    Remove backlink
+                  </AuButton>
+                </AuDropdown>
+              </Item>
+            {{/each}}
+          </AuList>
+        {{else}}
+          <p>This node does not have any backlinks</p>
+        {{/if}}
+      </div>
+      {{#if this.isResource}}
+        <div>
+          <AuHeading @level='6' @skin='6' class='au-u-margin-bottom-small'>
+            Content Predicate
+          </AuHeading>
+          {{#if this.properties}}
+            <ContentPredicateList
+              @properties={{this.properties}}
+              @removeProperty={{this.removeProperty}}
+            />
+          {{/if}}
+        </div>
+      {{/if}}
+      {{#if this.statusMessage}}
+        <div>
+          <AuAlert
+            @skin={{this.statusMessage.type}}
+            @closable={{true}}
+            @onClose={{this.closeStatusMessage}}
+          >
+            {{this.statusMessage.message}}
+          </AuAlert>
+        </div>
+      {{/if}}
+    </AuContent>
+
+    {{! Creation modal }}
+    <RelationshipEditorModal
+      @importedResources={{this.allImportedResources}}
+      @modalOpen={{this.isCreating}}
+      @onSave={{this.addProperty}}
+      @onCancel={{this.cancel}}
+      @controller={{this.controller}}
+    />
+    {{! Update modal }}
+    <RelationshipEditorModal
+      @importedResources={{this.allImportedResources}}
+      @modalOpen={{this.isUpdating}}
+      @onSave={{this.updateProperty}}
+      @onCancel={{this.cancel}}
+      @triple={{statusTriple this.status}}
+      @controller={{this.controller}}
+    />
+  </template>
 }

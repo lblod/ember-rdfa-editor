@@ -1,3 +1,4 @@
+import { type PNode } from '@lblod/ember-rdfa-editor';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
@@ -14,8 +15,6 @@ import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processo
 import type { Command, Transaction } from 'prosemirror-state';
 
 type RemovePropertyArgs = {
-  /** The resource from which to remove a property */
-  resource: string;
   /**
    A transaction to use in place of getting a new one from state.tr
    This can be used to call this command from within another, but care must be taken to not use
@@ -24,24 +23,42 @@ type RemovePropertyArgs = {
   transaction?: Transaction;
 } & (
   | {
-      /** The index of the property to be removed in the properties-array of the resource */
-      index: number;
+      /** The resource from which to remove a property */
+      resource: string;
     }
   | {
-      /** The exact property object to find and remove */
-      property: OutgoingTriple;
+      /** A document which defines imported resources and their properties */
+      documentResourceNode: PNode;
+      /** The resources imported by that document */
+      importedResources: string[];
     }
-);
+) &
+  (
+    | {
+        /** The index of the property to be removed in the properties-array of the resource */
+        index: number;
+      }
+    | {
+        /** The exact property object to find and remove */
+        property: OutgoingTriple;
+      }
+  );
 
 export function removeProperty({
-  resource,
   transaction,
   ...args
 }: RemovePropertyArgs): Command {
   return (state, dispatch) => {
-    const resourceNodes = getNodesBySubject(state, resource);
-    if (!resourceNodes?.length) {
-      return false;
+    let resource: string | undefined;
+    let resourceNodes: ResolvedPNode[];
+    if ('resource' in args) {
+      resource = args.resource;
+      resourceNodes = getNodesBySubject(state, args.resource);
+      if (!resourceNodes?.length) {
+        return false;
+      }
+    } else {
+      resourceNodes = [{ value: args.documentResourceNode, pos: -1 }];
     }
 
     const properties = getProperties(resourceNodes[0].value);
@@ -62,11 +79,11 @@ export function removeProperty({
     }
 
     if (dispatch) {
+      const tr = transaction ?? state.tr;
+
+      // First update the properties of all nodes defining the given resource
       const updatedProperties = properties.slice();
       updatedProperties.splice(index, 1);
-
-      const tr = transaction ?? state.tr;
-      // Update the properties of all nodes defining the given resource
       resourceNodes.forEach((node) => {
         TransformUtils.setAttribute(
           tr,
@@ -76,6 +93,7 @@ export function removeProperty({
         );
       });
 
+      // Then we remove any backlinks.
       if (isLinkToNode(propertyToRemove)) {
         const { object } = propertyToRemove;
         /**
@@ -95,6 +113,15 @@ export function removeProperty({
         targets?.forEach((target) => {
           const backlinks = getBacklinks(target.value);
           if (backlinks) {
+            if (!resource) {
+              const backlink = backlinks.find(
+                (bl) =>
+                  bl.predicate === propertyToRemove?.predicate &&
+                  'importedResources' in args &&
+                  args.importedResources.includes(bl.subject.value),
+              );
+              resource = backlink?.subject.value;
+            }
             const filteredBacklinks = backlinks.filter((backlink) => {
               return !(
                 backlink.predicate === propertyToRemove?.predicate &&
@@ -110,6 +137,7 @@ export function removeProperty({
           }
         });
       }
+
       dispatch(tr);
     }
 

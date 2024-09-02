@@ -6,10 +6,9 @@ import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 
 interface Args {
   properties: OutgoingTriple[];
-  addProperty: (property: OutgoingTriple) => void;
   removeProperty: (index: number) => void;
 }
-export default class ContentPredicateListComponent extends Component<Args> {
+export default class ContentPredicateList extends Component<Args> {
   ThreeDotsIcon = ThreeDotsIcon;
   BinIcon = BinIcon;
 
