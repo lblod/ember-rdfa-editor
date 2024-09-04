@@ -113,7 +113,6 @@
     "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
     "uuid": "^9.0.1",
-    "vm-browserify": "^1.1.2",
     "yup": "^1.4.0"
   },
   "devDependencies": {
