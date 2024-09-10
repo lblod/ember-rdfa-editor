@@ -1,6 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import { type Select } from 'ember-power-select/components/power-select';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import type {
   OutgoingTriple,
@@ -33,13 +34,17 @@ const allTermTypes: SupportedTermType[] = [
   'ContentLiteral',
 ];
 
-interface Args {
-  triple: OutgoingTriple;
-  termTypes?: SupportedTermType[];
-  defaultTermType?: SupportedTermType;
-  controller?: SayController;
-  onInput?(newTriple: Partial<OutgoingTriple>): void;
-  onSubmit?(newTriple: OutgoingTriple): void;
+interface Sig {
+  Args: {
+    triple?: OutgoingTriple;
+    termTypes?: SupportedTermType[];
+    defaultTermType?: SupportedTermType;
+    controller?: SayController;
+    onInput?(newTriple: Partial<OutgoingTriple>): void;
+    onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
+    importedResources?: string[] | false;
+  };
+  Element: HTMLFormElement;
 }
 const datatypeSchema = object({
   termType: string<'NamedNode'>().required(),
@@ -90,7 +95,7 @@ const DEFAULT_TRIPLE: OutgoingTriple = {
   predicate: '',
   object: sayDataFactory.namedNode(''),
 };
-export default class OutgoingTripleFormComponent extends Component<Args> {
+export default class OutgoingTripleFormComponent extends Component<Sig> {
   @localCopy('args.triple.object.termType')
   selectedTermType?: SayTermType;
 
@@ -99,6 +104,9 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
 
   @localCopy('args.triple.object.value')
   linkedLiteralNode?: string;
+
+  @tracked
+  subject: string | undefined = undefined;
 
   @tracked
   errors: ValidationError[] = [];
@@ -157,7 +165,9 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     if (!this.controller) {
       return [];
     }
-    return getSubjects(this.controller.mainEditorState);
+    return getSubjects(this.controller.mainEditorState).filter(
+      (resource) => !(this.args.importedResources || [])?.includes(resource),
+    );
   }
 
   get initialDatatypeValue(): string {
@@ -191,6 +201,11 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
       this.currentFormData?.get('object.language')?.toString().length,
     );
   }
+
+  get hasImportedResources(): boolean {
+    return !!this.args.importedResources;
+  }
+
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -209,9 +224,16 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
   validateFormData(
     formData: FormData,
   ):
-    | { valid: true; triple: OutgoingTriple }
+    | { valid: true; triple: OutgoingTriple; subject?: string }
     | { valid: false; errors: ValidationError[] } {
     try {
+      if (this.args.importedResources && !this.subject) {
+        throw new ValidationError(
+          'Need to specify subject to link from when importing resources',
+          this.subject,
+          'subject',
+        );
+      }
       switch (this.termType) {
         case 'NamedNode': {
           const validated = namedNodeSchema.validateSync(
@@ -231,6 +253,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
               predicate: validated.predicate,
               object: sayDataFactory.namedNode(validated.object.value),
             },
+            subject: this.subject,
           };
         }
         case 'Literal': {
@@ -263,6 +286,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         case 'LiteralNode': {
@@ -298,6 +322,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         case 'ResourceNode': {
@@ -318,6 +343,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
           return {
             valid: true,
             triple: { predicate, object: sayDataFactory.resourceNode(value) },
+            subject: this.subject,
           };
         }
         case 'ContentLiteral': {
@@ -350,6 +376,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
                 ),
               ),
             },
+            subject: this.subject,
           };
         }
         // ts apparently not smart enough to see this can't happen
@@ -369,6 +396,23 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     return this.errors.find((error) => error.path === path)?.message ?? null;
   };
 
+  @action
+  setSubject(subject: string) {
+    this.subject = subject;
+  }
+  @action
+  onSubjectKeydown(select: Select, event: KeyboardEvent) {
+    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
+    // entry by typing in the power-select 'search' and hitting 'enter'
+    if (
+      event.key === 'Enter' &&
+      select.isOpen &&
+      !select.highlighted &&
+      !!select.searchText
+    ) {
+      select.actions.choose(select.searchText);
+    }
+  }
   @action
   setTermType(termType: SayTermType) {
     this.selectedTermType = termType;
@@ -394,7 +438,7 @@ export default class OutgoingTripleFormComponent extends Component<Args> {
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     const validated = this.validateFormData(formData);
     if (validated.valid) {
-      this.args.onSubmit?.(validated.triple);
+      this.args.onSubmit?.(validated.triple, validated.subject);
     } else {
       this.errors = validated.errors;
     }

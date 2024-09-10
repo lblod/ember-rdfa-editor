@@ -9,6 +9,12 @@ import type {
   OutgoingTriple,
 } from './rdfa-processor';
 import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
+import {
+  findNodesBySubject,
+  getBacklinks,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { sayDataFactory } from './say-data-factory';
 
 // const logger = createLogger('core/schema');
@@ -200,53 +206,94 @@ export function renderInvisibleRdfa(
   const propElements = [];
   const properties = nodeOrMark.attrs['properties'] as OutgoingTriple[];
   for (const { predicate, object } of properties) {
-    if (object.termType === 'ContentLiteral') {
-      // the contentliteral triple gets rendered as main node attributes, so we
-      // skip it here
-      continue;
-    }
-    if (object.termType === 'NamedNode' || object.termType === 'BlankNode') {
-      // the triple refers to a URI which does not have a corresponding
-      // resource node
-      const subject: string = unwrap(nodeOrMark.attrs['subject'] as string);
-      propElements.push([
-        'span',
-        {
-          about: subject,
-          property: predicate,
-          resource: object.value,
-        },
-      ]);
-    } else if (object.termType === 'Literal') {
-      if (object.language?.length) {
+    switch (object.termType) {
+      case 'ContentLiteral':
+        // the contentliteral triple gets rendered as main node attributes, so we
+        // skip it here
+        continue;
+      case 'NamedNode':
+      case 'BlankNode': {
+        // the triple refers to a URI which does not have a corresponding
+        // resource node
+        const subject: string = unwrap(nodeOrMark.attrs['subject'] as string);
         propElements.push([
           'span',
           {
+            about: subject,
             property: predicate,
-            content: object.value,
-            lang: object.language,
+            resource: object.value,
           },
-          '',
         ]);
-      } else if (object.datatype?.value?.length) {
-        propElements.push([
-          'span',
-          {
-            property: predicate,
-            content: object.value,
-            datatype: object.datatype.value,
-          },
-          '',
-        ]);
-      } else {
-        propElements.push([
-          'span',
-          {
-            property: predicate,
-            content: object.value,
-          },
-          '',
-        ]);
+        break;
+      }
+      case 'ResourceNode': {
+        // TODO need a way to make sure links to literals are displayed in the rdfa tools for a
+        // document node with imported resources after reload
+        // case 'LiteralNode': {
+        const importedResources = nodeOrMark.attrs[IMPORTED_RESOURCES_ATTR];
+        if (importedResources && 'nodeSize' in nodeOrMark) {
+          // This is a document node that imports resources, so we need special handling of those
+          // properties
+          // continued TODO...
+          // let linkedToNodes: ResolvedPNode[];
+          // if (object.termType === 'ResourceNode') {
+          //   linkedToNodes = findNodesBySubject(nodeOrMark, object.value);
+          // } else {
+          //   const node = findNodeByRdfaId(nodeOrMark, object.value);
+          //   linkedToNodes = node ? [node] : [];
+          // }
+          const linkedToNodes: ResolvedPNode[] = findNodesBySubject(
+            nodeOrMark,
+            object.value,
+          );
+          const backlinkToImportedResource = linkedToNodes
+            .flatMap((subj) => getBacklinks(subj.value))
+            .find((bl) => bl?.predicate === predicate);
+          if (backlinkToImportedResource) {
+            propElements.push([
+              'span',
+              {
+                about: backlinkToImportedResource.subject.value,
+                property: predicate,
+                resource: object.value,
+              },
+            ]);
+          }
+        }
+        break;
+      }
+      case 'Literal': {
+        if (object.language?.length) {
+          propElements.push([
+            'span',
+            {
+              property: predicate,
+              content: object.value,
+              lang: object.language,
+            },
+            '',
+          ]);
+        } else if (object.datatype?.value?.length) {
+          propElements.push([
+            'span',
+            {
+              property: predicate,
+              content: object.value,
+              datatype: object.datatype.value,
+            },
+            '',
+          ]);
+        } else {
+          propElements.push([
+            'span',
+            {
+              property: predicate,
+              content: object.value,
+            },
+            '',
+          ]);
+        }
+        break;
       }
     }
   }
@@ -365,6 +412,18 @@ const findRdfaContentElement = (node: Node) => {
   for (const child of node.children) {
     if ((child as HTMLElement).dataset['contentContainer']) {
       return child as HTMLElement;
+    }
+  }
+  return null;
+};
+
+export const findRdfaHiddenElements = (node: Node) => {
+  if (!isElement(node)) {
+    throw new Error('node is not an element');
+  }
+  for (const child of node.children) {
+    if ((child as HTMLElement).dataset['rdfaContainer']) {
+      return (child as HTMLElement).children;
     }
   }
   return null;
