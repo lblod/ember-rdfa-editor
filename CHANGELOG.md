@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 10.4.0
+
+### Minor Changes
+
+- [#1212](https://github.com/lblod/ember-rdfa-editor/pull/1212) [`cf21e31`](https://github.com/lblod/ember-rdfa-editor/commit/cf21e31e9b692455f02301c6002613ab457f729b) Thanks [@piemonkey](https://github.com/piemonkey)! - Add ability to link resources imported in snippets to be linked to resources in the external document
+
+- [#1212](https://github.com/lblod/ember-rdfa-editor/pull/1212) [`383ac49`](https://github.com/lblod/ember-rdfa-editor/commit/383ac49d1257e41a9e9cb26b6bd3289c530dfd72) Thanks [@piemonkey](https://github.com/piemonkey)! - Add ability to create RDFa links from resources defined outside of the document
+
+### Patch Changes
+
+- [#1216](https://github.com/lblod/ember-rdfa-editor/pull/1216) [`0f348b9`](https://github.com/lblod/ember-rdfa-editor/commit/0f348b9ff72165eacb3883454d315f761a08c181) Thanks [@piemonkey](https://github.com/piemonkey)! - Replace unused vm-browserify transitive dependency with a stub to avoid build failures downstream
+
 ## 10.3.0
 
 ### Minor Changes
