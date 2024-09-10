@@ -1,17 +1,21 @@
+import type { AttributeSpec } from 'prosemirror-model';
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import {
+  findRdfaHiddenElements,
   getRdfaAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
 } from '../core/schema';
-import type { AttributeSpec } from 'prosemirror-model';
+import { IMPORTED_RESOURCES_ATTR } from '../plugins/imported-resources';
+import { jsonParse } from '../utils/_private/string-utils';
 
 interface DocumentConfig {
   defaultLanguage?: string;
   content?: string;
   rdfaAware?: boolean;
+  hasResourceImports?: boolean;
   extraAttributes?: Record<string, AttributeSpec>;
 }
 
@@ -22,6 +26,7 @@ export const docWithConfig = ({
   content = 'block+',
   rdfaAware = false,
   extraAttributes = {},
+  hasResourceImports,
 }: DocumentConfig = {}): SayNodeSpec => {
   return {
     content,
@@ -37,6 +42,9 @@ export const docWithConfig = ({
         return {
           ...rdfaAttrSpec({ rdfaAware }),
           ...baseAttrs,
+          ...(hasResourceImports
+            ? { [IMPORTED_RESOURCES_ATTR]: { default: [] } }
+            : {}),
         };
       } else {
         return baseAttrs;
@@ -58,10 +66,34 @@ export const docWithConfig = ({
               extraAttrs[attr] = node.getAttribute(attr);
             });
             if (rdfaAware) {
+              const extraProps = [];
+              if (hasResourceImports) {
+                extraAttrs[IMPORTED_RESOURCES_ATTR] = jsonParse(
+                  node.getAttribute(IMPORTED_RESOURCES_ATTR),
+                );
+                const hidden = findRdfaHiddenElements(node);
+                if (hidden) {
+                  for (const hid of hidden) {
+                    const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
+                      rdfaAware: true,
+                    });
+                    if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
+                      extraProps.push(...hiddenRdfaAttrs.properties);
+                    }
+                  }
+                }
+              }
+              const rdfaAttrs = getRdfaAttrs(node, { rdfaAware: true });
               return {
                 ...extraAttrs,
                 lang: node.getAttribute('lang'),
-                ...getRdfaAttrs(node, { rdfaAware: true }),
+                ...rdfaAttrs,
+                properties: [
+                  ...(rdfaAttrs && 'properties' in rdfaAttrs
+                    ? rdfaAttrs.properties
+                    : []),
+                  ...extraProps,
+                ],
               };
             } else {
               return {
@@ -88,11 +120,16 @@ export const docWithConfig = ({
       const attrs: Record<string, unknown> = {
         lang: node.attrs['lang'] as string,
         'data-say-document': true,
+        properties: node.attrs['properties'],
       };
       Object.keys(extraAttributes).forEach((attr) => {
         attrs[attr] = node.attrs[attr];
       });
       if (rdfaAware) {
+        const importedRes = node.attrs[IMPORTED_RESOURCES_ATTR];
+        if (hasResourceImports && importedRes && Array.isArray(importedRes)) {
+          attrs[IMPORTED_RESOURCES_ATTR] = JSON.stringify(importedRes);
+        }
         return renderRdfaAware({
           renderable: node,
           tag: 'div',

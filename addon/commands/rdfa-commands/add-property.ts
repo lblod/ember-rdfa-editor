@@ -1,3 +1,4 @@
+import type { Command, Transaction } from 'prosemirror-state';
 import type {
   IncomingTriple,
   OutgoingTriple,
@@ -16,7 +17,7 @@ import {
   getProperties,
   isLinkToNode,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import type { Command, Transaction } from 'prosemirror-state';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
 
 export type AddPropertyArgs = {
   /** The resource to which to add a property */
@@ -29,26 +30,36 @@ export type AddPropertyArgs = {
     the passed transaction between passing it in and when the callback is called.
   */
   transaction?: Transaction;
+  /**
+   * Flag indicating if this resource represents a new imported resource on the document
+   */
+  isNewImportedResource?: boolean;
 };
 
 export function addProperty({
   resource,
   property,
   transaction,
+  isNewImportedResource,
 }: AddPropertyArgs): Command {
   return (state, dispatch) => {
-    const resourceNodes = getNodesBySubject(state, resource);
-    if (!resourceNodes?.length) {
+    let resourceNodes = getNodesBySubject(state, resource);
+    if (!resourceNodes?.length && !isNewImportedResource) {
       return false;
     }
 
     if (dispatch) {
+      const tr = transaction ?? state.tr;
+      if (isNewImportedResource) {
+        const imported: string[] = state.doc.attrs[IMPORTED_RESOURCES_ATTR];
+        tr.setDocAttribute(IMPORTED_RESOURCES_ATTR, [...imported, resource]);
+        resourceNodes = [{ pos: -1, value: state.doc }];
+      }
       const properties = getProperties(resourceNodes[0].value);
       const updatedProperties = properties
         ? [...properties, property]
         : [property];
 
-      const tr = transaction ?? state.tr;
       // Update the properties of each node that defines the given resource
       resourceNodes.forEach((node) => {
         TransformUtils.setAttribute(
