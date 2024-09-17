@@ -160,7 +160,7 @@ export default class SpaceInvisibleController extends Controller {
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
-    this.rdfaEditor.initialize(presetContent);
+    this.rdfaEditor.initialize(presetContent, { doNotClean: true });
     applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);

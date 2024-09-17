@@ -80,7 +80,7 @@ module('Integration | RDFa blackbox test ', function () {
       controller.initialize(html);
       const outputHTML = controller.htmlContent;
       // run through the editor twice to test for stability
-      controller.initialize(outputHTML);
+      controller.initialize(outputHTML, { doNotClean: true });
 
       const finalHTML = controller.htmlContent;
       assert.strictEqual(outputHTML, finalHTML);

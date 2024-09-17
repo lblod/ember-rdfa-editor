@@ -97,4 +97,28 @@ module('ProseMirror | view', function () {
     });
     assert.strictEqual(view.htmlContent, expectedHtml);
   });
+
+  test('setHtmlContent will leave not clean the HTML if asked not to', function (assert) {
+    const schema = TEST_SCHEMA;
+
+    const view = new SayView(null, {
+      state: EditorState.create({ schema }),
+    });
+    const htmlToInsert = oneLineTrim`
+    <div lang="en-US" data-say-document="true">
+      <div style="display: none" data-rdfa-container="true"></div>
+      <div data-content-container="true">
+        <p>   </p>
+        <p>
+           Suspendisse molestie ipsum odio, ac dignissim odio vestibulum ut.
+           Ut facilisis purus et blandit posuere.
+           Mauris vitae neque bibendum, rutrum leo ac, euismod magna.
+        </p>
+        <p></p>
+      </div>
+    </div>
+    `;
+    view.setHtmlContent(htmlToInsert, { doNotClean: true });
+    assert.strictEqual(view.htmlContent, htmlToInsert);
+  });
 });
