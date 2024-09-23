@@ -276,10 +276,24 @@ export default class HTMLInputParser {
    *
    * @param htmlString {string}
    * @param asHTMLElement {boolean}
+   * @param doNotClean {boolean} - optionally prevent cleaning input (just sanitize it). This should
+   * only be used with html that the editor understands directly, e.g. saved editor contents.
    */
-  prepareHTML(htmlString: string): string;
-  prepareHTML(htmlString: string, asHTMLDocument?: boolean): Document;
-  prepareHTML(htmlString: string, asHTMLDocument?: boolean): string | Document {
+  prepareHTML(
+    htmlString: string,
+    asHTMLDocument?: false,
+    doNotClean?: boolean,
+  ): string;
+  prepareHTML(
+    htmlString: string,
+    asHTMLDocument: true,
+    doNotClean?: boolean,
+  ): Document;
+  prepareHTML(
+    htmlString: string,
+    asHTMLDocument?: boolean,
+    doNotClean?: boolean,
+  ): string | Document {
     const parser = new DOMParser();
 
     const document = parser.parseFromString(
@@ -289,8 +303,10 @@ export default class HTMLInputParser {
 
     const bodyElement = document.body;
 
-    this.cleanDocx({ element: bodyElement });
-    this.setTableColWidthDataset({ element: bodyElement });
+    if (!doNotClean) {
+      this.cleanDocx({ element: bodyElement });
+      this.setTableColWidthDataset({ element: bodyElement });
+    }
     this.sanitizeHTML({ element: bodyElement });
 
     if (asHTMLDocument) {

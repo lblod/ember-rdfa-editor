@@ -188,6 +188,7 @@ It allows you to provide an object contain a series of `NodeViewConstructor` fun
 This object contains a series of `string:boolean` pairs. It may contain the following entries:
 - showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
 - showRdfa: Show RDFA in the editor
+- editRdfa: Opt in to the [experimental RDFa editing mode](#experimental%3A-a-new-approach-to-handle-rdfa-in-documents)
 - showRdfaHighlight: Show Rdfa highlights
 - showRdfaHover: Show Rdfa information on hover
 - showPaper: Show the editor inside a paper like container

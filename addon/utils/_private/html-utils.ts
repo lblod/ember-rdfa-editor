@@ -8,11 +8,16 @@ import type { HEADING_ELEMENTS } from './constants';
 
 export function htmlToDoc(
   html: string,
-  options: { schema: Schema; parser: ProseParser; editorView?: EditorView },
+  options: {
+    schema: Schema;
+    parser: ProseParser;
+    editorView?: EditorView;
+    doNotClean?: boolean;
+  },
 ) {
   const { parser } = options;
   const htmlCleaner = new HTMLInputParser();
-  const cleanedHTML = htmlCleaner.prepareHTML(html);
+  const cleanedHTML = htmlCleaner.prepareHTML(html, false, options.doNotClean);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
   preprocessRDFa(
@@ -35,11 +40,15 @@ export function htmlToDoc(
 
 export function htmlToFragment(
   html: string,
-  options: { parser: ProseParser; editorView: EditorView },
+  options: {
+    parser: ProseParser;
+    editorView: EditorView;
+    doNotClean?: boolean;
+  },
 ) {
   const { parser, editorView } = options;
   const htmlCleaner = new HTMLInputParser();
-  const cleanedHTML = htmlCleaner.prepareHTML(html);
+  const cleanedHTML = htmlCleaner.prepareHTML(html, false, options.doNotClean);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
   preprocessRDFa(parsed, getPathFromRoot(editorView.dom, false));

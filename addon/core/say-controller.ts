@@ -5,7 +5,7 @@ import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-uti
 import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
 import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
 import SayView, {
-  type DocumentRange,
+  type SetHtmlOptions,
 } from '@lblod/ember-rdfa-editor/core/say-view';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import { tracked } from '@glimmer/tracking';
@@ -80,11 +80,18 @@ export default class SayController {
    * This method creates a new `doc` node and parses it correctly based on the provided html.
    * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
    */
-  initialize(html: string, { shouldFocus = true } = {}) {
+  initialize(
+    html: string,
+    {
+      shouldFocus = true,
+      doNotClean = false,
+    }: Exclude<SetHtmlOptions, 'range'> = {},
+  ) {
     const doc = htmlToDoc(html, {
       schema: this.schema,
       editorView: this.editor.mainView,
       parser: this.editor.parser,
+      doNotClean,
     });
 
     this.editor.mainView.updateState(
@@ -105,10 +112,7 @@ export default class SayController {
    * Note: it does not create a new `doc` node and does not update the `doc` node based on the provided html
    * (e.g. `lang` attributes on the `doc` node are not parsed)
    */
-  setHtmlContent(
-    content: string,
-    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
-  ) {
+  setHtmlContent(content: string, options: SetHtmlOptions = {}) {
     this.mainEditorView.setHtmlContent(content, options);
   }
 

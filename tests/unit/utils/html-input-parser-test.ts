@@ -1767,3 +1767,30 @@ module('Utils | CS | HTMLInputParser', function () {
     );
   });
 });
+
+test('It should remove unsafe url schemes, even when not cleaning', function (assert) {
+  const expectedHtml = oneLineTrim`<a style="color:green">Lorem Ipsum</a>`;
+  const inputParser = new HTMLInputParser();
+  const htmlContent = oneLineTrim`<a href="javascript:console.log('this should not work')" style="color:green">Lorem Ipsum</a>`;
+
+  const actualHtml = inputParser.prepareHTML(htmlContent, false, true);
+  assert.strictEqual(actualHtml, expectedHtml);
+});
+
+test('It should remove src tags, even when not cleaning', function (assert) {
+  const expectedHtml = oneLineTrim`console.log('test')`;
+  const inputParser = new HTMLInputParser();
+  const htmlContent = oneLineTrim`<src>console.log('test')</src>`;
+
+  const actualHtml = inputParser.prepareHTML(htmlContent, false, true);
+  assert.strictEqual(actualHtml, expectedHtml);
+});
+
+test('It should leave empty elements when not cleaning', function (assert) {
+  const expectedHtml = oneLineTrim`<p></p><p>This is the only line including text</p><p>  </p>`;
+  const inputParser = new HTMLInputParser();
+  const htmlContent = oneLineTrim`<p></p><p>This is the only line including text</p><p>  </p>`;
+
+  const actualHtml = inputParser.prepareHTML(htmlContent, false, true);
+  assert.strictEqual(actualHtml, expectedHtml);
+});

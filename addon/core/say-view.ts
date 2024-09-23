@@ -5,10 +5,21 @@ import { htmlToDoc, htmlToFragment } from '../utils/_private/html-utils';
 import { DOMSerializer, ProseParser } from '..';
 import { SetDocAttributesStep } from '../utils/steps';
 
+export interface SetHtmlOptions {
+  shouldFocus?: boolean;
+  range?: DocumentRange;
+  /**
+   * Do not clean, only sanitize the input. This leaves empty elements and proprietary tags intact,
+   * so is only suitable for HTML produced by the editor or otherwise known to be understood by it.
+   * Defaults to false.
+   */
+  doNotClean?: boolean;
+}
 export type DocumentRange = {
   from: number;
   to: number;
 };
+
 export default class SayView extends EditorView {
   isSayView = true;
   @tracked declare state: EditorState;
@@ -37,11 +48,8 @@ export default class SayView extends EditorView {
    * This method creates a new `doc` node and parses it correctly based on the provided html.
    * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
    */
-  setHtmlContent(
-    content: string,
-    options: { shouldFocus?: boolean; range?: DocumentRange } = {},
-  ) {
-    const { shouldFocus = true } = options;
+  setHtmlContent(content: string, options: SetHtmlOptions = {}) {
+    const { shouldFocus = true, doNotClean } = options;
     if (shouldFocus) {
       this.focus();
     }
@@ -51,6 +59,7 @@ export default class SayView extends EditorView {
       const fragment = htmlToFragment(content, {
         parser: this.domParser,
         editorView: this,
+        doNotClean,
       });
       tr.replaceRange(range.from, range.to, fragment);
     } else {
@@ -58,6 +67,7 @@ export default class SayView extends EditorView {
         schema: this.state.schema,
         parser: this.domParser,
         editorView: this,
+        doNotClean,
       });
       tr.step(new SetDocAttributesStep(doc.attrs));
       tr.replaceWith(0, tr.doc.nodeSize - 2, doc);
