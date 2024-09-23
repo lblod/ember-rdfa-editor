@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.5.0
+
+### Minor Changes
+
+- [#1217](https://github.com/lblod/ember-rdfa-editor/pull/1217) [`d5b99c1`](https://github.com/lblod/ember-rdfa-editor/commit/d5b99c1843ff85a4e03c2cb8de08d1329d8184e3) Thanks [@piemonkey](https://github.com/piemonkey)! - Add option to SayController.initialize() and SayView.setHtmlContent() to prevent cleaning input HTML
+
 ## 10.4.0
 
 ### Minor Changes
