@@ -52,18 +52,12 @@ export default class RdfaEditorDebugTools extends Component<DebugToolArgs> {
   }
 
   @action
-  showStyledExportPreview() {
+  showExportPreview(isStyled: boolean, filterForPublish: boolean) {
     const wnd = window.open('about:blank', '', '_blank');
     if (this.controller && wnd) {
-      wnd.document.write(generatePageForExport(this.controller, true));
-    }
-  }
-
-  @action
-  showRawExportPreview() {
-    const wnd = window.open('about:blank', '', '_blank');
-    if (this.controller && wnd) {
-      wnd.document.write(generatePageForExport(this.controller, false));
+      wnd.document.write(
+        generatePageForExport(this.controller, isStyled, filterForPublish),
+      );
     }
   }
 

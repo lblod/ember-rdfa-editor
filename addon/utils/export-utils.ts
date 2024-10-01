@@ -1,8 +1,10 @@
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { stripHtmlForPublish } from './strip-html-for-publish';
 
 export function generatePageForExport(
   controller: SayController,
   includeStyles: boolean,
+  filterForPublish?: boolean,
 ) {
   const parser = new DOMParser();
   const basicDocument = parser.parseFromString(
@@ -25,10 +27,11 @@ export function generatePageForExport(
     });
   }
 
-  const contentDocument = parser.parseFromString(
-    controller?.htmlContent || '',
-    'text/html',
-  );
+  let content = controller?.htmlContent || '';
+  if (filterForPublish) {
+    content = stripHtmlForPublish(content);
+  }
+  const contentDocument = parser.parseFromString(content, 'text/html');
 
   if (contentDocument.body.firstChild) {
     basicDocument.body.appendChild(contentDocument.body.firstChild);
