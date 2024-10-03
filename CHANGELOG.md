@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.6.0
+
+### Minor Changes
+
+- [#1219](https://github.com/lblod/ember-rdfa-editor/pull/1219) [`7f01e7e`](https://github.com/lblod/ember-rdfa-editor/commit/7f01e7e07f7de4b7cef5870bbcffeed2b7589674) Thanks [@piemonkey](https://github.com/piemonkey)! - Add util for filtering out html elements marked with a special attribute, to allow for filtering these on publish
+
 ## 10.5.0
 
 ### Minor Changes
