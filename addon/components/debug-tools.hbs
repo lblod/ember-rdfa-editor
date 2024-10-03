@@ -1,10 +1,13 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div {{this.setUpListeners}}>
-  <button type='button' {{on 'click' this.showStyledExportPreview}}>
+  <button type='button' {{on 'click' (fn this.showExportPreview true false)}}>
     Show Styled Export
   </button>
-  <button type='button' {{on 'click' this.showRawExportPreview}}>
+  <button type='button' {{on 'click' (fn this.showExportPreview false false)}}>
     Show Raw Export
+  </button>
+  <button type='button' {{on 'click' (fn this.showExportPreview true true)}}>
+    Show Export For Publish
   </button>
   {{#if @controller}}
     <span>Sample data:
