@@ -18,7 +18,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     content: 'block+',
     group: 'block',
     attrs: rdfaAttrSpec({ rdfaAware }),
-    defining: true,
+    definingAsContext: true,
     editable: rdfaAware,
     isolating: rdfaAware,
     selectable: rdfaAware,
