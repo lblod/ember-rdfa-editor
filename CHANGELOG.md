@@ -1,5 +1,16 @@
 # @lblod/ember-rdfa-editor
 
+## 10.6.1
+
+### Patch Changes
+
+- [#1221](https://github.com/lblod/ember-rdfa-editor/pull/1221) [`06c67cb`](https://github.com/lblod/ember-rdfa-editor/commit/06c67cbff899422417ffd46d79c759cfd97710bc) Thanks [@abeforgit](https://github.com/abeforgit)! - Make block-rdfa non-defining for copy operations
+
+  This means that when you copy text from inside an rdfa block, the block itself
+  no longer gets copied along. It just stays where it is, which is more natural
+
+- [#1218](https://github.com/lblod/ember-rdfa-editor/pull/1218) [`574a5f7`](https://github.com/lblod/ember-rdfa-editor/commit/574a5f7beb6aa33dda28ea74c16d1caa9cd5cd8f) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `ember-source` pnpm patch to silence `unexpectedly found... slicing...` warning
+
 ## 10.6.0
 
 ### Minor Changes
