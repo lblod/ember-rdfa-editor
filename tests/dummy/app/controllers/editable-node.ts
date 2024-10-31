@@ -59,7 +59,7 @@ import {
   bullet_list_input_rule,
   ordered_list_input_rule,
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
-import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
+import { inputRules, PNode, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
@@ -74,6 +74,7 @@ import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -168,6 +169,7 @@ export default class EditableBlockController extends Controller {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
+      block_rdfa: (node: PNode) => new BlockRDFaView(node),
     };
   };
 
