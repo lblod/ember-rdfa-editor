@@ -5,7 +5,7 @@
     border-style: dashed;
     border-width: 1px;
     &.say-active {
-      outline: 0.2rem solid var(--au-blue-500);
+      outline: 0.2rem solid var(--au-blue-700);
     }
   }
 }
@@ -13,7 +13,7 @@
 .ember-node {
   white-space: normal !important;
   &.say-active {
-    outline: 0.2rem solid var(--au-blue-500);
+    outline: 0.2rem solid var(--au-blue-700);
   }
   .say-inline-rdfa {
     [contenteditable] {
@@ -40,7 +40,7 @@
     &.atomic {
       background-color: var(--au-blue-200);
     }
-    outline: 1px solid var(--au-blue-500);
+    outline: 1px solid var(--au-blue-700);
 
     ::selection {
       background-color: var(--au-blue-300);

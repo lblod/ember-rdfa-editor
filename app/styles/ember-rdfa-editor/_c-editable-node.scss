@@ -4,7 +4,7 @@
     padding: $au-unit;
     border-radius: $au-radius;
     &.say-active {
-      outline: 0.2rem solid var(--au-blue-500);
+      outline: 0.2rem solid var(--au-blue-700);
     }
     &.ProseMirror-selectednode {
       background-color: var(--au-blue-200);
