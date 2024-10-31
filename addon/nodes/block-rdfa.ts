@@ -46,12 +46,12 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           renderable: node,
           tag: 'div',
           attrs: {
-            class: 'say-editable',
+            class: 'say-editable say-block-rdfa',
           },
           content: 0,
         });
       } else {
-        return ['div', node.attrs, 0];
+        return ['div', { ...node.attrs, class: 'say-block-rdfa' }, 0];
       }
     },
   };
