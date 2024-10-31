@@ -1,5 +1,35 @@
 # @lblod/ember-rdfa-editor
 
+## 10.7.0
+
+### Minor Changes
+
+- [#1224](https://github.com/lblod/ember-rdfa-editor/pull/1224) [`e37b476`](https://github.com/lblod/ember-rdfa-editor/commit/e37b476a8683f8bd071760e907e7813dfbaad107) Thanks [@elpoelma](https://github.com/elpoelma)! - Simply gap-cursor styling:
+
+  - Add small margins
+  - Remove unnecessary `position: absolute` and `:after` css rules
+
+- [#1224](https://github.com/lblod/ember-rdfa-editor/pull/1224) [`2cd7ca5`](https://github.com/lblod/ember-rdfa-editor/commit/2cd7ca54ba0fd89662cc416272170328694fca2a) Thanks [@elpoelma](https://github.com/elpoelma)! - Rework `block_rdfa` UX/UI:
+
+  - Introduction of `BlockRDFaView` nodeview
+  - Addition of a descriptive `label` component to the `block_rdfa` view.
+
+- [#1223](https://github.com/lblod/ember-rdfa-editor/pull/1223) [`3679d00`](https://github.com/lblod/ember-rdfa-editor/commit/3679d00e8490b01d9d0603c97b35ea622ff5cf80) Thanks [@elpoelma](https://github.com/elpoelma)! - Reduce editor padding
+
+- [#1224](https://github.com/lblod/ember-rdfa-editor/pull/1224) [`52616d2`](https://github.com/lblod/ember-rdfa-editor/commit/52616d297aff27570a4592686f50b5620e8143bb) Thanks [@elpoelma](https://github.com/elpoelma)! - Rework `block-rdfa` styling:
+  - Introduction of `say-block-rdfa` class
+  - Adjustment of margins
+  - Adjust border color and radius
+  - Adjust padding
+
+### Patch Changes
+
+- [#1222](https://github.com/lblod/ember-rdfa-editor/pull/1222) [`fff8803`](https://github.com/lblod/ember-rdfa-editor/commit/fff88036e3d85c5740c1b78415953b54e89b0d82) Thanks [@elpoelma](https://github.com/elpoelma)! - Disable `rdfaAware` setting for heading nodes in dummy app
+
+- [#1223](https://github.com/lblod/ember-rdfa-editor/pull/1223) [`76023a0`](https://github.com/lblod/ember-rdfa-editor/commit/76023a07c2bbc21835015086ecfe61f6f73d3ae1) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust margin rules to not target invisible elements
+
+- [#1223](https://github.com/lblod/ember-rdfa-editor/pull/1223) [`76023a0`](https://github.com/lblod/ember-rdfa-editor/commit/76023a07c2bbc21835015086ecfe61f6f73d3ae1) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust margin rules to be consistent across all types of elements (including headings). Note: this reduces the margin around headings
+
 ## 10.6.1
 
 ### Patch Changes
