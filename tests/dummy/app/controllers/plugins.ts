@@ -71,6 +71,10 @@ import {
   dropdownView,
 } from '../dummy-nodes';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import {
+  firefox_svg_bug,
+  FirefoxSVGBugView,
+} from '../dummy-nodes/firefox-svg-bug';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -82,6 +86,7 @@ export default class IndexController extends Controller {
       paragraph,
 
       repaired_block: repairedBlockWithConfig(),
+      firefox_svg_bug,
 
       list_item: listItemWithConfig(),
       ordered_list: orderedListWithConfig(),
@@ -139,6 +144,7 @@ export default class IndexController extends Controller {
       dropdown: dropdownView(proseController),
       link: linkView(this.linkOptions)(proseController),
       image: imageView(proseController),
+      firefox_svg_bug: () => new FirefoxSVGBugView(),
     };
   };
   @tracked plugins: PluginConfig = [

@@ -66,6 +66,10 @@ import type { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { getOwner } from '@ember/application';
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import {
+  FirefoxSVGBugView,
+  firefox_svg_bug,
+} from '../dummy-nodes/firefox-svg-bug';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -78,6 +82,7 @@ export default class IndexController extends Controller {
       paragraph,
 
       repaired_block: repairedBlockWithConfig(),
+      firefox_svg_bug,
 
       list_item: listItemWithConfig({ enableHierarchicalList: true }),
       ordered_list: orderedListWithConfig({ enableHierarchicalList: true }),
@@ -150,6 +155,7 @@ export default class IndexController extends Controller {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
+      firefox_svg_bug: () => new FirefoxSVGBugView(),
     };
   };
 

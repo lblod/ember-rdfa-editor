@@ -74,6 +74,10 @@ import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import {
+  FirefoxSVGBugView,
+  firefox_svg_bug,
+} from '../dummy-nodes/firefox-svg-bug';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -91,6 +95,7 @@ export default class EditableBlockController extends Controller {
       paragraph,
 
       repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
+      firefox_svg_bug,
 
       list_item: listItemWithConfig({
         enableHierarchicalList: true,
@@ -168,6 +173,7 @@ export default class EditableBlockController extends Controller {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
+      firefox_svg_bug: () => new FirefoxSVGBugView(),
     };
   };
 

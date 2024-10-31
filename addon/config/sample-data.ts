@@ -594,4 +594,16 @@ world
     </div>
   </div>
   `,
+  FirefoxSVGBug: `
+  <div data-say-document="true">
+    <h1>Firefox SVG bug</h1>
+    <p>This sample contains a way to reproduce the so-called svg-bug in firefox.</p>
+    <p>You'll notice issues if you try to select across the different UI elements containing inline SVGs</p>
+    <p>As of prosemirror-view <a href="https://github.com/ProseMirror/prosemirror-view/releases/tag/1.34.3">v1.34.3</a> some issues around this case have been fixed. E.g. for links, but not for all cases, as can be seen with the 'firefox-svg-bug' nodes</p>
+    <p>BUT: selection around link nodes does remain buggy in firefox</p>
+    <p>This issue does not occur in chromium-based browsers</p>
+    <p>text <span data-firefox-svg-bug></span> text <span data-firefox-svg-bug></span> text <span data-firefox-svg-bug></span> text</p>
+    <p><a href="https://redpencil.io">redpencil.io</a>gerger <a href="https://redpencil.io">redpencil.io</a> ergerg reg <a href="https://redpencil.io">redpencil.io</a>gerg eg r ger</p>
+  </div>
+  `
 };
