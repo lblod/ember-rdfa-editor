@@ -2,10 +2,16 @@ import { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
+  isRdfaAttrs,
   rdfaAttrSpec,
   renderRdfaAware,
 } from '@lblod/ember-rdfa-editor/core/schema';
 import type SayNodeSpec from '../core/say-node-spec';
+import type { NodeView } from 'prosemirror-view';
+import { RDF, SKOS } from '../utils/_private/constants';
+import { getRDFFragment } from '../utils/namespace';
+
+const FALLBACK_LABEL = 'Data-object';
 
 type Config = {
   rdfaAware?: boolean;
@@ -17,7 +23,13 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   return {
     content: 'block+',
     group: 'block',
-    attrs: rdfaAttrSpec({ rdfaAware }),
+    attrs: {
+      ...rdfaAttrSpec({ rdfaAware }),
+      label: {
+        default: undefined,
+        editable: true,
+      },
+    },
     definingAsContext: true,
     editable: rdfaAware,
     isolating: rdfaAware,
@@ -33,7 +45,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           }
           const attrs = getRdfaAttrs(node, { rdfaAware });
           if (attrs) {
-            return attrs;
+            return { ...attrs, label: node.dataset['label'] };
           }
           return false;
         },
@@ -47,15 +59,99 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           tag: 'div',
           attrs: {
             class: 'say-editable',
+            'data-label': node.attrs['label'],
           },
           content: 0,
         });
       } else {
-        return ['div', node.attrs, 0];
+        const { label, ...attrs } = node.attrs;
+        return ['div', { ...attrs, 'data-label': label }, 0];
       }
     },
   };
 };
+
+export class BlockRDFaView implements NodeView {
+  dom: HTMLElement;
+  labelElement: HTMLElement;
+  contentDOM: HTMLElement;
+  node: PNode;
+  constructor(node: PNode) {
+    this.node = node;
+    this.dom = document.createElement('div');
+    this.dom.setAttribute('class', 'say-block-rdfa');
+    this.labelElement = this.dom.appendChild(document.createElement('span'));
+    this.labelElement.contentEditable = 'false';
+    this.labelElement.textContent = getBlockRDFaLabel(
+      node,
+      FALLBACK_LABEL,
+    ).toUpperCase();
+    this.labelElement.setAttribute('class', 'say-block-rdfa--label');
+    this.contentDOM = this.dom.appendChild(document.createElement('div'));
+  }
+
+  update(node: PNode) {
+    if (node.type != this.node.type) {
+      return false;
+    }
+    this.node = node;
+    this.labelElement.textContent = getBlockRDFaLabel(
+      node,
+      FALLBACK_LABEL,
+    ).toUpperCase();
+    return true;
+  }
+}
+
+/**
+ * Function that determines which label should be shown on the `block_rdfa` node
+ * Priority:
+ * 1. The `label` attribute
+ * 2. Value of first encountered `skos:prefLabel` attribute (if resource node)
+ * 3. Last part of the first encountered type/predicate URI
+ * 4. The value of the `fallback` argument
+ */
+function getBlockRDFaLabel(node: PNode, fallback: string) {
+  const { attrs } = node;
+  if (attrs['label']) {
+    return attrs['label'] as string;
+  }
+  // Node is not rdfa-aware
+  if (!isRdfaAttrs(attrs)) {
+    return 'Data-object';
+  }
+
+  const { rdfaNodeType } = attrs;
+  if (rdfaNodeType === 'resource') {
+    const { properties } = attrs;
+    const prefLabelProps = properties.filter(
+      (prop) =>
+        prop.object.termType === 'Literal' &&
+        SKOS('prefLabel').matches(prop.predicate),
+    );
+    if (prefLabelProps.length) {
+      return prefLabelProps[0].object.value;
+    } else {
+      const typeProp = properties.find(
+        (prop) =>
+          prop.object.termType === 'NamedNode' &&
+          RDF('type').matches(prop.predicate),
+      );
+      if (typeProp) {
+        return getRDFFragment(typeProp.object.value);
+      } else {
+        return fallback;
+      }
+    }
+  } else {
+    const { backlinks } = attrs;
+    if (backlinks.length) {
+      return getRDFFragment(backlinks[0].predicate);
+    } else {
+      return fallback;
+    }
+  }
+}
 
 /**
  * @deprecated use `blockRdfaWithConfig` instead

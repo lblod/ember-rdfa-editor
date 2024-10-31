@@ -1,0 +1,31 @@
+.say-block-rdfa {
+  outline: 1px solid #c5cbd5;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  padding-left: 0.5rem;
+  padding-right: 3.6rem;
+  border-radius: 3px;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  &.say-active {
+    outline: 2px solid #0055cc;
+  }
+  &.ProseMirror-selectednode {
+    background-color: var(--au-blue-200);
+  }
+}
+
+.say-block-rdfa--label {
+  position: absolute;
+  top: -12px;
+  right: 10px;
+  background-color: white;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  color: #687483;
+  font-weight: 500;
+}
+
+.say-block-rdfa.say-active > .say-block-rdfa--label {
+  color: #0055cc;
+}
