@@ -12,7 +12,7 @@ module('ProseMirror | view', function () {
     });
     const htmlToInsert = oneLineTrim`
     <div lang="en-US" data-say-document="true">
-      <div style="display: none" data-rdfa-container="true"></div>
+      <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
            Fusce euismod mauris in lacus mollis, eu laoreet risus sollicitudin.
@@ -67,7 +67,7 @@ module('ProseMirror | view', function () {
     `;
     const expectedHtml = oneLineTrim`
     <div lang="en-US" data-say-document="true">
-      <div style="display: none" data-rdfa-container="true"></div>
+      <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p>Lorem ips<strong>um dolor s</strong>
         </p>
@@ -106,7 +106,7 @@ module('ProseMirror | view', function () {
     });
     const htmlToInsert = oneLineTrim`
     <div lang="en-US" data-say-document="true">
-      <div style="display: none" data-rdfa-container="true"></div>
+      <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p>   </p>
         <p>

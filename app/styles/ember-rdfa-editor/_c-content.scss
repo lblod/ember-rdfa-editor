@@ -123,14 +123,22 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Setup some margin rules
-  p + *,
-  div + *,
-  span + *,
-  ul + *,
-  ol + *,
-  i + *,
-  table + * {
-    margin-top: $say-typography-margin;
+  p,
+  ul,
+  ol,
+  table,
+  div,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    &:not(.say-hidden) {
+      + * {
+        margin-top: $say-typography-margin;
+      }
+    }
   }
 
   [data-indentation-level='1'] {
@@ -167,25 +175,6 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   i + br,
   br + br {
     margin-top: 0;
-  }
-
-  h1,
-  .h1 {
-    margin-top: $say-typography-margin * 2;
-    margin-bottom: $say-typography-margin * 2;
-  }
-
-  h2,
-  .h2,
-  h3,
-  .h3,
-  h4,
-  .h4,
-  h5,
-  .h5,
-  h6 {
-    margin-top: $say-typography-margin * 2;
-    margin-bottom: $say-typography-margin;
   }
 
   // Style links

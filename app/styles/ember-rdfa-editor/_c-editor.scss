@@ -10,7 +10,7 @@ $say-editor-background: var(--au-gray-100) !default;
 $say-editor-sidebar-medium: 30% !default;
 $say-editor-sidebar-large: 30% !default;
 $say-paper-min-height: calc(100vh + #{$au-unit}) !default;
-$say-paper-padding: $au-unit-large !default;
+$say-paper-padding: $au-unit !default;
 $say-paper-background: var(--au-white) !default;
 $say-paper-box-shadow:
   0 1px 3px rgba($au-gray-900, 0.1),
