@@ -305,7 +305,12 @@ export function renderInvisibleRdfa(
   }
   return [
     tag,
-    { style: 'display: none', 'data-rdfa-container': true, ...attrs },
+    {
+      style: 'display: none',
+      class: 'say-hidden',
+      'data-rdfa-container': true,
+      ...attrs,
+    },
     ...propElements,
   ];
 }
