@@ -30,6 +30,7 @@
   gap: 0;
   vertical-align: bottom;
   min-height: 24px;
+  margin-bottom: -3px;
   background-color: var(--au-blue-100);
   border-color: var(--au-blue-300);
   border-radius: var(--au-radius);
@@ -41,7 +42,6 @@
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
-    min-width: 5rem;
     padding: 2px;
     color: var(--au-blue-700);
 
