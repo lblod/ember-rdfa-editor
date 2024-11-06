@@ -10,7 +10,6 @@ import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icon
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
-  LinkIcon = LinkIcon;
   LinkExternalIcon = LinkExternalIcon;
   LinkBrokenIcon = LinkBrokenIcon;
 
