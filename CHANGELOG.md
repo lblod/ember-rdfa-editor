@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.7.2
+
+### Patch Changes
+
+- [#1227](https://github.com/lblod/ember-rdfa-editor/pull/1227) [`156816c`](https://github.com/lblod/ember-rdfa-editor/commit/156816c2a61074314c461424d5049482a75a6b13) Thanks [@elpoelma](https://github.com/elpoelma)! - Move RDF namespace objects out of constants file to prevent circular imports
+
 ## 10.7.1
 
 ### Patch Changes
