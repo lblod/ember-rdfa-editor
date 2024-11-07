@@ -134,11 +134,13 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h4,
   h5,
   h6 {
-    &:not(.say-hidden) {
-      + * {
-        margin-top: $say-typography-margin;
-      }
+    + * {
+      margin-top: $say-typography-margin;
     }
+  }
+
+  .say-hidden + * {
+    margin-top: 0;
   }
 
   [data-indentation-level='1'] {
