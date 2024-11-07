@@ -1,5 +1,12 @@
 # @lblod/ember-rdfa-editor
 
+## 10.7.1
+
+### Patch Changes
+
+- [#1226](https://github.com/lblod/ember-rdfa-editor/pull/1226) [`4a5ee36`](https://github.com/lblod/ember-rdfa-editor/commit/4a5ee3605e2f6f564e265dcc4cbd349ece3cfd41) Thanks [@elpoelma](https://github.com/elpoelma)! - Reduce specificity of general editor margin rule.
+  This fix reverts a previous breaking change wherein the specificity of the general editor margin css rule was increased from (0,1,1) to (0,2,1). This fix ensures the specificity is reverted back to (0,1,1).
+
 ## 10.7.0
 
 ### Minor Changes
