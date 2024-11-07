@@ -8,7 +8,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/schema';
 import type SayNodeSpec from '../core/say-node-spec';
 import type { NodeView } from 'prosemirror-view';
-import { RDF, SKOS } from '../utils/_private/constants';
+import { RDF, SKOS } from '../utils/_private/namespaces';
 import { getRDFFragment } from '../utils/namespace';
 
 const FALLBACK_LABEL = 'Data-object';
