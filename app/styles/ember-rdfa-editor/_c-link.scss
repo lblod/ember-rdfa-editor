@@ -26,23 +26,28 @@
   }
 }
 
-.say-link {
+.say-pill {
   gap: 0;
   vertical-align: bottom;
-
+  height: 1.5rem;
+  margin-bottom: -0.1rem;
+  background-color: var(--au-blue-100);
+  border-color: var(--au-blue-300);
+  border-radius: var(--au-radius);
+  font-weight: var(--au-regular);
+  color: var(--au-blue-700);
   [contenteditable] {
     outline: none;
     white-space: break-spaces;
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
-    min-width: 5rem;
-    padding-right: 0.5rem;
+    color: var(--au-blue-700);
   }
 }
 
 .ember-node.ProseMirror-selectednode {
-  .say-link {
+  .say-pill {
     background-color: var(--au-blue-200);
     outline: 2px solid var(--au-blue-500);
     outline-offset: -2px;

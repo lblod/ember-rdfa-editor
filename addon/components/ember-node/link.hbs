@@ -1,9 +1,7 @@
 {{! @glint-nocheck: not typesafe yet }}
 <this.Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
   <Pill
-    class='say-link'
-    @icon={{this.LinkIcon}}
-    @iconAlignment='right'
+    class='say-pill'
     @skin='link'
     title={{t 'ember-rdfa-editor.link.ctrlClickDescription'}}
     aria-describedby='link-tooltip'
