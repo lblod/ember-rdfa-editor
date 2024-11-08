@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.7.3
+
+### Patch Changes
+
+- [#1225](https://github.com/lblod/ember-rdfa-editor/pull/1225) [`934c0c1`](https://github.com/lblod/ember-rdfa-editor/commit/934c0c159532bd9e54f1025206cc8d66c0b64d6b) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Add say-pill class and use it on the link
+
 ## 10.7.2
 
 ### Patch Changes
