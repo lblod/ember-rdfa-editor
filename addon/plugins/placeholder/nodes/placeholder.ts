@@ -9,10 +9,15 @@ export const placeholder: NodeSpec = {
   draggable: false,
   atom: true,
   defining: false,
+  classNames: ['say-placeholder'],
   toDOM(node) {
     return [
       'span',
-      { class: PLACEHOLDER_CLASS, ...node.attrs, contenteditable: false },
+      {
+        class: `${PLACEHOLDER_CLASS} ${node.type.spec['classNames']?.join(' ')}`,
+        ...node.attrs,
+        contenteditable: false,
+      },
       node.attrs['placeholderText'],
     ];
   },

@@ -34,6 +34,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     editable: rdfaAware,
     isolating: rdfaAware,
     selectable: rdfaAware,
+    classNames: ['say-block-rdfa'],
     parseDOM: [
       {
         tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
@@ -58,14 +59,22 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           renderable: node,
           tag: 'div',
           attrs: {
-            class: 'say-editable',
+            class: `say-editable ${node.type.spec['classNames']?.join(' ')}`,
             'data-label': node.attrs['label'],
           },
           content: 0,
         });
       } else {
         const { label, ...attrs } = node.attrs;
-        return ['div', { ...attrs, 'data-label': label }, 0];
+        return [
+          'div',
+          {
+            ...attrs,
+            'data-label': label,
+            class: node.type.spec['classNames']?.join(' '),
+          },
+          0,
+        ];
       }
     },
   };

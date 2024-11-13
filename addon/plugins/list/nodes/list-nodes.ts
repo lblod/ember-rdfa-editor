@@ -45,6 +45,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
     },
     content: 'list_item+',
     group: 'block list',
+    classNames: ['say-ordered-list'],
     parseDOM: [
       {
         tag: 'ol',
@@ -78,7 +79,15 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
       if (enableHierarchicalList) {
         baseAttrs['data-hierarchical'] = hierarchical;
       }
-      return ['ol', { ...baseAttrs, ...attrs }, 0];
+      return [
+        'ol',
+        {
+          ...baseAttrs,
+          ...attrs,
+          class: node.type.spec['classNames']?.join(' '),
+        },
+        0,
+      ];
     },
   };
 };
@@ -96,6 +105,7 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = () => {
       style: { default: 'unordered' },
       hierarchical: { default: false },
     },
+    classNames: ['say-bullet-list'],
     parseDOM: [
       {
         tag: 'ul',
@@ -110,7 +120,14 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = () => {
       },
     ],
     toDOM(node: PNode) {
-      return ['ul', node.attrs, 0];
+      return [
+        'ul',
+        {
+          ...node.attrs,
+          class: node.type.spec['classNames']?.join(' '),
+        },
+        0,
+      ];
     },
   };
 };
@@ -131,6 +148,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     content: 'paragraphGroup+ block*',
     defining: true,
     attrs: enableHierarchicalList ? { listPath: { default: [] } } : undefined,
+    classNames: ['say-list-item'],
     parseDOM: [
       {
         tag: 'li',
@@ -152,15 +170,15 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node: PNode) {
-      return [
-        'li',
-        enableHierarchicalList
-          ? {
-              'data-list-marker': renderListMarker(node.attrs['listPath']),
-            }
-          : {},
-        0,
-      ];
+      const attributes: { [key: string]: any } = {
+        class: node.type.spec['classNames']?.join(' '),
+      };
+      if (enableHierarchicalList) {
+        attributes['data-list-marker'] = renderListMarker(
+          node.attrs['listPath'],
+        );
+      }
+      return ['li', attributes, 0];
     },
   };
 };

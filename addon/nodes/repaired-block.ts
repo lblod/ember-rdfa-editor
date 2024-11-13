@@ -15,6 +15,7 @@ export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
     content: 'inline*',
     group: 'inline',
     attrs: rdfaAttrSpec({ rdfaAware }),
+    classNames: ['say-repaired-block'],
     // defining: true,
     parseDOM: [
       {
@@ -33,9 +34,23 @@ export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
     ],
     toDOM(node: PNode): DOMOutputSpec {
       if (rdfaAware) {
-        return renderRdfaAware({ renderable: node, tag: 'span', content: 0 });
+        return renderRdfaAware({
+          renderable: node,
+          tag: 'span',
+          content: 0,
+          attrs: {
+            class: node.type.spec['classNames']?.join(' '),
+          },
+        });
       } else {
-        return ['span', { ...node.attrs }, 0];
+        return [
+          'span',
+          {
+            ...node.attrs,
+            class: node.type.spec['classNames']?.join(' '),
+          },
+          0,
+        ];
       }
     },
   };

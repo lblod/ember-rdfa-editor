@@ -111,6 +111,12 @@ interface TableNodeOptions {
     even?: string;
     odd?: string;
   };
+  classNames?: {
+    table?: [string];
+    table_row?: [string];
+    table_cell?: [string];
+    table_header?: [string];
+  };
 }
 
 interface TableNodes extends Record<string, NodeSpec> {
@@ -215,6 +221,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
+      classNames: options.classNames?.table || ['say-table'],
       attrs: {
         ...rdfaAttrSpec({ rdfaAware: false }),
         class: { default: 'say-table' },
@@ -239,7 +246,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: 'say-table',
+            class: node.type.spec['classNames']?.join(' '),
             style: constructInlineStyles(tableStyle),
           },
           ['tbody', 0],
@@ -258,7 +265,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: 'say-table',
+            class: node.type.spec['classNames']?.join(' '),
             style: constructInlineStyles(style),
           },
           tableView.colgroupElement,
@@ -269,6 +276,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
+      classNames: options.classNames?.table_row || ['say-table-row'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }) },
       allowGapCursor: false,
       parseDOM: [
@@ -295,20 +303,29 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         };
         return [
           'tr',
-          { ...node.attrs, style: constructInlineStyles(style) },
+          {
+            ...node.attrs,
+            style: constructInlineStyles(style),
+            class: node.type.spec['classNames']?.join(' '),
+          },
           0,
         ];
       },
       toDOM(node: PNode) {
         return [
           'tr',
-          { ...node.attrs, style: constructInlineStyles(rowStyle) },
+          {
+            ...node.attrs,
+            style: constructInlineStyles(rowStyle),
+            class: node.type.spec['classNames']?.join(' '),
+          },
           0,
         ];
       },
     },
     table_cell: {
       content: options.cellContent,
+      classNames: options.classNames?.table_cell || ['say-table-cell'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
@@ -325,11 +342,19 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['td', setCellAttrs(node, extraCellAttributes), 0];
+        return [
+          'td',
+          {
+            ...setCellAttrs(node, extraCellAttributes),
+            class: node.type.spec['classNames']?.join(' '),
+          },
+          0,
+        ];
       },
     },
     table_header: {
       content: options.cellContent,
+      classNames: options.classNames?.table_header || ['say-table-header'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'header_cell',
       isolating: true,
@@ -345,7 +370,14 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['th', setCellAttrs(node, extraCellAttributes), 0];
+        return [
+          'th',
+          {
+            ...setCellAttrs(node, extraCellAttributes),
+            class: node.type.spec['classNames']?.join(' '),
+          },
+          0,
+        ];
       },
     },
   };

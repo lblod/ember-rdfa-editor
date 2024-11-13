@@ -43,6 +43,7 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
     editable: rdfaAware,
     isolating: rdfaAware,
     selectable: rdfaAware,
+    classNames: ['say-heading'],
     parseDOM: [
       {
         tag: HEADING_ELEMENTS.join(','),
@@ -81,14 +82,18 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
           renderable: node,
           attrs: {
             ...baseAttrs,
-            class: 'say-editable',
+            class: `say-editable ${node.type.spec['classNames']?.join(' ')}`,
           },
           content: 0,
         });
       } else {
         return [
           `h${(level as number).toString()}`,
-          { ...baseAttrs, ...node.attrs },
+          {
+            ...baseAttrs,
+            ...node.attrs,
+            class: node.type.spec['classNames']?.join(' '),
+          },
           0,
         ];
       }

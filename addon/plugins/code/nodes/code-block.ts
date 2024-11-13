@@ -6,8 +6,13 @@ export const code_block: NodeSpec = {
   group: 'block',
   code: true,
   defining: true,
+  classNames: ['say-code-block'],
   parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
-  toDOM() {
-    return ['pre', ['code', 0]];
+  toDOM(node) {
+    return [
+      'pre',
+      { class: node.type.spec['classNames']?.join(' ') },
+      ['code', 0],
+    ];
   },
 };

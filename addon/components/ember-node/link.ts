@@ -36,6 +36,10 @@ export default class Link extends Component<EmberNodeArgs> {
     return this.node.attrs['interactive'] as boolean;
   }
 
+  get class() {
+    return this.node.type.spec['classNames']?.join(' ');
+  }
+
   @action
   onSelectEmbedded(selected: boolean, innerState: EditorState) {
     if (!selected && !this.href) {

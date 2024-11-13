@@ -31,16 +31,21 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
     selectable: true,
     editable: rdfaAware,
     isolating: rdfaAware,
+    classNames: ['say-inline-rdfa'],
     toDOM(node: PNode) {
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,
           tag: 'span',
-          attrs: { class: 'say-inline-rdfa' },
+          attrs: { class: node.type.spec['classNames']?.join(' ') },
           content: 0,
         });
       } else {
-        return ['span', { ...node.attrs, class: 'say-inline-rdfa' }, 0];
+        return [
+          'span',
+          { ...node.attrs, class: node.type.spec['classNames']?.join(' ') },
+          0,
+        ];
       }
     },
     parseDOM: [

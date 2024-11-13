@@ -14,6 +14,7 @@ const emberNodeConfig: EmberNodeConfig = {
   group: 'inline',
   draggable: true,
   atom: true,
+  classNames: ['say-image'],
   attrs: {
     src: {},
     alt: { default: null },
@@ -48,6 +49,7 @@ const emberNodeConfig: EmberNodeConfig = {
         'data-width': width as number,
         'data-height': height as number,
         style: widthStyle + heightStyle,
+        class: node.type.spec['classNames']?.join(' '),
       },
     ];
   },

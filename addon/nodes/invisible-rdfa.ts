@@ -20,6 +20,7 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
     atom: true,
     defining: true,
     isolating: true,
+    classNames: ['say-invisible-rdfa'],
     attrs: {
       ...rdfaAttrSpec({ rdfaAware }),
       __tag: { default: 'span' },
@@ -49,7 +50,10 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
       if (rdfaAware) {
         return [
           __tag,
-          renderRdfaAttrs(attrs as RdfaAttrs),
+          {
+            ...renderRdfaAttrs(attrs as RdfaAttrs),
+            class: node.type.spec['classNames']?.join(' '),
+          },
           renderInvisibleRdfa(node, 'span'),
         ];
       } else {
