@@ -331,6 +331,27 @@ This addon uses CSS variables to customise the styling. You can override these v
 }
 ```
 
+#### Override node classes
+Heading -> say-heading
+Paragraph -> say-paragraph
+RepairedBlock -> say-repaired-block
+ListItem -> say-li
+OrderedList -> say-ordered-list
+BulletList -> say-bullet-list
+Placeholder -> say-placeholder
+Table -> say-table
+TableRow -> say-table-row
+TableCell -> say-table-cell
+TableHeader -> say-table-header
+Blockquote -> say-blockquote 
+HorizontalRule -> say-horizontal-rule 
+Image -> say-image 
+HardBreak -> say-hard-break 
+InvisibleRdfa -> say-invisible-rdfa
+BlockRdfa -> say-block-rdfa 
+InlineRdfa -> say-inline-rdfa
+Link -> say-pill say-link
+
 ## Embroider
 To use `@lblod/ember-rdfa-editor` with Embroider some extra Webpack configuration is needed, which you can import like this:
 
