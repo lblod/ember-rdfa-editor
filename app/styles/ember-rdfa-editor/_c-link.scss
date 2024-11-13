@@ -29,8 +29,9 @@
 .say-pill {
   gap: 0;
   vertical-align: bottom;
-  height: 1.5rem;
+  min-height: 2.55rem;
   margin-bottom: -0.1rem;
+  margin-top: 2px;
   background-color: var(--au-blue-100);
   border-color: var(--au-blue-300);
   border-radius: var(--au-radius);
