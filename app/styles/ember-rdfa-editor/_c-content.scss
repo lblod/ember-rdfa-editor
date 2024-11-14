@@ -222,11 +222,11 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Style lists
-  ul.bullet-list {
+  ul.say-bullet-list {
     list-style-type: initial;
 
     // Stop indenting
-    ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list ul.bullet-list {
+    ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list {
       margin-left: 0;
       padding-left: 0;
     }
@@ -235,7 +235,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   ol.say-ordered-list {
     list-style-type: decimal;
 
-    & > li.say-lis-item ol.say-ordered-list {
+    & > li.say-list-item ol.say-ordered-list {
       list-style-type: inherit;
     }
 
