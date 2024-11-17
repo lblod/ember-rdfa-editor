@@ -18,6 +18,7 @@ import {
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { sayDataFactory } from './say-data-factory';
 import {
+  fullLiteralSpan,
   incomingTripleSpan,
   literalSpan,
   namedNodeSpan,
@@ -266,6 +267,28 @@ export function renderInvisibleRdfa(
         propElements.push(literalSpan(predicate, object));
         break;
       }
+    }
+  }
+  for (const fullTriple of nodeOrMark.attrs['metaTriples'] as FullTriple[]) {
+    switch (fullTriple.object.termType) {
+      case 'NamedNode':
+        propElements.push(
+          namedNodeSpan(
+            fullTriple.subject.value,
+            fullTriple.predicate,
+            fullTriple.object.value,
+          ),
+        );
+        break;
+      case 'Literal':
+        propElements.push(
+          fullLiteralSpan(
+            fullTriple.subject.value,
+            fullTriple.predicate,
+            fullTriple.object,
+          ),
+        );
+        break;
     }
   }
   if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {

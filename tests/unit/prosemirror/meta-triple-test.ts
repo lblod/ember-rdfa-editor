@@ -1,8 +1,10 @@
+import type { Quad } from '@graphy/memory.dataset.fast';
 import { ProseParser } from '@lblod/ember-rdfa-editor';
 import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import { transformMetaTriples } from '@lblod/ember-rdfa-editor/utils/meta-triple-utils';
+import { calculateDataset } from 'dummy/tests/test-utils';
 import { SAMPLE_PLUGINS, SAMPLE_SCHEMA } from 'dummy/tests/utils/editor';
 import { Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
@@ -96,6 +98,50 @@ module('ProseMirror | meta-triple', function () {
     assert.deepEqual(
       newDoc.attrs['metaTriples'],
       state.doc.attrs['metaTriples'],
+    );
+  });
+
+  test('meta triples get rendered as parseable rdfa', function (assert) {
+    const factory = new SayDataFactory();
+    const quad = factory.quad(
+      factory.namedNode('http://example.org/1'),
+      factory.namedNode('http://example.org/pred'),
+      factory.literal('test'),
+    );
+    const metaTriples = [
+      {
+        subject: quad.subject,
+        predicate: quad.predicate.value,
+        object: quad.object,
+      },
+    ];
+    const docJson: NodeJsonSpec = {
+      type: 'doc',
+      attrs: { lang: 'nl-BE', metaTriples },
+      content: [
+        {
+          type: 'block_rdfa',
+          attrs: {
+            about: 'http://foo.com/d6d171ad-90ca-4018-9849-170d86cb3d57',
+          },
+          content: [
+            {
+              type: 'paragraph',
+              attrs: { alignment: 'left', indentationLevel: 0 },
+            },
+          ],
+        },
+      ],
+    };
+    const state = makeState(docJson);
+
+    const serializer = SaySerializer.fromSchema(state.schema);
+    const html = serializer.serializeNode(state.doc) as HTMLElement;
+    const dataset = calculateDataset(html.outerHTML);
+
+    assert.strictEqual(
+      dataset.match(quad.subject, quad.predicate, quad.object).size,
+      1,
     );
   });
 });
