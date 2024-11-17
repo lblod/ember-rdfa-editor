@@ -1,4 +1,6 @@
 import type Owner from '@ember/owner';
+
+import { type Plugin } from 'prosemirror-state';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -25,7 +27,7 @@ import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { image } from '@lblod/ember-rdfa-editor/plugins/image';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import { inlineRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import {
   em,
@@ -75,7 +77,7 @@ export const SAMPLE_SCHEMA = new Schema({
       tableGroup: 'block',
       cellContent: 'block+',
     }),
-    heading: headingWithConfig({ rdfaAware: true }),
+    heading: headingWithConfig(),
     blockquote,
 
     horizontal_rule,
@@ -87,9 +89,9 @@ export const SAMPLE_SCHEMA = new Schema({
 
     hard_break,
     block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+    inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
   },
   marks: {
-    inline_rdfa,
     code,
     em,
     strong,
@@ -98,10 +100,11 @@ export const SAMPLE_SCHEMA = new Schema({
     subscript,
     superscript,
     highlight,
+
     color,
   },
 });
-export const SAMPLE_PLUGINS: PluginConfig = [
+export const SAMPLE_PLUGINS: Plugin[] = [
   firefoxCursorFix(),
   chromeHacksPlugin(),
   lastKeyPressedPlugin,

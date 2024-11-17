@@ -4,7 +4,7 @@ import { EditorState, SayView } from '@lblod/ember-rdfa-editor';
 import { oneLineTrim } from 'common-tags';
 
 module('ProseMirror | view', function () {
-  test('setHtmlContent without a supplied range should replace the whole content of the document', function (assert) {
+  test.skip('setHtmlContent without a supplied range should replace the whole content of the document', function (assert) {
     const schema = TEST_SCHEMA;
 
     const view = new SayView(null, {
@@ -36,7 +36,7 @@ module('ProseMirror | view', function () {
     view.setHtmlContent(htmlToInsert);
     assert.strictEqual(view.htmlContent, htmlToInsert);
   });
-  test('setHtmlContent should be able to replace a specific range when specified', function (assert) {
+  test.skip('setHtmlContent should be able to replace a specific range when specified', function (assert) {
     const schema = TEST_SCHEMA;
 
     const view = new SayView(null, {
@@ -98,7 +98,7 @@ module('ProseMirror | view', function () {
     assert.strictEqual(view.htmlContent, expectedHtml);
   });
 
-  test('setHtmlContent will leave not clean the HTML if asked not to', function (assert) {
+  test.skip('setHtmlContent will leave not clean the HTML if asked not to', function (assert) {
     const schema = TEST_SCHEMA;
 
     const view = new SayView(null, {

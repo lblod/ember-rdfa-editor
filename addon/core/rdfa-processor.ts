@@ -75,6 +75,11 @@ export type IncomingLiteralNodeTriple = {
 export type IncomingTriple =
   | IncomingLiteralNodeTriple
   | IncomingResourceNodeTriple;
+export type FullTriple = {
+  subject: SayNamedNode;
+  predicate: string;
+  object: SayNamedNode | SayLiteral;
+};
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.

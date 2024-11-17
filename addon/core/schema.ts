@@ -4,6 +4,7 @@ import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
+  FullTriple,
   IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
@@ -46,6 +47,7 @@ const classicRdfaAttrSpec = {
 const rdfaAwareAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
+  metaTriples: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
@@ -161,6 +163,7 @@ export function getRdfaAttrs(
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
+  'data-meta-triples': { default: [] },
   'data-subject': { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
