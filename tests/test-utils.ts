@@ -30,6 +30,13 @@ import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import { invisible_rdfa } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import { type FastDataset } from '@graphy/memory.dataset.fast';
+import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
+import {
+  isElement,
+  isTextNode,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -104,5 +111,34 @@ const marks = {
   strikethrough,
 };
 
+export function calculateDataset(html: string) {
+  const domParser = new DOMParser();
+  const parsedHTML = domParser.parseFromString(html, 'text/html');
+  const datastore = EditorStore.fromParse<Node>({
+    parseRoot: true,
+    root: parsedHTML,
+    baseIRI: 'http://example.org',
+    tag: tagName,
+    attributes(node: Node): Record<string, string> {
+      if (isElement(node)) {
+        const result: Record<string, string> = {};
+        for (const attr of node.attributes) {
+          result[attr.name] = attr.value;
+        }
+        return result;
+      }
+      return {};
+    },
+    isText: isTextNode,
+    children(node: Node): Iterable<Node> {
+      return node.childNodes;
+    },
+    pathFromDomRoot: [],
+    textContent(node: Node): string {
+      return node.textContent || '';
+    },
+  });
+  return datastore.dataset as unknown as FastDataset;
+}
 const TEST_SCHEMA = new Schema({ nodes, marks });
 export default TEST_SCHEMA;
