@@ -17,6 +17,11 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { sayDataFactory } from './say-data-factory';
+import {
+  incomingTripleSpan,
+  literalSpan,
+  namedNodeSpan,
+} from './schema/_private/render-rdfa-attrs';
 
 // const logger = createLogger('core/schema');
 
@@ -219,14 +224,7 @@ export function renderInvisibleRdfa(
         // the triple refers to a URI which does not have a corresponding
         // resource node
         const subject: string = unwrap(nodeOrMark.attrs['subject'] as string);
-        propElements.push([
-          'span',
-          {
-            about: subject,
-            property: predicate,
-            resource: object.value,
-          },
-        ]);
+        propElements.push(namedNodeSpan(subject, predicate, object.value));
         break;
       }
       case 'ResourceNode': {
@@ -253,49 +251,19 @@ export function renderInvisibleRdfa(
             .flatMap((subj) => getBacklinks(subj.value))
             .find((bl) => bl?.predicate === predicate);
           if (backlinkToImportedResource) {
-            propElements.push([
-              'span',
-              {
-                about: backlinkToImportedResource.subject.value,
-                property: predicate,
-                resource: object.value,
-              },
-            ]);
+            propElements.push(
+              namedNodeSpan(
+                backlinkToImportedResource.subject.value,
+                predicate,
+                object.value,
+              ),
+            );
           }
         }
         break;
       }
       case 'Literal': {
-        if (object.language?.length) {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-              lang: object.language,
-            },
-            '',
-          ]);
-        } else if (object.datatype?.value?.length) {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-              datatype: object.datatype.value,
-            },
-            '',
-          ]);
-        } else {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-            },
-            '',
-          ]);
-        }
+        propElements.push(literalSpan(predicate, object));
         break;
       }
     }
@@ -303,7 +271,7 @@ export function renderInvisibleRdfa(
   if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
     const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
     for (const { predicate, subject } of backlinks) {
-      propElements.push(['span', { rev: predicate, resource: subject.value }]);
+      propElements.push(incomingTripleSpan(subject.value, predicate));
     }
   }
   return [
