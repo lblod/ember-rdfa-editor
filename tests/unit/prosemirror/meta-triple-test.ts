@@ -1,9 +1,8 @@
 import { ProseParser } from '@lblod/ember-rdfa-editor';
-import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import type { TransactionMonad } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
+import { transformMetaTriples } from '@lblod/ember-rdfa-editor/utils/meta-triple-utils';
 import { SAMPLE_PLUGINS, SAMPLE_SCHEMA } from 'dummy/tests/utils/editor';
 import { Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
@@ -100,46 +99,3 @@ module('ProseMirror | meta-triple', function () {
     );
   });
 });
-function transformMetaTriples(
-  transformer: (oldTriples: FullTriple[]) => FullTriple[],
-  pos: number = -1,
-): TransactionMonad<boolean> {
-  return function (state: EditorState) {
-    const tr = state.tr;
-    if (pos === -1) {
-      return {
-        transaction: tr.setDocAttribute(
-          'metaTriples',
-          transformer(state.doc.attrs['metaTriples'] ?? []),
-        ),
-        initialState: state,
-        result: true,
-      };
-    } else {
-      const node = state.doc.nodeAt(pos);
-      if (node?.type.spec.attrs?.['metaTriples']) {
-        return {
-          initialState: state,
-          transaction: tr.setNodeAttribute(
-            pos,
-            'metaTriples',
-            transformer(node.attrs['metaTriples'] ?? []),
-          ),
-          result: true,
-        };
-      } else {
-        return {
-          initialState: state,
-          transaction: tr,
-          result: false,
-        };
-      }
-    }
-  };
-}
-function setMetaTriples(triples: FullTriple[], pos: number = -1) {
-  return transformMetaTriples(() => triples, pos);
-}
-function addMetaTriples(triples: FullTriple[], pos: number = -1) {
-  return transformMetaTriples((oldTriples) => oldTriples.concat(triples), pos);
-}
