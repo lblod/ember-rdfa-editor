@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
 import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
@@ -9,6 +10,12 @@ import RemoveNode from './remove-node';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
+import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
+import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
+import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
+import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { and } from 'ember-truth-helpers';
 
 type Args = {
   controller?: SayController;
@@ -16,15 +23,6 @@ type Args = {
   additionalImportedResources?: string[];
 };
 export default class RdfaEditor extends Component<Args> {
-  PropertyEditor = RdfaPropertyEditor;
-  RelationshipEditor = RdfaRelationshipEditor;
-  WrappingUtils = RdfaWrappingUtils;
-  // Disable the rdfa-type convertor for now
-  // RdfaTypeConvertor = RdfaTypeConvertor;
-  RemoveNode = RemoveNode;
-  ChevronDownIcon = ChevronDownIcon;
-  ChevronUpIcon = ChevronUpIcon;
-
   @tracked collapsed = false;
 
   toggleSection = () => {
@@ -55,10 +53,6 @@ export default class RdfaEditor extends Component<Args> {
     return selection && !selection.empty;
   }
 
-  // get supportsRdfaTypeConversion() {
-  //   return !!this.args.node.value.type.spec.attrs?.['rdfaNodeType'];
-  // }
-
   goToNodeWithId = (id: string) => {
     if (this.controller) {
       const doc = this.controller.mainEditorState.doc;
@@ -82,4 +76,53 @@ export default class RdfaEditor extends Component<Args> {
       }
     }
   };
+  <template>
+    <AuPanel class='au-u-margin-bottom-tiny' as |Section|>
+      <Section>
+        <AuToolbar as |Group|>
+          <Group>
+            <AuHeading @level='4' @skin='4'>RDFa</AuHeading>
+          </Group>
+          {{#if @node}}
+            <Group>
+              <AuPill>{{this.type}}</AuPill>
+              <AuButton
+                @skin='naked'
+                @icon={{if this.collapsed ChevronDownIcon ChevronUpIcon}}
+                {{on 'click' this.toggleSection}}
+              />
+            </Group>
+          {{/if}}
+        </AuToolbar>
+      </Section>
+      {{#if (and @node this.controller)}}
+        {{#unless this.collapsed}}
+          {{#if this.showPropertiesSection}}
+            <Section>
+              <RdfaPropertyEditor @node={{@node}} @controller={{@controller}} />
+            </Section>
+          {{/if}}
+          <Section>
+            <RdfaRelationshipEditor
+              @node={{@node}}
+              @controller={{@controller}}
+              @additionalImportedResources={{@additionalImportedResources}}
+            />
+          </Section>
+          <Section>
+            <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
+          </Section>
+          <Section>
+            {{#if @controller}}
+              <RemoveNode @node={{@node}} @controller={{@controller}} />
+            {{/if}}
+          </Section>
+        {{/unless}}
+      {{else}}
+        <Section>
+          <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
+        </Section>
+      {{/if}}
+    </AuPanel>
+  </template>
 }
