@@ -1,4 +1,3 @@
-import type { Quad } from '@graphy/memory.dataset.fast';
 import { ProseParser } from '@lblod/ember-rdfa-editor';
 import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
@@ -136,6 +135,146 @@ module('ProseMirror | meta-triple', function () {
     assert.strictEqual(
       dataset.match(quad.subject, quad.predicate, quad.object).size,
       1,
+    );
+  });
+
+  test('triples with distinct subjects stay consistent across doc reloads on non-doc nodes', function (assert) {
+    const factory = new SayDataFactory();
+    const docMetaTriples = [
+      {
+        subject: factory.namedNode('http://example.org/1'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('test'),
+      },
+    ];
+    const blockMetaTriples = [
+      {
+        subject: factory.namedNode('http://example.org/2'),
+        predicate: 'http://example.org/pred',
+        object: factory.namedNode(
+          'http://dbpedia.org/ontology/CyclingCompetition',
+        ),
+      },
+    ];
+    const docJson: NodeJsonSpec = {
+      type: 'doc',
+      attrs: {
+        properties: [],
+        backlinks: [],
+        metaTriples: docMetaTriples,
+        subject: null,
+        lang: 'nl-BE',
+      },
+      content: [
+        {
+          type: 'block_rdfa',
+          attrs: {
+            properties: [],
+            backlinks: [],
+            metaTriples: blockMetaTriples,
+            __rdfaId: 'f264819a-05a0-4909-b08a-313abccc9139',
+            rdfaNodeType: 'resource',
+            subject: 'http://example.org/6238392a-a4c4-44d0-9b98-a79257b5c54a',
+          },
+          content: [
+            {
+              type: 'paragraph',
+              attrs: {
+                alignment: 'left',
+                indentationLevel: 0,
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const state = makeState(docJson);
+
+    const serializer = SaySerializer.fromSchema(state.schema);
+    const html = serializer.serializeNode(state.doc) as HTMLElement;
+
+    const parser = ProseParser.fromSchema(state.schema);
+    const newDoc = htmlToDoc(html.outerHTML, {
+      schema: state.schema,
+      parser,
+    });
+    assert.deepEqual(
+      newDoc.attrs['metaTriples'],
+      state.doc.attrs['metaTriples'],
+    );
+    const html2 = serializer.serializeNode(newDoc);
+    assert.deepEqual(html2, html, 'second reload');
+  });
+
+  // TODO: I'm not sure we actually want this behavior, but not having it would
+  // mean quite a significant rework of the parsing logic, and it is at least
+  // somewhat logical, so I'm adding this test to document it and alert us if it
+  // changes
+  test('triple information gets collated onto all nodes that talk about the same subject', function (assert) {
+    const factory = new SayDataFactory();
+    const docMetaTriples = [
+      {
+        subject: factory.namedNode('http://example.org/1'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('test'),
+      },
+    ];
+    const blockMetaTriples = [
+      {
+        subject: factory.namedNode('http://example.org/1'),
+        predicate: 'http://example.org/pred',
+        object: factory.namedNode(
+          'http://dbpedia.org/ontology/CyclingCompetition',
+        ),
+      },
+    ];
+    const docJson: NodeJsonSpec = {
+      type: 'doc',
+      attrs: {
+        properties: [],
+        backlinks: [],
+        metaTriples: docMetaTriples,
+        subject: null,
+        lang: 'nl-BE',
+      },
+      content: [
+        {
+          type: 'block_rdfa',
+          attrs: {
+            properties: [],
+            backlinks: [],
+            metaTriples: blockMetaTriples,
+            __rdfaId: 'f264819a-05a0-4909-b08a-313abccc9139',
+            rdfaNodeType: 'resource',
+            subject: 'http://example.org/6238392a-a4c4-44d0-9b98-a79257b5c54a',
+          },
+          content: [
+            {
+              type: 'paragraph',
+              attrs: {
+                alignment: 'left',
+                indentationLevel: 0,
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const expectedTriples = [...docMetaTriples, ...blockMetaTriples];
+    const state = makeState(docJson);
+
+    const serializer = SaySerializer.fromSchema(state.schema);
+    const html = serializer.serializeNode(state.doc) as HTMLElement;
+
+    const parser = ProseParser.fromSchema(state.schema);
+    const newDoc = htmlToDoc(html.outerHTML, {
+      schema: state.schema,
+      parser,
+    });
+    assert.deepEqual(newDoc.attrs['metaTriples'], expectedTriples);
+    assert.deepEqual(
+      newDoc.content.child(0).attrs['metaTriples'],
+      expectedTriples,
     );
   });
 });
