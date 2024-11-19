@@ -144,6 +144,30 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       JSON.stringify(incomingProps);
     (node as HTMLElement).dataset['rdfaNodeType'] = 'resource';
     (node as HTMLElement).dataset['subject'] = entry.subject.value;
+    // due to the post-processing of the parsed triples, we can be sure that
+    // a loose triple gets interpreted as a resource node at this stage
+    // this does not mean it becomes a prosemirror resource node:
+    // the definition of "resource" node at the parsing level is actually
+    // slightly different from the one at the prosemirror-schema level, and
+    // should probably get a new name. Here, resource node simply means: any
+    // html element which defines a subject of a triple.
+    if (node.parentElement?.dataset['metaTripleContainer']) {
+      const ownerElement = node.parentElement?.parentElement?.parentElement;
+      if (ownerElement) {
+        ownerElement.dataset['metaTriples'] = JSON.stringify(
+          properties.map((prop) => ({
+            subject: { termType: 'NamedNode', value: entry.subject.value },
+            ...prop,
+          })),
+        );
+      } else {
+        // shouldn't happen, we only set the data-meta-triple-container attr on
+        // nodes within an rdfa-container
+        console.warn(
+          'Found metatriples in an element without a parent resrouce node to attach them to. Possible data loss',
+        );
+      }
+    }
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {

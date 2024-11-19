@@ -4,6 +4,7 @@ import { isElement } from '../utils/_private/dom-helpers';
 import {
   findRdfaHiddenElements,
   getRdfaAttrs,
+  getRdfaAwareDocAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
@@ -66,24 +67,14 @@ export const docWithConfig = ({
               extraAttrs[attr] = node.getAttribute(attr);
             });
             if (rdfaAware) {
-              const extraProps = [];
               if (hasResourceImports) {
                 extraAttrs[IMPORTED_RESOURCES_ATTR] = jsonParse(
                   node.getAttribute(IMPORTED_RESOURCES_ATTR),
                 );
-                const hidden = findRdfaHiddenElements(node);
-                if (hidden) {
-                  for (const hid of hidden) {
-                    const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
-                      rdfaAware: true,
-                    });
-                    if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
-                      extraProps.push(...hiddenRdfaAttrs.properties);
-                    }
-                  }
-                }
               }
-              const rdfaAttrs = getRdfaAttrs(node, { rdfaAware: true });
+              const rdfaAttrs = getRdfaAwareDocAttrs(node, {
+                hasResourceImports,
+              });
               return {
                 ...extraAttrs,
                 lang: node.getAttribute('lang'),
@@ -92,7 +83,6 @@ export const docWithConfig = ({
                   ...(rdfaAttrs && 'properties' in rdfaAttrs
                     ? rdfaAttrs.properties
                     : []),
-                  ...extraProps,
                 ],
               };
             } else {
@@ -117,10 +107,12 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
+      console.log('rendering doc', node);
       const attrs: Record<string, unknown> = {
         lang: node.attrs['lang'] as string,
         'data-say-document': true,
         properties: node.attrs['properties'],
+        about: node.attrs['subject'],
       };
       Object.keys(extraAttributes).forEach((attr) => {
         attrs[attr] = node.attrs[attr];

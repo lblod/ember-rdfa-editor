@@ -16,13 +16,18 @@ import {
   getBacklinks,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { sayDataFactory } from './say-data-factory';
+import {
+  sayDataFactory,
+  type SayTerm,
+  type WithoutEquals,
+} from './say-data-factory';
 import {
   fullLiteralSpan,
   incomingTripleSpan,
   literalSpan,
   namedNodeSpan,
 } from './schema/_private/render-rdfa-attrs';
+import { IllegalArgumentError } from '../utils/_private/errors';
 
 // const logger = createLogger('core/schema');
 
@@ -102,19 +107,13 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     return false;
   }
   const __rdfaId = node.getAttribute('__rdfaId') ?? uuidv4();
-  let backlinks: IncomingTriple[];
+  let backlinks: IncomingTriple[] = [];
   if (node.dataset['incomingProps']) {
-    backlinks = JSON.parse(node.dataset['incomingProps'], (key, value) => {
-      if (key === 'object' || key === 'subject') {
-        return sayDataFactory.fromTerm(value);
-      } else {
-        return value;
-      }
-    }) as IncomingTriple[];
-  } else {
-    backlinks = [];
+    backlinks = JSON.parse(
+      node.dataset['incomingProps'],
+      jsonToTerm,
+    ) as IncomingTriple[];
   }
-
   if (rdfaNodeType === 'literal') {
     return {
       rdfaNodeType: 'literal',
@@ -128,26 +127,84 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
         `Node with rdfaNodeType 'resource' does not provide a subject`,
       );
     }
-    let properties: OutgoingTriple[];
+    let properties: OutgoingTriple[] = [];
     if (node.dataset['outgoingProps']) {
-      properties = JSON.parse(node.dataset['outgoingProps'], (key, value) => {
-        if (key === 'object' || key === 'subject') {
-          return sayDataFactory.fromTerm(value);
-        } else {
-          return value;
-        }
-      }) as OutgoingTriple[];
-    } else {
-      properties = [];
+      properties = JSON.parse(
+        node.dataset['outgoingProps'],
+        jsonToTerm,
+      ) as OutgoingTriple[];
     }
+    let metaTriples: FullTriple[] = [];
+    if (node.dataset['metaTriples']) {
+      metaTriples = JSON.parse(node.dataset['metaTriples'], jsonToTerm);
+    }
+
     return {
       rdfaNodeType: 'resource',
       subject,
       __rdfaId,
       backlinks,
+      metaTriples,
       properties,
     };
   }
+}
+
+function jsonToTerm(key: string, value: WithoutEquals<SayTerm>) {
+  if (key === 'object' || key === 'subject') {
+    return sayDataFactory.fromTerm(value);
+  } else {
+    return value;
+  }
+}
+export function getRdfaAwareDocAttrs(
+  node: HTMLElement,
+  { hasResourceImports = false } = {},
+) {
+  if (!node.dataset['sayDocument']) {
+    throw new IllegalArgumentError('node is not a doc node');
+  }
+
+  let backlinks: IncomingTriple[] = [];
+  if (node.dataset['incomingProps']) {
+    backlinks = JSON.parse(
+      node.dataset['incomingProps'],
+      jsonToTerm,
+    ) as IncomingTriple[];
+  }
+
+  let properties: OutgoingTriple[] = [];
+  if (node.dataset['outgoingProps']) {
+    properties = JSON.parse(
+      node.dataset['outgoingProps'],
+      jsonToTerm,
+    ) as OutgoingTriple[];
+  }
+  if (hasResourceImports) {
+    const hidden = findRdfaHiddenElements(node);
+    if (hidden) {
+      for (const hid of hidden) {
+        const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
+          rdfaAware: true,
+        });
+        if (hiddenRdfaAttrs) {
+          if ('properties' in hiddenRdfaAttrs) {
+            properties.push(...hiddenRdfaAttrs.properties);
+          }
+        }
+      }
+    }
+  }
+  let metaTriples: FullTriple[] = [];
+  if (node.dataset['metaTriples']) {
+    metaTriples = JSON.parse(node.dataset['metaTriples'], jsonToTerm);
+  }
+
+  return {
+    backlinks,
+    metaTriples,
+    properties,
+  };
 }
 
 export function getRdfaAttrs<T extends RdfaAttrConfig>(
@@ -186,6 +243,7 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
+  metaTriples: FullTriple[];
   subject: string;
   properties: OutgoingTriple[];
 }
@@ -269,27 +327,36 @@ export function renderInvisibleRdfa(
       }
     }
   }
-  for (const fullTriple of nodeOrMark.attrs['metaTriples'] as FullTriple[]) {
-    switch (fullTriple.object.termType) {
-      case 'NamedNode':
-        propElements.push(
-          namedNodeSpan(
-            fullTriple.subject.value,
-            fullTriple.predicate,
-            fullTriple.object.value,
-          ),
-        );
-        break;
-      case 'Literal':
-        propElements.push(
-          fullLiteralSpan(
-            fullTriple.subject.value,
-            fullTriple.predicate,
-            fullTriple.object,
-          ),
-        );
-        break;
+  const metaTriples = nodeOrMark.attrs['metaTriples'] as FullTriple[];
+  if (metaTriples.length) {
+    const metaElements = [];
+    for (const fullTriple of nodeOrMark.attrs['metaTriples'] as FullTriple[]) {
+      switch (fullTriple.object.termType) {
+        case 'NamedNode':
+          metaElements.push(
+            namedNodeSpan(
+              fullTriple.subject.value,
+              fullTriple.predicate,
+              fullTriple.object.value,
+            ),
+          );
+          break;
+        case 'Literal':
+          metaElements.push(
+            fullLiteralSpan(
+              fullTriple.subject.value,
+              fullTriple.predicate,
+              fullTriple.object,
+            ),
+          );
+          break;
+      }
     }
+    propElements.push([
+      'span',
+      { 'data-meta-triple-container': true },
+      ...metaElements,
+    ]);
   }
   if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
     const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
@@ -422,7 +489,21 @@ export const findRdfaHiddenElements = (node: Node) => {
   }
   for (const child of node.children) {
     if ((child as HTMLElement).dataset['rdfaContainer']) {
-      return (child as HTMLElement).children;
+      return [...(child as HTMLElement).children].filter(
+        (child) => isElement(child) && !child.dataset['metaTripleContainer'],
+      );
+    }
+  }
+  return null;
+};
+export const findMetaElements = (node: Node) => {
+  const contentElement = findRdfaContentElement(node);
+  if (!contentElement || !isElement(contentElement)) {
+    return null;
+  }
+  for (const child of contentElement.children) {
+    if ((child as HTMLElement).dataset['metaTripleContainer']) {
+      return child as HTMLElement;
     }
   }
   return null;
