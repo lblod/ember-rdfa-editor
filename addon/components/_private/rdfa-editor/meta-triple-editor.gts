@@ -168,10 +168,11 @@ export default class MetaTripleEditor extends Component<Sig> {
     this.startTripleEdit(index);
   };
   removeTriple = (index: number) => {
-    const tr = transformMetaTriples(
-      (triples) => [...triples].splice(index, 1),
-      this.args.node.pos,
-    )(this.controller.mainEditorState).transaction;
+    const tr = transformMetaTriples((triples) => {
+      const clone = [...triples];
+      clone.splice(index, 1);
+      return clone;
+    }, this.args.node.pos)(this.controller.mainEditorState).transaction;
     this.controller.mainEditorView.dispatch(tr);
   };
   <template>

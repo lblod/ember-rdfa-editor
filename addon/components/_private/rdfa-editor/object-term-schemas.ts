@@ -6,7 +6,8 @@ export const datatypeSchema = object({
 export const literalTermSchema = object({
   termType: string<'Literal'>().required(),
   value: string().required(),
-  datatype: datatypeSchema,
+  // see https://github.com/jquense/yup?tab=readme-ov-file#object-schema-defaults
+  datatype: datatypeSchema.nullable().default(null),
   language: string().default(''),
 });
 export const literalNodeTermSchema = object({

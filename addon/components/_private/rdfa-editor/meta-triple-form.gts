@@ -108,7 +108,7 @@ export default class MetaTripleForm extends Component<MetaTripleFormSig> {
     );
     const datatype = extractedDatatype?.value?.length
       ? extractedDatatype
-      : null;
+      : undefined;
 
     return {
       termType: 'Literal',
@@ -151,18 +151,22 @@ export default class MetaTripleForm extends Component<MetaTripleFormSig> {
           triple: {
             subject: sayDataFactory.namedNode(validated.subject.value),
             predicate: validated.predicate,
-            object: sayDataFactory.literal(
-              validated.object.value,
-              languageOrDataType(
-                validated.object.language,
-                sayDataFactory.namedNode(validated.object.datatype.value),
+            object:
+              validated.object &&
+              sayDataFactory.literal(
+                validated.object.value,
+                languageOrDataType(
+                  validated.object.language,
+                  validated.object.datatype &&
+                    sayDataFactory.namedNode(validated.object.datatype.value),
+                ),
               ),
-            ),
           },
         };
       }
     } catch (e) {
       if (e instanceof ValidationError) {
+        console.warn(e);
         return { valid: false, errors: e.inner };
       } else {
         throw e;
@@ -297,8 +301,6 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
           @options={{@options}}
           @selected={{@selected}}
           @onChange={{@onChange}}
-          {{! @glint-expect-error our version of powerselect doesn't have good types}}
-          @allowClear={{true}}
           as |obj|
         >
           {{obj}}
