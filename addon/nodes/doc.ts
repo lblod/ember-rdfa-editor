@@ -2,8 +2,6 @@ import type { AttributeSpec } from 'prosemirror-model';
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import {
-  findRdfaHiddenElements,
-  getRdfaAttrs,
   getRdfaAwareDocAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,

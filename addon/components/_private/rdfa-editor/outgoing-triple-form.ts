@@ -265,7 +265,8 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
                 object.value,
                 languageOrDataType(
                   object.language,
-                  sayDataFactory.namedNode(object.datatype.value),
+                  object.datatype &&
+                    sayDataFactory.namedNode(object.datatype.value),
                 ),
               ),
             },
