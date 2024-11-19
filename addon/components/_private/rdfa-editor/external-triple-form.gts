@@ -166,7 +166,6 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
       }
     } catch (e) {
       if (e instanceof ValidationError) {
-        console.warn(e);
         return { valid: false, errors: e.inner };
       } else {
         throw e;
