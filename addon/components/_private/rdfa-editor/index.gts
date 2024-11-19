@@ -15,7 +15,7 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { and } from 'ember-truth-helpers';
+import MetaTripleEditor from './meta-triple-editor';
 
 type Args = {
   controller?: SayController;
@@ -45,7 +45,10 @@ export default class RdfaEditor extends Component<Args> {
   }
 
   get showPropertiesSection() {
-    return this.isResourceNode;
+    return (
+      this.controller &&
+      (this.isResourceNode || this.args.node.value.type.name === 'doc')
+    );
   }
 
   get hasSelection() {
@@ -95,33 +98,44 @@ export default class RdfaEditor extends Component<Args> {
           {{/if}}
         </AuToolbar>
       </Section>
-      {{#if (and @node this.controller)}}
-        {{#unless this.collapsed}}
-          {{#if this.showPropertiesSection}}
+      {{#if this.controller}}
+        {{#if @node}}
+          {{#unless this.collapsed}}
+            {{#if this.showPropertiesSection}}
+              <Section>
+                <MetaTripleEditor
+                  @controller={{this.controller}}
+                  @node={{@node}}
+                />
+              </Section>
+              <Section>
+                <RdfaPropertyEditor
+                  @node={{@node}}
+                  @controller={{@controller}}
+                />
+              </Section>
+            {{/if}}
             <Section>
-              <RdfaPropertyEditor @node={{@node}} @controller={{@controller}} />
+              <RdfaRelationshipEditor
+                @node={{@node}}
+                @controller={{@controller}}
+                @additionalImportedResources={{@additionalImportedResources}}
+              />
             </Section>
-          {{/if}}
-          <Section>
-            <RdfaRelationshipEditor
-              @node={{@node}}
-              @controller={{@controller}}
-              @additionalImportedResources={{@additionalImportedResources}}
-            />
-          </Section>
+            <Section>
+              <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
+            </Section>
+            <Section>
+              {{#if @controller}}
+                <RemoveNode @node={{@node}} @controller={{@controller}} />
+              {{/if}}
+            </Section>
+          {{/unless}}
+        {{else}}
           <Section>
             <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
           </Section>
-          <Section>
-            {{#if @controller}}
-              <RemoveNode @node={{@node}} @controller={{@controller}} />
-            {{/if}}
-          </Section>
-        {{/unless}}
-      {{else}}
-        <Section>
-          <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
-        </Section>
+        {{/if}}
       {{/if}}
     </AuPanel>
   </template>
