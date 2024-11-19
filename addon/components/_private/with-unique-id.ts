@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 
 interface Sig {
   Blocks: {
-    default: string;
+    default: [string];
   };
 }
 
