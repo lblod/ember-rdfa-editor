@@ -72,16 +72,8 @@ module('ProseMirror | meta-triple', function () {
       attrs: { lang: 'nl-BE', metaTriples },
       content: [
         {
-          type: 'block_rdfa',
-          attrs: {
-            about: 'http://foo.com/d6d171ad-90ca-4018-9849-170d86cb3d57',
-          },
-          content: [
-            {
-              type: 'paragraph',
-              attrs: { alignment: 'left', indentationLevel: 0 },
-            },
-          ],
+          type: 'paragraph',
+          attrs: { alignment: 'left', indentationLevel: 0 },
         },
       ],
     };
@@ -99,6 +91,8 @@ module('ProseMirror | meta-triple', function () {
       newDoc.attrs['metaTriples'],
       state.doc.attrs['metaTriples'],
     );
+    const html2 = serializer.serializeNode(newDoc);
+    assert.deepEqual(html2, html, 'second reload');
   });
 
   test('meta triples get rendered as parseable rdfa', function (assert) {
