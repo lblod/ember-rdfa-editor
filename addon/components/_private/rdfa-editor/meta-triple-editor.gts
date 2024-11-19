@@ -14,12 +14,23 @@ import { tracked } from '@glimmer/tracking';
 import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import MetaTripleForm from './meta-triple-form';
 import { transformMetaTriples } from '@lblod/ember-rdfa-editor/utils/meta-triple-utils';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
+import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
+import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
+import { fn } from '@ember/helper';
+import AuList from '@appuniversum/ember-appuniversum/components/au-list';
+import {
+  isSome,
+  type Option,
+} from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 interface EditModalSig {
   Args: {
     modalOpen: boolean;
     onCancel: () => void;
     onSubmit: (trip: FullTriple) => void;
+    triple?: Option<FullTriple>;
   };
 }
 // TODO: fix as soon as we can import the TOC type
@@ -34,7 +45,11 @@ class EditModal extends Component<EditModalSig> {
       >
         <:title>Edit meta triples</:title>
         <:body>
-          <MetaTripleForm @onSubmit={{@onSubmit}} id={{formId}} />
+          <MetaTripleForm
+            @onSubmit={{@onSubmit}}
+            id={{formId}}
+            @triple={{@triple}}
+          />
         </:body>
         <:footer>
           <AuButtonGroup>
@@ -49,6 +64,50 @@ class EditModal extends Component<EditModalSig> {
     </WithUniqueId>
   </template>
 }
+interface MetaTripleItemSig {
+  Args: {
+    trip: FullTriple;
+    index: number;
+    onRemove: (index: number) => void;
+    onEdit: (index: number) => void;
+  };
+}
+// eslint-disable-next-line ember/no-empty-glimmer-component-classes
+class MetaTripleItem extends Component<MetaTripleItemSig> {
+  <template>
+    <div class='au-u-padding-tiny'>
+      <p><strong>subject:</strong> {{@trip.subject.value}}</p>
+      <p><strong>predicate:</strong> {{@trip.predicate}}</p>
+      {{#if @trip.object.datatype}}
+        <p><strong>datatype:</strong> {{@trip.object.datatype.value}}</p>
+      {{/if}}
+      {{#if @trip.object.language}}
+        <p><strong>language:</strong> {{@trip.object.language}}</p>
+      {{/if}}
+      <p><strong>value:</strong> {{@trip.object.value}}</p>
+    </div>
+
+    <AuDropdown @icon={{ThreeDotsIcon}} role='menu' @alignment='left'>
+      <AuButton
+        @skin='link'
+        @icon={{PencilIcon}}
+        role='menuitem'
+        {{on 'click' (fn @onEdit @index)}}
+      >
+        Edit property
+      </AuButton>
+      <AuButton
+        @skin='link'
+        @icon={{BinIcon}}
+        role='menuitem'
+        class='au-c-button--alert'
+        {{on 'click' (fn @onRemove @index)}}
+      >
+        Remove property
+      </AuButton>
+    </AuDropdown>
+  </template>
+}
 
 interface Sig {
   Args: { controller: SayController; node: ResolvedPNode };
@@ -56,26 +115,64 @@ interface Sig {
 export default class MetaTripleEditor extends Component<Sig> {
   @tracked
   editModalOpen = false;
-  get metaTriples() {
-    return this.args.node.value.attrs['metaTriples'] ?? [];
+  @tracked
+  indexBeingEdited?: number;
+  get node() {
+    return this.args.node;
+  }
+  get metaTriples(): FullTriple[] {
+    return this.node.value.attrs['metaTriples'] ?? [];
   }
   get controller() {
     return this.args.controller;
+  }
+  get tripleBeingEdited(): Option<FullTriple> {
+    if (isSome(this.indexBeingEdited)) {
+      return this.metaTriples[this.indexBeingEdited];
+    }
+    return null;
   }
   closeModal = () => {
     this.editModalOpen = false;
   };
   updateMetaTriples = (trip: FullTriple) => {
-    const tr = transformMetaTriples(
-      (triples) => triples.concat(trip),
-      this.args.node.pos,
-    )(this.controller.mainEditorState).transaction;
+    let tr;
+    if (isSome(this.indexBeingEdited)) {
+      console.log('tripe', trip);
+      const index = this.indexBeingEdited;
+      tr = transformMetaTriples((triples) => {
+        const copy = [...triples];
+        copy.splice(index, 1, trip);
+        return copy;
+      }, this.args.node.pos)(this.controller.mainEditorState).transaction;
+    } else {
+      tr = transformMetaTriples(
+        (triples) => triples.concat(trip),
+        this.args.node.pos,
+      )(this.controller.mainEditorState).transaction;
+    }
+
     this.controller.mainEditorView.dispatch(tr);
 
     this.closeModal();
   };
-  startTripleCreation = () => {
+  startTripleEdit = (index?: number) => {
+    this.indexBeingEdited = index;
+
     this.editModalOpen = true;
+  };
+  addTriple = () => {
+    this.startTripleEdit();
+  };
+  editTriple = (index: number) => {
+    this.startTripleEdit(index);
+  };
+  removeTriple = (index: number) => {
+    const tr = transformMetaTriples(
+      (triples) => [...triples].splice(index, 1),
+      this.args.node.pos,
+    )(this.controller.mainEditorState).transaction;
+    this.controller.mainEditorView.dispatch(tr);
   };
   <template>
     <AuContent @skin='tiny'>
@@ -87,17 +184,32 @@ export default class MetaTripleEditor extends Component<Sig> {
           <AuButton
             @icon={{PlusIcon}}
             @skin='naked'
-            {{on 'click' this.startTripleCreation}}
+            {{on 'click' this.addTriple}}
           >
             Add triple
           </AuButton>
         </Group>
       </AuToolbar>
+
+      <AuList @divider={{true}} as |Item|>
+        {{#each this.metaTriples as |trip index|}}
+          <Item>
+            <MetaTripleItem
+              @trip={{trip}}
+              @index={{index}}
+              @onEdit={{this.editTriple}}
+              @onRemove={{this.removeTriple}}
+            />
+          </Item>
+        {{/each}}
+
+      </AuList>
     </AuContent>
     <EditModal
       @modalOpen={{this.editModalOpen}}
       @onCancel={{this.closeModal}}
       @onSubmit={{this.updateMetaTriples}}
+      @triple={{this.tripleBeingEdited}}
     />
   </template>
 }

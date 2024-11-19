@@ -16,6 +16,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
+import { type Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 const predicateSchema = string().curie().required();
 
@@ -42,7 +43,7 @@ interface MetaTripleFormSig {
   Element: HTMLFormElement;
   Args: {
     onSubmit: (trip: FullTriple) => void;
-    triple?: FullTriple;
+    triple?: Option<FullTriple>;
   };
 }
 const DEFAULT_TRIPLE: FullTriple = {
@@ -101,11 +102,19 @@ export default class MetaTripleForm extends Component<MetaTripleFormSig> {
     };
   };
   extractLiteral = (formData: FormData, base: string) => {
+    const extractedDatatype = this.extractNamedNode(
+      formData,
+      `${base}.datatype`,
+    );
+    const datatype = extractedDatatype?.value?.length
+      ? extractedDatatype
+      : null;
+
     return {
       termType: 'Literal',
       value: formData.get(`${base}.value`)?.toString(),
-      datatype: this.extractNamedNode(formData, `${base}.datatype`),
-      language: formData.get(`${base}.language`),
+      datatype,
+      language: formData.get(`${base}.language`)?.toString(),
     };
   };
   validateFormData = (formData: FormData): ValidationResult => {
