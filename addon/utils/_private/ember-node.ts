@@ -18,6 +18,7 @@ import type {
   DOMOutputSpec,
   TagParseRule,
   Node as PNode,
+  Attrs,
 } from 'prosemirror-model';
 import {
   Decoration,
@@ -337,9 +338,7 @@ export type EmberNodeConfig = {
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
   /** Generate a new URI when pasting the node? */
-  recreateUri?: boolean;
-  /** A list of attribute names which contain URIs to be regenerated on paste */
-  uriAttributes?: string[];
+  recreateUriFunction: (attrs: Attrs) => Attrs;
   /** A map of attributes to assign to this node */
   attrs?: {
     [name: string]: AttributeSpec & {
@@ -397,8 +396,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
     atom,
     draggable,
     defining,
-    recreateUri,
-    uriAttributes,
+    recreateUriFunction,
     attrs,
     parseDOM,
     toDOM,
@@ -410,8 +408,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
     atom,
     group,
     content,
-    recreateUri,
-    uriAttributes,
+    recreateUriFunction,
     attrs,
     draggable,
     defining,
