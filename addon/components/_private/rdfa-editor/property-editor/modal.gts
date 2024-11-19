@@ -3,15 +3,14 @@ import type {
   ContentTriple,
   PlainTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import OutgoingTripleForm, {
-  type SupportedTermType,
-} from '../outgoing-triple-form';
+import OutgoingTripleForm from '../outgoing-triple-form';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import WithUniqueId from '../../with-unique-id';
 import { array } from '@ember/helper';
 import { on } from '@ember/modifier';
+import type { SupportedTermType } from '../external-triple-form';
 
 interface Sig {
   Args: {

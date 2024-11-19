@@ -51,7 +51,7 @@ const DEFAULT_TRIPLE: FullTriple = {
   predicate: '',
   object: sayDataFactory.namedNode(''),
 };
-type SupportedTermType = 'NamedNode' | 'Literal';
+export type SupportedTermType = 'NamedNode' | 'Literal';
 export default class ExternalTripleForm extends Component<ExternalTripleFormSig> {
   @localCopy('args.triple.subject.value')
   subject: string = '';
