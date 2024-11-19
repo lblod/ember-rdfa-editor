@@ -20,6 +20,7 @@ module.exports = {
     // ts files
     {
       files: ['**/*.ts'],
+      parser: 'ember-eslint-parser',
       extends: [
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
@@ -38,12 +39,11 @@ module.exports = {
       extends: [
         'eslint:recommended',
         'plugin:ember/recommended',
-        'plugin:@typescript-eslint/eslint-recommended',
-        'plugin:@typescript-eslint/recommended',
+        'plugin:ember/recommended-gts',
         'plugin:prettier/recommended',
       ],
       rules: {
-        '@typescript-eslint/no-unused-vars': [
+        'no-unused-vars': [
           'error',
           { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
         ],
