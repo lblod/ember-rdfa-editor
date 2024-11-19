@@ -39,7 +39,7 @@ interface InvalidResult {
   errors: ValidationError[];
 }
 type ValidationResult = ValidResult | InvalidResult;
-interface MetaTripleFormSig {
+interface ExternalTripleFormSig {
   Element: HTMLFormElement;
   Args: {
     onSubmit: (trip: FullTriple) => void;
@@ -52,7 +52,7 @@ const DEFAULT_TRIPLE: FullTriple = {
   object: sayDataFactory.namedNode(''),
 };
 type SupportedTermType = 'NamedNode' | 'Literal';
-export default class MetaTripleForm extends Component<MetaTripleFormSig> {
+export default class ExternalTripleForm extends Component<ExternalTripleFormSig> {
   @localCopy('args.triple.subject.value')
   subject: string = '';
 

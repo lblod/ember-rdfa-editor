@@ -1,7 +1,7 @@
 import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import type { TransactionMonad } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
 import { EditorState } from 'prosemirror-state';
-export function transformMetaTriples(
+export function transformExternalTriples(
   transformer: (oldTriples: FullTriple[]) => FullTriple[],
   pos: number = -1,
 ): TransactionMonad<boolean> {
@@ -10,21 +10,21 @@ export function transformMetaTriples(
     if (pos === -1) {
       return {
         transaction: tr.setDocAttribute(
-          'metaTriples',
-          transformer(state.doc.attrs['metaTriples'] ?? []),
+          'externalTriples',
+          transformer(state.doc.attrs['externalTriples'] ?? []),
         ),
         initialState: state,
         result: true,
       };
     } else {
       const node = state.doc.nodeAt(pos);
-      if (node?.type.spec.attrs?.['metaTriples']) {
+      if (node?.type.spec.attrs?.['externalTriples']) {
         return {
           initialState: state,
           transaction: tr.setNodeAttribute(
             pos,
-            'metaTriples',
-            transformer(node.attrs['metaTriples'] ?? []),
+            'externalTriples',
+            transformer(node.attrs['externalTriples'] ?? []),
           ),
           result: true,
         };
@@ -38,9 +38,12 @@ export function transformMetaTriples(
     }
   };
 }
-export function setMetaTriples(triples: FullTriple[], pos: number = -1) {
-  return transformMetaTriples(() => triples, pos);
+export function setExternalTriples(triples: FullTriple[], pos: number = -1) {
+  return transformExternalTriples(() => triples, pos);
 }
-export function addMetaTriples(triples: FullTriple[], pos: number = -1) {
-  return transformMetaTriples((oldTriples) => oldTriples.concat(triples), pos);
+export function addExternalTriples(triples: FullTriple[], pos: number = -1) {
+  return transformExternalTriples(
+    (oldTriples) => oldTriples.concat(triples),
+    pos,
+  );
 }

@@ -151,20 +151,20 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     // slightly different from the one at the prosemirror-schema level, and
     // should probably get a new name. Here, resource node simply means: any
     // html element which defines a subject of a triple.
-    if (node.parentElement?.dataset['metaTripleContainer']) {
+    if (node.parentElement?.dataset['externalTripleContainer']) {
       const ownerElement = node.parentElement?.parentElement?.parentElement;
       if (ownerElement) {
-        ownerElement.dataset['metaTriples'] = JSON.stringify(
+        ownerElement.dataset['externalTriples'] = JSON.stringify(
           properties.map((prop) => ({
             subject: { termType: 'NamedNode', value: entry.subject.value },
             ...prop,
           })),
         );
       } else {
-        // shouldn't happen, we only set the data-meta-triple-container attr on
+        // shouldn't happen, we only set the data-external-triple-container attr on
         // nodes within an rdfa-container
         console.warn(
-          'Found metatriples in an element without a parent resrouce node to attach them to. Possible data loss',
+          'Found external triples in an element without a parent resource node to attach them to. Possible data loss',
         );
       }
     }

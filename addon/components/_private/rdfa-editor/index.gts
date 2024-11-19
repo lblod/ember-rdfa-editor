@@ -15,7 +15,7 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import MetaTripleEditor from './meta-triple-editor';
+import ExternalTripleEditor from './external-triple-editor';
 
 type Args = {
   controller?: SayController;
@@ -103,7 +103,7 @@ export default class RdfaEditor extends Component<Args> {
           {{#unless this.collapsed}}
             {{#if this.showPropertiesSection}}
               <Section>
-                <MetaTripleEditor
+                <ExternalTripleEditor
                   @controller={{this.controller}}
                   @node={{@node}}
                 />

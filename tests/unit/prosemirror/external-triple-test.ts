@@ -2,7 +2,7 @@ import { ProseParser } from '@lblod/ember-rdfa-editor';
 import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import { transformMetaTriples } from '@lblod/ember-rdfa-editor/utils/meta-triple-utils';
+import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
 import { calculateDataset } from 'dummy/tests/test-utils';
 import { SAMPLE_PLUGINS, SAMPLE_SCHEMA } from 'dummy/tests/utils/editor';
 import { Schema } from 'prosemirror-model';
@@ -22,8 +22,8 @@ function makeState(docJson: NodeJsonSpec<typeof SAMPLE_SCHEMA>): EditorState {
     doc: schema.nodeFromJSON(docJson),
   });
 }
-module('ProseMirror | meta-triple', function () {
-  test('transformMetaTriples sets doc attribute', function (assert) {
+module('ProseMirror | external-triple', function () {
+  test('transformExternalTriples sets doc attribute', function (assert) {
     const docJson: NodeJsonSpec = {
       type: 'doc',
       attrs: { lang: 'nl-BE' },
@@ -44,7 +44,7 @@ module('ProseMirror | meta-triple', function () {
     };
     const state = makeState(docJson);
     const factory = new SayDataFactory();
-    const metaTriples = [
+    const externalTriples = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',
@@ -52,14 +52,14 @@ module('ProseMirror | meta-triple', function () {
       },
     ];
     const newState = state.apply(
-      transformMetaTriples(() => metaTriples)(state).transaction,
+      transformExternalTriples(() => externalTriples)(state).transaction,
     );
 
-    assert.deepEqual(newState.doc.attrs['metaTriples'], metaTriples);
+    assert.deepEqual(newState.doc.attrs['externalTriples'], externalTriples);
   });
-  test('meta triples stay consistent across doc reloads', function (assert) {
+  test('external triples stay consistent across doc reloads', function (assert) {
     const factory = new SayDataFactory();
-    const metaTriples = [
+    const externalTriples = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',
@@ -68,7 +68,7 @@ module('ProseMirror | meta-triple', function () {
     ];
     const docJson: NodeJsonSpec = {
       type: 'doc',
-      attrs: { lang: 'nl-BE', metaTriples },
+      attrs: { lang: 'nl-BE', externalTriples },
       content: [
         {
           type: 'paragraph',
@@ -87,21 +87,21 @@ module('ProseMirror | meta-triple', function () {
       parser,
     });
     assert.deepEqual(
-      newDoc.attrs['metaTriples'],
-      state.doc.attrs['metaTriples'],
+      newDoc.attrs['externalTriples'],
+      state.doc.attrs['externalTriples'],
     );
     const html2 = serializer.serializeNode(newDoc);
     assert.deepEqual(html2, html, 'second reload');
   });
 
-  test('meta triples get rendered as parseable rdfa', function (assert) {
+  test('external triples get rendered as parseable rdfa', function (assert) {
     const factory = new SayDataFactory();
     const quad = factory.quad(
       factory.namedNode('http://example.org/1'),
       factory.namedNode('http://example.org/pred'),
       factory.literal('test'),
     );
-    const metaTriples = [
+    const externalTriples = [
       {
         subject: quad.subject,
         predicate: quad.predicate.value,
@@ -110,7 +110,7 @@ module('ProseMirror | meta-triple', function () {
     ];
     const docJson: NodeJsonSpec = {
       type: 'doc',
-      attrs: { lang: 'nl-BE', metaTriples },
+      attrs: { lang: 'nl-BE', externalTriples },
       content: [
         {
           type: 'block_rdfa',
@@ -140,14 +140,14 @@ module('ProseMirror | meta-triple', function () {
 
   test('triples with distinct subjects stay consistent across doc reloads on non-doc nodes', function (assert) {
     const factory = new SayDataFactory();
-    const docMetaTriples = [
+    const docExternalTriples = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',
         object: factory.literal('test'),
       },
     ];
-    const blockMetaTriples = [
+    const blockExternalTriples = [
       {
         subject: factory.namedNode('http://example.org/2'),
         predicate: 'http://example.org/pred',
@@ -161,7 +161,7 @@ module('ProseMirror | meta-triple', function () {
       attrs: {
         properties: [],
         backlinks: [],
-        metaTriples: docMetaTriples,
+        externalTriples: docExternalTriples,
         subject: null,
         lang: 'nl-BE',
       },
@@ -171,7 +171,7 @@ module('ProseMirror | meta-triple', function () {
           attrs: {
             properties: [],
             backlinks: [],
-            metaTriples: blockMetaTriples,
+            externalTriples: blockExternalTriples,
             __rdfaId: 'f264819a-05a0-4909-b08a-313abccc9139',
             rdfaNodeType: 'resource',
             subject: 'http://example.org/6238392a-a4c4-44d0-9b98-a79257b5c54a',
@@ -199,8 +199,8 @@ module('ProseMirror | meta-triple', function () {
       parser,
     });
     assert.deepEqual(
-      newDoc.attrs['metaTriples'],
-      state.doc.attrs['metaTriples'],
+      newDoc.attrs['externalTriples'],
+      state.doc.attrs['externalTriples'],
     );
     const html2 = serializer.serializeNode(newDoc);
     assert.deepEqual(html2, html, 'second reload');
@@ -212,14 +212,14 @@ module('ProseMirror | meta-triple', function () {
   // changes
   test('triple information gets collated onto all nodes that talk about the same subject', function (assert) {
     const factory = new SayDataFactory();
-    const docMetaTriples = [
+    const docExternalTriples = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',
         object: factory.literal('test'),
       },
     ];
-    const blockMetaTriples = [
+    const blockExternalTriples = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',
@@ -233,7 +233,7 @@ module('ProseMirror | meta-triple', function () {
       attrs: {
         properties: [],
         backlinks: [],
-        metaTriples: docMetaTriples,
+        externalTriples: docExternalTriples,
         subject: null,
         lang: 'nl-BE',
       },
@@ -243,7 +243,7 @@ module('ProseMirror | meta-triple', function () {
           attrs: {
             properties: [],
             backlinks: [],
-            metaTriples: blockMetaTriples,
+            externalTriples: blockExternalTriples,
             __rdfaId: 'f264819a-05a0-4909-b08a-313abccc9139',
             rdfaNodeType: 'resource',
             subject: 'http://example.org/6238392a-a4c4-44d0-9b98-a79257b5c54a',
@@ -260,7 +260,7 @@ module('ProseMirror | meta-triple', function () {
         },
       ],
     };
-    const expectedTriples = [...docMetaTriples, ...blockMetaTriples];
+    const expectedTriples = [...docExternalTriples, ...blockExternalTriples];
     const state = makeState(docJson);
 
     const serializer = SaySerializer.fromSchema(state.schema);
@@ -271,9 +271,9 @@ module('ProseMirror | meta-triple', function () {
       schema: state.schema,
       parser,
     });
-    assert.deepEqual(newDoc.attrs['metaTriples'], expectedTriples);
+    assert.deepEqual(newDoc.attrs['externalTriples'], expectedTriples);
     assert.deepEqual(
-      newDoc.content.child(0).attrs['metaTriples'],
+      newDoc.content.child(0).attrs['externalTriples'],
       expectedTriples,
     );
   });

@@ -12,8 +12,8 @@ import { on } from '@ember/modifier';
 import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
 import { tracked } from '@glimmer/tracking';
 import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import MetaTripleForm from './meta-triple-form';
-import { transformMetaTriples } from '@lblod/ember-rdfa-editor/utils/meta-triple-utils';
+import ExternalTripleForm from './external-triple-form';
+import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
@@ -43,9 +43,9 @@ class EditModal extends Component<EditModalSig> {
         @closable={{true}}
         @closeModal={{@onCancel}}
       >
-        <:title>Edit meta triples</:title>
+        <:title>Edit external triples</:title>
         <:body>
-          <MetaTripleForm
+          <ExternalTripleForm
             @onSubmit={{@onSubmit}}
             id={{formId}}
             @triple={{@triple}}
@@ -64,7 +64,7 @@ class EditModal extends Component<EditModalSig> {
     </WithUniqueId>
   </template>
 }
-interface MetaTripleItemSig {
+interface ExternalTripleItemSig {
   Args: {
     trip: FullTriple;
     index: number;
@@ -73,7 +73,7 @@ interface MetaTripleItemSig {
   };
 }
 // eslint-disable-next-line ember/no-empty-glimmer-component-classes
-class MetaTripleItem extends Component<MetaTripleItemSig> {
+class ExternalTripleItem extends Component<ExternalTripleItemSig> {
   <template>
     <div class='au-u-padding-tiny'>
       <p><strong>subject:</strong> {{@trip.subject.value}}</p>
@@ -112,7 +112,7 @@ class MetaTripleItem extends Component<MetaTripleItemSig> {
 interface Sig {
   Args: { controller: SayController; node: ResolvedPNode };
 }
-export default class MetaTripleEditor extends Component<Sig> {
+export default class ExternalTripleEditor extends Component<Sig> {
   @tracked
   editModalOpen = false;
   @tracked
@@ -120,33 +120,33 @@ export default class MetaTripleEditor extends Component<Sig> {
   get node() {
     return this.args.node;
   }
-  get metaTriples(): FullTriple[] {
-    return this.node.value.attrs['metaTriples'] ?? [];
+  get externalTriples(): FullTriple[] {
+    return this.node.value.attrs['externalTriples'] ?? [];
   }
   get controller() {
     return this.args.controller;
   }
   get tripleBeingEdited(): Option<FullTriple> {
     if (isSome(this.indexBeingEdited)) {
-      return this.metaTriples[this.indexBeingEdited];
+      return this.externalTriples[this.indexBeingEdited];
     }
     return null;
   }
   closeModal = () => {
     this.editModalOpen = false;
   };
-  updateMetaTriples = (trip: FullTriple) => {
+  updateExternalTriples = (trip: FullTriple) => {
     let tr;
     if (isSome(this.indexBeingEdited)) {
       console.log('tripe', trip);
       const index = this.indexBeingEdited;
-      tr = transformMetaTriples((triples) => {
+      tr = transformExternalTriples((triples) => {
         const copy = [...triples];
         copy.splice(index, 1, trip);
         return copy;
       }, this.args.node.pos)(this.controller.mainEditorState).transaction;
     } else {
-      tr = transformMetaTriples(
+      tr = transformExternalTriples(
         (triples) => triples.concat(trip),
         this.args.node.pos,
       )(this.controller.mainEditorState).transaction;
@@ -168,7 +168,7 @@ export default class MetaTripleEditor extends Component<Sig> {
     this.startTripleEdit(index);
   };
   removeTriple = (index: number) => {
-    const tr = transformMetaTriples((triples) => {
+    const tr = transformExternalTriples((triples) => {
       const clone = [...triples];
       clone.splice(index, 1);
       return clone;
@@ -179,7 +179,7 @@ export default class MetaTripleEditor extends Component<Sig> {
     <AuContent @skin='tiny'>
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level='5' @skin='5'>MetaTriples</AuHeading>
+          <AuHeading @level='5' @skin='5'>External Triples</AuHeading>
         </Group>
         <Group>
           <AuButton
@@ -193,9 +193,9 @@ export default class MetaTripleEditor extends Component<Sig> {
       </AuToolbar>
 
       <AuList @divider={{true}} as |Item|>
-        {{#each this.metaTriples as |trip index|}}
+        {{#each this.externalTriples as |trip index|}}
           <Item>
-            <MetaTripleItem
+            <ExternalTripleItem
               @trip={{trip}}
               @index={{index}}
               @onEdit={{this.editTriple}}
@@ -209,7 +209,7 @@ export default class MetaTripleEditor extends Component<Sig> {
     <EditModal
       @modalOpen={{this.editModalOpen}}
       @onCancel={{this.closeModal}}
-      @onSubmit={{this.updateMetaTriples}}
+      @onSubmit={{this.updateExternalTriples}}
       @triple={{this.tripleBeingEdited}}
     />
   </template>
