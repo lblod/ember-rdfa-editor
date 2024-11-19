@@ -38,12 +38,14 @@ module.exports = {
       plugins: ['ember'],
       extends: [
         'eslint:recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
         'plugin:ember/recommended',
         'plugin:ember/recommended-gts',
         'plugin:prettier/recommended',
       ],
       rules: {
-        'no-unused-vars': [
+        '@typescript-eslint/no-unused-vars': [
           'error',
           { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
         ],
