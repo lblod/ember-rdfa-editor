@@ -72,17 +72,30 @@ interface ExternalTripleItemSig {
     onEdit: (index: number) => void;
   };
 }
-// eslint-disable-next-line ember/no-empty-glimmer-component-classes
 class ExternalTripleItem extends Component<ExternalTripleItemSig> {
+  get datatype() {
+    const trip = this.args.trip;
+    if (trip.object.termType === 'Literal') {
+      return trip.object.datatype.value;
+    }
+    return null;
+  }
+  get language() {
+    const trip = this.args.trip;
+    if (trip.object.termType === 'Literal') {
+      return trip.object.language;
+    }
+    return null;
+  }
   <template>
     <div class='au-u-padding-tiny'>
       <p><strong>subject:</strong> {{@trip.subject.value}}</p>
       <p><strong>predicate:</strong> {{@trip.predicate}}</p>
-      {{#if @trip.object.datatype}}
-        <p><strong>datatype:</strong> {{@trip.object.datatype.value}}</p>
+      {{#if this.datatype}}
+        <p><strong>datatype:</strong> {{this.datatype}}</p>
       {{/if}}
-      {{#if @trip.object.language}}
-        <p><strong>language:</strong> {{@trip.object.language}}</p>
+      {{#if this.language}}
+        <p><strong>language:</strong> {{this.language}}</p>
       {{/if}}
       <p><strong>value:</strong> {{@trip.object.value}}</p>
     </div>
