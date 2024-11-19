@@ -19,6 +19,13 @@ import {
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { localCopy } from 'tracked-toolbox';
 import { ValidationError, object, string } from 'yup';
+import {
+  contentLiteralTermSchema,
+  literalNodeTermSchema,
+  literalTermSchema,
+  namedNodeTermSchema,
+  resourceNodeTermSchema,
+} from './object-term-schemas';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -46,49 +53,25 @@ interface Sig {
   };
   Element: HTMLFormElement;
 }
-const datatypeSchema = object({
-  termType: string<'NamedNode'>().required(),
-  value: string().curie({ allowEmpty: true }).default(''),
-});
 const namedNodeSchema = object({
   predicate: string().curie().required(),
-  object: object({
-    termType: string<'NamedNode'>().required(),
-    value: string().curie().required(),
-  }),
+  object: namedNodeTermSchema,
 });
 const literalSchema = object({
   predicate: string().curie().required(),
-  object: object({
-    termType: string<'Literal'>().required(),
-    value: string().required(),
-    datatype: datatypeSchema,
-    language: string().default(''),
-  }),
+  object: literalTermSchema,
 });
 const literalNodeSchema = object({
   predicate: string().curie().required(),
-  object: object({
-    termType: string().oneOf(['LiteralNode']).required(),
-    value: string().required(),
-    datatype: datatypeSchema,
-    language: string().default(''),
-  }),
+  object: literalNodeTermSchema,
 });
 const resourceNodeSchema = object({
   predicate: string().curie().required(),
-  object: object({
-    termType: string<'ResourceNode'>().required(),
-    value: string().curie().required(),
-  }),
+  object: resourceNodeTermSchema,
 });
 const contentLiteralSchema = object({
   predicate: string().curie().required(),
-  object: object({
-    termType: string<'ContentLiteral'>().required(),
-    datatype: datatypeSchema,
-    language: string().default(''),
-  }),
+  object: contentLiteralTermSchema,
 });
 
 const DEFAULT_TRIPLE: OutgoingTriple = {
