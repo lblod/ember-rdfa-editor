@@ -24,6 +24,7 @@ import {
   isSome,
   type Option,
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 interface EditModalSig {
   Args: {
@@ -33,37 +34,32 @@ interface EditModalSig {
     triple?: Option<FullTriple>;
   };
 }
-// TODO: fix as soon as we can import the TOC type
-// eslint-disable-next-line ember/no-empty-glimmer-component-classes
-class EditModal extends Component<EditModalSig> {
-  <template>
-    <WithUniqueId as |formId|>
-      <AuModal
-        @modalOpen={{@modalOpen}}
-        @closable={{true}}
-        @closeModal={{@onCancel}}
-      >
-        <:title>Edit external triples</:title>
-        <:body>
-          <ExternalTripleForm
-            @onSubmit={{@onSubmit}}
-            id={{formId}}
-            @triple={{@triple}}
-          />
-        </:body>
-        <:footer>
-          <AuButtonGroup>
-            <AuButton form={{formId}} type='submit'>Save</AuButton>
-            <AuButton
-              @skin='secondary'
-              {{on 'click' @onCancel}}
-            >Cancel</AuButton>
-          </AuButtonGroup>
-        </:footer>
-      </AuModal>
-    </WithUniqueId>
-  </template>
-}
+
+const EditModal: TemplateOnlyComponent<EditModalSig> = <template>
+  <WithUniqueId as |formId|>
+    <AuModal
+      @modalOpen={{@modalOpen}}
+      @closable={{true}}
+      @closeModal={{@onCancel}}
+    >
+      <:title>Edit external triples</:title>
+      <:body>
+        <ExternalTripleForm
+          @onSubmit={{@onSubmit}}
+          id={{formId}}
+          @triple={{@triple}}
+        />
+      </:body>
+      <:footer>
+        <AuButtonGroup>
+          <AuButton form={{formId}} type='submit'>Save</AuButton>
+          <AuButton @skin='secondary' {{on 'click' @onCancel}}>Cancel</AuButton>
+        </AuButtonGroup>
+      </:footer>
+    </AuModal>
+  </WithUniqueId>
+</template>;
+
 interface ExternalTripleItemSig {
   Args: {
     trip: FullTriple;

@@ -17,6 +17,7 @@ import {
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
 import { type Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 const predicateSchema = string().curie().required();
 
@@ -252,26 +253,24 @@ interface StringFieldSig {
   Args: FieldArgs & { value: string };
 }
 
-// eslint-disable-next-line ember/no-empty-glimmer-component-classes
-class StringField extends Component<StringFieldSig> {
-  <template>
-    <FormField @name={{@name}} @errors={{@errors}} @required={{@required}}>
-      <:label>
-        {{yield}}
-      </:label>
+const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
+  <FormField @name={{@name}} @errors={{@errors}} @required={{@required}}>
+    <:label>
+      {{yield}}
+    </:label>
 
-      <:default as |id|>
-        <AuInput
-          id={{id}}
-          name={{@name}}
-          value={{@value}}
-          required={{@required}}
-          @width='block'
-        />
-      </:default>
-    </FormField>
-  </template>
-}
+    <:default as |id|>
+      <AuInput
+        id={{id}}
+        name={{@name}}
+        value={{@value}}
+        required={{@required}}
+        @width='block'
+      />
+    </:default>
+  </FormField>
+</template>;
+
 interface SelectFieldArgs<T> extends FieldArgs {
   options: T[];
   selected: T;
@@ -281,6 +280,10 @@ interface SelectFieldSig<T> {
   Args: SelectFieldArgs<T>;
   Blocks: { default: [] };
 }
+
+// TOCs can't have a generic argument, so in this case we have to make a backing
+// class
+// ref: https://typed-ember.gitbook.io/glint/environments/ember/template-only-components
 // eslint-disable-next-line ember/no-empty-glimmer-component-classes
 class SelectField<T> extends Component<SelectFieldSig<T>> {
   <template>
