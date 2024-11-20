@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.8.0
+
+### Minor Changes
+
+- [#1230](https://github.com/lblod/ember-rdfa-editor/pull/1230) [`8185fce`](https://github.com/lblod/ember-rdfa-editor/commit/8185fcef230ae7fd87df227a2bae51ac306f345a) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Recreate uuids plugin rework
+
 ## 10.7.4
 
 ### Patch Changes
