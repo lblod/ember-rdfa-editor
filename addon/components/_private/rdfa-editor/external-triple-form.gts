@@ -19,6 +19,7 @@ import { eq } from 'ember-truth-helpers';
 import { type Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
+import type { Select } from 'ember-power-select/components/power-select';
 
 const predicateSchema = string().curie().required();
 
@@ -297,7 +298,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
 interface SelectFieldArgs<T> extends FieldArgs {
   options: T[];
   selected: T;
-  onChange: (newValue: T) => void;
+  onChange: (newValue: T, select: Select, event?: Event) => void;
 }
 interface SelectFieldSig<T> {
   Args: SelectFieldArgs<T>;
@@ -307,8 +308,10 @@ interface SelectFieldSig<T> {
 // TOCs can't have a generic argument, so in this case we have to make a backing
 // class
 // ref: https://typed-ember.gitbook.io/glint/environments/ember/template-only-components
-// eslint-disable-next-line ember/no-empty-glimmer-component-classes
 class SelectField<T> extends Component<SelectFieldSig<T>> {
+  onChange(selection: unknown, select: Select, event?: Event) {
+    this.args.onChange(selection as T, select, event);
+  }
   <template>
     <FormField @name={{@name}} @errors={{@errors}} @required={{@required}}>
       <:label>
@@ -317,7 +320,6 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
 
       <:default as |id|>
 
-        {{! @glint-expect-error our version of powerselect doesn't have good types}}
         <PowerSelect
           id={{id}}
           {{! For some reason need to manually set width }}
@@ -325,7 +327,7 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
           @searchEnabled={{false}}
           @options={{@options}}
           @selected={{@selected}}
-          @onChange={{@onChange}}
+          @onChange={{this.onChange}}
           as |obj|
         >
           {{obj}}
