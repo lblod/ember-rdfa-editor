@@ -109,7 +109,6 @@ export const docWithConfig = ({
         lang: node.attrs['lang'] as string,
         'data-say-document': true,
         properties: node.attrs['properties'],
-        about: node.attrs['subject'],
       };
       Object.keys(extraAttributes).forEach((attr) => {
         attrs[attr] = node.attrs[attr];
