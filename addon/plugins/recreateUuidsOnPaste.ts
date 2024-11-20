@@ -1,4 +1,10 @@
-import { Fragment, Slice, Node, Schema } from '@lblod/ember-rdfa-editor';
+import {
+  Fragment,
+  Slice,
+  Node,
+  Schema,
+  type Attrs,
+} from '@lblod/ember-rdfa-editor';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,17 +45,15 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
   let attrs = node.attrs;
   const type = node.type;
   const spec = type.spec;
+  if (spec['recreateUriFunction']) {
+    attrs = spec['recreateUriFunction'](node.attrs);
+  }
   if (spec['recreateUri']) {
     if (spec['uriAttributes']) {
-      const newAttributes: Record<string, string> = {};
-      for (const uriAttribute of spec['uriAttributes']) {
-        const oldUri = node.attrs[uriAttribute as string] as string;
-        const oldUriParts = oldUri.split('/');
-        oldUriParts[oldUriParts.length - 1] = uuidv4();
-        const newUri = oldUriParts.join('/');
-        newAttributes[uriAttribute as string] = newUri;
-      }
-      attrs = { ...node.attrs, ...newAttributes };
+      attrs = {
+        ...attrs,
+        ...recreateUriAttribute(attrs, spec['uriAttributes']),
+      };
     }
   }
   return schema.node(
@@ -61,3 +65,22 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
 }
 
 export default recreateUuidsOnPaste;
+
+export function recreateUriAttribute(attrs: Attrs, uriAttributes: [string]) {
+  const newAttributes: Record<string, string> = {};
+  for (const uriAttribute of uriAttributes) {
+    const oldUri = attrs[uriAttribute as string] as string;
+    const oldUriParts = oldUri.split('/');
+    oldUriParts[oldUriParts.length - 1] = uuidv4();
+    const newUri = oldUriParts.join('/');
+    newAttributes[uriAttribute as string] = newUri;
+  }
+  return { ...attrs, ...newAttributes };
+}
+
+export function recreateUri(oldUri: string) {
+  const oldUriParts = oldUri.split('/');
+  oldUriParts[oldUriParts.length - 1] = uuidv4();
+  const newUri = oldUriParts.join('/');
+  return newUri;
+}
