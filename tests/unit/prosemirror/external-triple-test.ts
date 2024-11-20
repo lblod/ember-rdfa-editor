@@ -210,7 +210,7 @@ module('ProseMirror | external-triple', function () {
   // mean quite a significant rework of the parsing logic, and it is at least
   // somewhat logical, so I'm adding this test to document it and alert us if it
   // changes
-  test('triple information gets collated onto all nodes that talk about the same subject', function (assert) {
+  test('triple information gets collated onto the first (document-order) node which defined the subject', function (assert) {
     const factory = new SayDataFactory();
     const docExternalTriples = [
       {
@@ -271,10 +271,76 @@ module('ProseMirror | external-triple', function () {
       schema: state.schema,
       parser,
     });
-    assert.deepEqual(newDoc.attrs['externalTriples'], expectedTriples);
+    assert.deepEqual(
+      newDoc.attrs['externalTriples'],
+      expectedTriples,
+      "'first' node that talks about subject collects all info about it",
+    );
     assert.deepEqual(
       newDoc.content.child(0).attrs['externalTriples'],
-      expectedTriples,
+      [],
+      "other nodes don't have the info anymore",
     );
+  });
+
+  test('multiple subjects on a single node get stored correctly', function (assert) {
+    const factory = new SayDataFactory();
+    const docExternalTriples = [
+      {
+        subject: factory.namedNode('http://example.org/1'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('test'),
+      },
+      {
+        subject: factory.namedNode('http://example.org/2'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('test'),
+      },
+      {
+        subject: factory.namedNode('http://example.org/3'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('test'),
+      },
+      {
+        subject: factory.namedNode('http://example.org/3'),
+        predicate: 'http://example.org/pred',
+        object: factory.literal('abc'),
+      },
+    ];
+    const docJson: NodeJsonSpec = {
+      type: 'doc',
+      attrs: {
+        properties: [],
+        backlinks: [],
+        externalTriples: docExternalTriples,
+        subject: null,
+        lang: 'nl-BE',
+      },
+      content: [
+        {
+          type: 'paragraph',
+          attrs: {
+            alignment: 'left',
+            indentationLevel: 0,
+          },
+        },
+      ],
+    };
+    const state = makeState(docJson);
+
+    const serializer = SaySerializer.fromSchema(state.schema);
+    const html = serializer.serializeNode(state.doc) as HTMLElement;
+
+    const parser = ProseParser.fromSchema(state.schema);
+    const newDoc = htmlToDoc(html.outerHTML, {
+      schema: state.schema,
+      parser,
+    });
+    assert.deepEqual(
+      newDoc.attrs['externalTriples'],
+      state.doc.attrs['externalTriples'],
+    );
+    const html2 = serializer.serializeNode(newDoc);
+    assert.deepEqual(html2, html, 'second reload');
   });
 });
