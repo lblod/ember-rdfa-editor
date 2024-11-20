@@ -105,7 +105,6 @@ export const docWithConfig = ({
       },
     ],
     toDOM(node) {
-      console.log('rendering doc', node);
       const attrs: Record<string, unknown> = {
         lang: node.attrs['lang'] as string,
         'data-say-document': true,

@@ -147,7 +147,6 @@ export default class ExternalTripleEditor extends Component<Sig> {
   updateExternalTriples = (trip: FullTriple) => {
     let tr;
     if (isSome(this.indexBeingEdited)) {
-      console.log('tripe', trip);
       const index = this.indexBeingEdited;
       tr = transformExternalTriples((triples) => {
         const copy = [...triples];
