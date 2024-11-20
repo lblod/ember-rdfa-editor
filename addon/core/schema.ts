@@ -243,7 +243,7 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
-  externalTriples: FullTriple[];
+  externalTriples?: FullTriple[];
   subject: string;
   properties: OutgoingTriple[];
 }
