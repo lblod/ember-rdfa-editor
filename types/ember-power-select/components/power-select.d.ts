@@ -26,6 +26,7 @@ declare module 'ember-power-select/components/power-select' {
     searchText: string;
     lastSearchedText: string;
     actions: SelectActions;
+    isOpen: boolean
   }
   export interface PowerSelectArgs {
     // The following args are not in the v6 or v7 types as they are only used in the template
