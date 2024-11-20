@@ -330,9 +330,7 @@ export function renderInvisibleRdfa(
   const externalTriples = nodeOrMark.attrs['externalTriples'] as FullTriple[];
   if (externalTriples.length) {
     const externalElements = [];
-    for (const fullTriple of nodeOrMark.attrs[
-      'externalTriples'
-    ] as FullTriple[]) {
+    for (const fullTriple of externalTriples) {
       switch (fullTriple.object.termType) {
         case 'NamedNode':
           externalElements.push(
