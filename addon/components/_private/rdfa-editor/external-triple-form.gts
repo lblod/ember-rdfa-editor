@@ -18,6 +18,7 @@ import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
 import { type Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
+import { modifier } from 'ember-modifier';
 
 const predicateSchema = string().curie().required();
 
@@ -71,6 +72,9 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
 
   @tracked
   currentFormData: FormData | null = null;
+
+  datatypePath = 'object.datatype.value';
+  languagePath = 'object.language';
   get termType() {
     return this.selectedTermType ?? 'NamedNode';
   }
@@ -91,6 +95,17 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   }
   get termTypes(): SupportedTermType[] {
     return ['NamedNode', 'Literal'];
+  }
+  get hasLanguage() {
+    return Boolean(
+      this.currentFormData?.get(this.languagePath)?.toString().length,
+    );
+  }
+  get hasDatatype() {
+    return (
+      !this.hasLanguage &&
+      Boolean(this.currentFormData?.get(this.datatypePath)?.toString().length)
+    );
   }
   selectTermType = (value: SupportedTermType) => {
     this.selectedTermType = value;
@@ -188,11 +203,16 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
     const formData = new FormData(event.currentTarget as HTMLFormElement);
     this.currentFormData = formData;
   };
+  initAfterInsert = modifier((form: HTMLFormElement) => {
+    const formData = new FormData(form);
+    this.currentFormData = formData;
+  });
   <template>
     <form
       ...attributes
       {{on 'submit' this.handleSubmit}}
       {{on 'input' this.handleInput}}
+      {{this.initAfterInsert}}
     >
 
       <StringField
@@ -226,16 +246,18 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
 
       {{#unless (eq this.termType 'NamedNode')}}
         <StringField
-          @name='object.datatype.value'
+          @name={{this.datatypePath}}
           @required={{false}}
           @errors={{this.errors}}
           @value={{this.datatype}}
+          @disabled={{this.hasLanguage}}
         >Datatype</StringField>
         <StringField
-          @name='object.language'
+          @name={{this.languagePath}}
           @required={{false}}
           @errors={{this.errors}}
           @value={{this.language}}
+          @disabled={{this.hasDatatype}}
         >Language</StringField>
       {{/unless}}
     </form>
@@ -250,7 +272,7 @@ interface StringFieldSig {
   Blocks: {
     default: [];
   };
-  Args: FieldArgs & { value: string };
+  Args: FieldArgs & { value: string; disabled?: boolean };
 }
 
 const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
@@ -265,6 +287,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
         name={{@name}}
         value={{@value}}
         required={{@required}}
+        @disabled={{@disabled}}
         @width='block'
       />
     </:default>
