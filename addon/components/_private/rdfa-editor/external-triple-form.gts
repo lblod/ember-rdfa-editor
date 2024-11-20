@@ -309,9 +309,9 @@ interface SelectFieldSig<T> {
 // class
 // ref: https://typed-ember.gitbook.io/glint/environments/ember/template-only-components
 class SelectField<T> extends Component<SelectFieldSig<T>> {
-  onChange(selection: unknown, select: Select, event?: Event) {
+  onChange = (selection: unknown, select: Select, event?: Event) => {
     this.args.onChange(selection as T, select, event);
-  }
+  };
   <template>
     <FormField @name={{@name}} @errors={{@errors}} @required={{@required}}>
       <:label>
