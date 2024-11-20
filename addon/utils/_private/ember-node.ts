@@ -338,7 +338,7 @@ export type EmberNodeConfig = {
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
   /** Generate a new URI when pasting the node? */
-  recreateUriFunction: (attrs: Attrs) => Attrs;
+  recreateUriFunction?: (attrs: Attrs) => Attrs;
   /** A map of attributes to assign to this node */
   attrs?: {
     [name: string]: AttributeSpec & {
