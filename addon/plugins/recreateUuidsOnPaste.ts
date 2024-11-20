@@ -48,6 +48,14 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
   if (spec['recreateUriFunction']) {
     attrs = spec['recreateUriFunction'](node.attrs);
   }
+  if (spec['recreateUri']) {
+    if (spec['uriAttributes']) {
+      attrs = {
+        ...attrs,
+        ...recreateUriAttribute(attrs, spec['uriAttributes']),
+      };
+    }
+  }
   return schema.node(
     node.type,
     attrs,
@@ -67,7 +75,7 @@ export function recreateUriAttribute(attrs: Attrs, uriAttributes: [string]) {
     const newUri = oldUriParts.join('/');
     newAttributes[uriAttribute as string] = newUri;
   }
-  attrs = { ...attrs, ...newAttributes };
+  return { ...attrs, ...newAttributes };
 }
 
 export function recreateUri(oldUri: string) {

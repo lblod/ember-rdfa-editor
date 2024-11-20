@@ -337,6 +337,14 @@ export type EmberNodeConfig = {
   draggable?: boolean;
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
+  /**
+   * @deprecated
+   */
+  recreateUri?: boolean;
+  /**
+   * @deprecated
+   */
+  uriAttributes?: [string];
   /** Generate a new URI when pasting the node? */
   recreateUriFunction?: (attrs: Attrs) => Attrs;
   /** A map of attributes to assign to this node */
@@ -396,6 +404,8 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
     atom,
     draggable,
     defining,
+    recreateUri,
+    uriAttributes,
     recreateUriFunction,
     attrs,
     parseDOM,
@@ -408,6 +418,8 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
     atom,
     group,
     content,
+    recreateUri,
+    uriAttributes,
     recreateUriFunction,
     attrs,
     draggable,
