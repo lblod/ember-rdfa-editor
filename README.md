@@ -332,25 +332,57 @@ This addon uses CSS variables to customise the styling. You can override these v
 ```
 
 #### Override node classes
-Heading -> say-heading
-Paragraph -> say-paragraph
-RepairedBlock -> say-repaired-block
-ListItem -> say-li
-OrderedList -> say-ordered-list
-BulletList -> say-bullet-list
-Placeholder -> say-placeholder
-Table -> say-table
-TableRow -> say-table-row
-TableCell -> say-table-cell
-TableHeader -> say-table-header
-Blockquote -> say-blockquote 
-HorizontalRule -> say-horizontal-rule 
-Image -> say-image 
-HardBreak -> say-hard-break 
-InvisibleRdfa -> say-invisible-rdfa
-BlockRdfa -> say-block-rdfa 
-InlineRdfa -> say-inline-rdfa
-Link -> say-pill say-link
+
+You can also customize the look of your editor by either adding styles to the class of each node, or even changing that class to your custom one.
+The classes asigned to each node are the following:
+| Node | Css class |
+|---|---|
+| Heading | say-heading |
+| Paragraph | say-paragraph |
+| RepairedBlock | say-repaired-block |
+| ListItem | say-li |
+| OrderedList | say-ordered-list |
+| BulletList | say-bullet-list |
+| Placeholder | say-placeholder |
+| Table | say-table |
+| TableRow | say-table-row |
+| TableCell | say-table-cell |
+| TableHeader | say-table-header |
+| Blockquote | say-blockquote |
+| HorizontalRule | say-horizontal-rule |
+| HardBreak | say-hard-break |
+| InvisibleRdfa | say-invisible-rdfa |
+| BlockRdfa | say-block-rdfa |
+| InlineRdfa | say-inline-rdfa |
+| Link | say-pill say-link |
+
+In order to replace this classes you just have to replace the property class names when using that node in the schema, for example:
+```js
+schema = new Schema({
+    nodes: {
+      doc: docWithConfig({
+        defaultLanguage: 'nl-BE',
+      }),
+      paragraph; {...paragraph, classNames: ['my-custom-class']},
+
+```
+except on the table, where you will need to add the classNames to the options of the tableNodes function
+```js
+ ...tableNodes({
+        tableGroup: 'block',
+        cellContent: 'block+',
+        inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rowBackground: {
+          odd: 'whitesmoke',
+        },
+        classNames: {
+          table: ['custom-table-class'];
+          table_row: ['custom-table-row-class'];
+          table_cell: ['custom-table-cell-class'];
+          table_header: ['custom-table-header-class'];
+        };
+  }),
+```
 
 ## Embroider
 To use `@lblod/ember-rdfa-editor` with Embroider some extra Webpack configuration is needed, which you can import like this:
