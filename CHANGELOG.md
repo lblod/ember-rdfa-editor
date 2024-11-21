@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 10.8.0
+
+### Minor Changes
+
+- [#1230](https://github.com/lblod/ember-rdfa-editor/pull/1230) [`8185fce`](https://github.com/lblod/ember-rdfa-editor/commit/8185fcef230ae7fd87df227a2bae51ac306f345a) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Recreate uuids plugin rework
+
+## 10.7.4
+
+### Patch Changes
+
+- [#1228](https://github.com/lblod/ember-rdfa-editor/pull/1228) [`8930eb7`](https://github.com/lblod/ember-rdfa-editor/commit/8930eb7fc368e15e85558951f2aac90a1bff1407) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix bug not allowing multiline pills
+
 ## 10.7.3
 
 ### Patch Changes
