@@ -226,7 +226,23 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     list-style-type: initial;
 
     // Stop indenting
-    ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list ul.say-bullet-list {
+    ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list
+      ul.say-bullet-list {
       margin-left: 0;
       padding-left: 0;
     }
@@ -240,7 +256,23 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
 
     // Stop indenting
-    ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list ol.say-ordered-list {
+    ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list
+      ol.say-ordered-list {
       margin-left: 0;
       padding-left: 0;
     }
