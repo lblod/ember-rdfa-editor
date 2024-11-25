@@ -48,8 +48,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 @mixin say-content() {
   // Set base font size for elements
   &,
-  ul.say-bullet-list,
-  ol.say-ordered-list,
+  .say-bullet-list,
+  .say-ordered-list,
   div {
     @include au-font-size($au-base);
     font-family: var(--au-font);
@@ -57,7 +57,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   span,
-  a.say-link {
+  .say-link {
     font-size: inherit;
   }
 
@@ -119,8 +119,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
-  p.say-paragraph,
-  li.say-list-item {
+  .say-paragraph,
+  .say-list-item {
     &.small {
       @include au-font-size($say-small-font-size);
     }
@@ -135,17 +135,12 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Setup some margin rules
-  p.say-paragraph,
-  ul.say-bullet-list,
-  ol.say-ordered-list,
-  table.say-table,
+  .say-paragraph,
+  .say-bullet-list,
+  .say-ordered-list,
+  .say-table,
   div,
-  h1.say-heading,
-  h2.say-heading,
-  h3.say-heading,
-  h4.say-heading,
-  h5.say-heading,
-  h6.say-heading {
+  .say-heading {
     + * {
       margin-top: $say-typography-margin;
     }
@@ -171,28 +166,28 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     margin-left: 12rem;
   }
 
-  li.say-list-item > {
+  .say-list-item > {
     [data-indentation-level] {
       margin-left: 0;
     }
   }
 
   // No margin
-  li.say-list-item p.say-paragraph + *,
-  li.say-list-item div + *,
-  p.say-paragraph * + *,
-  p.say-paragraph + br.say-hard-break,
-  div + br.say-hard-break,
-  span + br.say-hard-break,
-  ul.say-bullet-list + br.say-hard-break,
-  ol.say-ordered-list + br.say-hard-break,
-  i + br.say-hard-break,
-  br.say-hard-break + br.say-hard-break {
+  .say-list-item .say-paragraph + *,
+  .say-list-item div + *,
+  .say-paragraph * + *,
+  .say-paragraph + .say-hard-break,
+  div + .say-hard-break,
+  span + .say-hard-break,
+  .say-bullet-list + .say-hard-break,
+  .say-ordered-list + .say-hard-break,
+  i + .say-hard-break,
+  .say-hard-break + .say-hard-break {
     margin-top: 0;
   }
 
   // Style links
-  a.say-link {
+  .say-link {
     transition:
       color var(--au-transition),
       text-decoration var(--au-transition);
@@ -216,72 +211,72 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
-  ul.say-bullet-list,
-  ol.say-ordered-list {
+  .say-bullet-list,
+  .say-ordered-list {
     padding-left: 3rem;
   }
 
   // Style lists
-  ul.say-bullet-list {
+  .say-bullet-list {
     list-style-type: initial;
 
     // Stop indenting
-    ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list
-      ul.say-bullet-list {
+    .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list {
       margin-left: 0;
       padding-left: 0;
     }
   }
 
-  ol.say-ordered-list {
+  .say-ordered-list {
     list-style-type: decimal;
 
-    & > li.say-list-item ol.say-ordered-list {
+    & > .say-list-item .say-ordered-list {
       list-style-type: inherit;
     }
 
     // Stop indenting
-    ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list
-      ol.say-ordered-list {
+    .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list {
       margin-left: 0;
       padding-left: 0;
     }
   }
 
-  ul.say-bullet-list.article-list {
+  .say-bullet-list.article-list {
     padding-left: 0;
 
-    li.say-list-item {
+    .say-list-item {
       margin-bottom: 1.5rem;
       list-style-type: unset;
     }
@@ -289,7 +284,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   $styles: circle, square, initial;
 
-  ul.say-bullet-list > li.say-list-item {
+  .say-bullet-list > .say-list-item {
     // Goes up to 18 levels deep and assigns a different style
     // to 1, 2 and 3 levels, then repeats.
     @for $i from 1 through 18 {
@@ -304,7 +299,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Style horizontal rule
-  hr.say-horizontal-rule {
+  .say-horizontal-rule {
     margin: 0;
     margin-top: $au-unit;
     margin-bottom: $au-unit;
@@ -338,14 +333,14 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   // Table styling
 
-  .data-table th.say-table-header,
-  .data-table td.say-table-cell {
+  .data-table .say-table-header,
+  .data-table .say-table-cell {
     @include au-font-size($au-base, 1.5);
   }
 
   .data-table--lined.data-table--tight {
-    th.say-table-header,
-    td.say-table-cell {
+    .say-table-header,
+    .say-table-cell {
       font-size: 1.4rem;
       padding: 0.8rem;
     }

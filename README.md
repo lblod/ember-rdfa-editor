@@ -340,7 +340,7 @@ The classes asigned to each node are the following:
 | Heading | say-heading |
 | Paragraph | say-paragraph |
 | RepairedBlock | say-repaired-block |
-| ListItem | say-li |
+| ListItem | say-list-item |
 | OrderedList | say-ordered-list |
 | BulletList | say-bullet-list |
 | Placeholder | say-placeholder |
