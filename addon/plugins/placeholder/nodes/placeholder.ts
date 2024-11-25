@@ -1,5 +1,6 @@
 import type { NodeSpec } from 'prosemirror-model';
 import { PLACEHOLDER_CLASS } from '../../../utils/_private/constants';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 export const placeholder: NodeSpec = {
   attrs: { placeholderText: { default: 'placeholder' } },

@@ -10,6 +10,7 @@ import type SayNodeSpec from '../core/say-node-spec';
 import type { NodeView } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces';
 import { getRDFFragment } from '../utils/namespace';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -166,7 +167,3 @@ function getBlockRDFaLabel(node: PNode, fallback: string) {
  * @deprecated use `blockRdfaWithConfig` instead
  */
 export const block_rdfa = blockRdfaWithConfig();
-
-function getClassnamesFromNode(node: PNode) {
-  throw new Error('Function not implemented.');
-}
