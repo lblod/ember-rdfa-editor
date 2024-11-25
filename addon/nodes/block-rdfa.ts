@@ -59,7 +59,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           renderable: node,
           tag: 'div',
           attrs: {
-            class: `say-editable ${node.type.spec['classNames']?.join(' ')}`,
+            class: `say-editable ${getClassnamesFromNode(node)}`,
             'data-label': node.attrs['label'],
           },
           content: 0,
@@ -71,7 +71,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           {
             ...attrs,
             'data-label': label,
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];
@@ -166,3 +166,7 @@ function getBlockRDFaLabel(node: PNode, fallback: string) {
  * @deprecated use `blockRdfaWithConfig` instead
  */
 export const block_rdfa = blockRdfaWithConfig();
+
+function getClassnamesFromNode(node: PNode) {
+  throw new Error('Function not implemented.');
+}

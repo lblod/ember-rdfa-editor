@@ -6,6 +6,7 @@ import {
   renderInvisibleRdfa,
   renderRdfaAttrs,
 } from '../core/schema';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 type Options = {
   rdfaAware?: boolean;
@@ -52,7 +53,7 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
           __tag,
           {
             ...renderRdfaAttrs(attrs as RdfaAttrs),
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           renderInvisibleRdfa(node, 'span'),
         ];

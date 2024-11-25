@@ -1,4 +1,5 @@
 import type { NodeSpec } from 'prosemirror-model';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 export const hard_break: NodeSpec = {
   inline: true,
@@ -7,6 +8,6 @@ export const hard_break: NodeSpec = {
   classNames: ['say-hard-break'],
   parseDOM: [{ tag: 'br' }],
   toDOM(node) {
-    return ['br', { class: node.type.spec['classNames']?.join(' ') }];
+    return ['br', { class: getClassnamesFromNode(node) }];
   },
 };

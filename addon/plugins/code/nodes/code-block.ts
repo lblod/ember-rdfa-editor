@@ -1,3 +1,4 @@
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 import type { NodeSpec } from 'prosemirror-model';
 
 export const code_block: NodeSpec = {
@@ -9,10 +10,6 @@ export const code_block: NodeSpec = {
   classNames: ['say-code-block'],
   parseDOM: [{ tag: 'pre', preserveWhitespace: 'full' }],
   toDOM(node) {
-    return [
-      'pre',
-      { class: node.type.spec['classNames']?.join(' ') },
-      ['code', 0],
-    ];
+    return ['pre', { class: getClassnamesFromNode(node) }, ['code', 0]];
   },
 };

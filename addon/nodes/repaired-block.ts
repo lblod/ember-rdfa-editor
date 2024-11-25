@@ -2,6 +2,7 @@ import type { DOMOutputSpec, Node as PNode } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
 import type SayNodeSpec from '../core/say-node-spec';
 import { getRdfaContentElement, renderRdfaAware } from '../core/schema';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 type Options = {
   rdfaAware?: boolean;
@@ -39,7 +40,7 @@ export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
           tag: 'span',
           content: 0,
           attrs: {
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
         });
       } else {
@@ -47,7 +48,7 @@ export const repairedBlockWithConfig: (options?: Options) => SayNodeSpec = ({
           'span',
           {
             ...node.attrs,
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];

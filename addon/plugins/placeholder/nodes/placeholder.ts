@@ -14,7 +14,7 @@ export const placeholder: NodeSpec = {
     return [
       'span',
       {
-        class: `${PLACEHOLDER_CLASS} ${node.type.spec['classNames']?.join(' ')}`,
+        class: `${PLACEHOLDER_CLASS} ${getClassnamesFromNode(node)}`,
         ...node.attrs,
         contenteditable: false,
       },

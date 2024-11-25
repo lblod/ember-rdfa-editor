@@ -2,6 +2,7 @@ import { getRdfaAttrs, type NodeSpec } from '@lblod/ember-rdfa-editor';
 import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 export type ParagraphDataAttributes = {
   'data-indentation-level'?: number;
@@ -103,7 +104,7 @@ export const paragraphWithConfig: (
     toDOM(node) {
       const { alignment, indentationLevel } = node.attrs;
       const attrs: ParagraphDataAttributes = {
-        class: node.type.spec['classNames']?.join(' '),
+        class: getClassnamesFromNode(node),
       };
       if (alignment && alignment !== DEFAULT_ALIGNMENT) {
         attrs.style = `text-align: ${alignment}`;

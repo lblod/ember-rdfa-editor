@@ -9,6 +9,7 @@ import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 interface ExtraAttribute {
   default: unknown;
@@ -246,7 +247,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
             style: constructInlineStyles(tableStyle),
           },
           ['tbody', 0],
@@ -265,7 +266,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
             style: constructInlineStyles(style),
           },
           tableView.colgroupElement,
@@ -306,7 +307,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           {
             ...node.attrs,
             style: constructInlineStyles(style),
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];
@@ -317,7 +318,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           {
             ...node.attrs,
             style: constructInlineStyles(rowStyle),
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];
@@ -346,7 +347,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'td',
           {
             ...setCellAttrs(node, extraCellAttributes),
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];
@@ -374,7 +375,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'th',
           {
             ...setCellAttrs(node, extraCellAttributes),
-            class: node.type.spec['classNames']?.join(' '),
+            class: getClassnamesFromNode(node),
           },
           0,
         ];

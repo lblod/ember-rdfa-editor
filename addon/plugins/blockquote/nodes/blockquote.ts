@@ -1,3 +1,4 @@
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 import { type NodeSpec } from 'prosemirror-model';
 
 export const blockquote: NodeSpec = {
@@ -7,10 +8,6 @@ export const blockquote: NodeSpec = {
   defining: true,
   parseDOM: [{ tag: 'blockquote' }],
   toDOM(node) {
-    return [
-      'blockquote',
-      { class: node.type.spec['classNames']?.join(' ') },
-      0,
-    ];
+    return ['blockquote', { class: getClassnamesFromNode(node) }, 0];
   },
 };

@@ -12,6 +12,7 @@ import {
 } from '../utils/ember-node';
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa';
 import type { ComponentLike } from '@glint/template';
+import getClassnamesFromNode from '../utils/get-classnames-from-node';
 
 type Options = {
   rdfaAware?: boolean;
@@ -37,13 +38,13 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
         return renderRdfaAware({
           renderable: node,
           tag: 'span',
-          attrs: { class: node.type.spec['classNames']?.join(' ') },
+          attrs: { class: getClassnamesFromNode(node) },
           content: 0,
         });
       } else {
         return [
           'span',
-          { ...node.attrs, class: node.type.spec['classNames']?.join(' ') },
+          { ...node.attrs, class: getClassnamesFromNode(node) },
           0,
         ];
       }

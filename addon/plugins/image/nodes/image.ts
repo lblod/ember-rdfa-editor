@@ -6,6 +6,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import Image from '@lblod/ember-rdfa-editor/components/plugins/image/node';
 import { Node as PNode } from 'prosemirror-model';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'image',
@@ -49,7 +50,7 @@ const emberNodeConfig: EmberNodeConfig = {
         'data-width': width as number,
         'data-height': height as number,
         style: widthStyle + heightStyle,
-        class: node.type.spec['classNames']?.join(' '),
+        class: getClassnamesFromNode(node),
       },
     ];
   },

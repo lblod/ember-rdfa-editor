@@ -9,6 +9,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
 import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 export type OrderListStyle =
   | 'decimal'
@@ -84,7 +85,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
         {
           ...baseAttrs,
           ...attrs,
-          class: node.type.spec['classNames']?.join(' '),
+          class: getClassnamesFromNode(node),
         },
         0,
       ];
@@ -124,7 +125,7 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = () => {
         'ul',
         {
           ...node.attrs,
-          class: node.type.spec['classNames']?.join(' '),
+          class: getClassnamesFromNode(node),
         },
         0,
       ];
@@ -171,7 +172,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     ],
     toDOM(node: PNode) {
       const attributes: { [key: string]: any } = {
-        class: node.type.spec['classNames']?.join(' '),
+        class: getClassnamesFromNode(node),
       };
       if (enableHierarchicalList) {
         attributes['data-list-marker'] = renderListMarker(
