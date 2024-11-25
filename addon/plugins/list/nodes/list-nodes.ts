@@ -171,7 +171,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node: PNode) {
-      const attributes: { [key: string]: any } = {
+      const attributes: { [key: string]: string } = {
         class: getClassnamesFromNode(node),
       };
       if (enableHierarchicalList) {
