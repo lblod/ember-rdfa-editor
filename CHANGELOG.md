@@ -1,5 +1,30 @@
 # @lblod/ember-rdfa-editor
 
+## 10.9.0
+
+### Minor Changes
+
+- [#1229](https://github.com/lblod/ember-rdfa-editor/pull/1229) [`d8ad7c8`](https://github.com/lblod/ember-rdfa-editor/commit/d8ad7c808046ecbd676b7945aa1a712f8969e5f8) Thanks [@abeforgit](https://github.com/abeforgit)! - Add ability to add external (= loose) triples to a resource node
+
+  External triples are data not connected to an in-document node. They can be used
+  to define knowledge about URIs which are not mentioned in the document.
+
+  It's expected this will be rather rare, but crucial for some embedded usecases.
+
+  External triples are serialized inside a new container inside the already
+  exising rdfa-container, annotated with the `data-external-triple-container`
+  attribute, which is why I don't consider this a breaking change.
+
+  Also adds a new transactionMonad for manipulating these:
+  `transformExternalTriples`, and 2 shorthand wrappers: `addExternalTriple` and
+  `setExternalTriples`.
+
+  It also expands the rdfa-editor sidebar tools with an external triple section.
+
+### Patch Changes
+
+- [#1232](https://github.com/lblod/ember-rdfa-editor/pull/1232) [`3427d73`](https://github.com/lblod/ember-rdfa-editor/commit/3427d732fcd953bd0de143fd68e5d6f41a71b1b2) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix bug with multiple imported resource relationships that lead to duplication of these relationships
+
 ## 10.8.0
 
 ### Minor Changes
