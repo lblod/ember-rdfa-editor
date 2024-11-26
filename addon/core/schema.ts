@@ -183,16 +183,21 @@ export function getRdfaAwareDocAttrs(
   if (hasResourceImports) {
     const hidden = findRdfaHiddenElements(node);
     if (hidden) {
+      const imports = new Map<string, OutgoingTriple[]>();
       for (const hid of hidden) {
         const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
           rdfaAware: true,
         });
-        if (hiddenRdfaAttrs) {
-          if ('properties' in hiddenRdfaAttrs) {
-            properties.push(...hiddenRdfaAttrs.properties);
-          }
+        // Since 'getRdfaAttrs' returns the properties for the resource URI, not the node, it
+        // actually gives us *all* of the properties for each hidden element. We need to
+        // de-duplicate these so we only get each set once, per imported resource.
+        // It might make more sense to do this in the rdfa-processor, e.g. in the preprocessRDFa()
+        // function
+        if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
+          imports.set(hiddenRdfaAttrs.subject, hiddenRdfaAttrs.properties);
         }
       }
+      properties.push(...[...imports.values()].flat());
     }
   }
   let externalTriples: FullTriple[] = [];
