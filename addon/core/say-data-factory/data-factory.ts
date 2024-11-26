@@ -12,7 +12,7 @@ import { ContentLiteralTerm } from './prosemirror-terms/content-literal';
 import { LANG_STRING } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
-type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;
+export type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;
 let dataFactoryCounter = 0;
 
 /**
