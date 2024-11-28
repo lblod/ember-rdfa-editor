@@ -27,6 +27,7 @@ export default interface SayNodeSpec extends NodeSpec {
   attrs?: {
     [name: string]: SayAttributeSpec;
   };
+  classNames?: string[] | ((node: PNode) => string[]);
 }
 
 export const isEditable = (node: PNode) => {

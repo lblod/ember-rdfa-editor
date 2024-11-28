@@ -15,8 +15,8 @@
     border-bottom: 0.2rem solid var(--au-gray-300);
   }
 
-  th,
-  td {
+  th.say-table-header,
+  td.say-table-cell {
     @include au-font-size($au-base, 1.2);
     text-align: left;
     padding: $au-unit-small $au-unit-small;
@@ -26,7 +26,7 @@
     background-clip: padding-box;
   }
 
-  th {
+  th.say-table-header {
     font-weight: var(--au-medium);
   }
 
@@ -41,20 +41,20 @@
     background: var(--say-odd-row-background);
   }
 
-  th + th,
-  td + td,
-  th + td,
-  td + th {
+  th.say-table-header + th.say-table-header,
+  td.say-table-cell + td.say-table-cell,
+  th.say-table-header + td.say-table-cell,
+  td.say-table-cell + th.say-table-header {
     border-left: 0.1rem solid var(--au-gray-300);
   }
 
-  th,
-  td {
+  th.say-table-header,
+  td.say-table-cell {
     max-width: 55ch;
   }
 
-  th:focus,
-  td:focus {
+  th.say-table-header:focus,
+  td.say-table-cell:focus {
     outline: none;
   }
 
