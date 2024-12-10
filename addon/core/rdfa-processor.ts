@@ -75,6 +75,11 @@ export type IncomingLiteralNodeTriple = {
 export type IncomingTriple =
   | IncomingLiteralNodeTriple
   | IncomingResourceNodeTriple;
+export type FullTriple = {
+  subject: SayNamedNode;
+  predicate: string;
+  object: SayNamedNode | SayLiteral;
+};
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -106,6 +111,7 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     },
   });
 
+  const seenExternalSubjects = new Set<string>();
   // every resource node
   for (const [node, entry] of datastore.getResourceNodeMap().entries()) {
     const properties: OutgoingTriple[] = [];
@@ -139,6 +145,43 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       JSON.stringify(incomingProps);
     (node as HTMLElement).dataset['rdfaNodeType'] = 'resource';
     (node as HTMLElement).dataset['subject'] = entry.subject.value;
+    // due to the post-processing of the parsed triples, we can be sure that
+    // a loose triple gets interpreted as a resource node at this stage
+    // this does not mean it becomes a prosemirror resource node:
+    // the definition of "resource" node at the parsing level is actually
+    // slightly different from the one at the prosemirror-schema level, and
+    // should probably get a new name. Here, resource node simply means: any
+    // html element which defines a subject of a triple.
+    if (
+      node.parentElement?.dataset['externalTripleContainer'] &&
+      !seenExternalSubjects.has(entry.subject.value)
+    ) {
+      seenExternalSubjects.add(entry.subject.value);
+      const ownerElement = node.parentElement?.parentElement?.parentElement;
+      const newTriples = properties.map((prop) => ({
+        subject: { termType: 'NamedNode', value: entry.subject.value },
+        ...prop,
+      }));
+
+      if (ownerElement) {
+        const previousTriples = ownerElement.dataset['externalTriples'];
+        if (previousTriples) {
+          const prev = JSON.parse(previousTriples);
+
+          ownerElement.dataset['externalTriples'] = JSON.stringify(
+            prev.concat(newTriples),
+          );
+        } else {
+          ownerElement.dataset['externalTriples'] = JSON.stringify(newTriples);
+        }
+      } else {
+        // shouldn't happen, we only set the data-external-triple-container attr on
+        // nodes within an rdfa-container
+        console.warn(
+          'Found external triples in an element without a parent resource node to attach them to. Possible data loss',
+        );
+      }
+    }
   }
   // each content node
   for (const [node, object] of datastore.getContentNodeMap().entries()) {

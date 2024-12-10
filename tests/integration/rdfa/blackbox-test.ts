@@ -7,12 +7,6 @@
 
 import { module, test } from 'qunit';
 import TEST_CASES from './test-cases';
-import { EditorStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
-import {
-  isElement,
-  isTextNode,
-  tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
 import {
   SAMPLE_PLUGINS,
   SAMPLE_SCHEMA,
@@ -21,37 +15,7 @@ import {
 //@ts-expect-error graphy has no typescript definitions
 import ttl_write from '@graphy/content.ttl.write';
 import { Dataset } from '@rdfjs/types';
-import { FastDataset } from '@graphy/memory.dataset.fast';
-
-function calculateDataset(html: string) {
-  const domParser = new DOMParser();
-  const parsedHTML = domParser.parseFromString(html, 'text/html');
-  const datastore = EditorStore.fromParse<Node>({
-    parseRoot: true,
-    root: parsedHTML,
-    baseIRI: 'http://example.org',
-    tag: tagName,
-    attributes(node: Node): Record<string, string> {
-      if (isElement(node)) {
-        const result: Record<string, string> = {};
-        for (const attr of node.attributes) {
-          result[attr.name] = attr.value;
-        }
-        return result;
-      }
-      return {};
-    },
-    isText: isTextNode,
-    children(node: Node): Iterable<Node> {
-      return node.childNodes;
-    },
-    pathFromDomRoot: [],
-    textContent(node: Node): string {
-      return node.textContent || '';
-    },
-  });
-  return datastore.dataset as unknown as FastDataset;
-}
+import { calculateDataset } from 'dummy/tests/test-utils';
 
 async function toTurtle(dataset: Dataset) {
   return new Promise<string>((resolve, reject) => {

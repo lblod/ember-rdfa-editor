@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "10.8.0",
+  "version": "10.9.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -122,10 +122,10 @@
     "@ember/test-helpers": "^2.9.4",
     "@embroider/test-setup": "^3.0.3",
     "@glimmer/component": "^1.1.2",
-    "@glint/core": "~1.4.0",
-    "@glint/environment-ember-loose": "~1.4.0",
-    "@glint/environment-ember-template-imports": "~1.4.0",
-    "@glint/template": "~1.4.0",
+    "@glint/core": "~1.5.0",
+    "@glint/environment-ember-loose": "~1.5.0",
+    "@glint/environment-ember-template-imports": "~1.5.0",
+    "@glint/template": "~1.5.0",
     "@graphy/content.ttl.write": "^4.3.7",
     "@playwright/test": "^1.45.0",
     "@rdfjs/types": "^1.1.0",
@@ -215,8 +215,8 @@
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^3.4.2",
-    "@glint/template": "^1.4.0",
     "@floating-ui/dom": "^1.6.0",
+    "@glint/template": "^1.4.0",
     "ember-changeset": "^4.1.2",
     "ember-cli-sass": "^11.0.1",
     "ember-intl": "^6.4.0 || ^7.0.2",
@@ -240,7 +240,8 @@
   "overrides": {},
   "pnpm": {
     "overrides": {
-      "babel-plugin-ember-template-compilation": "^2.2.5"
+      "babel-plugin-ember-template-compilation": "^2.2.5",
+      "content-tag": "2.0.1"
     },
     "patchedDependencies": {
       "ember-source@4.12.0": "patches/ember-source@4.12.0.patch"

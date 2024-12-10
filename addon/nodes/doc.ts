@@ -2,8 +2,7 @@ import type { AttributeSpec } from 'prosemirror-model';
 import type SayNodeSpec from '../core/say-node-spec';
 import { isElement } from '../utils/_private/dom-helpers';
 import {
-  findRdfaHiddenElements,
-  getRdfaAttrs,
+  getRdfaAwareDocAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
@@ -66,24 +65,14 @@ export const docWithConfig = ({
               extraAttrs[attr] = node.getAttribute(attr);
             });
             if (rdfaAware) {
-              const extraProps = [];
               if (hasResourceImports) {
                 extraAttrs[IMPORTED_RESOURCES_ATTR] = jsonParse(
                   node.getAttribute(IMPORTED_RESOURCES_ATTR),
                 );
-                const hidden = findRdfaHiddenElements(node);
-                if (hidden) {
-                  for (const hid of hidden) {
-                    const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
-                      rdfaAware: true,
-                    });
-                    if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
-                      extraProps.push(...hiddenRdfaAttrs.properties);
-                    }
-                  }
-                }
               }
-              const rdfaAttrs = getRdfaAttrs(node, { rdfaAware: true });
+              const rdfaAttrs = getRdfaAwareDocAttrs(node, {
+                hasResourceImports,
+              });
               return {
                 ...extraAttrs,
                 lang: node.getAttribute('lang'),
@@ -92,7 +81,6 @@ export const docWithConfig = ({
                   ...(rdfaAttrs && 'properties' in rdfaAttrs
                     ? rdfaAttrs.properties
                     : []),
-                  ...extraProps,
                 ],
               };
             } else {

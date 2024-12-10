@@ -4,6 +4,7 @@ import { PNode } from '@lblod/ember-rdfa-editor/index';
 import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
+  FullTriple,
   IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
@@ -15,7 +16,18 @@ import {
   getBacklinks,
 } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { sayDataFactory } from './say-data-factory';
+import {
+  sayDataFactory,
+  type SayTerm,
+  type WithoutEquals,
+} from './say-data-factory';
+import {
+  fullLiteralSpan,
+  incomingTripleSpan,
+  literalSpan,
+  namedNodeSpan,
+} from './schema/_private/render-rdfa-attrs';
+import { IllegalArgumentError } from '../utils/_private/errors';
 
 // const logger = createLogger('core/schema');
 
@@ -46,6 +58,7 @@ const classicRdfaAttrSpec = {
 const rdfaAwareAttrSpec = {
   properties: { default: [] },
   backlinks: { default: [] },
+  externalTriples: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
@@ -94,19 +107,13 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     return false;
   }
   const __rdfaId = node.getAttribute('__rdfaId') ?? uuidv4();
-  let backlinks: IncomingTriple[];
+  let backlinks: IncomingTriple[] = [];
   if (node.dataset['incomingProps']) {
-    backlinks = JSON.parse(node.dataset['incomingProps'], (key, value) => {
-      if (key === 'object' || key === 'subject') {
-        return sayDataFactory.fromTerm(value);
-      } else {
-        return value;
-      }
-    }) as IncomingTriple[];
-  } else {
-    backlinks = [];
+    backlinks = JSON.parse(
+      node.dataset['incomingProps'],
+      jsonToTerm,
+    ) as IncomingTriple[];
   }
-
   if (rdfaNodeType === 'literal') {
     return {
       rdfaNodeType: 'literal',
@@ -120,26 +127,89 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
         `Node with rdfaNodeType 'resource' does not provide a subject`,
       );
     }
-    let properties: OutgoingTriple[];
+    let properties: OutgoingTriple[] = [];
     if (node.dataset['outgoingProps']) {
-      properties = JSON.parse(node.dataset['outgoingProps'], (key, value) => {
-        if (key === 'object' || key === 'subject') {
-          return sayDataFactory.fromTerm(value);
-        } else {
-          return value;
-        }
-      }) as OutgoingTriple[];
-    } else {
-      properties = [];
+      properties = JSON.parse(
+        node.dataset['outgoingProps'],
+        jsonToTerm,
+      ) as OutgoingTriple[];
     }
+    let externalTriples: FullTriple[] = [];
+    if (node.dataset['externalTriples']) {
+      externalTriples = JSON.parse(node.dataset['externalTriples'], jsonToTerm);
+    }
+
     return {
       rdfaNodeType: 'resource',
       subject,
       __rdfaId,
       backlinks,
+      externalTriples,
       properties,
     };
   }
+}
+
+function jsonToTerm(key: string, value: WithoutEquals<SayTerm>) {
+  if (key === 'object' || key === 'subject') {
+    return sayDataFactory.fromTerm(value);
+  } else {
+    return value;
+  }
+}
+export function getRdfaAwareDocAttrs(
+  node: HTMLElement,
+  { hasResourceImports = false } = {},
+) {
+  if (!node.dataset['sayDocument']) {
+    throw new IllegalArgumentError('node is not a doc node');
+  }
+
+  let backlinks: IncomingTriple[] = [];
+  if (node.dataset['incomingProps']) {
+    backlinks = JSON.parse(
+      node.dataset['incomingProps'],
+      jsonToTerm,
+    ) as IncomingTriple[];
+  }
+
+  let properties: OutgoingTriple[] = [];
+  if (node.dataset['outgoingProps']) {
+    properties = JSON.parse(
+      node.dataset['outgoingProps'],
+      jsonToTerm,
+    ) as OutgoingTriple[];
+  }
+  if (hasResourceImports) {
+    const hidden = findRdfaHiddenElements(node);
+    if (hidden) {
+      const imports = new Map<string, OutgoingTriple[]>();
+      for (const hid of hidden) {
+        const hiddenRdfaAttrs = getRdfaAttrs(hid as HTMLElement, {
+          rdfaAware: true,
+        });
+        // Since 'getRdfaAttrs' returns the properties for the resource URI, not the node, it
+        // actually gives us *all* of the properties for each hidden element. We need to
+        // de-duplicate these so we only get each set once, per imported resource.
+        // It might make more sense to do this in the rdfa-processor, e.g. in the preprocessRDFa()
+        // function
+        if (hiddenRdfaAttrs && 'properties' in hiddenRdfaAttrs) {
+          imports.set(hiddenRdfaAttrs.subject, hiddenRdfaAttrs.properties);
+        }
+      }
+      properties.push(...[...imports.values()].flat());
+    }
+  }
+  let externalTriples: FullTriple[] = [];
+  if (node.dataset['externalTriples']) {
+    externalTriples = JSON.parse(node.dataset['externalTriples'], jsonToTerm);
+  }
+
+  return {
+    backlinks,
+    externalTriples,
+    properties,
+  };
 }
 
 export function getRdfaAttrs<T extends RdfaAttrConfig>(
@@ -161,6 +231,7 @@ export function getRdfaAttrs(
 export const rdfaDomAttrs = {
   'data-incoming-props': { default: [] },
   'data-outgoing-props': { default: [] },
+  'data-external-triples': { default: [] },
   'data-subject': { default: null },
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
@@ -177,6 +248,7 @@ export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
+  externalTriples?: FullTriple[];
   subject: string;
   properties: OutgoingTriple[];
 }
@@ -216,14 +288,7 @@ export function renderInvisibleRdfa(
         // the triple refers to a URI which does not have a corresponding
         // resource node
         const subject: string = unwrap(nodeOrMark.attrs['subject'] as string);
-        propElements.push([
-          'span',
-          {
-            about: subject,
-            property: predicate,
-            resource: object.value,
-          },
-        ]);
+        propElements.push(namedNodeSpan(subject, predicate, object.value));
         break;
       }
       case 'ResourceNode': {
@@ -250,57 +315,58 @@ export function renderInvisibleRdfa(
             .flatMap((subj) => getBacklinks(subj.value))
             .find((bl) => bl?.predicate === predicate);
           if (backlinkToImportedResource) {
-            propElements.push([
-              'span',
-              {
-                about: backlinkToImportedResource.subject.value,
-                property: predicate,
-                resource: object.value,
-              },
-            ]);
+            propElements.push(
+              namedNodeSpan(
+                backlinkToImportedResource.subject.value,
+                predicate,
+                object.value,
+              ),
+            );
           }
         }
         break;
       }
       case 'Literal': {
-        if (object.language?.length) {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-              lang: object.language,
-            },
-            '',
-          ]);
-        } else if (object.datatype?.value?.length) {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-              datatype: object.datatype.value,
-            },
-            '',
-          ]);
-        } else {
-          propElements.push([
-            'span',
-            {
-              property: predicate,
-              content: object.value,
-            },
-            '',
-          ]);
-        }
+        propElements.push(literalSpan(predicate, object));
         break;
       }
     }
   }
+  const externalTriples = nodeOrMark.attrs['externalTriples'] as FullTriple[];
+  if (externalTriples.length) {
+    const externalElements = [];
+    for (const fullTriple of externalTriples) {
+      switch (fullTriple.object.termType) {
+        case 'NamedNode':
+          externalElements.push(
+            namedNodeSpan(
+              fullTriple.subject.value,
+              fullTriple.predicate,
+              fullTriple.object.value,
+            ),
+          );
+          break;
+        case 'Literal':
+          externalElements.push(
+            fullLiteralSpan(
+              fullTriple.subject.value,
+              fullTriple.predicate,
+              fullTriple.object,
+            ),
+          );
+          break;
+      }
+    }
+    propElements.push([
+      'span',
+      { 'data-external-triple-container': true },
+      ...externalElements,
+    ]);
+  }
   if (nodeOrMark.attrs['rdfaNodeType'] === 'resource') {
     const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
     for (const { predicate, subject } of backlinks) {
-      propElements.push(['span', { rev: predicate, resource: subject.value }]);
+      propElements.push(incomingTripleSpan(subject.value, predicate));
     }
   }
   return [
@@ -428,7 +494,22 @@ export const findRdfaHiddenElements = (node: Node) => {
   }
   for (const child of node.children) {
     if ((child as HTMLElement).dataset['rdfaContainer']) {
-      return (child as HTMLElement).children;
+      return [...(child as HTMLElement).children].filter(
+        (child) =>
+          isElement(child) && !child.dataset['externalTripleContainer'],
+      );
+    }
+  }
+  return null;
+};
+export const findExternalElements = (node: Node) => {
+  const contentElement = findRdfaContentElement(node);
+  if (!contentElement || !isElement(contentElement)) {
+    return null;
+  }
+  for (const child of contentElement.children) {
+    if ((child as HTMLElement).dataset['externalTripleContainer']) {
+      return child as HTMLElement;
     }
   }
   return null;
