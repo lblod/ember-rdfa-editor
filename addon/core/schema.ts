@@ -174,9 +174,8 @@ export function getRdfaAwareDocAttrs(
   }
 
   let properties: OutgoingTriple[] = [];
-  let subject: string | undefined = undefined;
+  const subject = node.dataset['subject'];
   if (node.dataset['outgoingProps']) {
-    subject = node.dataset['subject'];
     properties = JSON.parse(
       node.dataset['outgoingProps'],
       jsonToTerm,
