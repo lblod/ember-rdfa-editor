@@ -289,6 +289,13 @@ export function renderInvisibleRdfa(
       case 'BlankNode': {
         // the triple refers to a URI which does not have a corresponding
         // resource node
+        if (!isSome(nodeOrMark.attrs['subject'])) {
+          console.warn(
+            'Trying to render a BlankNode with no subject, ignoring',
+            nodeOrMark.attrs,
+          );
+          break;
+        }
         const subject: string = unwrap(nodeOrMark.attrs['subject'] as string);
         propElements.push(namedNodeSpan(subject, predicate, object.value));
         break;
