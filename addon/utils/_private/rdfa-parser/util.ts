@@ -20,15 +20,14 @@ import type {
   ModelTerm,
 } from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
 
-export class ModelDataFactory<N> extends DataFactory {
+export class ModelDataFactory<N> extends DataFactory<ModelQuad<N>> {
   quad(
     subject: ModelQuadSubject<N>,
     predicate: ModelQuadPredicate<N>,
     object: ModelQuadObject<N>,
     graph: RDF.Quad_Graph,
   ): ModelQuad<N> {
-    const quad = super.quad(subject, predicate, object, graph);
-    return { ...quad, subject, predicate, object, graph };
+    return super.quad(subject, predicate, object, graph);
   }
 
   namedNode<N, I extends string = string>(
