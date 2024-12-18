@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.9.1
+
+### Patch Changes
+
+- [#1233](https://github.com/lblod/ember-rdfa-editor/pull/1233) [`b70eaa9`](https://github.com/lblod/ember-rdfa-editor/commit/b70eaa9e3681ed711c11618b771beb47dedfe50c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix crash when saving documents with subjects
+
 ## 10.9.0
 
 ### Minor Changes
