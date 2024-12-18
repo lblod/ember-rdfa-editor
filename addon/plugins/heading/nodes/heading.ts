@@ -12,6 +12,7 @@ import type { ComponentLike } from '@glint/template';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment';
 import { HEADING_ELEMENTS } from '@lblod/ember-rdfa-editor/utils/_private/constants';
 import { getHeadingLevel } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 type Config = {
   rdfaAware?: boolean;
@@ -43,6 +44,7 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
     editable: rdfaAware,
     isolating: rdfaAware,
     selectable: rdfaAware,
+    classNames: ['say-heading'],
     parseDOM: [
       {
         tag: HEADING_ELEMENTS.join(','),
@@ -81,14 +83,18 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
           renderable: node,
           attrs: {
             ...baseAttrs,
-            class: 'say-editable',
+            class: `say-editable ${getClassnamesFromNode(node)}`,
           },
           content: 0,
         });
       } else {
         return [
           `h${(level as number).toString()}`,
-          { ...baseAttrs, ...node.attrs },
+          {
+            ...baseAttrs,
+            ...node.attrs,
+            class: getClassnamesFromNode(node),
+          },
           0,
         ];
       }

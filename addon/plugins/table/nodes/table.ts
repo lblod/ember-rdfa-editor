@@ -9,6 +9,7 @@ import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
 import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
 import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 interface ExtraAttribute {
   default: unknown;
@@ -110,6 +111,12 @@ interface TableNodeOptions {
   rowBackground?: {
     even?: string;
     odd?: string;
+  };
+  classNames?: {
+    table?: [string];
+    table_row?: [string];
+    table_cell?: [string];
+    table_header?: [string];
   };
 }
 
@@ -215,6 +222,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
       content: 'table_row+',
       tableRole: 'table',
       isolating: true,
+      classNames: options.classNames?.table || ['say-table'],
       attrs: {
         ...rdfaAttrSpec({ rdfaAware: false }),
         class: { default: 'say-table' },
@@ -239,7 +247,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: 'say-table',
+            class: getClassnamesFromNode(node),
             style: constructInlineStyles(tableStyle),
           },
           ['tbody', 0],
@@ -258,7 +266,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
           'table',
           {
             ...node.attrs,
-            class: 'say-table',
+            class: getClassnamesFromNode(node),
             style: constructInlineStyles(style),
           },
           tableView.colgroupElement,
@@ -269,6 +277,7 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
     table_row: {
       content: '(table_cell | table_header)*',
       tableRole: 'row',
+      classNames: options.classNames?.table_row || ['say-table-row'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }) },
       allowGapCursor: false,
       parseDOM: [
@@ -295,20 +304,29 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         };
         return [
           'tr',
-          { ...node.attrs, style: constructInlineStyles(style) },
+          {
+            ...node.attrs,
+            style: constructInlineStyles(style),
+            class: getClassnamesFromNode(node),
+          },
           0,
         ];
       },
       toDOM(node: PNode) {
         return [
           'tr',
-          { ...node.attrs, style: constructInlineStyles(rowStyle) },
+          {
+            ...node.attrs,
+            style: constructInlineStyles(rowStyle),
+            class: getClassnamesFromNode(node),
+          },
           0,
         ];
       },
     },
     table_cell: {
       content: options.cellContent,
+      classNames: options.classNames?.table_cell || ['say-table-cell'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'cell',
       isolating: true,
@@ -325,11 +343,19 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['td', setCellAttrs(node, extraCellAttributes), 0];
+        return [
+          'td',
+          {
+            ...setCellAttrs(node, extraCellAttributes),
+            class: getClassnamesFromNode(node),
+          },
+          0,
+        ];
       },
     },
     table_header: {
       content: options.cellContent,
+      classNames: options.classNames?.table_header || ['say-table-header'],
       attrs: { ...rdfaAttrSpec({ rdfaAware: false }), ...cellAttrs },
       tableRole: 'header_cell',
       isolating: true,
@@ -345,7 +371,14 @@ export function tableNodes(options: TableNodeOptions): TableNodes {
         },
       ],
       toDOM(node) {
-        return ['th', setCellAttrs(node, extraCellAttributes), 0];
+        return [
+          'th',
+          {
+            ...setCellAttrs(node, extraCellAttributes),
+            class: getClassnamesFromNode(node),
+          },
+          0,
+        ];
       },
     },
   };
