@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 10.10.0
+
+### Minor Changes
+
+- [#1231](https://github.com/lblod/ember-rdfa-editor/pull/1231) [`b3bf25d`](https://github.com/lblod/ember-rdfa-editor/commit/b3bf25dcb62316738d3f8aa9ea840e69800e5864) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Add classNames to every node to improve customization
+
+### Patch Changes
+
+- [#1235](https://github.com/lblod/ember-rdfa-editor/pull/1235) [`e02c4c6`](https://github.com/lblod/ember-rdfa-editor/commit/e02c4c6ac2f570ec68b5d8c819e113cc3a00e30b) Thanks [@piemonkey](https://github.com/piemonkey)! - Tweak style used by active ember nodes such as snippet placeholders to have rounded corners
+
+- [#1236](https://github.com/lblod/ember-rdfa-editor/pull/1236) [`df5dd82`](https://github.com/lblod/ember-rdfa-editor/commit/df5dd8206b473aeda20f5d7c20c34150631c37cc) Thanks [@piemonkey](https://github.com/piemonkey)! - If trying to render a BlankNode with no subject, ignore it instead of crashing
+
 ## 10.9.1
 
 ### Patch Changes
