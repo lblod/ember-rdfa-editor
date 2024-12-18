@@ -48,8 +48,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 @mixin say-content() {
   // Set base font size for elements
   &,
-  ul,
-  ol,
+  .say-bullet-list,
+  .say-ordered-list,
   div {
     @include au-font-size($au-base);
     font-family: var(--au-font);
@@ -57,7 +57,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   span,
-  a {
+  .say-link {
     font-size: inherit;
   }
 
@@ -67,48 +67,60 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   h1,
   .h1 {
-    @include au-font-size($say-h1-font-size, 1.1);
-    font-family: $say-h1-font-family;
-    font-weight: $say-h1-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h1-font-size, 1.1);
+      font-family: $say-h1-font-family;
+      font-weight: $say-h1-font-weight;
+    }
   }
 
   h2,
   .h2 {
-    @include au-font-size($say-h2-font-size, 1.3);
-    font-family: $say-h2-font-family;
-    font-weight: $say-h2-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h2-font-size, 1.3);
+      font-family: $say-h2-font-family;
+      font-weight: $say-h2-font-weight;
+    }
   }
 
   h3,
   .h3 {
-    @include au-font-size($say-h3-font-size, 1.3);
-    font-family: $say-h3-font-family;
-    font-weight: $say-h3-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h3-font-size, 1.3);
+      font-family: $say-h3-font-family;
+      font-weight: $say-h3-font-weight;
+    }
   }
 
   h4,
   .h4 {
-    @include au-font-size($say-h4-font-size);
-    font-family: $say-h4-font-family;
-    font-weight: $say-h4-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h4-font-size);
+      font-family: $say-h4-font-family;
+      font-weight: $say-h4-font-weight;
+    }
   }
 
   h5,
   .h5 {
-    @include au-font-size($say-h5-font-size);
-    font-family: $say-h5-font-family;
-    font-weight: $say-h5-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h5-font-size);
+      font-family: $say-h5-font-family;
+      font-weight: $say-h5-font-weight;
+    }
   }
 
   h6,
   .h6 {
-    @include au-font-size($say-h6-font-size);
-    font-family: $say-h6-font-family;
-    font-weight: $say-h6-font-weight;
+    &.say-heading {
+      @include au-font-size($say-h6-font-size);
+      font-family: $say-h6-font-family;
+      font-weight: $say-h6-font-weight;
+    }
   }
 
-  p,
-  li {
+  .say-paragraph,
+  .say-list-item {
     &.small {
       @include au-font-size($say-small-font-size);
     }
@@ -123,17 +135,12 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Setup some margin rules
-  p,
-  ul,
-  ol,
-  table,
+  .say-paragraph,
+  .say-bullet-list,
+  .say-ordered-list,
+  .say-table,
   div,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  .say-heading {
     + * {
       margin-top: $say-typography-margin;
     }
@@ -159,28 +166,28 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     margin-left: 12rem;
   }
 
-  li > {
+  .say-list-item > {
     [data-indentation-level] {
       margin-left: 0;
     }
   }
 
   // No margin
-  li p + *,
-  li div + *,
-  p * + *,
-  p + br,
-  div + br,
-  span + br,
-  ul + br,
-  ol + br,
-  i + br,
-  br + br {
+  .say-list-item .say-paragraph + *,
+  .say-list-item div + *,
+  .say-paragraph * + *,
+  .say-paragraph + .say-hard-break,
+  div + .say-hard-break,
+  span + .say-hard-break,
+  .say-bullet-list + .say-hard-break,
+  .say-ordered-list + .say-hard-break,
+  i + .say-hard-break,
+  .say-hard-break + .say-hard-break {
     margin-top: 0;
   }
 
   // Style links
-  a {
+  .say-link {
     transition:
       color var(--au-transition),
       text-decoration var(--au-transition);
@@ -204,42 +211,72 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     }
   }
 
-  ul,
-  ol {
+  .say-bullet-list,
+  .say-ordered-list {
     padding-left: 3rem;
   }
 
   // Style lists
-  ul,
-  ul.bullet-list {
+  .say-bullet-list {
     list-style-type: initial;
 
     // Stop indenting
-    ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul {
+    .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list
+      .say-bullet-list {
       margin-left: 0;
       padding-left: 0;
     }
   }
 
-  ol,
-  ol.numbered-list {
+  .say-ordered-list {
     list-style-type: decimal;
 
-    & > li ol {
+    & > .say-list-item .say-ordered-list {
       list-style-type: inherit;
     }
 
     // Stop indenting
-    ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol ol {
+    .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list
+      .say-ordered-list {
       margin-left: 0;
       padding-left: 0;
     }
   }
 
-  ul.article-list {
+  .say-bullet-list.article-list {
     padding-left: 0;
 
-    li {
+    .say-list-item {
       margin-bottom: 1.5rem;
       list-style-type: unset;
     }
@@ -247,7 +284,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   $styles: circle, square, initial;
 
-  ul > li {
+  .say-bullet-list > .say-list-item {
     // Goes up to 18 levels deep and assigns a different style
     // to 1, 2 and 3 levels, then repeats.
     @for $i from 1 through 18 {
@@ -262,7 +299,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Style horizontal rule
-  hr {
+  .say-horizontal-rule {
     margin: 0;
     margin-top: $au-unit;
     margin-bottom: $au-unit;
@@ -296,14 +333,14 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   // Table styling
 
-  .data-table th,
-  .data-table td {
+  .data-table .say-table-header,
+  .data-table .say-table-cell {
     @include au-font-size($au-base, 1.5);
   }
 
   .data-table--lined.data-table--tight {
-    th,
-    td {
+    .say-table-header,
+    .say-table-cell {
       font-size: 1.4rem;
       padding: 0.8rem;
     }
