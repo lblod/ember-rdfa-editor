@@ -6,6 +6,7 @@ import { Velcro } from 'ember-velcro';
 import { EditorState } from '@lblod/ember-rdfa-editor';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;
@@ -34,6 +35,10 @@ export default class Link extends Component<EmberNodeArgs> {
 
   get interactive() {
     return this.node.attrs['interactive'] as boolean;
+  }
+
+  get class() {
+    return getClassnamesFromNode(this.node);
   }
 
   @action

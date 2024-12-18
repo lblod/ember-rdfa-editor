@@ -1,3 +1,4 @@
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
@@ -33,6 +34,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
     atom: true,
     defining: true,
     draggable: false,
+    classNames: ['say-pill', 'say-link'],
     get attrs() {
       const baseAttrs = {
         href: {
@@ -73,11 +75,11 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
         return renderRdfaAware({
           renderable: node,
           tag: 'a',
-          attrs,
+          attrs: { ...attrs, class: getClassnamesFromNode(node) },
           content: 0,
         });
       } else {
-        return ['a', attrs, 0];
+        return ['a', { ...attrs, class: getClassnamesFromNode(node) }, 0];
       }
     },
   };
