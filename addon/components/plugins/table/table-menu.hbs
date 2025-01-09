@@ -11,7 +11,7 @@
   {{#if this.isInTable}}
     {{#each this.tableActions as |action|}}
       <Menu.Item
-        @menuAction={{(fn this.executeAction action)}}
+        @menuAction={{fn this.executeAction action}}
         title={{action.title}}
         disabled={{not (this.canExecuteAction action)}}
       >
@@ -28,6 +28,7 @@
         <AuLabel for='editor-table-columns' class='au-u-hidden-visually'>{{t
             'ember-rdfa-editor.table.columns'
           }}</AuLabel>
+        {{! TODO Refactor to use native input }}
         <Input
           id='editor-table-columns'
           class='say-input say-input--small'
@@ -42,6 +43,7 @@
         <AuLabel for='editor-table-rows' class='au-u-hidden-visually'>{{t
             'ember-rdfa-editor.table.rows'
           }}</AuLabel>
+        {{! TODO Refactor to use native input }}
         <Input
           id='editor-table-rows'
           class='say-input say-input--small'
