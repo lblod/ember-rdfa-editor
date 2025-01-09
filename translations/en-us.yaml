@@ -89,6 +89,7 @@ ember-rdfa-editor:
     cancel: Cancel
     back: Back
     more-options: More options
+    loading: Loading
   html-editor:
     toolbar-button:
       label: Edit HTML
