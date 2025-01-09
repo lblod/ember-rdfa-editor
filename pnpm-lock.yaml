@@ -340,14 +340,14 @@ importers:
         specifier: ~4.1.2
         version: 4.1.2(@glint/template@1.5.0)(webpack@5.92.1)
       ember-cli:
-        specifier: ~5.8.0
-        version: 5.8.1(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
+        specifier: ~5.12.0
+        version: 5.12.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
       ember-cli-autoprefixer:
         specifier: ^2.0.0
         version: 2.0.0
       ember-cli-dependency-checker:
         specifier: ^3.3.2
-        version: 3.3.2(ember-cli@5.8.1(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6))
+        version: 3.3.2(ember-cli@5.12.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6))
       ember-cli-inject-live-reload:
         specifier: ^2.1.0
         version: 2.1.0
@@ -3985,8 +3985,8 @@ packages:
     resolution: {integrity: sha512-rk7GY+FmLn/2e22HsZs0Ycrz8HQ1W3Fv+2TFOuEFW9optnDXDgkntPBIl6gact/LHsfBM5RKbM3dHsIIeLgl0Q==}
     engines: {node: 10.* || >= 12.*}
 
-  ember-cli@5.8.1:
-    resolution: {integrity: sha512-rW7NFCaC02Bj52ZaI22UM43YT7gaRNLkQzBfhZYVpWW1+SMrdQXCxuPs6kqKRxqk4xauUpfCzCDFH92icq+mKg==}
+  ember-cli@5.12.0:
+    resolution: {integrity: sha512-48ZOoUZTXsav37RIYY9gyCR35yo64mhzfv5YHtTbsZZwLv/HjvTz27X0CTvkfVQaOWHYDFekxdp9ppaKz84VNA==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -5884,20 +5884,11 @@ packages:
   lodash._isiterateecall@3.0.9:
     resolution: {integrity: sha512-De+ZbrMu6eThFti/CSzhRvTKMgQToLxbij58LMfM8JnYDNSOjkjTCIaa8ixglOeGh2nyPlakbt5bJWJ7gvpYlQ==}
 
-  lodash.assignin@4.2.0:
-    resolution: {integrity: sha512-yX/rx6d/UTVh7sSVWVSIMjfnz95evAgDFdb1ZozC35I9mSFCkmzptOzevxjgbQUsc78NR44LVHWjsoMQXy9FDg==}
-
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
 
   lodash.capitalize@4.2.1:
     resolution: {integrity: sha512-kZzYOKspf8XVX5AvmQF94gQW0lejFVgb80G85bU4ZWzoJ6C03PQg3coYAUpSTpQWelrZELd3XWgHzw4Ck5kaIw==}
-
-  lodash.castarray@4.4.0:
-    resolution: {integrity: sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==}
-
-  lodash.clonedeep@4.5.0:
-    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
 
   lodash.curry@4.1.1:
     resolution: {integrity: sha512-/u14pXGviLaweY5JI0IUzgzF2J6Ne8INyzAZjImcryjgkZ+ebruBxy2/JaOOkTqScddcYtakjhSaeemV8lR0tA==}
@@ -5916,9 +5907,6 @@ packages:
 
   lodash.escaperegexp@4.1.2:
     resolution: {integrity: sha512-TM9YBvyC84ZxE3rgfefxUWiQKLilstD6k7PTGt6wfbtXF8ixIJLOL3VYyV/z+ZiPLsVxAsKAFVwWlWeb2Y8Yyw==}
-
-  lodash.find@4.6.0:
-    resolution: {integrity: sha512-yaRZoAV3Xq28F1iafWN1+a0rflOej93l1DQUejs3SZ41h2O9UJBoS9aueGjPDgAl4B6tPC0NuuchLKaDQQ3Isg==}
 
   lodash.flatten@3.0.2:
     resolution: {integrity: sha512-jCXLoNcqQRbnT/KWZq2fIREHWeczrzpTR0vsycm96l/pu5hGeAntVBG0t7GuM/2wFqmnZs3d1eGptnAH2E8+xQ==}
@@ -8039,8 +8027,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  testem@3.15.0:
-    resolution: {integrity: sha512-vI1oQsjJW4QdVaH6ZmfNErzH7nzs0KzHJluocnfvbz1XRYGJKkIMGKWfsbD8MGGJOg+uzXcEek0/2W7BmGR4ug==}
+  testem@3.15.2:
+    resolution: {integrity: sha512-mRzqZktqTCWi/rUP/RQOKXvMtuvY3lxuzBVb1xGXPnRNGMEj/1DaLGn6X447yOsz6SlWxSsZfcNuiE7fT1MOKg==}
     engines: {node: '>= 7.*'}
     hasBin: true
 
@@ -9992,7 +9980,7 @@ snapshots:
       lodash: 4.17.21
       minimatch: 3.1.2
       resolve-package-path: 4.0.3
-      semver: 7.6.2
+      semver: 7.6.3
       typescript-memoize: 1.1.1
     transitivePeerDependencies:
       - supports-color
@@ -11099,7 +11087,7 @@ snapshots:
       debug: 4.3.5
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.6.2
+      semver: 7.6.3
       tsutils: 3.21.0(typescript@5.3.3)
     optionalDependencies:
       typescript: 5.3.3
@@ -11114,7 +11102,7 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
-      semver: 7.6.2
+      semver: 7.6.3
       ts-api-utils: 1.3.0(typescript@5.3.3)
     optionalDependencies:
       typescript: 5.3.3
@@ -11131,7 +11119,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.3.3)
       eslint: 8.57.0
       eslint-scope: 5.1.1
-      semver: 7.6.2
+      semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -11145,7 +11133,7 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.3.3)
       eslint: 8.57.0
-      semver: 7.6.2
+      semver: 7.6.3
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -12477,7 +12465,7 @@ snapshots:
 
   builtins@5.1.0:
     dependencies:
-      semver: 7.6.2
+      semver: 7.6.3
 
   bundle-name@3.0.0:
     dependencies:
@@ -13009,7 +12997,7 @@ snapshots:
       postcss-modules-values: 4.0.0(postcss@8.4.39)
       postcss-value-parser: 4.2.0
       schema-utils: 3.3.0
-      semver: 7.6.2
+      semver: 7.6.3
       webpack: 5.92.1
 
   css-tree@2.3.1:
@@ -13229,7 +13217,7 @@ snapshots:
       '@one-ini/wasm': 0.1.1
       commander: 10.0.1
       minimatch: 9.0.1
-      semver: 7.6.2
+      semver: 7.6.3
 
   ee-first@1.1.1: {}
 
@@ -13278,7 +13266,7 @@ snapshots:
       mkdirp: 0.5.6
       resolve-package-path: 3.1.0
       rimraf: 2.7.1
-      semver: 7.6.2
+      semver: 7.6.3
       symlink-or-copy: 1.3.1
       typescript-memoize: 1.1.1
       walk-sync: 0.3.4
@@ -13453,10 +13441,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-cli-dependency-checker@3.3.2(ember-cli@5.8.1(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)):
+  ember-cli-dependency-checker@3.3.2(ember-cli@5.12.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)):
     dependencies:
       chalk: 2.4.2
-      ember-cli: 5.8.1(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
+      ember-cli: 5.12.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
       find-yarn-workspace-root: 1.2.1
       is-git-url: 1.0.0
       resolve: 1.22.8
@@ -13499,7 +13487,7 @@ snapshots:
       hash-for-dep: 1.5.1
       heimdalljs-logger: 0.1.10
       json-stable-stringify: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.3
       silent-error: 1.1.1
       strip-bom: 4.0.0
       walk-sync: 2.2.0
@@ -13691,7 +13679,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-cli@5.8.1(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6):
+  ember-cli@5.12.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6):
     dependencies:
       '@pnpm/find-workspace-dir': 6.0.3
       broccoli: 3.5.2
@@ -13770,7 +13758,7 @@ snapshots:
       sort-package-json: 1.57.0
       symlink-or-copy: 1.3.1
       temp: 0.9.4
-      testem: 3.15.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(lodash@4.17.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
+      testem: 3.15.2(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6)
       tiny-lr: 2.0.0
       tree-sync: 2.1.0
       walk-sync: 3.0.0
@@ -14130,7 +14118,7 @@ snapshots:
       ember-router-generator: 2.0.0
       inflection: 1.13.4
       resolve: 1.22.8
-      semver: 7.5.4
+      semver: 7.6.3
       silent-error: 1.1.1
     transitivePeerDependencies:
       - '@babel/core'
@@ -14253,7 +14241,7 @@ snapshots:
       lodash: 4.17.21
       package-json: 6.5.0
       remote-git-tags: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.3
     transitivePeerDependencies:
       - encoding
 
@@ -16270,15 +16258,9 @@ snapshots:
 
   lodash._isiterateecall@3.0.9: {}
 
-  lodash.assignin@4.2.0: {}
-
   lodash.camelcase@4.3.0: {}
 
   lodash.capitalize@4.2.1: {}
-
-  lodash.castarray@4.4.0: {}
-
-  lodash.clonedeep@4.5.0: {}
 
   lodash.curry@4.1.1: {}
 
@@ -16293,8 +16275,6 @@ snapshots:
   lodash.defaultsdeep@4.6.1: {}
 
   lodash.escaperegexp@4.1.2: {}
-
-  lodash.find@4.6.0: {}
 
   lodash.flatten@3.0.2:
     dependencies:
@@ -18664,7 +18644,7 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
-  testem@3.15.0(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(lodash@4.17.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6):
+  testem@3.15.2(babel-core@6.26.3)(debug@4.3.5)(handlebars@4.7.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(underscore@1.13.6):
     dependencies:
       '@xmldom/xmldom': 0.8.10
       backbone: 1.6.0
@@ -18679,11 +18659,7 @@ snapshots:
       glob: 7.2.3
       http-proxy: 1.18.1(debug@4.3.5)
       js-yaml: 3.14.1
-      lodash.assignin: 4.2.0
-      lodash.castarray: 4.4.0
-      lodash.clonedeep: 4.5.0
-      lodash.find: 4.6.0
-      lodash.uniqby: 4.7.0
+      lodash: 4.17.21
       mkdirp: 3.0.1
       mustache: 4.2.0
       node-notifier: 10.0.1
@@ -18722,7 +18698,6 @@ snapshots:
       - just
       - liquid-node
       - liquor
-      - lodash
       - marko
       - mote
       - nunjucks
@@ -19101,7 +19076,7 @@ snapshots:
       is-yarn-global: 0.4.1
       latest-version: 7.0.0
       pupa: 3.1.0
-      semver: 7.5.4
+      semver: 7.6.3
       semver-diff: 4.0.0
       xdg-basedir: 5.1.0
 
@@ -19156,12 +19131,12 @@ snapshots:
   validate-peer-dependencies@1.2.0:
     dependencies:
       resolve-package-path: 3.1.0
-      semver: 7.6.2
+      semver: 7.6.3
 
   validate-peer-dependencies@2.2.0:
     dependencies:
       resolve-package-path: 4.0.3
-      semver: 7.6.2
+      semver: 7.6.3
 
   validated-changeset@1.3.4:
     dependencies:
