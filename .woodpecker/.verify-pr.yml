@@ -4,29 +4,17 @@ steps:
     commands:
       - corepack enable
       - pnpm i --frozen-lockfile
-  lint-js:
+  lint:
     image: node:20-slim
     group: lint
     commands:
       - corepack enable
-      - pnpm lint:js
-  lint-hbs:
-    image: node:20-slim
-    group: lint
-    commands:
-      - corepack enable
-      - pnpm lint:hbs
-  lint-prettier:
-    image: node:20-slim
-    group: lint
-    commands:
-      - corepack enable
-      - pnpm lint:prettier
+      - pnpm lint
   test:
     image: danlynn/ember-cli:4.12.1
     commands:
       - corepack enable
-      - pnpm test:ember
+      - pnpm test
   prepack:
     image: node:20-slim
     commands:
