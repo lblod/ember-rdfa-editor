@@ -11,7 +11,9 @@
   {{yield to='top'}}
   <div class='say-container__main'>
     {{#if @loading}}
-      <AuLoader />
+      <AuLoader @hideMessage={{true}}>
+        {{t 'ember-rdfa-editor.utils.loading'}}
+      </AuLoader>
     {{/if}}
 
     <div

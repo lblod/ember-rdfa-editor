@@ -13,7 +13,7 @@
       {{#each this.styles as |style|}}
         <Menu.Item
           disabled={{this.styleIsActive style.name}}
-          @menuAction={{(fn this.setStyle style.name)}}
+          @menuAction={{fn this.setStyle style.name}}
         >
           {{#if (this.styleIsActive style.name)}}
             <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />

@@ -46,7 +46,7 @@ export default class PropertyEditorModal extends Component<Sig> {
           <OutgoingTripleForm
             id={{formId}}
             @onSubmit={{this.save}}
-            @termTypes={{(array 'NamedNode' 'Literal' 'ContentLiteral')}}
+            @termTypes={{array 'NamedNode' 'Literal' 'ContentLiteral'}}
             @triple={{@property}}
           />
         </:body>
