@@ -11,10 +11,15 @@ steps:
       - corepack enable
       - pnpm lint
   test:
-    image: danlynn/ember-cli:4.12.1
+    image: node:20-slim
     commands:
       - corepack enable
-      - pnpm test
+      - pnpm test:ember
+  test:
+    image: node:20-slim
+    commands:
+      - corepack enable
+      - pnpm test:ember-compatibility
   prepack:
     image: node:20-slim
     commands:
