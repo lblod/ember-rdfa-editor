@@ -354,35 +354,6 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
       margin-bottom: 0.5rem;
     }
   }
-
-  // Don't show certain properties
-  [property='besluit:gebeurtNa'],
-  [property='besluit:aangebrachtNa'],
-  [property='eli:language'],
-  [typeof='ext:TasklistData'],
-  [class='ext_scroll_to'],
-  [property='ext:variableState'],
-  [property='ext:idInSnippet'],
-  [property='ext:intentionUri'],
-  [typeof='ext:Variable'],
-  [property='ext:metadata'] {
-    display: none !important;
-  }
-
-  // Structures
-  [property='say:hasPart'] + [property='say:hasPart'] {
-    margin-top: $au-unit-small;
-  }
-
-  [property='say:hasPart'] [property='say:hasPart'],
-  [property='say:hasPart'] [property='eli:has_part'] {
-    margin-left: $au-unit-tiny;
-  }
-
-  [typeof='besluit:Artikel'] > [property='say:heading'],
-  [typeof='say:Article'] > [property='say:heading'] {
-    font-weight: var(--au-medium);
-  }
 }
 
 .say-content {
