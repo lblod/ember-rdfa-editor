@@ -37,7 +37,6 @@ $say-paper-box-shadow:
   }
 
   @include mq(1280px) {
-
     .say-container--paper.say-container--sidebar-right & {
       padding-right: $say-editor-sidebar-large;
     }
