@@ -31,10 +31,6 @@ The following component is an example on how you can include the editor:
   @schema={{this.schema}}
   @plugins={{this.plugins}}
   @editorOptions={{hash 
-    showToggleRdfaAnnotations="true" 
-    showRdfa="true" 
-    showRdfaHighlight="true" 
-    showRdfaHover="true" 
     showPaper="true" 
     showSidebar="true" 
     showToolbarBottom=null
@@ -186,17 +182,13 @@ It allows you to provide an object contain a series of `NodeViewConstructor` fun
 ### The `editorOptions` property
 
 This object contains a series of `string:boolean` pairs. It may contain the following entries:
-- showToggleRdfaAnnotations: Show annotations toggle switch and add rdfa annotations view
-- showRdfa: Show RDFA in the editor
 - editRdfa: Opt in to the [experimental RDFa editing mode](#experimental%3A-a-new-approach-to-handle-rdfa-in-documents)
-- showRdfaHighlight: Show Rdfa highlights
-- showRdfaHover: Show Rdfa information on hover
 - showPaper: Show the editor inside a paper like container
 - showSidebar: Show a right sidebar for plugins
 - showToolbarBottom: Display the toolbar at the bottom of the screen
 
 ### The `toolbarOptions` property
-This oject contains a series of `string:boolean` pairs.
+This object contains a series of `string:boolean` pairs.
 It may contain the following entries:
 - showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
 - showListButtons: Show list styling buttons (ordered list, unordered list)
