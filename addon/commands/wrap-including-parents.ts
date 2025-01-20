@@ -19,7 +19,7 @@ export function wrapIncludingParents(
     if (state.selection instanceof GapCursor) {
       const { $from } = state.selection;
       const contentMatch = $from.parent.contentMatchAt($from.index());
-      if(!contentMatch.matchType(nodeType)){
+      if (!contentMatch.matchType(nodeType)) {
         return false;
       }
       const node = nodeType.createAndFill(attrs);
