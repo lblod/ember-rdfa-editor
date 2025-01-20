@@ -64,8 +64,9 @@ import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import type { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
-import { getOwner } from '@ember/application';
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { getOwner } from '@ember/owner';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export default class SpaceInvisibleController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -142,7 +143,7 @@ export default class SpaceInvisibleController extends Controller {
         ordered_list_input_rule(this.schema.nodes.ordered_list),
       ],
     }),
-    emberApplication({ application: getOwner(this) }),
+    emberApplication({ application: unwrap(getOwner(this)) }),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
