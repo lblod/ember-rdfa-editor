@@ -1,0 +1,10 @@
+steps:
+  test-compat:
+    image: danlynn/ember-cli:5.12.0-node_20.18
+    commands:
+      - corepack enable
+      - pnpm i --frozen-lockfile
+      - pnpm exec ember try:one embroider-optimized --skip-cleanup=true
+when:
+  event:
+    - pull_request

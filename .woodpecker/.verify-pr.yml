@@ -15,11 +15,6 @@ steps:
     commands:
       - corepack enable
       - pnpm test:ember
-  test-compat:
-    image: danlynn/ember-cli:5.12.0-node_20.18
-    commands:
-      - corepack enable
-      - pnpm test:ember-compatibility
   prepack:
     image: node:20-slim
     commands:
