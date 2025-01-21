@@ -182,7 +182,6 @@ It allows you to provide an object contain a series of `NodeViewConstructor` fun
 ### The `editorOptions` property
 
 This object contains a series of `string:boolean` pairs. It may contain the following entries:
-- editRdfa: Opt in to the [experimental RDFa editing mode](#experimental%3A-a-new-approach-to-handle-rdfa-in-documents)
 - showPaper: Show the editor inside a paper like container
 - showSidebar: Show a right sidebar for plugins
 - showToolbarBottom: Display the toolbar at the bottom of the screen
