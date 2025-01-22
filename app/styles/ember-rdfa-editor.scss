@@ -16,6 +16,7 @@
 // VARIABLES
 
 .ProseMirror-gapcursor {
+  display: none;
   border-top: 1px solid black;
   animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
   margin-top: 0.5rem;
