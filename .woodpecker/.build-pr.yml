@@ -6,4 +6,4 @@ steps:
       dry_run: true
 when:
   event:
-    - pull_request
+    - tag
