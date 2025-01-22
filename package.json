@@ -223,7 +223,8 @@
     },
     "patchedDependencies": {
       "ember-source@5.12.0": "patches/ember-source@5.12.0.patch"
-    }
+    },
+    "allowNonAppliedPatches": true
   },
   "engines": {
     "node": "16.* || 18.* || >= 20"
