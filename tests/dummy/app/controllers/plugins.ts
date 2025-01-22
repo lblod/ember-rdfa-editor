@@ -1,4 +1,3 @@
-import { getOwner } from '@ember/application';
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
@@ -71,6 +70,8 @@ import {
   dropdownView,
 } from '../dummy-nodes';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { getOwner } from '@ember/owner';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -157,7 +158,7 @@ export default class IndexController extends Controller {
         ordered_list_input_rule(this.schema.nodes.ordered_list),
       ],
     }),
-    emberApplication({ application: getOwner(this) }),
+    emberApplication({ application: unwrap(getOwner(this)) }),
   ];
 
   @action

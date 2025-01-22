@@ -1,5 +1,21 @@
 # @lblod/ember-rdfa-editor
 
+## 10.11.0
+
+### Minor Changes
+
+- [#1237](https://github.com/lblod/ember-rdfa-editor/pull/1237) [`63d0497`](https://github.com/lblod/ember-rdfa-editor/commit/63d0497cffceea89ec827ec4c3e24ca09795943a) Thanks [@piemonkey](https://github.com/piemonkey)! - Add support for Ember 5.4+
+
+- [#1237](https://github.com/lblod/ember-rdfa-editor/pull/1237) [`13b8df9`](https://github.com/lblod/ember-rdfa-editor/commit/13b8df9995deb84416a13751c6763025fbe43d65) Thanks [@piemonkey](https://github.com/piemonkey)! - Update test app to use Ember 5.12
+
+### Patch Changes
+
+- [#1243](https://github.com/lblod/ember-rdfa-editor/pull/1243) [`162828e`](https://github.com/lblod/ember-rdfa-editor/commit/162828eea83397c380c939ca327d438a9e961000) Thanks [@piemonkey](https://github.com/piemonkey)! - Reinstate ember-source patch to prevent console warnings when running ember serve
+
+- [#1237](https://github.com/lblod/ember-rdfa-editor/pull/1237) [`ba2ee2b`](https://github.com/lblod/ember-rdfa-editor/commit/ba2ee2bf468f9cc63e3b2b56456b706744aa37c1) Thanks [@piemonkey](https://github.com/piemonkey)! - Add support for ember-power-select 8
+
+- [#1242](https://github.com/lblod/ember-rdfa-editor/pull/1242) [`a40b440`](https://github.com/lblod/ember-rdfa-editor/commit/a40b440059088807ebd247acfec73edd55b92dcf) Thanks [@elpoelma](https://github.com/elpoelma)! - Move to builtin ember.js types
+
 ## 10.10.0
 
 ### Minor Changes

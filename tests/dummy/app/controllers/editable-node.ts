@@ -62,7 +62,6 @@ import {
 import { inputRules, PNode, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
-import { getOwner } from '@ember/application';
 import {
   editableNodePlugin,
   getActiveEditableNode,
@@ -75,6 +74,8 @@ import {
   inlineRdfaWithConfig,
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
+import { getOwner } from '@ember/owner';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -160,7 +161,7 @@ export default class EditableBlockController extends Controller {
         ordered_list_input_rule(this.schema.nodes.ordered_list),
       ],
     }),
-    emberApplication({ application: getOwner(this) }),
+    emberApplication({ application: unwrap(getOwner(this)) }),
     editableNodePlugin(),
   ];
 
