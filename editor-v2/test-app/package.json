@@ -1,11 +1,11 @@
 {
   "name": "test-app",
-  "version": "0.0.0",
+  "version": "10.11.0",
   "private": true,
   "description": "Test app for ember-rdfa-editor addon",
   "repository": "",
   "license": "MIT",
-  "author": "",
+  "author": "redpencil.io",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -26,9 +26,12 @@
     "test:ember": "ember test"
   },
   "devDependencies": {
+    "@appuniversum/ember-appuniversum": "~3.4.2",
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.25.9",
     "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.7",
     "@ember-data/adapter": "~5.4.0-beta.12",
     "@ember-data/graph": "~5.4.0-beta.12",
     "@ember-data/json-api": "~5.4.0-beta.12",
@@ -49,15 +52,30 @@
     "@glint/environment-ember-loose": "^1.5.0",
     "@glint/environment-ember-template-imports": "^1.5.0",
     "@glint/template": "^1.5.0",
+    "@graphy/content.ttl.write": "^4.3.7",
+    "@playwright/test": "^1.45.0",
+    "@rdfjs/types": "^1.1.0",
+    "@release-it/keep-a-changelog": "^4.0.0",
     "@tsconfig/ember": "^3.0.8",
+    "@types/common-tags": "^1.8.4",
+    "@types/debug": "^4.1.12",
+    "@types/dompurify": "^3.0.5",
     "@types/eslint__js": "^8.42.3",
+    "@types/htmlbars-inline-precompile": "^3.0.3",
+    "@types/js-beautify": "^1.14.3",
+    "@types/node": "^20.14.9",
+    "@types/prosemirror-dev-tools": "^3.0.6",
     "@types/qunit": "^2.19.12",
+    "@types/responselike": "^1.0.3",
     "@types/rsvp": "^4.0.9",
+    "@types/sinon": "^17.0.3",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",
     "@warp-drive/core-types": "~0.0.0-beta.12",
     "broccoli-asset-rev": "^3.0.0",
     "concurrently": "^9.1.0",
+    "ember-changeset": "~4.1.2",
     "ember-auto-import": "^2.10.0",
     "ember-cli": "~6.1.0",
     "ember-cli-app-version": "^7.0.0",
@@ -68,6 +86,7 @@
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
+    "ember-intl": "~6.4.1",
     "ember-data": "~5.3.9",
     "ember-fetch": "^8.1.2",
     "ember-load-initializers": "^3.0.1",
@@ -80,6 +99,7 @@
     "ember-source-channel-url": "^3.0.0",
     "ember-template-imports": "^4.2.0",
     "ember-template-lint": "^6.0.0",
+    "ember-truth-helpers": "^4.0.3",
     "ember-try": "^3.0.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
@@ -91,8 +111,12 @@
     "loader.js": "^4.7.0",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
+    "prosemirror-dev-tools": "^4.1.0",
     "qunit": "^2.23.1",
     "qunit-dom": "^3.4.0",
+    "release-it": "^16.3.0",
+    "rimraf": "^5.0.7",
+    "sass": "^1.77.6",
     "stylelint": "^16.12.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-prettier": "^5.0.2",
@@ -106,5 +130,14 @@
   },
   "ember": {
     "edition": "octane"
-  }
+  },
+  "browserslist": [
+    "last 1 Chrome version",
+    "last 1 Firefox version",
+    "last 1 Edge version"
+  ],
+  "volta": {
+    "node": "20.11.0"
+  },
+  "packageManager": "pnpm@9.4.0"
 }
