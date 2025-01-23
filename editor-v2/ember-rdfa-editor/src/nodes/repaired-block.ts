@@ -1,5 +1,5 @@
 import type { DOMOutputSpec, Node as PNode } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, rdfaAttrSpec } from '#root';
 import type SayNodeSpec from '../core/say-node-spec';
 import { getRdfaContentElement, renderRdfaAware } from '../core/schema';
 import getClassnamesFromNode from '../utils/get-classnames-from-node';

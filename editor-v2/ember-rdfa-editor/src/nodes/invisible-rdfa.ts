@@ -1,5 +1,5 @@
-import { getRdfaAttrs, PNode, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { getRdfaAttrs, PNode, rdfaAttrSpec } from '#root';
+import { tagName } from '#root/utils/_private/dom-helpers';
 import type SayNodeSpec from '../core/say-node-spec';
 import {
   type RdfaAttrs,

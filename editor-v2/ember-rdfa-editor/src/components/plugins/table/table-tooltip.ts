@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { type Command, SayController } from '@lblod/ember-rdfa-editor';
+import { type Command, SayController } from '#root';
 import { htmlSafe } from '@ember/template';
 import SelectionTooltip from '../../_private/selection-tooltip';
 import {
@@ -21,9 +21,9 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
-import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color';
+import ColorMenu from '#root/components/plugins/table/color';
 import type { ComponentLike } from '@glint/template';
-import VerticalAlign from '@lblod/ember-rdfa-editor/components/plugins/table/vertical-align';
+import VerticalAlign from '#root/components/plugins/table/vertical-align';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { TableColumnEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-end-add';
 import { TableColumnStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-start-add';

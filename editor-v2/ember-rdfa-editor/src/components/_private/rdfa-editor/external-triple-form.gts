@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { ValidationError, object, string } from 'yup';
 import { on } from '@ember/modifier';
 import { tracked } from '@glimmer/tracking';
-import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { FullTriple } from '#root/core/rdfa-processor';
 import { localCopy } from 'tracked-toolbox';
 import { literalTermSchema, namedNodeTermSchema } from './object-term-schemas';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
@@ -13,10 +13,10 @@ import WithUniqueId from '../with-unique-id';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+} from '#root/core/say-data-factory';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
-import { type Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { type Option } from '#root/utils/_private/option';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';

@@ -1,4 +1,4 @@
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 import { type NodeSpec } from 'prosemirror-model';
 
 export const blockquote: NodeSpec = {

@@ -5,7 +5,7 @@ import {
   isRdfaAttrs,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '@lblod/ember-rdfa-editor/core/schema';
+} from '#root/core/schema';
 import type SayNodeSpec from '../core/say-node-spec';
 import type { NodeView } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces';

@@ -7,8 +7,8 @@ import {
   type Middleware,
 } from '@floating-ui/dom';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import floatingUI from '@lblod/ember-rdfa-editor/modifiers/_private/floating-ui';
+import { SayController } from '#root';
+import floatingUI from '#root/modifiers/_private/floating-ui';
 
 type Args = {
   controller: SayController;

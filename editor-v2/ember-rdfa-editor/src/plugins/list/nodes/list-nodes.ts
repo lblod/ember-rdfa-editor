@@ -2,14 +2,14 @@ import type { Node as PNode, ParseRule } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
-} from '@lblod/ember-rdfa-editor/core/schema';
+} from '#root/core/schema';
 import {
   optionMapOr,
   unwrap,
-} from '@lblod/ember-rdfa-editor/utils/_private/option';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+} from '#root/utils/_private/option';
+import type SayNodeSpec from '#root/core/say-node-spec';
+import { tagName } from '#root/utils/_private/dom-helpers';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 
 export type OrderListStyle =
   | 'decimal'

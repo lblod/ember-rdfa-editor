@@ -1,23 +1,23 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { PNode } from '#root';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/_private/node-utils';
+} from '#root/plugins/rdfa-info';
+import { isResourceNode } from '#root/utils/_private/node-utils';
 import {
   getBacklinks,
   getProperties,
   getRdfaId,
   getSubject,
   isLinkToNode,
-} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-utils';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+} from '#root/utils/_private/rdfa-utils';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import type {
   IncomingTriple,
   OutgoingTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+} from '#root/core/rdfa-processor';
+import TransformUtils from '#root/utils/_private/transform-utils';
 
 /**
  * Returns nodes from the oldState that are not in the newState

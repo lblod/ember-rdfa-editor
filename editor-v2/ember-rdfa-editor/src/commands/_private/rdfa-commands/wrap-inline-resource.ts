@@ -4,10 +4,10 @@ import {
   findNodeByRdfaId,
   generateNewUri,
   getRdfaChildren,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+} from '#root/utils/rdfa-utils';
 import { wrapSelection } from '../../wrap-selection';
 import { addProperty } from '../../rdfa-commands/add-property';
-import type { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { LinkTriple } from '#root/core/rdfa-processor';
 
 export function wrapInlineResource(
   args: { uriBase: string } | { existingUri: string },

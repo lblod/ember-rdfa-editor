@@ -1,11 +1,11 @@
 import type { Attrs, MarkType } from 'prosemirror-model';
 import type { Command, TextSelection } from 'prosemirror-state';
-import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
+import { shallowEqual } from '#root/utils/_private/object-utils';
 import {
   fromToWithoutEdgeSpaces,
   markApplies,
   selectionHasMarkEverywhere,
-} from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
+} from '#root/utils/_private/mark-utils';
 
 /**
  * Adapted from https://github.com/ProseMirror/prosemirror-commands/blob/7635496296b2e561a5893b03154bd89c127a6972/src/commands.ts#L579

@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import type SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
+import { EditorState, PNode } from '#root';
+import SayEditor from '#root/core/say-editor';
+import type SayMarkSpec from '#root/core/say-mark-spec';
+import type SayNodeSpec from '#root/core/say-node-spec';
 import {
   type DOMOutputSpec,
   DOMSerializer,

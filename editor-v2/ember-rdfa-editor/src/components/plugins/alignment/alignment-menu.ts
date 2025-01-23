@@ -1,12 +1,12 @@
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '#root';
 import {
   ALIGNMENT_OPTIONS,
   type AlignmentOption,
   DEFAULT_ALIGNMENT,
-} from '@lblod/ember-rdfa-editor/plugins/alignment';
-import { setAlignment } from '@lblod/ember-rdfa-editor/plugins/alignment/commands';
+} from '#root/plugins/alignment';
+import { setAlignment } from '#root/plugins/alignment/commands';
 import IntlService from 'ember-intl/services/intl';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
@@ -15,7 +15,7 @@ import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils';
 
 type Args = {
   controller?: SayController;

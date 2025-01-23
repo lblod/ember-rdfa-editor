@@ -5,25 +5,25 @@ import {
   type QuadNodes,
   type RdfaParseConfig,
   RdfaParser,
-} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
+} from '#root/utils/_private/rdfa-parser/rdfa-parser';
 import {
   type ConciseTerm,
   conciseToRdfjs,
   type TermConverter,
-} from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string';
-import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa';
-import { ResultSet } from '@lblod/ember-rdfa-editor/utils/_private/datastore/result-set';
-import { TermMapping } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-mapping';
+} from '#root/utils/_private/concise-term-string';
+import { defaultPrefixes } from '#root/config/rdfa';
+import { ResultSet } from '#root/utils/_private/datastore/result-set';
+import { TermMapping } from '#root/utils/_private/datastore/term-mapping';
 import {
   isPrimitive,
   type ObjectSpec,
   type PredicateSpec,
   type SubjectSpec,
-} from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-spec';
+} from '#root/utils/_private/datastore/term-spec';
 import { GraphyDataset } from './graphy-dataset';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { unwrap } from '#root/utils/_private/option';
 import { TwoWayMap } from '../map-utils';
-import type { IncomingLiteralNodeTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { IncomingLiteralNodeTriple } from '#root/core/rdfa-processor';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;

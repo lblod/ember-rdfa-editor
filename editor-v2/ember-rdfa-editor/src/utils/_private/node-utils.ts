@@ -1,4 +1,4 @@
-import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
+import { PNode, ResolvedPos } from '#root';
 
 export function getGroups(node: PNode) {
   return node.type.spec.group?.split(' ') ?? [];

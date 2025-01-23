@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import { SayNamedNode } from './named-node';
-import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import type { Option } from '#root/utils/_private/option';
 import type { SayTerm } from '.';
 
 /**

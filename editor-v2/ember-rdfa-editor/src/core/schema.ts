@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
-import { PNode } from '@lblod/ember-rdfa-editor/index';
+import { PNode } from '#root/index';
 import { isSome, unwrap } from '../utils/_private/option';
 import type {
   ContentTriple,
@@ -9,13 +9,13 @@ import type {
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
+import { isElement } from '#root/utils/_private/dom-helpers';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
 import {
   findNodesBySubject,
   getBacklinks,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+} from '#root/utils/rdfa-utils';
+import { type ResolvedPNode } from '#root/utils/_private/types';
 import {
   sayDataFactory,
   type SayTerm,

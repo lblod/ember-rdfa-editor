@@ -3,10 +3,10 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '@lblod/ember-rdfa-editor/utils/ember-node';
-import Image from '@lblod/ember-rdfa-editor/components/plugins/image/node';
+} from '#root/utils/ember-node';
+import Image from '#root/components/plugins/image/node';
 import { Node as PNode } from 'prosemirror-model';
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'image',

@@ -4,12 +4,12 @@ import { Node as PNode, ResolvedPos, type NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
-} from '@lblod/ember-rdfa-editor/core/schema';
-import { TableView } from '@lblod/ember-rdfa-editor/plugins/table';
-import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils';
-import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+} from '#root/core/schema';
+import { TableView } from '#root/plugins/table';
+import { getPos } from '#root/utils/node-utils';
+import { constructInlineStyles } from '#root/utils/_private/html-utils';
+import type SayNodeSpec from '#root/core/say-node-spec';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 
 interface ExtraAttribute {
   default: unknown;

@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { undo } from '@lblod/ember-rdfa-editor/plugins/history';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { undo } from '#root/plugins/history';
+import SayController from '#root/core/say-controller';
 import { UndoIcon } from '@appuniversum/ember-appuniversum/components/icons/undo';
 
 type Args = {

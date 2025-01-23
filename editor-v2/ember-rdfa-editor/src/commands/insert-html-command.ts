@@ -2,10 +2,10 @@ import type { Command } from 'prosemirror-state';
 import {
   getPathFromRoot,
   isTextNode,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
-import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing';
-import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing';
+import { preprocessRDFa } from '#root/core/rdfa-processor';
 import { PNode } from '..';
 
 export function insertHtml(

@@ -3,17 +3,17 @@ import Component from '@glimmer/component';
 import {
   createLogger,
   type Logger,
-} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+} from '#root/utils/_private/logging-utils';
 import { tracked } from 'tracked-built-ins';
 import SayEditor, {
   type PluginConfig,
-} from '@lblod/ember-rdfa-editor/core/say-editor';
+} from '#root/core/say-editor';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { getOwner } from '@ember/application';
 import type Owner from '@ember/owner';
-import type { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute-value-generation';
+import SayController from '#root/core/say-controller';
 import type { KeymapOptions } from '../core/keymap';
 import { deprecate } from '@ember/debug';
 

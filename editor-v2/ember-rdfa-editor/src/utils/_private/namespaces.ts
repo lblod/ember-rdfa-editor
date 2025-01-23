@@ -1,4 +1,4 @@
-import { namespace } from '@lblod/ember-rdfa-editor/utils/namespace';
+import { namespace } from '#root/utils/namespace';
 
 export const SKOS = namespace('http://www.w3.org/2004/02/skos/core#', 'skos');
 export const RDF = namespace(

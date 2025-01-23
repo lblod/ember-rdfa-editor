@@ -1,13 +1,13 @@
 // Shelved for now
 // import Component from '@glimmer/component';
 // import { tracked } from '@glimmer/tracking';
-// import { SayController } from '@lblod/ember-rdfa-editor';
+// import { SayController } from '#root';
 // import {
 //   clearBacklinks,
 //   clearProperties,
-// } from '@lblod/ember-rdfa-editor/commands/rdfa-commands';
-// import { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-// import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
+// } from '#root/commands/rdfa-commands';
+// import { ResolvedPNode } from '#root/utils/_private/types';
+// import { isResourceNode } from '#root/utils/node-utils';
 // import { v4 as uuidv4 } from 'uuid';
 // type Args = {
 //   node: ResolvedPNode;

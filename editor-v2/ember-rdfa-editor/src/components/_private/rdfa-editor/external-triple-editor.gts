@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import type SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import type SayController from '#root/core/say-controller';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -9,11 +9,11 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import WithUniqueId from '../with-unique-id';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import { tracked } from '@glimmer/tracking';
-import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import type { FullTriple } from '#root/core/rdfa-processor';
 import ExternalTripleForm from './external-triple-form';
-import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
+import { transformExternalTriples } from '#root/utils/external-triple-utils';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
@@ -23,7 +23,7 @@ import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import {
   isSome,
   type Option,
-} from '@lblod/ember-rdfa-editor/utils/_private/option';
+} from '#root/utils/_private/option';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 interface EditModalSig {

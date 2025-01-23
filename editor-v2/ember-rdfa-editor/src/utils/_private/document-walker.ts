@@ -1,4 +1,4 @@
-import { PNode, ResolvedPos } from '@lblod/ember-rdfa-editor';
+import { PNode, ResolvedPos } from '#root';
 
 /**
  * Find a position between nodes that passes a predicate test in document order.

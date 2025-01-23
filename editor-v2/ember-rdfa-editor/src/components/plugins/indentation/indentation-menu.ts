@@ -1,9 +1,9 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { liftListItem, sinkListItem } from 'prosemirror-schema-list';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SayController from '#root/core/say-controller';
 import { chainCommands } from 'prosemirror-commands';
-import { indentNode } from '@lblod/ember-rdfa-editor/commands';
+import { indentNode } from '#root/commands';
 import { ReverseIndentIcon } from '@appuniversum/ember-appuniversum/components/icons/reverse-indent';
 import { IndentIcon } from '@appuniversum/ember-appuniversum/components/icons/indent';
 

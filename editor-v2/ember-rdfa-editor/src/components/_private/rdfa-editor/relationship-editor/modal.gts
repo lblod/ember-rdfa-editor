@@ -7,8 +7,8 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import type RdfaRelationshipEditor from './index';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { SayController } from '#root';
+import type { OutgoingTriple } from '#root/core/rdfa-processor';
 import OutgoingTripleForm from '../outgoing-triple-form';
 
 type Sig = {

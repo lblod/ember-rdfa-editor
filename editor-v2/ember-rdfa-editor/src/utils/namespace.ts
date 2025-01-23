@@ -1,7 +1,7 @@
 import {
   sayDataFactory,
   type SayNamedNode,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+} from '#root/core/say-data-factory';
 import { isRdfaAttrs, type RdfaAttrs } from '../core/schema';
 import type { Attrs } from 'prosemirror-model';
 import type { OutgoingTriple } from '../core/rdfa-processor';

@@ -1,4 +1,4 @@
-import { AssertionError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
+import { AssertionError } from '#root/utils/_private/errors';
 
 export type None = null | undefined;
 export type Option<A> = A | None;

@@ -15,14 +15,14 @@ import {
   type RdfaProfile,
 } from './rdfa-profile';
 import { Util } from './util';
-import { CustomError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
+import { CustomError } from '#root/utils/_private/errors';
 import {
   isElement,
   isTextNode,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils';
-import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/_private/datastore/graphy-dataset';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+} from '#root/utils/_private/dom-helpers';
+import MapUtils from '#root/utils/_private/map-utils';
+import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset';
+import { unwrap } from '#root/utils/_private/option';
 import {
   type RdfaContentNodeMap,
   type RdfaResourceNodeMap,
@@ -33,7 +33,7 @@ import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+} from '#root/core/say-data-factory';
 import { LANG_STRING } from '../constants';
 
 export type ModelTerm<N> =

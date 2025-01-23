@@ -3,16 +3,16 @@ import {
   getRdfaAttrs,
   getRdfaContentElement,
   renderRdfaAware,
-} from '@lblod/ember-rdfa-editor/core/schema';
-import { rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
-import { optionMapOr } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import NumberEditor from '@lblod/ember-rdfa-editor/components/_private/number-editor';
+} from '#root/core/schema';
+import { rdfaAttrSpec } from '#root';
+import { optionMapOr } from '#root/utils/_private/option';
+import type SayNodeSpec from '#root/core/say-node-spec';
+import NumberEditor from '#root/components/_private/number-editor';
 import type { ComponentLike } from '@glint/template';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment';
-import { HEADING_ELEMENTS } from '@lblod/ember-rdfa-editor/utils/_private/constants';
-import { getHeadingLevel } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+import { HEADING_ELEMENTS } from '#root/utils/_private/constants';
+import { getHeadingLevel } from '#root/utils/_private/html-utils';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 
 type Config = {
   rdfaAware?: boolean;

@@ -3,8 +3,8 @@ import {
   PNode,
   ProsePlugin,
   Transaction,
-} from '@lblod/ember-rdfa-editor';
-import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
+} from '#root';
+import { changedDescendants } from '#root/utils/_private/changed-descendants';
 import type { ListPathEntry } from './nodes/list-nodes';
 
 export { toggleList } from './commands/toggle-list';

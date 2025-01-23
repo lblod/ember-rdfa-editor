@@ -1,8 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
+import { SayController } from '#root';
+import { linkToHref } from '#root/utils/_private/string-utils';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 

@@ -3,9 +3,9 @@ import {
   isDisplayedAsBlock,
   tagName,
   getWindowSelection,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers';
 import { runInDebug } from '@ember/debug';
-import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants';
+import { INVISIBLE_SPACE } from '#root/utils/_private/constants';
 
 /**
  * Awaits until just *after* the next animation frame.

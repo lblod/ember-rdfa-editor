@@ -1,4 +1,4 @@
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { PNode } from '#root';
 import { Fragment, MarkType, NodeType, Schema } from 'prosemirror-model';
 import { find as linkifyFind } from 'linkifyjs';
 

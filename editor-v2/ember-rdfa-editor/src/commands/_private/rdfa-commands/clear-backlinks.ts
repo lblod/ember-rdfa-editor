@@ -1,10 +1,10 @@
 // Shelved for now
-// import { getNodesByResource } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+// import { getNodesByResource } from '#root/plugins/rdfa-info';
 // import {
 //   getBacklinks,
 //   getProperties,
 //   getResource,
-// } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+// } from '#root/utils/rdfa-utils';
 // import { Command } from 'prosemirror-state';
 
 // type ClearBacklinksArgs = {

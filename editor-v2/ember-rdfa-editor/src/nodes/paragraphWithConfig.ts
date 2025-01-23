@@ -1,5 +1,5 @@
-import { getRdfaAttrs, type NodeSpec } from '@lblod/ember-rdfa-editor';
-import { NON_BLOCK_NODES } from '@lblod/ember-rdfa-editor/utils/_private/constants';
+import { getRdfaAttrs, type NodeSpec } from '#root';
+import { NON_BLOCK_NODES } from '#root/utils/_private/constants';
 import { optionMapOr } from '../utils/_private/option';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment';
 import getClassnamesFromNode from '../utils/get-classnames-from-node';

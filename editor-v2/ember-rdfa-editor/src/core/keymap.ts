@@ -6,7 +6,7 @@ import {
 } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { toggleMarkAddFirst } from '#root/commands/toggle-mark-add-first';
 import {
   chainCommands,
   createParagraphNear,
@@ -28,7 +28,7 @@ import {
   selectNodeBackward,
   selectNodeForward,
   selectBlockRdfaNode,
-} from '@lblod/ember-rdfa-editor/commands';
+} from '#root/commands';
 import selectParentNodeOfType from '../commands/select-parent-node-of-type';
 import { hasParentNodeOfType } from '@curvenote/prosemirror-utils';
 import { undoInputRule } from 'prosemirror-inputrules';

@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '#root';
 
 type Args = {
   controller?: SayController;

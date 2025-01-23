@@ -4,7 +4,7 @@ import {
   Node,
   Schema,
   type Attrs,
-} from '@lblod/ember-rdfa-editor';
+} from '#root';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 

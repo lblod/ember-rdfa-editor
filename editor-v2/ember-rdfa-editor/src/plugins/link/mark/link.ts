@@ -1,5 +1,5 @@
 import type { MarkSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrSpec } from '@lblod/ember-rdfa-editor';
+import { getRdfaAttrs, rdfaAttrSpec } from '#root';
 
 /**
  * @deprecated use the `link` node-spec instead

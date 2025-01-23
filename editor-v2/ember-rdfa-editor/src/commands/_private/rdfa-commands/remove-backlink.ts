@@ -1,15 +1,15 @@
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+} from '#root/plugins/rdfa-info';
+import TransformUtils from '#root/utils/_private/transform-utils';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import {
   getBacklinks,
   getProperties,
   getSubject,
   isLinkToNode,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+} from '#root/utils/rdfa-utils';
 import type { Command, Transaction } from 'prosemirror-state';
 
 type RemoveBacklinkArgs = {

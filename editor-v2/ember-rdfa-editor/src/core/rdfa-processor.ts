@@ -3,12 +3,12 @@ import {
   isElement,
   isTextNode,
   tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers';
 import {
   type default as Datastore,
   EditorStore,
   type SubAndContentPred,
-} from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore';
+} from '#root/utils/_private/datastore/datastore';
 import type { Quad } from '@rdfjs/types';
 import type { SayLiteral } from './say-data-factory';
 import type { SayNamedNode } from './say-data-factory';

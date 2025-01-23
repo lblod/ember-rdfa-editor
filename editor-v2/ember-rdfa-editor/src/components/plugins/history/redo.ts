@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { redo } from '@lblod/ember-rdfa-editor/plugins/history';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { redo } from '#root/plugins/history';
+import SayController from '#root/core/say-controller';
 import { RedoIcon } from '@appuniversum/ember-appuniversum/components/icons/redo';
 
 type Args = {

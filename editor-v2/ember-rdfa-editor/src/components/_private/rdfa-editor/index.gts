@@ -1,13 +1,13 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { NodeSelection, SayController } from '@lblod/ember-rdfa-editor';
-import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { NodeSelection, SayController } from '#root';
+import { isResourceNode } from '#root/utils/node-utils';
 import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor';
 import RdfaRelationshipEditor from './relationship-editor';
 import RdfaWrappingUtils from './wrapping-utils';
 import RemoveNode from './remove-node';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';

@@ -18,7 +18,7 @@ import type {
   ModelQuadPredicate,
   ModelQuadSubject,
   ModelTerm,
-} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser';
+} from '#root/utils/_private/rdfa-parser/rdfa-parser';
 
 export class ModelDataFactory<N> extends DataFactory {
   quad(

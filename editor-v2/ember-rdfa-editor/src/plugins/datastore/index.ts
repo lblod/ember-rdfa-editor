@@ -7,28 +7,28 @@ import {
 import {
   proseStoreFromParse,
   SayStore,
-} from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
-import { Mark, PNode, ProsePlugin, Schema } from '@lblod/ember-rdfa-editor';
+} from '#root/utils/_private/datastore/say-store';
+import { Mark, PNode, ProsePlugin, Schema } from '#root';
 import { map, objectFrom } from 'iter-tools';
-import { ProseReferenceManager } from '@lblod/ember-rdfa-editor/core/say-editor';
+import { ProseReferenceManager } from '#root/core/say-editor';
 import {
   createLogger,
   type Logger,
-} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils';
+} from '#root/utils/_private/logging-utils';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
 import {
   isElement,
   tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers';
 import {
   type Option,
   unwrap,
-} from '@lblod/ember-rdfa-editor/utils/_private/option';
-import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils';
+} from '#root/utils/_private/option';
+import ArrayUtils from '#root/utils/_private/array-utils';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
-export { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
+export { SayStore } from '#root/utils/_private/datastore/say-store';
 
 export interface TextPNode {
   children: ResolvedPNode[];

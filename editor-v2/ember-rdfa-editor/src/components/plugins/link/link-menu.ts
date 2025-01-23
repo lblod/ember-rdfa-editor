@@ -1,8 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { wrapSelection } from '@lblod/ember-rdfa-editor/commands/wrap-selection';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
+import { wrapSelection } from '#root/commands/wrap-selection';
+import { SayController } from '#root';
+import { linkToHref } from '#root/utils/_private/string-utils';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 
 type Args = {

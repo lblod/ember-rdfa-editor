@@ -30,10 +30,10 @@ import { v4 as uuidv4 } from 'uuid';
 import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
-import { NodeSelection, SayView } from '@lblod/ember-rdfa-editor';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec';
-import type { NodeSerializer } from '@lblod/ember-rdfa-editor/core/say-serializer';
+import { NodeSelection, SayView } from '#root';
+import SayController from '#root/core/say-controller';
+import type SayNodeSpec from '#root/core/say-node-spec';
+import type { NodeSerializer } from '#root/core/say-serializer';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;

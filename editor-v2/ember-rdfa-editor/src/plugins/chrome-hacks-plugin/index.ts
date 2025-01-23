@@ -3,8 +3,8 @@ import {
   DecorationSet,
   EditorState,
   ProsePlugin,
-} from '@lblod/ember-rdfa-editor';
-import { chrome } from '@lblod/ember-rdfa-editor/utils/_private/browser';
+} from '#root';
+import { chrome } from '#root/utils/_private/browser';
 
 export function chromeHacksPlugin(): ProsePlugin {
   const chromeHacksPlugin = new ProsePlugin({

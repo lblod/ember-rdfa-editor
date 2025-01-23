@@ -2,12 +2,12 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '#root';
 import {
   clearHighlight,
   setHighlight,
-} from '@lblod/ember-rdfa-editor/plugins/highlight';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
+} from '#root/plugins/highlight';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';

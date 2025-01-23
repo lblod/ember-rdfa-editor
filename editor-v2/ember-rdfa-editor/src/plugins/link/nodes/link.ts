@@ -1,4 +1,4 @@
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
@@ -11,7 +11,7 @@ import {
   type EmberNodeConfig,
 } from '../../../utils/ember-node';
 import type { ComponentLike } from '@glint/template';
-import Link from '@lblod/ember-rdfa-editor/components/ember-node/link';
+import Link from '#root/components/ember-node/link';
 
 type LinkOptions = {
   interactive?: boolean;

@@ -1,14 +1,14 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '#root';
 import {
   wrapInlineResource,
   wrapLiteral,
   wrapResource,
-} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
+} from '#root/commands/_private/rdfa-commands';
 import WrappingModal from './modal';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import { wrapInlineLiteral } from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/wrap-inline-literal';
+import type { ResolvedPNode } from '#root/utils/_private/types';
+import { wrapInlineLiteral } from '#root/commands/_private/rdfa-commands/wrap-inline-literal';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 
 type Args = {

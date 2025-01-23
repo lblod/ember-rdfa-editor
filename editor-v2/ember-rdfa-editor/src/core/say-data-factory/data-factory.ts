@@ -9,8 +9,8 @@ import { SayQuad, type SayTerm } from '.';
 import { LiteralNodeTerm } from './prosemirror-terms/literal-node';
 import { ResourceNodeTerm } from './prosemirror-terms/resource-node';
 import { ContentLiteralTerm } from './prosemirror-terms/content-literal';
-import { LANG_STRING } from '@lblod/ember-rdfa-editor/utils/_private/constants';
-import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { LANG_STRING } from '#root/utils/_private/constants';
+import type { Option } from '#root/utils/_private/option';
 
 export type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;
 let dataFactoryCounter = 0;

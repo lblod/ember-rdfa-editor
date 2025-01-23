@@ -1,5 +1,5 @@
 import type { ComponentLike } from '@glint/template';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { PNode } from '#root';
 import type { NodeSpec } from 'prosemirror-model';
 import type { NodeSerializer } from './say-serializer';
 

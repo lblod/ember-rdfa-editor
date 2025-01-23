@@ -1,13 +1,13 @@
-import { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store';
+import { SayStore } from '#root/utils/_private/datastore/say-store';
 import type Owner from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { shallowEqual } from '@lblod/ember-rdfa-editor/utils/_private/object-utils';
-import { datastoreKey } from '@lblod/ember-rdfa-editor/plugins/datastore';
-import { selectionHasMarkEverywhere } from '@lblod/ember-rdfa-editor/utils/_private/mark-utils';
+import { unwrap } from '#root/utils/_private/option';
+import { shallowEqual } from '#root/utils/_private/object-utils';
+import { datastoreKey } from '#root/plugins/datastore';
+import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils';
 import SayView, {
   type SetHtmlOptions,
-} from '@lblod/ember-rdfa-editor/core/say-view';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
+} from '#root/core/say-view';
+import SayEditor from '#root/core/say-editor';
 import { tracked } from '@glimmer/tracking';
 import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
@@ -16,7 +16,7 @@ import {
   Selection,
   Transaction,
 } from 'prosemirror-state';
-import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import { htmlToDoc } from '#root/utils/_private/html-utils';
 
 export default class SayController {
   @tracked

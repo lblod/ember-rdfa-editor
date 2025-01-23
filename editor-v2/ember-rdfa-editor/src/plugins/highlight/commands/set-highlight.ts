@@ -1,5 +1,5 @@
 import type { Command } from 'prosemirror-state';
-import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first';
+import { toggleMarkAddFirst } from '#root/commands/toggle-mark-add-first';
 
 export function setHighlight(color: string): Command {
   return function (state, dispatch) {

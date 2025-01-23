@@ -1,12 +1,12 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
-import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils';
+import type { EmberNodeArgs } from '#root/utils/ember-node';
+import { linkToHref } from '#root/utils/_private/string-utils';
 import { Velcro } from 'ember-velcro';
-import { EditorState } from '@lblod/ember-rdfa-editor';
+import { EditorState } from '#root';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
-import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;

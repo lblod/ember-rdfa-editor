@@ -3,23 +3,23 @@ import {
   Mapping,
   PNode,
   Selection,
-} from '@lblod/ember-rdfa-editor';
+} from '#root';
 import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/core/rdfa-processor';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
-import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/core/say-data-factory';
+import { isElement } from '#root/utils/_private/dom-helpers';
 import { v4 as uuidv4 } from 'uuid';
 import type { ResolvedPNode } from './types';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+} from '#root/plugins/rdfa-info';
 import TransformUtils from './transform-utils';
 import type {
   TransactionMonad,

@@ -6,11 +6,11 @@ import IntlService from 'ember-intl/services/intl';
 import {
   type OrderListStyle,
   toggleList,
-} from '@lblod/ember-rdfa-editor/plugins/list';
+} from '#root/plugins/list';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command } from 'prosemirror-state';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SayController from '#root/core/say-controller';
 import { OrderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/ordered-list';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 

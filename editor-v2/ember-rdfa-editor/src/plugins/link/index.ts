@@ -6,8 +6,8 @@ import {
   EditorView,
   SayView,
   Slice,
-} from '@lblod/ember-rdfa-editor';
-import linkifyFragment from '@lblod/ember-rdfa-editor/utils/_private/linkify-fragment';
+} from '#root';
+import linkifyFragment from '#root/utils/_private/linkify-fragment';
 
 export { link as linkMark } from './mark/link';
 export { link, linkView } from './nodes/link';

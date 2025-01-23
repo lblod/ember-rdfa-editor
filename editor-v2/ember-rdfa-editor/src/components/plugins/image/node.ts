@@ -27,9 +27,9 @@
  */
 
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+import type { EmberNodeArgs } from '#root/utils/ember-node';
 import { modifier } from 'ember-modifier';
-import { updateSize } from '@lblod/ember-rdfa-editor/plugins/image/utils/resize-functions';
+import { updateSize } from '#root/plugins/image/utils/resize-functions';
 
 const MIN_SURFACE = 625;
 

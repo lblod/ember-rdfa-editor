@@ -2,22 +2,22 @@ import type { Command, Transaction } from 'prosemirror-state';
 import type {
   IncomingTriple,
   OutgoingTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/core/rdfa-processor';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+} from '#root/core/say-data-factory';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+} from '#root/plugins/rdfa-info';
+import TransformUtils from '#root/utils/_private/transform-utils';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import {
   getProperties,
   isLinkToNode,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
+} from '#root/utils/rdfa-utils';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
 
 export type AddPropertyArgs = {
   /** The resource to which to add a property */

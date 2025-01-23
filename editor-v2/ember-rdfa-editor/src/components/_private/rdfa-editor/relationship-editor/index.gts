@@ -3,34 +3,34 @@ import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
-import { PNode, SayController } from '@lblod/ember-rdfa-editor';
-import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils';
+import { PNode, SayController } from '#root';
+import { isResourceNode } from '#root/utils/node-utils';
 import {
   removeBacklink,
   selectNodeByRdfaId,
   selectNodeBySubject,
-} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands';
-import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
-import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors';
+} from '#root/commands/_private/rdfa-commands';
+import { addProperty, removeProperty } from '#root/commands';
+import { NotImplementedError } from '#root/utils/_private/errors';
 import RelationshipEditorModal from './modal';
 import {
   getNodeByRdfaId,
   getSubjects,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
+} from '#root/plugins/rdfa-info';
+import type { ResolvedPNode } from '#root/utils/_private/types';
 import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/core/rdfa-processor';
 import {
   isLinkToNode,
   getBacklinks,
   getProperties,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+} from '#root/utils/rdfa-utils';
 import ContentPredicateList from './content-predicate-list';
-import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
-import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources';
+import TransformUtils from '#root/utils/_private/transform-utils';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';

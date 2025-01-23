@@ -23,8 +23,8 @@
  *  THE SOFTWARE.
  */
 
-import { NodeSelection, ResolvedPos } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { NodeSelection, ResolvedPos } from '#root';
+import { unwrap } from '#root/utils/_private/option';
 import {
   cellAround,
   CellSelection,

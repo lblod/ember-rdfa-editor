@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import type { SayController } from '@lblod/ember-rdfa-editor';
+import type { SayController } from '#root';
 import { HtmlIcon } from '@appuniversum/ember-appuniversum/components/icons/html';
 
 type Args = {

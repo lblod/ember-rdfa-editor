@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils';
+import { SayController } from '#root';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils';
 import { tracked } from 'tracked-built-ins';
 import { ImageIcon } from '@appuniversum/ember-appuniversum/components/icons/image';
 

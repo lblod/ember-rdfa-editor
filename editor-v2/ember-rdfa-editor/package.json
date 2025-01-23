@@ -20,6 +20,7 @@
     "./addon-main.js": "./addon-main.cjs"
   },
   "imports": {
+    "#root": "./src/index.ts",
     "#root/*": "./src/*"
   },
   "typesVersions": {

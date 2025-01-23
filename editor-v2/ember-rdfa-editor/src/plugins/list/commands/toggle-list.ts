@@ -1,7 +1,7 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import type { Attrs, NodeType } from 'prosemirror-model';
 import type { Command } from 'prosemirror-state';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { PNode } from '#root';
 import { wrapInList } from 'prosemirror-schema-list';
 import { liftOutOfNestedLists } from './lift-out-of-nested-lists';
 

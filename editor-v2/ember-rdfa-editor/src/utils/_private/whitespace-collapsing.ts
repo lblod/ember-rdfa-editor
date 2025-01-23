@@ -1,6 +1,6 @@
-import { NON_BREAKING_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants';
-import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import { PHRASING_CONTENT } from '@lblod/ember-rdfa-editor/utils/_private/constants';
+import { NON_BREAKING_SPACE } from '#root/utils/_private/constants';
+import { tagName } from '#root/utils/_private/dom-helpers';
+import { PHRASING_CONTENT } from '#root/utils/_private/constants';
 
 /**
  * utility function to convert text content styled using `white-space: pre-wrap`

@@ -6,7 +6,7 @@ import {
 } from 'prosemirror-state';
 import type { Attrs, NodeSpec, NodeType } from '..';
 import { ContentMatch, Node as PNode } from 'prosemirror-model';
-import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import type { Option } from '#root/utils/_private/option';
 
 export function specCanSplit(spec: NodeSpec): boolean {
   return (spec['canSplit'] as Option<boolean>) ?? true;

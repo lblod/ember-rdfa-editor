@@ -1,13 +1,13 @@
 import { addProperty } from '../../rdfa-commands/add-property';
 import type { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
-import { wrapIncludingParents } from '@lblod/ember-rdfa-editor/commands';
+import { wrapIncludingParents } from '#root/commands';
 import {
   findNodeByRdfaId,
   generateNewUri,
   getRdfaChildren,
-} from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import type { LinkTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/utils/rdfa-utils';
+import type { LinkTriple } from '#root/core/rdfa-processor';
 
 export function wrapResource(
   args: { uriBase: string } | { existingUri: string },

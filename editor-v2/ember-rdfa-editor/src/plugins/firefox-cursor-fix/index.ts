@@ -6,8 +6,8 @@ import {
   ProsePlugin,
   SayView,
   TextSelection,
-} from '@lblod/ember-rdfa-editor';
-import { gecko } from '@lblod/ember-rdfa-editor/utils/_private/browser';
+} from '#root';
+import { gecko } from '#root/utils/_private/browser';
 
 export function firefoxCursorFix(): ProsePlugin {
   const firefoxCursorFix = new ProsePlugin({

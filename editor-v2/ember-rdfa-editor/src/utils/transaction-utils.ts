@@ -1,4 +1,4 @@
-import { EditorState, Transaction } from '@lblod/ember-rdfa-editor';
+import { EditorState, Transaction } from '#root';
 
 /**
  * A generic container for the result of a transaction monad

@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import type {
   ContentTriple,
   PlainTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/core/rdfa-processor';
 import OutgoingTripleForm from '../outgoing-triple-form';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';

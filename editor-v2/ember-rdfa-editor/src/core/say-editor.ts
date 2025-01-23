@@ -5,7 +5,7 @@ import {
   getPathFromRoot,
   isElement,
   tagName,
-} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers';
 
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
@@ -13,15 +13,15 @@ import { history } from 'prosemirror-history';
 import {
   baseKeymap,
   type KeymapOptions,
-} from '@lblod/ember-rdfa-editor/core/keymap';
+} from '#root/core/keymap';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils';
-import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager';
+import { ReferenceManager } from '#root/utils/_private/reference-manager';
 import {
   datastore,
   isElementPNode,
   type ResolvedPNode,
-} from '@lblod/ember-rdfa-editor/plugins/datastore';
+} from '#root/plugins/datastore';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste, {
   recreateUuidsOnPasteKey,
@@ -30,16 +30,16 @@ import type Owner from '@ember/owner';
 import {
   type DefaultAttrGenPuginOptions,
   defaultAttributeValueGeneration,
-} from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
-import SayView from '@lblod/ember-rdfa-editor/core/say-view';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+} from '#root/plugins/default-attribute-value-generation';
+import SayView from '#root/core/say-view';
+import SayController from '#root/core/say-controller';
+import SaySerializer from '#root/core/say-serializer';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info';
 import { gapCursor } from '../plugins/gap-cursor';
-import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import { removePropertiesOfDeletedNodes } from '#root/plugins/remove-properties-of-deleted-nodes';
 import { ProseParser } from '..';
-import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser';
-import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import HTMLInputParser from '#root/utils/_private/html-input-parser';
+import { preprocessRDFa } from '#root/core/rdfa-processor';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 

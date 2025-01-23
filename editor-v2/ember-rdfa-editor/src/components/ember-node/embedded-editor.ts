@@ -38,15 +38,15 @@ import {
   StepMap,
   TextSelection,
   Transaction,
-} from '@lblod/ember-rdfa-editor';
-import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node';
+} from '#root';
+import type { EmberNodeArgs } from '#root/utils/ember-node';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
-import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history';
-import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
+import { redo, undo } from '#root/plugins/history';
+import { isSome, unwrap } from '#root/utils/_private/option';
+import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed';
 import { Plugin } from 'prosemirror-state';
-import { embeddedEditorBaseKeymap } from '@lblod/ember-rdfa-editor/core/keymap';
+import { embeddedEditorBaseKeymap } from '#root/core/keymap';
 
 type Args = EmberNodeArgs & {
   placeholder: string;

@@ -1,16 +1,16 @@
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { SayController } from '#root';
+import { unwrap } from '#root/utils/_private/option';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal';
-import { addProperty, removeProperty } from '@lblod/ember-rdfa-editor/commands';
-import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types';
-import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils';
+import { addProperty, removeProperty } from '#root/commands';
+import type { ResolvedPNode } from '#root/utils/_private/types';
+import TransformUtils from '#root/utils/_private/transform-utils';
 import type {
   OutgoingTriple,
   PlainTriple,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+} from '#root/core/rdfa-processor';
+import { isLinkToNode } from '#root/utils/rdfa-utils';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';

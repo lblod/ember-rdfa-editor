@@ -2,21 +2,21 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { type Select } from 'ember-power-select/components/power-select';
-import { SayController } from '@lblod/ember-rdfa-editor';
+import { SayController } from '#root';
 import type {
   OutgoingTriple,
   SayTermType,
-} from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '#root/core/rdfa-processor';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+} from '#root/core/say-data-factory';
 import {
   getNodeByRdfaId,
   getSubjects,
   rdfaInfoPluginKey,
-} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+} from '#root/plugins/rdfa-info';
+import { unwrap } from '#root/utils/_private/option';
 import { localCopy } from 'tracked-toolbox';
 import { ValidationError, object, string } from 'yup';
 import {

@@ -3,7 +3,7 @@ import {
   postCleanHtml,
   cleanEmptyElements,
   cleanLinkElements,
-} from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions/index';
+} from '#root/utils/_private/ce/paste-handler-helper-functions/index';
 
 export function cleanDocx(element: HTMLElement): string {
   cleanEmptyElements(element);

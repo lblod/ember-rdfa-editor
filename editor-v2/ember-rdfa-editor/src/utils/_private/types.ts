@@ -1,4 +1,4 @@
-import { PNode } from '@lblod/ember-rdfa-editor';
+import { PNode } from '#root';
 
 export type HtmlTag = keyof HTMLElementTagNameMap;
 

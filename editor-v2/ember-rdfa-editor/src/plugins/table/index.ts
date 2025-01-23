@@ -1,4 +1,4 @@
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { unwrap } from '#root/utils/_private/option';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
 import { Node } from 'prosemirror-model';
@@ -15,7 +15,7 @@ import {
   TableView as PluginTableView,
 } from '@say-editor/prosemirror-tables';
 import { findNextCell, selectionCell } from './utils';
-import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import { constructInlineStyles } from '#root/utils/_private/html-utils';
 
 export { tableNodes } from './nodes/table';
 export { insertTable } from './commands/insertTable';
