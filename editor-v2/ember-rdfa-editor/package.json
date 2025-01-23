@@ -66,6 +66,7 @@
     "@glint/environment-ember-template-imports": "^1.4.0",
     "@glint/template": "^1.4.0",
     "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@tsconfig/ember": "^3.0.8",
     "babel-plugin-ember-template-compilation": "^2.2.5",
     "concurrently": "^9.0.1",
@@ -81,6 +82,8 @@
     "prettier-plugin-ember-template-tag": "^2.0.4",
     "rollup": "^4.22.5",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-sass": "^1.15.2",
+    "sass": "^1.83.4",
     "typescript": "~5.6.0",
     "typescript-eslint": "^8.19.1"
   },
