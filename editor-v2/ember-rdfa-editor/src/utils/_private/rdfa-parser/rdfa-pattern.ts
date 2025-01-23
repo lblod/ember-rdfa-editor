@@ -4,7 +4,7 @@
  * Copyright © 2019 Ruben Taelman
  */
 
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import type { IActiveTag } from './active-tag.ts';
 
 /**

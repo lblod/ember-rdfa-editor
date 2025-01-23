@@ -4,7 +4,7 @@
  * Copyright © 2019 Ruben Taelman
  */
 
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import { resolve } from 'relative-to-absolute-iri';
 import type { IActiveTag } from './active-tag.ts';
 import { RDFA_CONTENTTYPES, type RdfaProfile } from './rdfa-profile.ts';

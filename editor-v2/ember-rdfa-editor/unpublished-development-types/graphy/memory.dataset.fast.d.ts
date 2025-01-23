@@ -1,5 +1,5 @@
 declare module '@graphy/memory.dataset.fast' {
-  import * as RDF from '@rdfjs/types';
+  import type * as RDF from '@rdfjs/types';
   export type TermType = 'NamedNode' | 'BlankNode' | 'Literal' | 'DefaultGraph';
 
   export type AnyQuad = RDF.Quad;

@@ -3,7 +3,7 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import type { IActiveTag } from './active-tag.ts';
 import type { IHtmlParseListener } from './html-parse-listener.ts';
 import INITIAL_CONTEXT_XHTML from './initial-context-xhtml.ts';

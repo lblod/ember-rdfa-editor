@@ -1,4 +1,4 @@
-import * as RDF from '@rdfjs/types';
+import type * as RDF from '@rdfjs/types';
 import dataset, { type FastDataset } from '@graphy/memory.dataset.fast';
 import { NotImplementedError } from '#root/utils/_private/errors.ts';
 
