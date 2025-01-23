@@ -1,5 +1,14 @@
 # @lblod/ember-rdfa-editor
 
+## 10.11.1
+
+### Patch Changes
+
+- [#1245](https://github.com/lblod/ember-rdfa-editor/pull/1245) [`301aec0`](https://github.com/lblod/ember-rdfa-editor/commit/301aec0ecd6ee362ee1b1fb8f71a5c0a8dc46982) Thanks [@elpoelma](https://github.com/elpoelma)! - Improve behaviour of `wrapIncludingParents` when working with gap-cursor selections. When the selection is a gap-cursor, do not wrap around its parent, but rather simply insert a node of the given `nodeType` at that selection.
+  This ensures the behaviour of the command is similar as when it is dealing with a collapsed text-selection.
+
+- [#1244](https://github.com/lblod/ember-rdfa-editor/pull/1244) [`a087b6a`](https://github.com/lblod/ember-rdfa-editor/commit/a087b6a4a5badfab5a0dbdc73ecb520914612638) Thanks [@elpoelma](https://github.com/elpoelma)! - Hide gapcursor when editor is not focused
+
 ## 10.11.0
 
 ### Minor Changes
