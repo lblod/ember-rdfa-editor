@@ -1,0 +1,33 @@
+{{! @glint-nocheck: not typesafe yet }}
+<DummyContainer>
+  <:header>
+    <DebugTools @controller={{this.rdfaEditor}} />
+  </:header>
+  <:content>
+    <EditorContainer
+      @editorOptions={{hash
+        showRdfa='true'
+        showRdfaHighlight='true'
+        showRdfaHover='true'
+        showPaper='true'
+        showToolbarBottom=null
+      }}
+      @showRdfaBlocks={{this.showRdfaBlocks}}
+    >
+      <:top>
+        <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
+      </:top>
+      <:default>
+        <Editor
+          @plugins={{this.plugins}}
+          @schema={{this.schema}}
+          @nodeViews={{this.nodeViews}}
+          @rdfaEditorInit={{this.rdfaEditorInit}}
+        />
+      </:default>
+      <:aside>
+        <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}} />
+      </:aside>
+    </EditorContainer>
+  </:content>
+</DummyContainer>
