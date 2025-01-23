@@ -13,6 +13,7 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./webpack-config": "./webpack-config.cjs",
     "./addon-main.js": "./addon-main.cjs",
     "./commands": {
       "types": "./declarations/commands/index.d.ts",
@@ -138,7 +139,22 @@
       "types": "./declarations/plugins/text-style/index.d.ts",
       "default": "./dist/plugins/text-style/index.js"
     },
-
+    "./plugins/_private/editable-node": {
+      "types": "./declarations/plugins/_private/editable-node/index.d.ts",
+      "default": "./dist/plugins/_private/editable-node/index.js"
+    },
+    "./components/_private/rdfa-editor": {
+      "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
+      "default": "./dist/components/_private/rdfa-editor/index.js"
+    },
+    "./components/_private/attribute-editor": {
+      "types": "./declarations/components/_private/attribute-editor/index.d.ts",
+      "default": "./dist/components/_private/attribute-editor/index.js"
+    },
+    "./components/_private/debug-info": {
+      "types": "./declarations/components/_private/debug-info/index.d.ts",
+      "default": "./dist/components/_private/debug-info/index.js"
+    },
     "./*": {
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
@@ -189,13 +205,13 @@
     "@floating-ui/dom": "^1.6.5",
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "0.8.0-beta.6",
+    "@rdfjs/types": "^1.1.2",
     "@say-editor/prosemirror-invisibles": "^0.1.1",
     "@say-editor/prosemirror-tables": "^0.3.0",
-    "@rdfjs/types": "^1.1.0",
     "babel-plugin-ember-template-compilation": "^2.2.5",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.2",
-    "crypto-browserify": "^3.12.0",
+    "crypto-browserify": "^3.12.1",
     "debug": "^4.3.5",
     "decorator-transforms": "^2.2.2",
     "dompurify": "^3.1.5",
@@ -228,6 +244,7 @@
     "stream-browserify": "^3.0.0",
     "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
+    "@glint/template": "^1.4.0",
     "uuid": "^9.0.1",
     "yup": "^1.4.0"
   },
@@ -242,7 +259,6 @@
     "@glint/core": "^1.4.0",
     "@glint/environment-ember-loose": "^1.4.0",
     "@glint/environment-ember-template-imports": "^1.4.0",
-    "@glint/template": "^1.4.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-json": "^6.1.0",

@@ -7,9 +7,14 @@ module.exports = function (defaults) {
     'ember-cli-babel': { enableTypeScriptTransform: true },
     autoImport: {
       watchDependencies: ['@lblod/ember-rdfa-editor'],
+      webpack: require('@lblod/ember-rdfa-editor/webpack-config'),
     },
   });
 
   const { maybeEmbroider } = require('@embroider/test-setup');
-  return maybeEmbroider(app);
+  return maybeEmbroider(app, {
+    packagerOptions: {
+      webpackConfig: require('@lblod/ember-rdfa-editor/webpack-config'),
+    },
+  });
 };

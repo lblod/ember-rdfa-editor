@@ -5,7 +5,7 @@ import { modifier } from 'ember-modifier';
 import SayController from '#root/core/say-controller.ts';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { Velcro } from 'ember-velcro';
-import { type ComponentLike } from '@glint/template';
+import type { ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;

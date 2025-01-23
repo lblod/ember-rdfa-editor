@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { type ComponentLike } from '@glint/template';
+import type { ComponentLike } from '@glint/template';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 
 type Args = {

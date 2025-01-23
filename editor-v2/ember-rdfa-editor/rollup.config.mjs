@@ -12,16 +12,43 @@ const addon = new Addon({
   srcDir: 'src',
   destDir: 'dist',
 });
-
+const EMPTY_MODULE_ID = '$empty$';
+const EMPTY_MODULE = 'export default {}';
+const BROWSERIFY_ALIASES = {
+  // assert: 'assert',
+  // events: 'events',
+  // fs: 'memfs',
+  // module: EMPTY_MODULE_ID,
+  // path: 'path-browserify',
+  // process: 'process',
+  // util: 'util',
+  crypto: 'crypto-browserify'
+};
+const browserify = {
+  name: 'browserify',
+  resolveId(source, importer) {
+    if (source in BROWSERIFY_ALIASES) {
+      if (BROWSERIFY_ALIASES[source] === EMPTY_MODULE_ID)
+        return EMPTY_MODULE_ID;
+      return nodeResolve.resolveId(BROWSERIFY_ALIASES[source], undefined);
+    }
+    if (source === EMPTY_MODULE_ID) return EMPTY_MODULE_ID;
+  },
+  load(id) {
+    if (id === EMPTY_MODULE_ID) return EMPTY_MODULE;
+  },
+};
 export default {
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
   output: addon.output(),
 
   plugins: [
-    nodeResolve(),
+    nodeResolve({ preferBuiltins: false }),
     commonjs(),
     json(),
+    browserify,
+
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
     // By default all your JavaScript modules (**/*.js) will be importable.
@@ -34,6 +61,7 @@ export default {
       '**/*.ts',
       'index.js',
       'template-registry.js',
+      'webpack-config.js'
     ]),
 
     // These are the modules that should get reexported into the traditional

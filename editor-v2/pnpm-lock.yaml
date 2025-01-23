@@ -56,6 +56,9 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.6.5
         version: 1.6.13
+      '@glint/template':
+        specifier: ^1.4.0
+        version: 1.5.1
       '@graphy/memory.dataset.fast':
         specifier: 4.3.3
         version: 4.3.3
@@ -63,7 +66,7 @@ importers:
         specifier: 0.8.0-beta.6
         version: 0.8.0-beta.6
       '@rdfjs/types':
-        specifier: ^1.1.0
+        specifier: ^1.1.2
         version: 1.1.2
       '@say-editor/prosemirror-invisibles':
         specifier: ^0.1.1
@@ -81,7 +84,7 @@ importers:
         specifier: ^1.8.2
         version: 1.8.2
       crypto-browserify:
-        specifier: ^3.12.0
+        specifier: ^3.12.1
         version: 3.12.1
       debug:
         specifier: ^4.3.5
@@ -216,9 +219,6 @@ importers:
       '@glint/environment-ember-template-imports':
         specifier: ^1.4.0
         version: 1.5.1(@glint/environment-ember-loose@1.5.1(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.1)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.2.0(@babel/core@7.26.0)(ember-source@5.12.0(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.1)(rsvp@4.8.5)(webpack@5.97.1))))(@glint/template@1.5.1)
-      '@glint/template':
-        specifier: ^1.4.0
-        version: 1.5.1
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.26.0)(rollup@4.31.0)
