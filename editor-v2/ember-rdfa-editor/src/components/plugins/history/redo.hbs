@@ -1,0 +1,7 @@
+{{! @glint-nocheck: not typesafe yet }}
+<Toolbar::Button
+  @disabled={{this.disabled}}
+  @title={{t 'ember-rdfa-editor.redo'}}
+  @icon={{this.RedoIcon}}
+  {{on 'click' this.onClick}}
+/>

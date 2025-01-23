@@ -1,0 +1,56 @@
+{{! Shelved for now }}
+{{!-- <AuButton
+  @width="block"
+  {{on "click" this.showConfirmationDialog}}
+>
+  {{this.buttonLabel}}
+</AuButton>
+<AuModal
+  @title={{this.confirmationDialogTitle}}
+  @modalOpen={{this.showDialog}}
+  @closeModal={{this.cancelConversion}}
+  as |Modal|
+>
+
+  <Modal.Body>
+    <AuAlert
+      @title="Possible loss of data"
+      @skin="warning"
+      @icon="alert-triangle"
+    >
+      {{#if this.isResourceNode}}
+        <p>Converting this node to a content node will remove all properties and
+          relationships from this node.</p>
+      {{else}}
+        <p>Converting this node to a resource node will remove all relationships
+          from this node.</p>
+      {{/if}}
+    </AuAlert>
+
+    {{#unless this.isResourceNode}}
+      {{#let (unique-id) as |id|}}
+        <AuLabel for="id">
+          Resource
+          <AuPill>Optional</AuPill>
+        </AuLabel>
+        <AuInput
+          @width="block"
+          id={{id}}
+          @value={{this.newResource}}
+          {{on "input" this.setNewResource}}
+        />
+      {{/let}}
+    {{/unless}}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <AuButtonGroup>
+      <AuButton {{on "click" this.confirmConversion}} @skin="primary">
+        Yes
+      </AuButton>
+      <AuButton {{on "click" this.cancelConversion}} @skin="secondary">
+        No
+      </AuButton>
+    </AuButtonGroup>
+  </Modal.Footer>
+</AuModal> --}}

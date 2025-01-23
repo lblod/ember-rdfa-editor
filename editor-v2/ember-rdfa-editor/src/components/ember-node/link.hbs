@@ -1,0 +1,53 @@
+{{! @glint-nocheck: not typesafe yet }}
+<this.Velcro @placement='bottom' @offsetOptions={{hash mainAxis=3}} as |velcro|>
+  <Pill
+    class={{this.class}}
+    @skin='link'
+    title={{t 'ember-rdfa-editor.link.ctrlClickDescription'}}
+    aria-describedby='link-tooltip'
+    {{velcro.hook}}
+    {{on 'click' this.onClick}}
+  >
+    <EmberNode::EmbeddedEditor
+      @controller={{@controller}}
+      @node={{@node}}
+      @view={{@view}}
+      @getPos={{@getPos}}
+      @selected={{@selected}}
+      @onSelected={{this.onSelectEmbedded}}
+      @placeholder={{t 'ember-rdfa-editor.link.placeholder.text'}}
+      @decorations={{@decorations}}
+      @contentDecorations={{@contentDecorations}}
+      {{leave-on-enter-key this.controller @getPos}}
+    />
+  </Pill>
+  {{#if (and this.selected this.interactive)}}
+    <Pill
+      @size='small'
+      class='say-link-tooltip'
+      id='link-tooltip'
+      {{velcro.loop}}
+    >
+      <AuLinkExternal
+        href={{this.href}}
+        @skin='button-naked'
+        @icon={{this.LinkExternalIcon}}
+        title={{t 'ember-rdfa-editor.link.open'}}
+      />
+      <AuInput
+        value={{this.href}}
+        placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
+        {{on 'change' this.setHref}}
+        {{on 'focus' this.selectHref}}
+        {{leave-on-enter-key this.controller @getPos}}
+      />
+      <AuButton
+        @icon={{this.LinkBrokenIcon}}
+        @skin='naked'
+        @size='small'
+        {{on 'click' this.remove}}
+        title={{t 'ember-rdfa-editor.link.edit.uncouple'}}
+      />
+    </Pill>
+  {{/if}}
+</this.Velcro>

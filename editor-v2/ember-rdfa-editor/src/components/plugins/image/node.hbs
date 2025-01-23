@@ -1,0 +1,47 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{! template-lint-disable no-invalid-interactive }}
+<span class='say-image' {{this.setUpImageContainer}} style={{this.style}}>
+  <img
+    src={{@node.attrs.src}}
+    alt={{@node.attrs.alt}}
+    {{on 'click' @selectNode}}
+    {{this.setUpImage}}
+    style={{this.style}}
+  />
+  <div class='say-image__resizer'>
+    {{! Corner handles }}
+    <div
+      class='say-image__resize__handle say-image__resize__handle-top-left'
+      {{this.setUpHandle 'topLeft'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-top-right'
+      {{this.setUpHandle 'topRight'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-bottom-right'
+      {{this.setUpHandle 'bottomRight'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-bottom-left'
+      {{this.setUpHandle 'bottomLeft'}}
+    />
+    {{! Side handles }}
+    <div
+      class='say-image__resize__handle say-image__resize__handle-top'
+      {{this.setUpHandle 'top'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-right'
+      {{this.setUpHandle 'right'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-bottom'
+      {{this.setUpHandle 'bottom'}}
+    />
+    <div
+      class='say-image__resize__handle say-image__resize__handle-left'
+      {{this.setUpHandle 'left'}}
+    />
+  </div>
+</span>

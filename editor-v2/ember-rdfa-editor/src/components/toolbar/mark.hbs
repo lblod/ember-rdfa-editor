@@ -1,0 +1,10 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{#if @controller}}
+  <Toolbar::Button
+    @active={{this.isActive}}
+    @title={{@title}}
+    @icon={{@icon}}
+    @disabled={{not this.canToggle}}
+    {{on 'click' this.toggle}}
+  />
+{{/if}}

@@ -1,0 +1,44 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{#if @controller}}
+  <div class='say-toolbar__button'>
+    <this.Velcro
+      @placement='bottom'
+      @offsetOptions={{hash mainAxis=6}}
+      as |velcro|
+    >
+      <button
+        type='button'
+        class='main {{if @active "is-active"}}'
+        disabled={{not this.canSetColor}}
+        title={{t 'ember-rdfa-editor.table.background-color'}}
+        {{velcro.hook}}
+        {{on 'click' this.toggleDropdown}}
+        {{this.setupDropdownButton}}
+      >
+        <div
+          class='say-toolbar__table-cell-background-button'
+          style={{this.htmlSafe
+            (concat '--selected-background-color: ' this.currentColor)
+          }}
+        />
+      </button>
+
+      {{#if this.dropdownOpen}}
+        <Utils::ColorSelector
+          class='say-dropdown__menu is-visible'
+          {{velcro.loop}}
+          {{focus-trap
+            shouldSelfFocus=true
+            focusTrapOptions=(hash
+              clickOutsideDeactivates=this.clickOutsideDropdown
+            )
+          }}
+          tabindex='-1'
+          @onChange={{this.setColor}}
+          @color={{this.currentColor}}
+          @presetColors={{@presetColors}}
+        />
+      {{/if}}
+    </this.Velcro>
+  </div>
+{{/if}}

@@ -1,0 +1,28 @@
+{{! @glint-nocheck: not typesafe yet }}
+<AuPill
+  @skin='link'
+  {{on 'click' this.showModal}}
+  class='au-u-margin-tiny'
+  title='Document Language'
+>{{this.lang}}</AuPill>
+{{#if this.modalOpen}}
+  <AuModal
+    @title='Select document language'
+    @closeModal={{this.closeModal}}
+    @modalOpen={{true}}
+    @size='default'
+    as |Modal|
+  >
+    <Modal.Body>
+      <PowerSelect
+        @placeholder='Select document language'
+        @options={{this.supportedLanguages}}
+        @selected={{this.lang}}
+        @onChange={{this.setLanguage}}
+        as |lang|
+      >
+        {{lang}}
+      </PowerSelect>
+    </Modal.Body>
+  </AuModal>
+{{/if}}
