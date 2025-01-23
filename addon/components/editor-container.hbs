@@ -1,8 +1,9 @@
 <div
   class='say-container
     {{if @editorOptions.showPaper "say-container--paper"}}
+    {{unless @editorOptions.hideSidebarLeft "say-container--sidebar-left"}}
     {{if
-      (and (has-block "aside") (not @hideSidebar))
+      (and (has-block "aside") (not @editorOptions.hideSidebarRight))
       "say-container--sidebar-right"
     }}
     {{if @editorOptions.showToolbarBottom "say-container--toolbar-bottom"}}'
@@ -22,7 +23,7 @@
       {{yield}}
 
     </div>
-    {{#if (and (has-block 'aside') (not @hideSidebar))}}
+    {{#if (and (has-block 'aside') (not @editorOptions.hideSidebarRight))}}
       <div class='say-container__aside'>
         {{yield to='aside'}}
       </div>

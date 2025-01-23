@@ -7,6 +7,8 @@
 
 $say-editor-padding: $au-unit !default;
 $say-editor-background: var(--au-gray-100) !default;
+$say-editor-sidebar-left-medium: 2.4rem !default;
+$say-editor-sidebar-left-large: $au-unit-huge * 1.5 !default;
 $say-editor-sidebar-medium: 30% !default;
 $say-editor-sidebar-large: 30% !default;
 $say-paper-min-height: calc(100vh + #{$au-unit}) !default;
@@ -31,12 +33,18 @@ $say-paper-box-shadow:
   }
 
   @include mq(medium) {
+    .say-container--paper.say-container--sidebar-left & {
+      padding-left: $say-editor-sidebar-left-medium;
+    }
     .say-container--paper.say-container--sidebar-right & {
-      padding-right: $say-editor-sidebar-medium;
+      padding-right: $say-editor-sidebar-large;
     }
   }
 
   @include mq(1280px) {
+    .say-container--paper.say-container--sidebar-left & {
+      padding-left: $say-editor-sidebar-left-large;
+    }
     .say-container--paper.say-container--sidebar-right & {
       padding-right: $say-editor-sidebar-large;
     }

@@ -32,7 +32,6 @@ The following component is an example on how you can include the editor:
   @plugins={{this.plugins}}
   @editorOptions={{hash 
     showPaper="true" 
-    showSidebar="true" 
     showToolbarBottom=null
   }}
   @toolbarOptions={{hash 
@@ -163,7 +162,6 @@ The main editor component may expect the following properties:
 - `plugins`: a list of prosemirror plugins which should be enabled in the editor
 - `nodeViews`: a function which expects an argument of type `ProseController` and returns a series of prosemirror `
 - `editorOptions`: an object containing different options for the editor
-- `toolbarOptions`: an object containing different options for the editor toolbar
 
 ### The `rdfaEditorInit` property
 A function which is called on initialization of the editor. It receives an instance of a `ProseController`. This function is typically used to load documents into the editor.
@@ -183,15 +181,9 @@ It allows you to provide an object contain a series of `NodeViewConstructor` fun
 
 This object contains a series of `string:boolean` pairs. It may contain the following entries:
 - showPaper: Show the editor inside a paper like container
-- showSidebar: Show a right sidebar for plugins
 - showToolbarBottom: Display the toolbar at the bottom of the screen
-
-### The `toolbarOptions` property
-This object contains a series of `string:boolean` pairs.
-It may contain the following entries:
-- showTextStyleButtons: Show text styling buttons (bold, italic, underline, strikethrough)
-- showListButtons: Show list styling buttons (ordered list, unordered list)
-- showIndentButtons: Show indent buttons (indent, reverse indent)
+- hideSidebarLeft: Hide the sidebar to the left of the editor
+- hideSidebarRight: Hide the sidebar to the right of the editor
 
 ## The `ProseController` class
 Instances of the `ProseController` class can be used to control different aspects of the editor.

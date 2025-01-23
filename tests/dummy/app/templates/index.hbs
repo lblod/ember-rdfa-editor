@@ -5,8 +5,12 @@
   </:header>
   <:content>
     <EditorContainer
-      @editorOptions={{hash showPaper='true' showToolbarBottom=null}}
-      @hideSidebar={{true}}
+      @editorOptions={{hash
+        showPaper=true
+        showToolbarBottom=null
+        hideSidebarLeft=true
+        hideSidebarRight=true
+      }}
     >
       <:top>
         <SampleToolbarResponsive
