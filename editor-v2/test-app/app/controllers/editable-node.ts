@@ -9,7 +9,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import {
   blockRdfaWithConfig,
   docWithConfig,

@@ -55,7 +55,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
 import applyDevTools from 'prosemirror-dev-tools';

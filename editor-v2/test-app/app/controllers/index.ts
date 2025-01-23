@@ -9,7 +9,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -19,7 +19,6 @@ import {
   repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
@@ -163,7 +162,6 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent, { doNotClean: true });
-    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

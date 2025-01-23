@@ -1,5 +1,5 @@
 {
-  "name": "ember-rdfa-editor",
+  "name": "@lblod/ember-rdfa-editor",
   "version": "0.0.0",
   "description": "The default blueprint for Embroider v2 addons.",
   "keywords": [
@@ -13,11 +13,136 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./addon-main.js": "./addon-main.cjs",
+    "./commands": {
+      "types": "./declarations/commands/index.d.ts",
+      "default": "./dist/commands/index.js"
+    },
+    "./core/say-data-factory": {
+      "types": "./declarations/core/say-data-factory/index.d.ts",
+      "default": "./dist/core/say-data-factory/index.js"
+    },
+    "./core/say-data-factory/prosemirror-terms": {
+      "types": "./declarations/core/say-data-factory/prosemirror-terms/index.d.ts",
+      "default": "./dist/core/say-data-factory/prosemirror-terms/index.js"
+    },
+    "./marks": {
+      "types": "./declarations/marks/index.d.ts",
+      "default": "./dist/marks/index.js"
+    },
+    "./nodes": {
+      "types": "./declarations/nodes/index.d.ts",
+      "default": "./dist/nodes/index.js"
+    },
+    "./plugins/alignment": {
+      "types": "./declarations/plugins/alignment/index.d.ts",
+      "default": "./dist/plugins/alignment/index.js"
+    },
+    "./plugins/blockquote": {
+      "types": "./declarations/plugins/blockquote/index.d.ts",
+      "default": "./dist/plugins/blockquote/index.js"
+    },
+    "./plugins/chrome-hacks-plugin": {
+      "types": "./declarations/plugins/chrome-hacks-plugin/index.d.ts",
+      "default": "./dist/plugins/chrome-hacks-plugin/index.js"
+    },
+    "./plugins/code": {
+      "types": "./declarations/plugins/code/index.d.ts",
+      "default": "./dist/plugins/code/index.js"
+    },
+    "./plugins/color": {
+      "types": "./declarations/plugins/color/index.d.ts",
+      "default": "./dist/plugins/color/index.js"
+    },
+    "./plugins/datastore": {
+      "types": "./declarations/plugins/datastore/index.d.ts",
+      "default": "./dist/plugins/datastore/index.js"
+    },
+    "./plugins/default-attribute-value-generation": {
+      "types": "./declarations/plugins/default-attribute-value-generation/index.d.ts",
+      "default": "./dist/plugins/default-attribute-value-generation/index.js"
+    },
+    "./plugins/editable-node": {
+      "types": "./declarations/plugins/editable-node/index.d.ts",
+      "default": "./dist/plugins/editable-node/index.js"
+    },
+    "./plugins/ember-application": {
+      "types": "./declarations/plugins/ember-application/index.d.ts",
+      "default": "./dist/plugins/ember-application/index.js"
+    },
+    "./plugins/firefox-cursor-fix": {
+      "types": "./declarations/plugins/firefox-cursor-fix/index.d.ts",
+      "default": "./dist/plugins/firefox-cursor-fix/index.js"
+    },
+    "./plugins/gap-cursor": {
+      "types": "./declarations/plugins/gap-cursor/index.d.ts",
+      "default": "./dist/plugins/gap-cursor/index.js"
+    },
+    "./plugins/heading": {
+      "types": "./declarations/plugins/heading/index.d.ts",
+      "default": "./dist/plugins/heading/index.js"
+    },
+    "./plugins/highlight": {
+      "types": "./declarations/plugins/highlight/index.d.ts",
+      "default": "./dist/plugins/highlight/index.js"
+    },
+    "./plugins/history": {
+      "types": "./declarations/plugins/history/index.d.ts",
+      "default": "./dist/plugins/history/index.js"
+    },
+    "./plugins/image": {
+      "types": "./declarations/plugins/image/index.d.ts",
+      "default": "./dist/plugins/image/index.js"
+    },
+    "./plugins/imported-resources": {
+      "types": "./declarations/plugins/imported-resources/index.d.ts",
+      "default": "./dist/plugins/imported-resources/index.js"
+    },
+    "./plugins/invisibles": {
+      "types": "./declarations/plugins/invisibles/index.d.ts",
+      "default": "./dist/plugins/invisibles/index.js"
+    },
+    "./plugins/last-key-pressed": {
+      "types": "./declarations/plugins/last-key-pressed/index.d.ts",
+      "default": "./dist/plugins/last-key-pressed/index.js"
+    },
+    "./plugins/link": {
+      "types": "./declarations/plugins/link/index.d.ts",
+      "default": "./dist/plugins/link/index.js"
+    },
+    "./plugins/list": {
+      "types": "./declarations/plugins/list/index.d.ts",
+      "default": "./dist/plugins/list/index.js"
+    },
+    "./plugins/list/input_rules": {
+      "types": "./declarations/plugins/list/input_rules/index.d.ts",
+      "default": "./dist/plugins/list/input_rules/index.js"
+    },
+    "./plugins/placeholder": {
+      "types": "./declarations/plugins/placeholder/index.d.ts",
+      "default": "./dist/plugins/placeholder/index.js"
+    },
+    "./plugins/rdfa-info": {
+      "types": "./declarations/plugins/rdfa-info/index.d.ts",
+      "default": "./dist/plugins/rdfa-info/index.js"
+    },
+    "./plugins/remove-properties-of-deleted-nodes": {
+      "types": "./declarations/plugins/remove-properties-of-deleted-nodes/index.d.ts",
+      "default": "./dist/plugins/remove-properties-of-deleted-nodes/index.js"
+    },
+    "./plugins/table": {
+      "types": "./declarations/plugins/table/index.d.ts",
+      "default": "./dist/plugins/table/index.js"
+    },
+    "./plugins/text-style": {
+      "types": "./declarations/plugins/text-style/index.d.ts",
+      "default": "./dist/plugins/text-style/index.js"
+    },
+
     "./*": {
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
-    },
-    "./addon-main.js": "./addon-main.cjs"
+    }
   },
   "imports": {
     "#root": "./src/index.ts",
@@ -66,6 +191,7 @@
     "@lblod/marawa": "0.8.0-beta.6",
     "@say-editor/prosemirror-invisibles": "^0.1.1",
     "@say-editor/prosemirror-tables": "^0.3.0",
+    "@rdfjs/types": "^1.1.0",
     "babel-plugin-ember-template-compilation": "^2.2.5",
     "codemirror": "^6.0.1",
     "common-tags": "^1.8.2",
