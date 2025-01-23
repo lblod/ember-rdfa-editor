@@ -4,7 +4,7 @@ import {
   EditorState,
   ProsePlugin,
 } from '#root';
-import { chrome } from '#root/utils/_private/browser';
+import { chrome } from '#root/utils/_private/browser.ts';
 
 export function chromeHacksPlugin(): ProsePlugin {
   const chromeHacksPlugin = new ProsePlugin({

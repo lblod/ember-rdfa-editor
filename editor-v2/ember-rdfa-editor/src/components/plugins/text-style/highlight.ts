@@ -6,8 +6,8 @@ import { SayController } from '#root';
 import {
   clearHighlight,
   setHighlight,
-} from '#root/plugins/highlight';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils';
+} from '#root/plugins/highlight/index.ts';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';

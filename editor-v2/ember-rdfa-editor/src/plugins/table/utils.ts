@@ -24,7 +24,7 @@
  */
 
 import { NodeSelection, ResolvedPos } from '#root';
-import { unwrap } from '#root/utils/_private/option';
+import { unwrap } from '#root/utils/_private/option.ts';
 import {
   cellAround,
   CellSelection,

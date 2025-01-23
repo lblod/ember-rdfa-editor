@@ -1,10 +1,10 @@
 import { PNode, ProseParser } from '#root';
-import { preprocessRDFa } from '#root/core/rdfa-processor';
+import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import type { Attrs, Schema } from 'prosemirror-model';
-import HTMLInputParser from './html-input-parser';
-import { getPathFromRoot, tagName } from './dom-helpers';
+import HTMLInputParser from './html-input-parser.ts';
+import { getPathFromRoot, tagName } from './dom-helpers.ts';
 import { EditorView } from 'prosemirror-view';
-import type { HEADING_ELEMENTS } from './constants';
+import type { HEADING_ELEMENTS } from './constants.ts';
 
 export function htmlToDoc(
   html: string,

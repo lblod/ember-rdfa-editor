@@ -4,6 +4,8 @@ import { Addon } from '@embroider/addon-dev/rollup';
 
 import sassPlugin from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import * as sass from 'sass';
 
 const addon = new Addon({
@@ -18,6 +20,8 @@ export default {
 
   plugins: [
     nodeResolve(),
+    commonjs(),
+    json(),
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
     // By default all your JavaScript modules (**/*.js) will be importable.

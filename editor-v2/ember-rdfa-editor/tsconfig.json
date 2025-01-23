@@ -27,6 +27,9 @@
     */
     "noEmitOnError": false,
 
+    "noUncheckedIndexedAccess": false,
+    "strictFunctionTypes": false,
+
     /**
       https://www.typescriptlang.org/tsconfig#rootDir
       "Default: The longest common path of all non-declaration input files."

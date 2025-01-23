@@ -1,4 +1,4 @@
-import ArrayUtils from './array-utils';
+import ArrayUtils from './array-utils.ts';
 
 type HashFunction<I> = (item: I) => unknown;
 

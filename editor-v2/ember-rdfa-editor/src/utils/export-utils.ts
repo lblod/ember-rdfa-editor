@@ -1,5 +1,5 @@
-import SayController from '#root/core/say-controller';
-import { stripHtmlForPublish } from './strip-html-for-publish';
+import SayController from '#root/core/say-controller.ts';
+import { stripHtmlForPublish } from './strip-html-for-publish.ts';
 
 export function generatePageForExport(
   controller: SayController,

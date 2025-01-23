@@ -1,17 +1,17 @@
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '../../../core/schema';
+} from '../../../core/schema.ts';
 import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '../../../utils/ember-node';
+} from '../../../utils/ember-node.ts';
 import type { ComponentLike } from '@glint/template';
-import Link from '#root/components/ember-node/link';
+import Link from '#root/components/ember-node/link.ts';
 
 type LinkOptions = {
   interactive?: boolean;

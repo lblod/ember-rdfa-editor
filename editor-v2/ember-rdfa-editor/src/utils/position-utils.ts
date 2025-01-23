@@ -1,2 +1,2 @@
-export * from './_private/position-utils';
-export * from './_private/document-walker';
+export * from './_private/position-utils.ts';
+export * from './_private/document-walker.ts';

@@ -1,1 +1,1 @@
-export { inline_rdfa } from './inline-rdfa';
+export { inline_rdfa } from './inline-rdfa.ts';

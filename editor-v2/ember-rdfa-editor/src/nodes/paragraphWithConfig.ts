@@ -1,8 +1,8 @@
 import { getRdfaAttrs, type NodeSpec } from '#root';
-import { NON_BLOCK_NODES } from '#root/utils/_private/constants';
-import { optionMapOr } from '../utils/_private/option';
-import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+import { NON_BLOCK_NODES } from '#root/utils/_private/constants.ts';
+import { optionMapOr } from '../utils/_private/option.ts';
+import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment/index.ts';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 export type ParagraphDataAttributes = {
   'data-indentation-level'?: number;

@@ -1,5 +1,5 @@
-import { isComment } from './isComment';
-import { traverse } from './traverse';
+import { isComment } from './isComment.ts';
+import { traverse } from './traverse.ts';
 
 type Callback = (node: Comment) => boolean;
 

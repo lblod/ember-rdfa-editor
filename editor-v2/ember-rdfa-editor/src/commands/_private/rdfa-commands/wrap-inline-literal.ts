@@ -1,6 +1,6 @@
 import { type Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
-import { wrapSelection } from '../../wrap-selection';
+import { wrapSelection } from '../../wrap-selection.ts';
 
 export function wrapInlineLiteral(): Command {
   return (state, dispatch) => {

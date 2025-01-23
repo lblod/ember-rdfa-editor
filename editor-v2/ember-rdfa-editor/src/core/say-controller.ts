@@ -1,13 +1,13 @@
-import { SayStore } from '#root/utils/_private/datastore/say-store';
+import { SayStore } from '#root/utils/_private/datastore/say-store.ts';
 import type Owner from '@ember/owner';
-import { unwrap } from '#root/utils/_private/option';
-import { shallowEqual } from '#root/utils/_private/object-utils';
-import { datastoreKey } from '#root/plugins/datastore';
-import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils';
+import { unwrap } from '#root/utils/_private/option.ts';
+import { shallowEqual } from '#root/utils/_private/object-utils.ts';
+import { datastoreKey } from '#root/plugins/datastore/index.ts';
+import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';
 import SayView, {
   type SetHtmlOptions,
-} from '#root/core/say-view';
-import SayEditor from '#root/core/say-editor';
+} from '#root/core/say-view.ts';
+import SayEditor from '#root/core/say-editor.ts';
 import { tracked } from '@glimmer/tracking';
 import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
@@ -16,7 +16,7 @@ import {
   Selection,
   Transaction,
 } from 'prosemirror-state';
-import { htmlToDoc } from '#root/utils/_private/html-utils';
+import { htmlToDoc } from '#root/utils/_private/html-utils.ts';
 
 export default class SayController {
   @tracked

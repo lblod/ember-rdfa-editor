@@ -1,16 +1,16 @@
 import type * as RDF from '@rdfjs/types';
-import { SayNamedNode } from './named-node';
-import { SayBlankNode } from './blank-node';
-import { SayLiteral } from './literal';
-import { SayVariable } from './variable';
-import { SayDefaultGraph } from './default-graph';
+import { SayNamedNode } from './named-node.ts';
+import { SayBlankNode } from './blank-node.ts';
+import { SayLiteral } from './literal.ts';
+import { SayVariable } from './variable.ts';
+import { SayDefaultGraph } from './default-graph.ts';
 import { Quad } from 'rdf-data-factory';
-import { SayQuad, type SayTerm } from '.';
-import { LiteralNodeTerm } from './prosemirror-terms/literal-node';
-import { ResourceNodeTerm } from './prosemirror-terms/resource-node';
-import { ContentLiteralTerm } from './prosemirror-terms/content-literal';
-import { LANG_STRING } from '#root/utils/_private/constants';
-import type { Option } from '#root/utils/_private/option';
+import { SayQuad, type SayTerm } from './index.ts';
+import { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
+import { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
+import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
+import { LANG_STRING } from '#root/utils/_private/constants.ts';
+import type { Option } from '#root/utils/_private/option.ts';
 
 export type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;
 let dataFactoryCounter = 0;

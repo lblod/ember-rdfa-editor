@@ -2,8 +2,8 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { MarkType } from 'prosemirror-model';
 import { type ComponentLike } from '@glint/template';
-import { toggleMarkAddFirst } from '#root/commands';
-import SayController from '#root/core/say-controller';
+import { toggleMarkAddFirst } from '#root/commands/index.ts';
+import SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

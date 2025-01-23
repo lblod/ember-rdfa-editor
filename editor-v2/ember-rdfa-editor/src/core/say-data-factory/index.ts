@@ -27,19 +27,19 @@
  * THE SOFTWARE.
  */
 
-import type { LiteralNodeTerm } from './prosemirror-terms/literal-node';
+import type { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
 import type * as RDF from '@rdfjs/types';
-import type { ResourceNodeTerm } from './prosemirror-terms/resource-node';
-import { ContentLiteralTerm } from './prosemirror-terms/content-literal';
+import type { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
+import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
 
-export * from './data-factory';
-export * from './blank-node';
-export * from './default-graph';
-export * from './literal';
-export * from './named-node';
-export * from './quad';
-export * from './variable';
-export * from './prosemirror-terms';
+export * from './data-factory.ts';
+export * from './blank-node.ts';
+export * from './default-graph.ts';
+export * from './literal.ts';
+export * from './named-node.ts';
+export * from './quad.ts';
+export * from './variable.ts';
+export * from './prosemirror-terms/index.ts';
 
 export type SayTerm =
   | RDF.Term

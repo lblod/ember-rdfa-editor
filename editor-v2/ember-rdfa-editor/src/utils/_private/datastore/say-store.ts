@@ -2,14 +2,14 @@ import {
   quadHash,
   type RdfaParseConfig,
   RdfaParser,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser';
-import { defaultPrefixes } from '#root/config/rdfa';
+} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
+import { defaultPrefixes } from '#root/config/rdfa.ts';
 import { EditorState } from 'prosemirror-state';
 import {
   type default as Datastore,
   EditorStore,
-} from '#root/utils/_private/datastore/datastore';
-import type { ResolvedPNode } from '#root/plugins/datastore';
+} from '#root/utils/_private/datastore/datastore.ts';
+import type { ResolvedPNode } from '#root/plugins/datastore/index.ts';
 
 export interface SayDatastore extends Datastore<ResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): SayStore;

@@ -3,7 +3,7 @@ import type {
   ConBlankNode,
   ConLiteral,
   ConNamedNode,
-} from '#root/utils/_private/concise-term-string';
+} from '#root/utils/_private/concise-term-string.ts';
 
 export type TermSpec = SubjectSpec | PredicateSpec | ObjectSpec;
 export type SubjectSpec = RDF.Quad_Subject | ConNamedNode | ConBlankNode | null;

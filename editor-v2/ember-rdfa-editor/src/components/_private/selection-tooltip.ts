@@ -8,7 +8,7 @@ import {
 } from '@floating-ui/dom';
 import Component from '@glimmer/component';
 import { SayController } from '#root';
-import floatingUI from '#root/modifiers/_private/floating-ui';
+import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 
 type Args = {
   controller: SayController;

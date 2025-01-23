@@ -1,4 +1,4 @@
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 import type { NodeSpec } from 'prosemirror-model';
 
 export const code_block: NodeSpec = {

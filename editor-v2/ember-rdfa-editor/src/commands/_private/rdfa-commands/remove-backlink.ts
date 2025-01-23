@@ -1,15 +1,15 @@
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '#root/plugins/rdfa-info';
-import TransformUtils from '#root/utils/_private/transform-utils';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+} from '#root/plugins/rdfa-info/index.ts';
+import TransformUtils from '#root/utils/_private/transform-utils.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
   getBacklinks,
   getProperties,
   getSubject,
   isLinkToNode,
-} from '#root/utils/rdfa-utils';
+} from '#root/utils/rdfa-utils.ts';
 import type { Command, Transaction } from 'prosemirror-state';
 
 type RemoveBacklinkArgs = {

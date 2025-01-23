@@ -1,10 +1,10 @@
 // Shelved for now
-// import { getNodesByResource } from '#root/plugins/rdfa-info';
+// import { getNodesByResource } from '#root/plugins/rdfa-info.ts';
 // import {
 //   getBacklinks,
 //   getProperties,
 //   getResource,
-// } from '#root/utils/rdfa-utils';
+// } from '#root/utils/rdfa-utils.ts';
 // import { Command } from 'prosemirror-state';
 
 // type ClearBacklinksArgs = {

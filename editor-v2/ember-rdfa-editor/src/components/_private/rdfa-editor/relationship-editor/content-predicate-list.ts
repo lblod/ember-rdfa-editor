@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import type { OutgoingTriple } from '#root/core/rdfa-processor';
+import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 

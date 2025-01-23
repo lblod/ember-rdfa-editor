@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import SayController from '#root/core/say-controller';
-import type SayNodeSpec from '#root/core/say-node-spec';
-import { unwrap } from '#root/utils/_private/option';
-import TransformUtils from '#root/utils/_private/transform-utils';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+import SayController from '#root/core/say-controller.ts';
+import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import { unwrap } from '#root/utils/_private/option.ts';
+import TransformUtils from '#root/utils/_private/transform-utils.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { Changeset, EmberChangeset } from 'ember-changeset';
 import { trackedReset } from 'tracked-toolbox';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';

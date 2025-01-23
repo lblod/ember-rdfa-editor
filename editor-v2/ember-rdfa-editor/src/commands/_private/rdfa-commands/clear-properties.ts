@@ -2,13 +2,13 @@
 // import {
 //   getNodeByRdfaId,
 //   getNodesByResource,
-// } from '#root/plugins/rdfa-info';
-// import { ResolvedPNode } from '#root/utils/_private/types';
+// } from '#root/plugins/rdfa-info.ts';
+// import { ResolvedPNode } from '#root/utils/_private/types.ts';
 // import {
 //   getBacklinks,
 //   getProperties,
 //   getResource,
-// } from '#root/utils/rdfa-utils';
+// } from '#root/utils/rdfa-utils.ts';
 // import { Command } from 'prosemirror-state';
 
 // type ClearPropertiesArgs = {

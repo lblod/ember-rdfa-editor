@@ -2,14 +2,14 @@ import type { Node as PNode, ParseRule } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
-} from '#root/core/schema';
+} from '#root/core/schema.ts';
 import {
   optionMapOr,
   unwrap,
-} from '#root/utils/_private/option';
-import type SayNodeSpec from '#root/core/say-node-spec';
-import { tagName } from '#root/utils/_private/dom-helpers';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+} from '#root/utils/_private/option.ts';
+import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import { tagName } from '#root/utils/_private/dom-helpers.ts';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
 export type OrderListStyle =
   | 'decimal'

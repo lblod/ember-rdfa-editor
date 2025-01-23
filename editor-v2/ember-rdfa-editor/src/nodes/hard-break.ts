@@ -1,5 +1,5 @@
 import type { NodeSpec } from 'prosemirror-model';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 export const hard_break: NodeSpec = {
   inline: true,

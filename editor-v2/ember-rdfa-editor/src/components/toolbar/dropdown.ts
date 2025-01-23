@@ -2,8 +2,8 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
-import SayController from '#root/core/say-controller';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils';
+import SayController from '#root/core/say-controller.ts';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { Velcro } from 'ember-velcro';
 import { type ComponentLike } from '@glint/template';
 

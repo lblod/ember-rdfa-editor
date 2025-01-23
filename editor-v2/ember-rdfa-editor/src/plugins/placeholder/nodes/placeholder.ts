@@ -1,6 +1,6 @@
 import type { NodeSpec } from 'prosemirror-model';
-import { PLACEHOLDER_CLASS } from '../../../utils/_private/constants';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+import { PLACEHOLDER_CLASS } from '../../../utils/_private/constants.ts';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
 export const placeholder: NodeSpec = {
   attrs: { placeholderText: { default: 'placeholder' } },

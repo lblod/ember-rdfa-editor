@@ -16,7 +16,7 @@ export interface DatastorePluginState {
 
 /** This plugin gives access to the ember application instance, so this can be used in other plugins/nodes. You can initialize it with `emberApplication({ application: getOwner(this) })`. Afterwards, you can access the ember application and do things like accessing ember services anywhere you have access to the state.
 ```
-import { emberApplicationPluginKey } from '#root/plugins/ember-application';
+import { emberApplicationPluginKey } from '#root/plugins/ember-application.ts';
 const intlService = emberApplicationPluginKey.getState(state)?.application.lookup('service:intl');
 ```
 */

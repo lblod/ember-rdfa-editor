@@ -5,10 +5,10 @@ import {
   wrapInlineResource,
   wrapLiteral,
   wrapResource,
-} from '#root/commands/_private/rdfa-commands';
-import WrappingModal from './modal';
-import type { ResolvedPNode } from '#root/utils/_private/types';
-import { wrapInlineLiteral } from '#root/commands/_private/rdfa-commands/wrap-inline-literal';
+} from '#root/commands/_private/rdfa-commands/index.ts';
+import WrappingModal from './modal.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import { wrapInlineLiteral } from '#root/commands/_private/rdfa-commands/wrap-inline-literal.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 
 type Args = {

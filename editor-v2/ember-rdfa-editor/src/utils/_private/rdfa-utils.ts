@@ -8,23 +8,23 @@ import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '#root/core/rdfa-processor';
+} from '#root/core/rdfa-processor.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '#root/core/say-data-factory';
-import { isElement } from '#root/utils/_private/dom-helpers';
+} from '#root/core/say-data-factory/index.ts';
+import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { v4 as uuidv4 } from 'uuid';
-import type { ResolvedPNode } from './types';
+import type { ResolvedPNode } from './types.ts';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '#root/plugins/rdfa-info';
-import TransformUtils from './transform-utils';
+} from '#root/plugins/rdfa-info/index.ts';
+import TransformUtils from './transform-utils.ts';
 import type {
   TransactionMonad,
   TransactionMonadResult,
-} from '../transaction-utils';
+} from '../transaction-utils.ts';
 
 export type RdfaAttr =
   | 'vocab'

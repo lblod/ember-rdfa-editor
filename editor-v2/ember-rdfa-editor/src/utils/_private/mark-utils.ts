@@ -1,8 +1,8 @@
 import { PNode } from '#root';
 import type { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
 import { SelectionRange, Selection } from 'prosemirror-state';
-import { unwrap } from '#root/utils/_private/option';
-import { shallowEqual } from '#root/utils/_private/object-utils';
+import { unwrap } from '#root/utils/_private/option.ts';
+import { shallowEqual } from '#root/utils/_private/object-utils.ts';
 
 /**
  * Check that between 2 positions in a Node the same mark is set. Optionally only consider marks

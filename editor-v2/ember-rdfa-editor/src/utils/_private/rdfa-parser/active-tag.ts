@@ -3,13 +3,13 @@
  *
  * Copyright © 2019 Ruben Taelman
  */
-import type { IRdfaPattern } from './rdfa-pattern';
+import type { IRdfaPattern } from './rdfa-pattern.ts';
 import type {
   ModelBlankNode,
   ModelNamedNode,
   ModelQuadPredicate,
   ModelTerm,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser';
+} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
 
 /**
  * Data holder for the RDFa state in XML tags.

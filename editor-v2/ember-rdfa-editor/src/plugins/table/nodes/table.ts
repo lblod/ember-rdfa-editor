@@ -4,12 +4,12 @@ import { Node as PNode, ResolvedPos, type NodeSpec } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
-} from '#root/core/schema';
-import { TableView } from '#root/plugins/table';
-import { getPos } from '#root/utils/node-utils';
-import { constructInlineStyles } from '#root/utils/_private/html-utils';
-import type SayNodeSpec from '#root/core/say-node-spec';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+} from '#root/core/schema.ts';
+import { TableView } from '#root/plugins/table/index.ts';
+import { getPos } from '#root/utils/node-utils.ts';
+import { constructInlineStyles } from '#root/utils/_private/html-utils.ts';
+import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
 interface ExtraAttribute {
   default: unknown;

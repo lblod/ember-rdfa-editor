@@ -1,8 +1,8 @@
 import type { DOMOutputSpec, Node as PNode } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec } from '#root';
-import type SayNodeSpec from '../core/say-node-spec';
-import { getRdfaContentElement, renderRdfaAware } from '../core/schema';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+import type SayNodeSpec from '../core/say-node-spec.ts';
+import { getRdfaContentElement, renderRdfaAware } from '../core/schema.ts';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 type Options = {
   rdfaAware?: boolean;

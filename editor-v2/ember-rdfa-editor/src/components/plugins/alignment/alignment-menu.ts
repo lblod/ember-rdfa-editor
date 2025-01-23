@@ -5,8 +5,8 @@ import {
   ALIGNMENT_OPTIONS,
   type AlignmentOption,
   DEFAULT_ALIGNMENT,
-} from '#root/plugins/alignment';
-import { setAlignment } from '#root/plugins/alignment/commands';
+} from '#root/plugins/alignment/index.ts';
+import { setAlignment } from '#root/plugins/alignment/commands.ts';
 import IntlService from 'ember-intl/services/intl';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
@@ -15,7 +15,7 @@ import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 
 type Args = {
   controller?: SayController;

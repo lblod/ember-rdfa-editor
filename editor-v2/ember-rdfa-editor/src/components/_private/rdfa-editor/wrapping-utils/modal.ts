@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import type RdfaWrappingUtils from './index';
+import type RdfaWrappingUtils from './index.ts';
 
 type Args = {
   closeModal: () => void;

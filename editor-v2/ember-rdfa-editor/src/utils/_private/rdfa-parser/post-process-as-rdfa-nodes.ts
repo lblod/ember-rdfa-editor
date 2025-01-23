@@ -1,6 +1,6 @@
-import { unwrap } from '../option';
-import type { IActiveTag } from './active-tag';
-import type { ModelBlankNode, ModelNamedNode } from './rdfa-parser';
+import { unwrap } from '../option.ts';
+import type { IActiveTag } from './active-tag.ts';
+import type { ModelBlankNode, ModelNamedNode } from './rdfa-parser.ts';
 export interface PostProcessArgs<N> {
   activeTag: IActiveTag<N>;
   attributes: Record<string, string>;

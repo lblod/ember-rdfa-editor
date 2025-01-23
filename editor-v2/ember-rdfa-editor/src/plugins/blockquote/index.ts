@@ -1,1 +1,1 @@
-export { blockquote } from './nodes/blockquote';
+export { blockquote } from './nodes/blockquote.ts';

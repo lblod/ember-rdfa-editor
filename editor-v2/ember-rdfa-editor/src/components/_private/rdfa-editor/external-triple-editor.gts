@@ -1,29 +1,26 @@
 import Component from '@glimmer/component';
-import type SayController from '#root/core/say-controller';
+import type SayController from '#root/core/say-controller.ts';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import WithUniqueId from '../with-unique-id';
+import WithUniqueId from '../with-unique-id.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { tracked } from '@glimmer/tracking';
-import type { FullTriple } from '#root/core/rdfa-processor';
-import ExternalTripleForm from './external-triple-form';
-import { transformExternalTriples } from '#root/utils/external-triple-utils';
+import type { FullTriple } from '#root/core/rdfa-processor.ts';
+import ExternalTripleForm from './external-triple-form.gts';
+import { transformExternalTriples } from '#root/utils/external-triple-utils.ts';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
-import {
-  isSome,
-  type Option,
-} from '#root/utils/_private/option';
+import { isSome, type Option } from '#root/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 interface EditModalSig {
@@ -52,8 +49,8 @@ const EditModal: TemplateOnlyComponent<EditModalSig> = <template>
       </:body>
       <:footer>
         <AuButtonGroup>
-          <AuButton form={{formId}} type='submit'>Save</AuButton>
-          <AuButton @skin='secondary' {{on 'click' @onCancel}}>Cancel</AuButton>
+          <AuButton form={{formId}} type="submit">Save</AuButton>
+          <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
         </AuButtonGroup>
       </:footer>
     </AuModal>
@@ -84,7 +81,7 @@ class ExternalTripleItem extends Component<ExternalTripleItemSig> {
     return null;
   }
   <template>
-    <div class='au-u-padding-tiny'>
+    <div class="au-u-padding-tiny">
       <p><strong>subject:</strong> {{@trip.subject.value}}</p>
       <p><strong>predicate:</strong> {{@trip.predicate}}</p>
       {{#if this.datatype}}
@@ -96,21 +93,21 @@ class ExternalTripleItem extends Component<ExternalTripleItemSig> {
       <p><strong>value:</strong> {{@trip.object.value}}</p>
     </div>
 
-    <AuDropdown @icon={{ThreeDotsIcon}} role='menu' @alignment='left'>
+    <AuDropdown @icon={{ThreeDotsIcon}} role="menu" @alignment="left">
       <AuButton
-        @skin='link'
+        @skin="link"
         @icon={{PencilIcon}}
-        role='menuitem'
-        {{on 'click' (fn @onEdit @index)}}
+        role="menuitem"
+        {{on "click" (fn @onEdit @index)}}
       >
         Edit property
       </AuButton>
       <AuButton
-        @skin='link'
+        @skin="link"
         @icon={{BinIcon}}
-        role='menuitem'
-        class='au-c-button--alert'
-        {{on 'click' (fn @onRemove @index)}}
+        role="menuitem"
+        class="au-c-button--alert"
+        {{on "click" (fn @onRemove @index)}}
       >
         Remove property
       </AuButton>
@@ -184,16 +181,16 @@ export default class ExternalTripleEditor extends Component<Sig> {
     this.controller.mainEditorView.dispatch(tr);
   };
   <template>
-    <AuContent @skin='tiny'>
+    <AuContent @skin="tiny">
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level='5' @skin='5'>External Triples</AuHeading>
+          <AuHeading @level="5" @skin="5">External Triples</AuHeading>
         </Group>
         <Group>
           <AuButton
             @icon={{PlusIcon}}
-            @skin='naked'
-            {{on 'click' this.addTriple}}
+            @skin="naked"
+            {{on "click" this.addTriple}}
           >
             Add triple
           </AuButton>

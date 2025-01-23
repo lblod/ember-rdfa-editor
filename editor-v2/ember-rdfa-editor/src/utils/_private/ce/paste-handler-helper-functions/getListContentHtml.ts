@@ -1,5 +1,5 @@
-import { removeNodesBetweenComments } from './removeNodesBetweenComments';
-import { traverseElements } from './traverseElements';
+import { removeNodesBetweenComments } from './removeNodesBetweenComments.ts';
+import { traverseElements } from './traverseElements.ts';
 
 const HEADINGS_TAG_NAMES = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 

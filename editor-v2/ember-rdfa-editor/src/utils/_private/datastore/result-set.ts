@@ -1,5 +1,5 @@
 import { first, isEmpty, type Iterable, map } from 'iter-tools';
-import { single } from '../iterator-utils';
+import { single } from '../iterator-utils.ts';
 
 export class ResultSet<I> implements Iterable<I> {
   private engine: Iterable<I>;

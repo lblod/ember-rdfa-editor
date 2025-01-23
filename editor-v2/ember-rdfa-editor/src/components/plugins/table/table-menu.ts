@@ -13,8 +13,8 @@ import {
   splitCell,
   toggleHeader,
 } from '@say-editor/prosemirror-tables';
-import SayController from '#root/core/say-controller';
-import { insertTable } from '#root/plugins/table';
+import SayController from '#root/core/say-controller.ts';
+import { insertTable } from '#root/plugins/table/index.ts';
 import { type Command } from '#root';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';

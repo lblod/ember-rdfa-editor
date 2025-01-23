@@ -3,19 +3,19 @@ import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { Decoration } from 'prosemirror-view';
 import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
-import { isNone } from './utils/_private/option';
+import { isNone } from './utils/_private/option.ts';
 
 export {
   getRdfaAttrs,
   rdfaAttrs,
   rdfaAttrSpec,
-} from '#root/core/schema';
-export type { RdfaAttrs } from '#root/core/schema';
+} from '#root/core/schema.ts';
+export type { RdfaAttrs } from '#root/core/schema.ts';
 
 export {
   default as ProseMirror,
   type PluginConfig,
-} from '#root/core/say-editor';
+} from '#root/core/say-editor.ts';
 
 export * from 'prosemirror-model';
 export { Node as PNode, DOMParser as ProseParser } from 'prosemirror-model';
@@ -33,8 +33,8 @@ export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
 
-export { default as SayView } from '#root/core/say-view';
-export { default as SayController } from '#root/core/say-controller';
+export { default as SayView } from '#root/core/say-view.ts';
+export { default as SayController } from '#root/core/say-controller.ts';
 addMethod(
   string,
   'curie',

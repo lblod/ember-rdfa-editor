@@ -6,10 +6,10 @@ import { on } from '@ember/modifier';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
-import type RdfaRelationshipEditor from './index';
+import type RdfaRelationshipEditor from './index.gts';
 import { SayController } from '#root';
-import type { OutgoingTriple } from '#root/core/rdfa-processor';
-import OutgoingTripleForm from '../outgoing-triple-form';
+import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import OutgoingTripleForm from '../outgoing-triple-form.ts';
 
 type Sig = {
   Args: {
@@ -46,17 +46,17 @@ export default class RelationshipEditorModal extends Component<Sig> {
             id={{formId}}
             @onSubmit={{this.save}}
             @controller={{@controller}}
-            @termTypes={{array 'LiteralNode' 'ResourceNode'}}
+            @termTypes={{array "LiteralNode" "ResourceNode"}}
             @triple={{@triple}}
             @importedResources={{@importedResources}}
           />
         </:body>
         <:footer>
           <AuButtonGroup>
-            <AuButton form={{formId}} type='submit'>Save</AuButton>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
             <AuButton
-              @skin='secondary'
-              {{on 'click' this.cancel}}
+              @skin="secondary"
+              {{on "click" this.cancel}}
             >Cancel</AuButton>
           </AuButtonGroup>
         </:footer>

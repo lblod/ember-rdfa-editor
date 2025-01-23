@@ -1,7 +1,7 @@
 import type { ComponentLike } from '@glint/template';
 import { PNode } from '#root';
 import type { NodeSpec } from 'prosemirror-model';
-import type { NodeSerializer } from './say-serializer';
+import type { NodeSerializer } from './say-serializer.ts';
 
 export interface SayAttributeSpec {
   default?: unknown;

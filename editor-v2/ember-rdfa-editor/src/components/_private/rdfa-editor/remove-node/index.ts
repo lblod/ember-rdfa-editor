@@ -3,7 +3,7 @@ import { tracked } from '@glimmer/tracking';
 import { AlertTriangleIcon } from '@appuniversum/ember-appuniversum/components/icons/alert-triangle';
 
 import { type SayController } from '#root';
-import { type ResolvedPNode } from '#root/utils/_private/types';
+import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 
 type Args = {
   node: ResolvedPNode;

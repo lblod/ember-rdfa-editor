@@ -1,14 +1,14 @@
 import type { AttributeSpec } from 'prosemirror-model';
-import type SayNodeSpec from '../core/say-node-spec';
-import { isElement } from '../utils/_private/dom-helpers';
+import type SayNodeSpec from '../core/say-node-spec.ts';
+import { isElement } from '../utils/_private/dom-helpers.ts';
 import {
   getRdfaAwareDocAttrs,
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '../core/schema';
-import { IMPORTED_RESOURCES_ATTR } from '../plugins/imported-resources';
-import { jsonParse } from '../utils/_private/string-utils';
+} from '../core/schema.ts';
+import { IMPORTED_RESOURCES_ATTR } from '../plugins/imported-resources/index.ts';
+import { jsonParse } from '../utils/_private/string-utils.ts';
 
 interface DocumentConfig {
   defaultLanguage?: string;

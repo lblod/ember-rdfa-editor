@@ -1,12 +1,12 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '#root/utils/ember-node';
-import { linkToHref } from '#root/utils/_private/string-utils';
+import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
+import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { Velcro } from 'ember-velcro';
 import { EditorState } from '#root';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
 export default class Link extends Component<EmberNodeArgs> {
   Velcro = Velcro;

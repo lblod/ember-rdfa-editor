@@ -4,7 +4,7 @@ import beautify from 'js-beautify';
 import { action } from '@ember/object';
 import { basicSetup } from 'codemirror';
 import { html } from '@codemirror/lang-html';
-import CodeMirrorModifier from '#root/modifiers/_private/code-mirror';
+import CodeMirrorModifier from '#root/modifiers/_private/code-mirror.ts';
 import { keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 

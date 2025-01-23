@@ -1,4 +1,4 @@
-import { traverse } from './traverse';
+import { traverse } from './traverse.ts';
 
 type Callback = (node: Element) => boolean;
 

@@ -1,1 +1,1 @@
-export * from './_private/node-utils';
+export * from './_private/node-utils.ts';

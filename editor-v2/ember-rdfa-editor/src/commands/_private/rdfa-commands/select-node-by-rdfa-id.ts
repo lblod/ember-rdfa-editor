@@ -1,4 +1,4 @@
-import { getNodeByRdfaId } from '#root/plugins/rdfa-info';
+import { getNodeByRdfaId } from '#root/plugins/rdfa-info/index.ts';
 import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByRdfaIdArgs = {

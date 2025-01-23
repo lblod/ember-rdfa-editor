@@ -6,8 +6,8 @@
 
 import * as RDF from '@rdfjs/types';
 import { resolve } from 'relative-to-absolute-iri';
-import type { IActiveTag } from './active-tag';
-import { RDFA_CONTENTTYPES, type RdfaProfile } from './rdfa-profile';
+import type { IActiveTag } from './active-tag.ts';
+import { RDFA_CONTENTTYPES, type RdfaProfile } from './rdfa-profile.ts';
 import { DataFactory } from 'rdf-data-factory';
 import type {
   ModelBlankNode,
@@ -18,7 +18,7 @@ import type {
   ModelQuadPredicate,
   ModelQuadSubject,
   ModelTerm,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser';
+} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
 
 export class ModelDataFactory<N> extends DataFactory {
   quad(

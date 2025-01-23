@@ -1,6 +1,6 @@
 import * as RDF from '@rdfjs/types';
 import dataset, { type FastDataset } from '@graphy/memory.dataset.fast';
-import { NotImplementedError } from '#root/utils/_private/errors';
+import { NotImplementedError } from '#root/utils/_private/errors.ts';
 
 function isFastDataset(thing: unknown): thing is FastDataset {
   // ts fails us here, see https://github.com/Microsoft/TypeScript/issues/21732

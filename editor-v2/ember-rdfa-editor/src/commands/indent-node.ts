@@ -1,5 +1,5 @@
 import type { Command } from 'prosemirror-state';
-import { PNode } from '..';
+import { PNode } from '../index.ts';
 
 type IndentNodeArgs = {
   direction: number;

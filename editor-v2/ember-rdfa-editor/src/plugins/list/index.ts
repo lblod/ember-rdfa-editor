@@ -1,14 +1,9 @@
-import {
-  EditorState,
-  PNode,
-  ProsePlugin,
-  Transaction,
-} from '#root';
-import { changedDescendants } from '#root/utils/_private/changed-descendants';
-import type { ListPathEntry } from './nodes/list-nodes';
+import { EditorState, PNode, ProsePlugin, Transaction } from '#root';
+import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
+import type { ListPathEntry } from './nodes/list-nodes.ts';
 
-export { toggleList } from './commands/toggle-list';
-export { liftOutOfNestedLists } from './commands/lift-out-of-nested-lists';
+export { toggleList } from './commands/toggle-list.ts';
+export { liftOutOfNestedLists } from './commands/lift-out-of-nested-lists.ts';
 export {
   orderedListWithConfig,
   listItemWithConfig,
@@ -16,9 +11,12 @@ export {
   ordered_list,
   list_item,
   bullet_list,
-} from './nodes/list-nodes';
-export type { OrderListStyle } from './nodes/list-nodes';
-export { bullet_list_input_rule, ordered_list_input_rule } from './input_rules';
+} from './nodes/list-nodes.ts';
+export type { OrderListStyle } from './nodes/list-nodes.ts';
+export {
+  bullet_list_input_rule,
+  ordered_list_input_rule,
+} from './input_rules/index.ts';
 
 export function listTrackingPlugin(): ProsePlugin {
   return new ProsePlugin({

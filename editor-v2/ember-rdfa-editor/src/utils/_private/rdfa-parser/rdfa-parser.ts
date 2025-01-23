@@ -4,37 +4,37 @@
  * Copyright © 2019 Ruben Taelman
  */
 import * as RDF from '@rdfjs/types';
-import type { IActiveTag } from './active-tag';
-import type { IHtmlParseListener } from './html-parse-listener';
-import INITIAL_CONTEXT_XHTML from './initial-context-xhtml';
-import INITIAL_CONTEXT from './initial-context';
-import type { IRdfaPattern } from './rdfa-pattern';
+import type { IActiveTag } from './active-tag.ts';
+import type { IHtmlParseListener } from './html-parse-listener.ts';
+import INITIAL_CONTEXT_XHTML from './initial-context-xhtml.ts';
+import INITIAL_CONTEXT from './initial-context.ts';
+import type { IRdfaPattern } from './rdfa-pattern.ts';
 import {
   type IRdfaFeatures,
   RDFA_FEATURES,
   type RdfaProfile,
-} from './rdfa-profile';
-import { Util } from './util';
-import { CustomError } from '#root/utils/_private/errors';
+} from './rdfa-profile.ts';
+import { Util } from './util.ts';
+import { CustomError } from '#root/utils/_private/errors.ts';
 import {
   isElement,
   isTextNode,
-} from '#root/utils/_private/dom-helpers';
-import MapUtils from '#root/utils/_private/map-utils';
-import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset';
-import { unwrap } from '#root/utils/_private/option';
+} from '#root/utils/_private/dom-helpers.ts';
+import MapUtils from '#root/utils/_private/map-utils.ts';
+import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset.ts';
+import { unwrap } from '#root/utils/_private/option.ts';
 import {
   type RdfaContentNodeMap,
   type RdfaResourceNodeMap,
   rdfaContentNodeMap,
   rdfaResourceNodeMap,
-} from '../datastore/datastore';
-import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes';
+} from '../datastore/datastore.ts';
+import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '#root/core/say-data-factory';
-import { LANG_STRING } from '../constants';
+} from '#root/core/say-data-factory/index.ts';
+import { LANG_STRING } from '../constants.ts';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>

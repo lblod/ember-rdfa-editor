@@ -1,6 +1,6 @@
-import { isFragmentHref } from './isFragmentHref';
-import { traverseElements } from './traverseElements';
-import { unwrapElement } from './unwrapElement';
+import { isFragmentHref } from './isFragmentHref.ts';
+import { traverseElements } from './traverseElements.ts';
+import { unwrapElement } from './unwrapElement.ts';
 
 export function cleanLinkElements(rootNode: Node): void {
   traverseElements(rootNode, (element) => {

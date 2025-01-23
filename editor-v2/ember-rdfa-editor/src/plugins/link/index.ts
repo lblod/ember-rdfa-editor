@@ -7,10 +7,10 @@ import {
   SayView,
   Slice,
 } from '#root';
-import linkifyFragment from '#root/utils/_private/linkify-fragment';
+import linkifyFragment from '#root/utils/_private/linkify-fragment.ts';
 
-export { link as linkMark } from './mark/link';
-export { link, linkView } from './nodes/link';
+export { link as linkMark } from './mark/link.ts';
+export { link, linkView } from './nodes/link.ts';
 export const linkHandler: ProsePlugin = new ProsePlugin({
   props: {
     handleClickOn(

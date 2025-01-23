@@ -4,33 +4,30 @@ import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
 import { PNode, SayController } from '#root';
-import { isResourceNode } from '#root/utils/node-utils';
+import { isResourceNode } from '#root/utils/node-utils.ts';
 import {
   removeBacklink,
   selectNodeByRdfaId,
   selectNodeBySubject,
-} from '#root/commands/_private/rdfa-commands';
-import { addProperty, removeProperty } from '#root/commands';
-import { NotImplementedError } from '#root/utils/_private/errors';
-import RelationshipEditorModal from './modal';
-import {
-  getNodeByRdfaId,
-  getSubjects,
-} from '#root/plugins/rdfa-info';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+} from '#root/commands/_private/rdfa-commands/index.ts';
+import { addProperty, removeProperty } from '#root/commands/index.ts';
+import { NotImplementedError } from '#root/utils/_private/errors.ts';
+import RelationshipEditorModal from './modal.gts';
+import { getNodeByRdfaId, getSubjects } from '#root/plugins/rdfa-info/index.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '#root/core/rdfa-processor';
+} from '#root/core/rdfa-processor.ts';
 import {
   isLinkToNode,
   getBacklinks,
   getProperties,
-} from '#root/utils/rdfa-utils';
-import ContentPredicateList from './content-predicate-list';
-import TransformUtils from '#root/utils/_private/transform-utils';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
+} from '#root/utils/rdfa-utils.ts';
+import ContentPredicateList from './content-predicate-list.ts';
+import TransformUtils from '#root/utils/_private/transform-utils.ts';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -374,17 +371,17 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   <template>
-    <AuContent @skin='tiny'>
+    <AuContent @skin="tiny">
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level='5' @skin='5'>Relationships</AuHeading>
+          <AuHeading @level="5" @skin="5">Relationships</AuHeading>
         </Group>
         <Group>
           <AuButton
             @icon={{PlusIcon}}
-            @skin='naked'
+            @skin="naked"
             @disabled={{not this.canAddRelationship}}
-            {{on 'click' this.addRelationship}}
+            {{on "click" this.addRelationship}}
           >
             Add relationship
           </AuButton>
@@ -393,28 +390,28 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       {{#if this.importedResources}}
         <div>
           <AuHeading
-            @level='6'
-            @skin='6'
-            class='au-u-margin-bottom-small'
+            @level="6"
+            @skin="6"
+            class="au-u-margin-bottom-small"
           >Imported Resources</AuHeading>
           <AuList @divider={{true}} as |Item|>
             {{#each-in this.importedResources as |imported linked|}}
               <Item
-                class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+                class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
               >
                 {{imported}}
                 <AuDropdown
                   @icon={{if linked ChevronDownIcon PlusIcon}}
                   @title={{linked}}
-                  role='menu'
-                  @alignment='left'
+                  role="menu"
+                  @alignment="left"
                 >
                   {{#each this.allResources as |res|}}
                     <AuButton
-                      @skin='link'
+                      @skin="link"
                       @icon={{PencilIcon}}
-                      role='menuitem'
-                      {{on 'click' (fn this.linkImportedResource imported res)}}
+                      role="menuitem"
+                      {{on "click" (fn this.linkImportedResource imported res)}}
                     >
                       {{res}}
                     </AuButton>
@@ -428,41 +425,41 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       {{#if this.showOutgoingSection}}
         <div>
           <AuHeading
-            @level='6'
-            @skin='6'
-            class='au-u-margin-bottom-small'
+            @level="6"
+            @skin="6"
+            class="au-u-margin-bottom-small"
           >Outgoing</AuHeading>
           {{#if this.hasOutgoing}}
             <AuList @divider={{true}} as |Item|>
               {{#each this.properties as |prop index|}}
                 {{#if (this.isNodeLink prop)}}
                   <Item
-                    class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+                    class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
                   >
                     <AuButton
                       @icon={{ExternalLinkIcon}}
-                      @skin='link'
-                      {{on 'click' (fn this.goToOutgoing prop)}}
+                      @skin="link"
+                      {{on "click" (fn this.goToOutgoing prop)}}
                     >{{prop.predicate}}</AuButton>
                     <AuDropdown
                       @icon={{ThreeDotsIcon}}
-                      role='menu'
-                      @alignment='left'
+                      role="menu"
+                      @alignment="left"
                     >
                       <AuButton
-                        @skin='link'
+                        @skin="link"
                         @icon={{PencilIcon}}
-                        role='menuitem'
-                        {{on 'click' (fn this.editRelationship index)}}
+                        role="menuitem"
+                        {{on "click" (fn this.editRelationship index)}}
                       >
                         Edit relationship
                       </AuButton>
                       <AuButton
-                        @skin='link'
+                        @skin="link"
                         @icon={{BinIcon}}
-                        role='menuitem'
-                        class='au-c-button--alert'
-                        {{on 'click' (fn this.removeProperty index)}}
+                        role="menuitem"
+                        class="au-c-button--alert"
+                        {{on "click" (fn this.removeProperty index)}}
                       >
                         Remove outgoing
                       </AuButton>
@@ -478,32 +475,32 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       {{/if}}
       <div>
         <AuHeading
-          @level='6'
-          @skin='6'
-          class='au-u-margin-bottom-small'
+          @level="6"
+          @skin="6"
+          class="au-u-margin-bottom-small"
         >Backlinks</AuHeading>
         {{#if this.backlinks}}
           <AuList @divider={{true}} as |Item|>
             {{#each this.backlinks as |backlink index|}}
               <Item
-                class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+                class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
               >
                 <AuButton
                   @icon={{ExternalLinkIcon}}
-                  @skin='link'
-                  {{on 'click' (fn this.goToBacklink backlink)}}
+                  @skin="link"
+                  {{on "click" (fn this.goToBacklink backlink)}}
                 >{{backlink.predicate}}</AuButton>
                 <AuDropdown
                   @icon={{ThreeDotsIcon}}
-                  role='menu'
-                  @alignment='left'
+                  role="menu"
+                  @alignment="left"
                 >
                   <AuButton
-                    @skin='link'
+                    @skin="link"
                     @icon={{BinIcon}}
-                    role='menuitem'
-                    class='au-c-button--alert'
-                    {{on 'click' (fn this.removeBacklink index)}}
+                    role="menuitem"
+                    class="au-c-button--alert"
+                    {{on "click" (fn this.removeBacklink index)}}
                   >
                     Remove backlink
                   </AuButton>
@@ -517,7 +514,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       </div>
       {{#if this.isResource}}
         <div>
-          <AuHeading @level='6' @skin='6' class='au-u-margin-bottom-small'>
+          <AuHeading @level="6" @skin="6" class="au-u-margin-bottom-small">
             Content Predicate
           </AuHeading>
           {{#if this.properties}}

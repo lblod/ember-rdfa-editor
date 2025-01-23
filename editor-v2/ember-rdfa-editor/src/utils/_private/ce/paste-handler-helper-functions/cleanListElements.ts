@@ -1,6 +1,6 @@
-import { buildList } from './buildList';
-import { isList } from './isList';
-import { traverseElements } from './traverseElements';
+import { buildList } from './buildList.ts';
+import { isList } from './isList.ts';
+import { traverseElements } from './traverseElements.ts';
 
 export function cleanListElements(body: Node): void {
   traverseElements(body, (element) => {

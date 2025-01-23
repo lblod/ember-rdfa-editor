@@ -1,1 +1,1 @@
-export * from './_private/ember-node';
+export * from './_private/ember-node.ts';

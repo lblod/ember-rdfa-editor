@@ -7,9 +7,9 @@ import {
   type PluginView,
   ProsePlugin,
 } from '#root';
-import { isEditable } from '#root/core/say-node-spec';
-import { isSome } from '#root/utils/_private/option';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+import { isEditable } from '#root/core/say-node-spec.ts';
+import { isSome } from '#root/utils/_private/option.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 
 type State = {
   activeNode?: ResolvedPNode;

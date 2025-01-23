@@ -7,7 +7,7 @@ import {
   SayView,
   TextSelection,
 } from '#root';
-import { gecko } from '#root/utils/_private/browser';
+import { gecko } from '#root/utils/_private/browser.ts';
 
 export function firefoxCursorFix(): ProsePlugin {
   const firefoxCursorFix = new ProsePlugin({

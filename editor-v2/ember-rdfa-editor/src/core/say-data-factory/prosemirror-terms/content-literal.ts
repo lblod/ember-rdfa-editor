@@ -1,7 +1,7 @@
 import type * as RDF from '@rdfjs/types';
-import { SayNamedNode } from '../named-node';
-import type { Option } from '#root/utils/_private/option';
-import type { SayTerm } from '..';
+import { SayNamedNode } from '../named-node.ts';
+import type { Option } from '#root/utils/_private/option.ts';
+import type { SayTerm } from '../index.ts';
 
 /**
  * A term that represents an RDF literal, containing a string with an optional language tag or datatype.

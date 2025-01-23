@@ -1,13 +1,10 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
 import { ProsePlugin } from '#root';
-import {
-  getRdfaId,
-  getSubject,
-} from '#root/utils/rdfa-utils';
-import MapUtils from '#root/utils/_private/map-utils';
-import { unwrap } from '#root/utils/_private/option';
-import type { ResolvedPNode } from '#root/utils/_private/types';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
+import { getRdfaId, getSubject } from '#root/utils/rdfa-utils.ts';
+import MapUtils from '#root/utils/_private/map-utils.ts';
+import { unwrap } from '#root/utils/_private/option.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 
 class RdfaInfo {
   private state: EditorState;

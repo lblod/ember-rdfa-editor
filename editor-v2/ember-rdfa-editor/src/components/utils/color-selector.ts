@@ -2,7 +2,7 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
-import { defaultColors } from '#root/config/colors';
+import { defaultColors } from '#root/config/colors.ts';
 import { AddIcon } from '@appuniversum/ember-appuniversum/components/icons/add';
 import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 

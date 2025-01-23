@@ -39,14 +39,14 @@ import {
   TextSelection,
   Transaction,
 } from '#root';
-import type { EmberNodeArgs } from '#root/utils/ember-node';
+import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
-import { redo, undo } from '#root/plugins/history';
-import { isSome, unwrap } from '#root/utils/_private/option';
-import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed';
+import { redo, undo } from '#root/plugins/history/index.ts';
+import { isSome, unwrap } from '#root/utils/_private/option.ts';
+import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed/index.ts';
 import { Plugin } from 'prosemirror-state';
-import { embeddedEditorBaseKeymap } from '#root/core/keymap';
+import { embeddedEditorBaseKeymap } from '#root/core/keymap.ts';
 
 type Args = EmberNodeArgs & {
   placeholder: string;

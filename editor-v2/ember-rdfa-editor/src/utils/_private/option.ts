@@ -1,4 +1,4 @@
-import { AssertionError } from '#root/utils/_private/errors';
+import { AssertionError } from '#root/utils/_private/errors.ts';
 
 export type None = null | undefined;
 export type Option<A> = A | None;

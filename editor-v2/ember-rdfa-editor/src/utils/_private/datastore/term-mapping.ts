@@ -2,10 +2,10 @@ import * as RDF from '@rdfjs/types';
 import {
   conciseToRdfjs,
   type PrefixMapping,
-} from '#root/utils/_private/concise-term-string';
+} from '#root/utils/_private/concise-term-string.ts';
 import { execPipe, filter, first, flatMap, isEmpty, map } from 'iter-tools';
-import type { TermSpec } from '#root/utils/_private/datastore/term-spec';
-import { single } from '../iterator-utils';
+import type { TermSpec } from '#root/utils/_private/datastore/term-spec.ts';
+import { single } from '../iterator-utils.ts';
 
 /**
  * Utility class to represent a collection of terms with their

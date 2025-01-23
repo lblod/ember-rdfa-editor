@@ -31,9 +31,9 @@ import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import { NodeSelection, SayView } from '#root';
-import SayController from '#root/core/say-controller';
-import type SayNodeSpec from '#root/core/say-node-spec';
-import type { NodeSerializer } from '#root/core/say-serializer';
+import SayController from '#root/core/say-controller.ts';
+import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import type { NodeSerializer } from '#root/core/say-serializer.ts';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;

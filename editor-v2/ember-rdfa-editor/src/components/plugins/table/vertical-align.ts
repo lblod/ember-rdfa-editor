@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '#root';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils';
+import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';

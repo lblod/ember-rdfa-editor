@@ -1,7 +1,7 @@
 import type { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
-import { wrapIncludingParents } from '#root/commands';
-import { findRdfaIdsInSelection } from '#root/utils/rdfa-utils';
+import { wrapIncludingParents } from '#root/commands/index.ts';
+import { findRdfaIdsInSelection } from '#root/utils/rdfa-utils.ts';
 
 export function wrapLiteral(): Command {
   return (state, dispatch) => {

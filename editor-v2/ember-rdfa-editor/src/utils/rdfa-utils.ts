@@ -1,1 +1,1 @@
-export * from './_private/rdfa-utils';
+export * from './_private/rdfa-utils.ts';

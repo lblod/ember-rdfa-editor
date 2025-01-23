@@ -22,7 +22,7 @@
  */
 
 import { Fragment, Slice } from 'prosemirror-model';
-import { unwrap } from './option';
+import { unwrap } from './option.ts';
 
 enum Side {
   Left = -1,

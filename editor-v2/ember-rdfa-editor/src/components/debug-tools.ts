@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import sampleData from '../config/sample-data';
-import SayController from '#root/core/say-controller';
+import sampleData from '../config/sample-data.ts';
+import SayController from '#root/core/say-controller.ts';
 import { modifier } from 'ember-modifier';
-import { generatePageForExport } from '#root/utils/export-utils';
+import { generatePageForExport } from '#root/utils/export-utils.ts';
 
 interface DebugToolArgs {
   controller?: SayController;

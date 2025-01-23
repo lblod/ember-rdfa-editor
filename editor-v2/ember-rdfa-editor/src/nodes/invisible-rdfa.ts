@@ -1,12 +1,12 @@
 import { getRdfaAttrs, PNode, rdfaAttrSpec } from '#root';
-import { tagName } from '#root/utils/_private/dom-helpers';
-import type SayNodeSpec from '../core/say-node-spec';
+import { tagName } from '#root/utils/_private/dom-helpers.ts';
+import type SayNodeSpec from '../core/say-node-spec.ts';
 import {
   type RdfaAttrs,
   renderInvisibleRdfa,
   renderRdfaAttrs,
-} from '../core/schema';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+} from '../core/schema.ts';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 type Options = {
   rdfaAware?: boolean;

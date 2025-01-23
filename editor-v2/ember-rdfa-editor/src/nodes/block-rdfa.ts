@@ -5,12 +5,12 @@ import {
   isRdfaAttrs,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '#root/core/schema';
-import type SayNodeSpec from '../core/say-node-spec';
+} from '#root/core/schema.ts';
+import type SayNodeSpec from '../core/say-node-spec.ts';
 import type { NodeView } from 'prosemirror-view';
-import { RDF, SKOS } from '../utils/_private/namespaces';
-import { getRDFFragment } from '../utils/namespace';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+import { RDF, SKOS } from '../utils/_private/namespaces.ts';
+import { getRDFFragment } from '../utils/namespace.ts';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 

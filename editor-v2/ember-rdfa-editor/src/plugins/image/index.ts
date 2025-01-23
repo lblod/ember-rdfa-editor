@@ -1,1 +1,1 @@
-export { image, imageView } from './nodes/image';
+export { image, imageView } from './nodes/image.ts';

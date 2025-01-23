@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
-import type { Option } from '#root/utils/_private/option';
-import type { SayTerm } from '.';
+import type { Option } from '#root/utils/_private/option.ts';
+import type { SayTerm } from './index.ts';
 
 /**
  * A term that represents an RDF blank node with a label.

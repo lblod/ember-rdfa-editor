@@ -4,7 +4,7 @@ import {
   commands,
   selectActiveState,
 } from '@say-editor/prosemirror-invisibles';
-import SayController from '#root/core/say-controller';
+import SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

@@ -3,20 +3,17 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { type Select } from 'ember-power-select/components/power-select';
 import { SayController } from '#root';
-import type {
-  OutgoingTriple,
-  SayTermType,
-} from '#root/core/rdfa-processor';
+import type { OutgoingTriple, SayTermType } from '#root/core/rdfa-processor.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '#root/core/say-data-factory';
+} from '#root/core/say-data-factory/index.ts';
 import {
   getNodeByRdfaId,
   getSubjects,
   rdfaInfoPluginKey,
-} from '#root/plugins/rdfa-info';
-import { unwrap } from '#root/utils/_private/option';
+} from '#root/plugins/rdfa-info/index.ts';
+import { unwrap } from '#root/utils/_private/option.ts';
 import { localCopy } from 'tracked-toolbox';
 import { ValidationError, object, string } from 'yup';
 import {
@@ -25,7 +22,7 @@ import {
   literalTermSchema,
   namedNodeTermSchema,
   resourceNodeTermSchema,
-} from './object-term-schemas';
+} from './object-term-schemas.ts';
 
 type SupportedTermType =
   | 'NamedNode'

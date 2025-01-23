@@ -3,10 +3,10 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '#root/utils/ember-node';
-import Image from '#root/components/plugins/image/node';
+} from '#root/utils/ember-node.ts';
+import Image from '#root/components/plugins/image/node.ts';
 import { Node as PNode } from 'prosemirror-model';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node';
+import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'image',

@@ -1,5 +1,5 @@
-import { isComment } from './isComment';
-import { traverseComments } from './traverseComments';
+import { isComment } from './isComment.ts';
+import { traverseComments } from './traverseComments.ts';
 
 export function removeNodesBetweenComments(
   rootNode: Node,

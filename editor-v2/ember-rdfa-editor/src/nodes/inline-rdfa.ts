@@ -4,15 +4,15 @@ import {
   getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '../core/schema';
+} from '../core/schema.ts';
 import {
   type EmberNodeConfig,
   createEmberNodeSpec,
   createEmberNodeView,
-} from '../utils/ember-node';
-import InlineRdfaComponent from '../components/ember-node/inline-rdfa';
+} from '../utils/ember-node.ts';
+import InlineRdfaComponent from '../components/ember-node/inline-rdfa.ts';
 import type { ComponentLike } from '@glint/template';
-import getClassnamesFromNode from '../utils/get-classnames-from-node';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 
 type Options = {
   rdfaAware?: boolean;

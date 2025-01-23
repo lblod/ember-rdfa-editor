@@ -2,24 +2,28 @@ import Component from '@glimmer/component';
 import { ValidationError, object, string } from 'yup';
 import { on } from '@ember/modifier';
 import { tracked } from '@glimmer/tracking';
-import type { FullTriple } from '#root/core/rdfa-processor';
+import type { FullTriple } from '#root/core/rdfa-processor.ts';
 import { localCopy } from 'tracked-toolbox';
-import { literalTermSchema, namedNodeTermSchema } from './object-term-schemas';
+import {
+  literalTermSchema,
+  namedNodeTermSchema,
+} from './object-term-schemas.ts';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
-import WithUniqueId from '../with-unique-id';
+import WithUniqueId from '../with-unique-id.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '#root/core/say-data-factory';
+} from '#root/core/say-data-factory/index.ts';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
-import { type Option } from '#root/utils/_private/option';
+import { type Option } from '#root/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
-import { modifier } from 'ember-modifier';
+import { modifier, type FunctionBasedModifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
+import type { EmptyObject } from 'ember-modifier/-private/signature.js';
 
 const predicateSchema = string().curie().required();
 
@@ -211,25 +215,26 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   <template>
     <form
       ...attributes
-      {{on 'submit' this.handleSubmit}}
-      {{on 'input' this.handleInput}}
+      {{on "submit" this.handleSubmit}}
+      {{on "input" this.handleInput}}
+      {{! @glint-expect-error: not typesafe yet }}
       {{this.initAfterInsert}}
     >
 
       <StringField
-        @name='subject.value'
+        @name="subject.value"
         @required={{true}}
         @errors={{this.errors}}
         @value={{this.triple.subject.value}}
       >Subject</StringField>
       <StringField
-        @name='predicate'
+        @name="predicate"
         @required={{true}}
         @errors={{this.errors}}
         @value={{this.triple.predicate}}
       >Predicate</StringField>
       <TermTypeSelectField
-        @name='termType'
+        @name="termType"
         @selected={{this.termType}}
         @options={{this.termTypes}}
         @onChange={{this.selectTermType}}
@@ -239,13 +244,13 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         TermType
       </TermTypeSelectField>
       <StringField
-        @name='object.value'
+        @name="object.value"
         @required={{true}}
         @errors={{this.errors}}
         @value={{this.triple.object.value}}
       >Value</StringField>
 
-      {{#unless (eq this.termType 'NamedNode')}}
+      {{#unless (eq this.termType "NamedNode")}}
         <StringField
           @name={{this.datatypePath}}
           @required={{false}}
@@ -289,7 +294,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
         value={{@value}}
         required={{@required}}
         @disabled={{@disabled}}
-        @width='block'
+        @width="block"
       />
     </:default>
   </FormField>
@@ -323,7 +328,7 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
         <PowerSelect
           id={{id}}
           {{! For some reason need to manually set width }}
-          class='au-u-1-1'
+          class="au-u-1-1"
           @searchEnabled={{false}}
           @options={{@options}}
           @selected={{@selected}}
@@ -352,8 +357,8 @@ class FormField extends Component<FormFieldSig> {
           <AuLabel
             for={{id}}
             @required={{@required}}
-            @requiredLabel='Required'
-          >{{yield to='label'}}</AuLabel>
+            @requiredLabel="Required"
+          >{{yield to="label"}}</AuLabel>
           {{yield id}}
           {{#if error}}
             <AuPill>{{error}}</AuPill>

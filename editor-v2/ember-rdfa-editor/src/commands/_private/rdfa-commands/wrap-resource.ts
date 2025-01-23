@@ -1,13 +1,13 @@
-import { addProperty } from '../../rdfa-commands/add-property';
+import { addProperty } from '../../rdfa-commands/add-property.ts';
 import type { Command } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
-import { wrapIncludingParents } from '#root/commands';
+import { wrapIncludingParents } from '#root/commands/index.ts';
 import {
   findNodeByRdfaId,
   generateNewUri,
   getRdfaChildren,
-} from '#root/utils/rdfa-utils';
-import type { LinkTriple } from '#root/core/rdfa-processor';
+} from '#root/utils/rdfa-utils.ts';
+import type { LinkTriple } from '#root/core/rdfa-processor.ts';
 
 export function wrapResource(
   args: { uriBase: string } | { existingUri: string },

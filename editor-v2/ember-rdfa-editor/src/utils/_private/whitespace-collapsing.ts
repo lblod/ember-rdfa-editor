@@ -1,6 +1,6 @@
-import { NON_BREAKING_SPACE } from '#root/utils/_private/constants';
-import { tagName } from '#root/utils/_private/dom-helpers';
-import { PHRASING_CONTENT } from '#root/utils/_private/constants';
+import { NON_BREAKING_SPACE } from '#root/utils/_private/constants.ts';
+import { tagName } from '#root/utils/_private/dom-helpers.ts';
+import { PHRASING_CONTENT } from '#root/utils/_private/constants.ts';
 
 /**
  * utility function to convert text content styled using `white-space: pre-wrap`

@@ -2,7 +2,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import { NodeType, SayController } from '#root';
-import { setBlockType } from '#root/commands/set-block-type';
+import { setBlockType } from '#root/commands/set-block-type.ts';
 import IntlService from 'ember-intl/services/intl';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';

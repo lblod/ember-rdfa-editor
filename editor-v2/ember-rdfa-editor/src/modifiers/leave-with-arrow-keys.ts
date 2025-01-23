@@ -1,6 +1,6 @@
 import Modifier, { type ArgsFor, type PositionalArgs } from 'ember-modifier';
 import type Owner from '@ember/owner';
-import { SayController, TextSelection } from '..';
+import { SayController, TextSelection } from '../index.ts';
 import { registerDestructor } from '@ember/destroyable';
 
 function removeListeners(instance: LeaveWithArrowKeysModifier) {

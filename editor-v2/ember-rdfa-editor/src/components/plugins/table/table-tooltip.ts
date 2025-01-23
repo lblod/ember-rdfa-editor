@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { type Command, SayController } from '#root';
 import { htmlSafe } from '@ember/template';
-import SelectionTooltip from '../../_private/selection-tooltip';
+import SelectionTooltip from '../../_private/selection-tooltip.ts';
 import {
   addColumnAfter,
   addColumnBefore,
@@ -21,9 +21,9 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
-import ColorMenu from '#root/components/plugins/table/color';
+import ColorMenu from '#root/components/plugins/table/color.ts';
 import type { ComponentLike } from '@glint/template';
-import VerticalAlign from '#root/components/plugins/table/vertical-align';
+import VerticalAlign from '#root/components/plugins/table/vertical-align.ts';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { TableColumnEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-end-add';
 import { TableColumnStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-start-add';

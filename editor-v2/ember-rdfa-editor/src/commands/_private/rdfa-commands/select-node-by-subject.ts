@@ -1,4 +1,4 @@
-import { getNodesBySubject } from '#root/plugins/rdfa-info';
+import { getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
 import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeBySubjectArgs = {

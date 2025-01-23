@@ -3,7 +3,7 @@ import {
   postCleanHtml,
   cleanEmptyElements,
   cleanLinkElements,
-} from '#root/utils/_private/ce/paste-handler-helper-functions/index';
+} from '#root/utils/_private/ce/paste-handler-helper-functions/index.ts';
 
 export function cleanDocx(element: HTMLElement): string {
   cleanEmptyElements(element);

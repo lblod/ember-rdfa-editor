@@ -2,22 +2,16 @@ import type { Command, Transaction } from 'prosemirror-state';
 import type {
   IncomingTriple,
   OutgoingTriple,
-} from '#root/core/rdfa-processor';
+} from '#root/core/rdfa-processor.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-} from '#root/core/say-data-factory';
-import {
-  getNodeByRdfaId,
-  getNodesBySubject,
-} from '#root/plugins/rdfa-info';
-import TransformUtils from '#root/utils/_private/transform-utils';
-import type { ResolvedPNode } from '#root/utils/_private/types';
-import {
-  getProperties,
-  isLinkToNode,
-} from '#root/utils/rdfa-utils';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
+} from '#root/core/say-data-factory/index.ts';
+import { getNodeByRdfaId, getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
+import TransformUtils from '#root/utils/_private/transform-utils.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import { getProperties, isLinkToNode } from '#root/utils/rdfa-utils.ts';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 
 export type AddPropertyArgs = {
   /** The resource to which to add a property */

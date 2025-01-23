@@ -1,5 +1,5 @@
 import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
-import { isNone, type Option } from './option';
+import { isNone, type Option } from './option.ts';
 
 /**
  * If passed a link *and just a link* (ignoring leading and trailing whitespace), return the href

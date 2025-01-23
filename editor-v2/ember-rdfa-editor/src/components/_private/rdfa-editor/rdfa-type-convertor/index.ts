@@ -5,9 +5,9 @@
 // import {
 //   clearBacklinks,
 //   clearProperties,
-// } from '#root/commands/rdfa-commands';
-// import { ResolvedPNode } from '#root/utils/_private/types';
-// import { isResourceNode } from '#root/utils/node-utils';
+// } from '#root/commands/rdfa-commands.ts';
+// import { ResolvedPNode } from '#root/utils/_private/types.ts';
+// import { isResourceNode } from '#root/utils/node-utils.ts';
 // import { v4 as uuidv4 } from 'uuid';
 // type Args = {
 //   node: ResolvedPNode;

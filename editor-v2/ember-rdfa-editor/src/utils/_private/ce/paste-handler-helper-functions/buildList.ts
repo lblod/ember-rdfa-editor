@@ -1,8 +1,8 @@
-import { getListContentHtml } from './getListContentHtml';
-import { getListLevel } from './getListLevel';
-import { isList } from './isList';
-import { isOrderedList } from './isOrderedList';
-import { parseHtmlElement } from './parseHtmlElement';
+import { getListContentHtml } from './getListContentHtml.ts';
+import { getListLevel } from './getListLevel.ts';
+import { isList } from './isList.ts';
+import { isOrderedList } from './isOrderedList.ts';
+import { parseHtmlElement } from './parseHtmlElement.ts';
 
 interface Result {
   list: Element | null;

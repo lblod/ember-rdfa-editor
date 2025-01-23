@@ -7,28 +7,28 @@ import {
 import {
   proseStoreFromParse,
   SayStore,
-} from '#root/utils/_private/datastore/say-store';
+} from '#root/utils/_private/datastore/say-store.ts';
 import { Mark, PNode, ProsePlugin, Schema } from '#root';
 import { map, objectFrom } from 'iter-tools';
-import { ProseReferenceManager } from '#root/core/say-editor';
+import { ProseReferenceManager } from '#root/core/say-editor.ts';
 import {
   createLogger,
   type Logger,
-} from '#root/utils/_private/logging-utils';
+} from '#root/utils/_private/logging-utils.ts';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
 import {
   isElement,
   tagName,
-} from '#root/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers.ts';
 import {
   type Option,
   unwrap,
-} from '#root/utils/_private/option';
-import ArrayUtils from '#root/utils/_private/array-utils';
+} from '#root/utils/_private/option.ts';
+import ArrayUtils from '#root/utils/_private/array-utils.ts';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
-export { SayStore } from '#root/utils/_private/datastore/say-store';
+export { SayStore } from '#root/utils/_private/datastore/say-store.ts';
 
 export interface TextPNode {
   children: ResolvedPNode[];

@@ -4,9 +4,9 @@ import {
   NodeSelection,
   TextSelection,
 } from 'prosemirror-state';
-import type { Attrs, NodeSpec, NodeType } from '..';
+import type { Attrs, NodeSpec, NodeType } from '../index.ts';
 import { ContentMatch, Node as PNode } from 'prosemirror-model';
-import type { Option } from '#root/utils/_private/option';
+import type { Option } from '#root/utils/_private/option.ts';
 
 export function specCanSplit(spec: NodeSpec): boolean {
   return (spec['canSplit'] as Option<boolean>) ?? true;

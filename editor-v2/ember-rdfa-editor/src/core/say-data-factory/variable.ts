@@ -1,6 +1,6 @@
-import type { Option } from '#root/utils/_private/option';
+import type { Option } from '#root/utils/_private/option.ts';
 import type * as RDF from '@rdfjs/types';
-import type { SayTerm } from '.';
+import type { SayTerm } from './index.ts';
 
 /**
  * A term that represents a variable.

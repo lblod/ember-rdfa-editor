@@ -1,10 +1,7 @@
-import {
-  canSplit,
-  specCanSplit,
-} from '#root/commands/split-block-checked';
+import { canSplit, specCanSplit } from '#root/commands/split-block-checked.ts';
 import type { Command, TextSelection } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
-import { isNone, unwrap } from '#root/utils/_private/option';
+import { isNone, unwrap } from '#root/utils/_private/option.ts';
 
 export const liftEmptyBlockChecked: Command = (state, dispatch) => {
   const { $cursor } = state.selection as TextSelection;

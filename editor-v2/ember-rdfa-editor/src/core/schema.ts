@@ -1,33 +1,33 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
-import { PNode } from '#root/index';
-import { isSome, unwrap } from '../utils/_private/option';
+import { PNode } from '#root/index.ts';
+import { isSome, unwrap } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
   IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
-} from './rdfa-processor';
-import { isElement } from '#root/utils/_private/dom-helpers';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources';
+} from './rdfa-processor.ts';
+import { isElement } from '#root/utils/_private/dom-helpers.ts';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import {
   findNodesBySubject,
   getBacklinks,
-} from '#root/utils/rdfa-utils';
-import { type ResolvedPNode } from '#root/utils/_private/types';
+} from '#root/utils/rdfa-utils.ts';
+import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
   sayDataFactory,
   type SayTerm,
   type WithoutEquals,
-} from './say-data-factory';
+} from './say-data-factory/index.ts';
 import {
   fullLiteralSpan,
   incomingTripleSpan,
   literalSpan,
   namedNodeSpan,
-} from './schema/_private/render-rdfa-attrs';
-import { IllegalArgumentError } from '../utils/_private/errors';
+} from './schema/_private/render-rdfa-attrs.ts';
+import { IllegalArgumentError } from '../utils/_private/errors.ts';
 
 // const logger = createLogger('core/schema');
 

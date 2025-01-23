@@ -1,1 +1,1 @@
-export { placeholder } from './nodes/placeholder';
+export { placeholder } from './nodes/placeholder.ts';

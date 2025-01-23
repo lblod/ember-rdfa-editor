@@ -3,23 +3,23 @@ import {
   isElement,
   isTextNode,
   tagName,
-} from '#root/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers.ts';
 import {
   type default as Datastore,
   EditorStore,
   type SubAndContentPred,
-} from '#root/utils/_private/datastore/datastore';
+} from '#root/utils/_private/datastore/datastore.ts';
 import type { Quad } from '@rdfjs/types';
-import type { SayLiteral } from './say-data-factory';
-import type { SayNamedNode } from './say-data-factory';
 import {
+  SayLiteral,
+  SayNamedNode,
   SayBlankNode,
   ResourceNodeTerm,
   LiteralNodeTerm,
   ContentLiteralTerm,
   sayDataFactory,
   languageOrDataType,
-} from './say-data-factory';
+} from './say-data-factory/index.ts';
 
 export type SayTermType =
   | 'NamedNode'

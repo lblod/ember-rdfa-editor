@@ -2,11 +2,11 @@ import type { Command } from 'prosemirror-state';
 import {
   getPathFromRoot,
   isTextNode,
-} from '#root/utils/_private/dom-helpers';
+} from '#root/utils/_private/dom-helpers.ts';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
-import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing';
-import { preprocessRDFa } from '#root/core/rdfa-processor';
-import { PNode } from '..';
+import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing.ts';
+import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
+import { PNode } from '../index.ts';
 
 export function insertHtml(
   html: Node | string,

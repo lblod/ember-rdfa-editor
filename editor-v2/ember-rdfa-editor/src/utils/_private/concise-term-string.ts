@@ -3,8 +3,8 @@ import { DataFactory } from 'rdf-data-factory';
 import {
   RDF_TYPE,
   XSD_PREFIX,
-} from '#root/utils/_private/constants';
-import { ParseError } from '#root/utils/_private/errors';
+} from '#root/utils/_private/constants.ts';
+import { ParseError } from '#root/utils/_private/errors.ts';
 
 /**
  * This is a simplified implementation of {@link https://graphy.link/concise#string/c1 Concise term syntax}

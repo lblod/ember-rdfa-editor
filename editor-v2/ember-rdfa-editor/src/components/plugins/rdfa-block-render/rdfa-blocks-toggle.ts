@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import SayController from '#root/core/say-controller';
+import SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

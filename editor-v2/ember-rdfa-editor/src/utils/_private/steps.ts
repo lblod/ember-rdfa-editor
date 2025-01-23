@@ -1,6 +1,6 @@
 import { Node, Schema } from 'prosemirror-model';
 import { Step, StepResult } from 'prosemirror-transform';
-import { unwrap } from './option';
+import { unwrap } from './option.ts';
 
 //Based on https://discuss.prosemirror.net/t/changing-doc-attrs/784/22
 /**

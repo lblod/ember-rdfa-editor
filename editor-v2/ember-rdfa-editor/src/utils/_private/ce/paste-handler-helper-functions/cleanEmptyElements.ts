@@ -1,4 +1,4 @@
-import { traverseElements } from './traverseElements';
+import { traverseElements } from './traverseElements.ts';
 
 const ALLOWED_EMPTY_ELEMENTS = ['BR', 'IMG', 'TR', 'TD', 'HR'];
 const NOTRIM_ELEMENTS = ['SPAN'];

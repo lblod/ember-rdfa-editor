@@ -1,4 +1,4 @@
-import type { SayLiteral } from '../../say-data-factory';
+import type { SayLiteral } from '../../say-data-factory/index.ts';
 
 export function namedNodeSpan(
   subject: string,

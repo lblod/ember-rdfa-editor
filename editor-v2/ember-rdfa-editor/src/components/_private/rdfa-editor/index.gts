@@ -1,13 +1,13 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { NodeSelection, SayController } from '#root';
-import { isResourceNode } from '#root/utils/node-utils';
+import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
-import RdfaPropertyEditor from './property-editor';
-import RdfaRelationshipEditor from './relationship-editor';
-import RdfaWrappingUtils from './wrapping-utils';
-import RemoveNode from './remove-node';
-import type { ResolvedPNode } from '#root/utils/_private/types';
+import RdfaPropertyEditor from './property-editor/index.ts';
+import RdfaRelationshipEditor from './relationship-editor/index.gts';
+import RdfaWrappingUtils from './wrapping-utils/index.ts';
+import RemoveNode from './remove-node/index.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
@@ -15,7 +15,7 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import ExternalTripleEditor from './external-triple-editor';
+import ExternalTripleEditor from './external-triple-editor.gts';
 
 type Args = {
   controller?: SayController;
@@ -80,19 +80,19 @@ export default class RdfaEditor extends Component<Args> {
     }
   };
   <template>
-    <AuPanel class='au-u-margin-bottom-tiny' as |Section|>
+    <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
       <Section>
         <AuToolbar as |Group|>
           <Group>
-            <AuHeading @level='4' @skin='4'>RDFa</AuHeading>
+            <AuHeading @level="4" @skin="4">RDFa</AuHeading>
           </Group>
           {{#if @node}}
             <Group>
               <AuPill>{{this.type}}</AuPill>
               <AuButton
-                @skin='naked'
+                @skin="naked"
                 @icon={{if this.collapsed ChevronDownIcon ChevronUpIcon}}
-                {{on 'click' this.toggleSection}}
+                {{on "click" this.toggleSection}}
               />
             </Group>
           {{/if}}

@@ -1,5 +1,5 @@
-import { cleanCrLf } from './cleanCrLf';
-import { removeHtmlSurroundings } from './removeHtmlSurroundings';
+import { cleanCrLf } from './cleanCrLf.ts';
+import { removeHtmlSurroundings } from './removeHtmlSurroundings.ts';
 
 const cleaners = [removeHtmlSurroundings, cleanCrLf];
 

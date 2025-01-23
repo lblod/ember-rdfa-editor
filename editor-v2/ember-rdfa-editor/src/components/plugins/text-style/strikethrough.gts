@@ -1,5 +1,5 @@
 import { StrikethroughIcon } from '@appuniversum/ember-appuniversum/components/icons/strikethrough';
-import Mark from '#root/components/toolbar/mark';
+import Mark from '#root/components/toolbar/mark.ts';
 import t from 'ember-intl/helpers/t';
 
 <template>

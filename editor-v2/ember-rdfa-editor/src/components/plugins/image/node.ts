@@ -27,9 +27,9 @@
  */
 
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '#root/utils/ember-node';
+import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import { modifier } from 'ember-modifier';
-import { updateSize } from '#root/plugins/image/utils/resize-functions';
+import { updateSize } from '#root/plugins/image/utils/resize-functions.ts';
 
 const MIN_SURFACE = 625;
 
