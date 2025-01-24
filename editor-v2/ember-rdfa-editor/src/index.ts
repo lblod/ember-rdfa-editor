@@ -5,6 +5,7 @@ import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
 import { isNone } from './utils/_private/option.ts';
 
+import '#root/styles/ember-rdfa-editor.scss';
 export {
   getRdfaAttrs,
   rdfaAttrs,

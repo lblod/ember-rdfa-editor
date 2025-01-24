@@ -1,0 +1,296 @@
+/* ==================================
+   #SAY ANNOTATIONS
+   Shared styling (hover, click, show, regular)
+   ================================== */
+
+/* Variables
+  ========================================================================== */
+
+$say-annotation-width: $au-unit-huge * 1.5 !default;
+$say-annotation-offset: $au-unit-large !default;
+$say-annotation-gutter: $au-unit !default;
+$say-annotation-width-content: $say-annotation-width !default;
+$say-annotation-text-color: var(--au-gray-700) !default;
+$say-annotation-background-color: var(--au-gray-100) !default;
+
+/* Component
+  ========================================================================== */
+
+.rdfa-annotations {
+  // Visibility annotations
+  [property='dc:subject'],
+  [property='besluit:geplandOpenbaar'],
+  [property='besluit:openbaar'] {
+    font-weight: var(--au-regular);
+    color: $say-annotation-text-color !important;
+  }
+
+  [typeof='besluit:BehandelingVanAgendapunt'],
+  [property='ext:behandelt'],
+  [property='besluit:heeftAgendapunt'],
+  [typeof='besluit:Agendapunt'] {
+    @include au-font-size($au-base);
+    font-weight: var(--au-regular);
+    display: block !important;
+    position: relative;
+    color: $say-annotation-text-color !important;
+
+    [property='besluit:geplandOpenbaar'],
+    [property='besluit:openbaar'] {
+      color: var(--au-gray-600) !important;
+    }
+
+    [property='besluit:geplandOpenbaar'] i,
+    [property='besluit:openbaar'] i {
+      font-size: 1.5rem;
+      top: 0.2rem;
+      padding-left: 1px;
+      z-index: 2;
+      color: var(--au-gray-600) !important;
+    }
+
+    [property='besluit:geplandOpenbaar'][content='false'],
+    [property='besluit:openbaar'][content='false'],
+    [property='besluit:geplandOpenbaar'][content='false'] i,
+    [property='besluit:openbaar'][content='false'] i {
+      color: $say-editor-private-color !important;
+    }
+  }
+
+  // Show underlines on annotation
+  [property],
+  [typeof]:not([typeof='foaf:Document']),
+  [data-type],
+  .mark-highlight-manual {
+    border-bottom: 0.2rem dotted var(--au-gray-300);
+    padding-bottom: 0.2rem;
+    transition: border var(--au-transition);
+
+    // Hide certain underlines
+    [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      [typeof]
+      .mark-highlight-manual,
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      .mark-highlight-manual,
+    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [data-type],
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [data-type],
+    [typeof] [typeof] [typeof] [typeof] [typeof] [typeof] [typeof],
+    [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property]
+      [property] {
+      border-bottom: 0;
+    }
+  }
+
+  // Making it easy to discover elements that need to be filled out / take action upon
+  [property^='ext:insert'] {
+    background-color: $say-editor-highlight-color;
+    transition: background-color var(--au-transition);
+
+    &::selection {
+      background-color: $say-editor-highlight-selected-color;
+    }
+
+    &:hover {
+      background-color: $say-editor-highlight-hover-color;
+    }
+  }
+
+  [property='besluit:motivering']:after {
+    position: absolute;
+    z-index: -1;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($au-gray-100, 0.5);
+  }
+}
+
+// Highlighting
+span.mark-highlight-manual {
+  font-style: italic;
+  border-radius: 0.3rem;
+  color: var(--au-orange-700);
+  background-color: var(--au-orange-300);
+  margin-right: 0.5rem !important;
+  padding: 0 0.2rem !important;
+  line-height: 1.2rem !important;
+  transition:
+    border 0.1s ease-in-out,
+    background-color 0.1s ease-in-out;
+
+  &[data-editor-position-level='1'],
+  &:hover,
+  &:focus,
+  &:focus-within {
+    opacity: 0.75;
+  }
+  &::selection {
+    background-color: var(--au-blue-200);
+  }
+  user-select: none;
+}
+
+span.mark-highlight-manual.ProseMirror-selectednode {
+  background-color: var(--au-blue-200);
+  outline: 2px solid var(--au-blue-500);
+  color: var(--au-black);
+}
+
+[typeof='ext:Mapping'] + [typeof='ext:Mapping'] {
+  margin-left: 0.3rem;
+}
+
+[typeof='ext:Mapping'] {
+  border-bottom: 0 !important;
+
+  [property],
+  .mark-highlight-manual {
+    border-bottom: 0;
+  }
+
+  [property='ext:content'] {
+    border-radius: 0.3rem;
+    padding: 0 0.3rem;
+    line-height: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  [property='dct:type'] + [property='ext:content'],
+  [property='ext:codelist'] + [property='ext:content'] {
+    color: var(--vl-picton-120);
+    border-radius: 0.3rem;
+    background-color: rgba(#16465b, 0.15);
+    transition:
+      border 0.1s ease-in-out,
+      background-color 0.1s ease-in-out;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      background-color: rgba(#16465b, 0.1);
+    }
+  }
+
+  [property='dct:type'] + [property='ext:content']:after,
+  [property='ext:codelist'] + [property='ext:content']:after {
+    position: relative;
+    top: -0.2rem;
+    content: '' !important;
+    display: inline-block !important;
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.3rem;
+    background-size: contain;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMTY0NjVCIj48cGF0aCBkPSJNMjAuODMxMTAwMywzLjE4Mzg0MTggQzIwLjQ1OTEwMDMsMi44MDc0MjE4IDIwLjAxNjEwMDMsMi41MDg1NjE4IDE5LjUyNzcwMDMsMi4zMDQ2MDE4IEMxOS4wMzk0MDAzLDIuMTAwNjMxOCAxOC41MTU0MDAzLDEuOTk1NjAxOCAxNy45ODYxMDAzLDEuOTk1NjAxOCBDMTcuNDU2OTAwMywxLjk5NTYwMTggMTYuOTMyOTAwMywyLjEwMDYzMTggMTYuNDQ0NjAwMywyLjMwNDYwMTggQzE1Ljk1NjIwMDMsMi41MDg1NjE4IDE1LjUxMzIwMDMsMi44MDc0MjE4IDE1LjE0MTEwMDMsMy4xODM4NDE4IEwzLjczMTE0MDMyLDE0LjU5MzgwMTggQzMuNjEzMTgwMzIsMTQuNzI3MzAxOCAzLjUyNDYwMDMyLDE0Ljg4NDAwMTggMy40NzExNDAzMiwxNS4wNTM4MDE4IEwyLjAxMTE0MDMyLDIwLjc2MzgwMTggQzEuOTY4ODEwMzIsMjAuOTMxMjAxOCAxLjk3MDUxMDMyLDIxLjEwNjYwMTggMi4wMTYwNzAzMiwyMS4yNzMxMDE4IEMyLjA2MTYzMDMyLDIxLjQzOTUwMTggMi4xNDk1MDAzMiwyMS41OTE0MDE4IDIuMjcxMTQwMzIsMjEuNzEzODAxOCBDMi4zOTM1OTAzMiwyMS44MzU1MDE4IDIuNTQ1NDQwMzIsMjEuOTIzNDAxOCAyLjcxMTkxMDMyLDIxLjk2ODkwMTggQzIuODc4MzgwMzIsMjIuMDE0NTAxOCAzLjA1MzgyMDMyLDIyLjAxNjIwMTggMy4yMjExNDAzMiwyMS45NzM4MDE4IEw4LjkyMTE0MDMyLDIwLjU0MzgwMTggQzkuMDkxMDEwMzIsMjAuNDkwNDAxOCA5LjI0NzczMDMyLDIwLjQwMTgwMTggOS4zODExNDAzMiwyMC4yODM4MDE4IEwyMC44MzExMDAzLDguODczODQxOCBDMjEuMjA3NjAwMyw4LjUwMTgyMTggMjEuNTA2NDAwMyw4LjA1ODc5MTggMjEuNzEwNDAwMyw3LjU3MDQzMTggQzIxLjkxNDQwMDMsNy4wODIwNzE4IDIyLjAxOTQwMDMsNi41NTgwOTE4IDIyLjAxOTQwMDMsNi4wMjg4NDE4IEMyMi4wMTk0MDAzLDUuNDk5NjAxOCAyMS45MTQ0MDAzLDQuOTc1NjIxOCAyMS43MTA0MDAzLDQuNDg3MjYxOCBDMjEuNTA2NDAwMywzLjk5ODkwMTggMjEuMjA3NjAwMywzLjU1NTg3MTggMjAuODMxMTAwMywzLjE4Mzg0MTggWiBNMTQuNDIxMTAwMyw2LjczMzg0MTggTDE3LjI4MTEwMDMsOS41OTM4NDE4IEw4LjcyMTE0MDMyLDE4LjE2MzgwMTggTDUuODUxMTQwMzIsMTUuMzAzODAxOCBMMTQuNDIxMTAwMyw2LjczMzg0MTggWiBNNC40MjExNDAzMiwxOS42MzM4MDE4IEw1LjAxMTE0MDMyLDE3LjI1MzgwMTggTDYuNzYxMTQwMzIsMTkuMDAzODAxOCBMNC40MjExNDAzMiwxOS42MzM4MDE4IFogTTE5LjQyMTEwMDMsNC42MzM4NDE4IEMxOS43ODY5MDAzLDUuMDIwMTQxOCAxOS45OTA3MDAzLDUuNTMxODgxOCAxOS45OTA3MDAzLDYuMDYzODQxOCBDMTkuOTkwNzAwMyw2LjU5NTgwMTggMTkuNzg2OTAwMyw3LjEwNzU0MTggMTkuNDIxMTAwMyw3LjQ5Mzg0MTggTDE4LjcwMTEwMDMsOC4yMTM4NDE4IEwxNS44MzExMDAzLDUuMzEzODQxOCBMMTYuNTUxMTAwMyw0LjU5Mzg0MTggQzE2LjkzNjgwMDMsNC4yMjI5MTE4IDE3LjQ1MTEwMDMsNC4wMTU3MTE4IDE3Ljk4NjEwMDMsNC4wMTU3MTE4IEMxOC41MjEyMDAzLDQuMDE1NzExOCAxOS4wMzU1MDAzLDQuMjIyOTExOCAxOS40MjExMDAzLDQuNTkzODQxOCBMMTkuNDIxMTAwMyw0LjYzMzg0MTggWiIvPjwvc3ZnPgo=');
+  }
+}
+
+// Show RDFA blocks
+.rdfa-annotations.show-rdfa-blocks {
+  [property],
+  [typeof]:not([typeof='foaf:Document']),
+  [data-type],
+  .mark-highlight-manual {
+    position: relative;
+    border: 1px solid var(--au-gray-200);
+    display: block !important; // Override inline styles
+    margin: $au-unit-tiny;
+    padding: 0;
+
+    // Style annotation blocks
+    &:before {
+      @include au-font-size($say-smallest-font-size, 1.2);
+      font-family: var(--au-font);
+      font-weight: var(--au-medium);
+      letter-spacing: 0.01rem;
+      color: var(--au-gray-600);
+      text-transform: uppercase;
+      pointer-events: none;
+      content: attr(property) ' ' attr(typeof) ' ' attr(data-type);
+      position: relative;
+      right: auto;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      padding: $au-unit-tiny * 0.5;
+      transition: none;
+      border-bottom: 1px solid var(--au-gray-200);
+      background-color: var(--au-gray-100);
+      opacity: 1;
+    }
+  }
+
+  // Add help text on highlights
+  .mark-highlight-manual:after {
+    @include au-font-size($say-smallest-font-size, 1.2);
+    font-family: var(--au-font);
+    font-weight: var(--au-regular);
+    letter-spacing: 0.01rem;
+    color: var(--au-gray-600);
+    text-transform: uppercase;
+    pointer-events: none;
+    position: relative;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding: $au-unit-tiny * 0.5;
+    transition: none;
+    border-top: 1px solid var(--au-gray-200);
+    background-color: var(--au-white);
+    opacity: 1;
+    margin: 0;
+  }
+
+  span.mark-highlight-manual {
+    background-color: transparent;
+  }
+}
+
+.show-rdfa-path {
+  [data-editor-rdfa-position-level='0'] {
+    border-color: var(--au-green-900) !important;
+    border-width: 3px !important;
+    border-style: solid !important;
+  }
+  [data-editor-rdfa-position-level='1'] {
+    border-color: var(--au-green-700) !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+  }
+  [data-editor-rdfa-position-level='2'] {
+    border-color: var(--au-green-500) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+  }
+  [data-editor-rdfa-position-level='3'] {
+    border-color: var(--au-green-300) !important;
+    border-width: 1px !important;
+    border-style: dashed !important;
+  }
+}

@@ -1,0 +1,20 @@
+span.ember-node {
+  display: inline-block;
+}
+
+.ember-node {
+  white-space: normal;
+
+  .au-c-dropdown__menu.is-visible {
+    overflow: auto;
+    height: 200px;
+
+    .au-c-link {
+      min-height: 50px;
+    }
+  }
+
+  [data-ember-node-content='true'] {
+    white-space: break-spaces;
+  }
+}

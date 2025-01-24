@@ -1,0 +1,60 @@
+.say-link-tooltip {
+  z-index: 3;
+  background-color: var(--au-white);
+  gap: 0;
+  align-items: stretch;
+  padding: 0;
+  width: 28rem;
+
+  a,
+  button {
+    padding: 0;
+    flex: 1;
+    border: 0;
+    justify-content: center;
+  }
+
+  .au-c-input {
+    border-width: 0 0.1rem;
+    border-radius: 0%;
+    padding: 0 0.3rem;
+    flex: 7;
+  }
+
+  .au-c-input:focus {
+    border-width: 0 0 !important;
+  }
+}
+
+.say-pill {
+  gap: 0;
+  vertical-align: bottom;
+  min-height: 2.55rem;
+  margin-bottom: -0.1rem;
+  margin-top: 2px;
+  background-color: var(--au-blue-100);
+  border-color: var(--au-blue-300);
+  border-radius: var(--au-radius);
+  font-weight: var(--au-regular);
+  color: var(--au-blue-700);
+  [contenteditable] {
+    outline: none;
+    white-space: break-spaces;
+    word-break: break-all;
+    word-wrap: break-word;
+    cursor: text;
+    color: var(--au-blue-700);
+  }
+}
+
+.ember-node.ProseMirror-selectednode {
+  .say-pill {
+    background-color: var(--au-blue-200);
+    outline: 2px solid var(--au-blue-500);
+    outline-offset: -2px;
+
+    ::selection {
+      background-color: var(--au-blue-300);
+    }
+  }
+}

@@ -1,0 +1,86 @@
+/* ==================================
+   #SAY EDITOR HINTS
+   ================================== */
+
+.say-editor-hints {
+  display: block;
+  position: relative;
+}
+
+.say-editor-hints__list {
+  position: relative;
+  width: 100%;
+
+  @include mq(medium) {
+    width: auto;
+    max-width: 100%;
+  }
+}
+
+.say-editor-hints__list-item {
+  margin-bottom: $au-unit-small;
+}
+
+.say-editor-hints__insert {
+  .au-c-accordion {
+    padding-bottom: $au-unit-small;
+  }
+
+  @include mq($until: medium) {
+    position: relative;
+
+    .au-c-accordion {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      padding-bottom: $au-unit-tiny;
+    }
+
+    .au-c-accordion .au-c-toolbar {
+      background-color: var(--au-gray-100);
+      width: auto;
+      align-items: center;
+      justify-content: center;
+      width: $au-unit + $au-unit-small;
+      height: $au-unit + $au-unit-small;
+
+      &:hover {
+        background-color: var(--au-white);
+      }
+    }
+
+    .au-c-accordion .au-c-toolbar .au-c-toolbar__group {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .au-c-accordion .au-c-toolbar .au-c-icon {
+      margin-top: 0;
+      margin-right: 0;
+    }
+
+    .au-c-accordion .au-c-toolbar .au-c-button {
+      border: 0 !important;
+      clip: rect(0 0 0 0) !important;
+      clip-path: inset(50%) !important;
+      height: 1px !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      position: absolute !important;
+      white-space: nowrap !important;
+      width: 1px !important;
+    }
+
+    .au-c-accordion__content {
+      padding: $au-unit-tiny;
+      border-radius: var(--au-radius);
+      border: 0.1rem solid var(--au-gray-200);
+      background-color: var(--au-white);
+      box-shadow:
+        0 1px 3px rgba($au-gray-900, 0.1),
+        0 4px 20px rgba($au-gray-900, 0.035),
+        0 1px 1px rgba($au-gray-900, 0.025);
+    }
+  }
+}

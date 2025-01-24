@@ -5,6 +5,7 @@ import sampleData from '../config/sample-data.ts';
 import SayController from '#root/core/say-controller.ts';
 import { modifier } from 'ember-modifier';
 import { generatePageForExport } from '#root/utils/export-utils.ts';
+import '#root/styles/ember-rdfa-editor.scss';
 
 interface DebugToolArgs {
   controller?: SayController;

@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import type { ComponentLike } from '@glint/template';
+import '#root/styles/ember-rdfa-editor.scss';
 
 const PILL_SIZES = ['small'] as const;
 

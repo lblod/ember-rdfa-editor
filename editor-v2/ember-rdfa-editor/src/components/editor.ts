@@ -5,9 +5,7 @@ import {
   type Logger,
 } from '#root/utils/_private/logging-utils.ts';
 import { tracked } from 'tracked-built-ins';
-import SayEditor, {
-  type PluginConfig,
-} from '#root/core/say-editor.ts';
+import SayEditor, { type PluginConfig } from '#root/core/say-editor.ts';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { getOwner } from '@ember/application';
@@ -16,6 +14,7 @@ import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute
 import SayController from '#root/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
+import '#root/styles/ember-rdfa-editor.scss';
 
 export interface RdfaEditorArgs {
   /**

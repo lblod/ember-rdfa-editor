@@ -1,0 +1,196 @@
+/* ==================================
+  #DROPDOWN
+  ================================== */
+
+/* Variables
+  ========================================================================== */
+
+$say-dropdown-caret-size: 0.4rem !default;
+$say-toolbar-height: 44px !default;
+$say-smaller-font-size: 1.4rem !default;
+
+/* Component
+  ========================================================================== */
+
+.say-dropdown {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.say-toolbar__button {
+}
+
+.say-dropdown__button {
+  @include au-font-size($au-base, 1);
+  appearance: none;
+  outline: none;
+  border: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--au-gray-600);
+  height: $say-toolbar-height;
+  min-width: $say-toolbar-height;
+  background-color: transparent;
+  transition: color var(--au-transition);
+  padding: $au-unit-tiny;
+  margin: 0;
+
+  & + & {
+    border-left: 0.1rem solid var(--au-gray-200);
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--au-gray-700);
+    background-color: transparent;
+  }
+
+  &:focus {
+    outline: var(--au-outline);
+    outline-offset: -0.4rem;
+  }
+
+  &.is-active {
+    color: var(--au-gray-900);
+    background-color: var(--au-gray-300);
+    box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-400);
+  }
+
+  &:disabled {
+    color: var(--au-gray-400);
+    cursor: not-allowed;
+  }
+}
+
+.say-dropdown__button img {
+  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg)
+    brightness(91%) contrast(85%);
+
+  &:hover,
+  &:focus {
+    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+      brightness(97%) contrast(94%);
+  }
+}
+
+.say-dropdown__menu {
+  @include au-font-size($au-base, 1.5);
+  font-family: var(--au-font);
+  font-weight: var(--au-regular);
+  z-index: var(--au-z-index-beta);
+  background-color: $au-white;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: auto;
+  box-shadow:
+    0 0 12px rgba($au-gray-900, 0.15),
+    0 0 2px rgba($au-gray-900, 0.1);
+  border-radius: 0.3rem;
+  display: none;
+
+  &:before,
+  &:after {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-width: $say-dropdown-caret-size;
+    margin-left: -$say-dropdown-caret-size * 0.5;
+  }
+
+  &:before {
+    border-color: rgba($au-white, 0);
+    border-bottom-color: var(--au-gray-200);
+  }
+
+  &:after {
+    border-color: rgba($au-white, 0);
+    border-bottom-color: var(--au-white);
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &.is-visible {
+    display: flex;
+  }
+}
+
+.say-dropdown__menu [role='menuitem'] {
+  @include au-font-size($say-smaller-font-size, 1.5);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  font-family: var(--au-font);
+  font-weight: var(--au-regular);
+  color: var(--au-gray-700);
+  appearance: none;
+  border: 0;
+  padding: $au-unit-small;
+  height: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+
+  &:first-child {
+    border-top-right-radius: 0.3rem;
+    border-top-left-radius: 0.3rem;
+  }
+
+  &:last-child {
+    border-bottom-right-radius: 0.3rem;
+    border-bottom-left-radius: 0.3rem;
+  }
+
+  &:hover:not(:disabled) {
+    color: var(--au-gray-800);
+    background-color: var(--au-gray-100);
+  }
+
+  &:focus:not(:disabled) {
+    outline: var(--au-outline);
+    outline-offset: -0.2rem;
+  }
+
+  &:disabled {
+    color: var(--au-gray-500);
+  }
+}
+
+.say-dropdown__menu [role='menuitem'] + [role='menuitem'] {
+  border-top: 1px dotted var(--au-gray-300);
+}
+
+.say-dropdown__menu [role='menuitem'] img,
+.say-dropdown__menu [role='menuitem'] svg {
+  margin-right: $au-unit-tiny;
+}
+
+.say-dropdown__menu [role='menuitem'] img {
+  filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+    brightness(97%) contrast(94%);
+}
+
+.say-dropdown__menu [role='menuitem']:hover img,
+.say-dropdown__menu [role='menuitem']:focus img {
+  filter: invert(35%) sepia(14%) saturate(463%) hue-rotate(175deg)
+    brightness(92%) contrast(91%);
+}
+
+.say-dropdown__menu .say-dropdown__menu-with-inputs {
+  justify-content: space-between;
+}
+
+.say-dropdown__menu [role='menuitem'] input {
+  margin-left: $au-unit-tiny;
+}
