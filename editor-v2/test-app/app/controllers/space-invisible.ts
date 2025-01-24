@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Schema } from 'prosemirror-model';
+import { Schema } from '@lblod/ember-rdfa-editor';
 import {
   em,
   strikethrough,
@@ -19,7 +19,6 @@ import {
   repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import applyDevTools from 'prosemirror-dev-tools';
 import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
 import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
@@ -162,7 +161,6 @@ export default class SpaceInvisibleController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent, { doNotClean: true });
-    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

@@ -57,9 +57,7 @@ import {
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
-import { highlightPlugin } from 'dummy/dummy-plugins/highlight-plugin';
-import applyDevTools from 'prosemirror-dev-tools';
-import { Schema } from 'prosemirror-model';
+import { Schema } from '@lblod/ember-rdfa-editor';
 import { tracked } from 'tracked-built-ins';
 import {
   card,
@@ -145,7 +143,6 @@ export default class IndexController extends Controller {
   @tracked plugins: PluginConfig = [
     firefoxCursorFix(),
     chromeHacksPlugin(),
-    highlightPlugin({ testKey: 'yeet' }),
     ...tablePlugins,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),

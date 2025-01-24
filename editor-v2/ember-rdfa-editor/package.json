@@ -203,6 +203,7 @@
     "@embroider/addon-shim": "^1.8.9",
     "@embroider/macros": "^1.16.5",
     "@floating-ui/dom": "^1.6.5",
+    "@glint/template": "^1.4.0",
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "0.8.0-beta.6",
     "@rdfjs/types": "^1.1.2",
@@ -244,7 +245,6 @@
     "stream-browserify": "^3.0.0",
     "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
-    "@glint/template": "^1.4.0",
     "uuid": "^9.0.1",
     "yup": "^1.4.0"
   },
@@ -273,6 +273,10 @@
     "eslint-plugin-ember": "^12.3.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^17.15.1",
+    "ember-power-select": "^8.6.2",
+    "ember-source": ">= 4.12.0",
+    "ember-basic-dropdown": "^8.4.0",
+    "ember-concurrency": "^4.0.2",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
@@ -285,7 +289,10 @@
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^3.7.0",
-    "ember-source": ">= 4.12.0"
+    "ember-power-select": "^8.6.2",
+    "ember-source": ">= 4.12.0",
+    "ember-basic-dropdown": "^8.4.0",
+    "ember-concurrency": "^4.0.2"
   },
   "ember": {
     "edition": "octane"

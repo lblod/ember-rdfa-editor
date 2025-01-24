@@ -9,6 +9,11 @@ module.exports = function (defaults) {
       watchDependencies: ['@lblod/ember-rdfa-editor'],
       webpack: require('@lblod/ember-rdfa-editor/webpack-config'),
     },
+    babel: {
+      plugins: [
+        require.resolve('ember-concurrency/async-arrow-task-transform'),
+      ],
+    },
   });
 
   const { maybeEmbroider } = require('@embroider/test-setup');

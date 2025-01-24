@@ -19,6 +19,7 @@
     [
       "module:decorator-transforms",
       { "runtime": { "import": "decorator-transforms/runtime" } }
-    ]
+    ],
+    "ember-concurrency/async-arrow-task-transform"
   ]
 }

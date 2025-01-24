@@ -3,10 +3,10 @@ import {
   DecorationSet,
   EditorState,
   NodeSelection,
-  PluginKey,
   type PluginView,
   ProsePlugin,
 } from '#root';
+import { PluginKey } from 'prosemirror-state';
 import { isEditable } from '#root/core/say-node-spec.ts';
 import { isSome } from '#root/utils/_private/option.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';

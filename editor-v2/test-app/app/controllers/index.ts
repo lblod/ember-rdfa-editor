@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Schema } from 'prosemirror-model';
+import { Schema } from '@lblod/ember-rdfa-editor';
 import {
   em,
   strikethrough,
