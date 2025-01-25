@@ -13,15 +13,15 @@ import {
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { v4 as uuidv4 } from 'uuid';
 import type { ResolvedPNode } from './types.ts';
-import {
-  getNodeByRdfaId,
-  getNodesBySubject,
-} from '#root/plugins/rdfa-info/index.ts';
 import TransformUtils from './transform-utils.ts';
 import type {
   TransactionMonad,
   TransactionMonadResult,
 } from '../transaction-utils.ts';
+import {
+  getNodeByRdfaId,
+  getNodesBySubject,
+} from '#root/plugins/rdfa-info/utils.ts';
 
 export type RdfaAttr =
   | 'vocab'

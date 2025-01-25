@@ -27,11 +27,6 @@
  * THE SOFTWARE.
  */
 
-import type { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
-import type * as RDF from '@rdfjs/types';
-import type { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
-import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
-
 export * from './data-factory.ts';
 export * from './blank-node.ts';
 export * from './default-graph.ts';
@@ -40,9 +35,4 @@ export * from './named-node.ts';
 export * from './quad.ts';
 export * from './variable.ts';
 export * from './prosemirror-terms/index.ts';
-
-export type SayTerm =
-  | RDF.Term
-  | ContentLiteralTerm
-  | LiteralNodeTerm
-  | ResourceNodeTerm;
+export type { SayTerm } from './term.ts';
