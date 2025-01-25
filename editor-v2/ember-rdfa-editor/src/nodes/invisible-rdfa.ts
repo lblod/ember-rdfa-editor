@@ -1,12 +1,14 @@
-import { getRdfaAttrs, PNode, rdfaAttrSpec } from '#root';
 import { tagName } from '#root/utils/_private/dom-helpers.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
 import {
+  getRdfaAttrs,
   type RdfaAttrs,
+  rdfaAttrSpec,
   renderInvisibleRdfa,
   renderRdfaAttrs,
 } from '../core/schema.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 type Options = {
   rdfaAware?: boolean;

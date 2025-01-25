@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { type Command, SayController } from '#root';
 import { htmlSafe } from '@ember/template';
 import SelectionTooltip from '../../_private/selection-tooltip.ts';
 import {
@@ -31,6 +30,8 @@ import { TableColumnRemoveIcon } from '@appuniversum/ember-appuniversum/componen
 import { TableRowEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-end-add';
 import { TableRowStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-start-add';
 import { TableRowRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-remove';
+import type SayController from '#root/core/say-controller.ts';
+import type { Command } from 'prosemirror-state';
 
 type Args = {
   controller: SayController;

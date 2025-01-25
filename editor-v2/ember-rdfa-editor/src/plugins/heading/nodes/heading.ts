@@ -2,9 +2,9 @@ import { Node as PNode } from 'prosemirror-model';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
+  rdfaAttrSpec,
   renderRdfaAware,
 } from '#root/core/schema.ts';
-import { rdfaAttrSpec } from '#root';
 import { optionMapOr } from '#root/utils/_private/option.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import NumberEditor from '#root/components/_private/number-editor/index.gts';

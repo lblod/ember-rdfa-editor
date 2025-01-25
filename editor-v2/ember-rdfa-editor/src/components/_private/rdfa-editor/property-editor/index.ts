@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { SayController } from '#root';
 import { unwrap } from '#root/utils/_private/option.ts';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal.gts';
@@ -14,6 +13,7 @@ import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
+import type SayController from '#root/core/say-controller.ts';
 
 type CreationStatus = {
   mode: 'creation';

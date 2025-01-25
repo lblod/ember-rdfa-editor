@@ -1,6 +1,9 @@
 import type { Mark } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrSpec } from '#root';
-import { getRdfaContentElement } from '../core/schema.ts';
+import {
+  getRdfaAttrs,
+  getRdfaContentElement,
+  rdfaAttrSpec,
+} from '../core/schema.ts';
 import type SayMarkSpec from '../core/say-mark-spec.ts';
 import { v4 as uuidv4 } from 'uuid';
 

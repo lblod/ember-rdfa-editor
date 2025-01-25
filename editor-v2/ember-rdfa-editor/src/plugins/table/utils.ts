@@ -23,7 +23,8 @@
  *  THE SOFTWARE.
  */
 
-import { NodeSelection, ResolvedPos } from '#root';
+import { ResolvedPos } from 'prosemirror-model';
+import { NodeSelection } from 'prosemirror-state';
 import { unwrap } from '#root/utils/_private/option.ts';
 import {
   cellAround,

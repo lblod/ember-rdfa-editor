@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { NodeSelection, SayController } from '#root';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor/index.ts';
@@ -16,6 +15,8 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import ExternalTripleEditor from './external-triple-editor.gts';
+import type SayController from '#root/core/say-controller.ts';
+import { NodeSelection } from 'prosemirror-state';
 
 type Args = {
   controller?: SayController;

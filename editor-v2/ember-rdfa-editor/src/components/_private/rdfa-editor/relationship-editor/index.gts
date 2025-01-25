@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
-import { PNode, SayController } from '#root';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import {
   removeBacklink,
@@ -42,6 +41,8 @@ import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import type SayController from '#root/core/say-controller.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 type Args = {
   controller?: SayController;

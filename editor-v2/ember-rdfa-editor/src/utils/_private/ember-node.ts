@@ -30,10 +30,11 @@ import { v4 as uuidv4 } from 'uuid';
 import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
-import { NodeSelection, SayView } from '#root';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import type { NodeSerializer } from '#root/core/say-serializer.ts';
+import type SayView from '#root/core/say-view.ts';
+import { NodeSelection } from 'prosemirror-state';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;

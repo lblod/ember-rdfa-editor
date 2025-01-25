@@ -1,4 +1,4 @@
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/8ec1e96ae994c1585b07b1ca9dc3292f63e868e0/src/fixtables.ts#L24
 export function changedDescendants(

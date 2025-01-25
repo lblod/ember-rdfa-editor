@@ -1,15 +1,10 @@
-import {
-  Decoration,
-  DecorationSet,
-  EditorState,
-  NodeSelection,
-  type PluginView,
-  ProsePlugin,
-} from '#root';
-import { PluginKey } from 'prosemirror-state';
+import type { PluginView } from 'prosemirror-state';
+import { EditorState, NodeSelection, PluginKey } from 'prosemirror-state';
 import { isEditable } from '#root/core/say-node-spec.ts';
 import { isSome } from '#root/utils/_private/option.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
 type State = {
   activeNode?: ResolvedPNode;
@@ -95,9 +90,7 @@ export const editableNodePlugin = (getPos?: () => number | undefined) =>
     // - Rich
     view(): PluginView {
       return {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         update() {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         destroy() {},
       };
     },

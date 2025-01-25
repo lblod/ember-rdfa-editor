@@ -2,12 +2,12 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 import { clearColor, setColor } from '#root/plugins/color/index.ts';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { WordIcon } from '@appuniversum/ember-appuniversum/components/icons/word';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

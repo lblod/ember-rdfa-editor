@@ -1,4 +1,5 @@
-import { PNode, ResolvedPos } from '#root';
+import { ResolvedPos } from 'prosemirror-model';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 export function getGroups(node: PNode) {
   return node.type.spec.group?.split(' ') ?? [];

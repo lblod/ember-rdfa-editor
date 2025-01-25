@@ -1,5 +1,5 @@
+import { getRdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
 import type { MarkSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrSpec } from '#root';
 
 /**
  * @deprecated use the `link` node-spec instead

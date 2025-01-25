@@ -1,8 +1,8 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import type { SayController } from '#root';
 import { HtmlIcon } from '@appuniversum/ember-appuniversum/components/icons/html';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

@@ -1,5 +1,5 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
-import { ProsePlugin } from '#root';
+import { ProsePlugin } from '#root/prosemirror-aliases.ts';
 import { getRdfaId, getSubject } from '#root/utils/rdfa-utils.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 import { unwrap } from '#root/utils/_private/option.ts';

@@ -1,4 +1,4 @@
-import type { MarkSpec } from '#root';
+import type { MarkSpec } from "prosemirror-model";
 
 export const code: MarkSpec = {
   parseDOM: [{ tag: 'code' }],

@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { type Select } from 'ember-power-select/components/power-select';
-import { SayController } from '#root';
 import type { OutgoingTriple, SayTermType } from '#root/core/rdfa-processor.ts';
 import {
   languageOrDataType,
@@ -23,6 +22,7 @@ import {
   namedNodeTermSchema,
   resourceNodeTermSchema,
 } from './object-term-schemas.ts';
+import type SayController from '#root/core/say-controller.ts';
 
 type SupportedTermType =
   | 'NamedNode'

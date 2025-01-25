@@ -1,9 +1,6 @@
-import {
-  EditorState,
-  Mapping,
-  PNode,
-  Selection,
-} from '#root';
+import { EditorState, Selection } from 'prosemirror-state';
+import { PNode } from '#root/prosemirror-aliases.ts';
+import { Mapping } from 'prosemirror-transform';
 import type {
   IncomingTriple,
   LinkTriple,

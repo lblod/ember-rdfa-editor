@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-import { EditorState, PNode } from '#root';
 import SayEditor from '#root/core/say-editor.ts';
 import type SayMarkSpec from '#root/core/say-mark-spec.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 import {
   type DOMOutputSpec,
   DOMSerializer,
@@ -36,6 +36,7 @@ import {
   NodeType,
   Schema,
 } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
 
 export type NodeSerializer = (node: PNode, state: EditorState) => DOMOutputSpec;
 export type MarkSerializer = (

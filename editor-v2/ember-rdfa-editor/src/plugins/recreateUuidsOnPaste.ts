@@ -1,10 +1,5 @@
-import {
-  Fragment,
-  Slice,
-  Node,
-  Schema,
-  type Attrs,
-} from '#root';
+import type { Attrs } from 'prosemirror-model';
+import { Fragment, Slice, Node, Schema } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { v4 as uuidv4 } from 'uuid';
 

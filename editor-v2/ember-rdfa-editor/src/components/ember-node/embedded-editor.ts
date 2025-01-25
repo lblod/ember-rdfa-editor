@@ -25,28 +25,26 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import {
-  AttrStep,
-  type Command,
-  EditorState,
-  keymap,
-  NodeSelection,
-  type NodeViewConstructor,
-  SayView,
-  Selection,
-  Step,
-  StepMap,
-  TextSelection,
-  Transaction,
-} from '#root';
 import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '#root/plugins/history/index.ts';
 import { isSome, unwrap } from '#root/utils/_private/option.ts';
 import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed/index.ts';
-import { Plugin } from 'prosemirror-state';
+import {
+  EditorState,
+  NodeSelection,
+  Plugin,
+  Selection,
+  TextSelection,
+  Transaction,
+  type Command,
+} from 'prosemirror-state';
 import { embeddedEditorBaseKeymap } from '#root/core/keymap.ts';
+import SayView from '#root/core/say-view.ts';
+import type { NodeViewConstructor } from 'prosemirror-view';
+import { AttrStep, Step, StepMap } from 'prosemirror-transform';
+import { keymap } from 'prosemirror-keymap';
 
 type Args = EmberNodeArgs & {
   placeholder: string;

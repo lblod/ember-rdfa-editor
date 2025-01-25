@@ -1,9 +1,9 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import type { Attrs, NodeType } from 'prosemirror-model';
 import type { Command } from 'prosemirror-state';
-import { PNode } from '#root';
 import { wrapInList } from 'prosemirror-schema-list';
 import { liftOutOfNestedLists } from './lift-out-of-nested-lists.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 function isListNode(node: PNode) {
   return node.type.name === 'ordered_list' || node.type.name === 'bullet_list';

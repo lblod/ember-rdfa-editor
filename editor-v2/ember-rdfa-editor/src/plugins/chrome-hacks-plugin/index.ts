@@ -1,10 +1,7 @@
-import {
-  Decoration,
-  DecorationSet,
-  EditorState,
-  ProsePlugin,
-} from '#root';
+import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { EditorState } from 'prosemirror-state';
 import { chrome } from '#root/utils/_private/browser.ts';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
 export function chromeHacksPlugin(): ProsePlugin {
   const chromeHacksPlugin = new ProsePlugin({

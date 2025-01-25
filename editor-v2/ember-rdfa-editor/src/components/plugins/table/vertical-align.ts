@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
@@ -11,6 +10,7 @@ import { inject as service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

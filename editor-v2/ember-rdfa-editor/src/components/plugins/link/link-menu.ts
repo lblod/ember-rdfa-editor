@@ -1,9 +1,9 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { wrapSelection } from '#root/commands/wrap-selection.ts';
-import { SayController } from '#root';
 import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

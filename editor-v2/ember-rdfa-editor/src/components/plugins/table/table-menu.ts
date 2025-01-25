@@ -15,7 +15,6 @@ import {
 } from '@say-editor/prosemirror-tables';
 import SayController from '#root/core/say-controller.ts';
 import { insertTable } from '#root/plugins/table/index.ts';
-import { type Command } from '#root';
 import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
@@ -27,6 +26,7 @@ import { TableColumnRemoveIcon } from '@appuniversum/ember-appuniversum/componen
 import { TableRowEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-end-add';
 import { TableRowStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-start-add';
 import { TableRowRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-remove';
+import type { Command } from 'prosemirror-state';
 
 interface Args {
   controller?: SayController;

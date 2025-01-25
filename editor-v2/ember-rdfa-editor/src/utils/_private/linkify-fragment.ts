@@ -1,4 +1,4 @@
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 import { Fragment, MarkType, NodeType, Schema } from 'prosemirror-model';
 import { find as linkifyFind } from 'linkifyjs';
 
@@ -6,7 +6,7 @@ import { find as linkifyFind } from 'linkifyjs';
  *
  * Modified from https://github.com/ProseMirror/prosemirror/issues/90
  * This modified version is made to work with the linkifyjs (https://github.com/Hypercontext/linkifyjs) library
- * 
+ *
  * Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy

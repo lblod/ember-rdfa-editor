@@ -1,12 +1,8 @@
-import {
-  MarkType,
-  NodeType,
-  PNode,
-  ProsePlugin,
-  EditorView,
-  SayView,
-  Slice,
-} from '#root';
+import { MarkType, NodeType, Slice } from 'prosemirror-model';
+import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { EditorView } from 'prosemirror-view';
+import SayView from '#root/core/say-view.ts';
+
 import linkifyFragment from '#root/utils/_private/linkify-fragment.ts';
 
 export { link as linkMark } from './mark/link.ts';

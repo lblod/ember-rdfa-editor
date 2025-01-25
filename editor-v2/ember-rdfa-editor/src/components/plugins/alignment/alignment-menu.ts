@@ -1,6 +1,5 @@
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { SayController } from '#root';
 import {
   ALIGNMENT_OPTIONS,
   type AlignmentOption,
@@ -16,6 +15,7 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

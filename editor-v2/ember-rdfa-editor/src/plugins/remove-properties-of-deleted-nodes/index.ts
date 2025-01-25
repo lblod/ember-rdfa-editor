@@ -1,5 +1,5 @@
 import { EditorState, Plugin } from 'prosemirror-state';
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 import {
   getNodeByRdfaId,
   getNodesBySubject,

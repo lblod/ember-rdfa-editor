@@ -1,5 +1,5 @@
 import type { ComponentLike } from '@glint/template';
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 import type { NodeSpec } from 'prosemirror-model';
 import type { NodeSerializer } from './say-serializer.ts';
 

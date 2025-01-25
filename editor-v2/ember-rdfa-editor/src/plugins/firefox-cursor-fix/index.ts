@@ -1,12 +1,7 @@
-import {
-  Decoration,
-  DecorationSet,
-  EditorState,
-  EditorView,
-  ProsePlugin,
-  SayView,
-  TextSelection,
-} from '#root';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
+import { EditorState, TextSelection } from 'prosemirror-state';
+import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import SayView from '#root/core/say-view.ts';
 import { gecko } from '#root/utils/_private/browser.ts';
 
 export function firefoxCursorFix(): ProsePlugin {

@@ -1,4 +1,4 @@
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 import type { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
 import { SelectionRange, Selection } from 'prosemirror-state';
 import { unwrap } from '#root/utils/_private/option.ts';

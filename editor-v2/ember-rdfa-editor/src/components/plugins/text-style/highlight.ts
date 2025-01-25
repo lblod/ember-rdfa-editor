@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 import {
   clearHighlight,
   setHighlight,
@@ -12,6 +11,7 @@ import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

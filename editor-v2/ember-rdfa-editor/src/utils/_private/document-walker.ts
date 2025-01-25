@@ -1,4 +1,5 @@
-import { PNode, ResolvedPos } from '#root';
+import { ResolvedPos } from 'prosemirror-model';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 /**
  * Find a position between nodes that passes a predicate test in document order.
@@ -35,7 +36,7 @@ export function* findNodePosUp(
  * loop over the return values of the generator instead.
  * @param mainDoc the main doc for which the position is returned
  * @param $startPos the starting ResolvedPos position to start the search from
- * @param predicate a predicate returning if the position is valid, receiving a parent and a local index. 
+ * @param predicate a predicate returning if the position is valid, receiving a parent and a local index.
  *                  `parent.child(index)` is then the child after the index place.
 
  * @returns the global position (in reference to `mainDoc`)

@@ -7,11 +7,7 @@ import { isNone } from './utils/_private/option.ts';
 import '#root/styles/ember-rdfa-editor.scss';
 export { keydownHandler, keymap } from 'prosemirror-keymap';
 
-export {
-  getRdfaAttrs,
-  rdfaAttrs,
-  rdfaAttrSpec,
-} from '#root/core/schema.ts';
+export { getRdfaAttrs, rdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
 
 export type { RdfaAttrs } from '#root/core/schema.ts';
 
@@ -49,7 +45,6 @@ export {
   Schema,
   Slice,
 } from 'prosemirror-model';
-export { Node as PNode, DOMParser as ProseParser } from 'prosemirror-model';
 
 export type {
   Command,
@@ -71,7 +66,6 @@ export {
   TextSelection,
   Transaction,
 } from 'prosemirror-state';
-export { Plugin as ProsePlugin } from 'prosemirror-state';
 
 export type {
   DecorationAttrs,
@@ -127,6 +121,7 @@ export {
   wrappingInputRule,
 } from 'prosemirror-inputrules';
 
+export { PNode, ProseParser, ProsePlugin } from '#root/prosemirror-aliases.ts';
 export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;

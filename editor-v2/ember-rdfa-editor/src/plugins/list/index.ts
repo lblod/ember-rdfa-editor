@@ -1,4 +1,5 @@
-import { EditorState, PNode, ProsePlugin, Transaction } from '#root';
+import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { EditorState, Transaction } from 'prosemirror-state';
 import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
 import type { ListPathEntry } from './nodes/list-nodes.ts';
 

@@ -2,11 +2,11 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

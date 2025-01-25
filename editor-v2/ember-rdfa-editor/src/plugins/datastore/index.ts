@@ -8,7 +8,6 @@ import {
   proseStoreFromParse,
   SayStore,
 } from '#root/utils/_private/datastore/say-store.ts';
-import { Mark, PNode, ProsePlugin, Schema } from '#root';
 import { map, objectFrom } from 'iter-tools';
 import { ProseReferenceManager } from '#root/core/say-editor.ts';
 import {
@@ -25,6 +24,9 @@ import {
   unwrap,
 } from '#root/utils/_private/option.ts';
 import ArrayUtils from '#root/utils/_private/array-utils.ts';
+import type { Mark } from 'prosemirror-model';
+import { ProsePlugin, type PNode } from '#root/prosemirror-aliases.ts';
+import type { Schema } from 'prosemirror-model';
 
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 

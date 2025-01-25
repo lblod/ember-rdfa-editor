@@ -1,4 +1,4 @@
-import { PNode, ProseParser } from '#root';
+import { PNode, ProseParser } from '#root/prosemirror-aliases.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser.ts';

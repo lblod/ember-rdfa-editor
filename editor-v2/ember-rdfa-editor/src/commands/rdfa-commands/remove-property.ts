@@ -1,4 +1,3 @@
-import { type PNode } from '#root';
 import { getNodeByRdfaId, getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -10,6 +9,7 @@ import {
 } from '#root/utils/rdfa-utils.ts';
 import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import type { Command, Transaction } from 'prosemirror-state';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 type RemovePropertyArgs = {
   /**

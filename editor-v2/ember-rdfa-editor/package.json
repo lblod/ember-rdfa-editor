@@ -161,7 +161,8 @@
     }
   },
   "imports": {
-    "#root": "./src/index.ts",
+    "#root": null,
+    "#root/index.ts": null,
     "#root/*": "./src/*"
   },
   "typesVersions": {

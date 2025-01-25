@@ -1,4 +1,4 @@
-import { PNode } from '#root';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 export type HtmlTag = keyof HTMLElementTagNameMap;
 

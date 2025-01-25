@@ -1,6 +1,6 @@
+import type SayController from '#root/core/say-controller.ts';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 
 type Args = {
   controller?: SayController;

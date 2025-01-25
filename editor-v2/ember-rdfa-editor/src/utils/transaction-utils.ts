@@ -1,4 +1,4 @@
-import { EditorState, Transaction } from '#root';
+import { EditorState, Transaction } from 'prosemirror-state';
 
 /**
  * A generic container for the result of a transaction monad

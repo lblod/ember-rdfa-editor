@@ -1,6 +1,6 @@
 import { PluginKey } from 'prosemirror-state';
-import { ProsePlugin } from '#root';
 import type Owner from '@ember/owner';
+import { ProsePlugin } from '#root/prosemirror-aliases.ts';
 
 export const emberApplicationPluginKey = new PluginKey<DatastorePluginState>(
   'ember_application',

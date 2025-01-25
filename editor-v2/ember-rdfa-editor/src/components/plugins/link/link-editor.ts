@@ -1,10 +1,10 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
-import { SayController } from '#root';
 import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

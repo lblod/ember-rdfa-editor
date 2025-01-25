@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { SayController } from '#root';
 import {
   wrapInlineResource,
   wrapLiteral,
@@ -10,6 +9,7 @@ import WrappingModal from './modal.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { wrapInlineLiteral } from '#root/commands/_private/rdfa-commands/wrap-inline-literal.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
+import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

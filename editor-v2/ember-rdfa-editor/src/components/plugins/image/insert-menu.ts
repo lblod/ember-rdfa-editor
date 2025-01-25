@@ -1,9 +1,9 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { SayController } from '#root';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { tracked } from 'tracked-built-ins';
 import { ImageIcon } from '@appuniversum/ember-appuniversum/components/icons/image';
+import type SayController from '#root/core/say-controller.ts';
 
 const DEFAULT_SVG_HEIGHT = 100;
 
