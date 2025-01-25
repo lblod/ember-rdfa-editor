@@ -1,4 +1,4 @@
-import type { PNode } from '../index.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 export default function getClassnamesFromNode(node: PNode) {
   const classNames = node.type.spec['classNames'];

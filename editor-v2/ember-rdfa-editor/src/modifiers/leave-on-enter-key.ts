@@ -1,5 +1,6 @@
+import type SayController from '#root/core/say-controller.ts';
 import { modifier } from 'ember-modifier';
-import { SayController, TextSelection } from '../index.ts';
+import { TextSelection } from 'prosemirror-state';
 
 /* Set the cursor behind the node after `startPosNode` when pressing enter in the bound element. */
 export default modifier(function leaveOnEnterKey(

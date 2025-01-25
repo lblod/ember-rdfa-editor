@@ -1,5 +1,5 @@
 import type { Option } from '#root/utils/_private/option.ts';
-import type { SayTerm } from '../index.ts';
+import type { SayTerm } from '../term.ts';
 
 /**
  * A term that contains an IRI.

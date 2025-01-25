@@ -1,6 +1,6 @@
 import type { Option } from '#root/utils/_private/option.ts';
 import type * as RDF from '@rdfjs/types';
-import type { SayTerm } from './index.ts';
+import type { SayTerm } from './term.ts';
 
 /**
  * A singleton term instance that represents the default graph.

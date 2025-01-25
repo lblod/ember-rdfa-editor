@@ -10,10 +10,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import {
-  baseKeymap,
-  type KeymapOptions,
-} from '#root/core/keymap.ts';
+import { baseKeymap, type KeymapOptions } from '#root/core/keymap.ts';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils.ts';
 import { ReferenceManager } from '#root/utils/_private/reference-manager.ts';
@@ -37,9 +34,9 @@ import SaySerializer from '#root/core/say-serializer.ts';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info/index.ts';
 import { gapCursor } from '../plugins/gap-cursor/index.ts';
 import { removePropertiesOfDeletedNodes } from '#root/plugins/remove-properties-of-deleted-nodes/index.ts';
-import { ProseParser } from '../index.ts';
 import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
+import { ProseParser } from '#root/prosemirror-aliases.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 

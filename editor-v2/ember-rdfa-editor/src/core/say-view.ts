@@ -2,8 +2,9 @@ import { AllSelection, EditorState, Selection } from 'prosemirror-state';
 import { type DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc, htmlToFragment } from '../utils/_private/html-utils.ts';
-import { DOMSerializer, ProseParser } from '../index.ts';
 import { SetDocAttributesStep } from '../utils/steps.ts';
+import { ProseParser } from '#root/prosemirror-aliases.ts';
+import { DOMSerializer } from 'prosemirror-model';
 
 export interface SetHtmlOptions {
   shouldFocus?: boolean;

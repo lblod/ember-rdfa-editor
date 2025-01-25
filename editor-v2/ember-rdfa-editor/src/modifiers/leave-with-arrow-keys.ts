@@ -1,7 +1,8 @@
 import Modifier, { type ArgsFor, type PositionalArgs } from 'ember-modifier';
 import type Owner from '@ember/owner';
-import { SayController, TextSelection } from '../index.ts';
 import { registerDestructor } from '@ember/destroyable';
+import type SayController from '#root/core/say-controller.ts';
+import { TextSelection } from 'prosemirror-state';
 
 function removeListeners(instance: LeaveWithArrowKeysModifier) {
   instance.modifiedElement?.removeEventListener(

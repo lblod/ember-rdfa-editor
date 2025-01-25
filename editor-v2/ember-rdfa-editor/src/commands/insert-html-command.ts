@@ -6,7 +6,7 @@ import {
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
 import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
-import { PNode } from '../index.ts';
+import { PNode } from '#root/prosemirror-aliases.ts';
 
 export function insertHtml(
   html: Node | string,
