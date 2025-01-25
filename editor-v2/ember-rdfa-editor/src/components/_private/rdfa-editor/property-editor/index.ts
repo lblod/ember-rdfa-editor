@@ -3,13 +3,12 @@ import { SayController } from '#root';
 import { unwrap } from '#root/utils/_private/option.ts';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal.gts';
-import { addProperty, removeProperty } from '#root/commands/index.ts';
+import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
+import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
+
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import type {
-  OutgoingTriple,
-  PlainTriple,
-} from '#root/core/rdfa-processor.ts';
+import type { OutgoingTriple, PlainTriple } from '#root/core/rdfa-processor.ts';
 import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';

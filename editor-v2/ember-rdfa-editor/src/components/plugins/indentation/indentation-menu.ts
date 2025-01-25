@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import { liftListItem, sinkListItem } from 'prosemirror-schema-list';
 import SayController from '#root/core/say-controller.ts';
 import { chainCommands } from 'prosemirror-commands';
-import { indentNode } from '#root/commands/index.ts';
+import { indentNode } from '#root/commands/indent-node.ts';
 import { ReverseIndentIcon } from '@appuniversum/ember-appuniversum/components/icons/reverse-indent';
 import { IndentIcon } from '@appuniversum/ember-appuniversum/components/icons/indent';
 

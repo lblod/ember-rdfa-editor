@@ -10,7 +10,8 @@ import {
   selectNodeByRdfaId,
   selectNodeBySubject,
 } from '#root/commands/_private/rdfa-commands/index.ts';
-import { addProperty, removeProperty } from '#root/commands/index.ts';
+import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
+import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
 import { NotImplementedError } from '#root/utils/_private/errors.ts';
 import RelationshipEditorModal from './modal.gts';
 import { getNodeByRdfaId, getSubjects } from '#root/plugins/rdfa-info/index.ts';
