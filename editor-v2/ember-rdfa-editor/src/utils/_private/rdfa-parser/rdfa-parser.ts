@@ -16,19 +16,18 @@ import {
 } from './rdfa-profile.ts';
 import { Util } from './util.ts';
 import { CustomError } from '#root/utils/_private/errors.ts';
-import {
-  isElement,
-  isTextNode,
-} from '#root/utils/_private/dom-helpers.ts';
+import { isElement, isTextNode } from '#root/utils/_private/dom-helpers.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
+import type {
+  RdfaResourceNodeMap,
+  RdfaContentNodeMap,
+} from '../datastore/node-map.ts';
 import {
-  type RdfaContentNodeMap,
-  type RdfaResourceNodeMap,
   rdfaContentNodeMap,
   rdfaResourceNodeMap,
-} from '../datastore/datastore.ts';
+} from '../datastore/node-map.ts';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
 import {
   languageOrDataType,

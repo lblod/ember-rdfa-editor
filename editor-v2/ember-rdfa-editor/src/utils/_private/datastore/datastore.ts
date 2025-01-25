@@ -22,8 +22,8 @@ import {
 } from '#root/utils/_private/datastore/term-spec.ts';
 import { GraphyDataset } from './graphy-dataset.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
-import { TwoWayMap } from '../map-utils.ts';
-import type { IncomingLiteralNodeTriple } from '#root/core/rdfa-processor.ts';
+import type { RdfaResourceNodeMap, RdfaContentNodeMap } from './node-map.ts';
+import { rdfaContentNodeMap, rdfaResourceNodeMap } from './node-map.ts';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -40,42 +40,8 @@ interface PredicateNodesResponse<N> extends TermNodesResponse<N> {
 interface ObjectNodesResponse<N> extends TermNodesResponse<N> {
   object: RDF.Quad_Object;
 }
-export interface SubAndContentPred {
-  subject: RDF.Quad_Subject;
-  contentPredicate?: RDF.Quad_Predicate;
-  contentDatatype?: RDF.NamedNode;
-  contentLanguage?: string;
-}
 
 export type WhichTerm = 'subject' | 'predicate' | 'object';
-export type RdfaResourceNodeMap<N> = TwoWayMap<N, SubAndContentPred, N, string>;
-export type RdfaContentNodeMap<N> = TwoWayMap<
-  N,
-  IncomingLiteralNodeTriple,
-  N,
-  string
->;
-export function rdfaResourceNodeMap<N>(
-  init?: Iterable<[N, SubAndContentPred]>,
-): RdfaResourceNodeMap<N> {
-  return TwoWayMap.withValueStringHashing<N, SubAndContentPred>({
-    valueHasher: (item) => `${item.subject.termType}-${item.subject.value}`,
-    init,
-  });
-}
-export function rdfaContentNodeMap<N>(
-  init?: Iterable<[N, IncomingLiteralNodeTriple]>,
-): RdfaContentNodeMap<N> {
-  return TwoWayMap.withValueStringHashing<N, IncomingLiteralNodeTriple>({
-    valueHasher: ({
-      subject: { termType, value, language, datatype },
-      predicate,
-    }) => {
-      return `${termType}-${value}-${language}-${datatype.value}-${predicate}`;
-    },
-    init,
-  });
-}
 /**
  * High-level interface to query RDF-knowledge from the document.
  * Designed with the principles of a fluent interface in mind.

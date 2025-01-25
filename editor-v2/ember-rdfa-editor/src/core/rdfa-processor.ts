@@ -7,7 +7,6 @@ import {
 import {
   type default as Datastore,
   EditorStore,
-  type SubAndContentPred,
 } from '#root/utils/_private/datastore/datastore.ts';
 import type { Quad } from '@rdfjs/types';
 import {
@@ -20,6 +19,7 @@ import {
   sayDataFactory,
   languageOrDataType,
 } from './say-data-factory/index.ts';
+import type { SubAndContentPred } from '#root/utils/_private/datastore/node-map.ts';
 
 export type SayTermType =
   | 'NamedNode'
