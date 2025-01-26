@@ -243,6 +243,9 @@ importers:
       ember-concurrency:
         specifier: ^4.0.2
         version: 4.0.2(@babel/core@7.26.0)(@glimmer/tracking@1.1.2)(@glint/template@1.5.1)(ember-source@6.1.0(@glimmer/component@1.1.2(@babel/core@7.26.0))(@glint/template@1.5.1)(rsvp@4.8.5)(webpack@5.97.1))
+      ember-intl:
+        specifier: ~6.4.1
+        version: 6.4.1(@babel/core@7.26.0)(@glint/template@1.5.1)(typescript@5.6.3)(webpack@5.97.1)
       ember-power-select:
         specifier: ^8.6.2
         version: 8.6.2(22298c705fde87844127eb5601119afd)
@@ -11069,6 +11072,18 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@formatjs/intl@2.10.15(typescript@5.6.3)':
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.2.4
+      '@formatjs/fast-memoize': 2.2.3
+      '@formatjs/icu-messageformat-parser': 2.9.4
+      '@formatjs/intl-displaynames': 6.8.5
+      '@formatjs/intl-listformat': 7.7.5
+      intl-messageformat: 10.7.7
+      tslib: 2.8.1
+    optionalDependencies:
+      typescript: 5.6.3
+
   '@formatjs/intl@2.10.15(typescript@5.7.3)':
     dependencies:
       '@formatjs/ecma402-abstract': 2.2.4
@@ -15157,6 +15172,36 @@ snapshots:
       - '@glint/template'
       - supports-color
     optional: true
+
+  ember-intl@6.4.1(@babel/core@7.26.0)(@glint/template@1.5.1)(typescript@5.6.3)(webpack@5.97.1):
+    dependencies:
+      '@formatjs/icu-messageformat-parser': 2.11.0
+      '@formatjs/intl': 2.10.15(typescript@5.6.3)
+      broccoli-caching-writer: 3.0.3
+      broccoli-funnel: 3.0.8
+      broccoli-merge-files: 0.8.0
+      broccoli-merge-trees: 4.2.0
+      broccoli-source: 3.0.1
+      broccoli-stew: 3.0.0
+      calculate-cache-key-for-tree: 2.0.0
+      cldr-core: 44.1.0
+      ember-auto-import: 2.10.0(@glint/template@1.5.1)(webpack@5.97.1)
+      ember-cli-babel: 8.2.0(@babel/core@7.26.0)
+      ember-cli-typescript: 5.3.0
+      eventemitter3: 5.0.1
+      extend: 3.0.2
+      fast-memoize: 2.5.2
+      intl-messageformat: 10.7.14
+      js-yaml: 4.1.0
+      json-stable-stringify: 1.2.1
+      silent-error: 1.1.1
+    optionalDependencies:
+      typescript: 5.6.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@glint/template'
+      - supports-color
+      - webpack
 
   ember-intl@6.4.1(@babel/core@7.26.0)(@glint/template@1.5.1)(typescript@5.7.3)(webpack@5.97.1):
     dependencies:

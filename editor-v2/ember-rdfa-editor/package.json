@@ -267,17 +267,17 @@
     "@tsconfig/ember": "^3.0.8",
     "babel-plugin-ember-template-compilation": "^2.2.5",
     "concurrently": "^9.0.1",
-    "ember-source": "^5.4.0",
+    "ember-basic-dropdown": "^8.4.0",
+    "ember-concurrency": "^4.0.2",
+    "ember-intl": "~6.4.1",
+    "ember-power-select": "^8.6.2",
+    "ember-source": ">= 4.12.0",
     "ember-template-lint": "^6.0.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-ember": "^12.3.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^17.15.1",
-    "ember-power-select": "^8.6.2",
-    "ember-source": ">= 4.12.0",
-    "ember-basic-dropdown": "^8.4.0",
-    "ember-concurrency": "^4.0.2",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
@@ -290,10 +290,11 @@
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^3.7.0",
-    "ember-power-select": "^8.6.2",
-    "ember-source": ">= 4.12.0",
     "ember-basic-dropdown": "^8.4.0",
-    "ember-concurrency": "^4.0.2"
+    "ember-concurrency": "^4.0.2",
+    "ember-intl": "~6.4.1",
+    "ember-power-select": "^8.6.2",
+    "ember-source": ">= 4.12.0"
   },
   "ember": {
     "edition": "octane"
