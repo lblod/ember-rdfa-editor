@@ -1,9 +1,6 @@
-import type * as RDF from '@rdfjs/types';
+import type { Term, NamedNode, BlankNode, Literal } from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-import {
-  RDF_TYPE,
-  XSD_PREFIX,
-} from '#root/utils/_private/constants.ts';
+import { RDF_TYPE, XSD_PREFIX } from '#root/utils/_private/constants.ts';
 import { ParseError } from '#root/utils/_private/errors.ts';
 
 /**
@@ -32,7 +29,7 @@ type ConPlainLiteral = `"${string}`;
 type ConImplicitLiteral = string;
 
 export type PrefixMapping = (prefix: string) => string | null;
-export type TermConverter = (term: ConciseTerm) => RDF.Term;
+export type TermConverter = (term: ConciseTerm) => Term;
 
 export function xsd(type: string): string {
   return `${XSD_PREFIX}${type}`;
@@ -68,27 +65,27 @@ function toAbsIri(
 export function conciseToRdfjs(
   term: ConPrefixedName,
   prefixMapping: PrefixMapping,
-): RDF.NamedNode;
+): NamedNode;
 export function conciseToRdfjs(
   term: ConAbsoluteIRI,
   prefixMapping?: PrefixMapping,
-): RDF.NamedNode;
+): NamedNode;
 export function conciseToRdfjs(
   term: ConTypeAlias,
   prefixMapping?: PrefixMapping,
-): RDF.NamedNode;
+): NamedNode;
 export function conciseToRdfjs(
   term: ConLiteral,
   prefixMapping?: PrefixMapping,
-): RDF.Literal;
+): Literal;
 export function conciseToRdfjs(
   term: ConBlankNode,
   prefixMapping?: PrefixMapping,
-): RDF.BlankNode;
+): BlankNode;
 export function conciseToRdfjs(
   term: ConciseTerm,
   prefixMapping?: PrefixMapping,
-): RDF.Term {
+): Term {
   const factory = new DataFactory();
   if (typeof term === 'number') {
     const numberType = factory.namedNode(xsd('double'));

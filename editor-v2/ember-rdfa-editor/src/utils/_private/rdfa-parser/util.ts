@@ -4,7 +4,7 @@
  * Copyright © 2019 Ruben Taelman
  */
 
-import type * as RDF from '@rdfjs/types';
+import type { Quad_Graph, Literal, BlankNode, NamedNode } from '@rdfjs/types';
 import { resolve } from 'relative-to-absolute-iri';
 import type { IActiveTag } from './active-tag.ts';
 import { RDFA_CONTENTTYPES, type RdfaProfile } from './rdfa-profile.ts';
@@ -25,7 +25,7 @@ export class ModelDataFactory<N> extends DataFactory {
     subject: ModelQuadSubject<N>,
     predicate: ModelQuadPredicate<N>,
     object: ModelQuadObject<N>,
-    graph: RDF.Quad_Graph,
+    graph: Quad_Graph,
   ): ModelQuad<N> {
     const quad = super.quad(subject, predicate, object, graph);
     return { ...quad, subject, predicate, object, graph };
@@ -273,13 +273,13 @@ export class Util<N> {
     activeTag: IActiveTag<N>,
     allowTerms: boolean,
     allowBlankNode: B,
-  ): B extends true ? (RDF.BlankNode | RDF.NamedNode)[] : RDF.NamedNode[];
+  ): B extends true ? (BlankNode | NamedNode)[] : NamedNode[];
   public createVocabIris(
     terms: string,
     activeTag: IActiveTag<N>,
     allowTerms: boolean,
     allowBlankNode: boolean,
-  ): (RDF.NamedNode | RDF.BlankNode)[] {
+  ): (NamedNode | BlankNode)[] {
     return terms
       .split(/\s+/)
       .filter((term) => term && (allowTerms || term.indexOf(':') >= 0))
@@ -295,7 +295,7 @@ export class Util<N> {
    * @param {IActiveTag} activeTag The current active tag.
    * @return {Literal} A new literal node.
    */
-  public createLiteral(literal: string, activeTag: IActiveTag<N>): RDF.Literal {
+  public createLiteral(literal: string, activeTag: IActiveTag<N>): Literal {
     if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
       for (const entry of Util.TIME_REGEXES) {
         if (entry.regex.exec(literal)) {

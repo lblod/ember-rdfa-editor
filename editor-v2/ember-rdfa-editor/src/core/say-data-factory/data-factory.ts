@@ -1,10 +1,10 @@
-import type * as RDF from '@rdfjs/types';
+import type { NamedNode, BaseQuad, DataFactory } from '@rdfjs/types';
 import { SayNamedNode } from './named-node.ts';
 import { SayBlankNode } from './blank-node.ts';
 import { SayLiteral } from './literal.ts';
 import { SayVariable } from './variable.ts';
 import { SayDefaultGraph } from './default-graph.ts';
-import { Quad } from 'rdf-data-factory';
+import type { Quad } from 'rdf-data-factory';
 import type { SayTerm } from './term.ts';
 
 import { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
@@ -20,8 +20,8 @@ let dataFactoryCounter = 0;
 /**
  * A factory for instantiating Say RDF terms and quads.
  */
-export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
-  implements RDF.DataFactory<Q>
+export class SayDataFactory<Q extends BaseQuad = Quad>
+  implements DataFactory<Q>
 {
   private readonly blankNodePrefix: string;
   private blankNodeCounter = 0;
@@ -44,7 +44,7 @@ export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
 
   public literal(
     value: string,
-    languageOrDatatype?: string | RDF.NamedNode,
+    languageOrDatatype?: string | NamedNode,
   ): SayLiteral {
     return new SayLiteral(value, languageOrDatatype);
   }
@@ -70,7 +70,7 @@ export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
 
   literalNode(
     value: string,
-    languageOrDataType?: string | RDF.NamedNode<string>,
+    languageOrDataType?: string | NamedNode<string>,
   ): LiteralNodeTerm {
     return new LiteralNodeTerm(value, languageOrDataType);
   }
@@ -80,7 +80,7 @@ export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
   }
 
   contentLiteral(
-    languageOrDataType?: string | RDF.NamedNode<string>,
+    languageOrDataType?: string | NamedNode<string>,
   ): ContentLiteralTerm {
     return new ContentLiteralTerm(languageOrDataType);
   }
@@ -119,20 +119,14 @@ export class SayDataFactory<Q extends RDF.BaseQuad = RDF.Quad>
           original as WithoutEquals<LiteralNodeTerm>;
         return this.literalNode(
           original.value,
-          languageOrDataType(
-            language,
-            this.fromTerm(datatype) as RDF.NamedNode,
-          ),
+          languageOrDataType(language, this.fromTerm(datatype) as NamedNode),
         );
       }
       case 'ContentLiteral': {
         const { datatype, language } =
           original as WithoutEquals<ContentLiteralTerm>;
         return this.contentLiteral(
-          languageOrDataType(
-            language,
-            this.fromTerm(datatype) as RDF.NamedNode,
-          ),
+          languageOrDataType(language, this.fromTerm(datatype) as NamedNode),
         );
       }
     }
@@ -153,8 +147,8 @@ export interface IDataFactoryOptions {
 export const sayDataFactory = new SayDataFactory();
 export function languageOrDataType(
   language?: Option<string>,
-  datatype?: Option<RDF.NamedNode>,
-): string | RDF.NamedNode | undefined {
+  datatype?: Option<NamedNode>,
+): string | NamedNode | undefined {
   if (language?.length) {
     if (datatype && datatype.value.length) {
       if (datatype.equals(sayDataFactory.namedNode(LANG_STRING))) {
