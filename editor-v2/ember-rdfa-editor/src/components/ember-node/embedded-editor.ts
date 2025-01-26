@@ -26,7 +26,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
-import IntlService from 'ember-intl/services/intl';
+import type IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '#root/plugins/history/index.ts';
 import { isSome, unwrap } from '#root/utils/_private/option.ts';

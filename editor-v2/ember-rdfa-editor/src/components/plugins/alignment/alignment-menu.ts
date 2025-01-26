@@ -6,7 +6,7 @@ import {
   DEFAULT_ALIGNMENT,
 } from '#root/plugins/alignment/index.ts';
 import { setAlignment } from '#root/plugins/alignment/commands.ts';
-import IntlService from 'ember-intl/services/intl';
+import type IntlService from 'ember-intl/services/intl';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { Velcro } from 'ember-velcro';

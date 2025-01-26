@@ -19,7 +19,7 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
-import IntlService from 'ember-intl/services/intl';
+import type IntlService from 'ember-intl/services/intl';
 import ColorMenu from '#root/components/plugins/table/color.ts';
 import type { ComponentLike } from '@glint/template';
 import VerticalAlign from '#root/components/plugins/table/vertical-align.ts';

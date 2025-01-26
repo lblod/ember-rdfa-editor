@@ -7,7 +7,7 @@ import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
 import { inject as service } from '@ember/service';
-import IntlService from 'ember-intl/services/intl';
+import type IntlService from 'ember-intl/services/intl';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import type SayController from '#root/core/say-controller.ts';

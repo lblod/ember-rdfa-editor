@@ -16,7 +16,7 @@ import {
 import SayController from '#root/core/say-controller.ts';
 import { insertTable } from '#root/plugins/table/index.ts';
 import { service } from '@ember/service';
-import IntlService from 'ember-intl/services/intl';
+import type IntlService from 'ember-intl/services/intl';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { TableIcon } from '@appuniversum/ember-appuniversum/components/icons/table';
 import { TableInsertIcon } from '@appuniversum/ember-appuniversum/components/icons/table-insert';
