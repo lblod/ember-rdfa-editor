@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx.ts';
 import { preCleanHtml } from '#root/utils/_private/ce/paste-handler-helper-functions/index.ts';
+import { isElement } from './dom-helpers.ts';
+import { AssertionError } from './errors.ts';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',
@@ -296,24 +298,24 @@ export default class HTMLInputParser {
   ): string | Document {
     const parser = new DOMParser();
 
-    const document = parser.parseFromString(
+    const doc = parser.parseFromString(
       this.preCleanHtml(htmlString),
       'text/html',
     );
 
-    const bodyElement = document.body;
+    const bodyElement = doc.body;
 
     if (!doNotClean) {
       this.cleanDocx({ element: bodyElement });
       this.setTableColWidthDataset({ element: bodyElement });
     }
-    this.sanitizeHTML({ element: bodyElement });
+    const sanitized = this.sanitizeHTML({ element: bodyElement });
 
     if (asHTMLDocument) {
-      return document;
+      return sanitized as Document;
     }
 
-    return bodyElement.innerHTML;
+    return (sanitized as HTMLElement).innerHTML;
   }
 
   /**
@@ -323,12 +325,13 @@ export default class HTMLInputParser {
    * @method sanitizeHTML
    * @param element {HTMLElement}
    */
-  private sanitizeHTML({ element }: { element: HTMLElement }): string {
+  private sanitizeHTML({ element }: { element: HTMLElement }): Node {
     return DOMPurify.sanitize(element.outerHTML, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
       ADD_URI_SAFE_ATTR: this.uriSafeAttributes,
       IN_PLACE: true,
+      RETURN_DOM: true,
     });
   }
 
