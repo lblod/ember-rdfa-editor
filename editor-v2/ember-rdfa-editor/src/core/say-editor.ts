@@ -14,11 +14,9 @@ import { baseKeymap, type KeymapOptions } from '#root/core/keymap.ts';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils.ts';
 import { ReferenceManager } from '#root/utils/_private/reference-manager.ts';
-import {
-  datastore,
-  isElementPNode,
-  type ResolvedPNode,
-} from '#root/plugins/datastore/index.ts';
+import { datastore, isElementPNode } from '#root/plugins/datastore/index.ts';
+
+import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste, {
   recreateUuidsOnPasteKey,
@@ -184,13 +182,13 @@ export default class SayEditor {
 }
 
 export class ProseReferenceManager extends ReferenceManager<
-  ResolvedPNode,
-  ResolvedPNode
+  DatastoreResolvedPNode,
+  DatastoreResolvedPNode
 > {
   constructor() {
     super(
-      (node: ResolvedPNode) => node,
-      (bundle: ResolvedPNode) => {
+      (node: DatastoreResolvedPNode) => node,
+      (bundle: DatastoreResolvedPNode) => {
         if (isElementPNode(bundle)) {
           const { from, to, node } = bundle;
           const name = node?.type.name || '';

@@ -9,16 +9,16 @@ import {
   type default as Datastore,
   EditorStore,
 } from '#root/utils/_private/datastore/datastore.ts';
-import type { ResolvedPNode } from '#root/plugins/datastore/index.ts';
+import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
 
-export interface SayDatastore extends Datastore<ResolvedPNode> {
+export interface SayDatastore extends Datastore<DatastoreResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): SayStore;
 }
 
 export type LimitToRangeStrategy = 'rangeIsInside' | 'rangeContains';
 
 export class SayStore
-  extends EditorStore<ResolvedPNode>
+  extends EditorStore<DatastoreResolvedPNode>
   implements SayDatastore
 {
   limitToRange(
@@ -51,7 +51,9 @@ export class SayStore
   }
 }
 
-export function proseStoreFromParse(config: RdfaParseConfig<ResolvedPNode>) {
+export function proseStoreFromParse(
+  config: RdfaParseConfig<DatastoreResolvedPNode>,
+) {
   const {
     dataset,
     subjectToNodesMapping,

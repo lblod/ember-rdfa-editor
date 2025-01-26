@@ -9,51 +9,29 @@ import {
   SayStore,
 } from '#root/utils/_private/datastore/say-store.ts';
 import { map, objectFrom } from 'iter-tools';
-import { ProseReferenceManager } from '#root/core/say-editor.ts';
+import { ProseReferenceManager } from './prose-reference-manager.ts';
 import {
   createLogger,
   type Logger,
 } from '#root/utils/_private/logging-utils.ts';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
-import {
-  isElement,
-  tagName,
-} from '#root/utils/_private/dom-helpers.ts';
-import {
-  type Option,
-  unwrap,
-} from '#root/utils/_private/option.ts';
+import { isElement, tagName } from '#root/utils/_private/dom-helpers.ts';
+import { type Option, unwrap } from '#root/utils/_private/option.ts';
 import ArrayUtils from '#root/utils/_private/array-utils.ts';
 import type { Mark } from 'prosemirror-model';
 import { ProsePlugin, type PNode } from '#root/prosemirror-aliases.ts';
 import type { Schema } from 'prosemirror-model';
+import type { DatastoreResolvedPNode, TextPNode } from './datastore-node-types';
 
+import { isElementPNode } from './datastore-node-types.ts';
 export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
+export { isElementPNode } from './datastore-node-types.ts';
 export { SayStore } from '#root/utils/_private/datastore/say-store.ts';
 
-export interface TextPNode {
-  children: ResolvedPNode[];
-  mark?: Mark;
-  parent?: ResolvedPNode;
-  domNode: Node;
-  from: number;
-  to: number;
-}
-
-export interface ElementPNode {
-  node: PNode;
-  from: number;
-  to: number;
-}
-
-export function isElementPNode(pnode: ResolvedPNode): pnode is ElementPNode {
-  return 'node' in pnode;
-}
-
-export function getAppliedMarks(pnode: ResolvedPNode): Mark[] {
+export function getAppliedMarks(pnode: DatastoreResolvedPNode): Mark[] {
   const marks = [];
-  let currentNode: ResolvedPNode | undefined = pnode;
+  let currentNode: DatastoreResolvedPNode | undefined = pnode;
   while (currentNode && !isElementPNode(currentNode)) {
     if (currentNode.mark) {
       marks.unshift(currentNode.mark);
@@ -62,8 +40,6 @@ export function getAppliedMarks(pnode: ResolvedPNode): Mark[] {
   }
   return marks;
 }
-
-export type ResolvedPNode = ElementPNode | TextPNode;
 
 export interface DatastorePluginArgs {
   pathFromRoot: Node[];
@@ -163,7 +139,7 @@ function createDataStoreGetter(
   };
 }
 
-function textContent(resolvedNode: ResolvedPNode): string {
+function textContent(resolvedNode: DatastoreResolvedPNode): string {
   if (isElementPNode(resolvedNode)) {
     return resolvedNode.node.textContent;
   } else {
@@ -171,7 +147,7 @@ function textContent(resolvedNode: ResolvedPNode): string {
   }
 }
 
-function isText(resolvedNode: ResolvedPNode): boolean {
+function isText(resolvedNode: DatastoreResolvedPNode): boolean {
   return (
     isElementPNode(resolvedNode) &&
     resolvedNode.node.type.name !== 'invisible_rdfa' &&
@@ -200,10 +176,12 @@ function children(schema: Schema, refman: ProseReferenceManager) {
       rdfaMarks.push(markType);
     }
   }
-  return function (resolvedNode: ResolvedPNode): Iterable<ResolvedPNode> {
+  return function (
+    resolvedNode: DatastoreResolvedPNode,
+  ): Iterable<DatastoreResolvedPNode> {
     if (isElementPNode(resolvedNode)) {
       const { from, node } = resolvedNode;
-      const rslt: ResolvedPNode[] = [];
+      const rslt: DatastoreResolvedPNode[] = [];
       let textBuffer: [PNode, number][] = [];
 
       node.descendants((child, relativePos) => {
@@ -270,10 +248,10 @@ function serializeTextBlob(
   serializer: DOMSerializer,
   schema: Schema,
   buffer: [PNode, number][],
-): Iterable<ResolvedPNode> {
+): Iterable<DatastoreResolvedPNode> {
   let currentMark: Mark | null = null;
   let newBuffer: [PNode, number][] = [];
-  const children: ResolvedPNode[] = [];
+  const children: DatastoreResolvedPNode[] = [];
   for (const [node, pos] of buffer) {
     const rdfaMark = getRdfaMarks(rdfaMarks, node) ?? null;
     if (rdfaMark === currentMark) {
@@ -325,7 +303,7 @@ function serializeTextBlobRec(
   schema: Schema,
   buffer: [PNode, number][],
   mark: Option<Mark>,
-): Iterable<ResolvedPNode> {
+): Iterable<DatastoreResolvedPNode> {
   if (!mark) {
     return buffer.map(([node, pos]) =>
       refman.get({
@@ -343,7 +321,7 @@ function serializeTextBlobRec(
     const { dom } = DOMSerializer.renderSpec(document, outputSpec);
     let currentMark: Mark | undefined = undefined;
     let newBuffer: [PNode, number][] = [];
-    const children: ResolvedPNode[] = [];
+    const children: DatastoreResolvedPNode[] = [];
     for (const [node, pos] of buffer) {
       const rdfaMark = getRdfaMarks(rdfaMarks, node);
       if (rdfaMark === currentMark) {
@@ -400,7 +378,7 @@ function serializeTextBlobRec(
   }
 }
 
-function tag(resolvedNode: ResolvedPNode): string {
+function tag(resolvedNode: DatastoreResolvedPNode): string {
   if (isElementPNode(resolvedNode)) {
     return resolvedNode.node.type.name;
   } else {
@@ -408,7 +386,9 @@ function tag(resolvedNode: ResolvedPNode): string {
   }
 }
 
-function attributes(resolvedNode: ResolvedPNode): Record<string, string> {
+function attributes(
+  resolvedNode: DatastoreResolvedPNode,
+): Record<string, string> {
   if (isElementPNode(resolvedNode)) {
     return resolvedNode.node.attrs;
   } else {

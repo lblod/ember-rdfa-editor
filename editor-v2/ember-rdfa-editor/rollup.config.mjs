@@ -22,7 +22,7 @@ const BROWSERIFY_ALIASES = {
   // path: 'path-browserify',
   // process: 'process',
   // util: 'util',
-  crypto: 'crypto-browserify'
+  crypto: 'crypto-browserify',
 };
 const browserify = {
   name: 'browserify',
@@ -61,7 +61,7 @@ export default {
       '**/*.ts',
       'index.js',
       'template-registry.js',
-      'webpack-config.js'
+      'webpack-config.js',
     ]),
 
     // These are the modules that should get reexported into the traditional
