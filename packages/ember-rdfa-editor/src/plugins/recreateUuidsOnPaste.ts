@@ -64,11 +64,11 @@ export default recreateUuidsOnPaste;
 export function recreateUriAttribute(attrs: Attrs, uriAttributes: [string]) {
   const newAttributes: Record<string, string> = {};
   for (const uriAttribute of uriAttributes) {
-    const oldUri = attrs[uriAttribute as string] as string;
+    const oldUri = attrs[uriAttribute] as string;
     const oldUriParts = oldUri.split('/');
     oldUriParts[oldUriParts.length - 1] = uuidv4();
     const newUri = oldUriParts.join('/');
-    newAttributes[uriAttribute as string] = newUri;
+    newAttributes[uriAttribute] = newUri;
   }
   return { ...attrs, ...newAttributes };
 }

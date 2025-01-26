@@ -79,7 +79,7 @@ function emberComponent(
   const componentName = `${name}-${uuidv4()}`;
   owner.register(
     `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes, ember/require-tagless-components
+    // eslint-disable-next-line ember/no-classic-classes
     Component.extend({
       layout: template,
       tagName: '',
@@ -88,7 +88,7 @@ function emberComponent(
   );
   const component = owner.lookup(
     `component:${componentName}`,
-  ) as EmberInlineComponent; // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  ) as EmberInlineComponent;  
   const node = document.createElement(inline ? 'span' : 'div');
   node.classList.add('ember-node');
   component.appendTo(node);

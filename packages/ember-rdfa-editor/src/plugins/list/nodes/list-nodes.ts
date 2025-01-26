@@ -225,10 +225,10 @@ function calculateListItemPath(
     parent = parent.parentElement as HTMLElement;
   }
 
-  let grandParent = parent.parentElement as HTMLElement | null;
+  let grandParent = parent.parentElement;
   // skip contentContainer divs if rdfaAware
   if (grandParent?.dataset['contentContainer']) {
-    grandParent = grandParent.parentElement as HTMLElement | null;
+    grandParent = grandParent.parentElement;
   }
   if (grandParent && tagName(grandParent) === 'li') {
     basePath = calculateListItemPath(grandParent, mapping);

@@ -82,8 +82,8 @@ declare module 'ember-power-select/components/power-select' {
     _publicAPIActions: {
       search: (term: string) => void;
       highlight: (opt: unknown) => void;
-      select: (selected: unknown, e?: Event | undefined) => void;
-      choose: (selected: unknown, e?: Event | undefined) => void;
+      select: (selected: unknown, e?: Event  ) => void;
+      choose: (selected: unknown, e?: Event  ) => void;
       scrollTo: (option: unknown) => void;
     };
     private _resolvedOptions?;

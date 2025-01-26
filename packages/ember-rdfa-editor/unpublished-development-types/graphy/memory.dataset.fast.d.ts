@@ -26,7 +26,7 @@ declare module '@graphy/memory.dataset.fast' {
     language?: string;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+   
   export interface DatasetConfig {
     //TODO
   }

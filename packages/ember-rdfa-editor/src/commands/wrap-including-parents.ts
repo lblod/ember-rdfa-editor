@@ -17,7 +17,7 @@ export function wrapIncludingParents(
     const range = $from.blockRange($to);
     const wrapping = range && findWrapping(range, nodeType, attrs);
     if (wrapping) {
-      if (dispatch) dispatch(state.tr.wrap(range!, wrapping).scrollIntoView());
+      if (dispatch) dispatch(state.tr.wrap(range, wrapping).scrollIntoView());
       return true;
     } else {
       return selectParentNode(state, (tr) => {

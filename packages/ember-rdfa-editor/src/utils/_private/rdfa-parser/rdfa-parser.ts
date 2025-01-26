@@ -1376,7 +1376,7 @@ export class RdfaParser<N> {
     } else {
       let blankNodeIndex = 0;
       this.util.blankNodeFactory = () => {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+         
         const bNode = unwrap(pattern.constructedBlankNodes)[blankNodeIndex];
         blankNodeIndex++;
         return bNode;

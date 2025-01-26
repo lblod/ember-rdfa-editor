@@ -20,7 +20,7 @@ const verticalAlignOptions = ['top', 'middle', 'bottom'] as const;
 
 type VerticalAlignment = (typeof verticalAlignOptions)[number];
 
-const DEFAULT_ALIGN = 'top' as const;
+const DEFAULT_ALIGN = 'top';
 
 // TODO: Move to appuniversum icons
 const icons: Record<VerticalAlignment, string> = {

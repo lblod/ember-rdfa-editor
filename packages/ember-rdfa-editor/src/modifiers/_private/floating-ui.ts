@@ -65,7 +65,7 @@ const floatingUI: FunctionBasedModifier<FloatingUISignature> =
       });
 
       const update = () => {
-        computePosition(referenceElement as ReferenceElement, floatingElement, {
+        computePosition(referenceElement, floatingElement, {
           placement,
           strategy: strategy,
           middleware,

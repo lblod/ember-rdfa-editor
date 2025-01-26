@@ -296,5 +296,5 @@ export function editorDebug(
   message: string,
   ...args: unknown[]
 ): void {
-  runInDebug(() => console.debug(`${callerName}: ${message}`, ...args)); // eslint-disable-line no-console
+  runInDebug(() => console.debug(`${callerName}: ${message}`, ...args));  
 }

@@ -36,7 +36,7 @@ export default class LeaveWithArrowKeysModifier extends Modifier<ModifierArgs> {
   constructor(owner: Owner, args: ArgsFor<ModifierArgs>) {
     super(owner, args);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+     
     registerDestructor(this, removeListeners);
   }
 

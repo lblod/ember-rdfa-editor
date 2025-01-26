@@ -103,7 +103,7 @@ export function logMethod(
           doLog(...compiledMessage);
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+       
       return orig.apply(this, args);
     };
   };

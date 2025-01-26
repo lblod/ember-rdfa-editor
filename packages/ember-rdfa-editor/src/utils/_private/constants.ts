@@ -118,7 +118,7 @@ export const XSD_PREFIX = 'http://www.w3.org/2001/XMLSchema#';
 export const LUMP_NODE_PROPERTY =
   'http://lblod.data.gift/vocabularies/editor/isLumpNode';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+ 
 export const NOOP = () => {};
 export const INLINE_COMPONENT_CHILDREN_SELECTOR = '[data-slot]';
 export const LANG_STRING =
