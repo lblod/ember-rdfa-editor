@@ -7,7 +7,7 @@ import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';
 import SayView, {
   type SetHtmlOptions,
 } from '#root/core/say-view.ts';
-import SayEditor from '#root/core/say-editor.ts';
+import type SayEditor from '#root/core/say-editor.ts';
 import { tracked } from '@glimmer/tracking';
 import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {

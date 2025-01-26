@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-import SayEditor from '#root/core/say-editor.ts';
+import type SayEditor from '#root/core/say-editor.ts';
 import type SayMarkSpec from '#root/core/say-mark-spec.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import type { PNode } from '#root/prosemirror-aliases.ts';
@@ -285,7 +285,7 @@ function doc(options: { document?: Document }) {
 }
 
 function toStateGenerator(editorOrStateGenerator: SayEditor | StateGenerator) {
-  if (editorOrStateGenerator instanceof SayEditor) {
+  if ('mainView' in editorOrStateGenerator) {
     return () => editorOrStateGenerator.mainView.state;
   } else {
     return editorOrStateGenerator;
