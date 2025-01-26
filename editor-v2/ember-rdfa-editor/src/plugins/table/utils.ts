@@ -28,7 +28,7 @@ import { NodeSelection } from 'prosemirror-state';
 import { unwrap } from '#root/utils/_private/option.ts';
 import {
   cellAround,
-  CellSelection,
+  type CellSelection,
   type Direction,
 } from '@say-editor/prosemirror-tables';
 

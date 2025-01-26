@@ -5,7 +5,7 @@ import { TableView } from './table-view.ts';
 
 import {
   addRow,
-  CellSelection,
+  type CellSelection,
   columnResizing,
   goToNextCell,
   isInTable,
