@@ -1,15 +1,12 @@
 // Helper for creating a schema that supports tables.
 
 import { Node as PNode, ResolvedPos, type NodeSpec } from 'prosemirror-model';
-import {
-  getRdfaAttrs,
-  rdfaAttrSpec,
-} from '#root/core/schema.ts';
-import { TableView } from '#root/plugins/table/index.ts';
+import { getRdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
 import { getPos } from '#root/utils/node-utils.ts';
 import { constructInlineStyles } from '#root/utils/_private/html-utils.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import { TableView } from '../table-view.ts';
 
 interface ExtraAttribute {
   default: unknown;
