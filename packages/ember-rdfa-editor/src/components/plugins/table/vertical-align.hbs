@@ -1,17 +1,17 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
-  <div class='say-dropdown options'>
+  <div class="say-dropdown options">
     <this.Velcro
-      @placement='bottom'
+      @placement="bottom"
       @offsetOptions={{hash mainAxis=6}}
       as |velcro|
     >
       <button
-        type='button'
-        class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
-        title={{t 'ember-rdfa-editor.table.vertical-align'}}
+        type="button"
+        class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"
+        title={{t "ember-rdfa-editor.table.vertical-align"}}
         disabled={{not this.canSetVerticalAlign}}
-        {{on 'click' this.toggleDropdown}}
+        {{on "click" this.toggleDropdown}}
         {{velcro.hook}}
         {{this.setupDropdownButton}}
       >
@@ -19,14 +19,14 @@
         <AuIcon
           @icon={{this.ChevronDownIcon}}
           @ariaHidden={{true}}
-          @size='large'
+          @size="large"
         />
       </button>
       {{#if this.dropdownOpen}}
         <div
-          class='say-dropdown__menu is-visible'
-          role='menu'
-          tabindex='-1'
+          class="say-dropdown__menu is-visible"
+          role="menu"
+          tabindex="-1"
           {{velcro.loop}}
           {{focus-trap
             shouldSelfFocus=true
@@ -37,9 +37,9 @@
         >
           {{#each this.verticaAlignmentStyles as |style|}}
             <button
-              role='menuitem'
-              type='button'
-              {{on 'click' (fn this.setVerticalAlign style.value)}}
+              role="menuitem"
+              type="button"
+              {{on "click" (fn this.setVerticalAlign style.value)}}
             >
               {{#if (this.verticalAlignActive style.value)}}
                 <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />

@@ -1,20 +1,20 @@
 {{! @glint-nocheck: not typesafe yet }}
-<div class='say-dropdown' ...attributes>
+<div class="say-dropdown" ...attributes>
   <Pill
-    aria-haspopup='true'
-    aria-expanded='{{if this.dropdownOpen "true" "false"}}'
-    {{on 'click' this.openDropdown}}
+    aria-haspopup="true"
+    aria-expanded="{{if this.dropdownOpen 'true' 'false'}}"
+    {{on "click" this.openDropdown}}
     @icon={{@icon}}
     @iconAlignment={{@iconAlignment}}
   >
-    {{yield to='header'}}
+    {{yield to="header"}}
   </Pill>
   {{#if this.dropdownOpen}}
     <div
-      id='{{this.dropdownId}}'
-      class='say-dropdown__menu is-visible'
-      role='menu'
-      tabindex='-1'
+      id="{{this.dropdownId}}"
+      class="say-dropdown__menu is-visible"
+      role="menu"
+      tabindex="-1"
       {{focus-trap
         isActive=true
         shouldSelfFocus=true
@@ -23,7 +23,7 @@
         )
       }}
     >
-      {{yield to='content'}}
+      {{yield to="content"}}
     </div>
   {{/if}}
 </div>

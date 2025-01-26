@@ -38,7 +38,7 @@ $say-toolbar-height: 44px !default;
     flex-shrink: 1;
   }
 
-  *[data-hidden='true'] {
+  *[data-hidden="true"] {
     display: none;
   }
 }

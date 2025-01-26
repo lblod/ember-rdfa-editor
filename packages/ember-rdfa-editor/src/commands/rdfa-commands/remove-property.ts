@@ -1,4 +1,7 @@
-import { getNodeByRdfaId, getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
+import {
+  getNodeByRdfaId,
+  getNodesBySubject,
+} from '#root/plugins/rdfa-info/index.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import {

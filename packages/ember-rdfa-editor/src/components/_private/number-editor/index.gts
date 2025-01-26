@@ -5,7 +5,7 @@ interface Sig {
 }
 
 const NumberEditor: TemplateOnlyComponent<Sig> = <template>
-  <input type='number' class='au-c-input' ...attributes />
+  <input type="number" class="au-c-input" ...attributes />
 </template>;
 
 export default NumberEditor;

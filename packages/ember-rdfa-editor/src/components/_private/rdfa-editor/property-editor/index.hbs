@@ -1,14 +1,14 @@
 {{! @glint-nocheck: not typesafe yet }}
-<AuContent @skin='tiny'>
+<AuContent @skin="tiny">
   <AuToolbar as |Group|>
     <Group>
-      <AuHeading @level='5' @skin='5'>Properties</AuHeading>
+      <AuHeading @level="5" @skin="5">Properties</AuHeading>
     </Group>
     <Group>
       <AuButton
         @icon={{this.PlusIcon}}
-        @skin='naked'
-        {{on 'click' this.startPropertyCreation}}
+        @skin="naked"
+        {{on "click" this.startPropertyCreation}}
       >
         Add property
       </AuButton>
@@ -19,9 +19,9 @@
       {{#each this.properties as |prop index|}}
         {{#if (this.isPlainTriple prop)}}
           <Item
-            class='au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center'
+            class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
           >
-            <div class='au-u-padding-tiny'>
+            <div class="au-u-padding-tiny">
               <p><strong>predicate:</strong> {{prop.predicate}}</p>
               {{#if prop.object.datatype}}
                 <p><strong>datatype:</strong> {{prop.object.datatype.value}}</p>
@@ -29,7 +29,7 @@
               {{#if prop.object.language}}
                 <p><strong>language:</strong> {{prop.object.language}}</p>
               {{/if}}
-              {{#if (eq prop.object.termType 'ContentLiteral')}}
+              {{#if (eq prop.object.termType "ContentLiteral")}}
                 <AuPill>content-predicate</AuPill>
               {{else}}
                 <p><strong>value:</strong> {{prop.object.value}}</p>
@@ -37,23 +37,23 @@
             </div>
             <AuDropdown
               @icon={{this.ThreeDotsIcon}}
-              role='menu'
-              @alignment='left'
+              role="menu"
+              @alignment="left"
             >
               <AuButton
-                @skin='link'
+                @skin="link"
                 @icon={{this.PencilIcon}}
-                role='menuitem'
-                {{on 'click' (fn this.startPropertyUpdate index)}}
+                role="menuitem"
+                {{on "click" (fn this.startPropertyUpdate index)}}
               >
                 Edit property
               </AuButton>
               <AuButton
-                @skin='link'
+                @skin="link"
                 @icon={{this.BinIcon}}
-                role='menuitem'
-                class='au-c-button--alert'
-                {{on 'click' (fn this.removeProperty index)}}
+                role="menuitem"
+                class="au-c-button--alert"
+                {{on "click" (fn this.removeProperty index)}}
               >
                 Remove property
               </AuButton>

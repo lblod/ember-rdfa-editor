@@ -1,29 +1,29 @@
 {{! @glint-nocheck: not typesafe yet }}
-<div role='menu' class='say-color-selector' ...attributes>
-  <button type='button' role='menuitem' {{on 'click' this.clearColor}}>
+<div role="menu" class="say-color-selector" ...attributes>
+  <button type="button" role="menuitem" {{on "click" this.clearColor}}>
     <AuIcon @icon={{this.CircleXIcon}} @ariaHidden={{true}} />
-    {{t 'ember-rdfa-editor.color-selector.no-color'}}
+    {{t "ember-rdfa-editor.color-selector.no-color"}}
   </button>
-  <div class='color-selector__grid'>
+  <div class="color-selector__grid">
     {{#each this.presetColors as |presetColor|}}
       <button
-        type='button'
-        style={{this.htmlSafe (concat 'background-color: ' presetColor)}}
+        type="button"
+        style={{this.htmlSafe (concat "background-color: " presetColor)}}
         title={{presetColor}}
-        {{on 'click' (fn this.selectColor presetColor)}}
+        {{on "click" (fn this.selectColor presetColor)}}
       />
     {{/each}}
   </div>
-  <button role='menuitem' type='button' {{on 'click' this.openColorPicker}}>
+  <button role="menuitem" type="button" {{on "click" this.openColorPicker}}>
     <AuIcon @icon={{this.AddIcon}} @ariaHidden={{true}} />
-    {{t 'ember-rdfa-editor.color-selector.additional-colors'}}
+    {{t "ember-rdfa-editor.color-selector.additional-colors"}}
   </button>
   <input
-    type='color'
-    class='color-selector__picker'
-    id='say-highlight-color'
+    type="color"
+    class="color-selector__picker"
+    id="say-highlight-color"
     value={{@color}}
-    {{on 'change' this.onColorPickerChange}}
+    {{on "change" this.onColorPickerChange}}
     {{this.setUpColorPicker}}
   />
 </div>

@@ -1,11 +1,11 @@
 {{! @glint-nocheck: not typesafe yet }}
-<AuContent @skin='tiny'>
+<AuContent @skin="tiny">
   <AuToolbar as |Group|>
     <Group>
       <AuButton
         @icon={{this.PlusIcon}}
-        @skin='naked'
-        {{on 'click' (fn this.openModal false)}}
+        @skin="naked"
+        {{on "click" (fn this.openModal false)}}
       >
         Wrap With Block Resource
       </AuButton>
@@ -13,9 +13,9 @@
     <Group>
       <AuButton
         @icon={{this.PlusIcon}}
-        @skin='naked'
+        @skin="naked"
         @disabled={{not this.canWrapWithLiteral}}
-        {{on 'click' this.wrapWithLiteralNode}}
+        {{on "click" this.wrapWithLiteralNode}}
       >
         Wrap With Block Literal
       </AuButton>
@@ -24,8 +24,8 @@
     <Group>
       <AuButton
         @icon={{this.PlusIcon}}
-        @skin='naked'
-        {{on 'click' (fn this.openModal true)}}
+        @skin="naked"
+        {{on "click" (fn this.openModal true)}}
       >
         Wrap With Inline Resource
       </AuButton>
@@ -33,9 +33,9 @@
     <Group>
       <AuButton
         @icon={{this.PlusIcon}}
-        @skin='naked'
+        @skin="naked"
         @disabled={{not this.canWrapWithInlineLiteral}}
-        {{on 'click' this.wrapWithInlineLiteralNode}}
+        {{on "click" this.wrapWithInlineLiteralNode}}
       >
         Wrap With Inline Literal
       </AuButton>

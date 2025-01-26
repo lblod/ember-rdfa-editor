@@ -3,10 +3,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import type IntlService from 'ember-intl/services/intl';
-import {
-  type OrderListStyle,
-  toggleList,
-} from '#root/plugins/list/index.ts';
+import { type OrderListStyle, toggleList } from '#root/plugins/list/index.ts';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command } from 'prosemirror-state';

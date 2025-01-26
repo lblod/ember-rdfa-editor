@@ -26,7 +26,6 @@ declare module '@graphy/memory.dataset.fast' {
     language?: string;
   }
 
-   
   export interface DatasetConfig {
     //TODO
   }

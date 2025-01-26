@@ -36,7 +36,6 @@ export default class LeaveWithArrowKeysModifier extends Modifier<ModifierArgs> {
   constructor(owner: Owner, args: ArgsFor<ModifierArgs>) {
     super(owner, args);
 
-     
     registerDestructor(this, removeListeners);
   }
 

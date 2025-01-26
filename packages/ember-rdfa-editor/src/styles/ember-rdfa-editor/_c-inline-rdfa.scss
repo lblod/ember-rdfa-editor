@@ -66,7 +66,7 @@
   }
 
   // AuInput @type='number' overrides width to be 100px, we have to override it again
-  input[type='number'] {
+  input[type="number"] {
     width: 100%;
   }
 
@@ -84,7 +84,7 @@
   width: 200px;
 
   // AuInput @type='number' overrides width to be 100px, we have to override it again
-  input[type='number'] {
+  input[type="number"] {
     width: 100%;
   }
 

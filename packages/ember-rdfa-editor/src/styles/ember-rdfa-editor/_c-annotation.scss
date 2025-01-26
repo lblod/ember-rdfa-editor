@@ -18,30 +18,30 @@ $say-annotation-background-color: var(--au-gray-100) !default;
 
 .rdfa-annotations {
   // Visibility annotations
-  [property='dc:subject'],
-  [property='besluit:geplandOpenbaar'],
-  [property='besluit:openbaar'] {
+  [property="dc:subject"],
+  [property="besluit:geplandOpenbaar"],
+  [property="besluit:openbaar"] {
     font-weight: var(--au-regular);
     color: $say-annotation-text-color !important;
   }
 
-  [typeof='besluit:BehandelingVanAgendapunt'],
-  [property='ext:behandelt'],
-  [property='besluit:heeftAgendapunt'],
-  [typeof='besluit:Agendapunt'] {
+  [typeof="besluit:BehandelingVanAgendapunt"],
+  [property="ext:behandelt"],
+  [property="besluit:heeftAgendapunt"],
+  [typeof="besluit:Agendapunt"] {
     @include au-font-size($au-base);
     font-weight: var(--au-regular);
     display: block !important;
     position: relative;
     color: $say-annotation-text-color !important;
 
-    [property='besluit:geplandOpenbaar'],
-    [property='besluit:openbaar'] {
+    [property="besluit:geplandOpenbaar"],
+    [property="besluit:openbaar"] {
       color: var(--au-gray-600) !important;
     }
 
-    [property='besluit:geplandOpenbaar'] i,
-    [property='besluit:openbaar'] i {
+    [property="besluit:geplandOpenbaar"] i,
+    [property="besluit:openbaar"] i {
       font-size: 1.5rem;
       top: 0.2rem;
       padding-left: 1px;
@@ -49,17 +49,17 @@ $say-annotation-background-color: var(--au-gray-100) !default;
       color: var(--au-gray-600) !important;
     }
 
-    [property='besluit:geplandOpenbaar'][content='false'],
-    [property='besluit:openbaar'][content='false'],
-    [property='besluit:geplandOpenbaar'][content='false'] i,
-    [property='besluit:openbaar'][content='false'] i {
+    [property="besluit:geplandOpenbaar"][content="false"],
+    [property="besluit:openbaar"][content="false"],
+    [property="besluit:geplandOpenbaar"][content="false"] i,
+    [property="besluit:openbaar"][content="false"] i {
       color: $say-editor-private-color !important;
     }
   }
 
   // Show underlines on annotation
   [property],
-  [typeof]:not([typeof='foaf:Document']),
+  [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
     border-bottom: 0.2rem dotted var(--au-gray-300);
@@ -103,7 +103,7 @@ $say-annotation-background-color: var(--au-gray-100) !default;
   }
 
   // Making it easy to discover elements that need to be filled out / take action upon
-  [property^='ext:insert'] {
+  [property^="ext:insert"] {
     background-color: $say-editor-highlight-color;
     transition: background-color var(--au-transition);
 
@@ -116,10 +116,10 @@ $say-annotation-background-color: var(--au-gray-100) !default;
     }
   }
 
-  [property='besluit:motivering']:after {
+  [property="besluit:motivering"]:after {
     position: absolute;
     z-index: -1;
-    content: '';
+    content: "";
     top: 0;
     left: 0;
     width: 100%;
@@ -141,7 +141,7 @@ span.mark-highlight-manual {
     border 0.1s ease-in-out,
     background-color 0.1s ease-in-out;
 
-  &[data-editor-position-level='1'],
+  &[data-editor-position-level="1"],
   &:hover,
   &:focus,
   &:focus-within {
@@ -159,11 +159,11 @@ span.mark-highlight-manual.ProseMirror-selectednode {
   color: var(--au-black);
 }
 
-[typeof='ext:Mapping'] + [typeof='ext:Mapping'] {
+[typeof="ext:Mapping"] + [typeof="ext:Mapping"] {
   margin-left: 0.3rem;
 }
 
-[typeof='ext:Mapping'] {
+[typeof="ext:Mapping"] {
   border-bottom: 0 !important;
 
   [property],
@@ -171,15 +171,15 @@ span.mark-highlight-manual.ProseMirror-selectednode {
     border-bottom: 0;
   }
 
-  [property='ext:content'] {
+  [property="ext:content"] {
     border-radius: 0.3rem;
     padding: 0 0.3rem;
     line-height: 1.2rem;
     margin-bottom: 0.3rem;
   }
 
-  [property='dct:type'] + [property='ext:content'],
-  [property='ext:codelist'] + [property='ext:content'] {
+  [property="dct:type"] + [property="ext:content"],
+  [property="ext:codelist"] + [property="ext:content"] {
     color: var(--vl-picton-120);
     border-radius: 0.3rem;
     background-color: rgba(#16465b, 0.15);
@@ -194,24 +194,24 @@ span.mark-highlight-manual.ProseMirror-selectednode {
     }
   }
 
-  [property='dct:type'] + [property='ext:content']:after,
-  [property='ext:codelist'] + [property='ext:content']:after {
+  [property="dct:type"] + [property="ext:content"]:after,
+  [property="ext:codelist"] + [property="ext:content"]:after {
     position: relative;
     top: -0.2rem;
-    content: '' !important;
+    content: "" !important;
     display: inline-block !important;
     width: 1rem;
     height: 1rem;
     margin-left: 0.3rem;
     background-size: contain;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMTY0NjVCIj48cGF0aCBkPSJNMjAuODMxMTAwMywzLjE4Mzg0MTggQzIwLjQ1OTEwMDMsMi44MDc0MjE4IDIwLjAxNjEwMDMsMi41MDg1NjE4IDE5LjUyNzcwMDMsMi4zMDQ2MDE4IEMxOS4wMzk0MDAzLDIuMTAwNjMxOCAxOC41MTU0MDAzLDEuOTk1NjAxOCAxNy45ODYxMDAzLDEuOTk1NjAxOCBDMTcuNDU2OTAwMywxLjk5NTYwMTggMTYuOTMyOTAwMywyLjEwMDYzMTggMTYuNDQ0NjAwMywyLjMwNDYwMTggQzE1Ljk1NjIwMDMsMi41MDg1NjE4IDE1LjUxMzIwMDMsMi44MDc0MjE4IDE1LjE0MTEwMDMsMy4xODM4NDE4IEwzLjczMTE0MDMyLDE0LjU5MzgwMTggQzMuNjEzMTgwMzIsMTQuNzI3MzAxOCAzLjUyNDYwMDMyLDE0Ljg4NDAwMTggMy40NzExNDAzMiwxNS4wNTM4MDE4IEwyLjAxMTE0MDMyLDIwLjc2MzgwMTggQzEuOTY4ODEwMzIsMjAuOTMxMjAxOCAxLjk3MDUxMDMyLDIxLjEwNjYwMTggMi4wMTYwNzAzMiwyMS4yNzMxMDE4IEMyLjA2MTYzMDMyLDIxLjQzOTUwMTggMi4xNDk1MDAzMiwyMS41OTE0MDE4IDIuMjcxMTQwMzIsMjEuNzEzODAxOCBDMi4zOTM1OTAzMiwyMS44MzU1MDE4IDIuNTQ1NDQwMzIsMjEuOTIzNDAxOCAyLjcxMTkxMDMyLDIxLjk2ODkwMTggQzIuODc4MzgwMzIsMjIuMDE0NTAxOCAzLjA1MzgyMDMyLDIyLjAxNjIwMTggMy4yMjExNDAzMiwyMS45NzM4MDE4IEw4LjkyMTE0MDMyLDIwLjU0MzgwMTggQzkuMDkxMDEwMzIsMjAuNDkwNDAxOCA5LjI0NzczMDMyLDIwLjQwMTgwMTggOS4zODExNDAzMiwyMC4yODM4MDE4IEwyMC44MzExMDAzLDguODczODQxOCBDMjEuMjA3NjAwMyw4LjUwMTgyMTggMjEuNTA2NDAwMyw4LjA1ODc5MTggMjEuNzEwNDAwMyw3LjU3MDQzMTggQzIxLjkxNDQwMDMsNy4wODIwNzE4IDIyLjAxOTQwMDMsNi41NTgwOTE4IDIyLjAxOTQwMDMsNi4wMjg4NDE4IEMyMi4wMTk0MDAzLDUuNDk5NjAxOCAyMS45MTQ0MDAzLDQuOTc1NjIxOCAyMS43MTA0MDAzLDQuNDg3MjYxOCBDMjEuNTA2NDAwMywzLjk5ODkwMTggMjEuMjA3NjAwMywzLjU1NTg3MTggMjAuODMxMTAwMywzLjE4Mzg0MTggWiBNMTQuNDIxMTAwMyw2LjczMzg0MTggTDE3LjI4MTEwMDMsOS41OTM4NDE4IEw4LjcyMTE0MDMyLDE4LjE2MzgwMTggTDUuODUxMTQwMzIsMTUuMzAzODAxOCBMMTQuNDIxMTAwMyw2LjczMzg0MTggWiBNNC40MjExNDAzMiwxOS42MzM4MDE4IEw1LjAxMTE0MDMyLDE3LjI1MzgwMTggTDYuNzYxMTQwMzIsMTkuMDAzODAxOCBMNC40MjExNDAzMiwxOS42MzM4MDE4IFogTTE5LjQyMTEwMDMsNC42MzM4NDE4IEMxOS43ODY5MDAzLDUuMDIwMTQxOCAxOS45OTA3MDAzLDUuNTMxODgxOCAxOS45OTA3MDAzLDYuMDYzODQxOCBDMTkuOTkwNzAwMyw2LjU5NTgwMTggMTkuNzg2OTAwMyw3LjEwNzU0MTggMTkuNDIxMTAwMyw3LjQ5Mzg0MTggTDE4LjcwMTEwMDMsOC4yMTM4NDE4IEwxNS44MzExMDAzLDUuMzEzODQxOCBMMTYuNTUxMTAwMyw0LjU5Mzg0MTggQzE2LjkzNjgwMDMsNC4yMjI5MTE4IDE3LjQ1MTEwMDMsNC4wMTU3MTE4IDE3Ljk4NjEwMDMsNC4wMTU3MTE4IEMxOC41MjEyMDAzLDQuMDE1NzExOCAxOS4wMzU1MDAzLDQuMjIyOTExOCAxOS40MjExMDAzLDQuNTkzODQxOCBMMTkuNDIxMTAwMyw0LjYzMzg0MTggWiIvPjwvc3ZnPgo=');
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMTY0NjVCIj48cGF0aCBkPSJNMjAuODMxMTAwMywzLjE4Mzg0MTggQzIwLjQ1OTEwMDMsMi44MDc0MjE4IDIwLjAxNjEwMDMsMi41MDg1NjE4IDE5LjUyNzcwMDMsMi4zMDQ2MDE4IEMxOS4wMzk0MDAzLDIuMTAwNjMxOCAxOC41MTU0MDAzLDEuOTk1NjAxOCAxNy45ODYxMDAzLDEuOTk1NjAxOCBDMTcuNDU2OTAwMywxLjk5NTYwMTggMTYuOTMyOTAwMywyLjEwMDYzMTggMTYuNDQ0NjAwMywyLjMwNDYwMTggQzE1Ljk1NjIwMDMsMi41MDg1NjE4IDE1LjUxMzIwMDMsMi44MDc0MjE4IDE1LjE0MTEwMDMsMy4xODM4NDE4IEwzLjczMTE0MDMyLDE0LjU5MzgwMTggQzMuNjEzMTgwMzIsMTQuNzI3MzAxOCAzLjUyNDYwMDMyLDE0Ljg4NDAwMTggMy40NzExNDAzMiwxNS4wNTM4MDE4IEwyLjAxMTE0MDMyLDIwLjc2MzgwMTggQzEuOTY4ODEwMzIsMjAuOTMxMjAxOCAxLjk3MDUxMDMyLDIxLjEwNjYwMTggMi4wMTYwNzAzMiwyMS4yNzMxMDE4IEMyLjA2MTYzMDMyLDIxLjQzOTUwMTggMi4xNDk1MDAzMiwyMS41OTE0MDE4IDIuMjcxMTQwMzIsMjEuNzEzODAxOCBDMi4zOTM1OTAzMiwyMS44MzU1MDE4IDIuNTQ1NDQwMzIsMjEuOTIzNDAxOCAyLjcxMTkxMDMyLDIxLjk2ODkwMTggQzIuODc4MzgwMzIsMjIuMDE0NTAxOCAzLjA1MzgyMDMyLDIyLjAxNjIwMTggMy4yMjExNDAzMiwyMS45NzM4MDE4IEw4LjkyMTE0MDMyLDIwLjU0MzgwMTggQzkuMDkxMDEwMzIsMjAuNDkwNDAxOCA5LjI0NzczMDMyLDIwLjQwMTgwMTggOS4zODExNDAzMiwyMC4yODM4MDE4IEwyMC44MzExMDAzLDguODczODQxOCBDMjEuMjA3NjAwMyw4LjUwMTgyMTggMjEuNTA2NDAwMyw4LjA1ODc5MTggMjEuNzEwNDAwMyw3LjU3MDQzMTggQzIxLjkxNDQwMDMsNy4wODIwNzE4IDIyLjAxOTQwMDMsNi41NTgwOTE4IDIyLjAxOTQwMDMsNi4wMjg4NDE4IEMyMi4wMTk0MDAzLDUuNDk5NjAxOCAyMS45MTQ0MDAzLDQuOTc1NjIxOCAyMS43MTA0MDAzLDQuNDg3MjYxOCBDMjEuNTA2NDAwMywzLjk5ODkwMTggMjEuMjA3NjAwMywzLjU1NTg3MTggMjAuODMxMTAwMywzLjE4Mzg0MTggWiBNMTQuNDIxMTAwMyw2LjczMzg0MTggTDE3LjI4MTEwMDMsOS41OTM4NDE4IEw4LjcyMTE0MDMyLDE4LjE2MzgwMTggTDUuODUxMTQwMzIsMTUuMzAzODAxOCBMMTQuNDIxMTAwMyw2LjczMzg0MTggWiBNNC40MjExNDAzMiwxOS42MzM4MDE4IEw1LjAxMTE0MDMyLDE3LjI1MzgwMTggTDYuNzYxMTQwMzIsMTkuMDAzODAxOCBMNC40MjExNDAzMiwxOS42MzM4MDE4IFogTTE5LjQyMTEwMDMsNC42MzM4NDE4IEMxOS43ODY5MDAzLDUuMDIwMTQxOCAxOS45OTA3MDAzLDUuNTMxODgxOCAxOS45OTA3MDAzLDYuMDYzODQxOCBDMTkuOTkwNzAwMyw2LjU5NTgwMTggMTkuNzg2OTAwMyw3LjEwNzU0MTggMTkuNDIxMTAwMyw3LjQ5Mzg0MTggTDE4LjcwMTEwMDMsOC4yMTM4NDE4IEwxNS44MzExMDAzLDUuMzEzODQxOCBMMTYuNTUxMTAwMyw0LjU5Mzg0MTggQzE2LjkzNjgwMDMsNC4yMjI5MTE4IDE3LjQ1MTEwMDMsNC4wMTU3MTE4IDE3Ljk4NjEwMDMsNC4wMTU3MTE4IEMxOC41MjEyMDAzLDQuMDE1NzExOCAxOS4wMzU1MDAzLDQuMjIyOTExOCAxOS40MjExMDAzLDQuNTkzODQxOCBMMTkuNDIxMTAwMyw0LjYzMzg0MTggWiIvPjwvc3ZnPgo=");
   }
 }
 
 // Show RDFA blocks
 .rdfa-annotations.show-rdfa-blocks {
   [property],
-  [typeof]:not([typeof='foaf:Document']),
+  [typeof]:not([typeof="foaf:Document"]),
   [data-type],
   .mark-highlight-manual {
     position: relative;
@@ -229,7 +229,7 @@ span.mark-highlight-manual.ProseMirror-selectednode {
       color: var(--au-gray-600);
       text-transform: uppercase;
       pointer-events: none;
-      content: attr(property) ' ' attr(typeof) ' ' attr(data-type);
+      content: attr(property) " " attr(typeof) " " attr(data-type);
       position: relative;
       right: auto;
       top: 0;
@@ -273,22 +273,22 @@ span.mark-highlight-manual.ProseMirror-selectednode {
 }
 
 .show-rdfa-path {
-  [data-editor-rdfa-position-level='0'] {
+  [data-editor-rdfa-position-level="0"] {
     border-color: var(--au-green-900) !important;
     border-width: 3px !important;
     border-style: solid !important;
   }
-  [data-editor-rdfa-position-level='1'] {
+  [data-editor-rdfa-position-level="1"] {
     border-color: var(--au-green-700) !important;
     border-width: 2px !important;
     border-style: solid !important;
   }
-  [data-editor-rdfa-position-level='2'] {
+  [data-editor-rdfa-position-level="2"] {
     border-color: var(--au-green-500) !important;
     border-width: 1px !important;
     border-style: solid !important;
   }
-  [data-editor-rdfa-position-level='3'] {
+  [data-editor-rdfa-position-level="3"] {
     border-color: var(--au-green-300) !important;
     border-width: 1px !important;
     border-style: dashed !important;

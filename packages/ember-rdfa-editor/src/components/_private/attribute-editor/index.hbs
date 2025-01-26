@@ -1,41 +1,41 @@
 {{! @glint-nocheck: not typesafe yet }}
-<AuPanel class='au-u-margin-bottom-tiny' as |Section|>
+<AuPanel class="au-u-margin-bottom-tiny" as |Section|>
   <Section>
     <AuToolbar as |Group|>
       <Group>
-        <AuHeading @level='5' @skin='5'>Node attributes</AuHeading>
+        <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
       </Group>
       <Group>
         <AuButtonGroup>
           {{#if this.isEditing}}
             <AuButton
-              @skin='naked'
-              @iconAlignment='right'
-              {{on 'click' this.cancelEditing}}
+              @skin="naked"
+              @iconAlignment="right"
+              {{on "click" this.cancelEditing}}
             >
               Cancel
             </AuButton>
             <AuButton
               @icon={{this.CheckIcon}}
-              @iconAlignment='right'
-              {{on 'click' this.saveChanges}}
+              @iconAlignment="right"
+              {{on "click" this.saveChanges}}
             >
               Save
             </AuButton>
           {{else}}
             <AuButton
-              @skin='naked'
+              @skin="naked"
               @icon={{this.PencilIcon}}
-              @iconAlignment='right'
-              {{on 'click' this.enableEditingMode}}
+              @iconAlignment="right"
+              {{on "click" this.enableEditingMode}}
             >
               Edit
             </AuButton>
           {{/if}}
           <AuButton
-            @skin='naked'
+            @skin="naked"
             @icon={{if this.collapsed this.ChevronDownIcon this.ChevronUpIcon}}
-            {{on 'click' this.toggleSection}}
+            {{on "click" this.toggleSection}}
           />
         </AuButtonGroup>
       </Group>
@@ -46,7 +46,7 @@
       <AuList @divider={{true}} as |Item|>
         {{#each-in this.node.value.attrs as |key value|}}
           <Item>
-            <div class='au-u-padding-tiny'>
+            <div class="au-u-padding-tiny">
               {{#if (and this.isEditing (this.isEditable key))}}
                 {{#let (unique-id) as |id|}}
                   <AuLabel for={{id}}>
@@ -57,21 +57,21 @@
                       <EditorComponent
                         id={{id}}
                         value={{get this.changeset key}}
-                        {{on 'change' (fn this.updateChangeset key)}}
+                        {{on "change" (fn this.updateChangeset key)}}
                       />
                     {{else}}
                       <AuTextarea
-                        @width='block'
+                        @width="block"
                         id={{id}}
                         value={{get this.changeset key}}
-                        {{on 'change' (fn this.updateChangeset key)}}
+                        {{on "change" (fn this.updateChangeset key)}}
                       />
                     {{/if}}
                   {{/let}}
                 {{/let}}
               {{else}}
                 <p><strong>{{key}}</strong></p>
-                <pre>{{if value (this.formatValue value) '<No value>'}}</pre>
+                <pre>{{if value (this.formatValue value) "<No value>"}}</pre>
               {{/if}}
             </div>
           </Item>

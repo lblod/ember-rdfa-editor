@@ -1,26 +1,26 @@
 {{! @glint-nocheck: not typesafe yet }}
-<div class='say-toolbar__button'>
+<div class="say-toolbar__button">
   <button
-    type='button'
-    class='main {{if @active "is-active"}} {{if @disabled "is-disabled"}}'
+    type="button"
+    class="main {{if @active 'is-active'}} {{if @disabled 'is-disabled'}}"
     title={{@title}}
     disabled={{@disabled}}
     ...attributes
   >
-    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size='large' />
+    <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size="large" />
     {{yield}}
   </button>
-  {{#if (has-block 'options')}}
+  {{#if (has-block "options")}}
     <Toolbar::Dropdown
       @disabled={{@disabled}}
       @icon={{this.optionsIcon}}
-      @iconSize=''
+      @iconSize=""
       @controller={{@controller}}
-      class='options'
+      class="options"
       title={{@optionsLabel}}
       as |Menu|
     >
-      {{yield Menu to='options'}}
+      {{yield Menu to="options"}}
     </Toolbar::Dropdown>
   {{/if}}
 </div>

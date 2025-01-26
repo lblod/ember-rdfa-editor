@@ -1376,7 +1376,6 @@ export class RdfaParser<N> {
     } else {
       let blankNodeIndex = 0;
       this.util.blankNodeFactory = () => {
-         
         const bNode = unwrap(pattern.constructedBlankNodes)[blankNodeIndex];
         blankNodeIndex++;
         return bNode;

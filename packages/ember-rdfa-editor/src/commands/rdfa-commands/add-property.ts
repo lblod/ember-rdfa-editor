@@ -7,7 +7,10 @@ import {
   languageOrDataType,
   sayDataFactory,
 } from '#root/core/say-data-factory/index.ts';
-import { getNodeByRdfaId, getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
+import {
+  getNodeByRdfaId,
+  getNodesBySubject,
+} from '#root/plugins/rdfa-info/index.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { getProperties, isLinkToNode } from '#root/utils/rdfa-utils.ts';

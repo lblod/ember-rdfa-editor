@@ -10,8 +10,8 @@ interface Signature {
 
 const Card: TemplateOnlyComponent<Signature> = <template>
   <AuCard @flex={{true}} as |c|>
-    <c.header contenteditable='false'>
-      <AuHeading @level='2' @skin='4'>
+    <c.header contenteditable="false">
+      <AuHeading @level="2" @skin="4">
         Title
       </AuHeading>
       <p>

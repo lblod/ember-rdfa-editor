@@ -1,5 +1,5 @@
-import type { PNode } from "#root/prosemirror-aliases.ts";
-import type { Mark } from "prosemirror-model";
+import type { PNode } from '#root/prosemirror-aliases.ts';
+import type { Mark } from 'prosemirror-model';
 
 export interface TextPNode {
   children: DatastoreResolvedPNode[];

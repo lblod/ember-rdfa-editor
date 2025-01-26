@@ -4,35 +4,35 @@
     @flex={{true}}
     @expandable={{false}}
     @shadow={{true}}
-    @size='small'
+    @size="small"
     as |c|
   >
     <c.header>
-      <AuHeading @level='3' @skin='5'>{{t
-          'ember-rdfa-editor.link.edit.title'
+      <AuHeading @level="3" @skin="5">{{t
+          "ember-rdfa-editor.link.edit.title"
         }}</AuHeading>
     </c.header>
-    <c.content class='au-c-content--small'>
+    <c.content class="au-c-content--small">
       <AuInput
         value={{this.href}}
-        @width='block'
-        {{on 'change' this.setHref}}
-        {{on 'focus' this.selectHref}}
-        placeholder={{t 'ember-rdfa-editor.link.placeholder.href'}}
+        @width="block"
+        {{on "change" this.setHref}}
+        {{on "focus" this.selectHref}}
+        placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
       />
     </c.content>
     <c.footer>
       <AuLinkExternal
         @icon={{this.LinkExternalIcon}}
-        @skin='button-secondary'
+        @skin="button-secondary"
         href={{this.href}}
-      >{{t 'ember-rdfa-editor.link.open'}}</AuLinkExternal>
+      >{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
       <AuButton
         @icon={{this.LinkBrokenIcon}}
         @alert={{true}}
-        @skin='secondary'
-        {{on 'click' this.remove}}
-      >{{t 'ember-rdfa-editor.link.edit.uncouple'}}</AuButton>
+        @skin="secondary"
+        {{on "click" this.remove}}
+      >{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>
     </c.footer>
   </AuCard>
 {{/if}}

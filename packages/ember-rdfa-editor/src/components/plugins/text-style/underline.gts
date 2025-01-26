@@ -5,8 +5,8 @@ import t from 'ember-intl/helpers/t';
 <template>
   <Mark
     @icon={{UnderlinedIcon}}
-    @title={{t 'ember-rdfa-editor.underline'}}
-    @mark='underline'
+    @title={{t "ember-rdfa-editor.underline"}}
+    @mark="underline"
     {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
   />

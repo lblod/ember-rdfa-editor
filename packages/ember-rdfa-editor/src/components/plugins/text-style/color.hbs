@@ -1,32 +1,32 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
-  <div class='say-toolbar__button say-toolbar__highlight-button'>
+  <div class="say-toolbar__button say-toolbar__highlight-button">
     <this.Velcro
-      @placement='bottom'
+      @placement="bottom"
       @offsetOptions={{hash mainAxis=6}}
       as |velcro|
     >
       <button
-        type='button'
-        class='main {{if @active "is-active"}} {{if @disabled "is-disabled"}}'
-        title={{t 'ember-rdfa-editor.color.button-label'}}
+        type="button"
+        class="main {{if @active 'is-active'}} {{if @disabled 'is-disabled'}}"
+        title={{t "ember-rdfa-editor.color.button-label"}}
         {{velcro.hook}}
-        {{on 'click' this.toggleDropdown}}
+        {{on "click" this.toggleDropdown}}
         {{this.setupDropdownButton}}
       >
         <AuIcon
           @icon={{this.WordIcon}}
           @ariaHidden={{true}}
-          @size='large'
+          @size="large"
           style={{this.htmlSafe
-            (concat 'border-bottom-color: ' this.currentColor)
+            (concat "border-bottom-color: " this.currentColor)
           }}
         />
       </button>
 
       {{#if this.dropdownOpen}}
         <Utils::ColorSelector
-          class='say-dropdown__menu is-visible'
+          class="say-dropdown__menu is-visible"
           {{velcro.loop}}
           {{focus-trap
             shouldSelfFocus=true
@@ -34,7 +34,7 @@
               clickOutsideDeactivates=this.clickOutsideDropdown
             )
           }}
-          tabindex='-1'
+          tabindex="-1"
           @onChange={{this.setColor}}
           @color={{this.currentColor}}
           @presetColors={{@presetColors}}

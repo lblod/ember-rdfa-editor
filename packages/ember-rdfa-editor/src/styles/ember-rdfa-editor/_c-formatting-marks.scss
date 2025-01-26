@@ -26,16 +26,16 @@
       z-index: 1;
     }
     &.invisible--space::before {
-      content: '\00B7';
+      content: "\00B7";
     }
     &.invisible--break::before {
-      content: '\23CE';
+      content: "\23CE";
     }
     &.invisible--par::before {
-      content: '\00b6';
+      content: "\00b6";
     }
     &.invisible--heading::before {
-      content: '\00b6';
+      content: "\00b6";
     }
   }
 }

@@ -51,7 +51,7 @@
   }
 
   // Style before and after elements
-  [typeof]:not([typeof='foaf:Document']),
+  [typeof]:not([typeof="foaf:Document"]),
   [property],
   [data-type] {
     &:hover {
@@ -108,9 +108,9 @@
       );
     }
 
-    &[data-editor-position-level='1']:before,
+    &[data-editor-position-level="1"]:before,
     &:hover:before,
-    [property='say:hasPart']:hover > [property='say:heading']:before {
+    [property="say:hasPart"]:hover > [property="say:heading"]:before {
       right: calc(100% + #{$say-annotation-offset});
       opacity: 1;
     }
@@ -126,7 +126,7 @@
       opacity: 1;
     }
 
-    &[data-editor-position-level='0']:before {
+    &[data-editor-position-level="0"]:before {
       z-index: var(--au-z-index-gamma);
     }
   }
@@ -144,7 +144,7 @@
     &[data-editor-position-level]:hover:before,
     &:hover:before {
       display: none !important;
-      content: '' !important;
+      content: "" !important;
       display: none !important;
       opacity: 0 !important;
     }
@@ -152,7 +152,7 @@
 
   @include mq($until: 1280px) {
     // Hide all hover annotations on small screens
-    [typeof]:not([typeof='foaf:Document']),
+    [typeof]:not([typeof="foaf:Document"]),
     [property],
     [data-type] {
       &:before {

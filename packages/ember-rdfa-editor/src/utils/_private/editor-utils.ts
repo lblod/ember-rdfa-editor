@@ -296,5 +296,5 @@ export function editorDebug(
   message: string,
   ...args: unknown[]
 ): void {
-  runInDebug(() => console.debug(`${callerName}: ${message}`, ...args));  
+  runInDebug(() => console.debug(`${callerName}: ${message}`, ...args));
 }

@@ -88,7 +88,7 @@ function emberComponent(
   );
   const component = owner.lookup(
     `component:${componentName}`,
-  ) as EmberInlineComponent;  
+  ) as EmberInlineComponent;
   const node = document.createElement(inline ? 'span' : 'div');
   node.classList.add('ember-node');
   component.appendTo(node);

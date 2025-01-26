@@ -19,7 +19,7 @@
 
       // make clickable outside of element too
       &::before {
-        content: '';
+        content: "";
         position: relative;
         padding-left: 20px;
         padding-right: 20px;

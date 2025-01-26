@@ -1,16 +1,16 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if this.doc}}
   <AuPill
-    @skin='link'
-    {{on 'click' this.showModal}}
-    class='au-u-margin-tiny'
+    @skin="link"
+    {{on "click" this.showModal}}
+    class="au-u-margin-tiny"
   >Document Info</AuPill>
   {{#if this.modalOpen}}
     <AuModal
-      @title='Document Info'
+      @title="Document Info"
       @closeModal={{this.closeModal}}
       @modalOpen={{true}}
-      @size='default'
+      @size="default"
       as |Modal|
     >
       <Modal.Body>

@@ -2,8 +2,8 @@
 <Toolbar::Dropdown
   @controller={{@controller}}
   @icon={{this.TableIcon}}
-  @label={{t 'ember-rdfa-editor.table.table-options'}}
-  title={{t 'ember-rdfa-editor.table.table-options'}}
+  @label={{t "ember-rdfa-editor.table.table-options"}}
+  title={{t "ember-rdfa-editor.table.table-options"}}
   @hideLabel={{true}}
   @disabled={{not this.canInsertTable}}
   as |Menu|
@@ -22,55 +22,55 @@
       </Menu.Item>
     {{/each}}
   {{else}}
-    <div role='group'>
-      <div role='menuitem' class='say-dropdown__menu-with-inputs'>
-        {{t 'ember-rdfa-editor.table.columns'}}
-        <AuLabel for='editor-table-columns' class='au-u-hidden-visually'>{{t
-            'ember-rdfa-editor.table.columns'
+    <div role="group">
+      <div role="menuitem" class="say-dropdown__menu-with-inputs">
+        {{t "ember-rdfa-editor.table.columns"}}
+        <AuLabel for="editor-table-columns" class="au-u-hidden-visually">{{t
+            "ember-rdfa-editor.table.columns"
           }}</AuLabel>
         {{! TODO Refactor to use native input }}
         <Input
-          id='editor-table-columns'
-          class='say-input say-input--small'
-          size='1'
+          id="editor-table-columns"
+          class="say-input say-input--small"
+          size="1"
           @value={{this.tableAddColumns}}
         />
       </div>
     </div>
-    <div role='group'>
-      <div role='menuitem' class='say-dropdown__menu-with-inputs'>
-        {{t 'ember-rdfa-editor.table.rows'}}
-        <AuLabel for='editor-table-rows' class='au-u-hidden-visually'>{{t
-            'ember-rdfa-editor.table.rows'
+    <div role="group">
+      <div role="menuitem" class="say-dropdown__menu-with-inputs">
+        {{t "ember-rdfa-editor.table.rows"}}
+        <AuLabel for="editor-table-rows" class="au-u-hidden-visually">{{t
+            "ember-rdfa-editor.table.rows"
           }}</AuLabel>
         {{! TODO Refactor to use native input }}
         <Input
-          id='editor-table-rows'
-          class='say-input say-input--small'
-          size='1'
+          id="editor-table-rows"
+          class="say-input say-input--small"
+          size="1"
           @value={{this.tableAddRows}}
         />
       </div>
     </div>
     <Menu.Item
       @menuAction={{fn this.insertTable this.tableAddRows this.tableAddColumns}}
-      title={{t 'ember-rdfa-editor.table.insert-table'}}
+      title={{t "ember-rdfa-editor.table.insert-table"}}
     >
       <AuIcon @icon={{this.TableInsertIcon}} @ariaHidden={{true}} />
-      {{t 'ember-rdfa-editor.table.insert-table'}}
+      {{t "ember-rdfa-editor.table.insert-table"}}
     </Menu.Item>
   {{/if}}
 </Toolbar::Dropdown>
 <Toolbar::Button
-  @title={{t 'ember-rdfa-editor.table.add-column-after'}}
+  @title={{t "ember-rdfa-editor.table.add-column-after"}}
   @icon={{this.TableColumnEndAddIcon}}
-  {{on 'click' this.insertColumnAfter}}
+  {{on "click" this.insertColumnAfter}}
   @disabled={{not this.isInTable}}
 />
 <Toolbar::Button
-  @title={{t 'ember-rdfa-editor.table.add-row-below'}}
+  @title={{t "ember-rdfa-editor.table.add-row-below"}}
   @icon={{this.TableRowEndAddIcon}}
-  {{on 'click' this.insertRowBelow}}
+  {{on "click" this.insertRowBelow}}
   @disabled={{not this.isInTable}}
 />
 <Plugins::Table::Color @controller={{@controller}} />

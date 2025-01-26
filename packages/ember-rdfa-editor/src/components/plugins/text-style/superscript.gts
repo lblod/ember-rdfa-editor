@@ -5,8 +5,8 @@ import t from 'ember-intl/helpers/t';
 <template>
   <Mark
     @icon={{SuperscriptIcon}}
-    @title={{t 'ember-rdfa-editor.superscript'}}
-    @mark='superscript'
+    @title={{t "ember-rdfa-editor.superscript"}}
+    @mark="superscript"
     {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
   />

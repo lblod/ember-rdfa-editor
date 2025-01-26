@@ -7,39 +7,39 @@
   >
     <:title>Wrap selection</:title>
     <:body>
-      <form class='au-c-form' id={{formId}} {{on 'submit' this.save}}>
-        <AuFormRow @alignment='default'>
+      <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
+        <AuFormRow @alignment="default">
           {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel='Required'>
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
               Generate new URI?
             </AuLabel>
             <AuRadioGroup
               id={{id}}
               required={{true}}
-              @name='isNew'
+              @name="isNew"
               @selected={{this.generateNewUri}}
-              @width='block'
+              @width="block"
               @onChange={{this.shouldGenerateNewUri}}
-              @alignment='inline'
+              @alignment="inline"
               as |Group|
             >
-              <Group.Radio @value='yes'>Yes</Group.Radio>
-              <Group.Radio @value='no'>No</Group.Radio>
+              <Group.Radio @value="yes">Yes</Group.Radio>
+              <Group.Radio @value="no">No</Group.Radio>
             </AuRadioGroup>
           {{/let}}
         </AuFormRow>
-        <AuFormRow @alignment='default'>
+        <AuFormRow @alignment="default">
           {{#let (unique-id) as |id|}}
-            <AuLabel for={{id}} @required={{true}} @requiredLabel='Required'>
+            <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
               {{#if this.isNewUri}}URI base{{else}}Existing URI{{/if}}
             </AuLabel>
             <AuInput
               id={{id}}
               required={{true}}
               value={{this.resourceUriBase}}
-              @width='block'
-              placeholder='http://example.com/resource/'
-              {{on 'input' this.updateUriBase}}
+              @width="block"
+              placeholder="http://example.com/resource/"
+              {{on "input" this.updateUriBase}}
             />
           {{/let}}
         </AuFormRow>
@@ -47,10 +47,10 @@
     </:body>
     <:footer>
       <AuButtonGroup>
-        <AuButton form={{formId}} type='submit' @disabled={{not this.canSave}}>
+        <AuButton form={{formId}} type="submit" @disabled={{not this.canSave}}>
           Save
         </AuButton>
-        <AuButton @skin='secondary' {{on 'click' @closeModal}}>Cancel</AuButton>
+        <AuButton @skin="secondary" {{on "click" @closeModal}}>Cancel</AuButton>
       </AuButtonGroup>
     </:footer>
   </AuModal>

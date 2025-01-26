@@ -103,7 +103,7 @@ export function logMethod(
           doLog(...compiledMessage);
         }
       }
-       
+
       return orig.apply(this, args);
     };
   };

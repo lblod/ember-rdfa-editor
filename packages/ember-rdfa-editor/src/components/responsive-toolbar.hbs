@@ -1,16 +1,16 @@
 {{! @glint-nocheck: not typesafe yet }}
-<div class='say-toolbar' {{this.setUpToolbar}}>
-  {{#if (has-block 'main')}}
-    <div class='say-toolbar__main' {{this.setUpMainToolbar}}>
+<div class="say-toolbar" {{this.setUpToolbar}}>
+  {{#if (has-block "main")}}
+    <div class="say-toolbar__main" {{this.setUpMainToolbar}}>
       {{yield
         (hash
-          Group=(component 'toolbar/group')
-          Divider=(component 'toolbar/divider')
+          Group=(component "toolbar/group")
+          Divider=(component "toolbar/divider")
         )
-        to='main'
+        to="main"
       }}
       <this.Velcro
-        @placement='bottom-end'
+        @placement="bottom-end"
         @offsetOptions={{hash mainAxis=10}}
         as |velcro|
       >
@@ -18,41 +18,41 @@
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button
               @icon={{this.ThreeDotsIcon}}
-              title={{t 'ember-rdfa-editor.utils.more-options'}}
-              {{on 'click' this.toggleMainDropdown}}
+              title={{t "ember-rdfa-editor.utils.more-options"}}
+              {{on "click" this.toggleMainDropdown}}
               @active={{this.main.showDropdown}}
             />
           </Toolbar::Group>
         {{/if}}
         <div
-          class='say-toolbar__main-dropdown'
+          class="say-toolbar__main-dropdown"
           data-ignore-resize
-          data-hidden={{if this.main.showDropdown 'false' 'true'}}
+          data-hidden={{if this.main.showDropdown "false" "true"}}
           {{velcro.loop}}
           {{this.setUpMainDropdown}}
         >
           {{yield
             (hash
-              Group=(component 'toolbar/group')
-              Divider=(component 'toolbar/divider')
+              Group=(component "toolbar/group")
+              Divider=(component "toolbar/divider")
             )
-            to='main'
+            to="main"
           }}
         </div>
       </this.Velcro>
     </div>
   {{/if}}
-  {{#if (has-block 'side')}}
-    <div class='say-toolbar__side' {{this.setUpSideToolbar}}>
+  {{#if (has-block "side")}}
+    <div class="say-toolbar__side" {{this.setUpSideToolbar}}>
       {{yield
         (hash
-          Group=(component 'toolbar/group')
-          Divider=(component 'toolbar/divider')
+          Group=(component "toolbar/group")
+          Divider=(component "toolbar/divider")
         )
-        to='side'
+        to="side"
       }}
       <this.Velcro
-        @placement='bottom-end'
+        @placement="bottom-end"
         @offsetOptions={{hash mainAxis=10}}
         as |velcro|
       >
@@ -60,25 +60,25 @@
           <Toolbar::Group data-ignore-resize {{velcro.hook}}>
             <Toolbar::Button
               @icon={{this.NavDownIcon}}
-              title={{t 'ember-rdfa-editor.utils.more-options'}}
-              {{on 'click' this.toggleSideDropdown}}
+              title={{t "ember-rdfa-editor.utils.more-options"}}
+              {{on "click" this.toggleSideDropdown}}
               @active={{this.side.showDropdown}}
             />
           </Toolbar::Group>
         {{/if}}
         <div
-          class='say-toolbar__side-dropdown'
+          class="say-toolbar__side-dropdown"
           data-ignore-resize
-          data-hidden={{if this.side.showDropdown 'false' 'true'}}
+          data-hidden={{if this.side.showDropdown "false" "true"}}
           {{velcro.loop}}
           {{this.setUpSideDropdown}}
         >
           {{yield
             (hash
-              Group=(component 'toolbar/group')
-              Divider=(component 'toolbar/divider')
+              Group=(component "toolbar/group")
+              Divider=(component "toolbar/divider")
             )
-            to='side'
+            to="side"
           }}
         </div>
       </this.Velcro>

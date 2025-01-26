@@ -2,9 +2,9 @@
 {{#if @controller}}
   <Toolbar::Button
     @active={{this.isActive}}
-    @title={{t 'ember-rdfa-editor.unordered-list'}}
+    @title={{t "ember-rdfa-editor.unordered-list"}}
     @icon={{this.UnorderedListIcon}}
-    {{on 'click' this.toggle}}
+    {{on "click" this.toggle}}
     @disabled={{not this.canToggle}}
   />
 {{/if}}

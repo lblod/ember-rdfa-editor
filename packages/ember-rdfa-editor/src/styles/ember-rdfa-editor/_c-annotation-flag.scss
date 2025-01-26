@@ -7,8 +7,8 @@
 
 .rdfa-annotations.show-rdfa-blocks,
 .rdfa-annotations:not(.show-rdfa-blocks) {
-  [data-flagged-remove='almost-complete'][data-editor-position-level='0'],
-  [data-flagged-remove='almost-complete']:hover {
+  [data-flagged-remove="almost-complete"][data-editor-position-level="0"],
+  [data-flagged-remove="almost-complete"]:hover {
     box-shadow: -2px 0 0 var(--au-yellow-400);
     background-color: var(--au-yellow-200);
 
@@ -19,8 +19,8 @@
     }
   }
 
-  [data-flagged-remove='complete'][data-editor-position-level='0'],
-  [data-flagged-remove='complete'] {
+  [data-flagged-remove="complete"][data-editor-position-level="0"],
+  [data-flagged-remove="complete"] {
     cursor: text;
     box-shadow: none;
     background-color: var(--au-gray-100);

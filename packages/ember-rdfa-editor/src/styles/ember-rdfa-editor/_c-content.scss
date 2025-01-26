@@ -8,7 +8,7 @@
 $say-font-family:
   BlinkMacSystemFont,
   -apple-system,
-  'Segoe UI',
+  "Segoe UI",
   Roboto,
   Helvetica,
   Arial,
@@ -61,7 +61,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     font-size: inherit;
   }
 
-  [data-mark~='color']::selection {
+  [data-mark~="color"]::selection {
     color: inherit;
   }
 
@@ -150,19 +150,19 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     margin-top: 0;
   }
 
-  [data-indentation-level='1'] {
+  [data-indentation-level="1"] {
     margin-left: 3rem;
   }
 
-  [data-indentation-level='2'] {
+  [data-indentation-level="2"] {
     margin-left: 6rem;
   }
 
-  [data-indentation-level='3'] {
+  [data-indentation-level="3"] {
     margin-left: 9rem;
   }
 
-  [data-indentation-level='4'] {
+  [data-indentation-level="4"] {
     margin-left: 12rem;
   }
 
@@ -288,9 +288,9 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
     // Goes up to 18 levels deep and assigns a different style
     // to 1, 2 and 3 levels, then repeats.
     @for $i from 1 through 18 {
-      $selector: '';
+      $selector: "";
       @for $j from 1 through $i {
-        $selector: $selector + 'ul ';
+        $selector: $selector + "ul ";
       }
       #{$selector} > li {
         list-style-type: if($i >= 17, circle, nth($styles, ($i - 1) % 3 + 1));
@@ -356,31 +356,31 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   }
 
   // Don't show certain properties
-  [property='besluit:gebeurtNa'],
-  [property='besluit:aangebrachtNa'],
-  [property='eli:language'],
-  [typeof='ext:TasklistData'],
-  [class='ext_scroll_to'],
-  [property='ext:variableState'],
-  [property='ext:idInSnippet'],
-  [property='ext:intentionUri'],
-  [typeof='ext:Variable'],
-  [property='ext:metadata'] {
+  [property="besluit:gebeurtNa"],
+  [property="besluit:aangebrachtNa"],
+  [property="eli:language"],
+  [typeof="ext:TasklistData"],
+  [class="ext_scroll_to"],
+  [property="ext:variableState"],
+  [property="ext:idInSnippet"],
+  [property="ext:intentionUri"],
+  [typeof="ext:Variable"],
+  [property="ext:metadata"] {
     display: none !important;
   }
 
   // Structures
-  [property='say:hasPart'] + [property='say:hasPart'] {
+  [property="say:hasPart"] + [property="say:hasPart"] {
     margin-top: $au-unit-small;
   }
 
-  [property='say:hasPart'] [property='say:hasPart'],
-  [property='say:hasPart'] [property='eli:has_part'] {
+  [property="say:hasPart"] [property="say:hasPart"],
+  [property="say:hasPart"] [property="eli:has_part"] {
     margin-left: $au-unit-tiny;
   }
 
-  [typeof='besluit:Artikel'] > [property='say:heading'],
-  [typeof='say:Article'] > [property='say:heading'] {
+  [typeof="besluit:Artikel"] > [property="say:heading"],
+  [typeof="say:Article"] > [property="say:heading"] {
     font-weight: var(--au-medium);
   }
 }

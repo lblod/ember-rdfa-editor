@@ -1,27 +1,27 @@
 {{! @glint-nocheck: not typesafe yet }}
-<div class='say-dropdown options'>
+<div class="say-dropdown options">
   <this.Velcro
-    @placement='bottom'
+    @placement="bottom"
     @offsetOptions={{hash mainAxis=6}}
     as |velcro|
   >
     <button
-      type='button'
-      class='say-dropdown__button {{if this.dropdownOpen "is-active" ""}}'
-      title={{t 'ember-rdfa-editor.alignment.label'}}
+      type="button"
+      class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"
+      title={{t "ember-rdfa-editor.alignment.label"}}
       disabled={{not this.enabled}}
-      {{on 'click' this.toggleDropdown}}
+      {{on "click" this.toggleDropdown}}
       {{velcro.hook}}
       {{this.setupDropdownButton}}
     >
       {{this.htmlSafe this.currentAlignIcon}}
-      <AuIcon @icon={{this.NavDownIcon}} @ariaHidden={{true}} @size='large' />
+      <AuIcon @icon={{this.NavDownIcon}} @ariaHidden={{true}} @size="large" />
     </button>
     {{#if this.dropdownOpen}}
       <div
-        class='say-dropdown__menu is-visible'
-        role='menu'
-        tabindex='-1'
+        class="say-dropdown__menu is-visible"
+        role="menu"
+        tabindex="-1"
         {{velcro.loop}}
         {{focus-trap
           shouldSelfFocus=true
@@ -32,10 +32,10 @@
       >
         {{#each this.alignmentStyles as |style|}}
           <button
-            role='menuitem'
-            type='button'
+            role="menuitem"
+            type="button"
             title={{style.label}}
-            {{on 'click' (fn this.setAlignment style.value)}}
+            {{on "click" (fn this.setAlignment style.value)}}
           >
             {{#if (this.alignActive style.value)}}
               <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />

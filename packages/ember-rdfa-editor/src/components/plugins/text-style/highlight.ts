@@ -2,10 +2,7 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import {
-  clearHighlight,
-  setHighlight,
-} from '#root/plugins/highlight/index.ts';
+import { clearHighlight, setHighlight } from '#root/plugins/highlight/index.ts';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';

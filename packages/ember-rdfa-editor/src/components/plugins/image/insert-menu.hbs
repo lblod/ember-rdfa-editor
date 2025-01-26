@@ -1,34 +1,34 @@
 {{! @glint-nocheck: not typesafe yet }}
 <Toolbar::Button
   @disabled={{this.disabled}}
-  @title={{t 'ember-rdfa-editor.image.insert'}}
+  @title={{t "ember-rdfa-editor.image.insert"}}
   @icon={{this.ImageIcon}}
-  {{on 'click' this.showModal}}
+  {{on "click" this.showModal}}
 />
 <AuModal
   @modalOpen={{this.modalOpen}}
   @closeModal={{this.onCancel}}
-  class='say-image-insert-modal'
+  class="say-image-insert-modal"
 >
-  <:title>{{t 'ember-rdfa-editor.image.insert'}}</:title>
+  <:title>{{t "ember-rdfa-editor.image.insert"}}</:title>
   <:body>
-    <form class='au-o-flow'>
+    <form class="au-o-flow">
       <AuFormRow>
         {{#let (unique-id) as |id|}}
-          <AuLabel @required='true' for={{id}}>
-            {{t 'ember-rdfa-editor.image.url-label'}}
+          <AuLabel @required="true" for={{id}}>
+            {{t "ember-rdfa-editor.image.url-label"}}
           </AuLabel>
           <AuInput
             id={{id}}
-            @width='block'
+            @width="block"
             value={{this.url}}
             @error={{this.showError}}
-            {{on 'change' this.onChangeUrl}}
-            {{on 'focus' this.hideError}}
+            {{on "change" this.onChangeUrl}}
+            {{on "focus" this.hideError}}
           />
           {{#if this.showError}}
             <AuHelpText @error={{true}}>{{t
-                'ember-rdfa-editor.image.url-error'
+                "ember-rdfa-editor.image.url-error"
               }}</AuHelpText>
           {{/if}}
         {{/let}}
@@ -36,13 +36,13 @@
       <AuFormRow>
         {{#let (unique-id) as |id|}}
           <AuLabel for={{id}}>
-            {{t 'ember-rdfa-editor.image.alt-label'}}
+            {{t "ember-rdfa-editor.image.alt-label"}}
           </AuLabel>
           <AuInput
             id={{id}}
-            @width='block'
+            @width="block"
             value={{this.altText}}
-            {{on 'change' this.onChangeAltText}}
+            {{on "change" this.onChangeAltText}}
           />
         {{/let}}
       </AuFormRow>
@@ -51,21 +51,21 @@
       <img
         src={{this.url}}
         alt={{this.altText}}
-        class='say-image-insert-preview'
+        class="say-image-insert-preview"
       />
     {{/if}}
   </:body>
   <:footer>
     <AuButtonGroup>
       <AuButton
-        @skin='primary'
+        @skin="primary"
         @disabled={{not this.url}}
-        {{on 'click' this.onInsert}}
+        {{on "click" this.onInsert}}
       >
-        {{t 'ember-rdfa-editor.image.insert'}}
+        {{t "ember-rdfa-editor.image.insert"}}
       </AuButton>
-      <AuButton @skin='secondary' {{on 'click' this.onCancel}}>{{t
-          'ember-rdfa-editor.utils.back'
+      <AuButton @skin="secondary" {{on "click" this.onCancel}}>{{t
+          "ember-rdfa-editor.utils.back"
         }}</AuButton>
     </AuButtonGroup>
   </:footer>

@@ -5,8 +5,8 @@ import t from 'ember-intl/helpers/t';
 <template>
   <Mark
     @icon={{BoldIcon}}
-    @title={{t 'ember-rdfa-editor.bold'}}
-    @mark='strong'
+    @title={{t "ember-rdfa-editor.bold"}}
+    @mark="strong"
     {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
   />
