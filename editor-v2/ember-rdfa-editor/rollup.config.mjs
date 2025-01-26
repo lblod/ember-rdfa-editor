@@ -39,6 +39,15 @@ const browserify = {
   },
 };
 export default {
+  onwarn: (message, defaultHandler) => {
+    // fail build if circular dependencies are found
+    if (message.code === 'CIRCULAR_DEPENDENCY') {
+      console.error(message);
+      process.exit(-1);
+    } else {
+      defaultHandler(message);
+    }
+  },
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
   output: addon.output(),

@@ -1,11 +1,19 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
-import { ProsePlugin } from '#root/prosemirror-aliases.ts';
-import { getRdfaId, getSubject } from '#root/utils/rdfa-utils.ts';
+import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 
+export function getRdfaId(node: PNode): string | undefined {
+  return node.attrs['__rdfaId'] as string | undefined;
+}
+
+export function getSubject(node: PNode): string | undefined {
+  return (node.attrs['subject'] ??
+    node.attrs['about'] ??
+    node.attrs['resource']) as string | undefined;
+}
 class RdfaInfo {
   private state: EditorState;
   private _rdfaIdMapping?: Map<string, ResolvedPNode>;
