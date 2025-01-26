@@ -70,7 +70,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
         ...(style && {
           style: `list-style-type: ${style};`,
         }),
-      };
+      } as Record<string, unknown>;
       if (enableHierarchicalList) {
         baseAttrs['data-hierarchical'] = hierarchical;
       }
@@ -170,7 +170,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
       };
       if (enableHierarchicalList) {
         attributes['data-list-marker'] = renderListMarker(
-          node.attrs['listPath'],
+          node.attrs['listPath'] as ListPathEntry[],
         );
       }
       return ['li', attributes, 0];

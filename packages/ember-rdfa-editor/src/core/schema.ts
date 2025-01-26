@@ -133,7 +133,10 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     }
     let externalTriples: FullTriple[] = [];
     if (node.dataset['externalTriples']) {
-      externalTriples = JSON.parse(node.dataset['externalTriples'], jsonToTerm);
+      externalTriples = JSON.parse(
+        node.dataset['externalTriples'],
+        jsonToTerm,
+      ) as FullTriple[];
     }
 
     return {
@@ -200,7 +203,10 @@ export function getRdfaAwareDocAttrs(
   }
   let externalTriples: FullTriple[] = [];
   if (node.dataset['externalTriples']) {
-    externalTriples = JSON.parse(node.dataset['externalTriples'], jsonToTerm);
+    externalTriples = JSON.parse(
+      node.dataset['externalTriples'],
+      jsonToTerm,
+    ) as FullTriple[];
   }
 
   return {
@@ -257,7 +263,7 @@ export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
   return (
     '__rdfaId' in attrs &&
     'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'])
+    rdfaNodeTypes.includes(attrs['rdfaNodeType'] as 'resource' | 'literal')
   );
 }
 
@@ -301,7 +307,9 @@ export function renderInvisibleRdfa(
         // TODO need a way to make sure links to literals are displayed in the rdfa tools for a
         // document node with imported resources after reload
         // case 'LiteralNode': {
-        const importedResources = nodeOrMark.attrs[IMPORTED_RESOURCES_ATTR];
+        const importedResources = nodeOrMark.attrs[
+          IMPORTED_RESOURCES_ATTR
+        ] as unknown;
         if (importedResources && 'nodeSize' in nodeOrMark) {
           // This is a document node that imports resources, so we need special handling of those
           // properties

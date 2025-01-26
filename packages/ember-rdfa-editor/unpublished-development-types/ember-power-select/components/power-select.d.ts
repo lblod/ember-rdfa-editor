@@ -44,6 +44,7 @@ declare module 'ember-power-select/components/power-select' {
     noMatchesMessageComponent?: string;
     matchTriggerWidth?: boolean;
     options?: unknown[] | Promise<unknown[]>;
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     selected?: unknown | Promise<unknown>;
     closeOnSelect?: boolean;
     defaultHighlighted?: unknown;

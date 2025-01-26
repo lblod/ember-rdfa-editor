@@ -26,8 +26,9 @@ class RdfaInfo {
     const rdfaIdMapping: Map<string, ResolvedPNode> = new Map();
     const subjectMapping: Map<string, ResolvedPNode[]> = new Map();
     const { doc } = this.state;
-    const importedResources: string[] | undefined =
-      this.state.doc.attrs[IMPORTED_RESOURCES_ATTR];
+    const importedResources = this.state.doc.attrs[IMPORTED_RESOURCES_ATTR] as
+      | string[]
+      | undefined;
     if (importedResources) {
       // This document defines additional external resources that can be used in RDFa relationships,
       // such as when editing a snippet. Add those resources to those available in the document.

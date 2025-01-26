@@ -166,7 +166,7 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       if (ownerElement) {
         const previousTriples = ownerElement.dataset['externalTriples'];
         if (previousTriples) {
-          const prev = JSON.parse(previousTriples);
+          const prev = JSON.parse(previousTriples) as unknown[];
 
           ownerElement.dataset['externalTriples'] = JSON.stringify(
             prev.concat(newTriples),

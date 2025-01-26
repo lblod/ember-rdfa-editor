@@ -61,7 +61,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           tag: 'div',
           attrs: {
             class: `say-editable ${getClassnamesFromNode(node)}`,
-            'data-label': node.attrs['label'],
+            'data-label': node.attrs['label'] as string,
           },
           content: 0,
         });
@@ -71,7 +71,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           'div',
           {
             ...attrs,
-            'data-label': label,
+            'data-label': label as string,
             class: getClassnamesFromNode(node),
           },
           0,

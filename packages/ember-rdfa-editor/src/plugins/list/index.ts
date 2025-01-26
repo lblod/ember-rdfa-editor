@@ -65,8 +65,8 @@ function calculateListTree(node: PNode, offset: number, tr: Transaction) {
     path,
     offset,
     tr,
-    node.attrs['style'] ?? 'unordered',
-    node.attrs['hierarchical'] ?? false,
+    (node.attrs['style'] as string) ?? 'unordered',
+    (node.attrs['hierarchical'] as boolean) ?? false,
   );
 }
 function updateListItems(
@@ -103,8 +103,8 @@ function updateListItems(
         path,
         docPosOffset + offset + 1,
         tr,
-        child.attrs['style'] ?? style,
-        child.attrs['hierarchical'] ?? hierarchical,
+        (child.attrs['style'] as string) ?? style,
+        (child.attrs['hierarchical'] as boolean) ?? hierarchical,
       );
     } else {
       updateListItems(

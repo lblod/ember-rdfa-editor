@@ -76,7 +76,12 @@ export class GapCursor extends Selection {
   }
 
   /// @internal
-  static findGapCursorFrom($pos: ResolvedPos, dir: number, mustMove = false) {
+  static findGapCursorFrom(
+    this: void,
+    $pos: ResolvedPos,
+    dir: number,
+    mustMove = false,
+  ) {
     search: for (;;) {
       if (!mustMove && GapCursor.valid($pos)) return new GapCursor($pos);
       let pos = $pos.pos,

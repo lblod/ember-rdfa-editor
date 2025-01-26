@@ -126,7 +126,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
       ] &&
-      (this.node.attrs[IMPORTED_RESOURCES_ATTR] || [])
+      ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
     );
   }
   get allImportedResources(): string[] | false {
@@ -176,7 +176,9 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   isNodeLink = isLinkToNode;
 
   get importedResources(): Record<string, string | undefined> | undefined {
-    return this.node.attrs['importedResources'];
+    return this.node.attrs['importedResources'] as
+      | Record<string, string | undefined>
+      | undefined;
   }
   get allResources(): string[] {
     if (!this.controller) {

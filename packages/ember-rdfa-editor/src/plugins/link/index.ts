@@ -12,8 +12,8 @@ export const linkHandler: ProsePlugin = new ProsePlugin({
     handleClickOn(
       view: EditorView | SayView,
       pos: number,
-      node: PNode,
-      nodePos: number,
+      _node: PNode,
+      _nodePos: number,
       event: MouseEvent,
     ) {
       const schema = view.state.schema;
@@ -29,7 +29,7 @@ export const linkHandler: ProsePlugin = new ProsePlugin({
       );
       if (linkMark) {
         if (event.ctrlKey || event.metaKey) {
-          window.open(linkMark.attrs['href']);
+          window.open(linkMark.attrs['href'] as string);
         }
       }
     },

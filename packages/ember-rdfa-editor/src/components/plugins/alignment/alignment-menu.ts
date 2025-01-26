@@ -83,9 +83,9 @@ export default class AlignmentMenu extends Component<Args> {
     return this.controller?.checkCommand(setAlignment({ option: 'left' }));
   }
 
-  setAlignment = (option: AlignmentOption) => {
+  setAlignment = async (option: AlignmentOption) => {
     this.controller?.doCommand(setAlignment({ option }));
-    this.closeDropdown();
+    await this.closeDropdown();
   };
 
   @action

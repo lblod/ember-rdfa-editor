@@ -10,6 +10,7 @@ import { type Command } from 'prosemirror-state';
 import SayController from '#root/core/say-controller.ts';
 import { OrderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/ordered-list';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import type { ListPathEntry } from '#root/plugins/list/nodes/list-nodes.ts';
 
 type Args = {
   controller: SayController;
@@ -87,7 +88,7 @@ export default class ListOrdered extends Component<Args> {
     }
     const listItem = this.firstListItemParent;
     if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
-      const path = listItem.node.attrs['listPath'];
+      const path = listItem.node.attrs['listPath'] as ListPathEntry[];
 
       return path[path.length - 1].hierarchical;
     } else {
@@ -159,7 +160,7 @@ export default class ListOrdered extends Component<Args> {
     if (this.args.enableHierarchicalList) {
       const listItem = this.firstListItemParent;
       if (listItem?.node.type === this.controller.schema.nodes['list_item']) {
-        const path = listItem.node.attrs['listPath'];
+        const path = listItem.node.attrs['listPath'] as ListPathEntry[];
 
         return path[path.length - 1].style === style;
       } else {

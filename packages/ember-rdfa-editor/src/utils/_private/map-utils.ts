@@ -176,6 +176,6 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
     return this.entries();
   }
   get [Symbol.toStringTag](): string {
-    return this.keyToValue.toString();
+    return JSON.stringify(Object.fromEntries(this.keyToValue.entries()));
   }
 }

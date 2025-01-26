@@ -41,13 +41,15 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
   const type = node.type;
   const spec = type.spec;
   if (spec['recreateUriFunction']) {
-    attrs = spec['recreateUriFunction'](node.attrs);
+    attrs = (spec['recreateUriFunction'] as (attrs: Attrs) => Attrs)(
+      node.attrs,
+    );
   }
   if (spec['recreateUri']) {
     if (spec['uriAttributes']) {
       attrs = {
         ...attrs,
-        ...recreateUriAttribute(attrs, spec['uriAttributes']),
+        ...recreateUriAttribute(attrs, spec['uriAttributes'] as string[]),
       };
     }
   }
@@ -61,7 +63,7 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
 
 export default recreateUuidsOnPaste;
 
-export function recreateUriAttribute(attrs: Attrs, uriAttributes: [string]) {
+export function recreateUriAttribute(attrs: Attrs, uriAttributes: string[]): Attrs {
   const newAttributes: Record<string, string> = {};
   for (const uriAttribute of uriAttributes) {
     const oldUri = attrs[uriAttribute] as string;

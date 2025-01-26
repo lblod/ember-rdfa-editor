@@ -36,7 +36,8 @@ export const inline_rdfa: SayMarkSpec = {
     },
   ],
   toDOM(mark: Mark) {
-    const { _guid, ...rdfaAttrs } = mark.attrs;
+    const { ...rdfaAttrs }: Record<string, unknown> = mark.attrs;
+    delete rdfaAttrs['_guid'];
     return ['span', rdfaAttrs, 0];
   },
   hasRdfa: true,

@@ -114,7 +114,7 @@ export const docWithConfig = ({
         attrs[attr] = node.attrs[attr];
       });
       if (rdfaAware) {
-        const importedRes = node.attrs[IMPORTED_RESOURCES_ATTR];
+        const importedRes = node.attrs[IMPORTED_RESOURCES_ATTR] as unknown;
         if (hasResourceImports && importedRes && Array.isArray(importedRes)) {
           attrs[IMPORTED_RESOURCES_ATTR] = JSON.stringify(importedRes);
         }
