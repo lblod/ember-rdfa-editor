@@ -12,6 +12,7 @@ import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/che
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
+import { TypeAssertionError } from '#root/utils/_private/errors.ts';
 
 type Args = {
   controller: SayController;
@@ -71,7 +72,11 @@ export default class AttributeEditor extends Component<Args> {
 
   saveChanges = () => {
     this.controller?.withTransaction((tr) => {
-      for (const { key, value } of unwrap(this.changeset).changes) {
+      for (const change of unwrap(this.changeset).changes) {
+        const { key, value } = change;
+        if (!(typeof key === 'string')) {
+          throw new TypeAssertionError();
+        }
         TransformUtils.setAttribute(tr, this.node.pos, key, value);
       }
       return tr;

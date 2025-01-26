@@ -7,6 +7,7 @@ import { ParseError } from '#root/utils/_private/errors.ts';
  * This is a simplified implementation of {@link https://graphy.link/concise#string/c1 Concise term syntax}
  */
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ConciseTerm = ConNamedNode | ConBlankNode | ConLiteral;
 
 export type ConNamedNode = ConAbsoluteIRI | ConPrefixedName | ConTypeAlias;
@@ -17,8 +18,11 @@ type ConTypeAlias = 'a';
 export type ConBlankNode = `_:${string}`;
 
 export type ConLiteral =
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   | ConPlainLiteral
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   | ConDatatypedLiteral
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   | ConLanguagedLiteral
   | ConImplicitLiteral
   | number

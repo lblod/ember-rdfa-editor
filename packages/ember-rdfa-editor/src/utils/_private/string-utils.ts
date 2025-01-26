@@ -18,7 +18,7 @@ export function jsonParse<T = unknown>(json: Option<string>): T | undefined {
     return undefined;
   }
   try {
-    return JSON.parse(json);
+    return JSON.parse(json) as T;
   } catch (err) {
     console.warn('unable to parse JSON', json, err);
     return undefined;

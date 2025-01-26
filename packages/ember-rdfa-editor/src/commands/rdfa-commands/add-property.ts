@@ -48,7 +48,7 @@ export function addProperty({
     if (dispatch) {
       const tr = transaction ?? state.tr;
       if (isNewImportedResource) {
-        const imported: string[] = state.doc.attrs[IMPORTED_RESOURCES_ATTR];
+        const imported = state.doc.attrs[IMPORTED_RESOURCES_ATTR] as string[];
         tr.setDocAttribute(IMPORTED_RESOURCES_ATTR, [...imported, resource]);
         resourceNodes = [{ pos: -1, value: state.doc }];
       }

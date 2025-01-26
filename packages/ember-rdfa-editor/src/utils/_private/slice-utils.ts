@@ -55,7 +55,7 @@ function closeRange(
   if (depth >= from)
     // Use the `contentMatchAt` and `fillBefore` functions to fill-in 'cut-through' nodes so they fit the schema.
     inner =
-      side < 0
+      side === Side.Left
         ? unwrap(
             node.contentMatchAt(0).fillBefore(inner, openEnd <= depth),
           ).append(inner)

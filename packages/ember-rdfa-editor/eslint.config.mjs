@@ -78,6 +78,13 @@ export default ts.config(
       parserOptions: parserOptions.esm.ts,
     },
     extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
   },
   {
     files: ['src/**/*'],

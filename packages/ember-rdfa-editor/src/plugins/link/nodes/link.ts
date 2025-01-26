@@ -70,7 +70,9 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
       ];
     },
     toDOM(node) {
-      const { interactive: _, placeholder: __, ...attrs } = node.attrs;
+      const { ...attrs }: Record<string, unknown> = node.attrs;
+      delete attrs['interactive'];
+      delete attrs['placeholder'];
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,

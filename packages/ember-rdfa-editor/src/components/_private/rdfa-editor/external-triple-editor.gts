@@ -127,7 +127,7 @@ export default class ExternalTripleEditor extends Component<Sig> {
     return this.args.node;
   }
   get externalTriples(): FullTriple[] {
-    return this.node.value.attrs['externalTriples'] ?? [];
+    return (this.node.value.attrs['externalTriples'] as FullTriple[]) ?? [];
   }
   get controller() {
     return this.args.controller;

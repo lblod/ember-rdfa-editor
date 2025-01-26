@@ -1,8 +1,6 @@
 import DOMPurify from 'dompurify';
 import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx.ts';
 import { preCleanHtml } from '#root/utils/_private/ce/paste-handler-helper-functions/index.ts';
-import { isElement } from './dom-helpers.ts';
-import { AssertionError } from './errors.ts';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',

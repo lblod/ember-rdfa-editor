@@ -11,7 +11,9 @@ export function transformExternalTriples(
       return {
         transaction: tr.setDocAttribute(
           'externalTriples',
-          transformer(state.doc.attrs['externalTriples'] ?? []),
+          transformer(
+            (state.doc.attrs['externalTriples'] as FullTriple[]) ?? [],
+          ),
         ),
         initialState: state,
         result: true,
@@ -24,7 +26,7 @@ export function transformExternalTriples(
           transaction: tr.setNodeAttribute(
             pos,
             'externalTriples',
-            transformer(node.attrs['externalTriples'] ?? []),
+            transformer((node.attrs['externalTriples'] as FullTriple[]) ?? []),
           ),
           result: true,
         };
