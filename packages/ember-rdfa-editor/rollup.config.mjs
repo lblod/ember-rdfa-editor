@@ -4,7 +4,6 @@ import { Addon } from '@embroider/addon-dev/rollup';
 
 import sassPlugin from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import * as sass from 'sass';
 
@@ -28,7 +27,6 @@ export default {
 
   plugins: [
     nodeResolve({ preferBuiltins: false }),
-    commonjs(),
     json(),
 
     // These are the modules that users should be able to import from your
