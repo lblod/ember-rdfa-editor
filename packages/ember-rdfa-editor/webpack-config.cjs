@@ -1,8 +1,8 @@
-// eslint-disable-next-line n/no-unpublished-require
 const webpack = require('webpack');
 
 // This allows consumers to import the needed Webpack config without having to know what's in it.
 module.exports = {
+  devtool: 'eval-source-map',
   node: {
     global: true,
     __filename: true,

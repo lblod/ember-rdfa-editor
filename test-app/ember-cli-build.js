@@ -13,6 +13,7 @@ module.exports = function (defaults) {
       plugins: [
         require.resolve('ember-concurrency/async-arrow-task-transform'),
       ],
+      sourceMaps: 'inline',
     },
   });
 
