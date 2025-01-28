@@ -3,12 +3,8 @@ steps:
     image: node:22-slim
     commands:
       - corepack enable
+      # this will also build the addon by default
       - pnpm i --frozen-lockfile
-  build:
-    image: node:22-slim
-    commands:
-      - corepack enable
-      - pnpm build
   lint:
     image: node:22-slim
     group: lint
