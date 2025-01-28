@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { NodeType } from 'prosemirror-model';
+import { NodeType } from '@lblod/ember-rdfa-editor';
 import { SayController } from '@lblod/ember-rdfa-editor';
 
 type RdfaIcPluginInsertComponentArgs = {
@@ -31,9 +31,11 @@ export default class RdfaIcPluginInsertComponent extends Component<RdfaIcPluginI
     this.insert(this.schema.nodes['dropdown']);
   }
 
-  insert(type: NodeType) {
-    this.controller.withTransaction((tr) => {
-      return tr.replaceSelectionWith(type.create()).scrollIntoView();
-    });
+  insert(type?: NodeType) {
+    if (type) {
+      this.controller.withTransaction((tr) => {
+        return tr.replaceSelectionWith(type.create()).scrollIntoView();
+      });
+    }
   }
 }

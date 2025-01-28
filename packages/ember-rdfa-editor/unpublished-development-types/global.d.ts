@@ -21,12 +21,3 @@ declare module 'yup' {
   }
 }
 
-declare global {
-  interface Assert {
-    deepArrayContains(
-      array: unknown[],
-      element: unknown,
-      message?: string,
-    ): void;
-  }
-}
