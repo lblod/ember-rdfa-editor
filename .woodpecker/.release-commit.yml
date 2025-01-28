@@ -1,19 +1,17 @@
 steps:
-  install:
-    image: node:22-slim
-    commands:
-      - corepack enable
-      - corepack use pnpm@10.0.0
-      - pnpm i --frozen-lockfile
   version:
     image: node:22-slim
+    directory: packages/ember-rdfa-editor
     commands:
       - npm version --no-git-tag-version $(npm pkg get version | sed 's/"//g')-dev.${CI_COMMIT_SHA}
-  release:
-    image: plugins/npm
-    settings:
-      token:
-        from_secret: npm_access_token
-      tag: dev
+  publish:
+    image: node:22-slim
+    commands:
+      - export NPM_TOKEN=$NPM_ACCESS_TOKEN
+      - npm config set ignore-scripts true
+      - corepack enable
+      - corepack use pnpm@10.0.0
+      - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
+    secrets: [npm_access_token]
 when:
   - event: push

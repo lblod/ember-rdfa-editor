@@ -5,6 +5,10 @@
   "keywords": [
     "ember-addon"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
+  },
   "license": "MIT",
   "author": "redpencil.io",
   "exports": {
