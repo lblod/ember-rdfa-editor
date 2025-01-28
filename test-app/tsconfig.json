@@ -13,6 +13,9 @@
     // layout, which is not resolvable with the Node resolution algorithm, to
     // work with TypeScript.
     "baseUrl": ".",
+
+    "noUncheckedIndexedAccess": false,
+
     "paths": {
       "test-app/tests/*": ["tests/*"],
       "test-app/*": ["app/*"],

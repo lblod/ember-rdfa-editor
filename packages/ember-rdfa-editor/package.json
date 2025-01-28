@@ -163,7 +163,14 @@
   "imports": {
     "#root": null,
     "#root/index.ts": null,
-    "#root/*": "./src/*"
+    "#root/*.ts": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*.ts"
+    },
+    "#root/*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*"
+    }
   },
   "typesVersions": {
     "*": {
