@@ -3,6 +3,8 @@ steps:
     image: node:22-slim
     commands:
       - corepack enable
+      # pinning to 10.0.0 because of https://github.com/nodejs/corepack/issues/612
+      - corepack use pnpm@10.0.0
       # this will also build the addon by default
       - pnpm i --frozen-lockfile
   lint:
@@ -10,16 +12,19 @@ steps:
     group: lint
     commands:
       - corepack enable
+      - corepack use pnpm@10.0.0
       - pnpm lint
   test:
     image: danlynn/ember-cli:6.1.0
     commands:
       - corepack enable
+      - corepack use pnpm@10.0.0
       - pnpm test
   prepack:
     image: node:22-slim
     commands:
       - corepack enable
+      - corepack use pnpm@10.0.0
       - pnpm prepack
 when:
   event:

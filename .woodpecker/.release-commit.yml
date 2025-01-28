@@ -3,6 +3,7 @@ steps:
     image: node:22-slim
     commands:
       - corepack enable
+      - corepack use pnpm@10.0.0
       - pnpm i --frozen-lockfile
   version:
     image: node:22-slim
