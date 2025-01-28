@@ -14,6 +14,11 @@
     "test": "pnpm --filter '*' test",
     "test:ember": "pnpm --filter '*' test:ember"
   },
+  "pnpm": {
+    "patchedDependencies": {
+      "ember-source@6.1.0": "./patches/ember-source@6.1.0.patch"
+    }
+  },
   "packageManager": "pnpm@10.0.0",
   "devDependencies": {
     "@glint/core": "^1.2.1",
