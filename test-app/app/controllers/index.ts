@@ -66,6 +66,7 @@ import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-applica
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import applyDevTools from 'prosemirror-dev-tools';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -162,6 +163,7 @@ export default class IndexController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent, { doNotClean: true });
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

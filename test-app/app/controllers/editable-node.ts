@@ -75,6 +75,7 @@ import {
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import applyDevTools from 'prosemirror-dev-tools';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -190,6 +191,7 @@ export default class EditableBlockController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent);
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
