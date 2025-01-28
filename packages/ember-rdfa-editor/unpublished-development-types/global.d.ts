@@ -20,4 +20,3 @@ declare module 'yup' {
     curie(options?: CurieOptions): this;
   }
 }
-
