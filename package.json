@@ -34,7 +34,8 @@
     },
     "onlyBuiltDependencies": [
       "core-js",
-      "@parcel/watcher"
+      "@parcel/watcher",
+      "ember-source"
     ]
   },
   "packageManager": "pnpm@10.1.0",
