@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { oneLineTrim } from 'common-tags';
 import sinon from 'sinon';
-import * as DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 
 import { Schema, EditorState } from '@lblod/ember-rdfa-editor';
 

@@ -1,4 +1,4 @@
-import { type TemplateOnlyComponent } from '@ember/component/template-only';
+import type { TOC } from '@ember/component/template-only';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 
@@ -8,7 +8,7 @@ interface Signature {
   };
 }
 
-const Card: TemplateOnlyComponent<Signature> = <template>
+const Card: TOC<Signature> = <template>
   <AuCard @flex={{true}} as |c|>
     <c.header contenteditable="false">
       <AuHeading @level="2" @skin="4">

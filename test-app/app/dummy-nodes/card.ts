@@ -4,7 +4,7 @@ import {
   createEmberNodeView,
   type EmberNodeConfig,
 } from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
-import Card from '../components/sample-ember-nodes/card';
+import Card from 'test-app/components/sample-ember-nodes/card';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'card',
