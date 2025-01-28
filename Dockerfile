@@ -5,6 +5,7 @@ LABEL maintainer="info@redpencil.io"
 RUN corepack enable
 WORKDIR /app
 COPY . .
+RUN corepack use pnpm@10.0.0
 RUN pnpm i --frozen-lockfile
 RUN pnpm build:test-app
 
