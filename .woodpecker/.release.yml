@@ -1,6 +1,6 @@
 steps:
   install:
-    image: node:20-slim
+    image: node:22-slim
     commands:
       - corepack enable
       - pnpm i --frozen-lockfile

@@ -1,34 +1,34 @@
 steps:
   install:
-    image: node:20-slim
+    image: node:22-slim
     commands:
       - corepack enable
       - pnpm i --frozen-lockfile
   lint-js:
-    image: node:20-slim
+    image: node:22-slim
     group: lint
     commands:
       - corepack enable
       - pnpm lint:js
   lint-hbs:
-    image: node:20-slim
+    image: node:22-slim
     group: lint
     commands:
       - corepack enable
       - pnpm lint:hbs
   lint-prettier:
-    image: node:20-slim
+    image: node:22-slim
     group: lint
     commands:
       - corepack enable
       - pnpm lint:prettier
   test:
-    image: danlynn/ember-cli:4.12.1
+    image: danlynn/ember-cli:6.1.0
     commands:
       - corepack enable
       - pnpm test:ember
   prepack:
-    image: node:20-slim
+    image: node:22-slim
     commands:
       - corepack enable
       - pnpm prepack

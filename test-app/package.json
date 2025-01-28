@@ -143,8 +143,5 @@
     "last 1 Firefox version",
     "last 1 Edge version"
   ],
-  "volta": {
-    "node": "20.11.0"
-  },
   "packageManager": "pnpm@9.4.0"
 }
