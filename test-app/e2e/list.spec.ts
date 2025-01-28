@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { EditorPage } from 'models/editor';
+import { EditorPage } from './models/editor';
 
 test.describe('lists', () => {
   test('checks that ordered lists are rendered correctly @vrt', async ({

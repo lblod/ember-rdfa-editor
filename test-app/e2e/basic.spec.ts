@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { EditorPage } from 'models/editor';
+import { EditorPage } from './models/editor';
 
 test.describe('basic editor functionality', () => {
   test('passes', async ({ page }) => {
