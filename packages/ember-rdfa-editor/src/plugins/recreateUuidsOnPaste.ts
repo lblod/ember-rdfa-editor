@@ -63,7 +63,10 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
 
 export default recreateUuidsOnPaste;
 
-export function recreateUriAttribute(attrs: Attrs, uriAttributes: string[]): Attrs {
+export function recreateUriAttribute(
+  attrs: Attrs,
+  uriAttributes: string[],
+): Attrs {
   const newAttributes: Record<string, string> = {};
   for (const uriAttribute of uriAttributes) {
     const oldUri = attrs[uriAttribute] as string;
