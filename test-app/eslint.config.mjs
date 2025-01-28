@@ -24,6 +24,7 @@ import qunit from 'eslint-plugin-qunit';
 import n from 'eslint-plugin-n';
 
 import babelParser from '@babel/eslint-parser';
+import playwright from 'eslint-plugin-playwright';
 
 const parserOptions = {
   esm: {
@@ -139,6 +140,21 @@ export default ts.config(
       globals: {
         ...globals.node,
       },
+    },
+  },
+  {
+    files: ['e2e/**/*.spec.{js,ts}'],
+    extends: [playwright.recommended],
+    plugins: {
+      playwright,
+    },
+    rules: {
+      'playwright/expect-expect': [
+        'error',
+        {
+          assertFunctionNames: ['setEditorContentAndCompareSnapshot'],
+        },
+      ],
     },
   },
 );

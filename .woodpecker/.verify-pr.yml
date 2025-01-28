@@ -4,6 +4,11 @@ steps:
     commands:
       - corepack enable
       - pnpm i --frozen-lockfile
+  build:
+    image: node:22-slim
+    commands:
+      - corepack enable
+      - pnpm build
   lint:
     image: node:22-slim
     group: lint
