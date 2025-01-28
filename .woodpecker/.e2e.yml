@@ -1,7 +1,7 @@
 steps:
   e2e:
     # this image must be the same as in `scripts/e2e.sh`
-    image: mcr.microsoft.com/playwright:v1.45.0-jammy
+    image: mcr.microsoft.com/playwright:v1.50.0-jammy
     commands:
       - corepack enable
       - corepack use pnpm@10.0.0

@@ -20,12 +20,6 @@ steps:
       - corepack enable
       - corepack use pnpm@10.0.0
       - pnpm test
-  prepack:
-    image: node:22-slim
-    commands:
-      - corepack enable
-      - corepack use pnpm@10.0.0
-      - pnpm prepack
 when:
   event:
     - pull_request
