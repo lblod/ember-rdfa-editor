@@ -1,13 +1,12 @@
 {
   "name": "@lblod/ember-rdfa-editor",
   "version": "10.11.1",
-  "description": "The default blueprint for Embroider v2 addons.",
+  "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
   "license": "MIT",
-  "author": "",
+  "author": "redpencil.io",
   "exports": {
     ".": {
       "types": "./declarations/index.d.ts",

@@ -3,7 +3,6 @@
   "version": "10.11.0",
   "private": true,
   "description": "Test app for ember-rdfa-editor addon",
-  "repository": "",
   "license": "MIT",
   "author": "redpencil.io",
   "directories": {
