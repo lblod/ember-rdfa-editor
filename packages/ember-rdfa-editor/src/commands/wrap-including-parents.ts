@@ -2,7 +2,7 @@ import type { Command } from 'prosemirror-state';
 import type { Attrs, NodeType } from 'prosemirror-model';
 import { findWrapping } from 'prosemirror-transform';
 import { selectParentNode } from 'prosemirror-commands';
-import { GapCursor } from '../plugins/gap-cursor';
+import { GapCursor } from '../plugins/gap-cursor/gap-cursor.ts';
 
 /**
  * Wrap the selection in a node of the given type with the given attributes.
