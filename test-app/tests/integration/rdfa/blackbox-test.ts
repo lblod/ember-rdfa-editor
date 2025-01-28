@@ -2,22 +2,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
 
 import { module, test } from 'qunit';
 import TEST_CASES from './test-cases';
 import { SAMPLE_PLUGINS, SAMPLE_SCHEMA, testEditor } from '../../utils/editor';
 //@ts-expect-error graphy has no typescript definitions
 import ttl_write from '@graphy/content.ttl.write';
-import { Dataset } from '@rdfjs/types';
+import type { Dataset } from '@rdfjs/types';
 import { calculateDataset } from '../../test-utils';
 
 async function toTurtle(dataset: Dataset) {
   return new Promise<string>((resolve, reject) => {
     let result = '';
     const ttl_writer = ttl_write();
-    ttl_writer.on('data', (chunk) => {
+    ttl_writer.on('data', (chunk: string) => {
       result += chunk;
     });
     ttl_writer.on('end', () => {

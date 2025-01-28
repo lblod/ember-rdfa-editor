@@ -97,7 +97,7 @@ export interface SubAndPred {
 }
 
 export interface RdfaParseResponse<N> {
-  dataset: RDF.Dataset;
+  dataset: GraphyDataset;
 
   subjectToNodesMapping: Map<string, N[]>;
   nodeToSubjectMapping: Map<N, ModelQuad<N>>;
@@ -222,7 +222,7 @@ export class RdfaParser<N> {
     }
     parser.onEnd();
     return {
-      dataset: parser.resultSet,
+      dataset: new GraphyDataset(parser.resultSet),
       nodeToSubjectMapping: parser.nodeToSubjectMapping,
       subjectToNodesMapping: parser.subjectToNodesMapping,
       nodeToPredicatesMapping: parser.nodeToPredicatesMapping,

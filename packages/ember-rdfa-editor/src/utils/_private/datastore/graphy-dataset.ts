@@ -58,11 +58,11 @@ export class GraphyDataset implements QuadDataSet {
   }
 
   match(
-    subject?: RDF.Quad_Subject | null,
-    predicate?: RDF.Quad_Predicate | null,
-    object?: RDF.Quad_Object | null,
+    subject?: RDF.Term | null,
+    predicate?: RDF.Term | null,
+    object?: RDF.Term | null,
     graph?: RDF.Quad_Graph | null,
-  ): QuadDataSet {
+  ): GraphyDataset {
     return new GraphyDataset(
       this.fastDataset.match(subject, predicate, object, graph),
     );
@@ -91,12 +91,12 @@ export class GraphyDataset implements QuadDataSet {
     return this;
   }
 
-  difference(other: QuadDataSet): QuadDataSet {
+  difference(other: QuadDataSet): GraphyDataset {
     const gds = new GraphyDataset(other);
     return new GraphyDataset(this.fastDataset.difference(gds.fastDataset));
   }
 
-  minus(other: QuadDataSet): QuadDataSet {
+  minus(other: QuadDataSet): GraphyDataset {
     const gds = new GraphyDataset(other);
     return new GraphyDataset(this.fastDataset.minus(gds.fastDataset));
   }
@@ -115,9 +115,7 @@ export class GraphyDataset implements QuadDataSet {
     return true;
   }
 
-  filter(
-    iteratee: (quad: RDF.Quad, dataset: this) => boolean,
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
+  filter(iteratee: (quad: RDF.Quad, dataset: this) => boolean): GraphyDataset {
     const rslt = [];
     for (const quad of this) {
       if (iteratee(quad, this)) {
@@ -137,7 +135,7 @@ export class GraphyDataset implements QuadDataSet {
     throw new NotImplementedError();
   }
 
-  intersection(other: QuadDataSet): QuadDataSet {
+  intersection(other: QuadDataSet): GraphyDataset {
     const gds = new GraphyDataset(other);
     return new GraphyDataset(this.fastDataset.intersection(gds.fastDataset));
   }
@@ -147,7 +145,7 @@ export class GraphyDataset implements QuadDataSet {
       quad: RDF.Quad,
       dataset: RDF.Dataset<RDF.Quad, RDF.Quad>,
     ) => RDF.Quad,
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
+  ): GraphyDataset {
     const result = [];
     for (const quad of this) {
       result.push(iteratee(quad, this));
@@ -194,9 +192,7 @@ export class GraphyDataset implements QuadDataSet {
     throw new NotImplementedError();
   }
 
-  union(
-    quads: RDF.Dataset<RDF.Quad, RDF.Quad>,
-  ): RDF.Dataset<RDF.Quad, RDF.Quad> {
+  union(quads: RDF.Dataset<RDF.Quad, RDF.Quad>): GraphyDataset {
     const gds = new GraphyDataset(quads);
     return new GraphyDataset(this.fastDataset.union(gds.fastDataset));
   }

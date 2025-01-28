@@ -10,6 +10,7 @@ import {
   EditorStore,
 } from '#root/utils/_private/datastore/datastore.ts';
 import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
+import type { GraphyDataset } from './graphy-dataset';
 
 export interface SayDatastore extends Datastore<DatastoreResolvedPNode> {
   limitToRange(state: EditorState, start: number, end: number): SayStore;
@@ -34,7 +35,7 @@ export class SayStore
         return range.from >= start && range.to <= end;
       }
     };
-    return this.transformDataset((dataset) => {
+    return this.transformDataset((dataset: GraphyDataset) => {
       return dataset.filter((quad) => {
         const quadNodes = this._quadToNodes.get(quadHash(quad));
         if (quadNodes) {

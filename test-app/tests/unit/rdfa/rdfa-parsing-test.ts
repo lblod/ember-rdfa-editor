@@ -195,8 +195,8 @@ module('rdfa | parsing', function () {
     const contentId = unwrap(propertyToLiteralNode).object.value;
 
     const { node: valueNode } = findNodeById(doc, contentId);
-    const valueProps = valueNode.attrs['properties'];
-    const valueBacklinks = valueNode.attrs['backlinks'];
+    const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
+    const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks = [
       {
@@ -256,8 +256,8 @@ module('rdfa | parsing', function () {
     const contentId = unwrap(propertyToLiteralNode).object.value;
 
     const { node: valueNode } = findNodeById(doc, contentId);
-    const valueProps = valueNode.attrs['properties'];
-    const valueBacklinks = valueNode.attrs['backlinks'];
+    const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
+    const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
     const expectedValueBacklinks = [
       {

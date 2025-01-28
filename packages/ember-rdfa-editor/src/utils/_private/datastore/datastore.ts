@@ -54,7 +54,7 @@ export type WhichTerm = 'subject' | 'predicate' | 'object';
  * representing the transformed knowledge in some convenient format.
  */
 export default interface Datastore<N> {
-  get dataset(): RDF.Dataset;
+  get dataset(): GraphyDataset;
 
   get size(): number;
 
@@ -92,7 +92,10 @@ export default interface Datastore<N> {
    * @param action
    */
   transformDataset(
-    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset,
+    action: (
+      dataset: GraphyDataset,
+      termconverter: TermConverter,
+    ) => GraphyDataset,
   ): this;
 
   /** Transformer method.
@@ -168,7 +171,7 @@ export default interface Datastore<N> {
 
 interface DatastoreConfig<N> {
   documentRoot: N;
-  dataset: RDF.Dataset;
+  dataset: GraphyDataset;
   subjectToNodes: Map<string, N[]>;
   nodeToSubject: Map<N, ModelQuad<N>>;
 
@@ -189,7 +192,7 @@ interface GenericDatastoreConfig<N> extends DatastoreConfig<N> {
 
 export class EditorStore<N> implements Datastore<N> {
   protected _documentRoot: N;
-  protected _dataset: RDF.Dataset;
+  protected _dataset: GraphyDataset;
   protected _subjectToNodes: Map<string, N[]>;
   protected _nodeToSubject: Map<N, ModelQuad<N>>;
   protected _prefixMapping: Map<string, string>;
@@ -300,7 +303,7 @@ export class EditorStore<N> implements Datastore<N> {
     });
   }
 
-  get dataset(): RDF.Dataset {
+  get dataset(): GraphyDataset {
     return this._dataset;
   }
 
@@ -494,7 +497,10 @@ export class EditorStore<N> implements Datastore<N> {
   }
 
   transformDataset(
-    action: (dataset: RDF.Dataset, termconverter: TermConverter) => RDF.Dataset,
+    action: (
+      dataset: GraphyDataset,
+      termconverter: TermConverter,
+    ) => GraphyDataset,
   ): this {
     return this.fromDataset(
       this._documentRoot,
@@ -502,7 +508,7 @@ export class EditorStore<N> implements Datastore<N> {
     );
   }
 
-  protected fromDataset(documentRoot: N, dataset: RDF.Dataset): this {
+  protected fromDataset(documentRoot: N, dataset: GraphyDataset): this {
     const Clazz = this.constructor as new (
       config: GenericDatastoreConfig<N>,
     ) => this;

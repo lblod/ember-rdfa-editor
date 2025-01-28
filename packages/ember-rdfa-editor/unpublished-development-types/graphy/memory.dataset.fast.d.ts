@@ -60,9 +60,9 @@ declare module '@graphy/memory.dataset.fast' {
     difference(other: FastDataset): FastDataset;
 
     match(
-      subject?: RDF.Quad_Subject | null,
-      predicate?: RDF.Quad_Predicate | null,
-      object?: RDF.Quad_Object | null,
+      subject?: RDF.Term | null,
+      predicate?: RDF.Term | null,
+      object?: RDF.Term | null,
       graph?: RDF.Quad_Graph | null,
     ): FastDataset;
 

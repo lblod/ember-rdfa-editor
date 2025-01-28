@@ -11,7 +11,6 @@ import { equiv } from 'qunit';
 setup(QUnit.assert);
 const defaultDumpDepth = QUnit.dump.maxDepth;
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
 const defaultParse: (
   this: unknown,
   data: unknown,
