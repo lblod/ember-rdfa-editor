@@ -7,10 +7,12 @@ steps:
   publish:
     image: node:22-slim
     commands:
-      - export NPM_TOKEN=$NPM_ACCESS_TOKEN
       - npm config set ignore-scripts true
+      - cat .npmrc
       - corepack enable
       - corepack use pnpm@10.0.0
+      - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
+      - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
     secrets: [npm_access_token]
 when:
