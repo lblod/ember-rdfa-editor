@@ -1,0 +1,21 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{#if this.doc}}
+  <AuPill
+    @skin="link"
+    {{on "click" this.showModal}}
+    class="au-u-margin-tiny"
+  >Document Info</AuPill>
+  {{#if this.modalOpen}}
+    <AuModal
+      @title="Document Info"
+      @closeModal={{this.closeModal}}
+      @modalOpen={{true}}
+      @size="default"
+      as |Modal|
+    >
+      <Modal.Body>
+        <this.AttributeEditor @node={{this.doc}} @controller={{@controller}} />
+      </Modal.Body>
+    </AuModal>
+  {{/if}}
+{{/if}}
