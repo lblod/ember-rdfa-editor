@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 10.11.3
+
+### Patch Changes
+
+- [#1238](https://github.com/lblod/ember-rdfa-editor/pull/1238) [`584226d`](https://github.com/lblod/ember-rdfa-editor/commit/584226d3ec7d3d52446ff398aaaf150f6446e5eb) Thanks [@abeforgit](https://github.com/abeforgit)! - Set up ember-try
+
 ## 10.11.2
 
 ### Patch Changes
