@@ -2,6 +2,7 @@ import {
   EditorState,
   PNode,
   ProsePlugin,
+  Selection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
 import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
@@ -49,9 +50,16 @@ export function listTrackingPlugin(): ProsePlugin {
         );
         if (changedLists.length) {
           const tr = newState.tr;
+          const oldSelection = tr.selection;
           for (const { node, pos } of changedLists) {
             calculateListTree(node, pos, tr);
           }
+          // A bit of a hack: we want to make sure to preserve the old selection, this allows us to easily copy it
+          const newSelection = Selection.fromJSON(
+            tr.doc,
+            oldSelection.toJSON(),
+          );
+          tr.setSelection(newSelection);
           return tr;
         }
       }

@@ -1,7 +1,7 @@
 import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants';
 import { isNone } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { Mark, MarkType, NodeType } from 'prosemirror-model';
-import { NodeSelection, Plugin } from 'prosemirror-state';
+import { Plugin, Selection } from 'prosemirror-state';
 
 export type DefaultAttrGenPuginOptions = {
   attribute: string;
@@ -49,9 +49,12 @@ export function defaultAttributeValueGeneration(
             if (!node.hasMarkup(node.type, newAttrs, newMarks)) {
               const oldSelection = tr.selection;
               tr.setNodeMarkup(pos, null, newAttrs, newMarks);
-              if (oldSelection instanceof NodeSelection) {
-                tr.setSelection(NodeSelection.create(tr.doc, pos));
-              }
+              // A bit of a hack: we want to make sure to preserve the old selection, this allows us to easily copy it
+              const newSelection = Selection.fromJSON(
+                tr.doc,
+                oldSelection.toJSON(),
+              );
+              tr.setSelection(newSelection);
             }
           }
         });
