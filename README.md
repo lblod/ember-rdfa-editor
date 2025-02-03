@@ -182,8 +182,8 @@ It allows you to provide an object contain a series of `NodeViewConstructor` fun
 This object contains a series of `string:boolean` pairs. It may contain the following entries:
 - showPaper: Show the editor inside a paper like container
 - showToolbarBottom: Display the toolbar at the bottom of the screen
-- hideSidebarLeft: Hide the sidebar to the left of the editor
-- hideSidebarRight: Hide the sidebar to the right of the editor
+- showSidebarLeft: Hide the sidebar to the left of the editor (default: `true`)
+- showSidebarRight: Hide the sidebar to the right of the editor (default: `true`)
 
 ## The `ProseController` class
 Instances of the `ProseController` class can be used to control different aspects of the editor.

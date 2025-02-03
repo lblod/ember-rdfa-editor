@@ -1,12 +1,12 @@
 import Component from '@glimmer/component';
-import { and, not } from 'ember-truth-helpers';
+import { and } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 
 type EditorOptions = {
   showPaper?: boolean;
-  hideSidebarLeft?: boolean;
-  hideSidebarRight?: boolean;
+  showSidebarLeft?: boolean;
+  showSidebarRight?: boolean;
   showToolbarBottom?: boolean;
 };
 
@@ -27,12 +27,12 @@ export default class EditorContainer extends Component<Signature> {
     return this.args.editorOptions?.showPaper ?? false;
   }
 
-  get hideSidebarLeft() {
-    return this.args.editorOptions?.hideSidebarLeft ?? false;
+  get showSidebarLeft() {
+    return this.args.editorOptions?.showSidebarLeft ?? true;
   }
 
-  get hideSidebarRight() {
-    return this.args.editorOptions?.hideSidebarRight ?? false;
+  get showSidebarRight() {
+    return this.args.editorOptions?.showSidebarRight ?? true;
   }
 
   get showToolbarBottom() {
@@ -42,9 +42,9 @@ export default class EditorContainer extends Component<Signature> {
     <div
       class='say-container
         {{if this.showPaper "say-container--paper"}}
-        {{unless this.hideSidebarLeft "say-container--sidebar-left"}}
+        {{if this.showSidebarLeft "say-container--sidebar-left"}}
         {{if
-          (and (has-block "aside") (not this.hideSidebarRight))
+          (and (has-block "aside") this.showSidebarRight)
           "say-container--sidebar-right"
         }}
         {{if this.showToolbarBottom "say-container--toolbar-bottom"}}'
@@ -61,7 +61,7 @@ export default class EditorContainer extends Component<Signature> {
           {{yield}}
 
         </div>
-        {{#if (and (has-block 'aside') (not this.hideSidebarRight))}}
+        {{#if (and (has-block 'aside') this.showSidebarRight)}}
           <div class='say-container__aside'>
             {{yield to='aside'}}
           </div>
