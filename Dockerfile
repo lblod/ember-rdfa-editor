@@ -3,7 +3,8 @@ FROM node:20-slim AS builder
 LABEL maintainer="info@redpencil.io"
 
 RUN corepack enable
-RUN corepack prepare pnpm@9.4 --activate
+# installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+RUN npm i -g corepack@0.31
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches/

@@ -4,6 +4,8 @@ steps:
     image: mcr.microsoft.com/playwright:v1.45.0-jammy
     commands:
       - corepack enable
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
       - pnpm e2e:run
       # Ideally we would also run the visual regression tests, but we need to fix the update process
