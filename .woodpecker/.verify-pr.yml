@@ -8,6 +8,7 @@ steps:
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
       - npm i -g corepack@0.31
       - corepack enable
+      - pnpm i --frozen-lockfile
       - pnpm build
   lint:
     image: node:22-slim

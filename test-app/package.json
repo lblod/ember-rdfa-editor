@@ -1,6 +1,6 @@
 {
   "name": "test-app",
-  "version": "10.11.1",
+  "version": "10.11.3",
   "private": true,
   "description": "Test app for ember-rdfa-editor addon",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "e2e:show-report": "playwright show-report"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~3.4.2",
+    "@appuniversum/ember-appuniversum": "~3.7.0",
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.25.9",
     "@babel/plugin-proposal-decorators": "^7.25.9",
@@ -86,6 +86,7 @@
     "concurrently": "^9.1.0",
     "dompurify": "^3.2.3",
     "ember-auto-import": "^2.10.0",
+    "ember-basic-dropdown": "^8.5.0",
     "ember-changeset": "~4.1.2",
     "ember-cli": "~6.1.0",
     "ember-cli-app-version": "^7.0.0",
@@ -103,6 +104,7 @@
     "ember-load-initializers": "^3.0.1",
     "ember-modifier": "^4.2.0",
     "ember-page-title": "^8.2.3",
+    "ember-power-select": "^8.7.0",
     "ember-qunit": "^8.1.1",
     "ember-resolver": "^13.1.0",
     "ember-source": "~6.1.0",
@@ -150,6 +152,5 @@
     "last 1 Chrome version",
     "last 1 Firefox version",
     "last 1 Edge version"
-  ],
-  "packageManager": "pnpm@9.4.0"
+  ]
 }
