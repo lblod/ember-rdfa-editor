@@ -5,14 +5,7 @@
   </:header>
   <:content>
     <EditorContainer
-      @editorOptions={{hash
-        showRdfa='true'
-        showRdfaHighlight='true'
-        showRdfaHover='true'
-        showPaper='true'
-        showToolbarBottom=null
-      }}
-      @showRdfaBlocks={{this.showRdfaBlocks}}
+      @editorOptions={{hash showPaper='true' showToolbarBottom=null}}
     >
       <:top>
         <SampleToolbarResponsive @controller={{this.rdfaEditor}} />

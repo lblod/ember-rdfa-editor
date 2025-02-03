@@ -182,10 +182,6 @@ export default class EditableBlockController extends Controller {
     return;
   }
 
-  get showRdfaBlocks() {
-    return this.rdfaEditor?.showRdfaBlocks;
-  }
-
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
