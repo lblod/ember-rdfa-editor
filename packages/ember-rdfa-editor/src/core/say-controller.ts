@@ -29,10 +29,6 @@ export default class SayController {
       .contextStore;
   }
 
-  get showRdfaBlocks() {
-    return this.editor.showRdfaBlocks;
-  }
-
   get mainEditorView() {
     return this.editor.mainView;
   }
@@ -181,29 +177,5 @@ export default class SayController {
 
   getDocumentAttribute<TAttribute = string>(attribute: string) {
     return this.mainEditorState.doc.attrs[attribute] as TAttribute;
-  }
-
-  toggleRdfaBlocks() {
-    this.editor.showRdfaBlocks = !this.editor.showRdfaBlocks;
-
-    /**
-     * By using the `setTimeout` we put our call at the end of the stack, making sure
-     * that changing `showRdfaBlocks` had an effect on the DOM, and the browser
-     * started painting the "rdfa blocks".
-     *
-     * We then use `requestAnimationFrame`, as the browser will have painted the
-     * "rdfa blocks" by then, and we can scroll to the active element.
-     *
-     * `scrollIntoView` essentially depends on the DOM position of the selection to
-     * scroll to it. If we don't wait for the browser to paint the "rdfa blocks",
-     * the scroll position will be wrong.
-     *
-     * @link https://github.com/ProseMirror/prosemirror-view/blob/39fb7c2e71287d6ac2013f5a8c878873a074244e/src/index.ts#L236
-     */
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        this.withTransaction((tr) => tr.scrollIntoView());
-      });
-    }, 0);
   }
 }

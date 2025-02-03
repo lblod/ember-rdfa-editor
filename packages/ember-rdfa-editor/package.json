@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "10.11.1",
+  "version": "10.11.3",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -365,7 +365,6 @@
       "./components/plugins/list/indentation-controls.js": "./dist/_app_/components/plugins/list/indentation-controls.js",
       "./components/plugins/list/ordered.js": "./dist/_app_/components/plugins/list/ordered.js",
       "./components/plugins/list/unordered.js": "./dist/_app_/components/plugins/list/unordered.js",
-      "./components/plugins/rdfa-block-render/rdfa-blocks-toggle.js": "./dist/_app_/components/plugins/rdfa-block-render/rdfa-blocks-toggle.js",
       "./components/plugins/table/color.js": "./dist/_app_/components/plugins/table/color.js",
       "./components/plugins/table/table-menu.js": "./dist/_app_/components/plugins/table/table-menu.js",
       "./components/plugins/table/table-tooltip.js": "./dist/_app_/components/plugins/table/table-tooltip.js",

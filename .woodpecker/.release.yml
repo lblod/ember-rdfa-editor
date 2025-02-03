@@ -3,7 +3,8 @@ steps:
     image: node:22-slim
     commands:
       - corepack enable
-      - corepack use pnpm@10.0.0
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
   release-next:
     image: plugins/npm

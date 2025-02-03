@@ -53,7 +53,6 @@ interface SayEditorArgs {
 export default class SayEditor {
   @tracked mainView: SayView;
   @tracked activeView: SayView;
-  @tracked showRdfaBlocks = false;
   owner: Owner;
   root: Element;
   baseIRI: string;

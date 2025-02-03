@@ -10,7 +10,8 @@ steps:
       - npm config set ignore-scripts true
       - cat .npmrc
       - corepack enable
-      - corepack use pnpm@10.0.0
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
       - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks

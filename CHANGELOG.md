@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 10.11.3
+
+### Patch Changes
+
+- [#1238](https://github.com/lblod/ember-rdfa-editor/pull/1238) [`584226d`](https://github.com/lblod/ember-rdfa-editor/commit/584226d3ec7d3d52446ff398aaaf150f6446e5eb) Thanks [@abeforgit](https://github.com/abeforgit)! - Set up ember-try
+
+## 10.11.2
+
+### Patch Changes
+
+- [#1247](https://github.com/lblod/ember-rdfa-editor/pull/1247) [`695ea89`](https://github.com/lblod/ember-rdfa-editor/commit/695ea894372bd1e6b548e52f7f2be9b25c4fabcb) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduce fix regarding selection preservation when using the `Transform.setNodeAttribute` or `Transform.setNodeMarkup` methods
+
 ## 10.11.1
 
 ### Patch Changes

@@ -1,5 +1,5 @@
 import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
-import { EditorState, Transaction } from 'prosemirror-state';
+import { EditorState, Transaction, Selection } from 'prosemirror-state';
 import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
 import type { ListPathEntry } from './nodes/list-nodes.ts';
 
@@ -48,9 +48,16 @@ export function listTrackingPlugin(): ProsePlugin {
         );
         if (changedLists.length) {
           const tr = newState.tr;
+          const oldSelection = tr.selection;
           for (const { node, pos } of changedLists) {
             calculateListTree(node, pos, tr);
           }
+          // A bit of a hack: we want to make sure to preserve the old selection, this allows us to easily copy it
+          const newSelection = Selection.fromJSON(
+            tr.doc,
+            oldSelection.toJSON(),
+          );
+          tr.setSelection(newSelection);
           return tr;
         }
       }

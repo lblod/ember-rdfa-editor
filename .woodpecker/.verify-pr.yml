@@ -2,11 +2,12 @@ steps:
   install:
     image: node:22-slim
     commands:
-      - corepack enable
       - npm config set ignore-scripts true
       # pinning to 10.0.0 because of https://github.com/nodejs/corepack/issues/612
       # corepack use also runs an install
-      - corepack use pnpm@10.0.0
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      - corepack enable
       - pnpm build
   lint:
     image: node:22-slim

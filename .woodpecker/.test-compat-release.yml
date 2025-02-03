@@ -1,0 +1,12 @@
+steps:
+  test-compat:
+    image: danlynn/ember-cli:5.12.0-node_20.18
+    commands:
+      - corepack enable
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      - pnpm i --frozen-lockfile
+      - pnpm exec ember try:one ember-release --skip-cleanup=true
+when:
+  event:
+    - pull_request

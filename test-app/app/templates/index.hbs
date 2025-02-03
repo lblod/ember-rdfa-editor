@@ -6,14 +6,11 @@
   <:content>
     <EditorContainer
       @editorOptions={{hash
-        showRdfa="true"
-        showRdfaHighlight="true"
-        showRdfaHover="true"
-        showPaper="true"
+        showPaper=true
         showToolbarBottom=null
+        showSidebarLeft=false
+        showSidebarRight=false
       }}
-      @showRdfaBlocks={{this.showRdfaBlocks}}
-      @hideSidebar={{true}}
     >
       <:top>
         <SampleToolbarResponsive

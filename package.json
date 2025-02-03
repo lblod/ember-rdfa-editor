@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "10.11.1",
+  "version": "10.11.3",
   "license": "MIT",
   "author": "redpencil.io",
   "scripts": {
@@ -26,6 +26,7 @@
     "patchedDependencies": {
       "ember-source@6.1.0": "./patches/ember-source@6.1.0.patch"
     },
+    "allowNonAppliedPatches": true,
     "onlyBuiltDependencies": [
       "core-js",
       "@parcel/watcher",
