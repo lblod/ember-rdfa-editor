@@ -215,7 +215,6 @@
     "@embroider/addon-shim": "^1.8.9",
     "@embroider/macros": "^1.16.5",
     "@floating-ui/dom": "^1.6.5",
-    "@glint/template": "^1.4.0",
     "@graphy/memory.dataset.fast": "4.3.3",
     "@lblod/marawa": "0.8.0-beta.6",
     "@rdfjs/types": "^1.1.2",
@@ -231,6 +230,7 @@
     "ember-cli-babel": "^8.2.0",
     "ember-cli-htmlbars": "^6.3.0",
     "ember-focus-trap": "^1.1.0",
+    "ember-modifier": "^4.2.0",
     "ember-template-imports": "^4.1.1",
     "ember-truth-helpers": "^4.0.3",
     "ember-velcro": "^2.2.0",
@@ -253,13 +253,12 @@
     "rdf-data-factory": "^1.1.2",
     "relative-to-absolute-iri": "^1.0.7",
     "stream-browserify": "^3.0.0",
-    "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
     "uuid": "^9.0.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.7.0",
+    "@appuniversum/ember-appuniversum": "~3.7.0",
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.25.1",
     "@babel/plugin-transform-typescript": "^7.25.2",
@@ -271,6 +270,7 @@
     "@glint/core": "^1.5.2",
     "@glint/environment-ember-loose": "^1.4.0",
     "@glint/environment-ember-template-imports": "^1.4.0",
+    "@glint/template": "^1.5.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
@@ -299,17 +299,28 @@
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-sass": "^1.15.2",
     "sass": "^1.83.4",
+    "tracked-built-ins": "^3.4.0",
     "typescript": "~5.7.0",
     "typescript-eslint": "^7.18.0",
     "webpack": "^5.97.1"
   },
   "peerDependencies": {
     "@appuniversum/ember-appuniversum": "^3.7.0",
-    "ember-basic-dropdown": "^8.4.0",
+    "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
+    "@glimmer/component": "^1.1.2 || ^2.0.0",
+    "@glimmer/tracking": "^1.1.2",
+    "@glint/template": ">= 1.0.0",
+    "ember-basic-dropdown": "^8.5.0",
     "ember-concurrency": "^4.0.2",
     "ember-intl": "~6.4.1",
     "ember-power-select": "^8.6.2",
-    "ember-source": ">= 4.12.0"
+    "ember-source": "^3.28.0 || ^4.0.0 || >=5.0.0",
+    "tracked-built-ins": "^3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@glint/template": {
+      "optional": true
+    }
   },
   "ember": {
     "edition": "octane"

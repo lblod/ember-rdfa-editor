@@ -32,7 +32,7 @@
     "e2e:show-report": "playwright show-report"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~3.7.0",
+    "@appuniversum/ember-appuniversum": "workspace:*",
     "@babel/core": "^7.26.0",
     "@babel/eslint-parser": "^7.25.9",
     "@babel/plugin-proposal-decorators": "^7.25.9",
@@ -86,7 +86,7 @@
     "concurrently": "^9.1.0",
     "dompurify": "^3.2.3",
     "ember-auto-import": "^2.10.0",
-    "ember-basic-dropdown": "^8.5.0",
+    "ember-basic-dropdown": "^8.4.0",
     "ember-changeset": "~4.1.2",
     "ember-cli": "~6.1.0",
     "ember-cli-app-version": "^7.0.0",
