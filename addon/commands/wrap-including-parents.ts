@@ -1,8 +1,7 @@
 import type { Command } from 'prosemirror-state';
 import type { Attrs, NodeType } from 'prosemirror-model';
-import { findWrapping } from 'prosemirror-transform';
-import { selectParentNode } from 'prosemirror-commands';
 import { GapCursor } from '../plugins/gap-cursor';
+import { findWrappingIncludingParents } from '../utils/wrap-utils';
 
 /**
  * Wrap the selection in a node of the given type with the given attributes.
@@ -31,17 +30,13 @@ export function wrapIncludingParents(
       }
       return true;
     }
-    const { $from, $to } = state.selection;
-    const range = $from.blockRange($to);
-    const wrapping = range && findWrapping(range, nodeType, attrs);
-    if (wrapping) {
-      if (dispatch) dispatch(state.tr.wrap(range!, wrapping).scrollIntoView());
+    const wrappingRange = findWrappingIncludingParents(state, nodeType, attrs);
+    if (wrappingRange && wrappingRange[1]) {
+      const [range, wrapping] = wrappingRange;
+      if (dispatch) dispatch(state.tr.wrap(range, wrapping).scrollIntoView());
       return true;
     } else {
-      return selectParentNode(state, (tr) => {
-        const newState = state.apply(tr);
-        return wrapIncludingParents(nodeType, attrs)(newState, dispatch);
-      });
+      return false;
     }
   };
 }
