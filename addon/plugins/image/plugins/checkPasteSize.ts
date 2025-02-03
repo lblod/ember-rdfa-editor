@@ -17,7 +17,7 @@ export function checkPasteSize({
         if (!data) return;
         const dataItems = data.items;
         let totalSize = 0;
-        for (let item of dataItems) {
+        for (const item of dataItems) {
           const file = item.getAsFile();
           if (file) {
             totalSize += file.size;
