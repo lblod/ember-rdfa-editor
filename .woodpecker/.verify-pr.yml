@@ -14,13 +14,13 @@ steps:
     image: node:22-slim
     group: lint
     commands:
-      - corepack enable
+      - npm i -g corepack@0.31
       - pnpm lint
   test:
     image: danlynn/ember-cli:6.1.0
     group: lint
     commands:
-      - corepack enable
+      - npm i -g corepack@0.31
       - pnpm test
 when:
   event:

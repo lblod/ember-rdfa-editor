@@ -40,30 +40,30 @@ export default class EditorContainer extends Component<Signature> {
   }
   <template>
     <div
-      class='say-container
-        {{if this.showPaper "say-container--paper"}}
-        {{if this.showSidebarLeft "say-container--sidebar-left"}}
+      class="say-container
+        {{if this.showPaper 'say-container--paper'}}
+        {{if this.showSidebarLeft 'say-container--sidebar-left'}}
         {{if
-          (and (has-block "aside") this.showSidebarRight)
-          "say-container--sidebar-right"
+          (and (has-block 'aside') this.showSidebarRight)
+          'say-container--sidebar-right'
         }}
-        {{if this.showToolbarBottom "say-container--toolbar-bottom"}}'
+        {{if this.showToolbarBottom 'say-container--toolbar-bottom'}}"
     >
-      {{yield to='top'}}
-      <div class='say-container__main'>
+      {{yield to="top"}}
+      <div class="say-container__main">
         {{#if @loading}}
           <AuLoader @hideMessage={{true}}>
-            {{t 'ember-rdfa-editor.utils.loading'}}
+            {{t "ember-rdfa-editor.utils.loading"}}
           </AuLoader>
         {{/if}}
 
-        <div class='say-editor {{if @loading "au-u-hidden-visually"}}'>
+        <div class="say-editor {{if @loading 'au-u-hidden-visually'}}">
           {{yield}}
 
         </div>
-        {{#if (and (has-block 'aside') this.showSidebarRight)}}
-          <div class='say-container__aside'>
-            {{yield to='aside'}}
+        {{#if (and (has-block "aside") this.showSidebarRight)}}
+          <div class="say-container__aside">
+            {{yield to="aside"}}
           </div>
         {{/if}}
       </div>

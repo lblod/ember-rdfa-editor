@@ -41,7 +41,7 @@ export default {
       '**/*.ts',
       'index.js',
       'template-registry.js',
-      'webpack-config.js',
+      'webpack-config.cjs',
     ]),
 
     // These are the modules that should get reexported into the traditional

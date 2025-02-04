@@ -32,13 +32,7 @@ module.exports = async function () {
         },
       },
       embroiderSafe(),
-      embroiderOptimized({
-        npm: {
-          devDependencies: {
-            'ember-source': '~5.12.0',
-          },
-        },
-      }),
+      embroiderOptimized(),
     ],
   };
 };

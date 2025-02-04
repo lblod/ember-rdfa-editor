@@ -16,7 +16,7 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./webpack-config": "./webpack-config.cjs",
+    "./webpack-config": "./dist/webpack-config.cjs",
     "./addon-main.js": "./addon-main.cjs",
     "./commands": {
       "types": "./declarations/commands/index.d.ts",
@@ -258,7 +258,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~3.7.0",
+    "@appuniversum/ember-appuniversum": "^3.7.0",
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.25.1",
     "@babel/plugin-transform-typescript": "^7.25.2",
