@@ -10,6 +10,8 @@ steps:
       - corepack enable
       - pnpm i --frozen-lockfile
       - pnpm build
+      # resync injected addon build
+      - pnpm i -f
   lint:
     image: node:22-slim
     group: lint
@@ -21,9 +23,6 @@ steps:
     group: lint
     commands:
       - npm i -g corepack@0.31
-      - pnpm i --frozen-lockfile
-      - pnpm build
-      - pnpm i -f
       - pnpm test
 when:
   event:
