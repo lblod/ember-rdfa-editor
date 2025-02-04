@@ -21,6 +21,9 @@ steps:
     group: lint
     commands:
       - npm i -g corepack@0.31
+      - pnpm i --frozen-lockfile
+      - pnpm build
+      - pnpm i -f
       - pnpm test
 when:
   event:
