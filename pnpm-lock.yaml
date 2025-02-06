@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@embroider/addon-dev':
+  '@embroider/addon-dev@7.1.1':
     hash: 53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8
     path: patches/@embroider__addon-dev.patch
   ember-source@6.1.0:
@@ -207,7 +207,7 @@ importers:
         specifier: ^7.25.6
         version: 7.26.7
       '@embroider/addon-dev':
-        specifier: ^7.1.0
+        specifier: 7.1.1
         version: 7.1.1(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.1)
       '@eslint/js':
         specifier: ^9.17.0
