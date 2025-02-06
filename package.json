@@ -25,7 +25,8 @@
       }
     },
     "patchedDependencies": {
-      "ember-source@6.1.0": "./patches/ember-source@6.1.0.patch"
+      "ember-source@6.1.0": "./patches/ember-source@6.1.0.patch",
+      "@embroider/addon-dev": "patches/@embroider__addon-dev.patch"
     },
     "allowNonAppliedPatches": true,
     "onlyBuiltDependencies": [
