@@ -14,14 +14,7 @@ import {
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import type { Command, Transaction } from 'prosemirror-state';
 
-type RemovePropertyArgs = {
-  /**
-   A transaction to use in place of getting a new one from state.tr
-   This can be used to call this command from within another, but care must be taken to not use
-   the passed transaction between passing it in and when the callback is called.
-   */
-  transaction?: Transaction;
-} & (
+export type RemovePropertyArgs = (
   | {
       /** The resource from which to remove a property */
       resource: string;
@@ -47,7 +40,14 @@ type RemovePropertyArgs = {
 export function removeProperty({
   transaction,
   ...args
-}: RemovePropertyArgs): Command {
+}: {
+  /**
+   A transaction to use in place of getting a new one from state.tr
+   This can be used to call this command from within another, but care must be taken to not use
+   the passed transaction between passing it in and when the callback is called.
+   */
+  transaction?: Transaction;
+} & RemovePropertyArgs): Command {
   return (state, dispatch) => {
     let resource: string | undefined;
     let resourceNodes: ResolvedPNode[];
