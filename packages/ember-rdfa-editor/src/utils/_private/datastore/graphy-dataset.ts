@@ -1,5 +1,6 @@
 import type * as RDF from '@rdfjs/types';
-import dataset, { type FastDataset } from '@graphy/memory.dataset.fast';
+import type { FastDataset } from '@graphy/memory.dataset.fast';
+import dataset from '@graphy/memory.dataset.fast';
 import { NotImplementedError } from '#root/utils/_private/errors.ts';
 
 function isFastDataset(thing: unknown): thing is FastDataset {
