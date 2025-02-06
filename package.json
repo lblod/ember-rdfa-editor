@@ -14,7 +14,9 @@
     "start:test-app": "pnpm --filter test-app start",
     "test": "pnpm --filter '*' test",
     "test:ember": "pnpm --filter '*' test:ember",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "say": "pnpm --filter @lblod/ember-rdfa-editor",
+    "tapp": "pnpm --filter test-app"
   },
   "pnpm": {
     "peerDependencyRules": {
