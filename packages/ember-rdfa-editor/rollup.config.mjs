@@ -103,6 +103,7 @@ export default {
       '**/*.ts',
       'index.js',
       'template-registry.js',
+      '**/*.scss'
     ]),
 
     // These are the modules that should get reexported into the traditional
