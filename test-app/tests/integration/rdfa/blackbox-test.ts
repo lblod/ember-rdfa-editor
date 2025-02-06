@@ -6,28 +6,9 @@
 import { module, test } from 'qunit';
 import TEST_CASES from './test-cases';
 import { SAMPLE_PLUGINS, SAMPLE_SCHEMA, testEditor } from '../../utils/editor';
-//@ts-expect-error graphy has no typescript definitions
-import ttl_write from '@graphy/content.ttl.write';
-import type { Dataset } from '@rdfjs/types';
 import { calculateDataset } from '../../test-utils';
-
-async function toTurtle(dataset: Dataset) {
-  return new Promise<string>((resolve, reject) => {
-    let result = '';
-    const ttl_writer = ttl_write();
-    ttl_writer.on('data', (chunk: string) => {
-      result += chunk;
-    });
-    ttl_writer.on('end', () => {
-      resolve(result);
-    });
-    ttl_writer.on('error', () => {
-      reject();
-    });
-    dataset.forEach((quad) => ttl_writer.write(quad));
-    ttl_writer.end();
-  });
-}
+//@ts-expect-error graphy has no typescript definitions
+import toNT from '@rdfjs/to-ntriples';
 
 module('Integration | RDFa blackbox test ', function () {
   for (const entry of Object.entries(TEST_CASES)) {
@@ -44,17 +25,17 @@ module('Integration | RDFa blackbox test ', function () {
       assert.strictEqual(outputHTML, finalHTML);
       const resultingDataset = calculateDataset(finalHTML);
       const isEqual = initialDataset.equals(resultingDataset);
-      const initialTurtle = (await toTurtle(initialDataset)).trim();
-      const resultingTurtle = (await toTurtle(resultingDataset)).trim();
+      const initialTurtle = (await toNT(initialDataset)).trim();
+      const resultingTurtle = (await toNT(resultingDataset)).trim();
       const message = `
         Before:
         ${initialTurtle || '<empty>'}
         After:
         ${resultingTurtle || '<empty>'}
         In 'before' but not in 'after':
-        ${await toTurtle(initialDataset.minus(resultingDataset))}
+        ${await toNT(initialDataset.minus(resultingDataset))}
         In 'after' but not in 'before':
-        ${await toTurtle(resultingDataset.minus(initialDataset))}
+        ${await toNT(resultingDataset.minus(initialDataset))}
       `;
       assert.true(isEqual, message);
     });

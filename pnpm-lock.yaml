@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  '@embroider/addon-dev':
+    hash: 53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8
+    path: patches/@embroider__addon-dev.patch
   ember-source@6.1.0:
     hash: d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621
     path: patches/ember-source@6.1.0.patch
@@ -205,7 +208,7 @@ importers:
         version: 7.26.7
       '@embroider/addon-dev':
         specifier: ^7.1.0
-        version: 7.1.1(@glint/template@1.5.2)(rollup@4.34.1)
+        version: 7.1.1(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.1)
       '@eslint/js':
         specifier: ^9.17.0
         version: 9.19.0
@@ -230,6 +233,12 @@ importers:
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.26.7)(rollup@4.34.1)
+      '@rollup/plugin-commonjs':
+        specifier: ^28.0.2
+        version: 28.0.2(rollup@4.34.1)
+      '@rollup/plugin-inject':
+        specifier: ^5.0.5
+        version: 5.0.5(rollup@4.34.1)
       '@rollup/plugin-json':
         specifier: ^6.1.0
         version: 6.1.0(rollup@4.34.1)
@@ -254,6 +263,9 @@ importers:
       concurrently:
         specifier: ^9.0.1
         version: 9.1.2
+      ember-auto-import:
+        specifier: ^2.10.0
+        version: 2.10.0(@glint/template@1.5.2)(webpack@5.97.1)
       ember-basic-dropdown:
         specifier: ^8.4.0
         version: 8.5.0(@babel/core@7.26.7)(@ember/string@4.0.0)(@ember/test-helpers@4.0.5(@babel/core@7.26.7)(@glint/template@1.5.2)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1)))(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glimmer/tracking@1.1.2)(@glint/environment-ember-loose@1.5.2(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.2.0(@babel/core@7.26.7)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1))))(@glint/template@1.5.2)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1))
@@ -302,6 +314,9 @@ importers:
       rollup-plugin-copy:
         specifier: ^3.5.0
         version: 3.5.0
+      rollup-plugin-node-globals:
+        specifier: ^1.4.0
+        version: 1.4.0
       rollup-plugin-sass:
         specifier: ^1.15.2
         version: 1.15.2(rollup@4.34.1)
@@ -410,15 +425,15 @@ importers:
       '@glint/template':
         specifier: ^1.5.0
         version: 1.5.2
-      '@graphy/content.ttl.write':
-        specifier: ^4.3.7
-        version: 4.3.7
       '@lblod/ember-rdfa-editor':
         specifier: workspace:*
         version: link:../packages/ember-rdfa-editor
       '@playwright/test':
         specifier: ^1.50.0
         version: 1.50.1
+      '@rdfjs/to-ntriples':
+        specifier: ^3.0.1
+        version: 3.0.1
       '@rdfjs/types':
         specifier: ^1.1.0
         version: 1.1.2
@@ -1959,18 +1974,6 @@ packages:
   '@glint/template@1.5.2':
     resolution: {integrity: sha512-fA9FoHCmWsWkoOKWshsOQlS0WCAM7NwwoaeSTHuz5yHvBZmmtkgx3t2SPOTJs85/hWTNVzYC/Gthw7xDUR3BlQ==}
 
-  '@graphy/content.ttl.write@4.3.7':
-    resolution: {integrity: sha512-QpSa3lMmU+DA8udvikrPDji+XvUf5wfU4ShhqXU9mQEdccDTNw/eOOlhtLITAC3Q0dsobAdb71fXtj7zqtDwQA==}
-    engines: {node: '>=8.4.0'}
-
-  '@graphy/core.class.scribable@4.3.7':
-    resolution: {integrity: sha512-XOR4hQOKiy34/q8svdcOzgcao27tClebSzpNaOfvdxSOC/E7plOhaLfVtWxPjfIbMJs7OtVihlyXEtD22Xnm1w==}
-    engines: {node: '>=8.4.0'}
-
-  '@graphy/core.class.writable@4.3.7':
-    resolution: {integrity: sha512-vUvYP9Sine5j9epaOlmkZ0Mll2Vlh/N3zc7weRlSnxNm2HhT/LhzF8PSCZyPg17rwpTabrjKW/Rj0xwQUqeEGQ==}
-    engines: {node: '>=8.4.0'}
-
   '@graphy/core.data.factory@4.3.7':
     resolution: {integrity: sha512-6uiNrClDnlfN52B8f0ZBjnyETXiCyYOyIUET2aGFTG+TXZTsiO1WcinsIo36YPt29i+boCDf0ldYDKhPKAibdw==}
     engines: {node: '>=8.4.0'}
@@ -2463,6 +2466,9 @@ packages:
     resolution: {integrity: sha512-BNwCSvG0cz0srsG5esq6CQKJc1m8g/M0DZpLuiEp0MMpfwguXX7VeS8TCg4UUG3DV/DqEvhy83ZKSEjdsYseeA==}
     hasBin: true
 
+  '@rdfjs/to-ntriples@3.0.1':
+    resolution: {integrity: sha512-gjoPAvh4j7AbGMjcDn/8R4cW+d/FPtbfbMM0uQXkyfBFtNUW2iVgrqsgJ65roLc54Y9A2TTFaeeTGSvY9a0HCQ==}
+
   '@rdfjs/types@1.1.2':
     resolution: {integrity: sha512-wqpOJK1QCbmsGNtyzYnojPU8gRDPid2JO0Q0kMtb4j65xhCK880cnKAfEOwC+dX85VJcCByQx5zOwyyfCjDJsg==}
 
@@ -2482,6 +2488,24 @@ packages:
     peerDependenciesMeta:
       '@types/babel__core':
         optional: true
+      rollup:
+        optional: true
+
+  '@rollup/plugin-commonjs@28.0.2':
+    resolution: {integrity: sha512-BEFI2EDqzl+vA1rl97IDRZ61AIwGH093d9nz8+dThxJNH8oSoB7MjWvPCX3dkaK1/RCJ/1v/R1XB15FuSs0fQw==}
+    engines: {node: '>=16.0.0 || 14 >= 14.17'}
+    peerDependencies:
+      rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-inject@5.0.5':
+    resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
       rollup:
         optional: true
 
@@ -3649,6 +3673,9 @@ packages:
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
+
+  buffer-es6@4.9.3:
+    resolution: {integrity: sha512-Ibt+oXxhmeYJSsCkODPqNpPmyegefiD8rfutH1NYGhMZQhSp95Rz7haemgnJ6dxa6LT+JLLbtgOMORRluwKktw==}
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -5266,6 +5293,9 @@ packages:
     resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
     engines: {node: '>=4.0'}
 
+  estree-walker@0.5.2:
+    resolution: {integrity: sha512-XpCnW/AE10ws/kDAs37cngSkvgIR8aN3G0MS85m7dUpuK2EREo9VJ00uvw6Dg/hXEpfsE1I1TvJOJr+Z+TL+ig==}
+
   estree-walker@0.6.1:
     resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
 
@@ -5410,6 +5440,14 @@ packages:
 
   fb-watchman@2.0.2:
     resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
+
+  fdir@6.4.3:
+    resolution: {integrity: sha512-PMXmW2y1hDDfTSRc9gaXIuCCRpuoz3Kaz8cUelp3smouvfT632ozg2vrT6lJsHKKOF59YLbOGfAWGUcKEfRMQw==}
+    peerDependencies:
+      picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
 
   fetch-blob@3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
@@ -6828,11 +6866,17 @@ packages:
     resolution: {integrity: sha512-tPJQ1HeyiU2vRruNGhZ+VleWuMQRro8iFtJxYgnS4NQe+EukKF6aGiIT+7flZhISAt2iaXBCfFGvAyif7/f8nQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  magic-string@0.22.5:
+    resolution: {integrity: sha512-oreip9rJZkzvA8Qzk9HFs8fZGF/u7H/gtrE8EN6RjKJ9kh2HlC+yQ2QezifqTZfGyiuAV0dRv5a+y/8gBb1m9w==}
+
   magic-string@0.24.1:
     resolution: {integrity: sha512-YBfNxbJiixMzxW40XqJEIldzHyh5f7CZKalo1uZffevyrPEX8Qgo9s0dmcORLHdV47UyvJg8/zD+6hQG3qvJrA==}
 
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
+
+  magic-string@0.30.17:
+    resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
   make-dir@3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
@@ -7730,6 +7774,9 @@ packages:
     resolution: {integrity: sha512-Azwzvl90HaF0aCz1JrDdXQykFakSSNPaPoiZ9fm5qJIMHioDZEi7OAdRwSm6rSoPtY3Qutnm3L7ogmg3dc+wbQ==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
+  process-es6@0.11.6:
+    resolution: {integrity: sha512-GYBRQtL4v3wgigq10Pv58jmTbFXlIiTbSfgnNqZLY0ldUPqy1rRxDI5fCjoCpnM6TqmHQI8ydzTBXW86OYc0gA==}
+
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
@@ -8185,6 +8232,9 @@ packages:
   rollup-plugin-copy@3.5.0:
     resolution: {integrity: sha512-wI8D5dvYovRMx/YYKtUNt3Yxaw4ORC9xo6Gt9t22kveWz1enG9QrhVlagzwrxSC455xD1dHMKhIJkbsQ7d48BA==}
     engines: {node: '>=8.3'}
+
+  rollup-plugin-node-globals@1.4.0:
+    resolution: {integrity: sha512-xRkB+W/m1KLIzPUmG0ofvR+CPNcvuCuNdjVBVS7ALKSxr3EDhnzNceGkGi1m8MToSli13AzKFYH4ie9w3I5L3g==}
 
   rollup-plugin-sass@1.15.2:
     resolution: {integrity: sha512-YhTYW0rgvc/2VqpbGXAWrGQjexLcRJvvS5lpG15OAnhVqHDOGMlEXN8u4ctCpmdJiuk2nzxQDWEPbJkqJijb2g==}
@@ -9199,6 +9249,9 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vlq@0.2.3:
+    resolution: {integrity: sha512-DRibZL6DsNhIgYQ+wNdWDL2SL3bKPlVrRiBqV5yuMm++op8W4kGFtaQfCs4KEJn0wBZcHVHJ3eoywX8983k1ow==}
 
   vscode-jsonrpc@8.1.0:
     resolution: {integrity: sha512-6TDy/abTQk+zDGYazgbIPc+4JoXdwC8NHU9Pbn4UJP1fehUyZmM4RHp5IthX7A6L5KS30PRui+j+tbbMMMafdw==}
@@ -10914,7 +10967,7 @@ snapshots:
       - '@glint/template'
       - supports-color
 
-  '@embroider/addon-dev@7.1.1(@glint/template@1.5.2)(rollup@4.34.1)':
+  '@embroider/addon-dev@7.1.1(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.1)':
     dependencies:
       '@embroider/core': 3.5.0(@glint/template@1.5.2)
       '@rollup/pluginutils': 4.2.1
@@ -11391,22 +11444,6 @@ snapshots:
       content-tag: 2.0.3
 
   '@glint/template@1.5.2': {}
-
-  '@graphy/content.ttl.write@4.3.7':
-    dependencies:
-      '@graphy/core.class.writable': 4.3.7
-      '@graphy/core.data.factory': 4.3.7
-      big-integer: 1.6.52
-
-  '@graphy/core.class.scribable@4.3.7':
-    dependencies:
-      '@graphy/core.data.factory': 4.3.7
-      '@graphy/core.iso.stream': 4.3.7
-
-  '@graphy/core.class.writable@4.3.7':
-    dependencies:
-      '@graphy/core.class.scribable': 4.3.7
-      '@graphy/core.data.factory': 4.3.7
 
   '@graphy/core.data.factory@4.3.7':
     dependencies:
@@ -12029,6 +12066,8 @@ snapshots:
     dependencies:
       '@rdfjs/data-model': 1.3.4
 
+  '@rdfjs/to-ntriples@3.0.1': {}
+
   '@rdfjs/types@1.1.2':
     dependencies:
       '@types/node': 20.17.17
@@ -12048,6 +12087,26 @@ snapshots:
       rollup: 4.34.1
     transitivePeerDependencies:
       - supports-color
+
+  '@rollup/plugin-commonjs@28.0.2(rollup@4.34.1)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.34.1)
+      commondir: 1.0.1
+      estree-walker: 2.0.2
+      fdir: 6.4.3(picomatch@4.0.2)
+      is-reference: 1.2.1
+      magic-string: 0.30.17
+      picomatch: 4.0.2
+    optionalDependencies:
+      rollup: 4.34.1
+
+  '@rollup/plugin-inject@5.0.5(rollup@4.34.1)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.34.1)
+      estree-walker: 2.0.2
+      magic-string: 0.30.17
+    optionalDependencies:
+      rollup: 4.34.1
 
   '@rollup/plugin-json@6.1.0(rollup@4.34.1)':
     dependencies:
@@ -13662,6 +13721,8 @@ snapshots:
   bser@2.1.1:
     dependencies:
       node-int64: 0.4.0
+
+  buffer-es6@4.9.3: {}
 
   buffer-from@1.1.2: {}
 
@@ -15819,6 +15880,8 @@ snapshots:
 
   estraverse@5.3.0: {}
 
+  estree-walker@0.5.2: {}
+
   estree-walker@0.6.1: {}
 
   estree-walker@2.0.2: {}
@@ -16050,6 +16113,10 @@ snapshots:
   fb-watchman@2.0.2:
     dependencies:
       bser: 2.1.1
+
+  fdir@6.4.3(picomatch@4.0.2):
+    optionalDependencies:
+      picomatch: 4.0.2
 
   fetch-blob@3.2.0:
     dependencies:
@@ -17621,6 +17688,10 @@ snapshots:
 
   macos-release@3.3.0: {}
 
+  magic-string@0.22.5:
+    dependencies:
+      vlq: 0.2.3
+
   magic-string@0.24.1:
     dependencies:
       sourcemap-codec: 1.4.8
@@ -17628,6 +17699,10 @@ snapshots:
   magic-string@0.25.9:
     dependencies:
       sourcemap-codec: 1.4.8
+
+  magic-string@0.30.17:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   make-dir@3.1.0:
     dependencies:
@@ -18492,6 +18567,8 @@ snapshots:
 
   proc-log@5.0.0: {}
 
+  process-es6@0.11.6: {}
+
   process-nextick-args@2.0.1: {}
 
   process@0.11.10: {}
@@ -19077,6 +19154,15 @@ snapshots:
       fs-extra: 8.1.0
       globby: 10.0.1
       is-plain-object: 3.0.1
+
+  rollup-plugin-node-globals@1.4.0:
+    dependencies:
+      acorn: 5.7.4
+      buffer-es6: 4.9.3
+      estree-walker: 0.5.2
+      magic-string: 0.22.5
+      process-es6: 0.11.6
+      rollup-pluginutils: 2.8.2
 
   rollup-plugin-sass@1.15.2(rollup@4.34.1):
     dependencies:
@@ -20339,6 +20425,8 @@ snapshots:
       '@ungap/structured-clone': 0.3.4
 
   vary@1.1.2: {}
+
+  vlq@0.2.3: {}
 
   vscode-jsonrpc@8.1.0: {}
 
