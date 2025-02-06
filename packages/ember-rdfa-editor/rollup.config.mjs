@@ -103,7 +103,7 @@ export default {
       '**/*.ts',
       'index.js',
       'template-registry.js',
-      '**/*.scss'
+      '**/*.scss',
     ]),
 
     // These are the modules that should get reexported into the traditional
@@ -179,6 +179,7 @@ export default {
       options: {
         importers: [new sass.NodePackageImporter()],
         style: 'compressed',
+        silenceDeprecations: ['import', 'global-builtin'],
       },
     }),
 
