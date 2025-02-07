@@ -1,5 +1,5 @@
-@use "pkg:@appuniversum/ember-appuniversum/styles" as *;
-@use "./_c-content" as content;
+@use "./_c-content.scss" as content;
+@import "@appuniversum/ember-appuniversum/styles";
 /* ==========================================================================
    #SHAME
    Temporary css

@@ -1,4 +1,4 @@
-@use "pkg:@appuniversum/ember-appuniversum/styles" as *;
+@import "@appuniversum/ember-appuniversum/styles";
 .say-table {
   @include au-font-size($au-h6);
   display: table;

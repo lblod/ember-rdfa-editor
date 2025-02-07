@@ -1,4 +1,4 @@
-@use "pkg:@appuniversum/ember-appuniversum/styles" as *;
+@import "@appuniversum/ember-appuniversum/styles";
 .say-image-insert-modal {
   .say-image-insert-preview {
     display: block;

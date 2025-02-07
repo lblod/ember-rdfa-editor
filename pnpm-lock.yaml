@@ -302,6 +302,9 @@ importers:
       globals:
         specifier: ^15.14.0
         version: 15.14.0
+      postcss:
+        specifier: ^8.5.1
+        version: 8.5.1
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -309,7 +312,7 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4(prettier@3.4.2)
       rollup:
-        specifier: ^4.22.5
+        specifier: ^4.32.0
         version: 4.34.1
       rollup-plugin-copy:
         specifier: ^3.5.0

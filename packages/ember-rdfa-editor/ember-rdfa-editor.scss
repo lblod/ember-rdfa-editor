@@ -1,6 +1,6 @@
-@use "pkg:@appuniversum/ember-appuniversum/styles" as *;
-@import "./ember-rdfa-editor/custom-components";
-@import "./ember-rdfa-editor/shame";
+@import "@appuniversum/ember-appuniversum/styles";
+@import "./scss/custom-components.scss";
+@import "./scss/shame.scss";
 /* ==================================
    #SAY EDITOR
    ================================== */

@@ -2,17 +2,18 @@ import { babel } from '@rollup/plugin-babel';
 import copy from 'rollup-plugin-copy';
 import { Addon } from '@embroider/addon-dev/rollup';
 
-import sassPlugin from 'rollup-plugin-sass';
+import sass from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import * as sass from 'sass';
+import { NodePackageImporter } from 'sass';
 import nodeGlobals from 'rollup-plugin-node-globals';
-
+import postcss from 'postcss';
+import path from 'path';
 const nodeResolvePlugin = nodeResolve({
   preferBuiltins: false,
   mainFields: ['module', 'jsnext:main', 'browser', 'main'],
-  extensions: ['.mjs', '.js', '.json', '.node', '.ts'],
+  extensions: ['.mjs', '.js', '.json', '.node', '.ts', '.scss'],
 });
 const addon = new Addon({
   srcDir: 'src',
@@ -70,125 +71,154 @@ const BUNDLED_DEPS = [
   'stream-browserify',
   'process',
 ];
-export default {
-  preserveSymlinks: false,
-  // TODO: stream-browserify is a mess of circular deps, so I can't let the
-  // build fail here anymore. Need to find a better way
-  //
-  // onwarn: (message, defaultHandler) => {
-  //   // fail build if circular dependencies are found
-  //   if (message.code === 'CIRCULAR_DEPENDENCY') {
-  //     console.error(message);
-  //     process.exit(-1);
-  //   } else {
-  //     defaultHandler(message);
-  //   }
-  // },
-  // This provides defaults that work well alongside `publicEntrypoints` below.
-  // You can augment this if you need to.
-  output: addon.output(),
-
-  plugins: [
-    json(),
-
-    // These are the modules that users should be able to import from your
-    // addon. Anything not listed here may get optimized away.
-    // By default all your JavaScript modules (**/*.js) will be importable.
-    // But you are encouraged to tweak this to only cover the modules that make
-    // up your addon's public API. Also make sure your package.json#exports
-    // is aligned to the config here.
-    // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
-    addon.publicEntrypoints([
-      '**/*.js',
-      '**/*.ts',
-      'index.js',
-      'template-registry.js',
-      '**/*.scss',
-    ]),
-
-    // These are the modules that should get reexported into the traditional
-    // "app" tree. Things in here should also be in publicEntrypoints above, but
-    // not everything in publicEntrypoints necessarily needs to go here.
-    addon.appReexports([
-      'components/**/*.js',
-      'helpers/**/*.js',
-      'modifiers/**/*.js',
-      'services/**/*.js',
-    ]),
-    commonjs(),
-    browserify(),
-
-    nodeGlobals(),
-    nodeResolvePlugin,
-
-    // Follow the V2 Addon rules about dependencies. Your code can import from
-    // `dependencies` and `peerDependencies` as well as standard Ember-provided
-    // package names.
-
-    // basically what this does is mark all our deps as external. So the v2
-    // addon is a bundle which still needs to be bundled by your app to get all
-    // the deps.
-    // Now, for graphy, we actually want to fully bundle that along with our
-    // source. So we have to bypass the embroider resolving for it (and its
-    // browserified dependencies) so that they get
-    // picked up by the combo of the node, commonjs, browserify, and nodeGlobals
-    // plugins
-    (function () {
-      const result = addon.dependencies();
-      const resolveId = result.resolveId;
-      async function myResolveId(source, importer, options) {
-        if (BUNDLED_DEPS.includes(source)) {
-          return this.resolve(source, importer, options);
-        }
-        const result = await resolveId(source, importer, options);
-        return result;
-      }
-      return { ...result, resolveId: myResolveId };
-    })(),
-
-    // This babel config should *not* apply presets or compile away ES modules.
-    // It exists only to provide development niceties for you, like automatic
-    // template colocation.
+export default [
+  {
+    input: './_index.scss',
+    output: {
+      file: './vendor/ember-rdfa-editor.js',
+      assetFileNames: '[name][extname]',
+    },
+    plugins: [
+      sass({
+        output: './vendor/ember-rdfa-editor.css',
+        options: {
+          includePaths: [path.resolve('node_modules')],
+          silenceDeprecations: ['import', 'global-builtin'],
+        },
+      }),
+    ],
+  },
+  {
+    input: './_index.scss',
+    output: {
+      file: './vendor/ember-rdfa-editor.js',
+      assetFileNames: '[name][extname]',
+    },
+    plugins: [
+      sass({
+        options: {
+          includePaths: [path.resolve('node_modules')],
+          silenceDeprecations: ['import', 'global-builtin'],
+        },
+        processor: (css) =>
+          postcss()
+            .process(css, {
+              from: undefined,
+            })
+            .then((result) => result.css),
+      }),
+    ],
+  },
+  {
+    preserveSymlinks: false,
+    // TODO: stream-browserify is a mess of circular deps, so I can't let the
+    // build fail here anymore. Need to find a better way
     //
-    // By default, this will load the actual babel config from the file
-    // babel.config.json.
-    babel({
-      extensions: ['.js', '.gjs', '.ts', '.gts'],
-      babelHelpers: 'bundled',
-    }),
+    // onwarn: (message, defaultHandler) => {
+    //   // fail build if circular dependencies are found
+    //   if (message.code === 'CIRCULAR_DEPENDENCY') {
+    //     console.error(message);
+    //     process.exit(-1);
+    //   } else {
+    //     defaultHandler(message);
+    //   }
+    // },
+    // This provides defaults that work well alongside `publicEntrypoints` below.
+    // You can augment this if you need to.
+    output: addon.output(),
 
-    // Ensure that standalone .hbs files are properly integrated as Javascript.
-    addon.hbs(),
+    plugins: [
+      json(),
 
-    // Ensure that .gjs files are properly integrated as Javascript
-    addon.gjs(),
+      // These are the modules that users should be able to import from your
+      // addon. Anything not listed here may get optimized away.
+      // By default all your JavaScript modules (**/*.js) will be importable.
+      // But you are encouraged to tweak this to only cover the modules that make
+      // up your addon's public API. Also make sure your package.json#exports
+      // is aligned to the config here.
+      // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
+      addon.publicEntrypoints([
+        'index.js',
+        'styles.js',
+        '**/*.js',
+        '**/*.ts',
+        'template-registry.js',
+      ]),
 
-    // Emit .d.ts declaration files
-    addon.declarations('declarations'),
+      // These are the modules that should get reexported into the traditional
+      // "app" tree. Things in here should also be in publicEntrypoints above, but
+      // not everything in publicEntrypoints necessarily needs to go here.
+      addon.appReexports([
+        'components/**/*.js',
+        'helpers/**/*.js',
+        'modifiers/**/*.js',
+        'services/**/*.js',
+      ]),
+      commonjs(),
+      browserify(),
 
-    // addons are allowed to contain imports of .css files, which we want rollup
-    // to leave alone and keep in the published output.
-    addon.keepAssets(['**/*.css']),
+      nodeGlobals(),
+      nodeResolvePlugin,
 
-    // Remove leftover build artifacts when starting a new build.
-    addon.clean(),
-    sassPlugin({
-      include: ['**/*.scss'],
-      insert: true,
-      api: 'modern',
-      options: {
-        importers: [new sass.NodePackageImporter()],
-        style: 'compressed',
-        silenceDeprecations: ['import', 'global-builtin'],
-      },
-    }),
+      // Follow the V2 Addon rules about dependencies. Your code can import from
+      // `dependencies` and `peerDependencies` as well as standard Ember-provided
+      // package names.
 
-    // Copy Readme and License into published package
-    copy({
-      targets: [
-        { src: '../../README.md', dest: '.' },
-        { src: '../../LICENSE.md', dest: '.' },
-      ],
-    }),
-  ],
-};
+      // basically what this does is mark all our deps as external. So the v2
+      // addon is a bundle which still needs to be bundled by your app to get all
+      // the deps.
+      // Now, for graphy, we actually want to fully bundle that along with our
+      // source. So we have to bypass the embroider resolving for it (and its
+      // browserified dependencies) so that they get
+      // picked up by the combo of the node, commonjs, browserify, and nodeGlobals
+      // plugins
+      (function () {
+        const result = addon.dependencies();
+        const resolveId = result.resolveId;
+        async function myResolveId(source, importer, options) {
+          if (BUNDLED_DEPS.includes(source)) {
+            return this.resolve(source, importer, options);
+          }
+          const result = await resolveId(source, importer, options);
+          return result;
+        }
+        return { ...result, resolveId: myResolveId };
+      })(),
+
+      // This babel config should *not* apply presets or compile away ES modules.
+      // It exists only to provide development niceties for you, like automatic
+      // template colocation.
+      //
+      // By default, this will load the actual babel config from the file
+      // babel.config.json.
+      babel({
+        extensions: ['.js', '.gjs', '.ts', '.gts'],
+        babelHelpers: 'bundled',
+      }),
+
+      // Ensure that standalone .hbs files are properly integrated as Javascript.
+      addon.hbs(),
+
+      // Ensure that .gjs files are properly integrated as Javascript
+      addon.gjs(),
+
+      // Emit .d.ts declaration files
+      addon.declarations('declarations'),
+
+      // addons are allowed to contain imports of .css files, which we want rollup
+      // to leave alone and keep in the published output.
+      addon.keepAssets(['**/*.css']),
+
+      // Remove leftover build artifacts when starting a new build.
+      addon.clean(),
+
+      // Copy Readme and License into published package
+      copy({
+        targets: [
+          { src: '../../README.md', dest: '.' },
+          { src: '../../LICENSE.md', dest: '.' },
+        ],
+      }),
+    ],
+  },
+];

@@ -4,7 +4,6 @@ import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
 import { isNone } from './utils/_private/option.ts';
 
-import '#root/styles/ember-rdfa-editor.scss';
 export { keydownHandler, keymap } from 'prosemirror-keymap';
 
 export { getRdfaAttrs, rdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';

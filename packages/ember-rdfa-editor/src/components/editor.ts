@@ -14,7 +14,6 @@ import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute
 import SayController from '#root/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
-import '#root/styles/ember-rdfa-editor.scss';
 
 export interface RdfaEditorArgs {
   /**
