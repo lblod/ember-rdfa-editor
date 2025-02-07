@@ -1,4 +1,4 @@
-@import "@appuniversum/ember-appuniversum/styles";
+@use "@appuniversum/ember-appuniversum/styles" as au;
 /* ==================================
    #SAY TOOLBAR
    ================================== */
@@ -7,14 +7,14 @@
   ========================================================================== */
 
 $say-toolbar-background: var(--au-gray-200) !default;
-$say-toolbar-border: tint($au-gray-300, 30) !default;
+$say-toolbar-border: tint(au.$au-gray-300, 30) !default;
 $say-toolbar-height: 44px !default;
 
 /* Component
   ========================================================================== */
 
 .say-toolbar {
-  @include au-font-size($au-base);
+  @include au.au-font-size(au.$au-base);
   display: flex;
   justify-content: flex-start;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
@@ -49,8 +49,8 @@ $say-toolbar-height: 44px !default;
   display: flex;
   justify-content: flex-start;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
-  border-radius: $au-unit-tiny;
-  padding: 0.1rem $au-unit-tiny 0; // Visually center the text in the pill
+  border-radius: au.$au-unit-tiny;
+  padding: 0.1rem au.$au-unit-tiny 0; // Visually center the text in the pill
   background-color: $say-toolbar-background;
   z-index: 1;
 }
@@ -98,7 +98,7 @@ $say-toolbar-height: 44px !default;
 }
 
 .say-toolbar__button {
-  @include au-font-size($au-base, 1);
+  @include au.au-font-size(au.$au-base, 1);
   height: $say-toolbar-height;
   min-width: $say-toolbar-height;
   display: inline-flex;

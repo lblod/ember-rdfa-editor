@@ -1,6 +1,7 @@
-@import "@appuniversum/ember-appuniversum/styles";
-@import "./scss/custom-components.scss";
-@import "./scss/shame.scss";
+@forward "./scss/custom-components.scss";
+@forward "./scss/custom-components.scss";
+@use "./scss/custom-components.scss" as *;
+@use "./scss/shame.scss" as *;
 /* ==================================
    #SAY EDITOR
    ================================== */

@@ -1,4 +1,4 @@
-@import "@appuniversum/ember-appuniversum/styles";
+@use "@appuniversum/ember-appuniversum/styles" as au;
 /* ==================================
    #ICONS
    ================================== */
@@ -38,11 +38,11 @@ $say-icon-size-large: 1.7rem !default;
 }
 
 .say-icon--left {
-  margin-right: $au-unit-tiny;
+  margin-right: au.$au-unit-tiny;
 }
 
 .say-icon--right {
-  margin-left: $au-unit-tiny;
+  margin-left: au.$au-unit-tiny;
 }
 
 .say-icon--rotate {

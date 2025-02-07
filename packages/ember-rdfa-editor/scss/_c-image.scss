@@ -1,10 +1,10 @@
-@import "@appuniversum/ember-appuniversum/styles";
+@use "@appuniversum/ember-appuniversum/styles" as au;
 .say-image-insert-modal {
   .say-image-insert-preview {
     display: block;
     margin: auto;
-    padding: $au-unit-tiny;
-    margin-top: $au-unit-small;
+    padding: au.$au-unit-tiny;
+    margin-top: au.$au-unit-small;
     max-width: 300px;
     max-height: 300px;
     border: 0.1rem solid var(--au-gray-200);

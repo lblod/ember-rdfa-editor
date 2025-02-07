@@ -3,7 +3,7 @@
    ================================== */
 
 // CUSTOM UI COMPONENTS
-@import "./a-custom-components.scss";
+@forward "./a-custom-components.scss";
 
 // SHAME
-@import "./shame.scss";
+@forward "./shame.scss";

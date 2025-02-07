@@ -1,4 +1,4 @@
-@import "@appuniversum/ember-appuniversum/styles";
+@use "@appuniversum/ember-appuniversum/styles" as au;
 /* ==================================
    #SAY EDITOR HINTS
    ================================== */
@@ -12,29 +12,29 @@
   position: relative;
   width: 100%;
 
-  @include mq(medium) {
+  @include au.mq(medium) {
     width: auto;
     max-width: 100%;
   }
 }
 
 .say-editor-hints__list-item {
-  margin-bottom: $au-unit-small;
+  margin-bottom: au.$au-unit-small;
 }
 
 .say-editor-hints__insert {
   .au-c-accordion {
-    padding-bottom: $au-unit-small;
+    padding-bottom: au.$au-unit-small;
   }
 
-  @include mq($until: medium) {
+  @include au.mq($until: medium) {
     position: relative;
 
     .au-c-accordion {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      padding-bottom: $au-unit-tiny;
+      padding-bottom: au.$au-unit-tiny;
     }
 
     .au-c-accordion .au-c-toolbar {
@@ -42,8 +42,8 @@
       width: auto;
       align-items: center;
       justify-content: center;
-      width: $au-unit + $au-unit-small;
-      height: $au-unit + $au-unit-small;
+      width: au.$au-unit + au.$au-unit-small;
+      height: au.$au-unit + au.$au-unit-small;
 
       &:hover {
         background-color: var(--au-white);
@@ -74,14 +74,14 @@
     }
 
     .au-c-accordion__content {
-      padding: $au-unit-tiny;
+      padding: au.$au-unit-tiny;
       border-radius: var(--au-radius);
       border: 0.1rem solid var(--au-gray-200);
       background-color: var(--au-white);
       box-shadow:
-        0 1px 3px rgba($au-gray-900, 0.1),
-        0 4px 20px rgba($au-gray-900, 0.035),
-        0 1px 1px rgba($au-gray-900, 0.025);
+        0 1px 3px rgba(au.$au-gray-900, 0.1),
+        0 4px 20px rgba(au.$au-gray-900, 0.035),
+        0 1px 1px rgba(au.$au-gray-900, 0.025);
     }
   }
 }

@@ -3,23 +3,23 @@
    ================================== */
 
 // CUSTOM UI COMPONENTS
-@import "./c-container.scss";
-@import "./c-dropdown.scss";
-@import "./c-content.scss";
-@import "./c-editor.scss";
-@import "./c-editor-hints.scss";
-@import "./c-icon.scss";
-@import "./c-link.scss";
-@import "./c-placeholder.scss";
-@import "./c-toast.scss";
-@import "./c-toolbar.scss";
-@import "./c-selection-tooltip.scss";
-@import "./c-table.scss";
-@import "./c-ember-node.scss";
-@import "./c-color-selector.scss";
-@import "./c-image.scss";
+@forward "./c-container.scss";
+@forward "./c-dropdown.scss";
+@forward "./c-content.scss";
+@forward "./c-editor.scss";
+@forward "./c-editor-hints.scss";
+@forward "./c-icon.scss";
+@forward "./c-link.scss";
+@forward "./c-placeholder.scss";
+@forward "./c-toast.scss";
+@forward "./c-toolbar.scss";
+@forward "./c-selection-tooltip.scss";
+@forward "./c-table.scss";
+@forward "./c-ember-node.scss";
+@forward "./c-color-selector.scss";
+@forward "./c-image.scss";
 
 // RDFA AND ANNOTATION COMPONENTS
-@import "./c-formatting-marks.scss";
-@import "./c-block-rdfa.scss";
-@import "./c-inline-rdfa.scss";
+@forward "./c-formatting-marks.scss";
+@forward "./c-block-rdfa.scss";
+@forward "./c-inline-rdfa.scss";

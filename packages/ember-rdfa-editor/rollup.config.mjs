@@ -83,7 +83,7 @@ export default [
         output: './vendor/ember-rdfa-editor.css',
         options: {
           includePaths: [path.resolve('node_modules')],
-          silenceDeprecations: ['import', 'global-builtin'],
+          quietDeps: true,
         },
       }),
     ],

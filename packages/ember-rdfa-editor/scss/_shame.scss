@@ -1,5 +1,5 @@
+@use "@appuniversum/ember-appuniversum/styles" as au;
 @use "./_c-content.scss" as content;
-@import "@appuniversum/ember-appuniversum/styles";
 /* ==========================================================================
    #SHAME
    Temporary css
@@ -66,9 +66,9 @@
 }
 
 .say-card .modal-dialog__header {
-  @include au-font-size($au-h6);
+  @include au.au-font-size(au.$au-h6);
   color: var(--au-gray-800);
-  padding: $au-unit-small;
+  padding: au.$au-unit-small;
   border-bottom: 0.1rem solid var(--au-gray-200);
 
   * {
@@ -76,7 +76,7 @@
   }
 
   * + * {
-    margin-top: $au-unit-small;
+    margin-top: au.$au-unit-small;
   }
 
   .grid {
@@ -85,12 +85,12 @@
 
   .col--2-12.u-align-right {
     margin-top: 0;
-    padding-right: $au-unit-tiny;
+    padding-right: au.$au-unit-tiny;
   }
 }
 
 .say-card .modal-dialog__content {
-  padding: $au-unit-small;
+  padding: au.$au-unit-small;
 }
 
 .say-card .modal-dialog__content--sectioned {
@@ -106,7 +106,7 @@
 }
 
 .say-card .modal-dialog__footer {
-  padding: $au-unit-small;
+  padding: au.$au-unit-small;
 
   button {
     margin-bottom: 0;
@@ -121,7 +121,7 @@
 
 .say-card .link-list.link-list--bordered {
   .link-list__item.link-list__item--sidenotes a {
-    padding: $au-unit-small !important;
+    padding: au.$au-unit-small !important;
   }
 
   .link-list__item.link-list__item--sidenotes a:hover {
@@ -129,14 +129,14 @@
   }
 
   .link-list__item__sidenote.uppercase {
-    @include au-font-size(content.$say-smallest-font-size, 1.3);
+    @include au.au-font-size(content.$say-smallest-font-size, 1.3);
     color: var(--au-gray-600);
     padding: 0;
   }
 }
 
 .say-card .modal-dialog__link-list {
-  padding: $au-unit-small;
+  padding: au.$au-unit-small;
   width: 100%;
   overflow: hidden;
 }
@@ -184,11 +184,11 @@
   }
 
   .au-c-toggle-switch__label {
-    @include au-font-size($au-base);
+    @include au.au-font-size(au.$au-base);
   }
 }
 
 // Old webuniversum classes
 .form__row + .form__row {
-  margin-top: $au-unit-tiny;
+  margin-top: au.$au-unit-tiny;
 }
