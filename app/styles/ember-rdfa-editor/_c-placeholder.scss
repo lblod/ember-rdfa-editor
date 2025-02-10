@@ -21,6 +21,9 @@ span.mark-highlight-manual {
     background-color: var(--au-blue-200);
   }
   user-select: none;
+  &.say-placeholder {
+    margin-right: 0 !important;
+  }
 }
 
 span.mark-highlight-manual.ProseMirror-selectednode {
@@ -37,3 +40,5 @@ span.mark-highlight-manual.ProseMirror-selectednode {
   height: 0;
   pointer-events: none;
 }
+
+
