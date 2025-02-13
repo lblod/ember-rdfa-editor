@@ -3,7 +3,7 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 export const checkPasteSizeKey = new PluginKey('CHECK_PASTE_SIZE');
 
 export function checkPasteSize({
-  pasteLimit = 100000,
+  pasteLimit = 1000000,
   onLimitReached,
 }: {
   pasteLimit?: number;
