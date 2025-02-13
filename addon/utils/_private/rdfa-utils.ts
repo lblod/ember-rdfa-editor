@@ -25,6 +25,7 @@ import type {
   TransactionMonad,
   TransactionMonadResult,
 } from '../transaction-utils';
+import type { RemovePropertyArgs } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/remove-property';
 
 export type RdfaAttr =
   | 'vocab'
@@ -446,6 +447,107 @@ export function addPropertyToNode({
         TransformUtils.setAttribute(tr, target.pos, 'backlinks', newBacklinks);
       });
     }
+    return { initialState: state, transaction: tr, result: true };
+  };
+}
+
+// TODO should we unify this and the command version? The difficulty is that the presence or not of
+// `dispatch` allows the command to hold off on some expensive work, which is not possible here.
+/**
+ * Adapted from `removeProperty` command to return a `TransactionMonad` instead
+ */
+export function removePropertyFromNode(
+  args: RemovePropertyArgs,
+): TransactionMonad<boolean> {
+  return (state) => {
+    const tr = state.tr;
+
+    let resource: string | undefined;
+    let resourceNodes: ResolvedPNode[];
+    if ('resource' in args) {
+      resource = args.resource;
+      resourceNodes = getNodesBySubject(state, args.resource);
+      if (!resourceNodes?.length) {
+        return { initialState: state, transaction: tr, result: false };
+      }
+    } else {
+      resourceNodes = [{ value: args.documentResourceNode, pos: -1 }];
+    }
+
+    const properties = getProperties(resourceNodes[0].value);
+    let propertyToRemove: OutgoingTriple | undefined;
+    let index = -1;
+    if ('index' in args) {
+      propertyToRemove = properties?.[args.index];
+      index = args.index;
+    } else {
+      index =
+        properties?.findIndex((prop) =>
+          deepEqualProperty(prop, args.property),
+        ) ?? -1;
+      propertyToRemove = properties?.[index];
+    }
+    if (!propertyToRemove || !properties) {
+      return { initialState: state, transaction: tr, result: false };
+    }
+
+    // First update the properties of all nodes defining the given resource
+    const updatedProperties = properties.slice();
+    updatedProperties.splice(index, 1);
+    resourceNodes.forEach((node) => {
+      TransformUtils.setAttribute(
+        tr,
+        node.pos,
+        'properties',
+        updatedProperties,
+      );
+    });
+
+    // Then we remove any backlinks.
+    if (isLinkToNode(propertyToRemove)) {
+      const { object } = propertyToRemove;
+      /**
+       * We need two make two cases here
+       * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
+       * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
+       */
+      let targets: ResolvedPNode[] | undefined;
+      if (object.termType === 'LiteralNode') {
+        const target = getNodeByRdfaId(state, object.value);
+        if (target) {
+          targets = [target];
+        }
+      } else {
+        targets = getNodesBySubject(state, object.value);
+      }
+      targets?.forEach((target) => {
+        const backlinks = getBacklinks(target.value);
+        if (backlinks) {
+          if (!resource) {
+            const backlink = backlinks.find(
+              (bl) =>
+                bl.predicate === propertyToRemove?.predicate &&
+                'importedResources' in args &&
+                args.importedResources.includes(bl.subject.value),
+            );
+            resource = backlink?.subject.value;
+          }
+          const filteredBacklinks = backlinks.filter((backlink) => {
+            return !(
+              backlink.predicate === propertyToRemove?.predicate &&
+              backlink.subject.value === resource
+            );
+          });
+          TransformUtils.setAttribute(
+            tr,
+            target.pos,
+            'backlinks',
+            filteredBacklinks,
+          );
+        }
+      });
+    }
+
     return { initialState: state, transaction: tr, result: true };
   };
 }
