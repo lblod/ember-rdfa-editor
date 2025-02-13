@@ -1,6 +1,7 @@
 import type Owner from '@ember/owner';
 
-import { type Plugin } from 'prosemirror-state';
+import { type Plugin as ProsePlugin } from 'prosemirror-state';
+import { history } from 'prosemirror-history';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -58,6 +59,13 @@ import {
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import sinon from 'sinon';
+import { rdfaInfoPlugin } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from '@lblod/ember-rdfa-editor/plugins/gap-cursor';
+import { v4 as uuidv4 } from 'uuid';
+import recreateUuidsOnPaste from '@lblod/ember-rdfa-editor/plugins/recreateUuidsOnPaste';
+import { defaultAttributeValueGeneration } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
 
 export const SAMPLE_SCHEMA = new Schema({
   nodes: {
@@ -104,7 +112,7 @@ export const SAMPLE_SCHEMA = new Schema({
     color,
   },
 });
-export const SAMPLE_PLUGINS: Plugin[] = [
+export const SAMPLE_PLUGINS: ProsePlugin[] = [
   firefoxCursorFix(),
   chromeHacksPlugin(),
   lastKeyPressedPlugin,
@@ -123,6 +131,35 @@ export const SAMPLE_PLUGINS: Plugin[] = [
     ],
   }),
   editableNodePlugin(),
+];
+// the SayEditor class adds a few always-on plugins, which
+// we won't get in test-utils that don't need to make an instance
+// of the SayEditor class
+//
+// This is clunky, and points at the class being a codesmell, but it's how it
+// works atm
+export const SAMPLE_PLUGINS_WITH_CORE: ProsePlugin[] = [
+  ...SAMPLE_PLUGINS,
+  dropCursor(),
+  gapCursor(),
+  history(),
+  recreateUuidsOnPaste,
+  defaultAttributeValueGeneration([
+    {
+      attribute: '__guid',
+      generator() {
+        return uuidv4();
+      },
+    },
+    {
+      attribute: '__rdfaId',
+      generator() {
+        return uuidv4();
+      },
+    },
+  ]),
+  removePropertiesOfDeletedNodes(),
+  rdfaInfoPlugin(),
 ];
 
 export function testEditor(
