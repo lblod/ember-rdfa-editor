@@ -37,6 +37,8 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
+import { SAMPLE_PLUGINS, SAMPLE_SCHEMA } from 'dummy/tests/utils/editor';
+import { EditorState } from 'prosemirror-state';
 
 /**
  * Utility to get the editor element in a type-safe way
@@ -142,3 +144,20 @@ export function calculateDataset(html: string) {
 }
 const TEST_SCHEMA = new Schema({ nodes, marks });
 export default TEST_SCHEMA;
+
+export interface NodeJsonSpec<S extends Schema = typeof SAMPLE_SCHEMA> {
+  type: S extends Schema<infer X> ? X : never;
+  attrs?: Record<string, unknown>;
+  content?: NodeJsonSpec<S>[];
+}
+
+export function makeState(
+  docJson: NodeJsonSpec<typeof SAMPLE_SCHEMA>,
+): EditorState {
+  const schema = SAMPLE_SCHEMA;
+  return EditorState.create({
+    schema,
+    plugins: SAMPLE_PLUGINS,
+    doc: schema.nodeFromJSON(docJson),
+  });
+}
