@@ -106,3 +106,21 @@ export function transactionCombinator<R>(
     };
   };
 }
+
+/**
+ * Creates a monad which applies the passed function to generate a list of monads based on the
+ * incoming EditorState and applies them all.
+ */
+export function composeMonads(
+  generator: (state: EditorState) => TransactionMonad<boolean>[],
+): TransactionMonad<boolean> {
+  return (state) => {
+    const monads: TransactionMonad<boolean>[] = generator(state);
+    const {
+      transactions: _,
+      result,
+      ...res
+    } = transactionCombinator<boolean>(state)(monads);
+    return { ...res, result: result.every(Boolean) };
+  };
+}

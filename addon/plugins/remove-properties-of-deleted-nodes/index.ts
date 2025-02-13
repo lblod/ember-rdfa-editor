@@ -82,7 +82,12 @@ export function removePropertiesOfDeletedNodes() {
 
       const targetsWithProperties = new Map<
         ResolvedPNode,
-        Array<{ backlink: IncomingTriple; rdfaId?: string }>
+        Array<
+          { backlink: IncomingTriple } & (
+            | { rdfaId: string }
+            | { resource: string }
+          )
+        >
       >();
 
       deletedNodes.forEach((node) => {
@@ -127,12 +132,13 @@ export function removePropertiesOfDeletedNodes() {
           const backlinks = getBacklinks(node) ?? [];
 
           backlinks.forEach((backlink) => {
-            const subject = backlink.subject;
-            const nodes = getNodesBySubject(newState, subject.value);
+            const backlinkSubject = backlink.subject;
+            const nodes = getNodesBySubject(newState, backlinkSubject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
                 backlink,
+                resource: subject,
               });
             });
           });
@@ -144,8 +150,8 @@ export function removePropertiesOfDeletedNodes() {
           const backlinks = getBacklinks(node) ?? [];
 
           backlinks.forEach((backlink) => {
-            const subject = backlink.subject;
-            const nodes = getNodesBySubject(newState, subject.value);
+            const backlinkSubject = backlink.subject;
+            const nodes = getNodesBySubject(newState, backlinkSubject.value);
 
             nodes?.forEach((node) => {
               setOrPush(targetsWithProperties, node, {
@@ -190,8 +196,8 @@ export function removePropertiesOfDeletedNodes() {
         if (properties) {
           const filteredProperties = properties.filter(
             (property) =>
-              !meta.some(({ backlink, rdfaId }) => {
-                if (rdfaId) {
+              !meta.some(({ backlink, ...backlinkFrom }) => {
+                if ('rdfaId' in backlinkFrom) {
                   if (!isLinkToNode(property)) {
                     return false;
                   }
@@ -200,14 +206,16 @@ export function removePropertiesOfDeletedNodes() {
                     return false;
                   }
 
-                  if (property.object.value !== rdfaId) {
+                  if (property.object.value !== backlinkFrom.rdfaId) {
                     return false;
                   }
                 }
 
                 return (
                   backlink.predicate === property.predicate &&
-                  backlink.subject.value === getSubject(target.value)
+                  backlink.subject.value === getSubject(target.value) &&
+                  (!('resource' in backlinkFrom) ||
+                    backlinkFrom.resource === property.object.value)
                 );
               }),
           );
