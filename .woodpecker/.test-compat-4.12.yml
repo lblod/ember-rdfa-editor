@@ -9,3 +9,6 @@ steps:
 when:
   event:
     - pull_request
+
+depends_on:
+  - verify-pr

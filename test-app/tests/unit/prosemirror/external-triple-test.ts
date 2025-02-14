@@ -1,25 +1,11 @@
-import { ProseParser, Schema, EditorState } from '@lblod/ember-rdfa-editor';
+import { ProseParser } from '@lblod/ember-rdfa-editor';
 import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
-import { calculateDataset } from '../../test-utils';
-import { SAMPLE_PLUGINS, SAMPLE_SCHEMA } from '../../utils/editor';
+import { calculateDataset, makeState } from '../../test-utils';
+import type { NodeJsonSpec } from '../../test-utils';
 import { module, test } from 'qunit';
-interface NodeJsonSpec<S extends Schema = typeof SAMPLE_SCHEMA> {
-  type: S extends Schema<infer X> ? X : never;
-  attrs?: Record<string, unknown>;
-  content?: NodeJsonSpec<S>[];
-}
-
-function makeState(docJson: NodeJsonSpec<typeof SAMPLE_SCHEMA>): EditorState {
-  const schema = SAMPLE_SCHEMA;
-  return EditorState.create({
-    schema,
-    plugins: SAMPLE_PLUGINS,
-    doc: schema.nodeFromJSON(docJson),
-  });
-}
 module('ProseMirror | external-triple', function () {
   test('transformExternalTriples sets doc attribute', function (assert) {
     const docJson: NodeJsonSpec = {

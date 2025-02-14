@@ -14,6 +14,12 @@ module.exports = function (defaults) {
       ],
       sourceMaps: 'inline',
     },
+
+    sassOptions: {
+      sourceMap: true,
+      sourceMapEmbed: true,
+      includePaths: ['node_modules/@appuniversum/ember-appuniversum'],
+    },
   });
 
   const { maybeEmbroider } = require('@embroider/test-setup');

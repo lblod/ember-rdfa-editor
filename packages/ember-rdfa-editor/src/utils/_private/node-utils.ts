@@ -1,5 +1,7 @@
-import { ResolvedPos } from 'prosemirror-model';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { NodeSelection } from 'prosemirror-state';
+import type { EditorState } from 'prosemirror-state';
+import type { ResolvedPos } from 'prosemirror-model';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 export function getGroups(node: PNode) {
   return node.type.spec.group?.split(' ') ?? [];
@@ -45,4 +47,21 @@ export function getPos(node: PNode, doc: PNode): ResolvedPos | -1 | undefined {
     console.warn(`getPos: ${node.toString()} not found in ${doc.toString()}`);
   }
   return result;
+}
+
+/**
+ * Based on prosemirror-commands 'selectParentNode' but is not a command
+ */
+export function parentNodeSelection({
+  doc,
+  selection,
+}: Pick<EditorState, 'doc' | 'selection'>): NodeSelection | null {
+  const { $from, to } = selection;
+  const sharedDepth = $from.sharedDepth(to);
+  if (sharedDepth === 0) {
+    // we're at the doc
+    return null;
+  }
+  const pos = $from.before(sharedDepth);
+  return NodeSelection.create(doc, pos);
 }

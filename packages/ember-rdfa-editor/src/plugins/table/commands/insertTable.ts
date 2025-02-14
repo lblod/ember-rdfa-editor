@@ -10,6 +10,16 @@ export function insertTable(rows: number, columns: number): Command {
       selection: { $from },
     } = state;
 
+    // table nodespecs don't necessarily exist, for example in an embedded editor or if
+    // misconfigured
+    if (
+      ['table', 'table_row', 'table_header', 'table_cell'].some(
+        (nodeType) => !schema.nodes[nodeType],
+      )
+    ) {
+      return false;
+    }
+
     const specAllowSplitByTable = $from.parent.type.spec[
       'allowSplitByTable'
     ] as boolean | undefined;

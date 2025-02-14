@@ -8,7 +8,11 @@ import Image from '#root/components/plugins/image/node.ts';
 import { Node as PNode } from 'prosemirror-model';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 
-const emberNodeConfig: EmberNodeConfig = {
+const emberNodeConfig = ({
+  allowBase64Images,
+}: {
+  allowBase64Images?: boolean;
+}): EmberNodeConfig => ({
   name: 'image',
   component: Image as unknown as ComponentLike,
   inline: true,
@@ -24,7 +28,7 @@ const emberNodeConfig: EmberNodeConfig = {
   },
   parseDOM: [
     {
-      tag: 'img[src]:not([src^="data:"])',
+      tag: allowBase64Images ? 'img[src]' : 'img[src]:not([src^="data:"])',
       getAttrs(dom: string | HTMLElement) {
         if (typeof dom === 'string') {
           return false;
@@ -57,7 +61,14 @@ const emberNodeConfig: EmberNodeConfig = {
   stopEvent() {
     return false;
   },
-};
+});
 
-export const image = createEmberNodeSpec(emberNodeConfig);
-export const imageView = createEmberNodeView(emberNodeConfig);
+export const image = createEmberNodeSpec(
+  emberNodeConfig({ allowBase64Images: false }),
+);
+export const imageWithConfig = ({
+  allowBase64Images,
+}: {
+  allowBase64Images: boolean;
+}) => createEmberNodeSpec(emberNodeConfig({ allowBase64Images }));
+export const imageView = createEmberNodeView(emberNodeConfig({}));

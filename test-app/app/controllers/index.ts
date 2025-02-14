@@ -26,7 +26,11 @@ import {
   tableNodes,
   tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
+import {
+  imageWithConfig,
+  imageView,
+  checkPasteSize,
+} from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
@@ -100,7 +104,7 @@ export default class IndexController extends Controller {
 
       text,
 
-      image,
+      image: imageWithConfig({ allowBase64Images: true }),
 
       hard_break,
       invisible_rdfa: invisibleRdfaWithConfig(),
@@ -145,6 +149,10 @@ export default class IndexController extends Controller {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
+    checkPasteSize({
+      pasteLimit: 100000,
+      onLimitReached: () => console.error('You cannot paste more than 100kb'),
+    }),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
