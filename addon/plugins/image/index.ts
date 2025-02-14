@@ -1,1 +1,2 @@
-export { image, imageView } from './nodes/image';
+export { image, imageView, imageWithConfig } from './nodes/image';
+export { checkPasteSize, checkPasteSizeKey } from './plugins/checkPasteSize';
