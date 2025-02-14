@@ -295,7 +295,11 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
         $selector: $selector + "ul ";
       }
       #{$selector} > li {
-        list-style-type: if($i >= 17, circle, list.nth($styles, ($i - 1) % 3 + 1));
+        list-style-type: if(
+          $i >= 17,
+          circle,
+          list.nth($styles, ($i - 1) % 3 + 1)
+        );
       }
     }
   }

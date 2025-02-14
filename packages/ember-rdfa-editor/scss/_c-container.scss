@@ -4,8 +4,6 @@
    #SAY CONTAINER
    ================================== */
 
-
-
 /* Component
   ========================================================================== */
 
@@ -61,10 +59,12 @@
 
   @include au.mq(1280px) {
     width: calc(
-      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small + au.$au-unit-tiny}
+      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small +
+        au.$au-unit-tiny}
     );
     max-width: calc(
-      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small + au.$au-unit-tiny}
+      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small +
+        au.$au-unit-tiny}
     );
   }
 }

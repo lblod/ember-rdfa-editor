@@ -137,7 +137,7 @@ module('ProseMirror | plugins | removePropertiesOfDeletedNodes', function () {
     // we now check that the relationship between the 1st and 2nd node isn't
     // accidentally removed
     assert.strictEqual(
-      firstNode?.attrs['properties']?.length,
+      (firstNode?.attrs['properties'] as unknown[])?.length,
       1,
       'first node needs to still have 1 outgoing property left',
     );
