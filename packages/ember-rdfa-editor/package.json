@@ -317,16 +317,16 @@
     "webpack": "^5.97.1"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.7.0",
+    "@appuniversum/ember-appuniversum": "^3.5.0",
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
     "@glimmer/component": "^1.1.2 || ^2.0.0",
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
     "ember-basic-dropdown": "^8.5.0",
     "ember-concurrency": "^4.0.2",
-    "ember-intl": "^6.4.1 || ^7.0.0",
+    "ember-intl": "^6.4.0 || ^7.0.0",
     "ember-power-select": "^7.0.0 || ^8.0.0",
-    "ember-source": "^3.28.0 || ^4.0.0 || >=5.0.0",
+    "ember-source": "^4.12.0 || >=5.0.0",
     "tracked-built-ins": "^3.3.0"
   },
   "peerDependenciesMeta": {
