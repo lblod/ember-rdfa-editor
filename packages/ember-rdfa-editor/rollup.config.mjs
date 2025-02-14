@@ -10,6 +10,8 @@ import { NodePackageImporter } from 'sass';
 import nodeGlobals from 'rollup-plugin-node-globals';
 import postcss from 'postcss';
 import path from 'path';
+import autoprefixer from 'autoprefixer';
+
 const nodeResolvePlugin = nodeResolve({
   preferBuiltins: false,
   mainFields: ['module', 'jsnext:main', 'browser', 'main'],
@@ -82,29 +84,13 @@ export default [
       sass({
         output: './vendor/ember-rdfa-editor.css',
         options: {
+          api: 'modern',
           includePaths: [path.resolve('node_modules')],
           quietDeps: true,
         },
-      }),
-    ],
-  },
-  {
-    input: './_index.scss',
-    output: {
-      file: './vendor/ember-rdfa-editor.js',
-      assetFileNames: '[name][extname]',
-    },
-    plugins: [
-      sass({
-        options: {
-          includePaths: [path.resolve('node_modules')],
-          silenceDeprecations: ['import', 'global-builtin'],
-        },
         processor: (css) =>
-          postcss()
-            .process(css, {
-              from: undefined,
-            })
+          postcss([autoprefixer])
+            .process(css)
             .then((result) => result.css),
       }),
     ],
