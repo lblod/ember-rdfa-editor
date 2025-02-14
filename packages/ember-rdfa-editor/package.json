@@ -16,7 +16,6 @@
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./webpack-config": "./dist/webpack-config.cjs",
     "./addon-main.js": "./addon-main.cjs",
     "./commands": {
       "types": "./declarations/commands/index.d.ts",
