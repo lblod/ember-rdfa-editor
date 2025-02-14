@@ -119,6 +119,8 @@ export {
   undoInputRule,
   wrappingInputRule,
 } from 'prosemirror-inputrules';
+export { history } from 'prosemirror-history';
+export { dropCursor } from 'prosemirror-dropcursor';
 
 export { PNode, ProseParser, ProsePlugin } from '#root/prosemirror-aliases.ts';
 export type InlineDecorationSpec = NonNullable<

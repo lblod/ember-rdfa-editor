@@ -36,11 +36,8 @@ import {
   isTextNode,
   tagName,
 } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers';
-import {
-  SAMPLE_PLUGINS_WITH_CORE,
-  SAMPLE_SCHEMA,
-} from 'dummy/tests/utils/editor';
-import { EditorState } from 'prosemirror-state';
+import { SAMPLE_PLUGINS_WITH_CORE, SAMPLE_SCHEMA } from './utils/editor';
+import { EditorState } from '@lblod/ember-rdfa-editor';
 
 /**
  * Utility to get the editor element in a type-safe way

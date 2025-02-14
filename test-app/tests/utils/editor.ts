@@ -1,7 +1,7 @@
 import type Owner from '@ember/owner';
 
-import { type ProsePlugin } from '@lblod/ember-rdfa-editor';
-import { history } from 'prosemirror-history';
+import type { ProsePlugin } from '@lblod/ember-rdfa-editor';
+import { history, dropCursor } from '@lblod/ember-rdfa-editor';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -61,7 +61,6 @@ import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import sinon from 'sinon';
 import { rdfaInfoPlugin } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
-import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from '@lblod/ember-rdfa-editor/plugins/gap-cursor';
 import { v4 as uuidv4 } from 'uuid';
 import recreateUuidsOnPaste from '@lblod/ember-rdfa-editor/plugins/recreateUuidsOnPaste';

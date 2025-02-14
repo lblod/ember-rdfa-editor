@@ -629,12 +629,6 @@ importers:
       prosemirror-dev-tools:
         specifier: ^4.2.0
         version: 4.2.0(@babel/core@7.26.7)(@babel/template@7.25.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      prosemirror-dropcursor:
-        specifier: ^1.8.1
-        version: 1.8.1
-      prosemirror-history:
-        specifier: ^1.4.0
-        version: 1.4.1
       qunit:
         specifier: ^2.23.1
         version: 2.24.1
@@ -680,6 +674,9 @@ importers:
       typescript-eslint:
         specifier: ^7.18.0
         version: 7.18.0(eslint@9.19.0)(typescript@5.7.3)
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
       webpack:
         specifier: ^5.97.1
         version: 5.97.1
