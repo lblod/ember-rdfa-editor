@@ -4,12 +4,8 @@
   border-radius: 0.3rem;
   color: var(--au-orange-700);
   background-color: var(--au-orange-300);
-  margin-right: 0 !important;
-  padding: 0 0.2rem !important;
-  line-height: 1.2rem !important;
-  transition:
-    border 0.1s ease-in-out,
-    background-color 0.1s ease-in-out;
+  padding-right: 0.05rem;
+  line-height: 1.2rem;
 
   &[data-editor-position-level="1"],
   &:hover,
@@ -17,9 +13,11 @@
   &:focus-within {
     opacity: 0.75;
   }
+
   &::selection {
     background-color: var(--au-blue-200);
   }
+
   user-select: none;
 }
 
