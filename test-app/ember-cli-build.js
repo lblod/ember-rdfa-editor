@@ -19,6 +19,8 @@ module.exports = function (defaults) {
       sourceMap: true,
       sourceMapEmbed: true,
       includePaths: ['node_modules/@appuniversum/ember-appuniversum'],
+
+      silenceDeprecations: ['import', 'global-builtin'],
     },
   });
 

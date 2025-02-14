@@ -1,8 +1,8 @@
 /* ==================================
    #DUMMY APP
    ================================== */
-@import "@appuniversum/ember-appuniversum/styles";
-@import "@lblod/ember-rdfa-editor";
+@use "@appuniversum/ember-appuniversum/styles";
+@use "@lblod/ember-rdfa-editor";
 
 code {
   background-color: #eee;
