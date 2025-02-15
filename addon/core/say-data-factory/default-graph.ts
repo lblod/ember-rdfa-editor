@@ -16,7 +16,7 @@ export class SayDefaultGraph implements RDF.DefaultGraph {
     // Private constructor
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return !!other && other.termType === 'DefaultGraph';
-  };
+  }
 }
