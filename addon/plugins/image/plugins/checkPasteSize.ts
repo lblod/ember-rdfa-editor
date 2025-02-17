@@ -1,4 +1,5 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
+import { notificationPluginKey } from '@lblod/ember-rdfa-editor/plugins/notification';
 
 export const checkPasteSizeKey = new PluginKey('CHECK_PASTE_SIZE');
 
@@ -12,7 +13,7 @@ export function checkPasteSize({
   return new Plugin({
     key: checkPasteSizeKey,
     props: {
-      handlePaste(_, event) {
+      handlePaste(view, event) {
         const data = event.clipboardData;
         if (!data) return;
         const dataItems = data.items;
@@ -27,7 +28,13 @@ export function checkPasteSize({
           if (onLimitReached) {
             onLimitReached();
           } else {
-            console.error('Paste size is bigger than expected');
+            // Show a notification via the notification plugin
+            notificationPluginKey.getState(view.state).notificationCallback({
+              title: 'Paste size limit reached',
+              options: {
+                type: 'error',
+              },
+            });
           }
 
           return true;

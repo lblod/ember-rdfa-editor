@@ -71,6 +71,7 @@ import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-applica
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { notificationPlugin } from '@lblod/ember-rdfa-editor/plugins/notification';
 
 export default class IndexController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -151,7 +152,6 @@ export default class IndexController extends Controller {
     emberApplication({ application: unwrap(getOwner(this)) }),
     checkPasteSize({
       pasteLimit: 100000,
-      onLimitReached: () => console.error('You cannot paste more than 100kb'),
     }),
   ];
 
@@ -170,6 +170,10 @@ export default class IndexController extends Controller {
     applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
+  }
+  @action
+  dummyCallback(notification) {
+    console.log(notification)
   }
 
   @action
