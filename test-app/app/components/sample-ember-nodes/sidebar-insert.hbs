@@ -1,0 +1,35 @@
+{{! @glint-nocheck: not typesafe yet }}
+<Sidebar as |Sidebar|>
+  <Sidebar.Collapsible @title={{t "ember-rdfa-editor.insert"}} as |Item|>
+    <Item>
+      <AuButton
+        @icon="add"
+        @iconAlignment="left"
+        @skin="link"
+        {{on "click" this.insertCard}}
+      >
+        Insert Card
+      </AuButton>
+    </Item>
+    <Item>
+      <AuButton
+        @icon="add"
+        @iconAlignment="left"
+        @skin="link"
+        {{on "click" this.insertCounter}}
+      >
+        Insert Counter
+      </AuButton>
+    </Item>
+    <Item>
+      <AuButton
+        @icon="add"
+        @iconAlignment="left"
+        @skin="link"
+        {{on "click" this.insertDropdown}}
+      >
+        Insert Dropdown
+      </AuButton>
+    </Item>
+  </Sidebar.Collapsible>
+</Sidebar>

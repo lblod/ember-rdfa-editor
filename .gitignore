@@ -4,6 +4,7 @@
 /dist/
 /declarations/
 /tmp/
+vendor/
 
 # dependencies
 /bower_components/

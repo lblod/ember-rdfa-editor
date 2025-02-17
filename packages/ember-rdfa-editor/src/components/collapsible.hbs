@@ -1,0 +1,52 @@
+{{! @glint-nocheck: not typesafe yet }}
+<div class="say-editor-hints__insert">
+  <div class="au-c-accordion au-c-accordion--reverse au-c-accordion--border">
+    <AuToolbar
+      @nowrap={{true}}
+      @reverse={{true}}
+      {{on "click" this.toggle}}
+      as |Group|
+    >
+      <Group>
+        <div>
+          <AuButton
+            @skin="link"
+            aria-hidden="true"
+            focusable="false"
+            aria-expanded="{{if this.expanded 'true' 'false'}}"
+          >
+            {{@title}}
+          </AuButton>
+        </div>
+      </Group>
+      <Group>
+        {{#if this.expanded}}
+          <AuIcon
+            @icon={{this.RemoveIcon}}
+            @alignment="left"
+            @size="large"
+            @ariaHidden="true"
+          />
+          <span class="au-u-hidden-visually">
+            Open accordion
+          </span>
+        {{else}}
+          <AuIcon
+            @icon={{this.AddIcon}}
+            @alignment="left"
+            @size="large"
+            @ariaHidden="true"
+          />
+          <span class="au-u-hidden-visually">
+            Sluit accordion
+          </span>
+        {{/if}}
+      </Group>
+    </AuToolbar>
+    <div class={{if this.expanded "au-c-accordion__content" "au-u-hidden"}}>
+      <AuList @divider={{true}} as |Item|>
+        {{yield Item}}
+      </AuList>
+    </div>
+  </div>
+</div>

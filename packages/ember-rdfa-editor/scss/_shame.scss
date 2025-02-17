@@ -1,0 +1,194 @@
+@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "./_c-content.scss" as content;
+/* ==========================================================================
+   #SHAME
+   Temporary css
+   Some parts will be reused, but most of them will not.
+   ========================================================================== */
+
+.say-typography {
+  // Hide empty text elements
+  #text {
+    display: none !important;
+  }
+
+  .annotation:hover {
+    background-color: transparent !important; // override annotation hover background
+  }
+
+  // Not sure what this does
+  mark {
+    cursor: pointer;
+  }
+
+  mark table {
+    font-weight: normal;
+    border: 4px solid var(--au-yellow-400);
+
+    &:active {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Not sure if this is used
+.internal-component {
+  display: block;
+  width: 50%;
+  margin: 5px auto;
+  border: 1px solid #333;
+}
+
+.internal-component .close {
+  float: right;
+  margin: 5px;
+}
+
+// Legacy modal style fixes
+.say-card .modal-dialog {
+  position: relative;
+  top: 0;
+  left: 0;
+  box-shadow: none;
+  transform: none;
+  padding: 0;
+  width: 100%;
+}
+
+// Temporary fix for nested cards
+.say-card .say-card {
+  box-shadow: none;
+  position: relative;
+}
+
+.say-card ul li div.u-hr {
+  display: none;
+}
+
+.say-card .modal-dialog__header {
+  @include au.au-font-size(au.$au-h6);
+  color: var(--au-gray-800);
+  padding: au.$au-unit-small;
+  border-bottom: 0.1rem solid var(--au-gray-200);
+
+  * {
+    margin-bottom: 0;
+  }
+
+  * + * {
+    margin-top: au.$au-unit-small;
+  }
+
+  .grid {
+    align-items: center;
+  }
+
+  .col--2-12.u-align-right {
+    margin-top: 0;
+    padding-right: au.$au-unit-tiny;
+  }
+}
+
+.say-card .modal-dialog__content {
+  padding: au.$au-unit-small;
+}
+
+.say-card .modal-dialog__content--sectioned {
+  padding: 0;
+}
+
+.say-card .modal-dialog__content--sectioned > * {
+  max-height: 50vh;
+}
+
+.say-card .modal-dialog__content--sectioned .modal-dialog__footer {
+  border-top: 1px solid var(--au-gray-200);
+}
+
+.say-card .modal-dialog__footer {
+  padding: au.$au-unit-small;
+
+  button {
+    margin-bottom: 0;
+  }
+}
+
+.say-card .link-list {
+  @media screen and (max-width: 767px) {
+    margin-bottom: 0 !important;
+  }
+}
+
+.say-card .link-list.link-list--bordered {
+  .link-list__item.link-list__item--sidenotes a {
+    padding: au.$au-unit-small !important;
+  }
+
+  .link-list__item.link-list__item--sidenotes a:hover {
+    background-color: var(--au-gray-100);
+  }
+
+  .link-list__item__sidenote.uppercase {
+    @include au.au-font-size(content.$say-smallest-font-size, 1.3);
+    color: var(--au-gray-600);
+    padding: 0;
+  }
+}
+
+.say-card .modal-dialog__link-list {
+  padding: au.$au-unit-small;
+  width: 100%;
+  overflow: hidden;
+}
+
+.modal-dialog.modal-dialog--sectioned
+  .modal-dialog__content.modal-dialog__content--sidebar-grid {
+  padding: 0;
+  overflow: hidden;
+
+  > .grid {
+    max-height: 60vh;
+    overflow: hidden;
+  }
+
+  > .grid > div:first-child {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  > .grid > div:nth-child(2) {
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    > div:first-child {
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    > div:nth-child(2) {
+      flex-grow: 0;
+    }
+  }
+}
+
+.say-border-bottom {
+  border-bottom: 0.1rem solid var(--au-gray-300);
+}
+
+// Override toolbar switch
+.say-toolbar {
+  .au-c-toggle-switch__toggle {
+    background-color: var(--au-gray-300);
+  }
+
+  .au-c-toggle-switch__label {
+    @include au.au-font-size(au.$au-base);
+  }
+}
+
+// Old webuniversum classes
+.form__row + .form__row {
+  margin-top: au.$au-unit-tiny;
+}

@@ -1,0 +1,63 @@
+@use "@appuniversum/ember-appuniversum/styles" as au;
+/* ==================================
+   #ICONS
+   ================================== */
+
+/* Variables
+  ========================================================================== */
+$say-icon-size: 1.3rem !default;
+$say-icon-size-medium: 1.25rem !default;
+$say-icon-size-large: 1.7rem !default;
+
+/* Component
+  ========================================================================== */
+
+.say-icon {
+  display: inline-block;
+  width: $say-icon-size;
+  height: $say-icon-size;
+  position: relative;
+  vertical-align: baseline;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+/* Modifiers
+  ========================================================================== */
+
+.say-icon--medium {
+  width: $say-icon-size-medium;
+  height: $say-icon-size-medium;
+}
+
+.say-icon--large {
+  width: $say-icon-size-large;
+  height: $say-icon-size-large;
+  vertical-align: center;
+}
+
+.say-icon--left {
+  margin-right: au.$au-unit-tiny;
+}
+
+.say-icon--right {
+  margin-left: au.$au-unit-tiny;
+}
+
+.say-icon--rotate {
+  animation-name: iconRotate;
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  transform-origin: center;
+}
+
+@keyframes iconRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

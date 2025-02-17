@@ -1,0 +1,207 @@
+@use "@appuniversum/ember-appuniversum/styles" as au;
+/* ==================================
+   #SAY TOOLBAR
+   ================================== */
+
+/* Variables
+  ========================================================================== */
+
+$say-toolbar-background: var(--au-gray-200) !default;
+$say-toolbar-border: tint(au.$au-gray-300, 30) !default;
+$say-toolbar-height: 44px !default;
+
+/* Component
+  ========================================================================== */
+
+.say-toolbar {
+  @include au.au-font-size(au.$au-base);
+  display: flex;
+  justify-content: flex-start;
+  min-height: $say-toolbar-height; // Fixes height bug on Safari
+  height: $say-toolbar-height;
+  background-color: $say-toolbar-background;
+  border-bottom: 1px solid $say-toolbar-border;
+
+  .say-container--toolbar-bottom & {
+    border-bottom: 0;
+    border-top: 1px solid $say-toolbar-border;
+  }
+
+  .say-toolbar__main {
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  .say-toolbar__side {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+  }
+
+  *[data-hidden="true"] {
+    display: none;
+  }
+}
+
+.say-toolbar__main-dropdown,
+.say-toolbar__side-dropdown {
+  display: flex;
+  justify-content: flex-start;
+  min-height: $say-toolbar-height; // Fixes height bug on Safari
+  border-radius: au.$au-unit-tiny;
+  padding: 0.1rem au.$au-unit-tiny 0; // Visually center the text in the pill
+  background-color: $say-toolbar-background;
+  z-index: 1;
+}
+
+.say-toolbar__main-dropdown {
+  flex-wrap: wrap;
+}
+
+.say-toolbar__side-dropdown {
+  flex-direction: column;
+}
+
+.say-toolbar img {
+  max-width: inherit;
+  height: 100%;
+}
+
+.say-toolbar__spacer {
+  width: 100%;
+}
+
+.say-toolbar__divider {
+  height: $say-toolbar-height;
+  border-left: 1px solid var(--au-gray-300);
+}
+
+.say-toolbar__group {
+  display: flex;
+  height: $say-toolbar-height;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.say-toolbar__group + .say-toolbar__group {
+  border-left: 1px solid var(--au-gray-300);
+}
+
+.say-toolbar__main-dropdown,
+.say-toolbar__side-dropdown {
+  .say-toolbar__group + .say-toolbar__group {
+    border-left: 0;
+  }
+}
+
+.say-toolbar__button {
+  @include au.au-font-size(au.$au-base, 1);
+  height: $say-toolbar-height;
+  min-width: $say-toolbar-height;
+  display: inline-flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  & + & {
+    border-left: 0.1rem solid var(--au-gray-200);
+  }
+
+  .main,
+  .options {
+    appearance: none;
+    outline: none;
+    border: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    display: inline-flex;
+    color: var(--au-gray-600);
+    background-color: transparent;
+    transition: color var(--au-transition);
+    padding: 0;
+    margin: 0;
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-700);
+      background-color: transparent;
+    }
+
+    &:focus {
+      outline: var(--au-outline);
+      outline-offset: -0.4rem;
+    }
+
+    &.is-active {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-300);
+      box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-400);
+    }
+
+    &:disabled,
+    &.is-disabled {
+      color: var(--au-gray-400);
+      cursor: not-allowed;
+    }
+  }
+  .main {
+    flex: 6;
+  }
+  .options {
+    flex: 3;
+
+    > .say-dropdown__button {
+      min-width: 0;
+      padding: 0;
+    }
+  }
+}
+
+.say-toolbar__button img {
+  filter: invert(59%) sepia(12%) saturate(457%) hue-rotate(172deg)
+    brightness(91%) contrast(85%);
+
+  &:hover,
+  &:focus {
+    filter: invert(43%) sepia(35%) saturate(180%) hue-rotate(173deg)
+      brightness(97%) contrast(94%);
+  }
+}
+
+.say-rdfa-toggle {
+  padding: 0 1.2rem;
+  white-space: nowrap;
+}
+
+.say-toolbar__highlight-button {
+  .main {
+    .au-c-icon {
+      border-bottom: 3px solid transparent;
+    }
+  }
+}
+
+.local-icon {
+  pointer-events: none;
+}
+
+.say-toolbar__table-cell-background-button {
+  --default-background-color: #ffff00;
+
+  width: 19px;
+  height: 19px;
+
+  margin-top: -3px;
+
+  background-color: var(
+    --selected-background-color,
+    var(--default-background-color)
+  );
+  border: 1px solid var(--au-gray-600);
+}
+
+.say-toolbar__toggle-switch__label {
+  color: var(--au-gray-700);
+}
