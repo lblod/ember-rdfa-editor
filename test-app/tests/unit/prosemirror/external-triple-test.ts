@@ -3,9 +3,13 @@ import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
-import { calculateDataset, makeState } from '../../test-utils';
-import type { NodeJsonSpec } from '../../test-utils';
 import { module, test } from 'qunit';
+import { calculateDataset } from 'test-app/tests/helpers/datastore';
+import {
+  makeState,
+  type NodeJsonSpec,
+} from 'test-app/tests/helpers/prosemirror';
+
 module('ProseMirror | external-triple', function () {
   test('transformExternalTriples sets doc attribute', function (assert) {
     const docJson: NodeJsonSpec = {
