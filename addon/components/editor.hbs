@@ -1,4 +1,6 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div class='say-editor__paper' {{did-insert this.handleRawEditorInit}}>
 </div>
-<AuToaster />
+{{#if this.notificationToaster}}
+  <AuToaster />
+{{/if}}
