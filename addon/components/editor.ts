@@ -90,6 +90,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     return this.args.baseIRI || window.document.baseURI;
   }
 
+  // We show the notification toaster unless told otherwise in the editor arguments
   get notificationToaster() {
     return this.args.notificationToaster === false ? false : true;
   }
