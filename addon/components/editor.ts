@@ -37,18 +37,18 @@ export interface RdfaEditorArgs {
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
   keyMapOptions?: KeymapOptions;
-  notificationCallback?: (notification: Notification) => void
+  notificationCallback?: (notification: Notification) => void;
 }
 
 interface Notification {
-  title?: string,
-  message?: string,
+  title?: string;
+  message?: string;
   options: {
-    type?: "info" | "success" | "warning" | "error"; // Default depends on the used display method
+    type?: 'info' | 'success' | 'warning' | 'error'; // Default depends on the used display method
     icon?: string; // Any valid Appuniversum icon name, default depends on the used display method
     timeOut?: number; // delay in milliseconds after which the toast auto-closes
     closable?: boolean; // Can the toast be closed by users, defaults to `true`
-  }
+  };
 }
 
 /**
@@ -116,13 +116,23 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
         },
       );
     }
-    const notificationCallback = this.args.notificationCallback ?? ((notification) => this.toaster.notify(notification.message, notification.title, notification.options));
+    const notificationCallback =
+      this.args.notificationCallback ??
+      ((notification) =>
+        this.toaster.notify(
+          notification.message,
+          notification.title,
+          notification.options,
+        ));
     this.prosemirror = new SayEditor({
       owner: getOwner(this) as Owner,
       target,
       schema: this.args.schema,
       baseIRI: this.baseIRI,
-      plugins: [...this.args.plugins, notificationPlugin(notificationCallback.bind(this))] ,
+      plugins: [
+        ...this.args.plugins,
+        notificationPlugin(notificationCallback.bind(this)),
+      ],
       nodeViews: this.args.nodeViews,
       defaultAttrGenerators: this.args.defaultAttrGenerators,
       keyMapOptions: this.args.keyMapOptions,

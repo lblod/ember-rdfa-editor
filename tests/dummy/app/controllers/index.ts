@@ -171,10 +171,6 @@ export default class IndexController extends Controller {
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
-  @action
-  dummyCallback(notification) {
-    console.log(notification)
-  }
 
   @action
   togglePlugin() {

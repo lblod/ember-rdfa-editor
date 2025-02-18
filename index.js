@@ -8,10 +8,7 @@ module.exports = {
   options: {
     babel: {
       sourceMaps: 'inline',
-      plugins: [
-        require.resolve('ember-auto-import/babel-plugin'),
-        require.resolve('ember-concurrency/async-arrow-task-transform'),
-      ],
+      plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
     autoImport: {
       webpack: require('./webpack-config'),

@@ -11,7 +11,6 @@
         showSidebarLeft=false
         showSidebarRight=false
       }}
-
     >
       <:top>
         <SampleToolbarResponsive
@@ -25,7 +24,6 @@
           @schema={{this.schema}}
           @nodeViews={{this.nodeViews}}
           @rdfaEditorInit={{this.rdfaEditorInit}}
-          @notificationCallback={{this.dummyCallback}}
         />
         {{#if this.rdfaEditor}}
           <Plugins::Table::TableTooltip @controller={{this.rdfaEditor}} />
