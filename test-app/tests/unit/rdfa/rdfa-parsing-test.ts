@@ -59,7 +59,6 @@ import {
   findChildrenByAttr,
   type NodeWithPos,
 } from '@curvenote/prosemirror-utils';
-import { testEditor } from '../../utils/editor';
 import type {
   IncomingTriple,
   OutgoingTriple,
@@ -67,6 +66,7 @@ import type {
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { testEditor } from 'test-app/tests/helpers/say-editor';
 
 const schema = new Schema({
   nodes: {

@@ -1,6 +1,8 @@
-import { makeState } from '../../test-utils';
-import type { NodeJsonSpec } from '../../test-utils';
 import { module, test } from 'qunit';
+import {
+  makeState,
+  type NodeJsonSpec,
+} from 'test-app/tests/helpers/prosemirror';
 module('ProseMirror | plugins | removePropertiesOfDeletedNodes', function () {
   test('removePropertiesOfDeletedNodes plugin only removes the backlink to the target subject', function (assert) {
     // doc with 3 block rdfa nodes as children
