@@ -238,7 +238,7 @@ You can discover additional examples on how to write Prosemirror schemas, plugin
 Ember-rdfa-editor requires users of the addon to import its SASS stylesheets. To support sass you must install `ember-cli-sass`. The stylesheets provided by ember-rdfa-editor can be imported with the following import statement:
 
 ```
-@import "ember-rdfa-editor";
+@import "@lblod/ember-rdfa-editor";
 ```
 
 When installing this through `ember install` the addon will add the snippet above automatically for you in your `app.scss`.
