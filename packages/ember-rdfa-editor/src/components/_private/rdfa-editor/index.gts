@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor/index.ts';
@@ -17,17 +16,20 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import ExternalTripleEditor from './external-triple-editor.gts';
 import type SayController from '#root/core/say-controller.ts';
 import { NodeSelection } from 'prosemirror-state';
+import { localCopy } from 'tracked-toolbox';
 
 type Args = {
   controller?: SayController;
   node: ResolvedPNode;
   additionalImportedResources?: string[];
+  expanded?: boolean;
+  onToggle?: (expanded: boolean) => void;
 };
 export default class RdfaEditor extends Component<Args> {
-  @tracked collapsed = false;
+  @localCopy('args.expanded', true) declare expanded: boolean;
 
   toggleSection = () => {
-    this.collapsed = !this.collapsed;
+    this.expanded = !this.expanded;
   };
 
   get isResourceNode() {
@@ -92,7 +94,7 @@ export default class RdfaEditor extends Component<Args> {
               <AuPill>{{this.type}}</AuPill>
               <AuButton
                 @skin="naked"
-                @icon={{if this.collapsed ChevronDownIcon ChevronUpIcon}}
+                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
                 {{on "click" this.toggleSection}}
               />
             </Group>
@@ -101,7 +103,7 @@ export default class RdfaEditor extends Component<Args> {
       </Section>
       {{#if this.controller}}
         {{#if @node}}
-          {{#unless this.collapsed}}
+          {{#if this.expanded}}
             {{#if this.showPropertiesSection}}
               <Section>
                 <ExternalTripleEditor
@@ -131,7 +133,7 @@ export default class RdfaEditor extends Component<Args> {
                 <RemoveNode @node={{@node}} @controller={{@controller}} />
               {{/if}}
             </Section>
-          {{/unless}}
+          {{/if}}
         {{else}}
           <Section>
             <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
