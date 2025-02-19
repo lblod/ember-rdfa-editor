@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
@@ -8,15 +7,18 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
+import { localCopy } from 'tracked-toolbox';
 
 type Signature = {
   Args: {
     node: ResolvedPNode;
+    expanded?: boolean;
+    onToggle?: (expanded: boolean) => void;
   };
 };
 
 export default class DebugInfo extends Component<Signature> {
-  @tracked collapsed = false;
+  @localCopy('args.expanded', true) declare expanded: boolean;
 
   get pos() {
     return this.args.node.pos;
@@ -27,7 +29,8 @@ export default class DebugInfo extends Component<Signature> {
   }
 
   toggleSection = () => {
-    this.collapsed = !this.collapsed;
+    this.expanded = !this.expanded;
+    this.args.onToggle?.(this.expanded);
   };
 
   <template>
@@ -40,18 +43,18 @@ export default class DebugInfo extends Component<Signature> {
           <Group>
             <AuButton
               @skin="naked"
-              @icon={{if this.collapsed ChevronDownIcon ChevronUpIcon}}
+              @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
               {{on "click" this.toggleSection}}
             />
           </Group>
         </AuToolbar>
       </Section>
-      {{#unless this.collapsed}}
+      {{#if this.expanded}}
         <Section>
           <p><strong>Position: </strong>{{this.pos}}</p>
           <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
         </Section>
-      {{/unless}}
+      {{/if}}
     </AuPanel>
   </template>
 }
