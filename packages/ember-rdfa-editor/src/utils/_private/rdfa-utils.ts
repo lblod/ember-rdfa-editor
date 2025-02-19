@@ -22,6 +22,7 @@ export {
   isLinkToNode,
   mapPositionFrom,
   parsePrefixString,
+  removePropertyFromNode,
 } from '#root/plugins/rdfa-info/utils.ts';
 export { getRdfaId, getSubject } from '#root/plugins/rdfa-info/plugin.ts';
 /**
