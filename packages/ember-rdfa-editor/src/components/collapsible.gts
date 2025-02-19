@@ -10,20 +10,32 @@ import { on } from '@ember/modifier';
 
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { tracked } from 'tracked-built-ins';
+import { localCopy } from 'tracked-toolbox';
+type Args = {
+  title: string;
+  onToggle?: (expanded: boolean) => void;
+} & (
+  | {
+      /** @deprecated, use `expanded` instead */
+      expandedInitially?: boolean;
+      expanded: never;
+    }
+  | {
+      /** @deprecated, use `expanded` instead */
+      expandedInitially?: never;
+      expanded?: boolean;
+    }
+);
 
 type CollapsibleSignature = {
-  Args: {
-    expandedInitially?: boolean;
-    title: string;
-  };
+  Args: Args;
   Element: HTMLDivElement;
   Blocks: {
     default: AuListSignature['Blocks']['default'];
   };
 };
 export default class Collapsible extends Component<CollapsibleSignature> {
-  @tracked _expanded?: boolean;
+  @localCopy('args.expanded') _expanded?: boolean;
 
   get expanded() {
     return this._expanded ?? this.args.expandedInitially;
@@ -31,7 +43,9 @@ export default class Collapsible extends Component<CollapsibleSignature> {
 
   @action
   toggle() {
-    this._expanded = !this.expanded;
+    const newState = !this.expanded;
+    this._expanded = newState;
+    this.args.onToggle?.(newState);
   }
 
   <template>
