@@ -1,5 +1,4 @@
-import type Owner from '@ember/owner';
-
+import { EditorState } from '@lblod/ember-rdfa-editor';
 import type { ProsePlugin } from '@lblod/ember-rdfa-editor';
 import { history, dropCursor } from '@lblod/ember-rdfa-editor';
 import {
@@ -40,12 +39,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/text-style';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color';
-import {
-  inputRules,
-  type PluginConfig,
-  SayController,
-  Schema,
-} from '@lblod/ember-rdfa-editor';
+import { inputRules, Schema } from '@lblod/ember-rdfa-editor';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
@@ -57,8 +51,6 @@ import {
   space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
-import sinon from 'sinon';
 import { rdfaInfoPlugin } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
 import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
 import { gapCursor } from '@lblod/ember-rdfa-editor/plugins/gap-cursor';
@@ -111,6 +103,7 @@ export const SAMPLE_SCHEMA = new Schema({
     color,
   },
 });
+
 export const SAMPLE_PLUGINS: ProsePlugin[] = [
   firefoxCursorFix(),
   chromeHacksPlugin(),
@@ -130,15 +123,6 @@ export const SAMPLE_PLUGINS: ProsePlugin[] = [
     ],
   }),
   editableNodePlugin(),
-];
-// the SayEditor class adds a few always-on plugins, which
-// we won't get in test-utils that don't need to make an instance
-// of the SayEditor class
-//
-// This is clunky, and points at the class being a codesmell, but it's how it
-// works atm
-export const SAMPLE_PLUGINS_WITH_CORE: ProsePlugin[] = [
-  ...SAMPLE_PLUGINS,
   dropCursor(),
   gapCursor(),
   history(),
@@ -161,23 +145,20 @@ export const SAMPLE_PLUGINS_WITH_CORE: ProsePlugin[] = [
   rdfaInfoPlugin(),
 ];
 
-export function testEditor(
-  schema: Schema,
-  plugins: PluginConfig,
-): { editor: SayEditor; controller: SayController } {
-  const mockOwner: Owner = {
-    factoryFor: sinon.fake(),
-    lookup: sinon.fake(),
-    register: sinon.fake(),
-  };
-  const element = document.createElement('div');
-  const editor = new SayEditor({
-    owner: mockOwner,
-    target: element,
-    baseIRI: 'http://test.org',
+export interface NodeJsonSpec<S extends Schema = typeof SAMPLE_SCHEMA> {
+  type: S extends Schema<infer X> ? X : never;
+  attrs?: Record<string, unknown>;
+  content?: NodeJsonSpec<S>[];
+  text?: string;
+}
+
+export function makeState(
+  docJson: NodeJsonSpec<typeof SAMPLE_SCHEMA>,
+): EditorState {
+  const schema = SAMPLE_SCHEMA;
+  return EditorState.create({
     schema,
-    plugins,
+    plugins: SAMPLE_PLUGINS,
+    doc: schema.nodeFromJSON(docJson),
   });
-  const controller = new SayController(editor);
-  return { editor, controller };
 }

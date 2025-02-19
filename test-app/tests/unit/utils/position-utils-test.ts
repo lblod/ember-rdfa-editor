@@ -1,11 +1,11 @@
 import { module, test } from 'qunit';
-import TEST_SCHEMA from '../../test-utils';
 import { findNodes } from '@lblod/ember-rdfa-editor/utils/_private/position-utils';
+import { SAMPLE_SCHEMA } from 'test-app/tests/helpers/prosemirror';
 
 module('Unit | utils | position-utils | get-nodes', function () {
   // Replace this with your real tests.
   test('Simple document', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),
@@ -29,7 +29,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
     assert.deepEqual(ranges[7], { from: 14, to: 17 });
   });
   test('Simple document - reverse', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),
@@ -60,7 +60,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
   });
 
   test('Simple document with text condition', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),
@@ -88,7 +88,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
     assert.deepEqual(ranges[2], { from: 14, to: 17 });
   });
   test('Simple document in reverse with text condition', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),
@@ -117,7 +117,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
     assert.deepEqual(ranges[2], { from: 2, to: 5 });
   });
   test('Simple document with start inside text node', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),
@@ -139,7 +139,7 @@ module('Unit | utils | position-utils | get-nodes', function () {
     assert.deepEqual(ranges[4], { from: 14, to: 17 });
   });
   test('Simple document with start inside text node - reverse', function (assert) {
-    const schema = TEST_SCHEMA;
+    const schema = SAMPLE_SCHEMA;
     const doc = schema.node('doc', {}, [
       schema.node('block_rdfa', null, [
         schema.node('paragraph', null, [schema.text('abc')]),

@@ -4,17 +4,24 @@
 
 import { module, test } from 'qunit';
 import TEST_CASES from './test-cases';
-import { SAMPLE_PLUGINS, SAMPLE_SCHEMA, testEditor } from '../../utils/editor';
-import { calculateDataset } from '../../test-utils';
 //@ts-expect-error graphy has no typescript definitions
 import toNT from '@rdfjs/to-ntriples';
+import { calculateDataset } from 'test-app/tests/helpers/datastore';
+import { testEditor } from 'test-app/tests/helpers/say-editor';
+import {
+  SAMPLE_PLUGINS,
+  SAMPLE_SCHEMA,
+} from 'test-app/tests/helpers/prosemirror';
 
 module('Integration | RDFa blackbox test ', function () {
   for (const entry of Object.entries(TEST_CASES)) {
     const [key, html] = entry;
     test(`underlying RDF stays intact - test case ${key}`, async function (assert) {
       const initialDataset = calculateDataset(html);
-      const { controller } = testEditor(SAMPLE_SCHEMA, SAMPLE_PLUGINS);
+      const { controller } = testEditor(SAMPLE_SCHEMA, {
+        plugins: SAMPLE_PLUGINS,
+        override: true,
+      });
       controller.initialize(html);
       const outputHTML = controller.htmlContent;
       // run through the editor twice to test for stability
