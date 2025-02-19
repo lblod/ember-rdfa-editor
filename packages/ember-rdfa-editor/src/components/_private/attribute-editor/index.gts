@@ -7,7 +7,7 @@ import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type { EmberChangeset } from 'ember-changeset';
 import { Changeset } from 'ember-changeset';
-import { trackedReset } from 'tracked-toolbox';
+import { localCopy, trackedReset } from 'tracked-toolbox';
 import { TypeAssertionError } from '#root/utils/_private/errors.ts';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
@@ -32,10 +32,13 @@ type Signature = {
   Args: {
     controller: SayController;
     node: ResolvedPNode;
+    expanded?: boolean;
+    onToggle?: (expanded: boolean) => void;
   };
 };
 export default class AttributeEditor extends Component<Signature> {
-  @tracked collapsed = false;
+  @localCopy('args.expanded', true) declare expanded: boolean;
+
   @trackedReset<AttributeEditor, boolean>({
     memo: 'node',
     update: (component) => {
@@ -60,7 +63,8 @@ export default class AttributeEditor extends Component<Signature> {
   }
 
   toggleSection = () => {
-    this.collapsed = !this.collapsed;
+    this.expanded = !this.expanded;
+    this.args.onToggle?.(this.expanded);
   };
 
   isEditable = (attr: string) => {
@@ -145,14 +149,14 @@ export default class AttributeEditor extends Component<Signature> {
               {{/if}}
               <AuButton
                 @skin="naked"
-                @icon={{if this.collapsed ChevronDownIcon ChevronUpIcon}}
+                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon }}
                 {{on "click" this.toggleSection}}
               />
             </AuButtonGroup>
           </Group>
         </AuToolbar>
       </Section>
-      {{#unless this.collapsed}}
+      {{#if this.expanded}}
         <Section>
           <AuList @divider={{true}} as |Item|>
             {{#each-in this.node.value.attrs as |key value|}}
@@ -196,7 +200,7 @@ export default class AttributeEditor extends Component<Signature> {
             {{/each-in}}
           </AuList>
         </Section>
-      {{/unless}}
+      {{/if}}
     </AuPanel>
   </template>
 }
