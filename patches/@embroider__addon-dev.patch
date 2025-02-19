@@ -1,0 +1,25 @@
+diff --git a/src/rollup-hbs-plugin.js b/src/rollup-hbs-plugin.js
+index 5ed68efb2f6ecadc3ee0d462e879e97b0b80fc7d..d7c3b5dd19cfe1f02d58e07305d7ae251a957b01 100644
+--- a/src/rollup-hbs-plugin.js
++++ b/src/rollup-hbs-plugin.js
+@@ -18,10 +18,12 @@ function rollupHbsPlugin({ excludeColocation, }) {
+                 return null;
+             }
+             let resolution = await this.resolve(source, importer, {
++                 ...options,
+                 skipSelf: true,
+             });
+             if (!resolution && (0, path_1.extname)(source) === '') {
+                 resolution = await this.resolve(source + '.hbs', importer, {
++                    ...options,
+                     skipSelf: true,
+                 });
+             }
+@@ -29,6 +31,7 @@ function rollupHbsPlugin({ excludeColocation, }) {
+                 let hbsSource = (0, core_1.syntheticJStoHBS)(source);
+                 if (hbsSource) {
+                     resolution = await this.resolve(hbsSource, importer, {
++                        ...options,
+                         skipSelf: true,
+                         custom: {
+                             embroider: {

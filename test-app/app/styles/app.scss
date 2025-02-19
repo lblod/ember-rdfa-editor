@@ -1,0 +1,12 @@
+/* ==================================
+   #DUMMY APP
+   ================================== */
+@use "@appuniversum/ember-appuniversum/styles";
+@use "@lblod/ember-rdfa-editor";
+
+code {
+  background-color: #eee;
+  border-radius: 3px;
+  font-family: courier, monospace;
+  padding: 0 3px;
+}

@@ -1,6 +1,6 @@
 steps:
   install:
-    image: node:20-slim
+    image: node:22-slim
     commands:
       - corepack enable
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612

@@ -1,0 +1,10 @@
+{{! @glint-nocheck: not typesafe yet }}
+<div class="say-toolbar">
+  {{yield
+    (hash
+      Group=(component "toolbar/group")
+      Spacer=(component "toolbar/spacer")
+      Divider=(component "toolbar/divider")
+    )
+  }}
+</div>

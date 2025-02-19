@@ -1,0 +1,50 @@
+{{! @glint-nocheck: not typesafe yet }}
+<AuContent @skin="tiny">
+  <AuToolbar as |Group|>
+    <Group>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin="naked"
+        {{on "click" (fn this.openModal false)}}
+      >
+        Wrap With Block Resource
+      </AuButton>
+    </Group>
+    <Group>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin="naked"
+        @disabled={{not this.canWrapWithLiteral}}
+        {{on "click" this.wrapWithLiteralNode}}
+      >
+        Wrap With Block Literal
+      </AuButton>
+    </Group>
+
+    <Group>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin="naked"
+        {{on "click" (fn this.openModal true)}}
+      >
+        Wrap With Inline Resource
+      </AuButton>
+    </Group>
+    <Group>
+      <AuButton
+        @icon={{this.PlusIcon}}
+        @skin="naked"
+        @disabled={{not this.canWrapWithInlineLiteral}}
+        {{on "click" this.wrapWithInlineLiteralNode}}
+      >
+        Wrap With Inline Literal
+      </AuButton>
+    </Group>
+  </AuToolbar>
+</AuContent>
+
+<this.Modal
+  @modalOpen={{this.modalOpen}}
+  @closeModal={{this.closeModal}}
+  @wrapWithResource={{this.wrapWithResource}}
+/>

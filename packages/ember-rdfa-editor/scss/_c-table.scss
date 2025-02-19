@@ -1,0 +1,134 @@
+@use "@appuniversum/ember-appuniversum/styles" as au;
+.say-table {
+  @include au.au-font-size(au.$au-h6);
+  display: table;
+  table-layout: auto;
+  position: relative;
+  min-width: 100%;
+  border-collapse: collapse;
+  border: 0.1rem solid var(--au-gray-300);
+
+  & + & {
+    margin-top: au.$au-unit;
+  }
+
+  thead {
+    border-bottom: 0.2rem solid var(--au-gray-300);
+  }
+
+  th.say-table-header,
+  td.say-table-cell {
+    @include au.au-font-size(au.$au-base, 1.2);
+    text-align: left;
+    padding: au.$au-unit-small au.$au-unit-small;
+    min-height: au.$au-unit-large;
+    position: relative;
+    // Fixes Firefox bug - https://bugzilla.mozilla.org/show_bug.cgi?id=688556
+    background-clip: padding-box;
+  }
+
+  th.say-table-header {
+    font-weight: var(--au-medium);
+  }
+
+  tr + tr {
+    border-top: 0.1rem solid var(--au-gray-300);
+  }
+
+  tr:nth-child(even) {
+    background: var(--say-even-row-background);
+  }
+  tr:nth-child(odd) {
+    background: var(--say-odd-row-background);
+  }
+
+  th.say-table-header + th.say-table-header,
+  td.say-table-cell + td.say-table-cell,
+  th.say-table-header + td.say-table-cell,
+  td.say-table-cell + th.say-table-header {
+    border-left: 0.1rem solid var(--au-gray-300);
+  }
+
+  th.say-table-header,
+  td.say-table-cell {
+    max-width: 55ch;
+  }
+
+  th.say-table-header:focus,
+  td.say-table-cell:focus {
+    outline: none;
+  }
+
+  // Element with a class that columnResizing plugin adds
+  .column-resize-handle {
+    position: absolute !important;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #adf;
+    pointer-events: none;
+    margin-top: 0;
+  }
+}
+
+.tableWrapper {
+  overflow-y: hidden;
+}
+
+table.ProseMirror-selectednode,
+// `tableWrapper` is a class that columnResizing plugin adds
+.tableWrapper.ProseMirror-selectednode {
+  background-color: var(--au-blue-200);
+  outline: 2px solid var(--au-blue-500);
+  color: var(--au-black);
+}
+
+// Class that columnResizing plugin adds
+.resize-cursor {
+  cursor: col-resize;
+}
+
+.say-table-tooltip {
+  display: flex;
+  flex-direction: column;
+
+  .color-selector__grid {
+    padding: 0 12px;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: au.$au-unit-small;
+    margin-bottom: au.$au-unit-small;
+
+    button {
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+    }
+  }
+}
+
+.say-table-tooltip--actions {
+  display: flex;
+  flex-direction: row;
+
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-600);
+    padding: au.$au-unit-small;
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-700);
+    }
+
+    &:disabled {
+      color: var(--au-gray-400);
+      cursor: not-allowed;
+    }
+  }
+}
