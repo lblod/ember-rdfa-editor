@@ -1,5 +1,55 @@
 # @lblod/ember-rdfa-editor
 
+## 11.0.0
+
+### Major Changes
+
+- [#1250](https://github.com/lblod/ember-rdfa-editor/pull/1250) [`32b31f5`](https://github.com/lblod/ember-rdfa-editor/commit/32b31f5674bffe009eddd2c2653af67ddbdf3c91) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Remove mark-highlight-manual class and add the styles contained in it to say-placeholder
+
+  Reduce margin right property of placeholders
+
+- [#1252](https://github.com/lblod/ember-rdfa-editor/pull/1252) [`e5ccb54`](https://github.com/lblod/ember-rdfa-editor/commit/e5ccb54d5cf9b409578b3ce542d6e18d9accd1d6) Thanks [@elpoelma](https://github.com/elpoelma)! - Stricten `@appuniversum/ember-appuniversum` peerdependency to version 3.5.0
+
+- [#1246](https://github.com/lblod/ember-rdfa-editor/pull/1246) [`ac6bb6d`](https://github.com/lblod/ember-rdfa-editor/commit/ac6bb6d63d45d8e1f08e3bf0c370d99a88c87cfa) Thanks [@abeforgit](https://github.com/abeforgit)! - Convert to a v2 addon
+
+- [#1241](https://github.com/lblod/ember-rdfa-editor/pull/1241) [`1517357`](https://github.com/lblod/ember-rdfa-editor/commit/151735798a51452e2318d2393a1385b87f354eda) Thanks [@elpoelma](https://github.com/elpoelma)! - **Adjustments to the `@editorOptions` argument of the `editor-container` component**
+
+  The following (legacy) properties are no longer supported:
+
+  - `@editorOptions.showRdfaHover`
+  - `@editorOptions.showRdfa`
+  - `@editorOptions.showRdfaHighlight`
+  - `@editorOptions.editRdfa`
+
+  The following `@editorOptions` properties have been added:
+
+  - `@editorOptions.showSidebarLeft` (default: `true`)
+  - `@editorOptions.showSidebarRight` (default: `true`)
+
+  These options replace the `@hideSidebar` argument, which is no longer supported.
+
+- [#1241](https://github.com/lblod/ember-rdfa-editor/pull/1241) [`1517357`](https://github.com/lblod/ember-rdfa-editor/commit/151735798a51452e2318d2393a1385b87f354eda) Thanks [@elpoelma](https://github.com/elpoelma)! - **Removal of the following SASS stylesheets**
+
+  - `_c-annotation.scss`
+  - `_c-annotation-content-en.scss`
+  - `_c-annotation-content-nl.scss`
+  - `_c-annotation-flag.scss`
+  - `_c-annotation-hover.scss`
+
+- [#1241](https://github.com/lblod/ember-rdfa-editor/pull/1241) [`1517357`](https://github.com/lblod/ember-rdfa-editor/commit/151735798a51452e2318d2393a1385b87f354eda) Thanks [@elpoelma](https://github.com/elpoelma)! - **Removal of the RDFa annotations toggle**
+  - Removal of the `plugins/rdfa-block-render/rdfa-blocks-toggle` component
+  - Removal of the `showRDFaBlocks` property on `SayController` instances
+  - Removal of the `toggleRDFaBlocks` method on `SayController` instances
+  - Removal of the `@showRDFaBlocks` argument of the `editor-container` component
+
+### Minor Changes
+
+- [#1249](https://github.com/lblod/ember-rdfa-editor/pull/1249) [`546bd01`](https://github.com/lblod/ember-rdfa-editor/commit/546bd01f7192d52958fa06da2718e663358d10cf) Thanks [@piemonkey](https://github.com/piemonkey)! - Add util for wrapping including parents without using a command
+
+- [#1249](https://github.com/lblod/ember-rdfa-editor/pull/1249) [`19b78a1`](https://github.com/lblod/ember-rdfa-editor/commit/19b78a1110c284a94cc3124d4e2f40a8f973d109) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix removePropertiesOfDeletedNodes plugin to only remove properties if they link to the subject being removed, not just matching the predicate of the relationship
+
+- [#1248](https://github.com/lblod/ember-rdfa-editor/pull/1248) [`e66e254`](https://github.com/lblod/ember-rdfa-editor/commit/e66e254e328e3e87f0f47f63ff92d552624491aa) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Allow inline images with a new config and added checkPasteSize plugin
+
 ## 10.11.3
 
 ### Patch Changes
@@ -1044,14 +1094,14 @@
   ```js
   createEmberNodeView({
     // ... other options
-    componentPath: 'foo',
+    componentPath: "foo",
   });
   ```
 
   After:
 
   ```js
-  import Foo from 'app-name/components/foo';
+  import Foo from "app-name/components/foo";
 
   createEmberNodeView({
     // ... other options
