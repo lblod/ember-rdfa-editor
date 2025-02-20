@@ -306,7 +306,7 @@
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
-    "rollup": "^4.32.0",
+    "rollup": "^4.34.2",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-sass": "^1.15.2",
