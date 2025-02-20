@@ -14,6 +14,9 @@ import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute
 import SayController from '#root/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
+import { notificationPlugin } from '#root/plugins/notification/index.ts';
+import { inject as service } from '@ember/service';
+import type { Notification } from '#root/plugins/notification/index.ts';
 
 export interface RdfaEditorArgs {
   /**
@@ -33,6 +36,8 @@ export interface RdfaEditorArgs {
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
   keyMapOptions?: KeymapOptions;
+  notificationCallback?: (notification: Notification) => void;
+  notificationToaster?: boolean;
 }
 
 /**
@@ -56,6 +61,21 @@ export interface RdfaEditorArgs {
  */
 export default class RdfaEditor extends Component<RdfaEditorArgs> {
   @tracked controller: SayController | null = null;
+  @service declare toaster: {
+    notify: (
+      message: string | undefined,
+      title: string | undefined,
+      options: {
+        type?: 'info' | 'success' | 'warning' | 'error'; // Default depends on the used display method
+        // Default depends on the used display method
+        icon?: string; // Any valid Appuniversum icon name, default depends on the used display method
+        // Any valid Appuniversum icon name, default depends on the used display method
+        timeOut?: number; // delay in milliseconds after which the toast auto-closes
+        // delay in milliseconds after which the toast auto-closes
+        closable?: boolean; // Can the toast be closed by users, defaults to `true`
+      },
+    ) => void;
+  };
 
   private logger: Logger = createLogger(this.constructor.name);
   private prosemirror: SayEditor | null = null;
@@ -66,6 +86,11 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
+  }
+
+  // We show the notification toaster unless told otherwise in the editor arguments
+  get notificationToaster() {
+    return this.args.notificationToaster === false ? false : true;
   }
 
   /**
@@ -100,12 +125,38 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       );
     }
 
+    const notificationCallback =
+      this.args.notificationCallback ??
+      ((notification: Notification) =>
+        this.toaster.notify(
+          notification.message,
+          notification.title,
+          notification.options,
+        ));
+    let plugins: PluginConfig;
+    if (Array.isArray(this.args.plugins)) {
+      plugins = [
+        ...this.args.plugins,
+        notificationPlugin(notificationCallback.bind(this)),
+      ];
+    } else if (this.args.plugins) {
+      plugins = {
+        plugins: [
+          ...this.args.plugins.plugins,
+          notificationPlugin(notificationCallback.bind(this)),
+        ],
+        override: this.args.plugins.override,
+      };
+    } else {
+      plugins = [notificationPlugin(notificationCallback.bind(this))];
+    }
+
     this.prosemirror = new SayEditor({
       owner: getOwner(this) as Owner,
       target,
       schema: this.args.schema,
       baseIRI: this.baseIRI,
-      plugins: this.args.plugins,
+      plugins,
       nodeViews: this.args.nodeViews,
       defaultAttrGenerators: this.args.defaultAttrGenerators,
       keyMapOptions: this.args.keyMapOptions,
