@@ -96,4 +96,4 @@ ember-rdfa-editor:
       title: HTML bewerken
   text-styles: Tekststijlen
   notifications:
-    paste-size-limit-reached: Grootte limiet bereikt, probeer opnieuw met een kleinere afbeelding
+    paste-size-limit-reached: Limiet voor plakgrootte bereikt, probeer het opnieuw met een kleinere afbeelding of gebruik een hulpprogramma om de grootte aan te passen
