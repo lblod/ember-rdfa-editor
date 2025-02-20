@@ -270,7 +270,7 @@ importers:
         specifier: ^2.10.0
         version: 2.10.0(@glint/template@1.5.2)(webpack@5.97.1)
       ember-basic-dropdown:
-        specifier: ^8.4.0
+        specifier: ^8.5.0
         version: 8.5.0(@babel/core@7.26.7)(@ember/string@4.0.0)(@ember/test-helpers@4.0.5(@babel/core@7.26.7)(@glint/template@1.5.2)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1)))(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glimmer/tracking@1.1.2)(@glint/environment-ember-loose@1.5.2(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(ember-cli-htmlbars@6.3.0)(ember-modifier@4.2.0(@babel/core@7.26.7)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1))))(@glint/template@1.5.2)(ember-source@6.1.0(patch_hash=d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621)(@glimmer/component@1.1.2(@babel/core@7.26.7))(@glint/template@1.5.2)(rsvp@4.8.5)(webpack@5.97.1))
       ember-concurrency:
         specifier: ^4.0.2
@@ -6588,6 +6588,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}

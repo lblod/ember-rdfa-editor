@@ -22,11 +22,15 @@ import type { Mark } from 'prosemirror-model';
 import { ProsePlugin, type PNode } from '#root/prosemirror-aliases.ts';
 import type { Schema } from 'prosemirror-model';
 import type { DatastoreResolvedPNode, TextPNode } from './datastore-node-types';
-
 import { isElementPNode } from './datastore-node-types.ts';
-export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
 
-export { isElementPNode } from './datastore-node-types.ts';
+export const datastoreKey = new PluginKey<DatastorePluginState>('datastore');
+export {
+  type DatastoreResolvedPNode,
+  type ElementPNode,
+  type TextPNode,
+  isElementPNode,
+} from './datastore-node-types.ts';
 export { SayStore } from '#root/utils/_private/datastore/say-store.ts';
 
 export function getAppliedMarks(pnode: DatastoreResolvedPNode): Mark[] {
