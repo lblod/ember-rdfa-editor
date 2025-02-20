@@ -40,6 +40,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
     "@glint/core": "^1.2.1",
+    "changesets-release-it-plugin": "git://git@github.com/piemonkey/changesets-release-it-plugin.git#38b58fc7bf3d3bc2270e5e68208e11a56cef650d",
     "concurrently": "^8.2.0",
     "prettier": "^3.0.3",
     "prettier-plugin-ember-template-tag": "^2.0.2"
