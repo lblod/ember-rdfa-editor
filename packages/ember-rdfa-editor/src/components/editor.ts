@@ -77,7 +77,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       },
     ) => void;
   };
-  @service declare intl : IntlService
+  @service declare intl: IntlService;
 
   private logger: Logger = createLogger(this.constructor.name);
   private prosemirror: SayEditor | null = null;
@@ -136,7 +136,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
           notification.options,
         ));
     let plugins: PluginConfig;
-    const notificationPluginOptions = {notificationCallback: notificationCallback.bind(this), intl: this.intl}
+    const notificationPluginOptions = {
+      notificationCallback: notificationCallback.bind(this),
+      intl: this.intl,
+    };
     if (Array.isArray(this.args.plugins)) {
       plugins = [
         ...this.args.plugins,

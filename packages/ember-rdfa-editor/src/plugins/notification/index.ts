@@ -15,18 +15,18 @@ export interface Notification {
 export const notificationPluginKey = new PluginKey('NOTIFICATION');
 
 interface notificationOptions {
-  notificationCallback: (notification: Notification) => void,
-  intl: IntlService
+  notificationCallback: (notification: Notification) => void;
+  intl: IntlService;
 }
 
-export const notificationPlugin = (options : notificationOptions) =>
+export const notificationPlugin = (options: notificationOptions) =>
   new Plugin({
     key: notificationPluginKey,
     state: {
       init() {
         return {
           notificationCallback: options.notificationCallback,
-          intl: options.intl
+          intl: options.intl,
         };
       },
       apply(tr, state) {
