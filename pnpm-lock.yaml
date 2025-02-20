@@ -149,7 +149,7 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       prosemirror-history:
-        specifier: ^1.4.0
+        specifier: 1.4.1
         version: 1.4.1
       prosemirror-inputrules:
         specifier: ^1.4.0
