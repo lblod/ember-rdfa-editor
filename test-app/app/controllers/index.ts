@@ -151,7 +151,6 @@ export default class IndexController extends Controller {
     emberApplication({ application: unwrap(getOwner(this)) }),
     checkPasteSize({
       pasteLimit: 100000,
-      onLimitReached: () => console.error('You cannot paste more than 100kb'),
     }),
   ];
 
