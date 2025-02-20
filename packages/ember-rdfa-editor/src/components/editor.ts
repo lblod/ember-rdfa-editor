@@ -17,6 +17,7 @@ import { deprecate } from '@ember/debug';
 import { notificationPlugin } from '#root/plugins/notification/index.ts';
 import { inject as service } from '@ember/service';
 import type { Notification } from '#root/plugins/notification/index.ts';
+import type IntlService from 'ember-intl/services/intl';
 
 export interface RdfaEditorArgs {
   /**
@@ -76,6 +77,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       },
     ) => void;
   };
+  @service declare intl : IntlService
 
   private logger: Logger = createLogger(this.constructor.name);
   private prosemirror: SayEditor | null = null;
@@ -134,21 +136,22 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
           notification.options,
         ));
     let plugins: PluginConfig;
+    const notificationPluginOptions = {notificationCallback: notificationCallback.bind(this), intl: this.intl}
     if (Array.isArray(this.args.plugins)) {
       plugins = [
         ...this.args.plugins,
-        notificationPlugin(notificationCallback.bind(this)),
+        notificationPlugin(notificationPluginOptions),
       ];
     } else if (this.args.plugins) {
       plugins = {
         plugins: [
           ...this.args.plugins.plugins,
-          notificationPlugin(notificationCallback.bind(this)),
+          notificationPlugin(notificationPluginOptions),
         ],
         override: this.args.plugins.override,
       };
     } else {
-      plugins = [notificationPlugin(notificationCallback.bind(this))];
+      plugins = [notificationPlugin(notificationPluginOptions)];
     }
 
     this.prosemirror = new SayEditor({

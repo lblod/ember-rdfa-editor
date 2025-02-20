@@ -29,8 +29,9 @@ export function checkPasteSize({
             onLimitReached();
           } else {
             // Show a notification via the notification plugin
-            notificationPluginKey.getState(view.state).notificationCallback({
-              title: 'Paste size limit reached',
+            const {notificationCallback, intl} = notificationPluginKey.getState(view.state)
+            notificationCallback({
+              title: intl.t('ember-rdfa-editor.notifications.paste-size-limit-reached'),
               options: {
                 type: 'error',
               },

@@ -96,3 +96,5 @@ ember-rdfa-editor:
     modal:
       title: Edit HTML
   text-styles: Text styles
+  notifications:
+    paste-size-limit-reached: Paste size limit reached, try again with a smaller image
