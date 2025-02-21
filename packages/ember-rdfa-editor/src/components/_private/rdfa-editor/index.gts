@@ -30,6 +30,7 @@ export default class RdfaEditor extends Component<Args> {
 
   toggleSection = () => {
     this.expanded = !this.expanded;
+    this.args.onToggle?.(this.expanded);
   };
 
   get isResourceNode() {
