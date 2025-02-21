@@ -149,7 +149,7 @@ export default class AttributeEditor extends Component<Signature> {
               {{/if}}
               <AuButton
                 @skin="naked"
-                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon }}
+                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
                 {{on "click" this.toggleSection}}
               />
             </AuButtonGroup>
