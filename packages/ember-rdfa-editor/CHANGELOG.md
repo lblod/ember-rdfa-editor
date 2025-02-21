@@ -1,5 +1,42 @@
 # @lblod/ember-rdfa-editor
 
+## 11.1.0
+
+### Minor Changes
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`e627cfa`](https://github.com/lblod/ember-rdfa-editor/commit/e627cfadd10ad5b50d2d1363f31288f60921d38d) Thanks [@elpoelma](https://github.com/elpoelma)! - `collapsible` component: add option to manually control toggled state through arguments:
+
+  - `expanded` (optional, default: `false`)
+  - `onToggle` (optional)
+
+  The `expandedInitally` argument has been marked as deprecated, and should be replaced by the `expanded` argument
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`8fabad2`](https://github.com/lblod/ember-rdfa-editor/commit/8fabad240e7c4a4895f1b1a00141ebe2ff479f5a) Thanks [@elpoelma](https://github.com/elpoelma)! - `AttributeEditor` component, add arguments to control `expanded` state:
+
+  - `onToggle` (optional)
+  - `expanded` (optional, default: `true`)
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`5de517b`](https://github.com/lblod/ember-rdfa-editor/commit/5de517b6255dc9bae7499e649944feb25b29b609) Thanks [@elpoelma](https://github.com/elpoelma)! - `DebugInfo` component, add arguments to control `expanded` state:
+
+  - `onToggle` (optional)
+  - `expanded` (optional, default: `true`)
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`d8f6a2d`](https://github.com/lblod/ember-rdfa-editor/commit/d8f6a2d08304195da4d415078c4ad64779f547e5) Thanks [@elpoelma](https://github.com/elpoelma)! - `RdfaEditor` component, add arguments to control `expanded` state:
+  - `onToggle` (optional)
+  - `expanded` (optional, default: `true`)
+
+### Patch Changes
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`d26281b`](https://github.com/lblod/ember-rdfa-editor/commit/d26281b60b290ff2111a6aa6514bd3d10df23e88) Thanks [@elpoelma](https://github.com/elpoelma)! - Convert `DebugInfo` to `gts` format
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`1db1e04`](https://github.com/lblod/ember-rdfa-editor/commit/1db1e04e8a4a71cd2e515271e560ddb92f55e10d) Thanks [@elpoelma](https://github.com/elpoelma)! - Convert `collapsible` component to `gts` format
+
+- [#1261](https://github.com/lblod/ember-rdfa-editor/pull/1261) [`67395f6`](https://github.com/lblod/ember-rdfa-editor/commit/67395f631ca3a74097e5b9867e079522b31c0fb7) Thanks [@elpoelma](https://github.com/elpoelma)! - Pin `prosemirror-history` version to 1.4.1
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`1db1e04`](https://github.com/lblod/ember-rdfa-editor/commit/1db1e04e8a4a71cd2e515271e560ddb92f55e10d) Thanks [@elpoelma](https://github.com/elpoelma)! - Convert `sidebar` component to `gts` format
+
+- [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`30615b5`](https://github.com/lblod/ember-rdfa-editor/commit/30615b529b77d0049ebc4c44dcedcc260c1eccf8) Thanks [@elpoelma](https://github.com/elpoelma)! - Convert `AttributeEditor` component to `gts` format
+
 ## 11.0.0
 
 ### Major Changes
