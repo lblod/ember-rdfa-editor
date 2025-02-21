@@ -1,5 +1,5 @@
 {{! @glint-nocheck: not typesafe yet }}
-<DummyContainer>
+<DummyContainer {{this.loadConfig}}>
   <:header>
     <DebugTools @controller={{this.rdfaEditor}} />
   </:header>
@@ -19,7 +19,11 @@
         />
       </:default>
       <:aside>
-        <SampleEmberNodes::SidebarInsert @controller={{this.rdfaEditor}} />
+        <SampleEmberNodes::Sidebar
+          @expanded={{this.sidebarExpanded}}
+          @onToggle={{this.onSidebarToggle}}
+          @controller={{this.rdfaEditor}}
+        />
       </:aside>
     </EditorContainer>
   </:content>
