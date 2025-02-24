@@ -157,14 +157,14 @@ export default class SayEditor {
       domParser: this.parser,
       transformPastedHTML: (html, editorView) => {
         const htmlCleaner = new HTMLInputParser();
-        const cleanedDocument = htmlCleaner.prepareHTML(html, true);
+        const cleanedHTMLNode = htmlCleaner.prepareHTML(html, true);
 
         preprocessRDFa(
-          cleanedDocument.body,
+          cleanedHTMLNode,
           editorView ? getPathFromRoot(editorView.dom, false) : [],
         );
 
-        return cleanedDocument.body.innerHTML;
+        return cleanedHTMLNode.innerHTML;
       },
       clipboardSerializer: this.serializer,
     });

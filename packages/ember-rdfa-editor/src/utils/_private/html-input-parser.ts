@@ -275,25 +275,25 @@ export default class HTMLInputParser {
    * @method prepareHTML
    *
    * @param htmlString {string}
-   * @param asHTMLElement {boolean}
+   * @param asHTMLNode {boolean}
    * @param doNotClean {boolean} - optionally prevent cleaning input (just sanitize it). This should
    * only be used with html that the editor understands directly, e.g. saved editor contents.
    */
   prepareHTML(
     htmlString: string,
-    asHTMLDocument?: false,
+    asHTMLNode?: false,
     doNotClean?: boolean,
   ): string;
   prepareHTML(
     htmlString: string,
-    asHTMLDocument: true,
+    asHTMLNode: true,
     doNotClean?: boolean,
-  ): Document;
+  ): HTMLElement;
   prepareHTML(
     htmlString: string,
-    asHTMLDocument?: boolean,
+    asHTMLNode?: boolean,
     doNotClean?: boolean,
-  ): string | Document {
+  ): string | HTMLElement {
     const parser = new DOMParser();
 
     const doc = parser.parseFromString(
@@ -309,11 +309,11 @@ export default class HTMLInputParser {
     }
     const sanitized = this.sanitizeHTML({ element: bodyElement });
 
-    if (asHTMLDocument) {
-      return sanitized as Document;
+    if (asHTMLNode) {
+      return sanitized;
     }
 
-    return (sanitized as HTMLElement).innerHTML;
+    return sanitized.innerHTML;
   }
 
   /**
@@ -323,14 +323,14 @@ export default class HTMLInputParser {
    * @method sanitizeHTML
    * @param element {HTMLElement}
    */
-  private sanitizeHTML({ element }: { element: HTMLElement }): Node {
+  private sanitizeHTML({ element }: { element: HTMLElement }): HTMLElement {
     return DOMPurify.sanitize(element.outerHTML, {
       ALLOWED_TAGS: this.safeTags,
       ALLOWED_ATTR: this.safeAttributes,
       ADD_URI_SAFE_ATTR: this.uriSafeAttributes,
       IN_PLACE: true,
       RETURN_DOM: true,
-    });
+    }) as HTMLElement;
   }
 
   private preCleanHtml(html: string): string {
