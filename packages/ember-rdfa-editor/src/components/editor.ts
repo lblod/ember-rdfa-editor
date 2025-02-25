@@ -16,7 +16,10 @@ import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
 import { notificationPlugin } from '#root/plugins/notification/index.ts';
 import { inject as service } from '@ember/service';
-import type { Notification } from '#root/plugins/notification/index.ts';
+import type {
+  Notification,
+  NotificationOptions,
+} from '#root/plugins/notification/index.ts';
 import type IntlService from 'ember-intl/services/intl';
 
 export interface RdfaEditorArgs {
@@ -66,15 +69,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
     notify: (
       message: string | undefined,
       title: string | undefined,
-      options: {
-        type?: 'info' | 'success' | 'warning' | 'error'; // Default depends on the used display method
-        // Default depends on the used display method
-        icon?: string; // Any valid Appuniversum icon name, default depends on the used display method
-        // Any valid Appuniversum icon name, default depends on the used display method
-        timeOut?: number; // delay in milliseconds after which the toast auto-closes
-        // delay in milliseconds after which the toast auto-closes
-        closable?: boolean; // Can the toast be closed by users, defaults to `true`
-      },
+      options: NotificationOptions,
     ) => void;
   };
   @service declare intl: IntlService;
