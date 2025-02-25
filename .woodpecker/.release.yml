@@ -7,19 +7,32 @@ steps:
       - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
   release-next:
-    image: plugins/npm
-    settings:
-      token:
-        from_secret: npm_access_token
-      tag: next
+    image: node:22-slim
+    commands:
+      - npm config set ignore-scripts true
+      - cat .npmrc
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
+      - pnpm i --frozen-lockfile
+      - pnpm build
+      - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
+    secrets: [npm_access_token]
     when:
       ref:
         include: refs/tags/*-next.*
   release:
-    image: plugins/npm
-    settings:
-      token:
-        from_secret: npm_access_token
+    image: node:22-slim
+    commands:
+      - npm config set ignore-scripts true
+      - cat .npmrc
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
+      - pnpm i --frozen-lockfile
+      - pnpm build
+      - pnpm publish packages/ember-rdfa-editor --access public --tag latest --no-git-checks
+    secrets: [npm_access_token]
     when:
       ref:
         exclude: refs/tags/*-*

@@ -71,9 +71,34 @@ import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading'
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import applyDevTools from 'prosemirror-dev-tools';
+import { modifier } from 'ember-modifier';
+
+const DEFAULT_SIDEBAR_EXPANDED = true;
+const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
 
 export default class IndexController extends Controller {
+  @tracked sidebarExpanded: boolean = DEFAULT_SIDEBAR_EXPANDED;
+
+  loadConfig = modifier(() => {
+    const sidebarExpandedStr = localStorage.getItem(
+      SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY,
+    );
+    if (sidebarExpandedStr) {
+      this.sidebarExpanded = JSON.parse(sidebarExpandedStr) as boolean;
+    }
+  });
+
+  @action
+  onSidebarToggle(expanded: boolean) {
+    this.sidebarExpanded = expanded;
+    localStorage.setItem(
+      SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY,
+      JSON.stringify(expanded),
+    );
+  }
+
   @tracked rdfaEditor?: SayController;
+
   schema = new Schema({
     nodes: {
       doc: docWithConfig({

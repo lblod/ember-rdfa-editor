@@ -1,6 +1,5 @@
 {
   "name": "test-app",
-  "version": "10.11.3",
   "private": true,
   "description": "Test app for ember-rdfa-editor addon",
   "license": "MIT",
@@ -21,7 +20,7 @@
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
     "start": "ember serve",
-    "test": "concurrently \"pnpm:test:*\" --names \"test:\" --prefixColors auto",
+    "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
     "test:ember": "ember test",
     "e2e:open": "playwright test --ui",
     "e2e:open:docker": "./scripts/e2e.sh test --ui",
