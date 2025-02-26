@@ -19,7 +19,7 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
-    "start": "ember serve",
+    "start": "concurrently 'ember serve' 'pnpm _syncPnpm --watch' --names 'tests serve, tests sync deps'",
     "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
     "test:ember": "ember test",
     "e2e:open": "playwright test --ui",
@@ -28,7 +28,8 @@
     "e2e:run:docker": "./scripts/e2e.sh test",
     "e2e:run:vrt": "./scripts/e2e.sh test --grep @vrt",
     "e2e:run:vrt:update": "./scripts/e2e.sh test --grep @vrt --update-snapshots",
-    "e2e:show-report": "playwright show-report"
+    "e2e:show-report": "playwright show-report",
+    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^3.7.0",
