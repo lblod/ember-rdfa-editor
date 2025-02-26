@@ -2,6 +2,7 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { notificationPluginKey } from '#root/plugins/notification/index.ts';
 import type IntlService from 'ember-intl/services/intl';
 import type { Notification } from '#root/plugins/notification/index.ts';
+import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 
 export const checkPasteSizeKey = new PluginKey('CHECK_PASTE_SIZE');
 
@@ -42,6 +43,7 @@ export function checkPasteSize({
               ),
               options: {
                 type: 'error',
+                icon: CircleXIcon,
               },
             });
           }
