@@ -149,9 +149,7 @@ export default class IndexController extends Controller {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
-    checkPasteSize({
-      pasteLimit: 100000,
-    }),
+    checkPasteSize({}),
   ];
 
   @tracked nodeViews = (controller: SayController) => {

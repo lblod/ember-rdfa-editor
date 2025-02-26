@@ -1,3 +1,4 @@
+import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import type IntlService from 'ember-intl/services/intl';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
@@ -9,9 +10,7 @@ export interface Notification {
 
 export interface NotificationOptions {
   type?: 'info' | 'success' | 'warning' | 'error'; // Default depends on the used display method
-  icon?: {
-    Element: SVGSVGElement;
-  }; // Any valid Appuniversum icon imported, default doesn't work on embeddable
+  icon?: TemplateOnlyComponent; // Any valid Appuniversum icon imported, default doesn't work on embeddable
   timeOut?: number; // delay in milliseconds after which the toast auto-closes
   closable?: boolean; // Can the toast be closed by users, defaults to `true`
 }
