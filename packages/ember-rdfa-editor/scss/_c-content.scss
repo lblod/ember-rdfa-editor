@@ -1,4 +1,5 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 @use "sass:list";
 /* ==================================
    #SAY CONTENT STYLES
@@ -17,28 +18,28 @@ $say-font-family:
   sans-serif !default;
 $say-h1-font-family: var(--au-font) !default;
 $say-h1-font-weight: var(--au-medium) !default;
-$say-h1-font-size: au.$au-h1 !default;
+$say-h1-font-size: au-settings.$au-h1 !default;
 $say-h2-font-family: var(--au-font) !default;
 $say-h2-font-weight: var(--au-medium) !default;
-$say-h2-font-size: au.$au-h2 !default;
+$say-h2-font-size: au-settings.$au-h2 !default;
 $say-h3-font-family: var(--au-font) !default;
 $say-h3-font-weight: var(--au-medium) !default;
-$say-h3-font-size: au.$au-h3 !default;
+$say-h3-font-size: au-settings.$au-h3 !default;
 $say-h4-font-family: var(--au-font) !default;
 $say-h4-font-weight: var(--au-medium) !default;
-$say-h4-font-size: au.$au-h4 !default;
+$say-h4-font-size: au-settings.$au-h4 !default;
 $say-h5-font-family: var(--au-font) !default;
 $say-h5-font-weight: var(--au-medium) !default;
-$say-h5-font-size: au.$au-h5 !default;
+$say-h5-font-size: au-settings.$au-h5 !default;
 $say-h6-font-family: var(--au-font) !default;
 $say-h6-font-weight: var(--au-medium) !default;
-$say-h6-font-size: au.$au-h6 !default;
+$say-h6-font-size: au-settings.$au-h6 !default;
 $say-base-font-family: var(--au-font) !default;
 $say-base-font-weight: var(--au-regular) !default;
-$say-small-font-size: au.$au-base !default;
+$say-small-font-size: au-settings.$au-base !default;
 $say-smaller-font-size: 1.4rem !default;
 $say-smallest-font-size: 1.2rem !default;
-$say-typography-margin: au.$au-unit-small !default;
+$say-typography-margin: au-settings.$au-unit-small !default;
 $say-editor-private-color: var(--au-gray-900) !default;
 $say-editor-highlight-color: var(--au-gray-100) !default;
 $say-editor-highlight-hover-color: var(--au-gray-200) !default;
@@ -53,7 +54,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   .say-bullet-list,
   .say-ordered-list,
   div {
-    @include au.au-font-size(au.$au-base);
+    @include au-tools.au-font-size(au-settings.$au-base);
     font-family: var(--au-font);
     font-weight: var(--au-regular);
   }
@@ -70,7 +71,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h1,
   .h1 {
     &.say-heading {
-      @include au.au-font-size($say-h1-font-size, 1.1);
+      @include au-tools.au-font-size($say-h1-font-size, 1.1);
       font-family: $say-h1-font-family;
       font-weight: $say-h1-font-weight;
     }
@@ -79,7 +80,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h2,
   .h2 {
     &.say-heading {
-      @include au.au-font-size($say-h2-font-size, 1.3);
+      @include au-tools.au-font-size($say-h2-font-size, 1.3);
       font-family: $say-h2-font-family;
       font-weight: $say-h2-font-weight;
     }
@@ -88,7 +89,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h3,
   .h3 {
     &.say-heading {
-      @include au.au-font-size($say-h3-font-size, 1.3);
+      @include au-tools.au-font-size($say-h3-font-size, 1.3);
       font-family: $say-h3-font-family;
       font-weight: $say-h3-font-weight;
     }
@@ -97,7 +98,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h4,
   .h4 {
     &.say-heading {
-      @include au.au-font-size($say-h4-font-size);
+      @include au-tools.au-font-size($say-h4-font-size);
       font-family: $say-h4-font-family;
       font-weight: $say-h4-font-weight;
     }
@@ -106,7 +107,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h5,
   .h5 {
     &.say-heading {
-      @include au.au-font-size($say-h5-font-size);
+      @include au-tools.au-font-size($say-h5-font-size);
       font-family: $say-h5-font-family;
       font-weight: $say-h5-font-weight;
     }
@@ -115,7 +116,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   h6,
   .h6 {
     &.say-heading {
-      @include au.au-font-size($say-h6-font-size);
+      @include au-tools.au-font-size($say-h6-font-size);
       font-family: $say-h6-font-family;
       font-weight: $say-h6-font-weight;
     }
@@ -124,15 +125,15 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   .say-paragraph,
   .say-list-item {
     &.small {
-      @include au.au-font-size($say-small-font-size);
+      @include au-tools.au-font-size($say-small-font-size);
     }
 
     &.smaller {
-      @include au.au-font-size($say-smaller-font-size, 1.5);
+      @include au-tools.au-font-size($say-smaller-font-size, 1.5);
     }
 
     &.smallest {
-      @include au.au-font-size($say-smallest-font-size, 1.5);
+      @include au-tools.au-font-size($say-smallest-font-size, 1.5);
     }
   }
 
@@ -209,7 +210,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
     &:focus {
       outline: var(--au-outline);
-      outline-offset: au.$au-unit-tiny * 0.5;
+      outline-offset: au-settings.$au-unit-tiny * 0.5;
     }
   }
 
@@ -307,8 +308,8 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
   // Style horizontal rule
   .say-horizontal-rule {
     margin: 0;
-    margin-top: au.$au-unit;
-    margin-bottom: au.$au-unit;
+    margin-top: au-settings.$au-unit;
+    margin-bottom: au-settings.$au-unit;
     border: 0;
     border-bottom: 3px solid var(--au-gray-200);
   }
@@ -341,7 +342,7 @@ $say-editor-highlight-selected-color: var(--au-gray-300) !default;
 
   .data-table .say-table-header,
   .data-table .say-table-cell {
-    @include au.au-font-size(au.$au-base, 1.5);
+    @include au-tools.au-font-size(au-settings.$au-base, 1.5);
   }
 
   .data-table--lined.data-table--tight {

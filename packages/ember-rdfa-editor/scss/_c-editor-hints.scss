@@ -1,4 +1,5 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 /* ==================================
    #SAY EDITOR HINTS
    ================================== */
@@ -12,29 +13,29 @@
   position: relative;
   width: 100%;
 
-  @include au.mq(medium) {
+  @include au-tools.mq(1023px) {
     width: auto;
     max-width: 100%;
   }
 }
 
 .say-editor-hints__list-item {
-  margin-bottom: au.$au-unit-small;
+  margin-bottom: au-settings.$au-unit-small;
 }
 
 .say-editor-hints__insert {
   .au-c-accordion {
-    padding-bottom: au.$au-unit-small;
+    padding-bottom: au-settings.$au-unit-small;
   }
 
-  @include au.mq($until: medium) {
+  @include au-tools.mq($until: 1023px) {
     position: relative;
 
     .au-c-accordion {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      padding-bottom: au.$au-unit-tiny;
+      padding-bottom: au-settings.$au-unit-tiny;
     }
 
     .au-c-accordion .au-c-toolbar {
@@ -42,8 +43,8 @@
       width: auto;
       align-items: center;
       justify-content: center;
-      width: au.$au-unit + au.$au-unit-small;
-      height: au.$au-unit + au.$au-unit-small;
+      width: au-settings.$au-unit + au-settings.$au-unit-small;
+      height: au-settings.$au-unit + au-settings.$au-unit-small;
 
       &:hover {
         background-color: var(--au-white);
@@ -74,14 +75,14 @@
     }
 
     .au-c-accordion__content {
-      padding: au.$au-unit-tiny;
+      padding: au-settings.$au-unit-tiny;
       border-radius: var(--au-radius);
       border: 0.1rem solid var(--au-gray-200);
       background-color: var(--au-white);
       box-shadow:
-        0 1px 3px rgba(au.$au-gray-900, 0.1),
-        0 4px 20px rgba(au.$au-gray-900, 0.035),
-        0 1px 1px rgba(au.$au-gray-900, 0.025);
+        0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+        0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+        0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
     }
   }
 }
