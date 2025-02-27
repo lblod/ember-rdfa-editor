@@ -23,8 +23,8 @@ importers:
         specifier: ^1.2.1
         version: 1.5.2(typescript@5.7.3)
       changesets-release-it-plugin:
-        specifier: git://git@github.com/piemonkey/changesets-release-it-plugin.git#38b58fc7bf3d3bc2270e5e68208e11a56cef650d
-        version: git+https://git@github.com:piemonkey/changesets-release-it-plugin.git#38b58fc7bf3d3bc2270e5e68208e11a56cef650d(@changesets/cli@2.27.12)(release-it@16.3.0(typescript@5.7.3))
+        specifier: 0.2.0
+        version: 0.2.0(@changesets/cli@2.27.12)(release-it@16.3.0(typescript@5.7.3))
       concurrently:
         specifier: ^8.2.0
         version: 8.2.2
@@ -3851,9 +3851,8 @@ packages:
     resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
-  changesets-release-it-plugin@git+https://git@github.com:piemonkey/changesets-release-it-plugin.git#38b58fc7bf3d3bc2270e5e68208e11a56cef650d:
-    resolution: {commit: 38b58fc7bf3d3bc2270e5e68208e11a56cef650d, repo: git@github.com:piemonkey/changesets-release-it-plugin.git, type: git}
-    version: 0.1.2
+  changesets-release-it-plugin@0.2.0:
+    resolution: {integrity: sha512-euCPpmr7vAzZJYbTV9l3CnR6r03gnczOajbjOYT8rZrCAEEmtYnP41pZPY+JsOzLV606O17yVzIEmy/jsebYug==}
     engines: {node: '>=18.0'}
     peerDependencies:
       '@changesets/cli': ^2.26.0
@@ -6693,6 +6692,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
@@ -14192,7 +14192,7 @@ snapshots:
 
   chalk@5.4.1: {}
 
-  changesets-release-it-plugin@git+https://git@github.com:piemonkey/changesets-release-it-plugin.git#38b58fc7bf3d3bc2270e5e68208e11a56cef650d(@changesets/cli@2.27.12)(release-it@16.3.0(typescript@5.7.3)):
+  changesets-release-it-plugin@0.2.0(@changesets/cli@2.27.12)(release-it@16.3.0(typescript@5.7.3)):
     dependencies:
       '@changesets/cli': 2.27.12
       '@manypkg/get-packages': 2.2.2
