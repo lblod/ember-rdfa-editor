@@ -22,7 +22,7 @@
       "allowedVersions": {
         "react": "18",
         "react-dom": "18",
-        "ember-source": "6"
+        "@ember/render-modifiers>ember-source": "6"
       }
     },
     "patchedDependencies": {

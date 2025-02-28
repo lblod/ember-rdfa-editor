@@ -195,7 +195,7 @@ importers:
         version: 1.6.1
     devDependencies:
       '@appuniversum/ember-appuniversum':
-        specifier: ^3.7.0
+        specifier: ^3.8.0
         version: 3.8.0(aa4c30eb1a49e2cc2468bfa975d0d115)
       '@babel/core':
         specifier: ^7.25.2
@@ -351,7 +351,7 @@ importers:
         injected: true
     devDependencies:
       '@appuniversum/ember-appuniversum':
-        specifier: ^3.7.0
+        specifier: ^3.8.0
         version: 3.8.0(aa4c30eb1a49e2cc2468bfa975d0d115)
       '@babel/core':
         specifier: ^7.26.0
@@ -6652,6 +6652,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
