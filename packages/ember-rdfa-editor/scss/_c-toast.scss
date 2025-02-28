@@ -1,21 +1,22 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 /* ==================================
    #TOAST
    ================================== */
 
 .say-toast {
-  @include au.au-font-size(au.$au-tiny, 1.3);
+  @include au-tools.au-font-size(au-settings.$au-tiny, 1.3);
   position: fixed;
   z-index: 3;
   bottom: 0;
   left: 0;
   display: flex;
   align-items: center;
-  padding: au.$au-unit-tiny au.$au-unit-small;
-  color: au.$au-white;
+  padding: au-settings.$au-unit-tiny au-settings.$au-unit-small;
+  color: au-settings.$au-white;
   border-top-right-radius: var(--au-radius);
   background-color: var(--au-gray-800);
-  min-height: au.$au-unit + au.$au-unit-tiny;
+  min-height: au-settings.$au-unit + au-settings.$au-unit-tiny;
 
   &.is-loaded {
     background-color: var(--au-green-500);

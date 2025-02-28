@@ -1,4 +1,5 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 @use "./c-editor.scss" as editor;
 /* ==================================
    #SAY CONTAINER
@@ -25,11 +26,12 @@
 .say-container__aside {
   position: absolute;
   bottom: 0;
-  right: au.$au-unit-small;
+  right: au-settings.$au-unit-small;
   max-width: 380px;
   max-height: calc(100% - 44px);
   overflow: auto;
-  padding: au.$au-unit-small au.$au-unit-small + au.$au-unit-tiny;
+  padding: au-settings.$au-unit-small au-settings.$au-unit-small +
+    au-settings.$au-unit-tiny;
 
   .say-container--toolbar-bottom & {
     top: 0;
@@ -46,25 +48,25 @@
     top: 0;
   }
 
-  @include au.mq(medium) {
+  @include au-tools.mq(1023px) {
     width: editor.$say-editor-sidebar-medium;
     max-width: editor.$say-editor-sidebar-medium;
     min-height: calc(100% - 44px);
 
     .say-container--paper.say-container--sidebar-right & {
-      padding: au.$au-unit;
+      padding: au-settings.$au-unit;
       bottom: auto;
     }
   }
 
-  @include au.mq(1280px) {
+  @include au-tools.mq(1280px) {
     width: calc(
-      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small +
-        au.$au-unit-tiny}
+      #{editor.$say-editor-sidebar-large} - #{au-settings.$au-unit-small +
+        au-settings.$au-unit-tiny}
     );
     max-width: calc(
-      #{editor.$say-editor-sidebar-large} - #{au.$au-unit-small +
-        au.$au-unit-tiny}
+      #{editor.$say-editor-sidebar-large} - #{au-settings.$au-unit-small +
+        au-settings.$au-unit-tiny}
     );
   }
 }
