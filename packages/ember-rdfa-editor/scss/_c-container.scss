@@ -30,7 +30,8 @@
   max-width: 380px;
   max-height: calc(100% - 44px);
   overflow: auto;
-  padding: au-settings.$au-unit-small au-settings.$au-unit-small + au-settings.$au-unit-tiny;
+  padding: au-settings.$au-unit-small au-settings.$au-unit-small +
+    au-settings.$au-unit-tiny;
 
   .say-container--toolbar-bottom & {
     top: 0;
