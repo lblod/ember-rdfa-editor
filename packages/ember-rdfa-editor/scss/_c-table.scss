@@ -1,6 +1,8 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+
 .say-table {
-  @include au.au-font-size(au.$au-h6);
+  @include au-tools.au-font-size(au-settings.$au-h6);
   display: table;
   table-layout: auto;
   position: relative;
@@ -9,7 +11,7 @@
   border: 0.1rem solid var(--au-gray-300);
 
   & + & {
-    margin-top: au.$au-unit;
+    margin-top: au-settings.$au-unit;
   }
 
   thead {
@@ -18,10 +20,10 @@
 
   th.say-table-header,
   td.say-table-cell {
-    @include au.au-font-size(au.$au-base, 1.2);
+    @include au-tools.au-font-size(au-settings.$au-base, 1.2);
     text-align: left;
-    padding: au.$au-unit-small au.$au-unit-small;
-    min-height: au.$au-unit-large;
+    padding: au-settings.$au-unit-small au-settings.$au-unit-small;
+    min-height: au-settings.$au-unit-large;
     position: relative;
     // Fixes Firefox bug - https://bugzilla.mozilla.org/show_bug.cgi?id=688556
     background-clip: padding-box;
@@ -98,8 +100,8 @@ table.ProseMirror-selectednode,
 
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-gap: au.$au-unit-small;
-    margin-bottom: au.$au-unit-small;
+    grid-gap: au-settings.$au-unit-small;
+    margin-bottom: au-settings.$au-unit-small;
 
     button {
       padding: 0;
@@ -119,7 +121,7 @@ table.ProseMirror-selectednode,
     outline: none;
     border: 0;
     color: var(--au-gray-600);
-    padding: au.$au-unit-small;
+    padding: au-settings.$au-unit-small;
 
     &:hover,
     &:focus {
