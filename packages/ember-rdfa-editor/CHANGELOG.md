@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 11.1.1
+
+### Patch Changes
+
+- [#1263](https://github.com/lblod/ember-rdfa-editor/pull/1263) [`c22f424`](https://github.com/lblod/ember-rdfa-editor/commit/c22f42458b921c3bf70d5f744829a35e3746f2c9) Thanks [@elpoelma](https://github.com/elpoelma)! - adjust `HTMLInputParser.prepareHTML` to return `HTMLElement` instead of `Document`
+
 ## 11.1.0
 
 ### Minor Changes
