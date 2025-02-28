@@ -17,7 +17,6 @@ QUnit.assert.deepArrayContains = deepArrayContains;
 setupDom(QUnit.assert);
 setApplication(Application.create(config.APP));
 
-
 const defaultDumpDepth = QUnit.dump.maxDepth;
 
 QUnit.hooks.afterEach(() => {

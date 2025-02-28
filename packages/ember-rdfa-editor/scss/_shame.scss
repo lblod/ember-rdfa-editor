@@ -1,4 +1,5 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 @use "./_c-content.scss" as content;
 /* ==========================================================================
    #SHAME
@@ -66,9 +67,9 @@
 }
 
 .say-card .modal-dialog__header {
-  @include au.au-font-size(au.$au-h6);
+  @include au-tools.au-font-size(au-settings.$au-h6);
   color: var(--au-gray-800);
-  padding: au.$au-unit-small;
+  padding: au-settings.$au-unit-small;
   border-bottom: 0.1rem solid var(--au-gray-200);
 
   * {
@@ -76,7 +77,7 @@
   }
 
   * + * {
-    margin-top: au.$au-unit-small;
+    margin-top: au-settings.$au-unit-small;
   }
 
   .grid {
@@ -85,12 +86,12 @@
 
   .col--2-12.u-align-right {
     margin-top: 0;
-    padding-right: au.$au-unit-tiny;
+    padding-right: au-settings.$au-unit-tiny;
   }
 }
 
 .say-card .modal-dialog__content {
-  padding: au.$au-unit-small;
+  padding: au-settings.$au-unit-small;
 }
 
 .say-card .modal-dialog__content--sectioned {
@@ -106,7 +107,7 @@
 }
 
 .say-card .modal-dialog__footer {
-  padding: au.$au-unit-small;
+  padding: au-settings.$au-unit-small;
 
   button {
     margin-bottom: 0;
@@ -121,7 +122,7 @@
 
 .say-card .link-list.link-list--bordered {
   .link-list__item.link-list__item--sidenotes a {
-    padding: au.$au-unit-small !important;
+    padding: au-settings.$au-unit-small !important;
   }
 
   .link-list__item.link-list__item--sidenotes a:hover {
@@ -129,14 +130,14 @@
   }
 
   .link-list__item__sidenote.uppercase {
-    @include au.au-font-size(content.$say-smallest-font-size, 1.3);
+    @include au-tools.au-font-size(content.$say-smallest-font-size, 1.3);
     color: var(--au-gray-600);
     padding: 0;
   }
 }
 
 .say-card .modal-dialog__link-list {
-  padding: au.$au-unit-small;
+  padding: au-settings.$au-unit-small;
   width: 100%;
   overflow: hidden;
 }
@@ -184,11 +185,11 @@
   }
 
   .au-c-toggle-switch__label {
-    @include au.au-font-size(au.$au-base);
+    @include au-tools.au-font-size(au-settings.$au-base);
   }
 }
 
 // Old webuniversum classes
 .form__row + .form__row {
-  margin-top: au.$au-unit-tiny;
+  margin-top: au-settings.$au-unit-tiny;
 }

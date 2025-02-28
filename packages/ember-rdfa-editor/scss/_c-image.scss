@@ -1,10 +1,12 @@
-@use "@appuniversum/ember-appuniversum/styles" as au;
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+
 .say-image-insert-modal {
   .say-image-insert-preview {
     display: block;
     margin: auto;
-    padding: au.$au-unit-tiny;
-    margin-top: au.$au-unit-small;
+    padding: au-settings.$au-unit-tiny;
+    margin-top: au-settings.$au-unit-small;
     max-width: 300px;
     max-height: 300px;
     border: 0.1rem solid var(--au-gray-200);
