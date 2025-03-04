@@ -103,7 +103,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   if (!rdfaNodeType || !rdfaNodeTypes.includes(rdfaNodeType)) {
     return false;
   }
-  const __rdfaId = node.getAttribute('__rdfaId') ?? uuidv4();
+  const __rdfaId = node.dataset['sayId'] ?? uuidv4();
   let backlinks: IncomingTriple[] = [];
   if (node.dataset['incomingProps']) {
     backlinks = JSON.parse(
@@ -398,6 +398,7 @@ export function renderInvisibleRdfa(
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
+  console.log('SayId: ', rdfaAttrs.__rdfaId);
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
@@ -406,22 +407,25 @@ export function renderRdfaAttrs(
     return contentTriple
       ? {
           about: rdfaAttrs.subject,
+          'data-say-id': rdfaAttrs.__rdfaId,
           property: contentTriple.predicate,
           datatype: contentTriple.object.language.length
             ? null
             : contentTriple.object.datatype.value,
           lang: contentTriple.object.language,
-
           resource: null,
         }
       : {
           about: rdfaAttrs.subject,
+          'data-say-id': rdfaAttrs.__rdfaId,
           resource: null,
         };
   } else {
     const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
-      return {};
+      return {
+        'data-say-id': rdfaAttrs.__rdfaId,
+      };
     }
 
     return {
@@ -432,6 +436,7 @@ export function renderRdfaAttrs(
         : backlinks[0].subject.datatype.value,
       lang: backlinks[0].subject.language,
       'data-literal-node': 'true',
+      'data-say-id': rdfaAttrs.__rdfaId,
     };
   }
 }

@@ -64,7 +64,7 @@ import type {
   OutgoingTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import { testEditor } from 'test-app/tests/helpers/say-editor';
 
@@ -267,5 +267,69 @@ module('rdfa | parsing', function () {
     ];
     assert.deepEqual(valueProps, expectedValueProps, 'valueProps');
     assert.deepEqual(valueBacklinks, expectedValueBacklinks, 'valueBacklinks');
+  });
+
+  test('it should parse rdfa-ids correctly', function (assert): void {
+    const { controller } = testEditor(schema, plugins);
+    const htmlContent = `
+      <div
+        class="say-editable say-block-rdfa"
+        about="http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+        data-say-id="c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+      >
+        <div
+          style="display: none"
+          class="say-hidden"
+          data-rdfa-container="true"
+        >
+          <span property="ext:content" content="test" lang="nl-be"></span>
+        </div>
+        <div data-content-container="true">
+            <p class="say-paragraph"></p>
+        </div>
+      </div>
+      <div
+        class="say-editable say-block-rdfa"
+        data-label="literal"
+        about="http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+        property="ext:toLiteral"
+        lang="nl-be"
+        data-literal-node="true"
+        data-say-id="f6a0b16d-0b7f-4c27-8111-a7ebf12ab103"
+      >
+        <div
+          style="display: none"
+          class="say-hidden"
+          data-rdfa-container="true"
+        >
+        </div>
+        <div data-content-container="true">
+          <p class="say-paragraph">Some content</p>
+        </div>
+      </div>
+    `;
+    console.log('HTML Content: ', htmlContent);
+    controller.initialize(htmlContent);
+    const { doc } = controller.mainEditorState;
+    console.log('Doc: ', doc);
+
+    const resourceNode = findNodesBySubject(
+      doc,
+      'http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7',
+    )[0].value;
+    assert.deepEqual(
+      resourceNode.attrs['__rdfaId'],
+      'c3d0f3a2-1314-4686-aa30-f46fd1f988f7',
+    );
+    const properties = resourceNode.attrs['properties'] as OutgoingTriple[];
+    assert.strictEqual(properties.length, 2);
+    const propertyToLiteralNode = properties.find(
+      (prop) => prop.object.termType === 'LiteralNode',
+    );
+    assert.true(isSome(propertyToLiteralNode));
+    assert.strictEqual(
+      propertyToLiteralNode!.object.value,
+      'f6a0b16d-0b7f-4c27-8111-a7ebf12ab103',
+    );
   });
 });
