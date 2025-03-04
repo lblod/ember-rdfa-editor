@@ -438,6 +438,7 @@ export function renderInvisibleRdfa(
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
+  console.log('SayId: ', rdfaAttrs.__rdfaId);
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
