@@ -317,6 +317,9 @@ importers:
       prettier-plugin-ember-template-tag:
         specifier: ^2.0.4
         version: 2.0.4(prettier@3.5.2)
+      prosemirror-test-builder:
+        specifier: ^1.1.1
+        version: 1.1.1
       rollup:
         specifier: ^4.34.2
         version: 4.34.8
@@ -635,6 +638,9 @@ importers:
       prosemirror-dev-tools:
         specifier: ^4.2.0
         version: 4.2.0(@babel/core@7.26.9)(@babel/template@7.26.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      prosemirror-test-builder:
+        specifier: ^1.1.1
+        version: 1.1.1
       qunit:
         specifier: ^2.23.1
         version: 2.24.1
@@ -6652,7 +6658,6 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
@@ -7963,6 +7968,9 @@ packages:
 
   prosemirror-state@1.4.3:
     resolution: {integrity: sha512-goFKORVbvPuAQaXhpbemJFRKJ2aixr+AZMGiquiqKxaucC6hlpHNZHWgz5R7dS4roHiwq9vDctE//CZ++o0W1Q==}
+
+  prosemirror-test-builder@1.1.1:
+    resolution: {integrity: sha512-DJ1+4TNTE9ZcYN/ozXCaWJVrGA99UttMoVvZuidvAotRg7FaiNtEYxL/vlDwfZDRnzJDXNYhmM3XPv3EweK7yA==}
 
   prosemirror-transform@1.10.2:
     resolution: {integrity: sha512-2iUq0wv2iRoJO/zj5mv8uDUriOHWzXRnOTVgCzSXnktS/2iQRa3UUQwVlkBlYZFtygw6Nh1+X4mGqoYBINn5KQ==}
@@ -19057,6 +19065,12 @@ snapshots:
       prosemirror-model: 1.24.1
       prosemirror-transform: 1.10.2
       prosemirror-view: 1.38.0
+
+  prosemirror-test-builder@1.1.1:
+    dependencies:
+      prosemirror-model: 1.24.1
+      prosemirror-schema-basic: 1.2.3
+      prosemirror-schema-list: 1.5.0
 
   prosemirror-transform@1.10.2:
     dependencies:
