@@ -98,9 +98,13 @@ function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
 }
 
 function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
-  const rdfaNodeType = node.dataset['rdfaNodeType'] as
+  let rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
+  console.log(node.dataset);
+  if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
+    rdfaNodeType = 'literal';
+  }
   if (!rdfaNodeType || !rdfaNodeTypes.includes(rdfaNodeType)) {
     return false;
   }
@@ -449,6 +453,7 @@ export function renderRdfaAttrs(
     if (!backlinks.length) {
       return {
         'data-say-id': rdfaAttrs.__rdfaId,
+        'data-literal-node': 'true',
       };
     }
 
