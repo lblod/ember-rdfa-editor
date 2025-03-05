@@ -340,7 +340,7 @@ module('rdfa | parsing', function () {
   test('it should parse a literal with multiple backlinks correctly', function (assert): void {
     // this is the new part, serializing an extra backlink from a literalNode in
     // the rdfaContainer
-    const hiddenBacklinkHtml = `<span about="http://test/2" property="http://test/testPred" datatype="" lang="" content="value"></span>`;
+    const hiddenBacklinkHtml = `<span data-literal-node="true" data-say-id="d601c3e1-5065-4bb4-bcb0-44e3636669d8" about="http://test/2" property="http://test/testPred" datatype="" lang="" content="value"></span>`;
     const html = `
     <div
       class="say-editable say-block-rdfa"
@@ -388,6 +388,7 @@ module('rdfa | parsing', function () {
       <div data-content-container="true"><p class="say-paragraph"></p></div>
     </div> `;
 
+    console.log('html', html);
     const { controller } = testEditor(schema, plugins);
     controller.initialize(html);
     const actualDoc = controller.mainEditorState.doc;

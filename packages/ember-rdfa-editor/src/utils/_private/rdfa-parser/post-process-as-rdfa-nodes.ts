@@ -149,6 +149,12 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           // blank resource node
           markAsResourceNode(node, unwrap(activeTag.subject), activeTag);
           return;
+        } else if (
+          truthyAttribute(attributes, 'data-literal-node') &&
+          truthyAttribute(attributes, 'data-say-id')
+        ) {
+          markAsLiteralNode(node, activeTag, attributes);
+          return;
         } else if (activeTag.object) {
           // intentionally empty, to preserve structure from algorithm in spec
         }
