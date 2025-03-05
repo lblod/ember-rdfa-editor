@@ -39,6 +39,7 @@ import {
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color';
 import {
+  EditorState,
   inputRules,
   type PluginConfig,
   PNode,
@@ -469,5 +470,18 @@ module('rdfa | parsing', function () {
       expectedDoc.toJSON(),
       'third render should give a stable doc',
     );
+  });
+  test('literal nodes without relationships should stay in the doc across renders', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const initialState = doc(
+      {},
+      block_rdfa({ rdfaNodeType: 'literal' }, paragraph('value')),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
 });
