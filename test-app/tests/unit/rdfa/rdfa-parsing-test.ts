@@ -341,7 +341,7 @@ module('rdfa | parsing', function () {
     // this is the new part, serializing an extra backlink from a literalNode in
     // the rdfaContainer
     const hiddenBacklinkHtml = `<span data-literal-node="true" data-say-id="d601c3e1-5065-4bb4-bcb0-44e3636669d8" about="http://test/2" property="http://test/testPred" datatype="" lang="" content="value"></span>`;
-    const html = `
+    const initialRender = `
     <div
       class="say-editable say-block-rdfa"
       about="http://test/1"
@@ -388,10 +388,10 @@ module('rdfa | parsing', function () {
       <div data-content-container="true"><p class="say-paragraph"></p></div>
     </div> `;
 
-    console.log('html', html);
+    console.log('html', initialRender);
     const { controller } = testEditor(schema, plugins);
-    controller.initialize(html);
-    const actualDoc = controller.mainEditorState.doc;
+    controller.initialize(initialRender);
+    const initialParse = controller.mainEditorState.doc;
     const { doc, block_rdfa, paragraph } = testBuilders;
     const df = new SayDataFactory();
     const expectedDoc = doc(
@@ -449,9 +449,17 @@ module('rdfa | parsing', function () {
     // we need a bit more nesting for the assert
     QUnit.dump.maxDepth = 10;
     assert.propEqual(
-      actualDoc.toJSON(),
+      initialParse.toJSON(),
       expectedDoc.toJSON(),
-      'documents should match',
+      'html should get parsed correctly',
+    );
+    const secondRender = controller.htmlContent;
+    controller.initialize(secondRender);
+    const secondParse = controller.mainEditorState.doc;
+    assert.propEqual(
+      secondParse.toJSON(),
+      expectedDoc.toJSON(),
+      'second render should give a stable doc',
     );
   });
 });

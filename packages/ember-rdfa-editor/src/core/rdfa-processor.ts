@@ -82,7 +82,6 @@ export type FullTriple = {
   object: SayNamedNode | SayLiteral;
 };
 const df = new SayDataFactory();
-datastore()
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
