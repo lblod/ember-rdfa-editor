@@ -14,6 +14,7 @@ import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.
 import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
+  languageOrDataType,
   sayDataFactory,
   type SayTerm,
   type WithoutEquals,
@@ -97,9 +98,13 @@ function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
 }
 
 function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
-  const rdfaNodeType = node.dataset['rdfaNodeType'] as
+  let rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
+  console.log(node.dataset);
+  if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
+    rdfaNodeType = 'literal';
+  }
   if (!rdfaNodeType || !rdfaNodeTypes.includes(rdfaNodeType)) {
     return false;
   }
@@ -382,6 +387,30 @@ export function renderInvisibleRdfa(
     for (const { predicate, subject } of backlinks) {
       propElements.push(incomingTripleSpan(subject.value, predicate));
     }
+  } else if (nodeOrMark.attrs['rdfaNodeType'] === 'literal') {
+    const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
+    if (backlinks.length > 1 && nodeOrMark instanceof PNode) {
+      const literalNodeId = nodeOrMark.attrs['__rdfaId'] as string | null;
+      if (literalNodeId) {
+        const [_first, ...rest] = backlinks;
+
+        for (const { predicate, subject } of rest) {
+          if (subject.termType === 'LiteralNode') {
+            propElements.push(
+              fullLiteralSpan(
+                subject.value,
+                predicate,
+                sayDataFactory.literal(
+                  nodeOrMark.textContent,
+                  languageOrDataType(subject.language, subject.datatype),
+                ),
+                literalNodeId,
+              ),
+            );
+          }
+        }
+      }
+    }
   }
   return [
     tag,
@@ -398,7 +427,6 @@ export function renderInvisibleRdfa(
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
-  console.log('SayId: ', rdfaAttrs.__rdfaId);
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
@@ -425,6 +453,7 @@ export function renderRdfaAttrs(
     if (!backlinks.length) {
       return {
         'data-say-id': rdfaAttrs.__rdfaId,
+        'data-literal-node': 'true',
       };
     }
 

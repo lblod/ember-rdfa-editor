@@ -18,6 +18,7 @@ import {
   ContentLiteralTerm,
   sayDataFactory,
   languageOrDataType,
+  SayDataFactory,
 } from './say-data-factory/index.ts';
 import type { SubAndContentPred } from '#root/utils/_private/datastore/node-map.ts';
 
@@ -80,6 +81,7 @@ export type FullTriple = {
   predicate: string;
   object: SayNamedNode | SayLiteral;
 };
+const df = new SayDataFactory();
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -191,10 +193,32 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       subject,
       predicate,
     };
-    // write info to node
+    const extraBacklinks = [];
+    if (isElement(node)) {
+      const firstChild = node.firstElementChild;
+      if (
+        firstChild &&
+        isElement(firstChild) &&
+        firstChild.dataset['rdfaContainer'] === 'true'
+      ) {
+        for (const child of firstChild.children as Iterable<HTMLElement>) {
+          if (
+            child.dataset['literalNode'] === 'true' &&
+            child.dataset['sayId']
+          ) {
+            const backlink = datastore.getContentNodeMap().get(child);
+            if (backlink) {
+              extraBacklinks.push(backlink);
+            }
+          }
+        }
+      }
+    }
+
     // write info to node
     (node as HTMLElement).dataset['incomingProps'] = JSON.stringify([
       incomingProp,
+      ...extraBacklinks,
     ]);
     (node as HTMLElement).dataset['rdfaNodeType'] = 'literal';
   }
