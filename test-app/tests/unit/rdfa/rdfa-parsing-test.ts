@@ -461,5 +461,13 @@ module('rdfa | parsing', function () {
       expectedDoc.toJSON(),
       'second render should give a stable doc',
     );
+    const thirdRender = controller.htmlContent;
+    controller.initialize(thirdRender);
+    const thirdParse = controller.mainEditorState.doc;
+    assert.propEqual(
+      thirdParse.toJSON(),
+      expectedDoc.toJSON(),
+      'third render should give a stable doc',
+    );
   });
 });
