@@ -475,7 +475,10 @@ module('rdfa | parsing', function () {
     const { doc, block_rdfa, paragraph } = testBuilders;
     const initialState = doc(
       {},
-      block_rdfa({ rdfaNodeType: 'literal' }, paragraph('value')),
+      block_rdfa(
+        { rdfaNodeType: 'literal', __rdfaId: 'test-id' },
+        paragraph('value'),
+      ),
     );
     const state = EditorState.create({ schema, plugins, doc: initialState });
     const { controller } = testEditor(schema, plugins, state);
