@@ -119,6 +119,14 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       jsonToTerm,
     ) as IncomingTriple[];
   }
+
+  let externalTriples: FullTriple[] = [];
+  if (node.dataset['externalTriples']) {
+    externalTriples = JSON.parse(
+      node.dataset['externalTriples'],
+      jsonToTerm,
+    ) as FullTriple[];
+  }
   if (rdfaNodeType === 'literal') {
     return {
       rdfaNodeType: 'literal',
@@ -127,6 +135,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       defaultLanguage: node.dataset['defaultLanguage'] ?? null,
       __rdfaId,
       backlinks,
+      externalTriples,
     };
   } else {
     const subject = node.dataset['subject'];
@@ -141,13 +150,6 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
         node.dataset['outgoingProps'],
         jsonToTerm,
       ) as OutgoingTriple[];
-    }
-    let externalTriples: FullTriple[] = [];
-    if (node.dataset['externalTriples']) {
-      externalTriples = JSON.parse(
-        node.dataset['externalTriples'],
-        jsonToTerm,
-      ) as FullTriple[];
     }
 
     return {
@@ -259,6 +261,7 @@ export interface RdfaAwareAttrs {
   __rdfaId: string;
   rdfaNodeType: (typeof rdfaNodeTypes)[number];
   backlinks: IncomingTriple[];
+  externalTriples?: FullTriple[];
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';

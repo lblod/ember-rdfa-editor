@@ -63,6 +63,7 @@ import {
 import type {
   IncomingTriple,
   OutgoingTriple,
+  FullTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
@@ -591,5 +592,32 @@ module('rdfa | parsing', function () {
     controller.initialize(html);
     const actualDoc = controller.mainEditorState.doc;
     assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
+  });
+  test('externalTriples should parse and stay in the doc across renders in literal nodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://testPred',
+              object: df.literal('value'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
 });
