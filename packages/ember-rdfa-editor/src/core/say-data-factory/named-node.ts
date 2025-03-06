@@ -20,4 +20,11 @@ export class SayNamedNode<Iri extends string = string>
       !!other && other.termType === 'NamedNode' && other.value === this.value
     );
   };
+
+  toJSON(){
+    return {
+      termType: this.termType,
+      value: this.value,
+    }
+  }
 }

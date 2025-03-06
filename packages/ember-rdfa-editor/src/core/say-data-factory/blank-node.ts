@@ -18,4 +18,11 @@ export class SayBlankNode implements RDF.BlankNode {
       !!other && other.termType === 'BlankNode' && other.value === this.value
     );
   };
+
+  toJSON(){
+    return {
+      termType: this.termType,
+      value: this.value,
+    }
+  }
 }

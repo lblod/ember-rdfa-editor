@@ -92,7 +92,7 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
       case 'BlankNode':
         return this.blankNode(original.value);
       case 'Literal': {
-        const { datatype, language } = original as WithoutEquals<SayLiteral>;
+        const { datatype, language } = original as unknown as WithoutEquals<SayLiteral>;
         return this.literal(
           original.value,
           languageOrDataType(language, this.fromTerm(datatype) as SayNamedNode),

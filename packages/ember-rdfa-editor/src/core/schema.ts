@@ -164,6 +164,7 @@ function jsonToTerm(key: string, value: WithoutEquals<SayTerm>) {
     return value;
   }
 }
+
 export function getRdfaAwareDocAttrs(
   node: HTMLElement,
   { hasResourceImports = false } = {},
