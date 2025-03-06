@@ -21,10 +21,10 @@ export class SayNamedNode<Iri extends string = string>
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
-    }
+    };
   }
 }

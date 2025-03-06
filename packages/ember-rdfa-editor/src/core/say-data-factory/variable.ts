@@ -19,10 +19,10 @@ export class SayVariable implements RDF.Variable {
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
-    }
+    };
   }
 }

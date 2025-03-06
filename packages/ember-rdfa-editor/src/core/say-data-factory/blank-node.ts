@@ -19,10 +19,10 @@ export class SayBlankNode implements RDF.BlankNode {
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
-    }
+    };
   }
 }

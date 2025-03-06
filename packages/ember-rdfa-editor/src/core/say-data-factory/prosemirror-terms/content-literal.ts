@@ -42,7 +42,7 @@ export class ContentLiteralTerm {
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
@@ -50,7 +50,7 @@ export class ContentLiteralTerm {
       datatype: {
         termType: this.datatype.termType,
         value: this.datatype.value,
-      }
-    }
+      },
+    };
   }
 }

@@ -47,7 +47,7 @@ export class LiteralNodeTerm {
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
@@ -55,7 +55,7 @@ export class LiteralNodeTerm {
       datatype: {
         termType: this.datatype.termType,
         value: this.datatype.value,
-      }
-    }
+      },
+    };
   }
 }

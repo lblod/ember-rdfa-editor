@@ -47,7 +47,7 @@ export class SayLiteral implements RDF.Literal {
     );
   };
 
-  toJSON(){
+  toJSON() {
     return {
       termType: this.termType,
       value: this.value,
@@ -55,7 +55,7 @@ export class SayLiteral implements RDF.Literal {
       datatype: {
         termType: this.datatype.termType,
         value: this.datatype.value,
-      }
-    }
+      },
+    };
   }
 }
