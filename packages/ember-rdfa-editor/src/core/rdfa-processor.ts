@@ -18,7 +18,6 @@ import {
   ContentLiteralTerm,
   sayDataFactory,
   languageOrDataType,
-  SayDataFactory,
 } from './say-data-factory/index.ts';
 import type { SubAndContentPred } from '#root/utils/_private/datastore/node-map.ts';
 
@@ -81,7 +80,7 @@ export type FullTriple = {
   predicate: string;
   object: SayNamedNode | SayLiteral;
 };
-const df = new SayDataFactory();
+
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.

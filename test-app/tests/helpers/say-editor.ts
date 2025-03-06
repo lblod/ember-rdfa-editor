@@ -41,7 +41,7 @@ export async function renderEditor() {
 export function testEditor(
   schema: Schema,
   plugins: PluginConfig,
-  initialState?: EditorState
+  initialState?: EditorState,
 ): { editor: SayEditor; controller: SayController } {
   const mockOwner: Owner = {
     factoryFor: sinon.fake(),
