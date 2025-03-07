@@ -46,4 +46,16 @@ export class LiteralNodeTerm {
       this.datatype.equals(other.datatype)
     );
   };
+
+  toJSON() {
+    return {
+      termType: this.termType,
+      value: this.value,
+      language: this.language,
+      datatype: {
+        termType: this.datatype.termType,
+        value: this.datatype.value,
+      },
+    };
+  }
 }

@@ -80,6 +80,7 @@ export type FullTriple = {
   predicate: string;
   object: SayNamedNode | SayLiteral;
 };
+
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -158,10 +159,20 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     ) {
       seenExternalSubjects.add(entry.subject.value);
       const ownerElement = node.parentElement?.parentElement?.parentElement;
-      const newTriples = properties.map((prop) => ({
-        subject: { termType: 'NamedNode', value: entry.subject.value },
-        ...prop,
-      }));
+      const newTriples = properties
+      // if the subject of a backlink to a literal node
+      // doesn't belong to a resource node,
+      // it will get interpreted both as a normal backlink (which is what we
+      // want) _and_ as an external triple with the target Id as a string
+      // value, which is what we don't want, so we filter that case here
+        .filter(
+          (prop) =>
+            ownerElement && prop.object.value !== ownerElement.dataset['sayId'],
+        )
+        .map((prop) => ({
+          subject: { termType: 'NamedNode', value: entry.subject.value },
+          ...prop,
+        }));
 
       if (ownerElement) {
         const previousTriples = ownerElement.dataset['externalTriples'];
@@ -191,10 +202,32 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       subject,
       predicate,
     };
-    // write info to node
+    const extraBacklinks = [];
+    if (isElement(node)) {
+      const firstChild = node.firstElementChild;
+      if (
+        firstChild &&
+        isElement(firstChild) &&
+        firstChild.dataset['rdfaContainer'] === 'true'
+      ) {
+        for (const child of firstChild.children as Iterable<HTMLElement>) {
+          if (
+            child.dataset['literalNode'] === 'true' &&
+            child.dataset['sayId']
+          ) {
+            const backlink = datastore.getContentNodeMap().get(child);
+            if (backlink) {
+              extraBacklinks.push(backlink);
+            }
+          }
+        }
+      }
+    }
+
     // write info to node
     (node as HTMLElement).dataset['incomingProps'] = JSON.stringify([
       incomingProp,
+      ...extraBacklinks,
     ]);
     (node as HTMLElement).dataset['rdfaNodeType'] = 'literal';
   }

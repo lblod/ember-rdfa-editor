@@ -295,12 +295,7 @@ export default class RdfaRelationshipEditor extends Component<Args> {
   };
 
   get canAddRelationship() {
-    if (isResourceNode(this.node)) {
-      return true;
-    } else {
-      // Content nodes may only have 1 backlink
-      return !this.backlinks || this.backlinks.length === 0;
-    }
+    return isResourceNode(this.node);
   }
 
   addRelationship = () => {

@@ -41,7 +41,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
     "@changesets/get-release-plan": "^4.0.8",
-    "@glint/core": "^1.2.1",
+    "@glint/core": "1.5.2",
     "@manypkg/get-packages": "^2.2.2",
     "@types/git-url-parse": "^9.0.3",
     "@types/node": "^20.14.9",

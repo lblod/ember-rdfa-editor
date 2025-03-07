@@ -53,6 +53,12 @@ function recreateUuidsOnNode(node: Node, schema: Schema) {
       };
     }
   }
+  if (attrs['__rdfaId']) {
+    attrs = {
+      ...attrs,
+      __rdfaId: uuidv4(),
+    };
+  }
   return schema.node(
     node.type,
     attrs,

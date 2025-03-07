@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '#root/prosemirror-aliases.ts';
-import { isSome, unwrap } from '../utils/_private/option.ts';
+import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
@@ -14,6 +14,7 @@ import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.
 import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
+  languageOrDataType,
   sayDataFactory,
   type SayTerm,
   type WithoutEquals,
@@ -59,6 +60,9 @@ const rdfaAwareAttrSpec = {
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
+  content: { default: null, editable: true },
+  defaultLanguage: { default: null, editable: true },
+  defaultDatatype: { default: null, editable: true },
 };
 
 /** @deprecated `rdfaAttrs` is deprecated, use the `rdfaAttrSpec` function instead */
@@ -97,9 +101,13 @@ function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
 }
 
 function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
-  const rdfaNodeType = node.dataset['rdfaNodeType'] as
+  let rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
+  console.log(node.dataset);
+  if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
+    rdfaNodeType = 'literal';
+  }
   if (!rdfaNodeType || !rdfaNodeTypes.includes(rdfaNodeType)) {
     return false;
   }
@@ -111,11 +119,23 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       jsonToTerm,
     ) as IncomingTriple[];
   }
+
+  let externalTriples: FullTriple[] = [];
+  if (node.dataset['externalTriples']) {
+    externalTriples = JSON.parse(
+      node.dataset['externalTriples'],
+      jsonToTerm,
+    ) as FullTriple[];
+  }
   if (rdfaNodeType === 'literal') {
     return {
       rdfaNodeType: 'literal',
+      content: node.getAttribute('content'),
+      defaultDatatype: node.dataset['defaultDatatype'] ?? null,
+      defaultLanguage: node.dataset['defaultLanguage'] ?? null,
       __rdfaId,
       backlinks,
+      externalTriples,
     };
   } else {
     const subject = node.dataset['subject'];
@@ -130,13 +150,6 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
         node.dataset['outgoingProps'],
         jsonToTerm,
       ) as OutgoingTriple[];
-    }
-    let externalTriples: FullTriple[] = [];
-    if (node.dataset['externalTriples']) {
-      externalTriples = JSON.parse(
-        node.dataset['externalTriples'],
-        jsonToTerm,
-      ) as FullTriple[];
     }
 
     return {
@@ -157,6 +170,7 @@ function jsonToTerm(key: string, value: WithoutEquals<SayTerm>) {
     return value;
   }
 }
+
 export function getRdfaAwareDocAttrs(
   node: HTMLElement,
   { hasResourceImports = false } = {},
@@ -247,9 +261,13 @@ export interface RdfaAwareAttrs {
   __rdfaId: string;
   rdfaNodeType: (typeof rdfaNodeTypes)[number];
   backlinks: IncomingTriple[];
+  externalTriples?: FullTriple[];
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
+  content: string | null;
+  defaultDatatype: string | null;
+  defaultLanguage: string | null;
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
@@ -382,6 +400,31 @@ export function renderInvisibleRdfa(
     for (const { predicate, subject } of backlinks) {
       propElements.push(incomingTripleSpan(subject.value, predicate));
     }
+  } else if (nodeOrMark.attrs['rdfaNodeType'] === 'literal') {
+    const backlinks = nodeOrMark.attrs['backlinks'] as IncomingTriple[];
+    if (backlinks.length > 1 && nodeOrMark instanceof PNode) {
+      const literalNodeId = nodeOrMark.attrs['__rdfaId'] as string | null;
+      if (literalNodeId) {
+        const [_first, ...rest] = backlinks;
+
+        for (const { predicate, subject } of rest) {
+          if (subject.termType === 'LiteralNode') {
+            propElements.push(
+              fullLiteralSpan(
+                subject.value,
+                predicate,
+                sayDataFactory.literal(
+                  (nodeOrMark.attrs['content'] as Option<string>) ??
+                    nodeOrMark.textContent,
+                  languageOrDataType(subject.language, subject.datatype),
+                ),
+                literalNodeId,
+              ),
+            );
+          }
+        }
+      }
+    }
   }
   return [
     tag,
@@ -424,7 +467,11 @@ export function renderRdfaAttrs(
     const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {
+        content: rdfaAttrs.content ?? null,
         'data-say-id': rdfaAttrs.__rdfaId,
+        'data-literal-node': 'true',
+        'data-default-datatype': rdfaAttrs.defaultDatatype,
+        'data-default-language': rdfaAttrs.defaultLanguage,
       };
     }
 
@@ -435,8 +482,11 @@ export function renderRdfaAttrs(
         ? null
         : backlinks[0].subject.datatype.value,
       lang: backlinks[0].subject.language,
+      content: rdfaAttrs.content ?? null,
       'data-literal-node': 'true',
       'data-say-id': rdfaAttrs.__rdfaId,
+      'data-default-datatype': rdfaAttrs.defaultDatatype,
+      'data-default-language': rdfaAttrs.defaultLanguage,
     };
   }
 }
