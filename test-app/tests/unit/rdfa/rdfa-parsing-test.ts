@@ -487,4 +487,28 @@ module('rdfa | parsing', function () {
     const secondState = controller.mainEditorState.doc;
     assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
+  test('literal node with content attribute should be serialized and parsed correctly', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const initialDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          content: 'alternative-value',
+        },
+        paragraph('value'),
+      ),
+    );
+    assert.strictEqual(
+      initialDoc.child(0).attrs['content'],
+      'alternative-value',
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialDoc });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialDoc.toJSON());
+  });
 });

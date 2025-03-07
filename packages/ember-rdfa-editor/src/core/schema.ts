@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '#root/prosemirror-aliases.ts';
-import { isSome, unwrap } from '../utils/_private/option.ts';
+import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
@@ -60,6 +60,7 @@ const rdfaAwareAttrSpec = {
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
   subject: { default: null },
+  content: { default: null, editable: true },
 };
 
 /** @deprecated `rdfaAttrs` is deprecated, use the `rdfaAttrSpec` function instead */
@@ -119,6 +120,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   if (rdfaNodeType === 'literal') {
     return {
       rdfaNodeType: 'literal',
+      content: node.getAttribute('content'),
       __rdfaId,
       backlinks,
     };
@@ -255,6 +257,7 @@ export interface RdfaAwareAttrs {
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
+  content: string | null;
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
@@ -401,7 +404,8 @@ export function renderInvisibleRdfa(
                 subject.value,
                 predicate,
                 sayDataFactory.literal(
-                  nodeOrMark.textContent,
+                  (nodeOrMark.attrs['content'] as Option<string>) ??
+                    nodeOrMark.textContent,
                   languageOrDataType(subject.language, subject.datatype),
                 ),
                 literalNodeId,
@@ -452,6 +456,7 @@ export function renderRdfaAttrs(
     const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
     if (!backlinks.length) {
       return {
+        content: rdfaAttrs.content ?? null,
         'data-say-id': rdfaAttrs.__rdfaId,
         'data-literal-node': 'true',
       };
@@ -464,6 +469,7 @@ export function renderRdfaAttrs(
         ? null
         : backlinks[0].subject.datatype.value,
       lang: backlinks[0].subject.language,
+      content: rdfaAttrs.content ?? null,
       'data-literal-node': 'true',
       'data-say-id': rdfaAttrs.__rdfaId,
     };
