@@ -15,7 +15,8 @@
     "test:ember": "pnpm --filter '*' test:ember",
     "prettier": "prettier --write .",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
-    "tapp": "pnpm --filter test-app"
+    "tapp": "pnpm --filter test-app",
+    "release": "tsx scripts/release/run.mts"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -39,10 +40,21 @@
   "packageManager": "pnpm@10.5.2",
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
+    "@changesets/get-release-plan": "^4.0.8",
     "@glint/core": "1.5.2",
-    "changesets-release-it-plugin": "0.2.0",
+    "@manypkg/get-packages": "^2.2.2",
+    "@types/git-url-parse": "^9.0.3",
+    "@types/node": "^20.14.9",
     "concurrently": "^8.2.0",
+    "execa": "^9.5.2",
+    "git-url-parse": "^16.0.1",
+    "mdast-util-to-string": "^4.0.0",
+    "octokit": "^4.1.2",
     "prettier": "^3.0.3",
-    "prettier-plugin-ember-template-tag": "^2.0.2"
+    "prettier-plugin-ember-template-tag": "^2.0.2",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "tsx": "^4.19.3",
+    "unified": "^11.0.5"
   }
 }
