@@ -63,6 +63,7 @@ import {
 import type {
   IncomingTriple,
   OutgoingTriple,
+  FullTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
@@ -591,5 +592,109 @@ module('rdfa | parsing', function () {
     controller.initialize(html);
     const actualDoc = controller.mainEditorState.doc;
     assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
+  });
+  test('externalTriples should parse and stay in the doc across renders in literal nodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://testPred',
+              object: df.literal('value'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
+  test('externalTriples can link to resourcenodes and literalnodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.literalNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://extraThing',
+              object: df.literal('extraThingValue'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
+
+  test('literalNodes can have backlinks which link to existing and nonexisting resources', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.literalNode('http://test/2'),
+              predicate: 'http://testPred',
+            },
+            {
+              subject: df.literalNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+        },
+        paragraph('value'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          __rdfaId: 'test-resource',
+          properties: [
+            { predicate: 'http://testPred', object: df.literalNode('test-id') },
+          ] satisfies OutgoingTriple[],
+          subject: 'http://test/1',
+        },
+        paragraph(),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
 });
