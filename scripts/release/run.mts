@@ -98,7 +98,7 @@ if (releasePlan.changesets.length === 0) {
   process.exit(1);
 }
 
-const statusResult = await execa({ reject: false, preferLocal: true })`changeset status`;
+const statusResult = await execa({ reject: false, preferLocal: true })`changeset status --verbose`;
 if (statusResult.failed) {
   console.error(statusResult.stderr);
   process.exit(1);
