@@ -20,7 +20,7 @@ steps:
     secrets: [npm_access_token]
     when:
       ref:
-        include: refs/tags/*-next.*
+        include: refs/tags/@lblod/ember-rdfa-editor@*-next.*
   release:
     image: node:22-slim
     commands:
@@ -35,14 +35,14 @@ steps:
     secrets: [npm_access_token]
     when:
       ref:
-        exclude: refs/tags/*-*
+        exclude: refs/tags/@lblod/ember-rdfa-editor@*-*
   push-tagged-build:
     image: plugins/docker
     settings:
       repo: lblod/ember-rdfa-editor
-      tags: "${CI_COMMIT_TAG##v}"
+      tags: "${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}"
       purge: true
     secrets: [ docker_username, docker_password ]
 when:
   event: tag
-  ref: refs/tags/v*
+  ref: refs/tags/@lblod/ember-rdfa-editor@*
