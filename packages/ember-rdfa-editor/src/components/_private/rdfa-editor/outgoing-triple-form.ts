@@ -151,7 +151,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   }
 
   get initialDatatypeValue(): string {
-    console.log('Get datatype');
     if (!this.controller) {
       return '';
     }
@@ -186,7 +185,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   }
 
   get initialLanguageValue(): string {
-    console.log('get initial lang');
     if (!this.controller) {
       return '';
     }
