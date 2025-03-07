@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@embroider/addon-dev@7.1.1':
+  '@embroider/addon-dev@7.1.2':
     hash: 53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8
     path: patches/@embroider__addon-dev.patch
   ember-source@6.1.0:
@@ -243,8 +243,8 @@ importers:
         specifier: ^7.25.6
         version: 7.26.9
       '@embroider/addon-dev':
-        specifier: 7.1.1
-        version: 7.1.1(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.8)
+        specifier: ^7.1.2
+        version: 7.1.2(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.8)
       '@eslint/js':
         specifier: ^9.17.0
         version: 9.21.0
@@ -1717,8 +1717,8 @@ packages:
   '@ember/test-waiters@4.0.0':
     resolution: {integrity: sha512-anqtvTCQvQh8VlHcKPJC0Fxz3aMmc7L+mZLOqvoH7+k86TUikZ/CxhytgMvgLk0x53fqOPEL1uykl2C9Ez65OA==}
 
-  '@embroider/addon-dev@7.1.1':
-    resolution: {integrity: sha512-81xGvfvIULEvZTZIswdF4X2Ag7dRKfiUfIQsQ9s11ScozexVj7gyBsMZ4iIwpPmv9iz7WZdBu+ptyJjOdx+HgA==}
+  '@embroider/addon-dev@7.1.2':
+    resolution: {integrity: sha512-hR1NTjoQ3BR3OGH0Ldl8I6N9YX59e4dFmFapUTi3ZNrKSp0WMIeFTThyGKDmMOzjLZZRAi1VUWAF5qUQ+xbkDA==}
     engines: {node: 12.* || 14.* || >= 16}
     hasBin: true
     peerDependencies:
@@ -10849,7 +10849,7 @@ snapshots:
       - '@glint/template'
       - supports-color
 
-  '@embroider/addon-dev@7.1.1(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.8)':
+  '@embroider/addon-dev@7.1.2(patch_hash=53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8)(@glint/template@1.5.2)(rollup@4.34.8)':
     dependencies:
       '@embroider/core': 3.5.2(@glint/template@1.5.2)
       '@rollup/pluginutils': 4.2.1
