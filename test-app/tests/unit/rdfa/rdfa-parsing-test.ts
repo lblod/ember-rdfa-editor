@@ -620,4 +620,38 @@ module('rdfa | parsing', function () {
     const secondState = controller.mainEditorState.doc;
     assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
+  test('externalTriples can link to resourcenodes and literalnodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.literalNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://extraThing',
+              object: df.literal('extraThingValue'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
 });

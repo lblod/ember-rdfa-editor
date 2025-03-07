@@ -159,10 +159,20 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     ) {
       seenExternalSubjects.add(entry.subject.value);
       const ownerElement = node.parentElement?.parentElement?.parentElement;
-      const newTriples = properties.map((prop) => ({
-        subject: { termType: 'NamedNode', value: entry.subject.value },
-        ...prop,
-      }));
+      const newTriples = properties
+      // if the subject of a backlink to a literal node
+      // doesn't belong to a resource node,
+      // it will get interpreted both as a normal backlink (which is what we
+      // want) _and_ as an external triple with the target Id as a string
+      // value, which is what we don't want, so we filter that case here
+        .filter(
+          (prop) =>
+            ownerElement && prop.object.value !== ownerElement.dataset['sayId'],
+        )
+        .map((prop) => ({
+          subject: { termType: 'NamedNode', value: entry.subject.value },
+          ...prop,
+        }));
 
       if (ownerElement) {
         const previousTriples = ownerElement.dataset['externalTriples'];
