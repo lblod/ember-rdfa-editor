@@ -98,7 +98,7 @@ if (releasePlan.changesets.length === 0) {
   process.exit(1);
 }
 
-const statusResult = await execa({ reject: false })`pnpm changeset status`;
+const statusResult = await execa({ reject: false, preferLocal: true })`changeset status`;
 if (statusResult.failed) {
   console.error(statusResult.stderr);
   process.exit(1);
@@ -106,7 +106,7 @@ if (statusResult.failed) {
 
 console.log(`${statusResult.stdout}\n`);
 
-const versionResult = await execa({ reject: false })`pnpm changeset version`;
+const versionResult = await execa({ reject: false, preferLocal: true })`changeset version`;
 if (versionResult.failed) {
   console.error(versionResult.stderr);
   process.exit(1);
@@ -145,7 +145,7 @@ if (!shouldTag) {
   process.exit(0);
 }
 
-const tagResult = await execa({ reject: false })`pnpm changeset tag`;
+const tagResult = await execa({ reject: false, preferLocal: true })`changeset tag`;
 
 if (tagResult.failed) {
   console.error(tagResult.stderr);
