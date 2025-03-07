@@ -160,11 +160,11 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       seenExternalSubjects.add(entry.subject.value);
       const ownerElement = node.parentElement?.parentElement?.parentElement;
       const newTriples = properties
-      // if the subject of a backlink to a literal node
-      // doesn't belong to a resource node,
-      // it will get interpreted both as a normal backlink (which is what we
-      // want) _and_ as an external triple with the target Id as a string
-      // value, which is what we don't want, so we filter that case here
+        // if the subject of a backlink to a literal node
+        // doesn't belong to a resource node,
+        // it will get interpreted both as a normal backlink (which is what we
+        // want) _and_ as an external triple with the target Id as a string
+        // value, which is what we don't want, so we filter that case here
         .filter(
           (prop) =>
             ownerElement && prop.object.value !== ownerElement.dataset['sayId'],
@@ -242,10 +242,7 @@ function quadToProperties(
   // check if quad refers to a contentNode
   if (quad.object.termType === 'Literal') {
     const contentNodes = datastore.getContentNodeMap().getValues({
-      subject: sayDataFactory.literalNode(
-        quad.subject.value,
-        languageOrDataType(quad.object.language, quad.object.datatype),
-      ),
+      subject: sayDataFactory.literalNode(quad.subject.value),
       predicate: quad.predicate.value,
     });
     if (contentNodes) {
@@ -256,13 +253,9 @@ function quadToProperties(
             'unexpected quad object type for quad referring to literal node',
           );
         }
-        const { datatype, language } = quad.object;
         result.push({
           predicate: quad.predicate.value,
-          object: sayDataFactory.literalNode(
-            contentId,
-            languageOrDataType(language, datatype),
-          ),
+          object: sayDataFactory.literalNode(contentId),
         });
       }
       return result;

@@ -320,7 +320,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
         case 'LiteralNode': {
           const {
             predicate,
-            object: { value, language, datatype },
+            object: { value },
           } = literalNodeSchema.validateSync(
             {
               predicate: formData.get('predicate')?.toString(),
@@ -344,10 +344,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
               predicate,
               object: sayDataFactory.literalNode(
                 value,
-                languageOrDataType(
-                  language,
-                  sayDataFactory.namedNode(datatype.value),
-                ),
               ),
             },
             subject: this.subject,

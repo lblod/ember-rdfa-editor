@@ -3,10 +3,7 @@ import type {
   IncomingTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
-import {
-  languageOrDataType,
-  sayDataFactory,
-} from '#root/core/say-data-factory/index.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
@@ -78,10 +75,7 @@ export function addProperty({
         let newBacklink: IncomingTriple;
         if (object.termType === 'LiteralNode') {
           newBacklink = {
-            subject: sayDataFactory.literalNode(
-              resource,
-              languageOrDataType(object.language, object.datatype),
-            ),
+            subject: sayDataFactory.literalNode(resource),
             predicate: property.predicate,
           };
           const target = getNodeByRdfaId(state, object.value);

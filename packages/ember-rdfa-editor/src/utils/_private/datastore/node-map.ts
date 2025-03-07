@@ -27,11 +27,8 @@ export function rdfaContentNodeMap<N>(
   init?: Iterable<[N, IncomingLiteralNodeTriple]>,
 ): RdfaContentNodeMap<N> {
   return TwoWayMap.withValueStringHashing<N, IncomingLiteralNodeTriple>({
-    valueHasher: ({
-      subject: { termType, value, language, datatype },
-      predicate,
-    }) => {
-      return `${termType}-${value}-${language}-${datatype.value}-${predicate}`;
+    valueHasher: ({ subject: { termType, value }, predicate }) => {
+      return `${termType}-${value}-${predicate}`;
     },
     init,
   });

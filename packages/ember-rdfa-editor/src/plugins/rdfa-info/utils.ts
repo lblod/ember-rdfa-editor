@@ -7,10 +7,7 @@ import type {
   LinkTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
-import {
-  languageOrDataType,
-  sayDataFactory,
-} from '#root/core/say-data-factory/index.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { v4 as uuidv4 } from 'uuid';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -253,13 +250,7 @@ export function getRdfaChildren(node: PNode) {
           }
           result.add({
             predicate: backlinks[0].predicate,
-            object: sayDataFactory.literalNode(
-              id,
-              languageOrDataType(
-                incomingTriple.subject.language,
-                incomingTriple.subject.datatype,
-              ),
-            ),
+            object: sayDataFactory.literalNode(id),
           });
         }
       }
@@ -316,11 +307,7 @@ export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
       }
       case 'LiteralNode': {
         if (b.object.termType === 'LiteralNode') {
-          return (
-            a.object.value === b.object.value &&
-            a.object.datatype.value === b.object.datatype.value &&
-            a.object.language === b.object.language
-          );
+          return a.object.value === b.object.value;
         }
         break;
       }
@@ -349,11 +336,7 @@ export function deepEqualBacklink(a: IncomingTriple, b: IncomingTriple) {
       }
       case 'LiteralNode': {
         if (b.subject.termType === 'LiteralNode') {
-          return (
-            a.subject.value === b.subject.value &&
-            a.subject.datatype.value === b.subject.datatype.value &&
-            a.subject.language === b.subject.language
-          );
+          return a.subject.value === b.subject.value;
         }
         break;
       }
@@ -410,10 +393,7 @@ export function addPropertyToNode({
       let newBacklink: IncomingTriple;
       if (object.termType === 'LiteralNode') {
         newBacklink = {
-          subject: sayDataFactory.literalNode(
-            resource,
-            languageOrDataType(object.language, object.datatype),
-          ),
+          subject: sayDataFactory.literalNode(resource),
           predicate: property.predicate,
         };
         const target = getNodeByRdfaId(state, object.value);
