@@ -309,7 +309,7 @@ function quadToBacklink(quad: Quad): IncomingTriple {
 }
 
 function ensureId(element: HTMLElement): string {
-  const rdfaId = element.getAttribute('__rdfaId') || uuidv4();
-  element.setAttribute('__rdfaId', rdfaId);
+  const rdfaId = element.dataset['sayId'] || uuidv4();
+  element.dataset['sayId'] = rdfaId;
   return rdfaId;
 }
