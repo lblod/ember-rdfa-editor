@@ -511,4 +511,85 @@ module('rdfa | parsing', function () {
     const secondState = controller.mainEditorState.doc;
     assert.propEqual(secondState.toJSON(), initialDoc.toJSON());
   });
+  test('datatype of literal-nodes should be correctly parsed', function (assert) {
+    // we need a bit more nesting for the assert
+    QUnit.dump.maxDepth = 10;
+    const html = `
+      <div
+        class="say-editable say-block-rdfa"
+        about="http://test/1"
+        data-say-id="2e4e9e27-6c0d-4653-8072-edae732f36a1"
+      >
+        <div
+            style="display: none"
+            class="say-hidden"
+            data-rdfa-container="true"
+        ></div>
+        <div data-content-container="true">
+            <div
+                class="say-editable say-block-rdfa"
+                about="http://test/1"
+                property="http://test/testPred"
+                datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+                lang=""
+                data-literal-node="true"
+                data-say-id="67c9959e-c15b-4a16-be65-e90c2256eed0"
+            >
+                <div
+                    style="display: none"
+                    class="say-hidden"
+                    data-rdfa-container="true"
+                ></div>
+                <div data-content-container="true">
+                    <p class="say-paragraph">content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const expectedDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/1',
+          __rdfaId: '2e4e9e27-6c0d-4653-8072-edae732f36a1',
+          properties: [
+            {
+              predicate: 'http://test/testPred',
+              object: df.literalNode(
+                '67c9959e-c15b-4a16-be65-e90c2256eed0',
+                df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+              ),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        block_rdfa(
+          {
+            rdfaNodeType: 'literal',
+            __rdfaId: '67c9959e-c15b-4a16-be65-e90c2256eed0',
+            backlinks: [
+              {
+                subject: df.literalNode(
+                  'http://test/1',
+                  df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+                ),
+                predicate: 'http://test/testPred',
+                // it may seem weird these are literalnode relationships, but
+                // it's because they need to store datatype and language
+              },
+            ] satisfies IncomingTriple[],
+          },
+          paragraph('content'),
+        ),
+      ),
+    );
+    const { controller } = testEditor(schema, plugins);
+    controller.initialize(html);
+    const actualDoc = controller.mainEditorState.doc;
+    assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
+  });
 });

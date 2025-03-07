@@ -61,6 +61,8 @@ const rdfaAwareAttrSpec = {
   rdfaNodeType: { default: undefined },
   subject: { default: null },
   content: { default: null, editable: true },
+  defaultLanguage: { default: null, editable: true },
+  defaultDatatype: { default: null, editable: true },
 };
 
 /** @deprecated `rdfaAttrs` is deprecated, use the `rdfaAttrSpec` function instead */
@@ -121,6 +123,8 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     return {
       rdfaNodeType: 'literal',
       content: node.getAttribute('content'),
+      defaultDatatype: node.dataset['defaultDatatype'] ?? null,
+      defaultLanguage: node.dataset['defaultLanguage'] ?? null,
       __rdfaId,
       backlinks,
     };
@@ -164,6 +168,7 @@ function jsonToTerm(key: string, value: WithoutEquals<SayTerm>) {
     return value;
   }
 }
+
 export function getRdfaAwareDocAttrs(
   node: HTMLElement,
   { hasResourceImports = false } = {},
@@ -258,6 +263,8 @@ export interface RdfaAwareAttrs {
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
   content: string | null;
+  defaultDatatype: string | null;
+  defaultLanguage: string | null;
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
@@ -459,6 +466,8 @@ export function renderRdfaAttrs(
         content: rdfaAttrs.content ?? null,
         'data-say-id': rdfaAttrs.__rdfaId,
         'data-literal-node': 'true',
+        'data-default-datatype': rdfaAttrs.defaultDatatype,
+        'data-default-language': rdfaAttrs.defaultLanguage,
       };
     }
 
@@ -472,6 +481,8 @@ export function renderRdfaAttrs(
       content: rdfaAttrs.content ?? null,
       'data-literal-node': 'true',
       'data-say-id': rdfaAttrs.__rdfaId,
+      'data-default-datatype': rdfaAttrs.defaultDatatype,
+      'data-default-language': rdfaAttrs.defaultLanguage,
     };
   }
 }
