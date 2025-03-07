@@ -654,4 +654,47 @@ module('rdfa | parsing', function () {
     const secondState = controller.mainEditorState.doc;
     assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
+
+  test('literalNodes can have backlinks which link to existing and nonexisting resources', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.literalNode('http://test/2'),
+              predicate: 'http://testPred',
+            },
+            {
+              subject: df.literalNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+        },
+        paragraph('value'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          __rdfaId: 'test-resource',
+          properties: [
+            { predicate: 'http://testPred', object: df.literalNode('test-id') },
+          ] satisfies OutgoingTriple[],
+          subject: 'http://test/1',
+        },
+        paragraph(),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
 });
