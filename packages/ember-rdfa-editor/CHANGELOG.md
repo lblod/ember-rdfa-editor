@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 11.3.0
+
+### Minor Changes
+
+- [#1267](https://github.com/lblod/ember-rdfa-editor/pull/1267) [`e743745`](https://github.com/lblod/ember-rdfa-editor/commit/e743745248e3d16c2ff0113bad3918e974f2d78a) Thanks [@elpoelma](https://github.com/elpoelma)! - Add support for parsing and serializing data-say-id attributes (\_\_rdfaId)
+
 ## 11.2.0
 
 ### Minor Changes
