@@ -327,12 +327,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
               object: {
                 termType: 'LiteralNode',
                 value: this.selectedLiteralNode,
-                datatype: {
-                  termType: 'NamedNode',
-                  value:
-                    formData.get('object.datatype.value')?.toString() || '',
-                },
-                language: formData.get('object.language')?.toString(),
               },
             },
             { abortEarly: false },

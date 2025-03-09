@@ -13,8 +13,6 @@ export const literalTermSchema = object({
 export const literalNodeTermSchema = object({
   termType: string().oneOf(['LiteralNode']).required(),
   value: string().required(),
-  datatype: datatypeSchema,
-  language: string().default(''),
 });
 export const resourceNodeTermSchema = object({
   termType: string<'ResourceNode'>().required(),
