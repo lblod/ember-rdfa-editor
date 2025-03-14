@@ -13,6 +13,7 @@ import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.
 import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
+  languageOrDataType,
   sayDataFactory,
   SayNamedNode,
   type SayTerm,
@@ -25,6 +26,7 @@ import {
   namedNodeSpan,
 } from './schema/_private/render-rdfa-attrs.ts';
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
+import type { NamedNode } from '@rdfjs/types';
 
 // const logger = createLogger('core/schema');
 
@@ -60,7 +62,7 @@ const rdfaAwareAttrSpec = {
   rdfaNodeType: { default: undefined },
   subject: { default: null },
   content: { default: null, editable: true },
-  datatype: { default: null, editable: true },
+  datatype: { default: null },
   language: { default: null, editable: true },
 };
 
@@ -420,6 +422,10 @@ export function renderInvisibleRdfa(
               sayDataFactory.literal(
                 (nodeOrMark.attrs['content'] as Option<string>) ??
                   nodeOrMark.textContent,
+                languageOrDataType(
+                  nodeOrMark.attrs['lang'] as Option<string>,
+                  nodeOrMark.attrs['datatype'] as Option<NamedNode>,
+                ),
               ),
               literalNodeId,
             ),
