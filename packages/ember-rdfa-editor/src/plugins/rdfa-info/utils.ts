@@ -539,7 +539,7 @@ export function removePropertyFromNode(
 
 export type UpdateSubjectArgs = {
   pos: number;
-  newSubject: string;
+  targetSubject: string;
   keepBacklinks: boolean;
   keepProperties: boolean;
   keepExternalTriples: boolean;
@@ -551,7 +551,7 @@ export function updateSubject(
   return (state) => {
     const {
       pos,
-      newSubject,
+      targetSubject,
       keepExternalTriples,
       keepProperties,
       keepBacklinks,
@@ -573,7 +573,7 @@ export function updateSubject(
       };
     }
 
-    if (attrs.subject === newSubject) {
+    if (attrs.subject === targetSubject) {
       return {
         initialState: state,
         transaction: state.tr,
@@ -588,7 +588,7 @@ export function updateSubject(
       attrs.subject,
     ).filter((n) => n.value !== nodeToUpdate);
 
-    tr.setNodeAttribute(pos, 'subject', newSubject);
+    tr.setNodeAttribute(pos, 'subject', targetSubject);
     if (!keepExternalTriples) {
       tr.setNodeAttribute(pos, 'externalTriples', []);
     }
@@ -646,7 +646,7 @@ export function updateSubject(
         for (const bl of backlinksToUpdate) {
           const newBl = {
             ...bl,
-            subject: sayDataFactory.resourceNode(newSubject),
+            subject: sayDataFactory.resourceNode(targetSubject),
           };
           backlinksUpdated.push(newBl);
         }
@@ -721,7 +721,7 @@ export function updateSubject(
         for (const prop of propertiesToUpdate) {
           const newProp = {
             ...prop,
-            object: sayDataFactory.resourceNode(newSubject),
+            object: sayDataFactory.resourceNode(targetSubject),
           };
           propertiesUpdated.push(newProp);
         }
@@ -748,37 +748,37 @@ export function updateSubject(
       }
     }
 
-    // We need to check wether there are other nodes that also define the `newSubject`
+    // We need to check wether there are other nodes that also define the `targetSubject`
     // Two case:
-    // - There are no other nodes defining the new subject => nothing to do
-    // - There are nodes defining the new subject => merge the backlinks + merge the properties
-    const nodesWithSameNewSubject = getNodesBySubject(state, newSubject);
-    if (nodesWithSameNewSubject.length) {
+    // - There are no other nodes defining the target subject => nothing to do
+    // - There are nodes defining the target subject => merge the backlinks + merge the properties
+    const nodesWithSameTargetSubject = getNodesBySubject(state, targetSubject);
+    if (nodesWithSameTargetSubject.length) {
       // Note: we need to resolve the nodes again here,
       // as we want to retrieve it's latest version (it could already have been updated in previous computations)
-      const nodeWithSameNewSubject = unwrap(
-        tr.doc.nodeAt(nodesWithSameNewSubject[0].pos),
+      const nodeWithSameTargetSubject = unwrap(
+        tr.doc.nodeAt(nodesWithSameTargetSubject[0].pos),
       );
       const mergedBacklinks = [
-        ...(nodeWithSameNewSubject.attrs['backlinks'] as IncomingTriple[]),
+        ...(nodeWithSameTargetSubject.attrs['backlinks'] as IncomingTriple[]),
         ...(unwrap(tr.doc.nodeAt(pos)).attrs['backlinks'] as IncomingTriple[]),
       ];
       const mergedProperties = [
-        ...(nodeWithSameNewSubject.attrs['properties'] as OutgoingTriple[]),
+        ...(nodeWithSameTargetSubject.attrs['properties'] as OutgoingTriple[]),
         ...(unwrap(tr.doc.nodeAt(pos)).attrs['properties'] as OutgoingTriple[]),
       ];
       tr.setNodeAttribute(pos, 'backlinks', mergedBacklinks);
       tr.setNodeAttribute(pos, 'properties', mergedProperties);
       for (const {
-        pos: nodeWithSameNewSubject_pos,
-      } of nodesWithSameNewSubject) {
+        pos: nodeWithSameTargetSubject_pos,
+      } of nodesWithSameTargetSubject) {
         tr.setNodeAttribute(
-          nodeWithSameNewSubject_pos,
+          nodeWithSameTargetSubject_pos,
           'backlinks',
           mergedBacklinks,
         );
         tr.setNodeAttribute(
-          nodeWithSameNewSubject_pos,
+          nodeWithSameTargetSubject_pos,
           'properties',
           mergedProperties,
         );

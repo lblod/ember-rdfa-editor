@@ -48,7 +48,7 @@ module('rdfa | updateSubject', (hooks) => {
   module('Simple cases', () => {
     test('Simple case without relationships', (assert) => {
       const initalSubject = `http://example.org/1`;
-      const newSubject = `http://example.org/2`;
+      const targetSubject = `http://example.org/2`;
       const initialDoc = doc(
         {},
         block_rdfa(
@@ -68,7 +68,7 @@ module('rdfa | updateSubject', (hooks) => {
         block_rdfa(
           {
             rdfaNodeType: 'resource',
-            subject: newSubject,
+            subject: targetSubject,
             __rdfaId: '1',
             properties: [],
             backlinks: [],
@@ -82,7 +82,7 @@ module('rdfa | updateSubject', (hooks) => {
       const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
       const operationResult = executeAndApplyUpdateSubjectOperation({
         pos: nodeToUpdate.pos,
-        newSubject,
+        targetSubject,
         keepBacklinks: false,
         keepProperties: false,
         keepExternalTriples: false,
@@ -94,7 +94,7 @@ module('rdfa | updateSubject', (hooks) => {
     });
     module('External triples', () => {
       const initalSubject = `http://example.org/1`;
-      const newSubject = `http://example.org/2`;
+      const targetSubject = `http://example.org/2`;
       const externalTriples: FullTriple[] = [
         {
           subject: sayDataFactory.namedNode('http://example.org/3'),
@@ -122,7 +122,7 @@ module('rdfa | updateSubject', (hooks) => {
           block_rdfa(
             {
               rdfaNodeType: 'resource',
-              subject: newSubject,
+              subject: targetSubject,
               __rdfaId: '1',
               properties: [],
               backlinks: [],
@@ -137,7 +137,7 @@ module('rdfa | updateSubject', (hooks) => {
         const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
         const operationResult = executeAndApplyUpdateSubjectOperation({
           pos: nodeToUpdate.pos,
-          newSubject,
+          targetSubject,
           keepBacklinks: false,
           keepProperties: false,
           keepExternalTriples: true,
@@ -154,7 +154,7 @@ module('rdfa | updateSubject', (hooks) => {
           block_rdfa(
             {
               rdfaNodeType: 'resource',
-              subject: newSubject,
+              subject: targetSubject,
               __rdfaId: '1',
               properties: [],
               backlinks: [],
@@ -169,7 +169,7 @@ module('rdfa | updateSubject', (hooks) => {
         const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
         const operationResult = executeAndApplyUpdateSubjectOperation({
           pos: nodeToUpdate.pos,
-          newSubject,
+          targetSubject,
           keepBacklinks: false,
           keepProperties: false,
           keepExternalTriples: false,
@@ -419,7 +419,7 @@ module('rdfa | updateSubject', (hooks) => {
         const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
         const operationResult = executeAndApplyUpdateSubjectOperation({
           pos: nodeToUpdate.pos,
-          newSubject: 'http://example.org/target',
+          targetSubject: 'http://example.org/target',
           keepBacklinks: false,
           keepProperties: false,
           keepExternalTriples: false,
@@ -565,7 +565,7 @@ module('rdfa | updateSubject', (hooks) => {
         const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
         const operationResult = executeAndApplyUpdateSubjectOperation({
           pos: nodeToUpdate.pos,
-          newSubject: 'http://example.org/target',
+          targetSubject: 'http://example.org/target',
           keepBacklinks: true,
           keepProperties: false,
           keepExternalTriples: false,
@@ -733,7 +733,7 @@ module('rdfa | updateSubject', (hooks) => {
         const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
         const operationResult = executeAndApplyUpdateSubjectOperation({
           pos: nodeToUpdate.pos,
-          newSubject: 'http://example.org/target',
+          targetSubject: 'http://example.org/target',
           keepBacklinks: true,
           keepProperties: true,
           keepExternalTriples: false,
@@ -909,7 +909,7 @@ module('rdfa | updateSubject', (hooks) => {
       const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
       const operationResult = executeAndApplyUpdateSubjectOperation({
         pos: nodeToUpdate.pos,
-        newSubject: 'http://example.org/target',
+        targetSubject: 'http://example.org/target',
         keepBacklinks: true,
         keepProperties: true,
         keepExternalTriples: false,
