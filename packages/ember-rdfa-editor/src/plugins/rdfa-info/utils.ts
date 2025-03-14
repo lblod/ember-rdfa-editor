@@ -675,7 +675,7 @@ export function updateSubject(
     }
     const { backlinks } = attrs;
 
-     // Collection of properties which need to be updated (or removed), grouped by the `__rdfaId` of their subject node
+    // Collection of properties which need to be updated (or removed), grouped by the `__rdfaId` of their subject node
     const propertiesToUpdateGroupedBySubjectRdfaId: Map<
       string,
       OutgoingTriple[]
@@ -756,7 +756,9 @@ export function updateSubject(
     if (nodesWithSameNewSubject.length) {
       // Note: we need to resolve the nodes again here,
       // as we want to retrieve it's latest version (it could already have been updated in previous computations)
-      const nodeWithSameNewSubject = unwrap(tr.doc.nodeAt(nodesWithSameNewSubject[0].pos));
+      const nodeWithSameNewSubject = unwrap(
+        tr.doc.nodeAt(nodesWithSameNewSubject[0].pos),
+      );
       const mergedBacklinks = [
         ...(nodeWithSameNewSubject.attrs['backlinks'] as IncomingTriple[]),
         ...(unwrap(tr.doc.nodeAt(pos)).attrs['backlinks'] as IncomingTriple[]),
