@@ -64,17 +64,11 @@ export type OutgoingTriple =
   | LiteralNodeTriple
   | ContentTriple;
 
-export type IncomingResourceNodeTriple = {
+export type IncomingTriple = {
   subject: ResourceNodeTerm;
   predicate: string;
 };
-export type IncomingLiteralNodeTriple = {
-  subject: LiteralNodeTerm;
-  predicate: string;
-};
-export type IncomingTriple =
-  | IncomingLiteralNodeTriple
-  | IncomingResourceNodeTriple;
+
 export type FullTriple = {
   subject: SayNamedNode;
   predicate: string;
@@ -242,7 +236,7 @@ function quadToProperties(
   // check if quad refers to a contentNode
   if (quad.object.termType === 'Literal') {
     const contentNodes = datastore.getContentNodeMap().getValues({
-      subject: sayDataFactory.literalNode(quad.subject.value),
+      subject: sayDataFactory.resourceNode(quad.subject.value),
       predicate: quad.predicate.value,
     });
     if (contentNodes) {

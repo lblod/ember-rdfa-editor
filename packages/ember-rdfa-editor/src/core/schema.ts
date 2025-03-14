@@ -5,7 +5,6 @@ import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
-  IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor.ts';
@@ -414,19 +413,17 @@ export function renderInvisibleRdfa(
         const [_first, ...rest] = backlinks;
 
         for (const { predicate, subject } of rest) {
-          if (subject.termType === 'LiteralNode') {
-            propElements.push(
-              fullLiteralSpan(
-                subject.value,
-                predicate,
-                sayDataFactory.literal(
-                  (nodeOrMark.attrs['content'] as Option<string>) ??
-                    nodeOrMark.textContent,
-                ),
-                literalNodeId,
+          propElements.push(
+            fullLiteralSpan(
+              subject.value,
+              predicate,
+              sayDataFactory.literal(
+                (nodeOrMark.attrs['content'] as Option<string>) ??
+                  nodeOrMark.textContent,
               ),
-            );
-          }
+              literalNodeId,
+            ),
+          );
         }
       }
     }
@@ -469,7 +466,7 @@ export function renderRdfaAttrs(
           resource: null,
         };
   } else {
-    const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
+    const backlinks = rdfaAttrs.backlinks;
     const datatypeAndLanguage: Record<string, string> = {};
     if (rdfaAttrs.datatype) {
       datatypeAndLanguage['datatype'] = rdfaAttrs.datatype.value;

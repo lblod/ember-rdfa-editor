@@ -336,9 +336,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
             valid: true,
             triple: {
               predicate,
-              object: sayDataFactory.literalNode(
-                value,
-              ),
+              object: sayDataFactory.literalNode(value),
             },
             subject: this.subject,
           };

@@ -242,12 +242,6 @@ export function getRdfaChildren(node: PNode) {
             object: sayDataFactory.resourceNode(subject),
           });
         } else {
-          const incomingTriple = backlinks[0];
-          if (incomingTriple.subject.termType !== 'LiteralNode') {
-            throw new Error(
-              'Unexpected type of incoming triple of a literal node',
-            );
-          }
           result.add({
             predicate: backlinks[0].predicate,
             object: sayDataFactory.literalNode(id),
@@ -326,23 +320,7 @@ export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
 }
 
 export function deepEqualBacklink(a: IncomingTriple, b: IncomingTriple) {
-  if (a.predicate === b.predicate) {
-    switch (a.subject.termType) {
-      case 'ResourceNode': {
-        if (b.subject.termType === 'ResourceNode') {
-          return a.subject.value === b.subject.value;
-        }
-        break;
-      }
-      case 'LiteralNode': {
-        if (b.subject.termType === 'LiteralNode') {
-          return a.subject.value === b.subject.value;
-        }
-        break;
-      }
-    }
-  }
-  return false;
+  return a.predicate === b.predicate && a.subject.value === b.subject.value;
 }
 
 export function isLinkToNode(triple: OutgoingTriple): triple is LinkTriple {
@@ -390,21 +368,16 @@ export function addPropertyToNode({
        * - The object of this property is a literal: we update the backlink of the corresponding content node, using its nodeId
        * - The object of this property is a namednode: we update the backlinks of the corresponding resource nodes, using the resource
        */
-      let newBacklink: IncomingTriple;
+      const newBacklink: IncomingTriple = {
+        subject: sayDataFactory.resourceNode(resource),
+        predicate: property.predicate,
+      };
       if (object.termType === 'LiteralNode') {
-        newBacklink = {
-          subject: sayDataFactory.literalNode(resource),
-          predicate: property.predicate,
-        };
         const target = getNodeByRdfaId(state, object.value);
         if (target) {
           targets = [target];
         }
       } else {
-        newBacklink = {
-          subject: sayDataFactory.resourceNode(resource),
-          predicate: property.predicate,
-        };
         targets = getNodesBySubject(state, object.value);
       }
       targets?.forEach((target) => {

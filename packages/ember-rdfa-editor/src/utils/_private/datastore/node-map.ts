@@ -1,6 +1,6 @@
 import type { Quad_Subject, Quad_Predicate, NamedNode } from '@rdfjs/types';
-import type { IncomingLiteralNodeTriple } from '#root/core/rdfa-processor.ts';
 import { TwoWayMap } from '../map-utils.ts';
+import type { IncomingTriple } from '#root/core/rdfa-processor.js';
 
 export interface SubAndContentPred {
   subject: Quad_Subject;
@@ -9,12 +9,7 @@ export interface SubAndContentPred {
   contentLanguage?: string;
 }
 export type RdfaResourceNodeMap<N> = TwoWayMap<N, SubAndContentPred, N, string>;
-export type RdfaContentNodeMap<N> = TwoWayMap<
-  N,
-  IncomingLiteralNodeTriple,
-  N,
-  string
->;
+export type RdfaContentNodeMap<N> = TwoWayMap<N, IncomingTriple, N, string>;
 export function rdfaResourceNodeMap<N>(
   init?: Iterable<[N, SubAndContentPred]>,
 ): RdfaResourceNodeMap<N> {
@@ -24,9 +19,9 @@ export function rdfaResourceNodeMap<N>(
   });
 }
 export function rdfaContentNodeMap<N>(
-  init?: Iterable<[N, IncomingLiteralNodeTriple]>,
+  init?: Iterable<[N, IncomingTriple]>,
 ): RdfaContentNodeMap<N> {
-  return TwoWayMap.withValueStringHashing<N, IncomingLiteralNodeTriple>({
+  return TwoWayMap.withValueStringHashing<N, IncomingTriple>({
     valueHasher: ({ subject: { termType, value }, predicate }) => {
       return `${termType}-${value}-${predicate}`;
     },
