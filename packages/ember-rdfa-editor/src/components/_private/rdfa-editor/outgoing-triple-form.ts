@@ -154,22 +154,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
     if (!this.controller) {
       return '';
     }
-    if (this.termType === 'LiteralNode') {
-      const selectedLiteralNodeId = this.selectedLiteralNode;
-      if (!selectedLiteralNodeId) {
-        return '';
-      }
-      const literalNode = getNodeByRdfaId(
-        this.controller.mainEditorState,
-        selectedLiteralNodeId,
-      );
-      if (!literalNode) {
-        return '';
-      }
-      return (
-        (literalNode.value.attrs['defaultDatatype'] as string | null) ?? ''
-      );
-    }
     if (
       this.triple.object.termType === 'Literal' ||
       this.triple.object.termType === 'ContentLiteral'
@@ -187,22 +171,6 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   get initialLanguageValue(): string {
     if (!this.controller) {
       return '';
-    }
-    if (this.termType === 'LiteralNode') {
-      const selectedLiteralNodeId = this.selectedLiteralNode;
-      if (!selectedLiteralNodeId) {
-        return '';
-      }
-      const literalNode = getNodeByRdfaId(
-        this.controller.mainEditorState,
-        selectedLiteralNodeId,
-      );
-      if (!literalNode) {
-        return '';
-      }
-      return (
-        (literalNode.value.attrs['defaultLanguage'] as string | null) ?? ''
-      );
     }
     if (
       this.triple.object.termType === 'Literal' ||
