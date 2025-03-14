@@ -290,7 +290,7 @@ module('rdfa | updateSubject', (hooks) => {
             properties: [],
             backlinks: [
               {
-                subject: sayDataFactory.literalNode(
+                subject: sayDataFactory.resourceNode(
                   'http://example.org/original',
                 ),
                 predicate: 'http://predicates.org/1',
@@ -404,7 +404,7 @@ module('rdfa | updateSubject', (hooks) => {
               properties: [],
               backlinks: [
                 {
-                  subject: sayDataFactory.literalNode(
+                  subject: sayDataFactory.resourceNode(
                     'http://example.org/original',
                   ),
                   predicate: 'http://predicates.org/1',
@@ -550,7 +550,7 @@ module('rdfa | updateSubject', (hooks) => {
               properties: [],
               backlinks: [
                 {
-                  subject: sayDataFactory.literalNode(
+                  subject: sayDataFactory.resourceNode(
                     'http://example.org/original',
                   ),
                   predicate: 'http://predicates.org/1',
@@ -712,13 +712,13 @@ module('rdfa | updateSubject', (hooks) => {
               properties: [],
               backlinks: [
                 {
-                  subject: sayDataFactory.literalNode(
+                  subject: sayDataFactory.resourceNode(
                     'http://example.org/original',
                   ),
                   predicate: 'http://predicates.org/1',
                 },
                 {
-                  subject: sayDataFactory.literalNode(
+                  subject: sayDataFactory.resourceNode(
                     'http://example.org/target',
                   ),
                   predicate: 'http://predicates.org/1',
@@ -801,7 +801,7 @@ module('rdfa | updateSubject', (hooks) => {
             properties: [],
             backlinks: [
               {
-                subject: sayDataFactory.literalNode(
+                subject: sayDataFactory.resourceNode(
                   'http://example.org/original',
                 ),
                 predicate: 'http://predicates.org/1',
@@ -832,7 +832,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
               {
                 predicate: 'http://predicates.org/1',
-                object: sayDataFactory.literalNode('5'),
+                object: sayDataFactory.literalNode('3'),
               },
               {
                 predicate: 'http://predicates.org/2',
@@ -868,7 +868,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
               {
                 predicate: 'http://predicates.org/1',
-                object: sayDataFactory.literalNode('5'),
+                object: sayDataFactory.literalNode('3'),
               },
               {
                 predicate: 'http://predicates.org/2',
@@ -893,7 +893,7 @@ module('rdfa | updateSubject', (hooks) => {
             properties: [],
             backlinks: [
               {
-                subject: sayDataFactory.literalNode(
+                subject: sayDataFactory.resourceNode(
                   'http://example.org/target',
                 ),
                 predicate: 'http://predicates.org/1',
