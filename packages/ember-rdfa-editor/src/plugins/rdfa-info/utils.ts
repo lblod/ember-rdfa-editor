@@ -7,7 +7,12 @@ import type {
   LinkTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
-import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
+import {
+  LiteralNodeTerm,
+  ResourceNodeTerm,
+  sayDataFactory,
+  type SayTerm,
+} from '#root/core/say-data-factory/index.ts';
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { v4 as uuidv4 } from 'uuid';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -17,7 +22,7 @@ import type {
 } from '#root/utils/transaction-utils.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-property.ts';
-import { isRdfaAttrs } from '#root/core/schema.ts';
+import { isRdfaAttrs, type RdfaAttrs } from '#root/core/schema.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 
@@ -536,6 +541,61 @@ export function removePropertyFromNode(
     return { initialState: state, transaction: tr, result: true };
   };
 }
+function getRdfaIdsOfObject(state: EditorState, object: SayTerm): string[] {
+  let rdfaIds: string[] = [];
+  if (object.termType === 'ResourceNode') {
+    // if an object refers to a resource, multiple nodes could define that
+    // resource, which is why this function returns an array
+    rdfaIds = getNodesBySubject(state, object.value).map(
+      ({ value }) => value.attrs['__rdfaId'] as string,
+    );
+  } else if (object.termType === 'LiteralNode') {
+    rdfaIds = [object.value];
+  }
+  // all other termtypes don't refer to nodes
+  return rdfaIds;
+}
+/**
+ * For a given outgoing triple, find all nodes which backlink to it.
+ * @returns RdfaIds of the found nodes, and the backlink
+ */
+function followPropToBacklinks(
+  state: EditorState,
+  subject: string,
+  prop: OutgoingTriple,
+): { rdfaIds: string[]; backlink: IncomingTriple } | null {
+  const correspondingBacklink = getCorrespondingBacklink(state, subject, prop);
+  if (!correspondingBacklink) {
+    return null;
+  }
+  const { object } = prop;
+  const rdfaIds = getRdfaIdsOfObject(state, object);
+  return { rdfaIds, backlink: correspondingBacklink };
+}
+/**
+ * For a given set of resource node attrs
+ * (no other attrs make sense to ask this of),
+ * find all nodes which backlink to it.
+ * @returns a map of each node's rdfaId onto the backlinks that node has to
+ * the given attrs
+ * */
+function getAllBacklinkingNodes(
+  state: EditorState,
+  attrs: RdfaAttrs & { rdfaNodeType: 'resource' },
+) {
+  const rslt: Map<string, IncomingTriple[]> = new Map();
+  const { properties } = attrs;
+  for (const prop of properties) {
+    const backlinkingNodes = followPropToBacklinks(state, attrs.subject, prop);
+    if (backlinkingNodes) {
+      const { rdfaIds, backlink } = backlinkingNodes;
+      for (const rdfaId of rdfaIds) {
+        MapUtils.setOrPush(rslt, rdfaId, backlink);
+      }
+    }
+  }
+  return rslt;
+}
 
 export type UpdateSubjectArgs = {
   pos: number;
@@ -557,28 +617,23 @@ export function updateSubject(
       keepBacklinks,
     } = args;
     const nodeToUpdate = state.doc.nodeAt(pos);
+
+    const doNothing = {
+      initialState: state,
+      transaction: state.tr,
+      result: false,
+    };
+
     if (!nodeToUpdate) {
-      return {
-        initialState: state,
-        transaction: state.tr,
-        result: false,
-      };
+      return doNothing;
     }
     const { attrs } = nodeToUpdate;
     if (!isRdfaAttrs(attrs) || attrs.rdfaNodeType !== 'resource') {
-      return {
-        initialState: state,
-        transaction: state.tr,
-        result: false,
-      };
+      return doNothing;
     }
 
     if (attrs.subject === targetSubject) {
-      return {
-        initialState: state,
-        transaction: state.tr,
-        result: false,
-      };
+      return doNothing;
     }
     const tr = state.tr;
 
@@ -592,39 +647,12 @@ export function updateSubject(
     if (!keepExternalTriples) {
       tr.setNodeAttribute(pos, 'externalTriples', []);
     }
-    const { properties } = attrs;
 
     // Collection of backlinks which need to be updated (or removed), grouped by the `__rdfaId` of their object node
     const backlinksToUpdateGroupedByObjectRdfaId: Map<
       string,
       IncomingTriple[]
-    > = new Map();
-    for (const prop of properties) {
-      const { object } = prop;
-      let rdfaIds: string[] = [];
-      if (object.termType === 'ResourceNode') {
-        rdfaIds = getNodesBySubject(state, object.value).map(
-          ({ value }) => value.attrs['__rdfaId'] as string,
-        );
-      } else if (object.termType === 'LiteralNode') {
-        rdfaIds = [object.value];
-      }
-      const correspondingBacklink = getCorrespondingBacklink(
-        state,
-        attrs.subject,
-        prop,
-      );
-      if (!correspondingBacklink) {
-        continue;
-      }
-      for (const rdfaId of rdfaIds) {
-        MapUtils.setOrPush(
-          backlinksToUpdateGroupedByObjectRdfaId,
-          rdfaId,
-          correspondingBacklink,
-        );
-      }
-    }
+    > = getAllBacklinkingNodes(state, attrs);
 
     if (keepProperties) {
       // In case the properties of the node need to be kept, we need to update their corresponding backlinks.
