@@ -19,7 +19,7 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
-    "start": "concurrently 'ember serve' 'pnpm _syncPnpm --watch' --names 'tests serve, tests sync deps'",
+    "start": "ember serve",
     "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
     "test:ember": "ember test",
     "e2e:open": "playwright test --ui",
@@ -28,8 +28,7 @@
     "e2e:run:docker": "./scripts/e2e.sh test",
     "e2e:run:vrt": "./scripts/e2e.sh test --grep @vrt",
     "e2e:run:vrt:update": "./scripts/e2e.sh test --grep @vrt --update-snapshots",
-    "e2e:show-report": "playwright show-report",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
+    "e2e:show-report": "playwright show-report"
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^3.8.0",
@@ -126,7 +125,6 @@
     "eslint-plugin-qunit": "^8.1.2",
     "globals": "^15.14.0",
     "loader.js": "^4.7.0",
-    "pnpm-sync-dependencies-meta-injected": "^0.0.14",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
     "prosemirror-dev-tools": "^4.2.0",
@@ -148,11 +146,6 @@
     "typescript-eslint": "^7.18.0",
     "uuid": "^9.0.1",
     "webpack": "^5.98.0"
-  },
-  "dependenciesMeta": {
-    "@lblod/ember-rdfa-editor": {
-      "injected": true
-    }
   },
   "engines": {
     "node": ">= 18"
