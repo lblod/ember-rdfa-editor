@@ -205,9 +205,9 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
     const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: sayDataFactory.literalNode('http://test/1'),
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -266,9 +266,9 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
     const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: sayDataFactory.literalNode('http://test/1'),
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -359,8 +359,6 @@ module('rdfa | parsing', function () {
           class="say-editable say-block-rdfa"
           about="http://test/1"
           property="http://test/testPred"
-          datatype=""
-          lang=""
           data-literal-node="true"
           data-say-id="d601c3e1-5065-4bb4-bcb0-44e3636669d8"
         >
@@ -414,17 +412,18 @@ module('rdfa | parsing', function () {
           {
             rdfaNodeType: 'literal',
             __rdfaId: 'd601c3e1-5065-4bb4-bcb0-44e3636669d8',
+            language: null,
             backlinks: [
               {
                 predicate: 'http://test/testPred',
                 // it may seem weird these are literalnode relationships, but
                 // it's because they need to store datatype and language
-                subject: df.literalNode('http://test/1'),
+                subject: df.resourceNode('http://test/1'),
               },
               // this is the new part, supporting multiple backlinks
               {
                 predicate: 'http://test/testPred',
-                subject: df.literalNode('http://test/2'),
+                subject: df.resourceNode('http://test/2'),
               },
             ] satisfies IncomingTriple[],
           },
@@ -561,10 +560,7 @@ module('rdfa | parsing', function () {
           properties: [
             {
               predicate: 'http://test/testPred',
-              object: df.literalNode(
-                '67c9959e-c15b-4a16-be65-e90c2256eed0',
-                df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
-              ),
+              object: df.literalNode('67c9959e-c15b-4a16-be65-e90c2256eed0'),
             },
           ] satisfies OutgoingTriple[],
         },
@@ -572,15 +568,12 @@ module('rdfa | parsing', function () {
           {
             rdfaNodeType: 'literal',
             __rdfaId: '67c9959e-c15b-4a16-be65-e90c2256eed0',
+            datatype: df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+            language: '',
             backlinks: [
               {
-                subject: df.literalNode(
-                  'http://test/1',
-                  df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
-                ),
+                subject: df.resourceNode('http://test/1'),
                 predicate: 'http://test/testPred',
-                // it may seem weird these are literalnode relationships, but
-                // it's because they need to store datatype and language
               },
             ] satisfies IncomingTriple[],
           },
@@ -631,7 +624,7 @@ module('rdfa | parsing', function () {
           __rdfaId: 'test-id',
           backlinks: [
             {
-              subject: df.literalNode('http://test/1'),
+              subject: df.resourceNode('http://test/1'),
               predicate: 'http://testPred',
             },
           ] satisfies IncomingTriple[],
@@ -666,11 +659,11 @@ module('rdfa | parsing', function () {
           __rdfaId: 'test-id',
           backlinks: [
             {
-              subject: df.literalNode('http://test/2'),
+              subject: df.resourceNode('http://test/2'),
               predicate: 'http://testPred',
             },
             {
-              subject: df.literalNode('http://test/1'),
+              subject: df.resourceNode('http://test/1'),
               predicate: 'http://testPred',
             },
           ] satisfies IncomingTriple[],

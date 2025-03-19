@@ -5,7 +5,6 @@ import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
-  IncomingLiteralNodeTriple,
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor.ts';
@@ -16,6 +15,7 @@ import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
   languageOrDataType,
   sayDataFactory,
+  SayNamedNode,
   type SayTerm,
   type WithoutEquals,
 } from './say-data-factory/index.ts';
@@ -26,6 +26,7 @@ import {
   namedNodeSpan,
 } from './schema/_private/render-rdfa-attrs.ts';
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
+import type { NamedNode } from '@rdfjs/types';
 
 // const logger = createLogger('core/schema');
 
@@ -61,8 +62,8 @@ const rdfaAwareAttrSpec = {
   rdfaNodeType: { default: undefined },
   subject: { default: null },
   content: { default: null, editable: true },
-  defaultLanguage: { default: null, editable: true },
-  defaultDatatype: { default: null, editable: true },
+  datatype: { default: null },
+  language: { default: null, editable: true },
 };
 
 /** @deprecated `rdfaAttrs` is deprecated, use the `rdfaAttrSpec` function instead */
@@ -128,11 +129,17 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     ) as FullTriple[];
   }
   if (rdfaNodeType === 'literal') {
+    const datatype = node.getAttribute('datatype');
+    let transformedDatatype = null;
+    if (datatype) {
+      transformedDatatype = sayDataFactory.namedNode(datatype);
+    }
+
     return {
       rdfaNodeType: 'literal',
       content: node.getAttribute('content'),
-      defaultDatatype: node.dataset['defaultDatatype'] ?? null,
-      defaultLanguage: node.dataset['defaultLanguage'] ?? null,
+      datatype: transformedDatatype,
+      language: node.getAttribute('lang') ?? null,
       __rdfaId,
       backlinks,
       externalTriples,
@@ -266,8 +273,8 @@ export interface RdfaAwareAttrs {
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
   content: string | null;
-  defaultDatatype: string | null;
-  defaultLanguage: string | null;
+  datatype?: SayNamedNode | null;
+  language?: string | null;
 }
 export interface RdfaResourceAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'resource';
@@ -408,20 +415,21 @@ export function renderInvisibleRdfa(
         const [_first, ...rest] = backlinks;
 
         for (const { predicate, subject } of rest) {
-          if (subject.termType === 'LiteralNode') {
-            propElements.push(
-              fullLiteralSpan(
-                subject.value,
-                predicate,
-                sayDataFactory.literal(
-                  (nodeOrMark.attrs['content'] as Option<string>) ??
-                    nodeOrMark.textContent,
-                  languageOrDataType(subject.language, subject.datatype),
+          propElements.push(
+            fullLiteralSpan(
+              subject.value,
+              predicate,
+              sayDataFactory.literal(
+                (nodeOrMark.attrs['content'] as Option<string>) ??
+                  nodeOrMark.textContent,
+                languageOrDataType(
+                  nodeOrMark.attrs['lang'] as Option<string>,
+                  nodeOrMark.attrs['datatype'] as Option<NamedNode>,
                 ),
-                literalNodeId,
               ),
-            );
-          }
+              literalNodeId,
+            ),
+          );
         }
       }
     }
@@ -464,29 +472,33 @@ export function renderRdfaAttrs(
           resource: null,
         };
   } else {
-    const backlinks = rdfaAttrs.backlinks as IncomingLiteralNodeTriple[];
+    const backlinks = rdfaAttrs.backlinks;
+    const datatypeAndLanguage: Record<string, string> = {};
+    if (rdfaAttrs.datatype) {
+      datatypeAndLanguage['datatype'] = rdfaAttrs.datatype.value;
+    }
+    if (rdfaAttrs.language) {
+      datatypeAndLanguage['lang'] = rdfaAttrs.language;
+    }
+
     if (!backlinks.length) {
-      return {
+      const resultAttrs: Record<string, string | null> = {
         content: rdfaAttrs.content ?? null,
         'data-say-id': rdfaAttrs.__rdfaId,
         'data-literal-node': 'true',
-        'data-default-datatype': rdfaAttrs.defaultDatatype,
-        'data-default-language': rdfaAttrs.defaultLanguage,
+        ...datatypeAndLanguage,
       };
+
+      return resultAttrs;
     }
 
     return {
       about: backlinks[0].subject.value,
       property: backlinks[0].predicate,
-      datatype: backlinks[0].subject.language.length
-        ? null
-        : backlinks[0].subject.datatype.value,
-      lang: backlinks[0].subject.language,
       content: rdfaAttrs.content ?? null,
       'data-literal-node': 'true',
       'data-say-id': rdfaAttrs.__rdfaId,
-      'data-default-datatype': rdfaAttrs.defaultDatatype,
-      'data-default-language': rdfaAttrs.defaultLanguage,
+      ...datatypeAndLanguage,
     };
   }
 }
