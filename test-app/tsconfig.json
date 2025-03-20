@@ -16,6 +16,7 @@
     "baseUrl": ".",
 
     "noUncheckedIndexedAccess": false,
+    "allowImportingTsExtensions": true,
 
     "paths": {
       "test-app/tests/*": ["tests/*"],
