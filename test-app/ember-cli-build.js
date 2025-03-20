@@ -1,18 +1,26 @@
 'use strict';
 
+const sideWatch = require('@embroider/broccoli-side-watch');
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-
-module.exports = function (defaults) {
+module.exports = async function (defaults) {
   let app = new EmberApp(defaults, {
     'ember-cli-babel': { enableTypeScriptTransform: true },
-    autoImport: {
-      watchDependencies: ['@lblod/ember-rdfa-editor'],
-    },
+
     babel: {
       plugins: [
         require.resolve('ember-concurrency/async-arrow-task-transform'),
       ],
       sourceMaps: 'inline',
+    },
+    autoImport: {
+      // Used by classic builds
+      watchDependencies: ['@lblod/ember-rdfa-editor'],
+    },
+    trees: {
+      // Used by embroider builds
+      app: sideWatch('app', {
+        watching: ['@lblod/ember-rdfa-editor'],
+      }),
     },
 
     sassOptions: {
@@ -25,5 +33,15 @@ module.exports = function (defaults) {
   });
 
   const { maybeEmbroider } = require('@embroider/test-setup');
-  return maybeEmbroider(app);
+  return maybeEmbroider(app, {
+    staticAddonTestSupportTrees: true,
+    staticAddonTrees: true,
+    staticInvokables: true,
+    staticEmberSource: true,
+    packagerOptions: {
+      webpackConfig: {
+        devtool: 'source-map',
+      },
+    },
+  });
 };

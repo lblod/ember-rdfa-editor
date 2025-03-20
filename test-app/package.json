@@ -19,7 +19,7 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
-    "start": "concurrently 'ember serve' 'pnpm _syncPnpm --watch' --names 'tests serve, tests sync deps'",
+    "start": "ember serve",
     "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
     "test:ember": "ember test",
     "e2e:open": "playwright test --ui",
@@ -28,8 +28,7 @@
     "e2e:run:docker": "./scripts/e2e.sh test",
     "e2e:run:vrt": "./scripts/e2e.sh test --grep @vrt",
     "e2e:run:vrt:update": "./scripts/e2e.sh test --grep @vrt --update-snapshots",
-    "e2e:show-report": "playwright show-report",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
+    "e2e:show-report": "playwright show-report"
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "^3.8.0",
@@ -52,10 +51,16 @@
     "@ember/optional-features": "^2.2.0",
     "@ember/string": "^4.0.0",
     "@ember/test-helpers": "^4.0.4",
+    "@embroider/broccoli-side-watch": "^1.0.1",
+    "@embroider/compat": "^3.8.4",
+    "@embroider/core": "^3.5.4",
     "@embroider/test-setup": "^3.0.1",
+    "@embroider/webpack": "^4.1.0",
     "@eslint/js": "^9.17.0",
     "@glimmer/component": "^1.1.2",
+    "@glimmer/runtime": "^0.94.10",
     "@glimmer/tracking": "^1.1.2",
+    "@glimmer/validator": "^0.94.8",
     "@glint/core": "^1.5.2",
     "@glint/environment-ember-loose": "^1.5.0",
     "@glint/environment-ember-template-imports": "^1.5.0",
@@ -112,7 +117,7 @@
     "ember-template-imports": "^4.2.0",
     "ember-template-lint": "^6.0.0",
     "ember-truth-helpers": "^4.0.3",
-    "ember-try": "^3.0.0",
+    "ember-try": "^4.0.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-ember": "^12.3.3",
@@ -122,7 +127,6 @@
     "eslint-plugin-qunit": "^8.1.2",
     "globals": "^15.14.0",
     "loader.js": "^4.7.0",
-    "pnpm-sync-dependencies-meta-injected": "^0.0.14",
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
     "prosemirror-dev-tools": "^4.2.0",
@@ -132,6 +136,7 @@
     "rdf-data-factory": "^1.1.2",
     "react": "18",
     "react-dom": "18",
+    "read-package-up": "^11.0.0",
     "rimraf": "^5.0.7",
     "sass": "^1.77.6",
     "sinon": "^19.0.2",
@@ -142,12 +147,7 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^7.18.0",
     "uuid": "^9.0.1",
-    "webpack": "^5.97.1"
-  },
-  "dependenciesMeta": {
-    "@lblod/ember-rdfa-editor": {
-      "injected": true
-    }
+    "webpack": "^5.98.0"
   },
   "engines": {
     "node": ">= 18"

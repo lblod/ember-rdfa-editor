@@ -8,4 +8,7 @@ declare global {
       message?: string,
     ): void;
   }
+  interface Window {
+    define: (key: string, value: unknown) => void;
+  }
 }
