@@ -1,9 +1,12 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
-import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
-import MapUtils from '#root/utils/_private/map-utils.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
+import {
+  PNode,
+  ProsePlugin,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources/index.ts';
 
 export function getRdfaId(node: PNode): string | undefined {
   return node.attrs['__rdfaId'] as string | undefined;

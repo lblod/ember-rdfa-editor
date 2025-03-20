@@ -1,7 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import { SayNamedNode } from './named-node.ts';
-import type { Option } from '#root/utils/_private/option.ts';
-import type { SayTerm } from './term.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 
 /**
  * A term that represents an RDF literal, containing a string with an optional language tag or datatype.
@@ -37,7 +36,7 @@ export class SayLiteral implements RDF.Literal {
     }
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals = (other?: Option<RDF.Term>) => {
     return (
       !!other &&
       other.termType === 'Literal' &&

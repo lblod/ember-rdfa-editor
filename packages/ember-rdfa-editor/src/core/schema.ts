@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
@@ -8,10 +8,13 @@ import type {
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor.ts';
-import { isElement } from '#root/utils/_private/dom-helpers.ts';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
-import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
-import { type ResolvedPNode } from '#root/utils/_private/types.ts';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources/index.ts';
+import {
+  findNodesBySubject,
+  getBacklinks,
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils.ts';
+import { type ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import {
   languageOrDataType,
   sayDataFactory,

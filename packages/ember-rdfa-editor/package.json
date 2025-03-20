@@ -21,13 +21,13 @@
       "types": "./declarations/commands/index.d.ts",
       "default": "./dist/commands/index.js"
     },
-    "./core/say-data-factory": {
-      "types": "./declarations/core/say-data-factory/index.d.ts",
-      "default": "./dist/core/say-data-factory/index.js"
-    },
     "./core/say-data-factory/prosemirror-terms": {
       "types": "./declarations/core/say-data-factory/prosemirror-terms/index.d.ts",
       "default": "./dist/core/say-data-factory/prosemirror-terms/index.js"
+    },
+    "./core/say-data-factory": {
+      "types": "./declarations/core/say-data-factory/index.d.ts",
+      "default": "./dist/core/say-data-factory/index.js"
     },
     "./marks": {
       "types": "./declarations/marks/index.d.ts",
@@ -166,19 +166,8 @@
     "./ember-rdfa-editor.scss": "./ember-rdfa-editor.scss",
     "./*": {
       "types": "./declarations/*.d.ts",
+      "nodeResolveFromSelf": "./src/*",
       "default": "./dist/*.js"
-    }
-  },
-  "imports": {
-    "#root": null,
-    "#root/index.ts": null,
-    "#root/*.ts": {
-      "types": "./declarations/*.d.ts",
-      "default": "./src/*.ts"
-    },
-    "#root/*": {
-      "types": "./declarations/*.d.ts",
-      "default": "./src/*"
     }
   },
   "typesVersions": {

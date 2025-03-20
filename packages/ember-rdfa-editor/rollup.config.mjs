@@ -15,6 +15,8 @@ const nodeResolvePlugin = nodeResolve({
   preferBuiltins: false,
   mainFields: ['module', 'jsnext:main', 'browser', 'main'],
   extensions: ['.mjs', '.js', '.json', '.node', '.ts', '.scss'],
+  moduleDirectories: ['basedir', 'node_modules'],
+  exportConditions: ['nodeResolveFromSelf'],
 });
 const addon = new Addon({
   srcDir: 'src',

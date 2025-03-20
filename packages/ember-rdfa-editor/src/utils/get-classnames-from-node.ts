@@ -1,4 +1,4 @@
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 type ClassNameProp = ((node: PNode) => string) | string[];
 export default function getClassnamesFromNode(node: PNode) {

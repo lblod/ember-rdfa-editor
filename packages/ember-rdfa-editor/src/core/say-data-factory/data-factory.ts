@@ -10,8 +10,8 @@ import type { SayTerm } from './term.ts';
 import { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
 import { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
 import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
-import { LANG_STRING } from '#root/utils/_private/constants.ts';
-import type { Option } from '#root/utils/_private/option.ts';
+import { LANG_STRING } from '@lblod/ember-rdfa-editor/utils/_private/constants.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import { SayQuad } from './quad.ts';
 
 export type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;

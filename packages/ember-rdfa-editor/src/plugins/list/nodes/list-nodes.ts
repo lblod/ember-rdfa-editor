@@ -1,9 +1,15 @@
 import type { Node as PNode, ParseRule } from 'prosemirror-model';
-import { getRdfaAttrs, getRdfaContentElement } from '#root/core/schema.ts';
-import { optionMapOr, unwrap } from '#root/utils/_private/option.ts';
-import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import { tagName } from '#root/utils/_private/dom-helpers.ts';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import {
+  getRdfaAttrs,
+  getRdfaContentElement,
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
+import {
+  optionMapOr,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec.ts';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node.ts';
 
 export type OrderListStyle =
   | 'decimal'

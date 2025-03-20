@@ -2,9 +2,9 @@ import type * as RDF from '@rdfjs/types';
 import {
   conciseToRdfjs,
   type PrefixMapping,
-} from '#root/utils/_private/concise-term-string.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string.ts';
 import { execPipe, filter, first, flatMap, isEmpty, map } from 'iter-tools';
-import type { TermSpec } from '#root/utils/_private/datastore/term-spec.ts';
+import type { TermSpec } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-spec.ts';
 import { single } from '../iterator-utils.ts';
 
 /**

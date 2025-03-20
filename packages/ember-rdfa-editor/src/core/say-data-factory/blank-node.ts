@@ -1,6 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Option } from '#root/utils/_private/option.ts';
-import type { SayTerm } from './term.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 
 /**
  * A term that represents an RDF blank node with a label.
@@ -13,7 +12,7 @@ export class SayBlankNode implements RDF.BlankNode {
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals = (other?: Option<RDF.Term>) => {
     return (
       !!other && other.termType === 'BlankNode' && other.value === this.value
     );

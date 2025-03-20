@@ -3,14 +3,17 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
 import type IntlService from 'ember-intl/services/intl';
-import { type OrderListStyle, toggleList } from '#root/plugins/list/index.ts';
+import {
+  type OrderListStyle,
+  toggleList,
+} from '@lblod/ember-rdfa-editor/plugins/list/index.ts';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { sinkListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command } from 'prosemirror-state';
-import SayController from '#root/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { OrderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/ordered-list';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
-import type { ListPathEntry } from '#root/plugins/list/nodes/list-nodes.ts';
+import type { ListPathEntry } from '@lblod/ember-rdfa-editor/plugins/list/nodes/list-nodes.ts';
 
 type Args = {
   controller: SayController;

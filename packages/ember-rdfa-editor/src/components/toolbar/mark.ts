@@ -2,8 +2,8 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { MarkType } from 'prosemirror-model';
 import type { ComponentLike } from '@glint/template';
-import { toggleMarkAddFirst } from '#root/commands/index.ts';
-import SayController from '#root/core/say-controller.ts';
+import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/index.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

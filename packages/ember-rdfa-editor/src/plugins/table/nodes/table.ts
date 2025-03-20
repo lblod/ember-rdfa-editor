@@ -1,11 +1,14 @@
 // Helper for creating a schema that supports tables.
 
 import { Node as PNode, ResolvedPos, type NodeSpec } from 'prosemirror-model';
-import { getRdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
-import { getPos } from '#root/utils/node-utils.ts';
-import { constructInlineStyles } from '#root/utils/_private/html-utils.ts';
-import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import {
+  getRdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
+import { getPos } from '@lblod/ember-rdfa-editor/utils/node-utils.ts';
+import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils.ts';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec.ts';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node.ts';
 import { TableView } from '../table-view.ts';
 
 interface ExtraAttribute {

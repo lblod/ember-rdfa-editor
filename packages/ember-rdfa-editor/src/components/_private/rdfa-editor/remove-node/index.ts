@@ -2,8 +2,8 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { AlertTriangleIcon } from '@appuniversum/ember-appuniversum/components/icons/alert-triangle';
 
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import type SayController from '#root/core/say-controller.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   node: ResolvedPNode;

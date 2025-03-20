@@ -9,7 +9,7 @@ import type {
   ModelNamedNode,
   ModelQuadPredicate,
   ModelTerm,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser.ts';
 
 /**
  * Data holder for the RDFa state in XML tags.

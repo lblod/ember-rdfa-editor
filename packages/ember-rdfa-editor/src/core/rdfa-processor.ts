@@ -3,11 +3,11 @@ import {
   isElement,
   isTextNode,
   tagName,
-} from '#root/utils/_private/dom-helpers.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
 import {
   type default as Datastore,
   EditorStore,
-} from '#root/utils/_private/datastore/datastore.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore.ts';
 import type { Quad } from '@rdfjs/types';
 import {
   SayLiteral,
@@ -19,7 +19,7 @@ import {
   sayDataFactory,
   languageOrDataType,
 } from './say-data-factory/index.ts';
-import type { SubAndContentPred } from '#root/utils/_private/datastore/node-map.ts';
+import type { SubAndContentPred } from '@lblod/ember-rdfa-editor/utils/_private/datastore/node-map.ts';
 
 export type SayTermType =
   | 'NamedNode'

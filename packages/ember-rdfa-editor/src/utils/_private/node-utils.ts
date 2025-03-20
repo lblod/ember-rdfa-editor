@@ -1,7 +1,7 @@
 import { NodeSelection } from 'prosemirror-state';
 import type { EditorState } from 'prosemirror-state';
 import type { ResolvedPos } from 'prosemirror-model';
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export function getGroups(node: PNode) {
   return node.type.spec.group?.split(' ') ?? [];

@@ -13,8 +13,8 @@ import {
   splitCell,
   toggleHeader,
 } from '@say-editor/prosemirror-tables';
-import SayController from '#root/core/say-controller.ts';
-import { insertTable } from '#root/plugins/table/index.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
+import { insertTable } from '@lblod/ember-rdfa-editor/plugins/table/index.ts';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';

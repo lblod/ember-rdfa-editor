@@ -1,5 +1,8 @@
-import { isElement, tagName } from '#root/utils/_private/dom-helpers.ts';
-import { ReferenceManager } from '#root/utils/_private/reference-manager.ts';
+import {
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
+import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager.ts';
 import type { DatastoreResolvedPNode } from './datastore-node-types.ts';
 import { isElementPNode } from './datastore-node-types.ts';
 

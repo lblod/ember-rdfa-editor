@@ -6,14 +6,18 @@ import { isNone } from './utils/_private/option.ts';
 
 export { keydownHandler, keymap } from 'prosemirror-keymap';
 
-export { getRdfaAttrs, rdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
+export {
+  getRdfaAttrs,
+  rdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
 
-export type { RdfaAttrs } from '#root/core/schema.ts';
+export type { RdfaAttrs } from '@lblod/ember-rdfa-editor/core/schema.ts';
 
 export {
   default as ProseMirror,
   type PluginConfig,
-} from '#root/core/say-editor.ts';
+} from '@lblod/ember-rdfa-editor/core/say-editor.ts';
 
 export type {
   AttributeSpec,
@@ -122,13 +126,18 @@ export {
 export { history } from 'prosemirror-history';
 export { dropCursor } from 'prosemirror-dropcursor';
 
-export { PNode, ProseParser, ProsePlugin } from '#root/prosemirror-aliases.ts';
+export {
+  PNode,
+  ProseParser,
+  ProsePlugin,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 export type InlineDecorationSpec = NonNullable<
   Parameters<typeof Decoration.inline>[3]
 >;
 
-export { default as SayView } from '#root/core/say-view.ts';
-export { default as SayController } from '#root/core/say-controller.ts';
+export { default as SayView } from '@lblod/ember-rdfa-editor/core/say-view.ts';
+export { default as SayController } from '@lblod/ember-rdfa-editor/core/say-controller.ts';
+export { default as SayEditor } from '@lblod/ember-rdfa-editor/core/say-editor.ts';
 addMethod(
   string,
   'curie',

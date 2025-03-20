@@ -1,4 +1,4 @@
-import { getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
+import { getNodesBySubject } from '@lblod/ember-rdfa-editor/plugins/rdfa-info/index.ts';
 import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeBySubjectArgs = {

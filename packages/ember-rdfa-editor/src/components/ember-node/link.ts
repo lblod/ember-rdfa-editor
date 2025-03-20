@@ -1,11 +1,11 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
-import { linkToHref } from '#root/utils/_private/string-utils.ts';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node.ts';
+import { linkToHref } from '@lblod/ember-rdfa-editor/utils/_private/string-utils.ts';
 import { Velcro } from 'ember-velcro';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node.ts';
 import type { EditorState } from 'prosemirror-state';
 
 export default class Link extends Component<EmberNodeArgs> {

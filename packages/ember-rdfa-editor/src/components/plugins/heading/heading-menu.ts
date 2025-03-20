@@ -1,11 +1,11 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import { setBlockType } from '#root/commands/set-block-type.ts';
+import { setBlockType } from '@lblod/ember-rdfa-editor/commands/set-block-type.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import type { NodeType } from 'prosemirror-model';
 
 type Args = {

@@ -1,5 +1,5 @@
-import type { FullTriple } from '#root/core/rdfa-processor.ts';
-import type { TransactionMonad } from '#root/utils/transaction-utils.ts';
+import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
+import type { TransactionMonad } from '@lblod/ember-rdfa-editor/utils/transaction-utils.ts';
 import { EditorState } from 'prosemirror-state';
 export function transformExternalTriples(
   transformer: (oldTriples: FullTriple[]) => FullTriple[],

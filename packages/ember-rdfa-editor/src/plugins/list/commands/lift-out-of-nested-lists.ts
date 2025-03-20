@@ -25,8 +25,8 @@
  * THE SOFTWARE.
  */
 
-import { unwrap } from '#root/utils/_private/option.ts';
-import { mapPositionFrom } from '#root/utils/rdfa-utils.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import { mapPositionFrom } from '@lblod/ember-rdfa-editor/utils/rdfa-utils.ts';
 import { Fragment, NodeRange, NodeType, Slice } from 'prosemirror-model';
 import type { Command, Transaction } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';

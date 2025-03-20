@@ -1,7 +1,10 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
-import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import {
+  inputRules,
+  type PluginConfig,
+  SayController,
+} from '@lblod/ember-rdfa-editor';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   blockRdfaWithConfig,

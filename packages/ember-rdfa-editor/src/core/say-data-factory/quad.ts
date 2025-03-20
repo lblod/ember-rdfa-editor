@@ -1,6 +1,5 @@
 import type * as RDF from '@rdfjs/types';
-import type { Option } from '#root/utils/_private/option.ts';
-import type { SayTerm } from './term.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 
 /**
  * An instance of DefaultGraph represents the default graph.
@@ -17,7 +16,7 @@ export class SayQuad implements RDF.BaseQuad {
     public readonly graph: RDF.Term,
   ) {}
 
-  equals = (other?: Option<SayTerm>) => {
+  equals = (other?: Option<RDF.Term>) => {
     // `|| !other.termType` is for backwards-compatibility with old factories without RDF* support.
     return (
       !!other &&

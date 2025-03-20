@@ -1,4 +1,4 @@
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { modifier } from 'ember-modifier';
 import { TextSelection } from 'prosemirror-state';
 

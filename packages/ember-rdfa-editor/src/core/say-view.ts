@@ -3,7 +3,7 @@ import { type DirectEditorProps, EditorView } from 'prosemirror-view';
 import { tracked } from '@glimmer/tracking';
 import { htmlToDoc, htmlToFragment } from '../utils/_private/html-utils.ts';
 import { SetDocAttributesStep } from '../utils/steps.ts';
-import { ProseParser } from '#root/prosemirror-aliases.ts';
+import { ProseParser } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { DOMSerializer } from 'prosemirror-model';
 
 export interface SetHtmlOptions {

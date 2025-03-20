@@ -1,18 +1,18 @@
 import {
   getNodeByRdfaId,
   getNodesBySubject,
-} from '#root/plugins/rdfa-info/index.ts';
-import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info/index.ts';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import {
   deepEqualProperty,
   getBacklinks,
   getProperties,
   isLinkToNode,
-} from '#root/utils/rdfa-utils.ts';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils.ts';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import type { Command, Transaction } from 'prosemirror-state';
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export type RemovePropertyArgs = (
   | {

@@ -1,5 +1,8 @@
 import Component from '@glimmer/component';
-import type { ContentTriple, PlainTriple } from '#root/core/rdfa-processor.ts';
+import type {
+  ContentTriple,
+  PlainTriple,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import OutgoingTripleForm from '../outgoing-triple-form.ts';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';

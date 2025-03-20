@@ -1,5 +1,5 @@
 import { UnderlinedIcon } from '@appuniversum/ember-appuniversum/components/icons/underlined';
-import Mark from '#root/components/toolbar/mark.ts';
+import Mark from '@lblod/ember-rdfa-editor/components/toolbar/mark.ts';
 import t from 'ember-intl/helpers/t';
 
 <template>

@@ -5,23 +5,23 @@ import {
   type QuadNodes,
   type RdfaParseConfig,
   RdfaParser,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser.ts';
 import {
   type ConciseTerm,
   conciseToRdfjs,
   type TermConverter,
-} from '#root/utils/_private/concise-term-string.ts';
-import { defaultPrefixes } from '#root/config/rdfa.ts';
-import { ResultSet } from '#root/utils/_private/datastore/result-set.ts';
-import { TermMapping } from '#root/utils/_private/datastore/term-mapping.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string.ts';
+import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa.ts';
+import { ResultSet } from '@lblod/ember-rdfa-editor/utils/_private/datastore/result-set.ts';
+import { TermMapping } from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-mapping.ts';
 import {
   isPrimitive,
   type ObjectSpec,
   type PredicateSpec,
   type SubjectSpec,
-} from '#root/utils/_private/datastore/term-spec.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/term-spec.ts';
 import { GraphyDataset } from './graphy-dataset.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import type { RdfaResourceNodeMap, RdfaContentNodeMap } from './node-map.ts';
 import { rdfaContentNodeMap, rdfaResourceNodeMap } from './node-map.ts';
 

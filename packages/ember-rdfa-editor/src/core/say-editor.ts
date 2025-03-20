@@ -5,18 +5,24 @@ import {
   getPathFromRoot,
   isElement,
   tagName,
-} from '#root/utils/_private/dom-helpers.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
 
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
 import { history } from 'prosemirror-history';
-import { baseKeymap, type KeymapOptions } from '#root/core/keymap.ts';
+import {
+  baseKeymap,
+  type KeymapOptions,
+} from '@lblod/ember-rdfa-editor/core/keymap.ts';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils.ts';
-import { ReferenceManager } from '#root/utils/_private/reference-manager.ts';
-import { datastore, isElementPNode } from '#root/plugins/datastore/index.ts';
+import { ReferenceManager } from '@lblod/ember-rdfa-editor/utils/_private/reference-manager.ts';
+import {
+  datastore,
+  isElementPNode,
+} from '@lblod/ember-rdfa-editor/plugins/datastore/index.ts';
 
-import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
+import type { DatastoreResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore/datastore-node-types.ts';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste, {
   recreateUuidsOnPasteKey,
@@ -25,16 +31,16 @@ import type Owner from '@ember/owner';
 import {
   type DefaultAttrGenPuginOptions,
   defaultAttributeValueGeneration,
-} from '#root/plugins/default-attribute-value-generation/index.ts';
-import SayView from '#root/core/say-view.ts';
-import SayController from '#root/core/say-controller.ts';
-import SaySerializer from '#root/core/say-serializer.ts';
+} from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation/index.ts';
+import SayView from '@lblod/ember-rdfa-editor/core/say-view.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
+import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer.ts';
 import { rdfaInfoPlugin } from '../plugins/rdfa-info/index.ts';
 import { gapCursor } from '../plugins/gap-cursor/index.ts';
-import { removePropertiesOfDeletedNodes } from '#root/plugins/remove-properties-of-deleted-nodes/index.ts';
-import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
-import { ProseParser } from '#root/prosemirror-aliases.ts';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes/index.ts';
+import HTMLInputParser from '@lblod/ember-rdfa-editor/utils/_private/html-input-parser.ts';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
+import { ProseParser } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 

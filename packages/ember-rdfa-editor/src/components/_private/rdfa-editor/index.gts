@@ -1,11 +1,11 @@
 import Component from '@glimmer/component';
-import { isResourceNode } from '#root/utils/node-utils.ts';
+import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils.ts';
 import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor/index.ts';
 import RdfaRelationshipEditor from './relationship-editor/index.gts';
 import RdfaWrappingUtils from './wrapping-utils/index.ts';
 import RemoveNode from './remove-node/index.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
@@ -14,7 +14,7 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import ExternalTripleEditor from './external-triple-editor.gts';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
 

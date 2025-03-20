@@ -1,9 +1,9 @@
 import type { PluginView } from 'prosemirror-state';
 import { EditorState, NodeSelection, PluginKey } from 'prosemirror-state';
-import { isEditable } from '#root/core/say-node-spec.ts';
-import { isSome } from '#root/utils/_private/option.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { isEditable } from '@lblod/ember-rdfa-editor/core/say-node-spec.ts';
+import { isSome } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 type State = {

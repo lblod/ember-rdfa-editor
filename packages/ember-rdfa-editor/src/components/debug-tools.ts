@@ -2,9 +2,9 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import sampleData from '../config/sample-data.ts';
-import SayController from '#root/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { modifier } from 'ember-modifier';
-import { generatePageForExport } from '#root/utils/export-utils.ts';
+import { generatePageForExport } from '@lblod/ember-rdfa-editor/utils/export-utils.ts';
 
 interface DebugToolArgs {
   controller?: SayController;

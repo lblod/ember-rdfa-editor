@@ -5,7 +5,7 @@ import {
   TextSelection,
 } from 'prosemirror-state';
 import { ContentMatch, Node as PNode } from 'prosemirror-model';
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import type { NodeSpec } from 'prosemirror-model';
 import type { NodeType } from 'prosemirror-model';
 import type { Attrs } from 'prosemirror-model';

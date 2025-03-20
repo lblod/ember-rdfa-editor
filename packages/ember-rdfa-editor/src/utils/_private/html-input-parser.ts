@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { cleanDocx } from './ce/paste-handler-helper-functions/cleanDocx.ts';
-import { preCleanHtml } from '#root/utils/_private/ce/paste-handler-helper-functions/index.ts';
+import { preCleanHtml } from '@lblod/ember-rdfa-editor/utils/_private/ce/paste-handler-helper-functions/index.ts';
 
 const DEFAULT_SAFE_ATTRIBUTES = [
   'about',

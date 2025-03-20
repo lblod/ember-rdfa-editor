@@ -1,5 +1,5 @@
-import { getSubject } from '#root/plugins/rdfa-info/plugin.ts';
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import { getSubject } from '@lblod/ember-rdfa-editor/plugins/rdfa-info/plugin.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export {
   addPropertyToNode,
@@ -23,8 +23,11 @@ export {
   mapPositionFrom,
   parsePrefixString,
   removePropertyFromNode,
-} from '#root/plugins/rdfa-info/utils.ts';
-export { getRdfaId, getSubject } from '#root/plugins/rdfa-info/plugin.ts';
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info/utils.ts';
+export {
+  getRdfaId,
+  getSubject,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info/plugin.ts';
 /**
  * Calculates a set of subject attributes present in the provided node and its children
  */

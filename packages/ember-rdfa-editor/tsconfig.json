@@ -50,6 +50,9 @@
     */
     "allowImportingTsExtensions": true,
 
-    "types": ["ember-source/types"]
+    "types": ["ember-source/types"],
+    "paths": {
+      "@lblod/ember-rdfa-editor/*": ["./src/*"]
+    }
   }
 }

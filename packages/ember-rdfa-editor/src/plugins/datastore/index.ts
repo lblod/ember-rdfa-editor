@@ -7,19 +7,28 @@ import {
 import {
   proseStoreFromParse,
   SayStore,
-} from '#root/utils/_private/datastore/say-store.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store.ts';
 import { map, objectFrom } from 'iter-tools';
 import { ProseReferenceManager } from './prose-reference-manager.ts';
 import {
   createLogger,
   type Logger,
-} from '#root/utils/_private/logging-utils.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils.ts';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
-import { isElement, tagName } from '#root/utils/_private/dom-helpers.ts';
-import { type Option, unwrap } from '#root/utils/_private/option.ts';
-import ArrayUtils from '#root/utils/_private/array-utils.ts';
+import {
+  isElement,
+  tagName,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
+import {
+  type Option,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import ArrayUtils from '@lblod/ember-rdfa-editor/utils/_private/array-utils.ts';
 import type { Mark } from 'prosemirror-model';
-import { ProsePlugin, type PNode } from '#root/prosemirror-aliases.ts';
+import {
+  ProsePlugin,
+  type PNode,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import type { Schema } from 'prosemirror-model';
 import type { DatastoreResolvedPNode, TextPNode } from './datastore-node-types';
 import { isElementPNode } from './datastore-node-types.ts';
@@ -31,7 +40,7 @@ export {
   type TextPNode,
   isElementPNode,
 } from './datastore-node-types.ts';
-export { SayStore } from '#root/utils/_private/datastore/say-store.ts';
+export { SayStore } from '@lblod/ember-rdfa-editor/utils/_private/datastore/say-store.ts';
 
 export function getAppliedMarks(pnode: DatastoreResolvedPNode): Mark[] {
   const marks = [];

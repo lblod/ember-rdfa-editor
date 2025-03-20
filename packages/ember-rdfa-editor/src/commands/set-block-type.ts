@@ -27,7 +27,7 @@
 import { type Attrs, Fragment, NodeType, Slice } from 'prosemirror-model';
 import type { Command } from 'prosemirror-state';
 import { ReplaceAroundStep, Transform } from 'prosemirror-transform';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 /// Returns a command that tries to set the selected textblocks to the
 /// given node type with the given attributes.

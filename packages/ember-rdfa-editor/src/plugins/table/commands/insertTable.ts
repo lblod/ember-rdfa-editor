@@ -1,7 +1,7 @@
 import type { Command } from 'prosemirror-state';
 
-import { unwrap } from '#root/utils/_private/option.ts';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export function insertTable(rows: number, columns: number): Command {
   return (state, dispatch) => {

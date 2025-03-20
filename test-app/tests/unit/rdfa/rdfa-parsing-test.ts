@@ -65,7 +65,6 @@ import type {
   OutgoingTriple,
   FullTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import {
   SayDataFactory,
@@ -73,6 +72,7 @@ import {
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import { testEditor } from 'test-app/tests/helpers/say-editor';
 import { builders } from 'prosemirror-test-builder';
+import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 
 const schema = new Schema({
   nodes: {
@@ -231,7 +231,7 @@ module('rdfa | parsing', function () {
                <span style="display: none"></span>
                <span><p data-indentation-level="0">test</p></span>
          </div>
-       </span>
+       </spn>
    </div>
     `;
     controller.initialize(htmlContent);

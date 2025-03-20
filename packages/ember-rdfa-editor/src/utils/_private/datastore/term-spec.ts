@@ -3,7 +3,7 @@ import type {
   ConBlankNode,
   ConLiteral,
   ConNamedNode,
-} from '#root/utils/_private/concise-term-string.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/concise-term-string.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type TermSpec = SubjectSpec | PredicateSpec | ObjectSpec;

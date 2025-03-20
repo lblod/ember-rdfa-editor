@@ -1,5 +1,6 @@
 import { ProseParser } from '@lblod/ember-rdfa-editor';
-import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { SayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory/data-factory';
 import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
 import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
 import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils';
@@ -32,7 +33,7 @@ module('ProseMirror | external-triple', function () {
     };
     const state = makeState(docJson);
     const factory = new SayDataFactory();
-    const externalTriples = [
+    const externalTriples: FullTriple[] = [
       {
         subject: factory.namedNode('http://example.org/1'),
         predicate: 'http://example.org/pred',

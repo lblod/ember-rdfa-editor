@@ -8,7 +8,7 @@ import {
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { GapCursor } from './gap-cursor.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 
 /**
  *

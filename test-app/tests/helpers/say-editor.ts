@@ -3,10 +3,10 @@ import { render } from '@ember/test-helpers';
 import {
   EditorState,
   SayController,
+  SayEditor,
   type PluginConfig,
   type Schema,
 } from '@lblod/ember-rdfa-editor';
-import SayEditor from '@lblod/ember-rdfa-editor/core/say-editor';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 

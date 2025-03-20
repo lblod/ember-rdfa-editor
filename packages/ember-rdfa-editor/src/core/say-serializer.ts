@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-import type SayEditor from '#root/core/say-editor.ts';
-import type SayMarkSpec from '#root/core/say-mark-spec.ts';
-import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import type SayEditor from '@lblod/ember-rdfa-editor/core/say-editor.ts';
+import type SayMarkSpec from '@lblod/ember-rdfa-editor/core/say-mark-spec.ts';
+import type SayNodeSpec from '@lblod/ember-rdfa-editor/core/say-node-spec.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import {
   type DOMOutputSpec,
   DOMSerializer,

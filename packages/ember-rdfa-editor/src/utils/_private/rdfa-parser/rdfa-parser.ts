@@ -15,11 +15,14 @@ import {
   type RdfaProfile,
 } from './rdfa-profile.ts';
 import { Util } from './util.ts';
-import { CustomError } from '#root/utils/_private/errors.ts';
-import { isElement, isTextNode } from '#root/utils/_private/dom-helpers.ts';
-import MapUtils from '#root/utils/_private/map-utils.ts';
-import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { CustomError } from '@lblod/ember-rdfa-editor/utils/_private/errors.ts';
+import {
+  isElement,
+  isTextNode,
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils.ts';
+import { GraphyDataset } from '@lblod/ember-rdfa-editor/utils/_private/datastore/graphy-dataset.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import type {
   RdfaResourceNodeMap,
   RdfaContentNodeMap,
@@ -29,7 +32,7 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/node-map.ts';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
-import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
+import { sayDataFactory } from '../../../core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 
 export type ModelTerm<N> =

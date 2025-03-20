@@ -25,7 +25,7 @@
 
 import { ResolvedPos } from 'prosemirror-model';
 import { NodeSelection } from 'prosemirror-state';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import {
   cellAround,
   type CellSelection,

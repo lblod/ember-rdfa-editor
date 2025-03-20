@@ -1,30 +1,31 @@
 import { getRdfaId, getSubject, rdfaInfoPluginKey } from './plugin.ts';
 import { EditorState, Selection } from 'prosemirror-state';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { Mapping } from 'prosemirror-transform';
 import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '#root/core/rdfa-processor.ts';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import {
-  LiteralNodeTerm,
-  ResourceNodeTerm,
   sayDataFactory,
   type SayTerm,
-} from '#root/core/say-data-factory/index.ts';
-import { isElement } from '#root/utils/_private/dom-helpers.ts';
+} from '../../core/say-data-factory/index.ts';
+import { isElement } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
 import { v4 as uuidv4 } from 'uuid';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import type {
   TransactionMonad,
   TransactionMonadResult,
-} from '#root/utils/transaction-utils.ts';
-import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-property.ts';
-import { isRdfaAttrs, type RdfaAttrs } from '#root/core/schema.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
-import MapUtils from '#root/utils/_private/map-utils.ts';
+} from '@lblod/ember-rdfa-editor/utils/transaction-utils.ts';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils.ts';
+import type { RemovePropertyArgs } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/remove-property.ts';
+import {
+  isRdfaAttrs,
+  type RdfaAttrs,
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import MapUtils from '@lblod/ember-rdfa-editor/utils/_private/map-utils.ts';
 
 export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);

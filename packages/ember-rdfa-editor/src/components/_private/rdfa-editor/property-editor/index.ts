@@ -1,19 +1,22 @@
 import Component from '@glimmer/component';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import { tracked } from '@glimmer/tracking';
 import PropertyEditorModal from './modal.gts';
-import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
-import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property.ts';
+import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/remove-property.ts';
 
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import type { OutgoingTriple, PlainTriple } from '#root/core/rdfa-processor.ts';
-import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils.ts';
+import type {
+  OutgoingTriple,
+  PlainTriple,
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
+import { isLinkToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type CreationStatus = {
   mode: 'creation';

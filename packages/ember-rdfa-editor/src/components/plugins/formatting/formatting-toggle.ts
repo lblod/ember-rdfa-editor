@@ -4,7 +4,7 @@ import {
   commands,
   selectActiveState,
 } from '@say-editor/prosemirror-invisibles';
-import SayController from '#root/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

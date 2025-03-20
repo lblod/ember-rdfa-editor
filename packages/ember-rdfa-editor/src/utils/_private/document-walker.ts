@@ -1,5 +1,5 @@
 import { ResolvedPos } from 'prosemirror-model';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 /**
  * Find a position between nodes that passes a predicate test in document order.

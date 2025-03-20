@@ -7,9 +7,9 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import type RdfaRelationshipEditor from './index.gts';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import OutgoingTripleForm from '../outgoing-triple-form.ts';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Sig = {
   Args: {

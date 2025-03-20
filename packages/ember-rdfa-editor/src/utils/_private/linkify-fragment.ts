@@ -1,4 +1,4 @@
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { Fragment, MarkType, NodeType, Schema } from 'prosemirror-model';
 import { find as linkifyFind } from 'linkifyjs';
 

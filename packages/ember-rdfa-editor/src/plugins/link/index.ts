@@ -1,9 +1,12 @@
 import { MarkType, NodeType, Slice } from 'prosemirror-model';
-import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
+import {
+  PNode,
+  ProsePlugin,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { EditorView } from 'prosemirror-view';
-import SayView from '#root/core/say-view.ts';
+import SayView from '@lblod/ember-rdfa-editor/core/say-view.ts';
 
-import linkifyFragment from '#root/utils/_private/linkify-fragment.ts';
+import linkifyFragment from '@lblod/ember-rdfa-editor/utils/_private/linkify-fragment.ts';
 
 export { link as linkMark } from './mark/link.ts';
 export { link, linkView } from './nodes/link.ts';

@@ -1,4 +1,4 @@
-import SayController from '#root/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { stripHtmlForPublish } from './strip-html-for-publish.ts';
 
 export function generatePageForExport(

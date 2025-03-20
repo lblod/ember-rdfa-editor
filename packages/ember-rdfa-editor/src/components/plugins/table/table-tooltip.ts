@@ -20,9 +20,9 @@ import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
-import ColorMenu from '#root/components/plugins/table/color.ts';
+import ColorMenu from '@lblod/ember-rdfa-editor/components/plugins/table/color.ts';
 import type { ComponentLike } from '@glint/template';
-import VerticalAlign from '#root/components/plugins/table/vertical-align.ts';
+import VerticalAlign from '@lblod/ember-rdfa-editor/components/plugins/table/vertical-align.ts';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { TableColumnEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-end-add';
 import { TableColumnStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-column-start-add';
@@ -30,7 +30,7 @@ import { TableColumnRemoveIcon } from '@appuniversum/ember-appuniversum/componen
 import { TableRowEndAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-end-add';
 import { TableRowStartAddIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-start-add';
 import { TableRowRemoveIcon } from '@appuniversum/ember-appuniversum/components/icons/table-row-remove';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import type { Command } from 'prosemirror-state';
 
 type Args = {

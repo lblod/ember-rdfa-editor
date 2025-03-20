@@ -1,11 +1,11 @@
 import { findParentNode } from '@curvenote/prosemirror-utils';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { toggleList } from '#root/plugins/list/index.ts';
+import { toggleList } from '@lblod/ember-rdfa-editor/plugins/list/index.ts';
 import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
-import SayController from '#root/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { UnorderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/unordered-list';
 
 type Args = {

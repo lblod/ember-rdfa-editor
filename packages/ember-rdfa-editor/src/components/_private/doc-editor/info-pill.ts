@@ -1,9 +1,9 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import AttributeEditor from '../attribute-editor/index.gts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import RdfaEditor from '../rdfa-editor/index.gts';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   controller?: SayController;

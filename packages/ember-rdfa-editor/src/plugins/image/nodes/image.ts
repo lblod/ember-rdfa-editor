@@ -3,10 +3,10 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '#root/utils/ember-node.ts';
-import Image from '#root/components/plugins/image/node.ts';
+} from '@lblod/ember-rdfa-editor/utils/ember-node.ts';
+import Image from '@lblod/ember-rdfa-editor/components/plugins/image/node.ts';
 import { Node as PNode } from 'prosemirror-model';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import getClassnamesFromNode from '@lblod/ember-rdfa-editor/utils/get-classnames-from-node.ts';
 
 const emberNodeConfig = ({
   allowBase64Images,

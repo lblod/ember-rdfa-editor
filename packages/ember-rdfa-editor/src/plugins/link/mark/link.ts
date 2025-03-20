@@ -1,4 +1,7 @@
-import { getRdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
+import {
+  getRdfaAttrs,
+  rdfaAttrSpec,
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
 import type { MarkSpec } from 'prosemirror-model';
 
 /**

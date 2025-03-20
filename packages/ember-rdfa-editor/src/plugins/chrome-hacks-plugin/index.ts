@@ -1,6 +1,6 @@
-import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { EditorState } from 'prosemirror-state';
-import { chrome } from '#root/utils/_private/browser.ts';
+import { chrome } from '@lblod/ember-rdfa-editor/utils/_private/browser.ts';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 export function chromeHacksPlugin(): ProsePlugin {

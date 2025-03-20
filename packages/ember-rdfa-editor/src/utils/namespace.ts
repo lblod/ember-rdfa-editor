@@ -1,7 +1,7 @@
 import {
   sayDataFactory,
   type SayNamedNode,
-} from '#root/core/say-data-factory/index.ts';
+} from '../core/say-data-factory/index.ts';
 import { isRdfaAttrs, type RdfaAttrs } from '../core/schema.ts';
 import type { Attrs } from 'prosemirror-model';
 import type { OutgoingTriple } from '../core/rdfa-processor.ts';

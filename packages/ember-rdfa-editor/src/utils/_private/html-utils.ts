@@ -1,5 +1,8 @@
-import { PNode, ProseParser } from '#root/prosemirror-aliases.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
+import {
+  PNode,
+  ProseParser,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser.ts';
 import { getPathFromRoot, tagName } from './dom-helpers.ts';

@@ -1,6 +1,6 @@
 import { Node } from 'prosemirror-model';
 import { TableView as PluginTableView } from '@say-editor/prosemirror-tables';
-import { constructInlineStyles } from '#root/utils/_private/html-utils.ts';
+import { constructInlineStyles } from '@lblod/ember-rdfa-editor/utils/_private/html-utils.ts';
 export class TableView extends PluginTableView {
   constructor(
     public node: Node,

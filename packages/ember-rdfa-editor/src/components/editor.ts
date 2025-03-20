@@ -3,23 +3,25 @@ import Component from '@glimmer/component';
 import {
   createLogger,
   type Logger,
-} from '#root/utils/_private/logging-utils.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/logging-utils.ts';
 import { tracked } from 'tracked-built-ins';
-import SayEditor, { type PluginConfig } from '#root/core/say-editor.ts';
+import SayEditor, {
+  type PluginConfig,
+} from '@lblod/ember-rdfa-editor/core/say-editor.ts';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { getOwner } from '@ember/application';
 import type Owner from '@ember/owner';
-import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute-value-generation/index.ts';
-import SayController from '#root/core/say-controller.ts';
+import type { DefaultAttrGenPuginOptions } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation/index.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
-import { notificationPlugin } from '#root/plugins/notification/index.ts';
+import { notificationPlugin } from '@lblod/ember-rdfa-editor/plugins/notification/index.ts';
 import { inject as service } from '@ember/service';
 import type {
   Notification,
   NotificationOptions,
-} from '#root/plugins/notification/index.ts';
+} from '@lblod/ember-rdfa-editor/plugins/notification/index.ts';
 import type IntlService from 'ember-intl/services/intl';
 
 export interface RdfaEditorArgs {

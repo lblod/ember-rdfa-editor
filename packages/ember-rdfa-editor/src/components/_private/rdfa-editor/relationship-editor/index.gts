@@ -3,31 +3,34 @@ import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
-import { isResourceNode } from '#root/utils/node-utils.ts';
+import { isResourceNode } from '@lblod/ember-rdfa-editor/utils/node-utils.ts';
 import {
   removeBacklink,
   selectNodeByRdfaId,
   selectNodeBySubject,
-} from '#root/commands/_private/rdfa-commands/index.ts';
-import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
-import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
-import { NotImplementedError } from '#root/utils/_private/errors.ts';
+} from '@lblod/ember-rdfa-editor/commands/_private/rdfa-commands/index.ts';
+import { addProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/add-property.ts';
+import { removeProperty } from '@lblod/ember-rdfa-editor/commands/rdfa-commands/remove-property.ts';
+import { NotImplementedError } from '@lblod/ember-rdfa-editor/utils/_private/errors.ts';
 import RelationshipEditorModal from './modal.gts';
-import { getNodeByRdfaId, getSubjects } from '#root/plugins/rdfa-info/index.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import {
+  getNodeByRdfaId,
+  getSubjects,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info/index.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import type {
   IncomingTriple,
   LinkTriple,
   OutgoingTriple,
-} from '#root/core/rdfa-processor.ts';
+} from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import {
   isLinkToNode,
   getBacklinks,
   getProperties,
-} from '#root/utils/rdfa-utils.ts';
+} from '@lblod/ember-rdfa-editor/utils/rdfa-utils.ts';
 import ContentPredicateList from './content-predicate-list.ts';
-import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
+import TransformUtils from '@lblod/ember-rdfa-editor/utils/_private/transform-utils.ts';
+import { IMPORTED_RESOURCES_ATTR } from '@lblod/ember-rdfa-editor/plugins/imported-resources/index.ts';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -41,8 +44,8 @@ import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import type SayController from '#root/core/say-controller.ts';
-import type { PNode } from '#root/prosemirror-aliases.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
+import type { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 type Args = {
   controller?: SayController;

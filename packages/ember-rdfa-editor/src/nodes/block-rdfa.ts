@@ -5,7 +5,7 @@ import {
   isRdfaAttrs,
   rdfaAttrSpec,
   renderRdfaAware,
-} from '#root/core/schema.ts';
+} from '@lblod/ember-rdfa-editor/core/schema.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
 import type { NodeView } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces.ts';

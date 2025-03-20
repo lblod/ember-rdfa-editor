@@ -1,8 +1,8 @@
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { EditorState, TextSelection } from 'prosemirror-state';
-import { ProsePlugin } from '#root/prosemirror-aliases.ts';
-import SayView from '#root/core/say-view.ts';
-import { gecko } from '#root/utils/_private/browser.ts';
+import { ProsePlugin } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
+import SayView from '@lblod/ember-rdfa-editor/core/say-view.ts';
+import { gecko } from '@lblod/ember-rdfa-editor/utils/_private/browser.ts';
 
 export function firefoxCursorFix(): ProsePlugin {
   const firefoxCursorFix = new ProsePlugin({

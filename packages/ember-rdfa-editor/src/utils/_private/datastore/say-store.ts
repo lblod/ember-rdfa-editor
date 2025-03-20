@@ -2,14 +2,14 @@ import {
   quadHash,
   type RdfaParseConfig,
   RdfaParser,
-} from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
-import { defaultPrefixes } from '#root/config/rdfa.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/rdfa-parser/rdfa-parser.ts';
+import { defaultPrefixes } from '@lblod/ember-rdfa-editor/config/rdfa.ts';
 import { EditorState } from 'prosemirror-state';
 import {
   type default as Datastore,
   EditorStore,
-} from '#root/utils/_private/datastore/datastore.ts';
-import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/datastore/datastore.ts';
+import type { DatastoreResolvedPNode } from '@lblod/ember-rdfa-editor/plugins/datastore/datastore-node-types.ts';
 import type { GraphyDataset } from './graphy-dataset';
 
 export interface SayDatastore extends Datastore<DatastoreResolvedPNode> {

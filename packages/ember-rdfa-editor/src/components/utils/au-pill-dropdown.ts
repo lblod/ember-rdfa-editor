@@ -2,8 +2,8 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { tracked } from '@glimmer/tracking';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
-import type SayController from '#root/core/say-controller.ts';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 interface Args {
   controller: SayController;

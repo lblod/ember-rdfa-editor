@@ -24,7 +24,7 @@
 import { Selection, NodeSelection } from 'prosemirror-state';
 import { Slice, ResolvedPos, Node } from 'prosemirror-model';
 import type { Mappable } from 'prosemirror-transform';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 
 /// Gap cursor selections are represented using this class. Its
 /// `$anchor` and `$head` properties both point at the cursor position.

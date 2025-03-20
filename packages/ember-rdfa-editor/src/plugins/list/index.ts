@@ -1,6 +1,9 @@
-import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
+import {
+  PNode,
+  ProsePlugin,
+} from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 import { EditorState, Transaction, Selection } from 'prosemirror-state';
-import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
+import { changedDescendants } from '@lblod/ember-rdfa-editor/utils/_private/changed-descendants.ts';
 import type { ListPathEntry } from './nodes/list-nodes.ts';
 
 export { toggleList } from './commands/toggle-list.ts';

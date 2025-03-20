@@ -1,4 +1,4 @@
-import { tagName } from '#root/utils/_private/dom-helpers.ts';
+import { tagName } from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
 import {
   getRdfaAttrs,
@@ -8,7 +8,7 @@ import {
   renderRdfaAttrs,
 } from '../core/schema.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 type Options = {
   rdfaAware?: boolean;

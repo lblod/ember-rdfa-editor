@@ -2,11 +2,11 @@ import type { Command } from 'prosemirror-state';
 import {
   getPathFromRoot,
   isTextNode,
-} from '#root/utils/_private/dom-helpers.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/dom-helpers.ts';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
-import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { normalToPreWrapWhiteSpace } from '@lblod/ember-rdfa-editor/utils/_private/whitespace-collapsing.ts';
+import { preprocessRDFa } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
+import { PNode } from '@lblod/ember-rdfa-editor/prosemirror-aliases.ts';
 
 export function insertHtml(
   html: Node | string,

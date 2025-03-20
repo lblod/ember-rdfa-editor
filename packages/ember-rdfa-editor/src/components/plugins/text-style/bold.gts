@@ -1,5 +1,5 @@
 import { BoldIcon } from '@appuniversum/ember-appuniversum/components/icons/bold';
-import Mark from '#root/components/toolbar/mark.ts';
+import Mark from '@lblod/ember-rdfa-editor/components/toolbar/mark.ts';
 import t from 'ember-intl/helpers/t';
 
 <template>

@@ -2,7 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { selectionCell, setCellAttr } from '@say-editor/prosemirror-tables';
@@ -10,7 +10,7 @@ import { inject as service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

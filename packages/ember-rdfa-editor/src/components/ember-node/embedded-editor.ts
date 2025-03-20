@@ -25,12 +25,15 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Component from '@glimmer/component';
-import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
+import type { EmberNodeArgs } from '@lblod/ember-rdfa-editor/utils/ember-node.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
-import { redo, undo } from '#root/plugins/history/index.ts';
-import { isSome, unwrap } from '#root/utils/_private/option.ts';
-import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed/index.ts';
+import { redo, undo } from '@lblod/ember-rdfa-editor/plugins/history/index.ts';
+import {
+  isSome,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
+import { lastKeyPressedPluginKey } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed/index.ts';
 import {
   EditorState,
   NodeSelection,
@@ -40,8 +43,8 @@ import {
   Transaction,
   type Command,
 } from 'prosemirror-state';
-import { embeddedEditorBaseKeymap } from '#root/core/keymap.ts';
-import SayView from '#root/core/say-view.ts';
+import { embeddedEditorBaseKeymap } from '@lblod/ember-rdfa-editor/core/keymap.ts';
+import SayView from '@lblod/ember-rdfa-editor/core/say-view.ts';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { AttrStep, Step, StepMap } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';

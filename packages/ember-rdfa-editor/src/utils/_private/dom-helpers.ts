@@ -1,4 +1,4 @@
-import { INVISIBLE_SPACE } from '#root/utils/_private/constants.ts';
+import { INVISIBLE_SPACE } from '@lblod/ember-rdfa-editor/utils/_private/constants.ts';
 
 /**
  * Fake class to list helper functions.

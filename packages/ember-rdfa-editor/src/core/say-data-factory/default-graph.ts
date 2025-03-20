@@ -1,6 +1,5 @@
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import type * as RDF from '@rdfjs/types';
-import type { SayTerm } from './term.ts';
 
 /**
  * A singleton term instance that represents the default graph.
@@ -16,7 +15,7 @@ export class SayDefaultGraph implements RDF.DefaultGraph {
     // Private constructor
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals = (other?: Option<RDF.Term>) => {
     return !!other && other.termType === 'DefaultGraph';
   };
 }

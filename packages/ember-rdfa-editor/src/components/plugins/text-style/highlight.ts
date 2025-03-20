@@ -2,13 +2,16 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { clearHighlight, setHighlight } from '#root/plugins/highlight/index.ts';
-import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
+import {
+  clearHighlight,
+  setHighlight,
+} from '@lblod/ember-rdfa-editor/plugins/highlight/index.ts';
+import { paintCycleHappened } from '@lblod/ember-rdfa-editor/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 
 type Args = {
   controller: SayController;

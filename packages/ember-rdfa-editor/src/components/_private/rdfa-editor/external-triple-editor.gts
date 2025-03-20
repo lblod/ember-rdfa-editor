@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import type SayController from '#root/core/say-controller.ts';
+import type SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -9,18 +9,21 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import WithUniqueId from '../with-unique-id.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
+import type { ResolvedPNode } from '@lblod/ember-rdfa-editor/utils/_private/types.ts';
 import { tracked } from '@glimmer/tracking';
-import type { FullTriple } from '#root/core/rdfa-processor.ts';
+import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import ExternalTripleForm from './external-triple-form.gts';
-import { transformExternalTriples } from '#root/utils/external-triple-utils.ts';
+import { transformExternalTriples } from '@lblod/ember-rdfa-editor/utils/external-triple-utils.ts';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
-import { isSome, type Option } from '#root/utils/_private/option.ts';
+import {
+  isSome,
+  type Option,
+} from '@lblod/ember-rdfa-editor/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 interface EditModalSig {

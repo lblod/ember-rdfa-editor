@@ -1,4 +1,4 @@
-import { getNodeByRdfaId } from '#root/plugins/rdfa-info/index.ts';
+import { getNodeByRdfaId } from '@lblod/ember-rdfa-editor/plugins/rdfa-info/index.ts';
 import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByRdfaIdArgs = {

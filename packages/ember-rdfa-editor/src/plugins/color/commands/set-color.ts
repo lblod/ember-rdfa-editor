@@ -1,5 +1,5 @@
 import type { Command } from 'prosemirror-state';
-import { toggleMarkAddFirst } from '#root/commands/toggle-mark-add-first.ts';
+import { toggleMarkAddFirst } from '@lblod/ember-rdfa-editor/commands/toggle-mark-add-first.ts';
 
 export function setColor(color: string): Command {
   return function (state, dispatch) {

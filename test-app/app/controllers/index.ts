@@ -41,7 +41,6 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   link,
   linkPasteHandler,
@@ -65,7 +64,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import type { PluginConfig } from '@lblod/ember-rdfa-editor';
+import type { PluginConfig, SayController } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';

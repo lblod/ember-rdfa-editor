@@ -1,7 +1,7 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
-import { notificationPluginKey } from '#root/plugins/notification/index.ts';
+import { notificationPluginKey } from '@lblod/ember-rdfa-editor/plugins/notification/index.ts';
 import type IntlService from 'ember-intl/services/intl';
-import type { Notification } from '#root/plugins/notification/index.ts';
+import type { Notification } from '@lblod/ember-rdfa-editor/plugins/notification/index.ts';
 import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 import type { EditorView } from 'prosemirror-view';
 
