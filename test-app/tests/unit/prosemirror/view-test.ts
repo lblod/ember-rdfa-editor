@@ -35,7 +35,7 @@ module('ProseMirror | view', function () {
     `;
 
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true">
+    <div lang="en-US" data-say-document="true" data-literal-node="true">
       <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p class="say-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -67,7 +67,7 @@ module('ProseMirror | view', function () {
       state: EditorState.create({ schema }),
     });
     const htmlToInsert = oneLineTrim`
-    <div lang="en-US" data-say-document="true">
+    <div lang="en-US" data-say-document="true" data-literal-node="true">
       <div style="display: none" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -90,7 +90,7 @@ module('ProseMirror | view', function () {
     </div>
     `;
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true">
+    <div lang="en-US" data-say-document="true" data-literal-node="true">
       <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p class="say-paragraph">Lorem ips<strong>um dolor s</strong>
@@ -143,7 +143,7 @@ module('ProseMirror | view', function () {
     </div>
     `;
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true">
+    <div lang="en-US" data-say-document="true" data-literal-node="true">
       <div style="display: none" class="say-hidden" data-rdfa-container="true"></div>
       <div data-content-container="true">
         <p class="say-paragraph">   </p>

@@ -39,6 +39,7 @@ import {
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color';
 import {
+  EditorState,
   inputRules,
   type PluginConfig,
   PNode,
@@ -62,11 +63,16 @@ import {
 import type {
   IncomingTriple,
   OutgoingTriple,
+  FullTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  SayDataFactory,
+  sayDataFactory,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import { testEditor } from 'test-app/tests/helpers/say-editor';
+import { builders } from 'prosemirror-test-builder';
 
 const schema = new Schema({
   nodes: {
@@ -135,6 +141,7 @@ const plugins: PluginConfig = [
 const rdf = (suffix: string) =>
   `http://www.w3.org/1999/02/22-rdf-syntax-ns#${suffix}`;
 const prov = (suffix: string) => `http://www.w3.org/ns/prov#${suffix}`;
+const testBuilders = builders(schema);
 
 function findNodeById(doc: PNode, id: string): NodeWithPos {
   const result = findChildrenByAttr(
@@ -198,9 +205,9 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
     const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: sayDataFactory.literalNode('http://test/1'),
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
@@ -259,13 +266,428 @@ module('rdfa | parsing', function () {
     const valueProps = valueNode.attrs['properties'] as OutgoingTriple[];
     const valueBacklinks = valueNode.attrs['backlinks'] as IncomingTriple[];
     const expectedValueProps: OutgoingTriple[] = [];
-    const expectedValueBacklinks = [
+    const expectedValueBacklinks: IncomingTriple[] = [
       {
-        subject: sayDataFactory.literalNode('http://test/1'),
+        subject: sayDataFactory.resourceNode('http://test/1'),
         predicate: prov('value'),
       },
     ];
     assert.deepEqual(valueProps, expectedValueProps, 'valueProps');
     assert.deepEqual(valueBacklinks, expectedValueBacklinks, 'valueBacklinks');
+  });
+
+  test('it should parse rdfa-ids correctly', function (assert): void {
+    const { controller } = testEditor(schema, plugins);
+    const htmlContent = `
+      <div
+        class="say-editable say-block-rdfa"
+        about="http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+        data-say-id="c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+      >
+        <div
+          style="display: none"
+          class="say-hidden"
+          data-rdfa-container="true"
+        >
+          <span property="ext:content" content="test" lang="nl-be"></span>
+        </div>
+        <div data-content-container="true">
+            <p class="say-paragraph"></p>
+        </div>
+      </div>
+      <div
+        class="say-editable say-block-rdfa"
+        data-label="literal"
+        about="http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7"
+        property="ext:toLiteral"
+        lang="nl-be"
+        data-literal-node="true"
+        data-say-id="f6a0b16d-0b7f-4c27-8111-a7ebf12ab103"
+      >
+        <div
+          style="display: none"
+          class="say-hidden"
+          data-rdfa-container="true"
+        >
+        </div>
+        <div data-content-container="true">
+          <p class="say-paragraph">Some content</p>
+        </div>
+      </div>
+    `;
+    console.log('HTML Content: ', htmlContent);
+    controller.initialize(htmlContent);
+    const { doc } = controller.mainEditorState;
+    console.log('Doc: ', doc);
+
+    const resourceNode = findNodesBySubject(
+      doc,
+      'http://example.com/c3d0f3a2-1314-4686-aa30-f46fd1f988f7',
+    )[0].value;
+    assert.deepEqual(
+      resourceNode.attrs['__rdfaId'],
+      'c3d0f3a2-1314-4686-aa30-f46fd1f988f7',
+    );
+    const properties = resourceNode.attrs['properties'] as OutgoingTriple[];
+    assert.strictEqual(properties.length, 2);
+    const propertyToLiteralNode = properties.find(
+      (prop) => prop.object.termType === 'LiteralNode',
+    );
+    assert.true(isSome(propertyToLiteralNode));
+    assert.strictEqual(
+      propertyToLiteralNode!.object.value,
+      'f6a0b16d-0b7f-4c27-8111-a7ebf12ab103',
+    );
+  });
+  test('it should parse a literal with multiple backlinks correctly', function (assert): void {
+    // this is the new part, serializing an extra backlink from a literalNode in
+    // the rdfaContainer
+    const hiddenBacklinkHtml = `<span data-literal-node="true" data-say-id="d601c3e1-5065-4bb4-bcb0-44e3636669d8" about="http://test/2" property="http://test/testPred" datatype="" lang="" content="value"></span>`;
+    const initialRender = `
+    <div
+      class="say-editable say-block-rdfa"
+      about="http://test/1"
+      data-say-id="07080c42-c2a0-4b5b-b808-37808d98294c"
+    >
+      <div
+        style="display: none"
+        class="say-hidden"
+        data-rdfa-container="true"
+      ></div>
+      <div data-content-container="true">
+        <div
+          class="say-editable say-block-rdfa"
+          about="http://test/1"
+          property="http://test/testPred"
+          data-literal-node="true"
+          data-say-id="d601c3e1-5065-4bb4-bcb0-44e3636669d8"
+        >
+          <div
+            style="display: none"
+            class="say-hidden"
+            data-rdfa-container="true"
+          >
+          ${hiddenBacklinkHtml}
+          </div>
+          <div data-content-container="true">
+            <p class="say-paragraph">value</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="say-editable say-block-rdfa"
+      about="http://test/2"
+      data-say-id="9dce8308-cbf4-4e87-9abd-4c336393940f"
+    >
+      <div
+        style="display: none"
+        class="say-hidden"
+        data-rdfa-container="true"
+      ></div>
+      <div data-content-container="true"><p class="say-paragraph"></p></div>
+    </div> `;
+
+    console.log('html', initialRender);
+    const { controller } = testEditor(schema, plugins);
+    controller.initialize(initialRender);
+    const initialParse = controller.mainEditorState.doc;
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const expectedDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/1',
+          __rdfaId: '07080c42-c2a0-4b5b-b808-37808d98294c',
+          properties: [
+            {
+              predicate: 'http://test/testPred',
+              object: df.literalNode('d601c3e1-5065-4bb4-bcb0-44e3636669d8'),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        block_rdfa(
+          {
+            rdfaNodeType: 'literal',
+            __rdfaId: 'd601c3e1-5065-4bb4-bcb0-44e3636669d8',
+            language: null,
+            backlinks: [
+              {
+                predicate: 'http://test/testPred',
+                // it may seem weird these are literalnode relationships, but
+                // it's because they need to store datatype and language
+                subject: df.resourceNode('http://test/1'),
+              },
+              // this is the new part, supporting multiple backlinks
+              {
+                predicate: 'http://test/testPred',
+                subject: df.resourceNode('http://test/2'),
+              },
+            ] satisfies IncomingTriple[],
+          },
+          paragraph('value'),
+        ),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/2',
+          __rdfaId: '9dce8308-cbf4-4e87-9abd-4c336393940f',
+          properties: [
+            // this is also new, a second resource node pointing to the same
+            // literal
+            {
+              predicate: 'http://test/testPred',
+              object: df.literalNode('d601c3e1-5065-4bb4-bcb0-44e3636669d8'),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        paragraph(''),
+      ),
+    );
+    // we need a bit more nesting for the assert
+    QUnit.dump.maxDepth = 10;
+    assert.propEqual(
+      initialParse.toJSON(),
+      expectedDoc.toJSON(),
+      'html should get parsed correctly',
+    );
+    const secondRender = controller.htmlContent;
+    controller.initialize(secondRender);
+    const secondParse = controller.mainEditorState.doc;
+    assert.propEqual(
+      secondParse.toJSON(),
+      expectedDoc.toJSON(),
+      'second render should give a stable doc',
+    );
+    const thirdRender = controller.htmlContent;
+    controller.initialize(thirdRender);
+    const thirdParse = controller.mainEditorState.doc;
+    assert.propEqual(
+      thirdParse.toJSON(),
+      expectedDoc.toJSON(),
+      'third render should give a stable doc',
+    );
+  });
+  test('literal nodes without relationships should stay in the doc across renders', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const initialState = doc(
+      {},
+      block_rdfa(
+        { rdfaNodeType: 'literal', __rdfaId: 'test-id' },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
+  test('literal node with content attribute should be serialized and parsed correctly', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const initialDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          content: 'alternative-value',
+        },
+        paragraph('value'),
+      ),
+    );
+    assert.strictEqual(
+      initialDoc.child(0).attrs['content'],
+      'alternative-value',
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialDoc });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialDoc.toJSON());
+  });
+  test('datatype of literal-nodes should be correctly parsed', function (assert) {
+    // we need a bit more nesting for the assert
+    QUnit.dump.maxDepth = 10;
+    const html = `
+      <div
+        class="say-editable say-block-rdfa"
+        about="http://test/1"
+        data-say-id="2e4e9e27-6c0d-4653-8072-edae732f36a1"
+      >
+        <div
+            style="display: none"
+            class="say-hidden"
+            data-rdfa-container="true"
+        ></div>
+        <div data-content-container="true">
+            <div
+                class="say-editable say-block-rdfa"
+                about="http://test/1"
+                property="http://test/testPred"
+                datatype="http://www.w3.org/2001/XMLSchema#dateTime"
+                lang=""
+                data-literal-node="true"
+                data-say-id="67c9959e-c15b-4a16-be65-e90c2256eed0"
+            >
+                <div
+                    style="display: none"
+                    class="say-hidden"
+                    data-rdfa-container="true"
+                ></div>
+                <div data-content-container="true">
+                    <p class="say-paragraph">content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const expectedDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/1',
+          __rdfaId: '2e4e9e27-6c0d-4653-8072-edae732f36a1',
+          properties: [
+            {
+              predicate: 'http://test/testPred',
+              object: df.literalNode('67c9959e-c15b-4a16-be65-e90c2256eed0'),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        block_rdfa(
+          {
+            rdfaNodeType: 'literal',
+            __rdfaId: '67c9959e-c15b-4a16-be65-e90c2256eed0',
+            datatype: df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
+            language: '',
+            backlinks: [
+              {
+                subject: df.resourceNode('http://test/1'),
+                predicate: 'http://test/testPred',
+              },
+            ] satisfies IncomingTriple[],
+          },
+          paragraph('content'),
+        ),
+      ),
+    );
+    const { controller } = testEditor(schema, plugins);
+    controller.initialize(html);
+    const actualDoc = controller.mainEditorState.doc;
+    assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
+  });
+  test('externalTriples should parse and stay in the doc across renders in literal nodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://testPred',
+              object: df.literal('value'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
+  test('externalTriples can link to resourcenodes and literalnodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.resourceNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+          externalTriples: [
+            {
+              subject: df.namedNode('http://test/1'),
+              predicate: 'http://extraThing',
+              object: df.literal('extraThingValue'),
+            },
+          ] satisfies FullTriple[],
+        },
+        paragraph('value'),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
+  });
+
+  test('literalNodes can have backlinks which link to existing and nonexisting resources', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialState = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          backlinks: [
+            {
+              subject: df.resourceNode('http://test/2'),
+              predicate: 'http://testPred',
+            },
+            {
+              subject: df.resourceNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+        },
+        paragraph('value'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          __rdfaId: 'test-resource',
+          properties: [
+            { predicate: 'http://testPred', object: df.literalNode('test-id') },
+          ] satisfies OutgoingTriple[],
+          subject: 'http://test/1',
+        },
+        paragraph(),
+      ),
+    );
+    const state = EditorState.create({ schema, plugins, doc: initialState });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    console.log('initialRender', initialRender);
+    controller.initialize(initialRender);
+    const secondState = controller.mainEditorState.doc;
+    assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
 });

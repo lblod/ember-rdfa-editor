@@ -29,10 +29,7 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/node-map.ts';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
-import {
-  languageOrDataType,
-  sayDataFactory,
-} from '#root/core/say-data-factory/index.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 
 export type ModelTerm<N> =
@@ -989,10 +986,9 @@ export class RdfaParser<N> {
     predicateAttribute = 'property',
   ) => {
     this.contentNodeMapping.set(node, {
-      subject: sayDataFactory.literalNode(
+      subject: sayDataFactory.resourceNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
           .value,
-        languageOrDataType(activeTag.language, activeTag.datatype),
       ),
 
       predicate: this.util.createIri(

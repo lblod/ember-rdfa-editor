@@ -126,6 +126,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-ember-template-tag": "^2.0.4",
     "prosemirror-dev-tools": "^4.2.0",
+    "prosemirror-test-builder": "^1.1.1",
     "qunit": "^2.23.1",
     "qunit-dom": "^3.4.0",
     "rdf-data-factory": "^1.1.2",

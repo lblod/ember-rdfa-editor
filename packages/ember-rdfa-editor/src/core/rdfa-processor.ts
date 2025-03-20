@@ -64,22 +64,17 @@ export type OutgoingTriple =
   | LiteralNodeTriple
   | ContentTriple;
 
-export type IncomingResourceNodeTriple = {
+export type IncomingTriple = {
   subject: ResourceNodeTerm;
   predicate: string;
 };
-export type IncomingLiteralNodeTriple = {
-  subject: LiteralNodeTerm;
-  predicate: string;
-};
-export type IncomingTriple =
-  | IncomingLiteralNodeTriple
-  | IncomingResourceNodeTriple;
+
 export type FullTriple = {
   subject: SayNamedNode;
   predicate: string;
   object: SayNamedNode | SayLiteral;
 };
+
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.
@@ -158,10 +153,20 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     ) {
       seenExternalSubjects.add(entry.subject.value);
       const ownerElement = node.parentElement?.parentElement?.parentElement;
-      const newTriples = properties.map((prop) => ({
-        subject: { termType: 'NamedNode', value: entry.subject.value },
-        ...prop,
-      }));
+      const newTriples = properties
+        // if the subject of a backlink to a literal node
+        // doesn't belong to a resource node,
+        // it will get interpreted both as a normal backlink (which is what we
+        // want) _and_ as an external triple with the target Id as a string
+        // value, which is what we don't want, so we filter that case here
+        .filter(
+          (prop) =>
+            ownerElement && prop.object.value !== ownerElement.dataset['sayId'],
+        )
+        .map((prop) => ({
+          subject: { termType: 'NamedNode', value: entry.subject.value },
+          ...prop,
+        }));
 
       if (ownerElement) {
         const previousTriples = ownerElement.dataset['externalTriples'];
@@ -191,10 +196,32 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
       subject,
       predicate,
     };
-    // write info to node
+    const extraBacklinks = [];
+    if (isElement(node)) {
+      const firstChild = node.firstElementChild;
+      if (
+        firstChild &&
+        isElement(firstChild) &&
+        firstChild.dataset['rdfaContainer'] === 'true'
+      ) {
+        for (const child of firstChild.children as Iterable<HTMLElement>) {
+          if (
+            child.dataset['literalNode'] === 'true' &&
+            child.dataset['sayId']
+          ) {
+            const backlink = datastore.getContentNodeMap().get(child);
+            if (backlink) {
+              extraBacklinks.push(backlink);
+            }
+          }
+        }
+      }
+    }
+
     // write info to node
     (node as HTMLElement).dataset['incomingProps'] = JSON.stringify([
       incomingProp,
+      ...extraBacklinks,
     ]);
     (node as HTMLElement).dataset['rdfaNodeType'] = 'literal';
   }
@@ -209,10 +236,7 @@ function quadToProperties(
   // check if quad refers to a contentNode
   if (quad.object.termType === 'Literal') {
     const contentNodes = datastore.getContentNodeMap().getValues({
-      subject: sayDataFactory.literalNode(
-        quad.subject.value,
-        languageOrDataType(quad.object.language, quad.object.datatype),
-      ),
+      subject: sayDataFactory.resourceNode(quad.subject.value),
       predicate: quad.predicate.value,
     });
     if (contentNodes) {
@@ -223,13 +247,9 @@ function quadToProperties(
             'unexpected quad object type for quad referring to literal node',
           );
         }
-        const { datatype, language } = quad.object;
         result.push({
           predicate: quad.predicate.value,
-          object: sayDataFactory.literalNode(
-            contentId,
-            languageOrDataType(language, datatype),
-          ),
+          object: sayDataFactory.literalNode(contentId),
         });
       }
       return result;

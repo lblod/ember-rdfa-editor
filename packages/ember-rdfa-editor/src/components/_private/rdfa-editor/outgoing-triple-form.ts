@@ -151,11 +151,12 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   }
 
   get initialDatatypeValue(): string {
-    const termType = this.triple.object.termType;
+    if (!this.controller) {
+      return '';
+    }
     if (
-      termType === 'Literal' ||
-      termType === 'ContentLiteral' ||
-      termType === 'LiteralNode'
+      this.triple.object.termType === 'Literal' ||
+      this.triple.object.termType === 'ContentLiteral'
     ) {
       const { language, datatype } = this.triple.object;
       if (language.length) {
@@ -163,6 +164,20 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
       } else {
         return datatype.value;
       }
+    }
+    return '';
+  }
+
+  get initialLanguageValue(): string {
+    if (!this.controller) {
+      return '';
+    }
+    if (
+      this.triple.object.termType === 'Literal' ||
+      this.triple.object.termType === 'ContentLiteral'
+    ) {
+      const { language } = this.triple.object;
+      return language;
     }
     return '';
   }
@@ -273,19 +288,13 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
         case 'LiteralNode': {
           const {
             predicate,
-            object: { value, language, datatype },
+            object: { value },
           } = literalNodeSchema.validateSync(
             {
               predicate: formData.get('predicate')?.toString(),
               object: {
                 termType: 'LiteralNode',
                 value: this.selectedLiteralNode,
-                datatype: {
-                  termType: 'NamedNode',
-                  value:
-                    formData.get('object.datatype.value')?.toString() || '',
-                },
-                language: formData.get('object.language')?.toString(),
               },
             },
             { abortEarly: false },
@@ -295,13 +304,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
             valid: true,
             triple: {
               predicate,
-              object: sayDataFactory.literalNode(
-                value,
-                languageOrDataType(
-                  language,
-                  sayDataFactory.namedNode(datatype.value),
-                ),
-              ),
+              object: sayDataFactory.literalNode(value),
             },
             subject: this.subject,
           };

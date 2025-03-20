@@ -18,6 +18,7 @@ export function fullLiteralSpan(
   subject: string | null,
   predicate: string,
   object: SayLiteral,
+  literalNodeId?: string,
 ) {
   let result: [string, Record<string, string>, string];
   if (object.language?.length) {
@@ -52,6 +53,10 @@ export function fullLiteralSpan(
   }
   if (subject) {
     result[1]['about'] = subject;
+  }
+  if (literalNodeId) {
+    result[1]['data-literal-node'] = 'true';
+    result[1]['data-say-id'] = literalNodeId;
   }
   return result;
 }

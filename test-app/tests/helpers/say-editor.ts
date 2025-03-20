@@ -1,6 +1,7 @@
 import type Owner from '@ember/owner';
 import { render } from '@ember/test-helpers';
 import {
+  EditorState,
   SayController,
   type PluginConfig,
   type Schema,
@@ -40,6 +41,7 @@ export async function renderEditor() {
 export function testEditor(
   schema: Schema,
   plugins: PluginConfig,
+  initialState?: EditorState,
 ): { editor: SayEditor; controller: SayController } {
   const mockOwner: Owner = {
     factoryFor: sinon.fake(),
@@ -55,5 +57,8 @@ export function testEditor(
     plugins,
   });
   const controller = new SayController(editor);
+  if (initialState) {
+    editor.mainView.updateState(initialState);
+  }
   return { editor, controller };
 }

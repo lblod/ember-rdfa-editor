@@ -17,4 +17,11 @@ export class ResourceNodeTerm<Iri extends string = string> {
       !!other && other.termType === 'ResourceNode' && other.value === this.value
     );
   };
+
+  toJSON() {
+    return {
+      termType: this.termType,
+      value: this.value,
+    };
+  }
 }

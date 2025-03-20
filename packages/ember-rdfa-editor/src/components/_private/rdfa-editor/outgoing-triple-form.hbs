@@ -161,7 +161,7 @@
           <AuInput
             id={{id}}
             name={{name}}
-            value={{this.triple.object.language}}
+            value={{this.initialLanguageValue}}
             required={{false}}
             @width="block"
             @disabled={{this.hasDatatype}}
@@ -194,50 +194,6 @@
           >
             {{this.literalNodeLabel obj}}
           </PowerSelect>
-          {{#if error}}
-            <AuPill>{{error}}</AuPill>
-          {{/if}}
-        {{/let}}
-      {{/let}}
-    </AuFormRow>
-    <AuFormRow>
-      {{#let (unique-id) "object.datatype.value" as |id name|}}
-        {{#let (this.findError name) as |error|}}
-          <AuLabel
-            for={{id}}
-            @required={{false}}
-            @requiredLabel="Required"
-          >Datatype</AuLabel>
-          <AuInput
-            id={{id}}
-            name={{name}}
-            value={{this.initialDatatypeValue}}
-            required={{false}}
-            @width="block"
-            @disabled={{this.hasLanguage}}
-          />
-          {{#if error}}
-            <AuPill>{{error}}</AuPill>
-          {{/if}}
-        {{/let}}
-      {{/let}}
-    </AuFormRow>
-    <AuFormRow>
-      {{#let (unique-id) "object.language" as |id name|}}
-        {{#let (this.findError name) as |error|}}
-          <AuLabel
-            for={{id}}
-            @required={{false}}
-            @requiredLabel="Required"
-          >Language</AuLabel>
-          <AuInput
-            id={{id}}
-            name={{name}}
-            value={{this.triple.object.language}}
-            required={{false}}
-            @width="block"
-            @disabled={{this.hasDatatype}}
-          />
           {{#if error}}
             <AuPill>{{error}}</AuPill>
           {{/if}}
@@ -305,7 +261,7 @@
           <AuInput
             id={{id}}
             name={{name}}
-            value={{this.triple.object.language}}
+            value={{this.initialLanguageValue}}
             required={{false}}
             @width="block"
             @disabled={{this.hasDatatype}}

@@ -68,11 +68,8 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
     );
   }
 
-  literalNode(
-    value: string,
-    languageOrDataType?: string | NamedNode<string>,
-  ): LiteralNodeTerm {
-    return new LiteralNodeTerm(value, languageOrDataType);
+  literalNode(value: string): LiteralNodeTerm {
+    return new LiteralNodeTerm(value);
   }
 
   resourceNode(value: string): ResourceNodeTerm {
@@ -92,7 +89,8 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
       case 'BlankNode':
         return this.blankNode(original.value);
       case 'Literal': {
-        const { datatype, language } = original as WithoutEquals<SayLiteral>;
+        const { datatype, language } =
+          original as unknown as WithoutEquals<SayLiteral>;
         return this.literal(
           original.value,
           languageOrDataType(language, this.fromTerm(datatype) as SayNamedNode),
@@ -115,12 +113,7 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
       case 'ResourceNode':
         return this.resourceNode(original.value);
       case 'LiteralNode': {
-        const { datatype, language } =
-          original as WithoutEquals<LiteralNodeTerm>;
-        return this.literalNode(
-          original.value,
-          languageOrDataType(language, this.fromTerm(datatype) as NamedNode),
-        );
+        return this.literalNode(original.value);
       }
       case 'ContentLiteral': {
         const { datatype, language } =

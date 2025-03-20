@@ -18,4 +18,11 @@ export class SayVariable implements RDF.Variable {
       !!other && other.termType === 'Variable' && other.value === this.value
     );
   };
+
+  toJSON() {
+    return {
+      termType: this.termType,
+      value: this.value,
+    };
+  }
 }
