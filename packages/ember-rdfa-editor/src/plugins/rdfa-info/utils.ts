@@ -8,8 +8,6 @@ import type {
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
 import {
-  LiteralNodeTerm,
-  ResourceNodeTerm,
   sayDataFactory,
   type SayTerm,
 } from '#root/core/say-data-factory/index.ts';
