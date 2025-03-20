@@ -34,6 +34,10 @@ module.exports = async function (defaults) {
 
   const { maybeEmbroider } = require('@embroider/test-setup');
   return maybeEmbroider(app, {
+    staticAddonTestSupportTrees: true,
+    staticAddonTrees: true,
+    staticInvokables: true,
+    staticEmberSource: true,
     packagerOptions: {
       webpackConfig: {
         devtool: 'source-map',
