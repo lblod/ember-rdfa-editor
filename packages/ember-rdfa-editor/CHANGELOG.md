@@ -1,5 +1,29 @@
 # @lblod/ember-rdfa-editor
 
+## 12.0.0
+
+### Major Changes
+
+- [#1275](https://github.com/lblod/ember-rdfa-editor/pull/1275) [`41569bc`](https://github.com/lblod/ember-rdfa-editor/commit/41569bc4f1e7c382130313494a8259f7db9adf8c) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove `lang` and `datatype` attributes from `LiteralNodeTerm` objects. The `lang` and `datatype` now need to be define on the literal node prosemirror attributes
+
+- [#1275](https://github.com/lblod/ember-rdfa-editor/pull/1275) [`9057cd5`](https://github.com/lblod/ember-rdfa-editor/commit/9057cd55cedc4e67978136debf892246d0949671) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust `IncomingTriple` interface. The `subject` field now only accepts an object of the type `ResourceNodeTerm`
+
+### Minor Changes
+
+- [#1273](https://github.com/lblod/ember-rdfa-editor/pull/1273) [`6d0e855`](https://github.com/lblod/ember-rdfa-editor/commit/6d0e855454a5f9a3d2dc2747573377f0f4bf19f1) Thanks [@abeforgit](https://github.com/abeforgit)! - Support external triples and loose backlinks on literal nodes
+
+- [#1270](https://github.com/lblod/ember-rdfa-editor/pull/1270) [`e380a63`](https://github.com/lblod/ember-rdfa-editor/commit/e380a63993682393ca8cc18546f63567a4157f82) Thanks [@elpoelma](https://github.com/elpoelma)! - Literal nodes: add support for `content` attribute, which may contain alternative content representation
+
+- [#1276](https://github.com/lblod/ember-rdfa-editor/pull/1276) [`7c0ddf9`](https://github.com/lblod/ember-rdfa-editor/commit/7c0ddf937e2fa0997796efd980257da18c1220ae) Thanks [@elpoelma](https://github.com/elpoelma)! - Add `updateSubject` transaction-monad which allows you to update the `subject` of a resource node
+
+### Patch Changes
+
+- [#1269](https://github.com/lblod/ember-rdfa-editor/pull/1269) [`9120706`](https://github.com/lblod/ember-rdfa-editor/commit/9120706338be05a3ac921a8706a144e4616d0389) Thanks [@abeforgit](https://github.com/abeforgit)! - fix: disabling adding relationships to literal nodes
+
+- [#1271](https://github.com/lblod/ember-rdfa-editor/pull/1271) [`fdbb9bf`](https://github.com/lblod/ember-rdfa-editor/commit/fdbb9bf6f0eef42c1af18d51cd3e3b1cb5a5185a) Thanks [@elpoelma](https://github.com/elpoelma)! - Fix issue related to JSON serialization of RDF terms
+
+- [#1274](https://github.com/lblod/ember-rdfa-editor/pull/1274) [`e3fb568`](https://github.com/lblod/ember-rdfa-editor/commit/e3fb568ef71bb557ef76e9a3806ac3a369614070) Thanks [@elpoelma](https://github.com/elpoelma)! - bugfix: ensure \_\_rdfaId attributes are regenerated on paste
+
 ## 11.3.0
 
 ### Minor Changes
