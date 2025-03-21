@@ -92,6 +92,98 @@ module('rdfa | updateSubject', (hooks) => {
       const resultState = operationResult.state;
       assert.deepEqual(resultState.doc.toJSON(), expectedDoc.toJSON());
     });
+    test('Literal node to resource node', (assert) => {
+      const initalSubject = null;
+      const targetSubject = `http://example.org/2`;
+      const initialDoc = doc(
+        {},
+        block_rdfa(
+          {
+            rdfaNodeType: 'literal',
+            subject: initalSubject,
+            __rdfaId: '1',
+            properties: [],
+            backlinks: [],
+          },
+          paragraph('content'),
+        ),
+      );
+
+      const expectedDoc = doc(
+        {},
+        block_rdfa(
+          {
+            rdfaNodeType: 'resource',
+            subject: targetSubject,
+            __rdfaId: '1',
+            properties: [],
+            backlinks: [],
+          },
+          paragraph('content'),
+        ),
+      );
+
+      const initialState = createEditorState(initialDoc);
+
+      const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
+      const operationResult = executeAndApplyUpdateSubjectOperation({
+        pos: nodeToUpdate.pos,
+        targetSubject,
+        keepBacklinks: false,
+        keepProperties: false,
+        keepExternalTriples: false,
+      })(initialState);
+      assert.true(operationResult.success);
+
+      const resultState = operationResult.state;
+      assert.deepEqual(resultState.doc.toJSON(), expectedDoc.toJSON());
+    });
+    test('Resource node to resource node', (assert) => {
+      const initalSubject = `http://example.org/1`;
+      const targetSubject = null;
+      const initialDoc = doc(
+        {},
+        block_rdfa(
+          {
+            rdfaNodeType: 'resource',
+            subject: initalSubject,
+            __rdfaId: '1',
+            properties: [],
+            backlinks: [],
+          },
+          paragraph('content'),
+        ),
+      );
+
+      const expectedDoc = doc(
+        {},
+        block_rdfa(
+          {
+            rdfaNodeType: 'literal',
+            subject: targetSubject,
+            __rdfaId: '1',
+            properties: [],
+            backlinks: [],
+          },
+          paragraph('content'),
+        ),
+      );
+
+      const initialState = createEditorState(initialDoc);
+
+      const nodeToUpdate = unwrap(getNodeByRdfaId(initialState, '1'));
+      const operationResult = executeAndApplyUpdateSubjectOperation({
+        pos: nodeToUpdate.pos,
+        targetSubject,
+        keepBacklinks: false,
+        keepProperties: false,
+        keepExternalTriples: false,
+      })(initialState);
+      assert.true(operationResult.success);
+
+      const resultState = operationResult.state;
+      assert.deepEqual(resultState.doc.toJSON(), expectedDoc.toJSON());
+    });
     module('External triples', () => {
       const initalSubject = `http://example.org/1`;
       const targetSubject = `http://example.org/2`;
