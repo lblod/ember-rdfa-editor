@@ -597,7 +597,7 @@ function getAllBacklinkingNodes(
 
 export type UpdateSubjectArgs = {
   pos: number;
-  targetSubject: string;
+  targetSubject: string | null;
   keepBacklinks: boolean;
   keepProperties: boolean;
   keepExternalTriples: boolean;
@@ -626,79 +626,95 @@ export function updateSubject(
       return doNothing;
     }
     const { attrs } = nodeToUpdate;
-    if (!isRdfaAttrs(attrs) || attrs.rdfaNodeType !== 'resource') {
+    if (!isRdfaAttrs(attrs)) {
       return doNothing;
     }
 
-    if (attrs.subject === targetSubject) {
+    if (
+      (attrs.rdfaNodeType === 'resource' && attrs.subject === targetSubject) ||
+      (attrs.rdfaNodeType === 'literal' && targetSubject === null)
+    ) {
       return doNothing;
     }
+
     const tr = state.tr;
 
     // Retrieve (other) nodes with the same subject
-    const nodesWithSameOriginalSubject = getNodesBySubject(
-      state,
-      attrs.subject,
-    ).filter((n) => n.value !== nodeToUpdate);
+    const nodesWithSameOriginalSubject =
+      attrs.rdfaNodeType === 'resource'
+        ? getNodesBySubject(state, attrs.subject).filter(
+            (n) => n.value !== nodeToUpdate,
+          )
+        : [];
 
     tr.setNodeAttribute(pos, 'subject', targetSubject);
+
+    if (targetSubject) {
+      tr.setNodeAttribute(pos, 'rdfaNodeType', 'resource');
+    } else {
+      tr.setNodeAttribute(pos, 'rdfaNodeType', 'literal');
+    }
+
     if (!keepExternalTriples) {
       tr.setNodeAttribute(pos, 'externalTriples', []);
     }
 
-    // Collection of backlinks which need to be updated (or removed), grouped by the `__rdfaId` of their object node
-    const backlinksToUpdateGroupedByObjectRdfaId: Map<
-      string,
-      IncomingTriple[]
-    > = getAllBacklinkingNodes(state, attrs);
+    if (attrs.rdfaNodeType === 'resource') {
+      // Collection of backlinks which need to be updated (or removed), grouped by the `__rdfaId` of their object node
+      const backlinksToUpdateGroupedByObjectRdfaId: Map<
+        string,
+        IncomingTriple[]
+      > = getAllBacklinkingNodes(state, attrs);
 
-    if (keepProperties) {
-      // In case the properties of the node need to be kept, we need to update their corresponding backlinks.
-      // Two cases:
-      // - No other nodes define the same original subject => we can simply remove the old backlinks + add the new backlinks
-      // - Other nodes define the same original subject => we need to keep the old backlinks + add the new backlinks
-      for (const [
-        rdfaId,
-        backlinksToUpdate,
-      ] of backlinksToUpdateGroupedByObjectRdfaId.entries()) {
-        const node = unwrap(getNodeByRdfaId(state, rdfaId));
-        const backlinks = node.value.attrs['backlinks'] as IncomingTriple[];
-        let backlinksUpdated = [...backlinks];
-        if (!nodesWithSameOriginalSubject.length) {
-          backlinksUpdated = backlinksUpdated.filter(
-            (bl) => !backlinksToUpdate.includes(bl),
-          );
-        }
-        for (const bl of backlinksToUpdate) {
-          const newBl = {
-            ...bl,
-            subject: sayDataFactory.resourceNode(targetSubject),
-          };
-          backlinksUpdated.push(newBl);
-        }
-        tr.setNodeAttribute(node.pos, 'backlinks', backlinksUpdated);
-      }
-    } else {
-      // In case the properties of the node do not need to be kept, we might need to remove some backlinks.
-      // Two cases:
-      // - No other nodes define the same original subject => remove the necessary backlinks
-      // - Other nodes define the same original subject => nothing todo, we can keep the backlinks without issues
-      tr.setNodeAttribute(pos, 'properties', []);
-      if (!nodesWithSameOriginalSubject.length) {
-        // Also remove the corresponding backlinks
+      if (keepProperties && targetSubject) {
+        // In case the properties of the node need to be kept, we need to update their corresponding backlinks.
+        // Two cases:
+        // - No other nodes define the same original subject => we can simply remove the old backlinks + add the new backlinks
+        // - Other nodes define the same original subject => we need to keep the old backlinks + add the new backlinks
         for (const [
           rdfaId,
-          backlinksToRemove,
+          backlinksToUpdate,
         ] of backlinksToUpdateGroupedByObjectRdfaId.entries()) {
           const node = unwrap(getNodeByRdfaId(state, rdfaId));
           const backlinks = node.value.attrs['backlinks'] as IncomingTriple[];
-          const backlinksUpdated = backlinks.filter(
-            (bl) => !backlinksToRemove.includes(bl),
-          );
+          let backlinksUpdated = [...backlinks];
+          if (!nodesWithSameOriginalSubject.length) {
+            backlinksUpdated = backlinksUpdated.filter(
+              (bl) => !backlinksToUpdate.includes(bl),
+            );
+          }
+          for (const bl of backlinksToUpdate) {
+            const newBl = {
+              ...bl,
+              subject: sayDataFactory.resourceNode(targetSubject),
+            };
+            backlinksUpdated.push(newBl);
+          }
           tr.setNodeAttribute(node.pos, 'backlinks', backlinksUpdated);
+        }
+      } else {
+        // In case the properties of the node do not need to be kept, we might need to remove some backlinks.
+        // Two cases:
+        // - No other nodes define the same original subject => remove the necessary backlinks
+        // - Other nodes define the same original subject => nothing todo, we can keep the backlinks without issues
+        tr.setNodeAttribute(pos, 'properties', []);
+        if (!nodesWithSameOriginalSubject.length) {
+          // Also remove the corresponding backlinks
+          for (const [
+            rdfaId,
+            backlinksToRemove,
+          ] of backlinksToUpdateGroupedByObjectRdfaId.entries()) {
+            const node = unwrap(getNodeByRdfaId(state, rdfaId));
+            const backlinks = node.value.attrs['backlinks'] as IncomingTriple[];
+            const backlinksUpdated = backlinks.filter(
+              (bl) => !backlinksToRemove.includes(bl),
+            );
+            tr.setNodeAttribute(node.pos, 'backlinks', backlinksUpdated);
+          }
         }
       }
     }
+
     const { backlinks } = attrs;
 
     // Collection of properties which need to be updated (or removed), grouped by the `__rdfaId` of their subject node
@@ -713,7 +729,7 @@ export function updateSubject(
       );
       const correspondingProperty = getCorrespondingProperty(
         state,
-        attrs.subject,
+        attrs.rdfaNodeType === 'resource' ? attrs.subject : attrs.__rdfaId,
         bl,
       );
       if (!correspondingProperty) {
@@ -745,10 +761,15 @@ export function updateSubject(
           );
         }
         for (const prop of propertiesToUpdate) {
-          const newProp = {
-            ...prop,
-            object: sayDataFactory.resourceNode(targetSubject),
-          };
+          const newProp = targetSubject
+            ? {
+                predicate: prop.predicate,
+                object: sayDataFactory.resourceNode(targetSubject),
+              }
+            : {
+                predicate: prop.predicate,
+                object: sayDataFactory.literalNode(attrs.__rdfaId),
+              };
           propertiesUpdated.push(newProp);
         }
         tr.setNodeAttribute(node.pos, 'properties', propertiesUpdated);
@@ -778,7 +799,9 @@ export function updateSubject(
     // Two case:
     // - There are no other nodes defining the target subject => nothing to do
     // - There are nodes defining the target subject => merge the backlinks + merge the properties
-    const nodesWithSameTargetSubject = getNodesBySubject(state, targetSubject);
+    const nodesWithSameTargetSubject = targetSubject
+      ? getNodesBySubject(state, targetSubject)
+      : [];
     if (nodesWithSameTargetSubject.length) {
       // Note: we need to resolve the nodes again here,
       // as we want to retrieve it's latest version (it could already have been updated in previous computations)
