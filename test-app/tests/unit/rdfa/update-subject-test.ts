@@ -138,7 +138,7 @@ module('rdfa | updateSubject', (hooks) => {
       const resultState = operationResult.state;
       assert.deepEqual(resultState.doc.toJSON(), expectedDoc.toJSON());
     });
-    test('Resource node to resource node', (assert) => {
+    test('Resource node to literal node', (assert) => {
       const initalSubject = `http://example.org/1`;
       const targetSubject = null;
       const initialDoc = doc(
