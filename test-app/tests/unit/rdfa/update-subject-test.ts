@@ -7,6 +7,7 @@ import {
 import { EditorState, PNode, type RdfaAttrs } from '@lblod/ember-rdfa-editor';
 import {
   getNodeByRdfaId,
+  getNodesBySubject,
   updateSubject,
   type UpdateSubjectArgs,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info/utils';
@@ -1011,5 +1012,177 @@ module('rdfa | updateSubject', (hooks) => {
       const resultState = operationResult.state;
       assert.deepEqual(resultState.doc.toJSON(), expectedDoc.toJSON());
     });
+  });
+  test('change subjects to match then to literal', (assert) => {
+    const initalSubject1 = `http://example.org/1`;
+    const initalSubject2 = `http://example.org/2`;
+    const initialDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: initalSubject1,
+          __rdfaId: '1',
+          properties: [
+            {
+              predicate: 'http://predicates.org/1',
+              object: sayDataFactory.literalNode('5'),
+            },
+            {
+              predicate: 'http://predicates.org/2',
+              object: sayDataFactory.namedNode('http://named-nodes.org/1'),
+            },
+          ],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: initalSubject2,
+          __rdfaId: '2',
+          properties: [
+            {
+              predicate: 'http://predicates.org/3',
+              object: sayDataFactory.literalNode('42'),
+            },
+            {
+              predicate: 'http://predicates.org/4',
+              object: sayDataFactory.namedNode('http://named-nodes.org/2'),
+            },
+          ],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+    );
+
+    const linkedDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: initalSubject1,
+          __rdfaId: '1',
+          properties: [
+            {
+              predicate: 'http://predicates.org/1',
+              object: sayDataFactory.literalNode('5'),
+            },
+            {
+              predicate: 'http://predicates.org/2',
+              object: sayDataFactory.namedNode('http://named-nodes.org/1'),
+            },
+            {
+              predicate: 'http://predicates.org/3',
+              object: sayDataFactory.literalNode('42'),
+            },
+            {
+              predicate: 'http://predicates.org/4',
+              object: sayDataFactory.namedNode('http://named-nodes.org/2'),
+            },
+          ],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: initalSubject1,
+          __rdfaId: '2',
+          properties: [
+            {
+              predicate: 'http://predicates.org/1',
+              object: sayDataFactory.literalNode('5'),
+            },
+            {
+              predicate: 'http://predicates.org/2',
+              object: sayDataFactory.namedNode('http://named-nodes.org/1'),
+            },
+            {
+              predicate: 'http://predicates.org/3',
+              object: sayDataFactory.literalNode('42'),
+            },
+            {
+              predicate: 'http://predicates.org/4',
+              object: sayDataFactory.namedNode('http://named-nodes.org/2'),
+            },
+          ],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+    );
+
+    const initialState = createEditorState(initialDoc);
+
+    const node2 = unwrap(getNodesBySubject(initialState, initalSubject2))[0];
+    const operationResult = executeAndApplyUpdateSubjectOperation({
+      pos: node2.pos,
+      targetSubject: initalSubject1,
+      keepBacklinks: true,
+      keepProperties: true,
+      keepExternalTriples: true,
+    })(initialState);
+    assert.true(operationResult.success);
+
+    const resultState = operationResult.state;
+    assert.deepEqual(resultState.doc.toJSON(), linkedDoc.toJSON());
+
+    const step2Node2 = unwrap(getNodeByRdfaId(resultState, '2'));
+    const operation2Result = executeAndApplyUpdateSubjectOperation({
+      pos: step2Node2.pos,
+      targetSubject: null,
+      keepBacklinks: true,
+      keepProperties: false,
+      keepExternalTriples: true,
+    })(resultState);
+    assert.true(operationResult.success);
+
+    const afterDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: initalSubject1,
+          __rdfaId: '1',
+          properties: [
+            {
+              predicate: 'http://predicates.org/1',
+              object: sayDataFactory.literalNode('5'),
+            },
+            {
+              predicate: 'http://predicates.org/2',
+              object: sayDataFactory.namedNode('http://named-nodes.org/1'),
+            },
+            {
+              predicate: 'http://predicates.org/3',
+              object: sayDataFactory.literalNode('42'),
+            },
+            {
+              predicate: 'http://predicates.org/4',
+              object: sayDataFactory.namedNode('http://named-nodes.org/2'),
+            },
+          ],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          subject: null,
+          __rdfaId: '2',
+          properties: [],
+          backlinks: [],
+        },
+        paragraph('content'),
+      ),
+    );
+
+    const result2State = operation2Result.state;
+    assert.deepEqual(result2State.doc.toJSON(), afterDoc.toJSON());
   });
 });
