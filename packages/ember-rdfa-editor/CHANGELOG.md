@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 12.1.0
+
+### Minor Changes
+
+- [#1280](https://github.com/lblod/ember-rdfa-editor/pull/1280) [`244d3b8`](https://github.com/lblod/ember-rdfa-editor/commit/244d3b89e6d6ddede4e6f63f27c33848ce0a292b) Thanks [@elpoelma](https://github.com/elpoelma)! - Adjust `updateSubject` utility function:
+  - accept `null` as a `targetSubject` value. If `null` is passed, the node is converted to a literal node. In this case, the `keepProperties` argument is ignored (properties are always removed in case of conversion to a literal node).
+  - the function can now also be run on literal nodes. This always you to easily convert a literal node to a resource node with a certain subject.
+
 ## 12.0.0
 
 ### Major Changes
