@@ -1,13 +1,12 @@
 import Component from '@glimmer/component';
 import type { ContentTriple, PlainTriple } from '#root/core/rdfa-processor.ts';
-import OutgoingTripleForm from '../outgoing-triple-form.ts';
+import OutgoingTripleForm from '../outgoing-triple-form.gts';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import WithUniqueId from '../../with-unique-id.ts';
 import { array } from '@ember/helper';
 import { on } from '@ember/modifier';
-import type { SupportedTermType } from '../external-triple-form.ts';
 
 interface Sig {
   Args: {
@@ -16,7 +15,6 @@ interface Sig {
     onSave: (property: PlainTriple | ContentTriple) => void;
     modalOpen: boolean;
     title?: string;
-    termTypes: SupportedTermType[];
   };
 }
 

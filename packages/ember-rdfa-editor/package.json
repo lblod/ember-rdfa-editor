@@ -351,6 +351,7 @@
       "./components/_private/doc-editor/info-pill.js": "./dist/_app_/components/_private/doc-editor/info-pill.js",
       "./components/_private/doc-editor/lang-pill.js": "./dist/_app_/components/_private/doc-editor/lang-pill.js",
       "./components/_private/number-editor/index.js": "./dist/_app_/components/_private/number-editor/index.js",
+      "./components/_private/rdfa-editor/backlink-form.js": "./dist/_app_/components/_private/rdfa-editor/backlink-form.js",
       "./components/_private/rdfa-editor/external-triple-editor.js": "./dist/_app_/components/_private/rdfa-editor/external-triple-editor.js",
       "./components/_private/rdfa-editor/external-triple-form.js": "./dist/_app_/components/_private/rdfa-editor/external-triple-form.js",
       "./components/_private/rdfa-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/index.js",

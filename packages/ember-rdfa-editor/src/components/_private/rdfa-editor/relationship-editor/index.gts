@@ -25,7 +25,7 @@ import {
   getBacklinks,
   getProperties,
 } from '#root/utils/rdfa-utils.ts';
-import ContentPredicateList from './content-predicate-list.ts';
+import ContentPredicateList from './content-predicate-list.gts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
@@ -129,16 +129,15 @@ export default class RdfaRelationshipEditor extends Component<Args> {
       ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
     );
   }
-  get allImportedResources(): string[] | false {
-    return (
-      this.documentImportedResources &&
-      Array.from(
-        new Set<string>([
-          ...(this.documentImportedResources || []),
-          ...(this.args.additionalImportedResources || []),
-        ]).values(),
-      )
-    );
+  get allImportedResources(): string[] {
+    return this.documentImportedResources
+      ? Array.from(
+          new Set<string>([
+            ...(this.documentImportedResources || []),
+            ...(this.args.additionalImportedResources || []),
+          ]).values(),
+        )
+      : [];
   }
 
   get isResource() {

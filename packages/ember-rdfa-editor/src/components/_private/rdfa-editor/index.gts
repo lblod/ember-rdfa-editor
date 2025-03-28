@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
-import RdfaPropertyEditor from './property-editor/index.ts';
+import RdfaPropertyEditor from './property-editor/index.gts';
 import RdfaRelationshipEditor from './relationship-editor/index.gts';
-import RdfaWrappingUtils from './wrapping-utils/index.ts';
-import RemoveNode from './remove-node/index.ts';
+import RdfaWrappingUtils from './wrapping-utils/index.gts';
+import RemoveNode from './remove-node/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
