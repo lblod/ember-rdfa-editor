@@ -12,10 +12,10 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import ExternalTripleEditor from './external-triple-editor.gts';
 import type SayController from '#root/core/say-controller.ts';
 import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
+import ExternalTripleEditor from './external-triple-editor/index.gts';
 
 type Args = {
   controller?: SayController;

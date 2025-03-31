@@ -6,13 +6,12 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import WithUniqueId from '../with-unique-id.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { tracked } from '@glimmer/tracking';
 import type { FullTriple } from '#root/core/rdfa-processor.ts';
-import ExternalTripleForm from './external-triple-form.gts';
+import ExternalTripleForm from './form.gts';
 import { transformExternalTriples } from '#root/utils/external-triple-utils.ts';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
@@ -22,6 +21,7 @@ import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import { isSome, type Option } from '#root/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
+import WithUniqueId from '../../with-unique-id.ts';
 
 interface EditModalSig {
   Args: {
