@@ -87,7 +87,7 @@ const DEFAULT_TRIPLE: OutgoingTriple = {
   predicate: '',
   object: sayDataFactory.namedNode(''),
 };
-export default class OutgoingTripleForm extends Component<Sig> {
+export default class PropertyEditorForm extends Component<Sig> {
   @localCopy('args.triple.object.termType')
   selectedTermType?: SayTermType;
 

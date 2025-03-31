@@ -16,6 +16,7 @@ import type SayController from '#root/core/say-controller.ts';
 import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
 import ExternalTripleEditor from './external-triple-editor/index.gts';
+import BacklinkEditor from './backlink-editor/index.gts';
 
 type Args = {
   controller?: SayController;
@@ -118,6 +119,9 @@ export default class RdfaEditor extends Component<Args> {
                 />
               </Section>
             {{/if}}
+            <Section>
+              <BacklinkEditor @controller={{this.controller}} @node={{@node}} />
+            </Section>
             <Section>
               <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
             </Section>
