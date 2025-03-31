@@ -23,13 +23,13 @@ import {
   literalTermSchema,
   namedNodeTermSchema,
   resourceNodeTermSchema,
-} from './object-term-schemas.ts';
+} from '../object-term-schemas.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { on } from '@ember/modifier';
-import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row.js';
-import AuLabel from '@appuniversum/ember-appuniversum/components/au-label.js';
-import AuPill from '@appuniversum/ember-appuniversum/components/au-pill.js';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input.js';
+import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
+import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
+import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
+import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import { eq } from 'ember-truth-helpers';
 import { uniqueId } from '@ember/helper';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
@@ -87,7 +87,7 @@ const DEFAULT_TRIPLE: OutgoingTriple = {
   predicate: '',
   object: sayDataFactory.namedNode(''),
 };
-export default class OutgoingTripleFormComponent extends Component<Sig> {
+export default class OutgoingTripleForm extends Component<Sig> {
   @localCopy('args.triple.object.termType')
   selectedTermType?: SayTermType;
 
@@ -135,6 +135,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
   }
 
   get literals(): string[] {
+    console.log('Get literals!');
     if (!this.controller) {
       return [];
     }
@@ -150,6 +151,7 @@ export default class OutgoingTripleFormComponent extends Component<Sig> {
         result.push(rdfaId);
       }
     });
+    console.log('Literals: ', result);
     return result;
   }
 

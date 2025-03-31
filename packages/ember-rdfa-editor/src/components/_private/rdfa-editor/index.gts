@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
 import RdfaPropertyEditor from './property-editor/index.gts';
-import RdfaRelationshipEditor from './relationship-editor/index.gts';
 import RdfaWrappingUtils from './wrapping-utils/index.gts';
 import RemoveNode from './remove-node/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -115,17 +114,10 @@ export default class RdfaEditor extends Component<Args> {
               <Section>
                 <RdfaPropertyEditor
                   @node={{@node}}
-                  @controller={{@controller}}
+                  @controller={{this.controller}}
                 />
               </Section>
             {{/if}}
-            <Section>
-              <RdfaRelationshipEditor
-                @node={{@node}}
-                @controller={{@controller}}
-                @additionalImportedResources={{@additionalImportedResources}}
-              />
-            </Section>
             <Section>
               <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
             </Section>
