@@ -17,4 +17,4 @@ steps:
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
     secrets: [npm_access_token]
 when:
-  - event: push
+  - event: manual
