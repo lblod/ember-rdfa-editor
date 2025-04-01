@@ -17,7 +17,9 @@ steps:
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
-    secrets: [npm_access_token]
+    environment:
+      NPM_ACCESS_TOKEN:
+        from_secret: npm_access_token
     when:
       ref:
         include: refs/tags/@lblod/ember-rdfa-editor@*-next.*
@@ -32,7 +34,9 @@ steps:
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag latest --no-git-checks
-    secrets: [npm_access_token]
+    environment:
+      NPM_ACCESS_TOKEN:
+        from_secret: npm_access_token
     when:
       ref:
         exclude: refs/tags/@lblod/ember-rdfa-editor@*-*
@@ -42,7 +46,10 @@ steps:
       repo: lblod/ember-rdfa-editor
       tags: "${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}"
       purge: true
-    secrets: [ docker_username, docker_password ]
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
 when:
   event: tag
   ref: refs/tags/@lblod/ember-rdfa-editor@*
