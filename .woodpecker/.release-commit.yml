@@ -15,6 +15,8 @@ steps:
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
-    secrets: [npm_access_token]
+    environment:
+      NPM_ACCESS_TOKEN:
+        from_secret: npm_access_token
 when:
   - event: manual

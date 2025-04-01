@@ -14,13 +14,13 @@ steps:
       - pnpm i -f
   lint:
     image: node:22-slim
-    group: lint
+    depends_on: [install]
     commands:
       - npm i -g corepack@0.31
       - pnpm lint
   test:
     image: danlynn/ember-cli:6.1.0
-    group: lint
+    depends_on: [install]
     commands:
       - npm i -g corepack@0.31
       - pnpm test
