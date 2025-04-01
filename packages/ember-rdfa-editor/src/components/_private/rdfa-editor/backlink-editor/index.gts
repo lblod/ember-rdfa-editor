@@ -28,9 +28,7 @@ import {
   addBacklinkToNode,
   removeBacklinkFromNode,
 } from '#root/utils/rdfa-utils.ts';
-import {
-  transactionCombinator,
-} from '#root/utils/transaction-utils.ts';
+import { transactionCombinator } from '#root/utils/transaction-utils.ts';
 
 type CreationStatus = {
   mode: 'creation';
