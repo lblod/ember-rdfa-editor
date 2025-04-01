@@ -14,6 +14,7 @@ import {
   addProperty,
   getNodeByRdfaId,
   getNodesBySubject,
+  isLinkToNode,
 } from '#root/plugins/rdfa-info/utils.ts';
 import { isRdfaAttrs } from '#root/core/schema.ts';
 import TransformUtils from './transform-utils.ts';
@@ -63,9 +64,9 @@ export function getSubjects(node: PNode): Set<string> {
 }
 
 export type AddBacklinkToNodeArgs = {
-  /** The resource to which to add a property */
+  /** The rdfaId of the node to which to add a backlink */
   rdfaId: string;
-  /** Property to add */
+  /** Backlink to add */
   backlink: IncomingTriple;
 };
 export function addBacklinkToNode({
@@ -121,5 +122,98 @@ export function addBacklinkToNode({
       });
     }
     return { initialState: state, transaction: tr, result: true };
+  };
+}
+
+export type RemoveBacklinkFromNodeArgs = {
+  /** The rdfaId of the node from which to remove a backlink */
+  rdfaId: string;
+  /** Backlink index to remove */
+  index: number;
+};
+export function removeBacklinkFromNode({
+  rdfaId,
+  index,
+}: RemoveBacklinkFromNodeArgs): TransactionMonad<boolean> {
+  return function (state: EditorState): TransactionMonadResult<boolean> {
+    const doNothing = {
+      initialState: state,
+      transaction: state.tr,
+      result: false,
+    };
+    const node = getNodeByRdfaId(state, rdfaId);
+    if (!node || !isRdfaAttrs(node.value.attrs)) {
+      return doNothing;
+    }
+    const attrs = node.value.attrs;
+    const nodesToUpdate =
+      attrs.rdfaNodeType === 'resource'
+        ? getNodesBySubject(state, attrs.subject)
+        : [node];
+
+    const backlinks = node.value.attrs.backlinks;
+    if (!backlinks?.length) {
+      return doNothing;
+    }
+    const backlinkToRemove = backlinks[index];
+    if (!backlinkToRemove) {
+      return doNothing;
+    }
+    const updatedBacklinks = backlinks.slice();
+    updatedBacklinks.splice(index, 1);
+    const tr = state.tr;
+    nodesToUpdate.forEach((node) => {
+      TransformUtils.setAttribute(tr, node.pos, 'backlinks', updatedBacklinks);
+    });
+    const subjectNodes = getNodesBySubject(
+      state,
+      backlinkToRemove.subject.value,
+    );
+    subjectNodes?.forEach((subjectNode) => {
+      const properties = subjectNode.value.attrs[
+        'properties'
+      ] as OutgoingTriple[];
+      if (properties) {
+        const filteredProperties = properties.filter((prop) => {
+          if (!isLinkToNode(prop)) {
+            return true;
+          }
+          if (
+            attrs.rdfaNodeType === 'literal' &&
+            prop.object.termType === 'LiteralNode'
+          ) {
+            return !(
+              backlinkToRemove.predicate === prop.predicate &&
+              backlinkToRemove.subject.value ===
+                subjectNode.value.attrs['subject'] &&
+              prop.object.value === attrs.__rdfaId
+            );
+          } else if (
+            attrs.rdfaNodeType === 'resource' &&
+            prop.object.termType === 'LiteralNode'
+          ) {
+            return !(
+              backlinkToRemove.predicate === prop.predicate &&
+              backlinkToRemove.subject.value ===
+                subjectNode.value.attrs['subject'] &&
+              prop.object.value === attrs.subject
+            );
+          } else {
+            return true;
+          }
+        });
+        TransformUtils.setAttribute(
+          tr,
+          subjectNode.pos,
+          'properties',
+          filteredProperties,
+        );
+      }
+    });
+    return {
+      transaction: tr,
+      initialState: state,
+      result: true,
+    };
   };
 }

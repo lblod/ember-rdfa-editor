@@ -24,9 +24,13 @@ import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button
 import BacklinkForm from './form.gts';
 import { v4 as uuidv4 } from 'uuid';
 import { action } from '@ember/object';
-import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
-import { removeBacklink } from '#root/commands/_private/rdfa-commands/remove-backlink.ts';
-import { isRdfaAttrs } from '#root/core/schema.ts';
+import {
+  addBacklinkToNode,
+  removeBacklinkFromNode,
+} from '#root/utils/rdfa-utils.ts';
+import {
+  transactionCombinator,
+} from '#root/utils/transaction-utils.js';
 
 type CreationStatus = {
   mode: 'creation';
@@ -96,24 +100,25 @@ export default class BacklinkEditor extends Component<Args> {
   };
 
   removeBacklink = (index: number) => {
-    const attrs = this.node.attrs;
-    if (!isRdfaAttrs(attrs)) {
-      return;
-    }
-    const target =
-      attrs.rdfaNodeType === 'literal'
-        ? ({ termType: 'LiteralNode', rdfaId: attrs.__rdfaId } as const)
-        : ({ termType: 'ResourceNode', value: attrs.subject } as const);
-    this.args.controller?.doCommand(removeBacklink({ target, index }), {
-      view: this.args.controller.mainEditorView,
+    this.controller.withTransaction(() => {
+      return removeBacklinkFromNode({
+        rdfaId: this.node.attrs['__rdfaId'] as string,
+        index,
+      })(this.controller.mainEditorState).transaction;
     });
   };
 
   updateBacklink = (newBacklink: IncomingTriple) => {
-    // TODO: use transaction-monads to do this in one go
     if (this.status?.mode === 'update') {
-      this.removeBacklink(this.status.index);
-      this.addBacklink(newBacklink);
+      const rdfaId = this.node.attrs['__rdfaId'] as string;
+      const index = this.status.index;
+      this.controller.withTransaction(() => {
+        return transactionCombinator(this.controller.mainEditorState)([
+          removeBacklinkFromNode({ rdfaId, index }),
+          addBacklinkToNode({ rdfaId, backlink: newBacklink }),
+        ]).transaction;
+      });
+
       this.status = undefined;
     }
   };
