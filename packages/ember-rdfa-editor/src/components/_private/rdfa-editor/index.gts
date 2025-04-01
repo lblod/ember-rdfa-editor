@@ -116,6 +116,7 @@ export default class RdfaEditor extends Component<Args> {
                 <RdfaPropertyEditor
                   @node={{@node}}
                   @controller={{this.controller}}
+                  @additionalImportedResources={{@additionalImportedResources}}
                 />
               </Section>
             {{/if}}
