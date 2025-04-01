@@ -30,7 +30,7 @@ import {
 } from '#root/utils/rdfa-utils.ts';
 import {
   transactionCombinator,
-} from '#root/utils/transaction-utils.js';
+} from '#root/utils/transaction-utils.ts';
 
 type CreationStatus = {
   mode: 'creation';
