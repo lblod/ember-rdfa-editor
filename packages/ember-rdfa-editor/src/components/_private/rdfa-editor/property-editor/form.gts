@@ -35,7 +35,6 @@ import { uniqueId } from '@ember/helper';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 
-
 type SupportedTermType =
   | 'NamedNode'
   | 'LiteralNode'
