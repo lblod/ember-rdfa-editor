@@ -134,7 +134,6 @@ export default class PropertyEditorForm extends Component<Sig> {
   }
 
   get literals(): string[] {
-    console.log('Get literals!');
     if (!this.controller) {
       return [];
     }
@@ -150,7 +149,6 @@ export default class PropertyEditorForm extends Component<Sig> {
         result.push(rdfaId);
       }
     });
-    console.log('Literals: ', result);
     return result;
   }
 

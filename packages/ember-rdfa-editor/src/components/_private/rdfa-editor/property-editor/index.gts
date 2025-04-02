@@ -218,11 +218,9 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   addProperty = (property: OutgoingTriple, subject?: string) => {
-    console.log('Add prop to subject: ', subject);
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
     const resource = this.currentResource || subject;
-    console.log('Resource: ', resource);
     if (resource) {
       const isNewImportedResource =
         (subject &&
