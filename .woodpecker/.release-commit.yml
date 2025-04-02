@@ -19,4 +19,4 @@ steps:
       NPM_ACCESS_TOKEN:
         from_secret: npm_access_token
 when:
-  - event: push
+  - event: manual
