@@ -130,15 +130,17 @@ export default class RdfaPropertyEditor extends Component<Args> {
       ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
     );
   }
-  get allImportedResources(): string[] {
-    return this.documentImportedResources
-      ? Array.from(
-          new Set<string>([
-            ...(this.documentImportedResources || []),
-            ...(this.args.additionalImportedResources || []),
-          ]).values(),
-        )
-      : [];
+
+  get allImportedResources(): string[] | false {
+    return (
+      this.documentImportedResources &&
+      Array.from(
+        new Set<string>([
+          ...(this.documentImportedResources || []),
+          ...(this.args.additionalImportedResources || []),
+        ]).values(),
+      )
+    );
   }
 
   get importedResources(): Record<string, string | undefined> | undefined {
@@ -426,7 +428,7 @@ interface Sig {
     onCancel: () => void;
     onSave: (property: OutgoingTriple, subject?: string) => void;
     modalOpen: boolean;
-    importedResources?: string[];
+    importedResources?: string[] | false;
     title?: string;
   };
 }

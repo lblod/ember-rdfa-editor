@@ -57,7 +57,7 @@ interface Sig {
     controller?: SayController;
     onInput?(newTriple: Partial<OutgoingTriple>): void;
     onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
-    importedResources?: string[];
+    importedResources?: string[] | false;
   };
   Element: HTMLFormElement;
 }
@@ -206,10 +206,6 @@ export default class PropertyEditorForm extends Component<Sig> {
     return Boolean(
       this.currentFormData?.get('object.language')?.toString().length,
     );
-  }
-
-  get hasImportedResources(): boolean {
-    return !!this.args.importedResources;
   }
 
   resourceNodeLabel = (resource: string): string => {
@@ -445,6 +441,10 @@ export default class PropertyEditorForm extends Component<Sig> {
     this.currentFormData = formData;
   }
 
+  isArray = (obj: unknown) => {
+    return Array.isArray(obj);
+  };
+
   <template>
     <form
       ...attributes
@@ -452,7 +452,7 @@ export default class PropertyEditorForm extends Component<Sig> {
       {{on "input" this.handleInput}}
       {{didInsert this.afterInsert}}
     >
-      {{#if this.hasImportedResources}}
+      {{#if (this.isArray @importedResources)}}
         <AuFormRow>
           {{#let (uniqueId) "subject" as |id name|}}
             {{#let (this.findError name) as |error|}}
