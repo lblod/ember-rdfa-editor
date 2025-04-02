@@ -4,11 +4,11 @@ import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
 import { localCopy } from 'tracked-toolbox';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
-import PowerSelect from 'ember-power-select/components/power-select';
+import PowerSelect, {
+  type Select,
+} from 'ember-power-select/components/power-select';
 import { type Option } from '#root/utils/_private/option.ts';
-import type { Select } from 'ember-power-select/components/power-select';
 import { uniqueId } from '@ember/helper';
 import { action } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
@@ -20,6 +20,7 @@ interface BacklinkFormSig {
     controller: SayController;
     onSubmit: (backlink: IncomingTriple) => void;
     backlink?: Option<IncomingTriple>;
+    predicateOptions?: string[];
   };
 }
 const DEFAULT_BACKLINK: IncomingTriple = {
@@ -65,9 +66,8 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
   }
 
   @action
-  updatePredicate(event: InputEvent) {
-    const target = event.target as HTMLInputElement;
-    this.predicate = target.value;
+  updatePredicate(value: string) {
+    this.predicate = value;
   }
 
   handleSubmit = (event: SubmitEvent) => {
@@ -78,6 +78,21 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
     };
     this.args.onSubmit(backlink);
   };
+  @action
+  allowCustomSelection(select: Select, event: KeyboardEvent) {
+    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
+    // entry by typing in the power-select 'search' and hitting 'enter'
+    if (
+      event.key === 'Enter' &&
+      select.isOpen &&
+      !select.highlighted &&
+      !!select.searchText
+    ) {
+      console.log(select.searchText);
+      select.actions.choose(select.searchText);
+    }
+    return true;
+  }
   <template>
     <form class="au-c-form" {{on "submit" this.handleSubmit}} ...attributes>
       <AuFormRow>
@@ -110,13 +125,20 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
             @required={{true}}
             @requiredLabel="Required"
           >Predicate</AuLabel>
-          <AuInput
+          <PowerSelect
             id={{id}}
-            value={{this.predicate}}
-            {{on "input" this.updatePredicate}}
-            required={{true}}
-            @width="block"
-          />
+            {{! For some reason need to manually set width }}
+            class="au-u-1-1"
+            @searchEnabled={{true}}
+            @options={{@predicateOptions}}
+            @selected={{this.predicate}}
+            @onChange={{this.updatePredicate}}
+            @onKeydown={{this.allowCustomSelection}}
+            @allowClear={{true}}
+            as |obj|
+          >
+            {{obj}}
+          </PowerSelect>
         {{/let}}
       </AuFormRow>
     </form>

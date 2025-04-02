@@ -41,6 +41,8 @@ type Args = {
   controller?: SayController;
   node: ResolvedPNode;
   additionalImportedResources?: string[];
+  predicateOptions?: string[];
+  objectOptions?: string[];
 };
 
 interface StatusMessage {
@@ -60,17 +62,15 @@ type UpdateStatus = {
   property: OutgoingTriple;
 };
 type Status = CreationStatus | UpdateStatus;
-type Args = {
-  controller: SayController;
-  node: ResolvedPNode;
-  additionalImportedResources?: string[];
-};
+
 export default class RdfaPropertyEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
   @tracked status?: Status;
 
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
+
   setUpListeners = modifier(() => {
+    console.log('setting up');
     const listenerHandler = (event: KeyboardEvent) => {
       if (event.altKey && event.ctrlKey) {
         const key = event.key;
@@ -78,7 +78,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
           case 'p':
           case 'P':
             if (this.canAddProperty) {
-              this.addProperty();
+              this.startPropertyCreation();
             }
             break;
         }
@@ -429,36 +429,39 @@ export default class RdfaPropertyEditor extends Component<Args> {
     {{! Creation modal }}
     <Modal
       @importedResources={{this.allImportedResources}}
-      @controller={{@controller}}
+      @controller={{this.controller}}
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
       @onCancel={{this.cancel}}
-      @controller={{this.controller}}
+      @predicateOptions={{@predicateOptions}}
+      @objectOptions={{@objectOptions}}
     />
     {{! Update modal }}
     <Modal
       @importedResources={{this.allImportedResources}}
-      @controller={{@controller}}
+      @controller={{this.controller}}
       @modalOpen={{this.isUpdating}}
       @onSave={{this.updateProperty}}
       @onCancel={{this.cancel}}
       {{! @glint-expect-error check if property is defined }}
       @property={{this.status.property}}
-      @triple={{statusTriple this.status}}
-      @controller={{this.controller}}
+      @predicateOptions={{@predicateOptions}}
+      @objectOptions={{@objectOptions}}
     />
   </template>
 }
 
 interface Sig {
   Args: {
-    controller: SayController;
+    controller?: SayController;
     property?: OutgoingTriple;
     onCancel: () => void;
     onSave: (property: OutgoingTriple, subject?: string) => void;
     modalOpen: boolean;
     importedResources?: string[] | false;
     title?: string;
+    predicateOptions?: string[];
+    objectOptions?: string[];
   };
 }
 

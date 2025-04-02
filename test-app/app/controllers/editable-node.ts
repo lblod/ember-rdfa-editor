@@ -87,12 +87,12 @@ export default class EditableBlockController extends Controller {
     'http://www.w3.org/ns/prov#value',
   ];
 
-  propertyValues = [];
+  propertyObjects = [
+    'http://data.vlaanderen.be/ns/besluit#behandelingVanAgendapunt',
+    'http://data.vlaanderen.be/ns/besluit#agendapoint',
+  ];
 
-  relationshipPredicates = [
-    'http://www.w3.org/ns/prov#wasGeneratedBy',
-    'http://data.vlaanderen.be/ns/besluit#behandelt',
-  ]
+  backlinkPredicates = ['http://www.w3.org/ns/prov#wasGeneratedBy'];
 
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;

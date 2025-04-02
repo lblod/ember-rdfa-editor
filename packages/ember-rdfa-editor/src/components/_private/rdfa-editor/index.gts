@@ -24,6 +24,9 @@ type Args = {
   additionalImportedResources?: string[];
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;
+  propertyPredicates?: string[];
+  propertyObjects?: string[];
+  backlinkPredicates?: string[];
 };
 export default class RdfaEditor extends Component<Args> {
   @localCopy('args.expanded', true) declare expanded: boolean;
@@ -123,7 +126,11 @@ export default class RdfaEditor extends Component<Args> {
               </Section>
             {{/if}}
             <Section>
-              <BacklinkEditor @controller={{this.controller}} @node={{@node}} />
+              <BacklinkEditor
+                @controller={{this.controller}}
+                @node={{@node}}
+                @predicateOptions={{@backlinkPredicates}}
+              />
             </Section>
             <Section>
               <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
