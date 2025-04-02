@@ -35,6 +35,13 @@ import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button
 import WithUniqueId from '../../with-unique-id.ts';
 import PropertyEditorForm from './form.gts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
+import { modifier } from 'ember-modifier';
+
+type Args = {
+  controller?: SayController;
+  node: ResolvedPNode;
+  additionalImportedResources?: string[];
+};
 
 interface StatusMessage {
   message: string;
@@ -63,6 +70,25 @@ export default class RdfaPropertyEditor extends Component<Args> {
   @tracked status?: Status;
 
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
+  setUpListeners = modifier(() => {
+    const listenerHandler = (event: KeyboardEvent) => {
+      if (event.altKey && event.ctrlKey) {
+        const key = event.key;
+        switch (key) {
+          case 'p':
+          case 'P':
+            if (this.canAddProperty) {
+              this.addProperty();
+            }
+            break;
+        }
+      }
+    };
+    window.addEventListener('keydown', listenerHandler);
+    return () => {
+      window.removeEventListener('keydown', listenerHandler);
+    };
+  });
 
   get node(): PNode {
     return this.args.node.value;
@@ -278,7 +304,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     return 'language' in obj;
   };
   <template>
-    <AuContent @skin="tiny">
+    <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
           <AuHeading @level="5" @skin="5">Properties</AuHeading>
@@ -407,6 +433,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
       @onCancel={{this.cancel}}
+      @controller={{this.controller}}
     />
     {{! Update modal }}
     <Modal
@@ -417,6 +444,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
       @onCancel={{this.cancel}}
       {{! @glint-expect-error check if property is defined }}
       @property={{this.status.property}}
+      @triple={{statusTriple this.status}}
+      @controller={{this.controller}}
     />
   </template>
 }
@@ -466,6 +495,8 @@ class Modal extends Component<Sig> {
             @controller={{@controller}}
             @triple={{@property}}
             @importedResources={{@importedResources}}
+            @predicateOptions={{@predicateOptions}}
+            @objectOptions={{@objectOptions}}
           />
         </:body>
         <:footer>

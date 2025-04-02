@@ -98,6 +98,10 @@ export default class PropertyEditorForm extends Component<Sig> {
 
   @tracked
   subject: string | undefined = undefined;
+  @localCopy('args.triple.predicate.value')
+  predicate?: string;
+  @localCopy('args.triple.object.value')
+  object?: string;
 
   @tracked
   errors: ValidationError[] = [];
@@ -240,10 +244,10 @@ export default class PropertyEditorForm extends Component<Sig> {
         case 'NamedNode': {
           const validated = namedNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'NamedNode',
-                value: formData.get('object.value')?.toString(),
+                value: this.object?.toString(),
               },
             },
             { abortEarly: false },
@@ -261,7 +265,7 @@ export default class PropertyEditorForm extends Component<Sig> {
         case 'Literal': {
           const { predicate, object } = literalSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'Literal',
                 value: formData.get('object.value')?.toString(),
@@ -298,7 +302,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { value },
           } = literalNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'LiteralNode',
                 value: this.selectedLiteralNode,
@@ -322,7 +326,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { value },
           } = resourceNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'ResourceNode',
                 value: this.selectedResourceNode,
@@ -343,7 +347,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { datatype, language },
           } = contentLiteralSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'ContentLiteral',
                 datatype: {
@@ -392,7 +396,19 @@ export default class PropertyEditorForm extends Component<Sig> {
     this.subject = subject;
   }
   @action
+<<<<<<< Updated upstream:packages/ember-rdfa-editor/src/components/_private/rdfa-editor/property-editor/form.gts
   onSubjectKeydown(select: Select, event: KeyboardEvent): undefined {
+=======
+  setPredicate(predicate: string) {
+    this.predicate = predicate;
+  }
+  @action
+  setObject(object: string) {
+    this.object = object;
+  }
+  @action
+  allowCustomSelection(select: Select, event: KeyboardEvent) {
+>>>>>>> Stashed changes:packages/ember-rdfa-editor/src/components/_private/rdfa-editor/outgoing-triple-form.ts
     // Based on example from ember-power-select docs, allows for selecting a previously non-existent
     // entry by typing in the power-select 'search' and hitting 'enter'
     if (
@@ -401,6 +417,7 @@ export default class PropertyEditorForm extends Component<Sig> {
       !select.highlighted &&
       !!select.searchText
     ) {
+      console.log(select.searchText)
       select.actions.choose(select.searchText);
     }
     return;
@@ -428,6 +445,7 @@ export default class PropertyEditorForm extends Component<Sig> {
     event.preventDefault();
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
+    console.log(formData);
     const validated = this.validateFormData(formData);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple, validated.subject);

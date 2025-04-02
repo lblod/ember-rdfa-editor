@@ -16,6 +16,7 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
+import { modifier } from 'ember-modifier';
 
 type Args = {
   controller?: SayController;
@@ -30,6 +31,28 @@ export default class WrappingUtils extends Component<Args> {
     super(owner, args);
     this.wrapWithResource = this.wrapWithBlockResource;
   }
+
+  setUpListeners = modifier(() => {
+    const listenerHandler = (event: KeyboardEvent) => {
+      if (event.altKey && event.ctrlKey) {
+        const key = event.key;
+        switch (key) {
+          case 'i':
+          case 'I':
+            this.openModal(true);
+            break;
+          case 'b':
+          case 'B':
+            this.openModal(false);
+            break;
+        }
+      }
+    };
+    window.addEventListener('keydown', listenerHandler);
+    return () => {
+      window.removeEventListener('keydown', listenerHandler);
+    };
+  });
 
   openModal = (inline: boolean) => {
     if (inline) {
@@ -75,7 +98,7 @@ export default class WrappingUtils extends Component<Args> {
   };
 
   <template>
-    <AuContent @skin="tiny">
+    <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
           <AuButton

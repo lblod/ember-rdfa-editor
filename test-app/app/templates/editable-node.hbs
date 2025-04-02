@@ -27,6 +27,10 @@
           <this.RdfaEditor
             @node={{this.activeNode}}
             @controller={{this.rdfaEditor}}
+            @propertyPredicates={{this.propertyPredicates}}
+            @propertyObjects={{this.propertyObjects}}
+            @relationshipPredicates={{this.relationshipPredicates}}
+            @relationshipObjects={{this.relationshipObjects}}
           />
           {{#if this.activeNode}}
             <this.DebugInfo @node={{this.activeNode}} />
