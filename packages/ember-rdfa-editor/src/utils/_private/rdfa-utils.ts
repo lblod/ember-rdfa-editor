@@ -12,6 +12,8 @@ import type {
 import {
   addBacklink,
   addProperty,
+  findNodesBySubject,
+  getBacklinks,
   getNodeByRdfaId,
   getNodesBySubject,
   isLinkToNode,
@@ -19,6 +21,8 @@ import {
 import { isRdfaAttrs } from '#root/core/schema.ts';
 import TransformUtils from './transform-utils.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import { type ResolvedPNode } from './types.ts';
+import { isSome } from './option.ts';
 
 export {
   addPropertyToNode,
@@ -216,4 +220,25 @@ export function removeBacklinkFromNode({
       result: true,
     };
   };
+}
+
+export function getSubjectsFromBacklinksOfRelationship(
+  doc: PNode,
+  importedResources: string[],
+  predicate: string,
+  linkedResource: string,
+) {
+  const linkedToNodes: ResolvedPNode[] = findNodesBySubject(
+    doc,
+    linkedResource,
+  );
+  return linkedToNodes
+    .flatMap((subj) => getBacklinks(subj.value))
+    .filter(
+      (bl) =>
+        bl?.predicate === predicate &&
+        importedResources.includes(bl.subject.value),
+    )
+    .map((bl) => bl?.subject.value)
+    .filter(isSome);
 }

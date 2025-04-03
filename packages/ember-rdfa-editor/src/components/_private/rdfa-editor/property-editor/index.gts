@@ -4,7 +4,10 @@ import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
-import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
+import {
+  getSubjectsFromBacklinksOfRelationship,
+  isLinkToNode,
+} from '#root/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
@@ -66,7 +69,25 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   get properties() {
-    return this.args.node.value.attrs['properties'] as OutgoingTriple[];
+    const properties = this.args.node.value.attrs[
+      'properties'
+    ] as OutgoingTriple[];
+    if (this.isDocWithImportedResourcesEnabled) {
+      const importedResources = this.documentImportedResources;
+      if (importedResources) {
+        // TODO do we need to memoize these results?
+        return properties.filter(
+          (property) =>
+            getSubjectsFromBacklinksOfRelationship(
+              this.node,
+              importedResources,
+              property.predicate,
+              property.object.value,
+            ).length === 0,
+        );
+      }
+    }
+    return properties;
   }
 
   get isCreating() {
@@ -94,7 +115,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     } else {
       this._statusMessage = val;
     }
-  }
+  };
 
   closeStatusMessage = () => {
     this.setStatusMessage(null);
@@ -114,22 +135,26 @@ export default class RdfaPropertyEditor extends Component<Args> {
     return getSubjects(this.controller.mainEditorState);
   }
 
-  get documentImportedResources(): string[] | false {
+  get isDocWithImportedResourcesEnabled(): boolean {
     return (
       this.type === 'document' &&
       !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
-      ] &&
+      ]
+    );
+  }
+  get docNodeImportedResources(): string[] | false {
+    return (
+      this.isDocWithImportedResourcesEnabled &&
       ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
     );
   }
-
-  get allImportedResources(): string[] | false {
+  get documentImportedResources(): string[] | false {
     return (
-      this.documentImportedResources &&
+      this.isDocWithImportedResourcesEnabled &&
       Array.from(
         new Set<string>([
-          ...(this.documentImportedResources || []),
+          ...(this.docNodeImportedResources || []),
           ...(this.args.additionalImportedResources || []),
         ]).values(),
       )
@@ -159,11 +184,13 @@ export default class RdfaPropertyEditor extends Component<Args> {
   };
 
   startPropertyUpdate = (index: number) => {
-    this.status = {
-      mode: 'update',
-      index,
-      property: this.properties[index],
-    };
+    if (this.properties?.[index]) {
+      this.status = {
+        mode: 'update',
+        index,
+        property: this.properties[index],
+      };
+    }
   };
 
   get canAddProperty() {
@@ -180,8 +207,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
     if (resource) {
       const isNewImportedResource =
         (subject &&
-          this.documentImportedResources &&
-          !this.documentImportedResources.includes(subject)) ||
+          this.docNodeImportedResources &&
+          !this.docNodeImportedResources.includes(subject)) ||
         false;
       this.controller?.doCommand(
         addProperty({ resource, property, isNewImportedResource }),
@@ -326,7 +353,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     </AuContent>
     {{! Creation modal }}
     <Modal
-      @importedResources={{this.allImportedResources}}
+      @importedResources={{this.documentImportedResources}}
       @controller={{@controller}}
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
@@ -334,7 +361,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     />
     {{! Update modal }}
     <Modal
-      @importedResources={{this.allImportedResources}}
+      @importedResources={{this.documentImportedResources}}
       @controller={{@controller}}
       @modalOpen={{this.isUpdating}}
       @onSave={{this.updateProperty}}

@@ -353,6 +353,8 @@
       "./components/_private/number-editor/index.js": "./dist/_app_/components/_private/number-editor/index.js",
       "./components/_private/rdfa-editor/backlink-editor/form.js": "./dist/_app_/components/_private/rdfa-editor/backlink-editor/form.js",
       "./components/_private/rdfa-editor/backlink-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/backlink-editor/index.js",
+      "./components/_private/rdfa-editor/doc-imported-resource-editor/form.js": "./dist/_app_/components/_private/rdfa-editor/doc-imported-resource-editor/form.js",
+      "./components/_private/rdfa-editor/doc-imported-resource-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/doc-imported-resource-editor/index.js",
       "./components/_private/rdfa-editor/external-triple-editor/form.js": "./dist/_app_/components/_private/rdfa-editor/external-triple-editor/form.js",
       "./components/_private/rdfa-editor/external-triple-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/external-triple-editor/index.js",
       "./components/_private/rdfa-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/index.js",
