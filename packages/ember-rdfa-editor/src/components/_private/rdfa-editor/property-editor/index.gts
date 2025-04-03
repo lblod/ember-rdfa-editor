@@ -33,22 +33,13 @@ import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button
 import WithUniqueId from '../../with-unique-id.ts';
 import PropertyEditorForm from './form.gts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
-import { type StatusMessage } from '../types.ts';
+import { type Status, type StatusMessage } from '../types.ts';
 import PropertyDetails from '../property-details.gts';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
 }
 
-type CreationStatus = {
-  mode: 'creation';
-};
-type UpdateStatus = {
-  mode: 'update';
-  index: number;
-  property: OutgoingTriple;
-};
-type Status = CreationStatus | UpdateStatus;
 type Args = {
   controller: SayController;
   node: ResolvedPNode;
@@ -183,14 +174,11 @@ export default class RdfaPropertyEditor extends Component<Args> {
     };
   };
 
-  startPropertyUpdate = (index: number) => {
-    if (this.properties?.[index]) {
-      this.status = {
-        mode: 'update',
-        index,
-        property: this.properties[index],
-      };
-    }
+  startPropertyUpdate = (property: OutgoingTriple) => {
+    this.status = {
+      mode: 'update',
+      property,
+    };
   };
 
   get canAddProperty() {
@@ -223,23 +211,23 @@ export default class RdfaPropertyEditor extends Component<Args> {
   updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
     // TODO: make a command to do this in one go
     if (this.status?.mode === 'update') {
-      this.removeProperty(this.status.index);
+      this.removeProperty(this.status.property);
       this.addProperty(newProperty, subject);
       this.status = undefined;
     }
   };
 
-  removeProperty = (index: number) => {
+  removeProperty = (property: OutgoingTriple) => {
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
     if (this.currentResource || this.type === 'document') {
       const propertyToRemove =
         this.type !== 'document' && this.currentResource
-          ? { resource: this.currentResource, index }
+          ? { resource: this.currentResource, property }
           : {
               documentResourceNode: this.node,
               importedResources: this.documentImportedResources || [],
-              index,
+              property,
             };
       this.controller?.doCommand(removeProperty(propertyToRemove), {
         view: this.controller.mainEditorView,
@@ -305,7 +293,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
       {{/if}}
       {{#if this.properties.length}}
         <AuList @divider={{true}} as |Item|>
-          {{#each this.properties as |prop index|}}
+          {{#each this.properties as |prop|}}
             <Item
               class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
             >
@@ -319,7 +307,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
                   @skin="link"
                   @icon={{PencilIcon}}
                   role="menuitem"
-                  {{on "click" (fn this.startPropertyUpdate index)}}
+                  {{on "click" (fn this.startPropertyUpdate prop)}}
                 >
                   Edit property
                 </AuButton>
@@ -328,7 +316,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
                   @icon={{BinIcon}}
                   role="menuitem"
                   class="au-c-button--alert"
-                  {{on "click" (fn this.removeProperty index)}}
+                  {{on "click" (fn this.removeProperty prop)}}
                 >
                   Remove property
                 </AuButton>

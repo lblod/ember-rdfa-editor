@@ -26,11 +26,19 @@ import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import RelationshipEditorForm from './form.gts';
 import PropertyDetails from '../property-details.gts';
+import { type Status } from '../types.ts';
+import PropertyEditorForm from '../property-editor/form.gts';
+import { array } from '@ember/helper';
+import { isSome } from '#root/utils/_private/option.ts';
+import { addProperty, removeProperty } from '#root/commands/index.ts';
 
-type Args = {
-  controller?: SayController;
-  node: ResolvedPNode;
-  additionalImportedResources?: string[];
+interface Sig {
+  Args: {
+    controller?: SayController;
+    node: ResolvedPNode;
+    additionalImportedResources?: string[];
+  };
+  Element: HTMLDivElement;
 };
 
 /** truth-helpers 'not' incorrectly treats [] as falsey */
@@ -38,15 +46,17 @@ function notTruthy(maybe: unknown) {
   return !maybe;
 }
 
-export default class DocImportedResourceEditor extends Component<Args> {
-  @tracked isModalOpen = false;
+export default class DocImportedResourceEditor extends Component<Sig> {
+  @tracked isResourceModalOpen = false;
+  openResourceModal = () => (this.isResourceModalOpen = true);
+  closeResourceModal = () => (this.isResourceModalOpen = false);
+
+  @tracked propertyModalStatus?: Status;
+  closePropertyModal = () => this.propertyModalStatus = undefined;
 
   get node(): PNode {
     return this.args.node.value;
   }
-
-  openModal = () => (this.isModalOpen = true);
-  closeModal = () => (this.isModalOpen = false);
 
   get importedResourceProperties(): Record<string, OutgoingTriple[]> {
     const importedResources = this.documentImportedResources;
@@ -110,19 +120,67 @@ export default class DocImportedResourceEditor extends Component<Args> {
         resource,
       })(this.args.controller.mainEditorState).transaction;
     });
-    this.closeModal();
+    this.closeResourceModal();
   };
   removeImportedResource = (_resource: string) => {
     console.error('not implemented');
     throw new Error('not implemented');
   };
-  addPropToImported = (_resource: string) => {
-    console.error('not implemented');
-    throw new Error('not implemented');
+  addPropToImported = (resource: string) => {
+    this.propertyModalStatus = {
+      mode: 'creation',
+      subject: resource,
+    };
+  };
+  startPropertyUpdate = (resource: string, property: OutgoingTriple) => {
+    this.propertyModalStatus = {
+      mode: 'update',
+      subject: resource,
+      property,
+    };
+  }
+
+  // TODO de-dupe this from property-editor?
+  addProperty = (property: OutgoingTriple, subject?: string) => {
+    const resource = subject ?? this.propertyModalStatus?.subject;
+    if (resource) {
+      const isNewImportedResource = subject !== this.propertyModalStatus?.subject;
+      this.args.controller?.doCommand(
+        addProperty({ resource, property, isNewImportedResource }),
+        {
+          view: this.args.controller.mainEditorView,
+        },
+      );
+      this.closePropertyModal();
+    }
   };
 
+  // TODO de-dupe this from property-editor?
+  updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
+    // TODO: make a command to do this in one go
+    if (this.propertyModalStatus?.mode === 'update') {
+      this.removeProperty(this.propertyModalStatus.property);
+    }
+    this.addProperty(newProperty, subject);
+    this.closePropertyModal();
+  };
+
+  // TODO de-dupe this from property-editor?
+  removeProperty = (property: OutgoingTriple) => {
+    console.log('remove', property)
+      const propertyToRemove = {
+        documentResourceNode: this.node,
+        importedResources: this.documentImportedResources || [],
+        property,
+      };
+      this.args.controller?.doCommand(removeProperty(propertyToRemove), {
+        view: this.args.controller.mainEditorView,
+      });
+  };
+
+
   <template>
-    <AuContent @skin="tiny">
+    <AuContent @skin="tiny" ...attributes>
       <AuToolbar as |Group|>
         <Group>
           <AuHeading @level="5" @skin="5">Imported Resources</AuHeading>
@@ -132,7 +190,7 @@ export default class DocImportedResourceEditor extends Component<Args> {
             @icon={{PlusIcon}}
             @skin="naked"
             @disabled={{notTruthy this.documentImportedResources}}
-            {{on "click" this.openModal}}
+            {{on "click" this.openResourceModal}}
           >
             Add imported resource
           </AuButton>
@@ -189,6 +247,7 @@ export default class DocImportedResourceEditor extends Component<Args> {
                         @skin="link"
                         @icon={{PencilIcon}}
                         role="menuitem"
+                        {{on "click" (fn this.startPropertyUpdate importedResource prop)}}
                       >
                         Edit property
                       </AuButton>
@@ -197,6 +256,7 @@ export default class DocImportedResourceEditor extends Component<Args> {
                         @icon={{BinIcon}}
                         role="menuitem"
                         class="au-c-button--alert"
+                        {{on "click" (fn this.removeProperty prop)}}
                       >
                         Remove property
                       </AuButton>
@@ -210,18 +270,19 @@ export default class DocImportedResourceEditor extends Component<Args> {
       {{/if}}
     </AuContent>
 
+    {{! Add imported resource modal }}
     <WithUniqueId as |formId|>
       <AuModal
-        @modalOpen={{this.isModalOpen}}
+        @modalOpen={{this.isResourceModalOpen}}
         @closable={{true}}
-        @closeModal={{this.closeModal}}
+        @closeModal={{this.closeResourceModal}}
       >
         <:title>Add Imported Resource</:title>
         <:body>
           <RelationshipEditorForm
             id={{formId}}
             @onSave={{this.addImportedResource}}
-            @onCancel={{this.closeModal}}
+            @onCancel={{this.closeResourceModal}}
             @controller={{@controller}}
           />
         </:body>
@@ -230,7 +291,42 @@ export default class DocImportedResourceEditor extends Component<Args> {
             <AuButton form={{formId}} type="submit">Save</AuButton>
             <AuButton
               @skin="secondary"
-              {{on "click" this.closeModal}}
+              {{on "click" this.closeResourceModal}}
+            >Cancel</AuButton>
+          </AuButtonGroup>
+        </:footer>
+      </AuModal>
+    </WithUniqueId>
+
+    {{! Add property modal }}
+    <WithUniqueId as |formId|>
+      <AuModal
+        @modalOpen={{isSome this.propertyModalStatus}}
+        @closable={{true}}
+        @closeModal={{this.closePropertyModal}}
+      >
+        <:title>Edit</:title>
+        <:body>
+          <PropertyEditorForm
+            id={{formId}}
+            @onSubmit={{this.updateProperty}}
+            @termTypes={{array
+              "LiteralNode"
+              "ResourceNode"
+            }}
+            @controller={{@controller}}
+            @subject={{this.propertyModalStatus.subject}}
+            {{! @glint-expect-error check if status is defined }}
+            @triple={{this.propertyModalStatus.property}}
+            @importedResources={{this.documentImportedResources}}
+          />
+        </:body>
+        <:footer>
+          <AuButtonGroup>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
+            <AuButton
+              @skin="secondary"
+              {{on "click" this.closePropertyModal}}
             >Cancel</AuButton>
           </AuButtonGroup>
         </:footer>
