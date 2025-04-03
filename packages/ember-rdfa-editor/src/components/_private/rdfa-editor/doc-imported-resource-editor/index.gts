@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
-import { and, isEmpty } from 'ember-truth-helpers';
+import { and, isEmpty, not } from 'ember-truth-helpers';
 import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -18,7 +18,10 @@ import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 import type SayController from '#root/core/say-controller.ts';
 import { type PNode } from '#root/prosemirror-aliases.ts';
-import { addImportedResource } from '#root/plugins/rdfa-info/imported-resources.ts';
+import {
+  addImportedResource,
+  removeImportedResource,
+} from '#root/plugins/rdfa-info/imported-resources.ts';
 import WithUniqueId from '#root/components/_private/with-unique-id.ts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/_private/rdfa-utils.ts';
@@ -39,7 +42,7 @@ interface Sig {
     additionalImportedResources?: string[];
   };
   Element: HTMLDivElement;
-};
+}
 
 /** truth-helpers 'not' incorrectly treats [] as falsey */
 function notTruthy(maybe: unknown) {
@@ -52,7 +55,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
   closeResourceModal = () => (this.isResourceModalOpen = false);
 
   @tracked propertyModalStatus?: Status;
-  closePropertyModal = () => this.propertyModalStatus = undefined;
+  closePropertyModal = () => (this.propertyModalStatus = undefined);
 
   get node(): PNode {
     return this.args.node.value;
@@ -122,9 +125,13 @@ export default class DocImportedResourceEditor extends Component<Sig> {
     });
     this.closeResourceModal();
   };
-  removeImportedResource = (_resource: string) => {
-    console.error('not implemented');
-    throw new Error('not implemented');
+  removeImportedResource = (resource: string) => {
+    this.args.controller?.withTransaction(() => {
+      if (!this.args.controller) return null;
+      return removeImportedResource({
+        resource,
+      })(this.args.controller.mainEditorState).transaction;
+    });
   };
   addPropToImported = (resource: string) => {
     this.propertyModalStatus = {
@@ -138,13 +145,14 @@ export default class DocImportedResourceEditor extends Component<Sig> {
       subject: resource,
       property,
     };
-  }
+  };
 
   // TODO de-dupe this from property-editor?
   addProperty = (property: OutgoingTriple, subject?: string) => {
     const resource = subject ?? this.propertyModalStatus?.subject;
     if (resource) {
-      const isNewImportedResource = subject !== this.propertyModalStatus?.subject;
+      const isNewImportedResource =
+        subject !== this.propertyModalStatus?.subject;
       this.args.controller?.doCommand(
         addProperty({ resource, property, isNewImportedResource }),
         {
@@ -167,17 +175,15 @@ export default class DocImportedResourceEditor extends Component<Sig> {
 
   // TODO de-dupe this from property-editor?
   removeProperty = (property: OutgoingTriple) => {
-    console.log('remove', property)
-      const propertyToRemove = {
-        documentResourceNode: this.node,
-        importedResources: this.documentImportedResources || [],
-        property,
-      };
-      this.args.controller?.doCommand(removeProperty(propertyToRemove), {
-        view: this.args.controller.mainEditorView,
-      });
+    const propertyToRemove = {
+      documentResourceNode: this.node,
+      importedResources: this.documentImportedResources || [],
+      property,
+    };
+    this.args.controller?.doCommand(removeProperty(propertyToRemove), {
+      view: this.args.controller.mainEditorView,
+    });
   };
-
 
   <template>
     <AuContent @skin="tiny" ...attributes>
@@ -220,7 +226,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
                     @skin="link"
                     @alert={{true}}
                     @icon={{CrossIcon}}
-                    @disabled={{isEmpty props}}
+                    @disabled={{not (isEmpty props)}}
                     role="button"
                     {{on
                       "click"
@@ -247,7 +253,10 @@ export default class DocImportedResourceEditor extends Component<Sig> {
                         @skin="link"
                         @icon={{PencilIcon}}
                         role="menuitem"
-                        {{on "click" (fn this.startPropertyUpdate importedResource prop)}}
+                        {{on
+                          "click"
+                          (fn this.startPropertyUpdate importedResource prop)
+                        }}
                       >
                         Edit property
                       </AuButton>
@@ -310,10 +319,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
           <PropertyEditorForm
             id={{formId}}
             @onSubmit={{this.updateProperty}}
-            @termTypes={{array
-              "LiteralNode"
-              "ResourceNode"
-            }}
+            @termTypes={{array "LiteralNode" "ResourceNode"}}
             @controller={{@controller}}
             @subject={{this.propertyModalStatus.subject}}
             {{! @glint-expect-error check if status is defined }}
