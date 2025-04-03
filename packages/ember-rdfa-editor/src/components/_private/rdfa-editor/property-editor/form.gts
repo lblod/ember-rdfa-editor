@@ -214,6 +214,14 @@ export default class PropertyEditorForm extends Component<Sig> {
     );
   }
 
+  get documentSubjects(): string[] {
+    return getSubjects(this.controller.mainEditorState);
+  }
+
+  get objectOptions(): string[] {
+    return [...this.args.objectOptions, ...this.documentSubjects] as string[];
+  }
+
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -568,7 +576,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 {{! For some reason need to manually set width }}
                 class="au-u-1-1"
                 @searchEnabled={{true}}
-                @options={{@objectOptions}}
+                @options={{this.objectOptions}}
                 @selected={{this.object}}
                 @onChange={{this.setObject}}
                 @onKeydown={{this.allowCustomSelection}}
