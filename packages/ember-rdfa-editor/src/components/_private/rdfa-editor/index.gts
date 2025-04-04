@@ -1,6 +1,8 @@
 import Component from '@glimmer/component';
-import { isResourceNode } from '#root/utils/node-utils.ts';
+import { NodeSelection } from 'prosemirror-state';
+import { localCopy } from 'tracked-toolbox';
 import { on } from '@ember/modifier';
+import { isResourceNode } from '#root/utils/node-utils.ts';
 import RdfaPropertyEditor from './property-editor/index.gts';
 import RdfaWrappingUtils from './wrapping-utils/index.gts';
 import RemoveNode from './remove-node/index.gts';
@@ -13,10 +15,10 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import type SayController from '#root/core/say-controller.ts';
-import { NodeSelection } from 'prosemirror-state';
-import { localCopy } from 'tracked-toolbox';
 import ExternalTripleEditor from './external-triple-editor/index.gts';
 import BacklinkEditor from './backlink-editor/index.gts';
+import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
+import DocImportedResourceEditor from './doc-imported-resource-editor/index.gts';
 
 type Args = {
   controller?: SayController;
@@ -58,6 +60,15 @@ export default class RdfaEditor extends Component<Args> {
   get hasSelection() {
     const selection = this.controller?.activeEditorState.selection;
     return selection && !selection.empty;
+  }
+
+  get isDocWithImportedResources() {
+    return (
+      this.type === 'document' &&
+      !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
+        IMPORTED_RESOURCES_ATTR
+      ]
+    );
   }
 
   goToNodeWithId = (id: string) => {
@@ -105,6 +116,14 @@ export default class RdfaEditor extends Component<Args> {
       {{#if this.controller}}
         {{#if @node}}
           {{#if this.expanded}}
+            {{#if this.isDocWithImportedResources}}
+              <Section>
+                <DocImportedResourceEditor
+                  @controller={{@controller}}
+                  @node={{@node}}
+                />
+              </Section>
+            {{/if}}
             {{#if this.showPropertiesSection}}
               <Section>
                 <ExternalTripleEditor

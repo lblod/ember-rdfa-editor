@@ -10,8 +10,7 @@ import type {
 } from './rdfa-processor.ts';
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
-import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
-import { type ResolvedPNode } from '#root/utils/_private/types.ts';
+import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
 import {
   languageOrDataType,
   sayDataFactory,
@@ -105,7 +104,6 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   let rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
-  console.log(node.dataset);
   if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
     rdfaNodeType = 'literal';
   }
@@ -332,9 +330,9 @@ export function renderInvisibleRdfa(
         // TODO need a way to make sure links to literals are displayed in the rdfa tools for a
         // document node with imported resources after reload
         // case 'LiteralNode': {
-        const importedResources = nodeOrMark.attrs[
-          IMPORTED_RESOURCES_ATTR
-        ] as unknown;
+        const importedResources = nodeOrMark.attrs[IMPORTED_RESOURCES_ATTR] as
+          | string[]
+          | undefined;
         if (importedResources && 'nodeSize' in nodeOrMark) {
           // This is a document node that imports resources, so we need special handling of those
           // properties
@@ -346,22 +344,15 @@ export function renderInvisibleRdfa(
           //   const node = findNodeByRdfaId(nodeOrMark, object.value);
           //   linkedToNodes = node ? [node] : [];
           // }
-          const linkedToNodes: ResolvedPNode[] = findNodesBySubject(
+          const subjects = getSubjectsFromBacklinksOfRelationship(
             nodeOrMark,
+            importedResources,
+            predicate,
             object.value,
           );
-          const backlinkToImportedResource = linkedToNodes
-            .flatMap((subj) => getBacklinks(subj.value))
-            .find((bl) => bl?.predicate === predicate);
-          if (backlinkToImportedResource) {
-            propElements.push(
-              namedNodeSpan(
-                backlinkToImportedResource.subject.value,
-                predicate,
-                object.value,
-              ),
-            );
-          }
+          subjects.forEach((subject) => {
+            propElements.push(namedNodeSpan(subject, predicate, object.value));
+          });
         }
         break;
       }
@@ -449,7 +440,6 @@ export function renderInvisibleRdfa(
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
-  console.log('SayId: ', rdfaAttrs.__rdfaId);
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
