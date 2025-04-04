@@ -5,11 +5,17 @@ import {
   wrapLiteral,
   wrapResource,
 } from '#root/commands/_private/rdfa-commands/index.ts';
-import WrappingModal from './modal.ts';
+import WrappingModal from './modal.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { wrapInlineLiteral } from '#root/commands/_private/rdfa-commands/wrap-inline-literal.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import type SayController from '#root/core/say-controller.ts';
+import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
+import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+import { not } from 'ember-truth-helpers';
 
 type Args = {
   controller?: SayController;
@@ -17,12 +23,9 @@ type Args = {
 };
 
 export default class WrappingUtils extends Component<Args> {
-  PlusIcon = PlusIcon;
-
   @tracked modalOpen = false;
   @tracked wrapWithResource;
 
-  Modal = WrappingModal;
   constructor(owner: unknown, args: Args) {
     super(owner, args);
     this.wrapWithResource = this.wrapWithBlockResource;
@@ -70,4 +73,56 @@ export default class WrappingUtils extends Component<Args> {
     this.controller?.doCommand(wrapInlineResource(details));
     this.closeModal();
   };
+
+  <template>
+    <AuContent @skin="tiny">
+      <AuToolbar as |Group|>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            {{on "click" (fn this.openModal false)}}
+          >
+            Wrap With Block Resource
+          </AuButton>
+        </Group>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            @disabled={{not this.canWrapWithLiteral}}
+            {{on "click" this.wrapWithLiteralNode}}
+          >
+            Wrap With Block Literal
+          </AuButton>
+        </Group>
+
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            {{on "click" (fn this.openModal true)}}
+          >
+            Wrap With Inline Resource
+          </AuButton>
+        </Group>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            @disabled={{not this.canWrapWithInlineLiteral}}
+            {{on "click" this.wrapWithInlineLiteralNode}}
+          >
+            Wrap With Inline Literal
+          </AuButton>
+        </Group>
+      </AuToolbar>
+    </AuContent>
+
+    <WrappingModal
+      @modalOpen={{this.modalOpen}}
+      @closeModal={{this.closeModal}}
+      @wrapWithResource={{this.wrapWithResource}}
+    />
+  </template>
 }
