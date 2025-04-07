@@ -88,7 +88,6 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
       !select.highlighted &&
       !!select.searchText
     ) {
-      console.log(select.searchText);
       select.actions.choose(select.searchText);
     }
     return true;

@@ -49,7 +49,6 @@ export default class BacklinkEditor extends Component<Args> {
   @tracked status?: Status;
 
   setUpListeners = modifier(() => {
-    console.log('setting up');
     const listenerHandler = (event: KeyboardEvent) => {
       if (event.altKey && event.ctrlKey) {
         const key = event.key;

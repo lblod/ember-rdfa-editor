@@ -429,7 +429,6 @@ export default class PropertyEditorForm extends Component<Sig> {
       !select.highlighted &&
       !!select.searchText
     ) {
-      console.log(select.searchText);
       select.actions.choose(select.searchText);
     }
     return true;
@@ -457,7 +456,6 @@ export default class PropertyEditorForm extends Component<Sig> {
     event.preventDefault();
     this.errors = [];
     const formData = new FormData(event.currentTarget as HTMLFormElement);
-    console.log(formData);
     const validated = this.validateFormData(formData);
     if (validated.valid) {
       this.args.onSubmit?.(validated.triple, validated.subject);

@@ -70,7 +70,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
 
   setUpListeners = modifier(() => {
-    console.log('setting up');
     const listenerHandler = (event: KeyboardEvent) => {
       if (event.altKey && event.ctrlKey) {
         const key = event.key;
