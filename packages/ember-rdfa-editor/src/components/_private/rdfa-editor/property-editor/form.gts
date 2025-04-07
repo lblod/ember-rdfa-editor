@@ -215,11 +215,17 @@ export default class PropertyEditorForm extends Component<Sig> {
   }
 
   get documentSubjects(): string[] {
+    if (!this.controller) {
+      return [];
+    }
     return getSubjects(this.controller.mainEditorState);
   }
 
   get objectOptions(): string[] {
-    return [...this.args.objectOptions, ...this.documentSubjects] as string[];
+    return [
+      ...(this.args.objectOptions ?? []),
+      ...this.documentSubjects,
+    ] as string[];
   }
 
   resourceNodeLabel = (resource: string): string => {
