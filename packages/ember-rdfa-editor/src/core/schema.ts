@@ -348,7 +348,7 @@ export function renderInvisibleRdfa(
             nodeOrMark,
             importedResources,
             predicate,
-            object.value,
+            object,
           );
           subjects.forEach((subject) => {
             propElements.push(namedNodeSpan(subject, predicate, object.value));

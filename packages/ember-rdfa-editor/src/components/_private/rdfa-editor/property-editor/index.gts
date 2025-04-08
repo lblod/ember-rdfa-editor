@@ -3,7 +3,7 @@ import { tracked } from '@glimmer/tracking';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import { isLinkTriple, type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import {
   getSubjectsFromBacklinksOfRelationship,
   isLinkToNode,
@@ -69,11 +69,12 @@ export default class RdfaPropertyEditor extends Component<Args> {
         // TODO do we need to memoize these results?
         return properties.filter(
           (property) =>
+            !isLinkTriple(property) ||
             getSubjectsFromBacklinksOfRelationship(
               this.node,
               importedResources,
               property.predicate,
-              property.object.value,
+              property.object,
             ).length === 0,
         );
       }

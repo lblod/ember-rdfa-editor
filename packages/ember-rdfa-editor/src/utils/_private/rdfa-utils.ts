@@ -1,5 +1,6 @@
 import type {
   IncomingTriple,
+  LinkTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
 import { getSubject } from '#root/plugins/rdfa-info/plugin.ts';
@@ -12,6 +13,7 @@ import type {
 import {
   addBacklink,
   addProperty,
+  findNodeByRdfaId,
   findNodesBySubject,
   getBacklinks,
   getNodeByRdfaId,
@@ -226,12 +228,21 @@ export function getSubjectsFromBacklinksOfRelationship(
   doc: PNode,
   importedResources: string[],
   predicate: string,
-  linkedResource: string,
+  linkedObject: LinkTriple['object'],
 ) {
-  const linkedToNodes: ResolvedPNode[] = findNodesBySubject(
-    doc,
-    linkedResource,
-  );
+  let linkedToNodes: ResolvedPNode[];
+  if (linkedObject.termType === 'ResourceNode') {
+    linkedToNodes = findNodesBySubject(
+      doc,
+      linkedObject.value,
+    );
+  } else {
+    const node = findNodeByRdfaId(
+      doc,
+      linkedObject.value,
+    );
+    linkedToNodes = node ? [node] : [];
+  }
   return linkedToNodes
     .flatMap((subj) => getBacklinks(subj.value))
     .filter(

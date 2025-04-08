@@ -23,8 +23,8 @@ import {
   removeImportedResource,
 } from '#root/plugins/rdfa-info/imported-resources.ts';
 import WithUniqueId from '#root/components/_private/with-unique-id.ts';
-import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
-import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/_private/rdfa-utils.ts';
+import { isLinkTriple, type OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import RelationshipEditorForm from './form.gts';
@@ -68,19 +68,22 @@ export default class DocImportedResourceEditor extends Component<Sig> {
     if (!importedResources) return {};
     const propsAndSubjects =
       props.map((prop) => {
+        if (!isLinkTriple(prop)) {
+          return [];
+        }
         const subjects = getSubjectsFromBacklinksOfRelationship(
           this.node,
           importedResources,
           prop.predicate,
-          prop.object.value,
+          prop.object,
         );
         return [prop, subjects] as [OutgoingTriple, string[]];
-      }) || [];
+      });
     const mapped: Record<string, OutgoingTriple[]> = Object.fromEntries(
       importedResources.map((imp) => [imp, []]),
     );
     propsAndSubjects.forEach(([prop, subjects]) => {
-      subjects.forEach((subject) => {
+      subjects?.forEach((subject) => {
         mapped[subject] = (mapped[subject] ?? []).concat(prop);
       });
     });
@@ -337,7 +340,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
           <PropertyEditorForm
             id={{formId}}
             @onSubmit={{this.updateProperty}}
-            @termTypes={{array "ResourceNode"}}
+            @termTypes={{array "LiteralNode" "ResourceNode"}}
             @controller={{@controller}}
             @subject={{this.propertyModalStatus.subject}}
             {{! @glint-expect-error check if status is defined }}
