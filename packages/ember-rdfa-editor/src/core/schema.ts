@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
+import { Mark, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
@@ -14,7 +14,6 @@ import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.t
 import {
   languageOrDataType,
   sayDataFactory,
-  SayNamedNode,
   type SayTerm,
   type WithoutEquals,
 } from './say-data-factory/index.ts';
@@ -26,8 +25,19 @@ import {
 } from './schema/_private/render-rdfa-attrs.ts';
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
 import type { NamedNode } from '@rdfjs/types';
+import { rdfaNodeTypes, type RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 // const logger = createLogger('core/schema');
+
+// Exports for backwards compatibility
+export {
+  rdfaNodeTypes,
+  type RdfaAwareAttrs,
+  type RdfaLiteralAttrs,
+  type RdfaResourceAttrs,
+  type RdfaAttrs,
+  isRdfaAttrs,
+} from './rdfa-types.ts';
 
 export type RdfaAttrConfig = {
   rdfaAware?: boolean;
@@ -260,35 +270,6 @@ export const rdfaDomAttrs = {
   __rdfaId: { default: undefined },
   'data-rdfa-node-type': { default: undefined },
 };
-
-export const rdfaNodeTypes = ['resource', 'literal'] as const;
-export interface RdfaAwareAttrs {
-  __rdfaId: string;
-  rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: IncomingTriple[];
-  externalTriples?: FullTriple[];
-}
-export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'literal';
-  content: string | null;
-  datatype?: SayNamedNode | null;
-  language?: string | null;
-}
-export interface RdfaResourceAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'resource';
-  externalTriples?: FullTriple[];
-  subject: string;
-  properties: OutgoingTriple[];
-}
-export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
-
-export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
-  return (
-    '__rdfaId' in attrs &&
-    'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'] as 'resource' | 'literal')
-  );
-}
 
 export const sharedRdfaNodeSpec = {
   isolating: true,

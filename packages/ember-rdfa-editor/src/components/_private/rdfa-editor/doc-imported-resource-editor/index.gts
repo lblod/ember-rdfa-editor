@@ -23,7 +23,10 @@ import {
   removeImportedResource,
 } from '#root/plugins/rdfa-info/imported-resources.ts';
 import WithUniqueId from '#root/components/_private/with-unique-id.ts';
-import { isLinkTriple, type OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import {
+  isLinkTriple,
+  type OutgoingTriple,
+} from '#root/core/rdfa-processor.ts';
 import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
@@ -66,19 +69,18 @@ export default class DocImportedResourceEditor extends Component<Sig> {
     const importedResources = this.documentImportedResources;
     const props = this.args.node.value.attrs['properties'] as OutgoingTriple[];
     if (!importedResources) return {};
-    const propsAndSubjects =
-      props.map((prop) => {
-        if (!isLinkTriple(prop)) {
-          return [];
-        }
-        const subjects = getSubjectsFromBacklinksOfRelationship(
-          this.node,
-          importedResources,
-          prop.predicate,
-          prop.object,
-        );
-        return [prop, subjects] as [OutgoingTriple, string[]];
-      });
+    const propsAndSubjects = props.map((prop) => {
+      if (!isLinkTriple(prop)) {
+        return [];
+      }
+      const subjects = getSubjectsFromBacklinksOfRelationship(
+        this.node,
+        importedResources,
+        prop.predicate,
+        prop.object,
+      );
+      return [prop, subjects] as [OutgoingTriple, string[]];
+    });
     const mapped: Record<string, OutgoingTriple[]> = Object.fromEntries(
       importedResources.map((imp) => [imp, []]),
     );

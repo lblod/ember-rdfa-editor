@@ -20,7 +20,7 @@ import {
   getNodesBySubject,
   isLinkToNode,
 } from '#root/plugins/rdfa-info/utils.ts';
-import { isRdfaAttrs } from '#root/core/schema.ts';
+import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import TransformUtils from './transform-utils.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import { type ResolvedPNode } from './types.ts';
@@ -232,15 +232,9 @@ export function getSubjectsFromBacklinksOfRelationship(
 ) {
   let linkedToNodes: ResolvedPNode[];
   if (linkedObject.termType === 'ResourceNode') {
-    linkedToNodes = findNodesBySubject(
-      doc,
-      linkedObject.value,
-    );
+    linkedToNodes = findNodesBySubject(doc, linkedObject.value);
   } else {
-    const node = findNodeByRdfaId(
-      doc,
-      linkedObject.value,
-    );
+    const node = findNodeByRdfaId(doc, linkedObject.value);
     linkedToNodes = node ? [node] : [];
   }
   return linkedToNodes
