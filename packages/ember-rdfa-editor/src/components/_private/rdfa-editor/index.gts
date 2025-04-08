@@ -57,11 +57,6 @@ export default class RdfaEditor extends Component<Args> {
     );
   }
 
-  get hasSelection() {
-    const selection = this.controller?.activeEditorState.selection;
-    return selection && !selection.empty;
-  }
-
   get isDocWithImportedResources() {
     return (
       this.type === 'document' &&

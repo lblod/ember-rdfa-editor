@@ -366,6 +366,14 @@ export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
   return false;
 }
 
+export function deepEqualPropertyList(
+  listA: OutgoingTriple[],
+  listB: OutgoingTriple[],
+) {
+  if (listA.length !== listB.length) return false;
+  return listA.every((a, i) => deepEqualProperty(a, listB[i]));
+}
+
 export function deepEqualBacklink(a: IncomingTriple, b: IncomingTriple) {
   return a.predicate === b.predicate && a.subject.value === b.subject.value;
 }

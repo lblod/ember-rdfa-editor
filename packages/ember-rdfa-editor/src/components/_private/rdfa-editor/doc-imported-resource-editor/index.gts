@@ -34,6 +34,7 @@ import PropertyEditorForm from '../property-editor/form.gts';
 import { array } from '@ember/helper';
 import { isSome } from '#root/utils/_private/option.ts';
 import { addProperty, removeProperty } from '#root/commands/index.ts';
+import { deepEqualPropertyList } from '#root/plugins/rdfa-info/utils.ts';
 
 interface Sig {
   Args: {
@@ -61,38 +62,55 @@ export default class DocImportedResourceEditor extends Component<Sig> {
     return this.args.node.value;
   }
 
-  get importedResourceProperties(): Record<string, OutgoingTriple[]> {
+  getSubjectPropertMap(): Record<string, OutgoingTriple[]> {
     const importedResources = this.documentImportedResources;
-    const properties = this.args.node.value.attrs[
-      'properties'
-    ] as OutgoingTriple[];
-    if (importedResources) {
-      // TODO do we need to memoize these results?
-      const mapped: Record<string, OutgoingTriple[]> = Object.fromEntries(
-        importedResources.map((imp) => [imp, []]),
-      );
-      properties
-        .map((property) => {
-          const subjects = getSubjectsFromBacklinksOfRelationship(
-            this.node,
-            importedResources,
-            property.predicate,
-            property.object.value,
-          );
-          return [subjects[0], property] as [
-            string | undefined,
-            OutgoingTriple,
-          ];
-        })
-        .forEach(([subject, property]) => {
-          if (subject) {
-            mapped[subject] = (mapped[subject] ?? []).concat(property);
-          }
-        });
-      return mapped;
-    } else {
-      return {};
+    const props = this.args.node.value.attrs['properties'] as OutgoingTriple[];
+    if (!importedResources) return {};
+    const propsAndSubjects =
+      props.map((prop) => {
+        const subjects = getSubjectsFromBacklinksOfRelationship(
+          this.node,
+          importedResources,
+          prop.predicate,
+          prop.object.value,
+        );
+        return [prop, subjects] as [OutgoingTriple, string[]];
+      }) || [];
+    const mapped: Record<string, OutgoingTriple[]> = Object.fromEntries(
+      importedResources.map((imp) => [imp, []]),
+    );
+    propsAndSubjects.forEach(([prop, subjects]) => {
+      subjects.forEach((subject) => {
+        mapped[subject] = (mapped[subject] ?? []).concat(prop);
+      });
+    });
+    return mapped;
+  }
+
+  // This isn't used to reduce re-calculations, just to re-use arrays when possible
+  irCache: Record<string, OutgoingTriple[]> | undefined;
+  get importedResourceProperties(): Record<string, OutgoingTriple[]> {
+    if (!this.irCache) {
+      // eslint-disable-next-line ember/no-side-effects
+      this.irCache = {};
     }
+    const newMap = this.getSubjectPropertMap();
+    // Re-use cached arrays if there are no changes to avoid re-renders that mess with on-clicks
+    // eslint-disable-next-line ember/no-side-effects
+    this.irCache = Object.fromEntries(
+      Object.entries(newMap).map(([subject, props]) => {
+        if (!this.irCache) return [subject, props];
+        if (
+          this.irCache[subject] &&
+          deepEqualPropertyList(this.irCache[subject], props)
+        ) {
+          return [subject, this.irCache[subject]];
+        } else {
+          return [subject, props];
+        }
+      }),
+    );
+    return this.irCache;
   }
 
   /**
@@ -319,7 +337,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
           <PropertyEditorForm
             id={{formId}}
             @onSubmit={{this.updateProperty}}
-            @termTypes={{array "LiteralNode" "ResourceNode"}}
+            @termTypes={{array "ResourceNode"}}
             @controller={{@controller}}
             @subject={{this.propertyModalStatus.subject}}
             {{! @glint-expect-error check if status is defined }}
