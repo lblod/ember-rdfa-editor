@@ -7,12 +7,11 @@ import { localCopy } from 'tracked-toolbox';
 import {
   literalTermSchema,
   namedNodeTermSchema,
-} from './object-term-schemas.ts';
+} from '../object-term-schemas.ts';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
-import WithUniqueId from '../with-unique-id.ts';
 import {
   languageOrDataType,
   sayDataFactory,
@@ -23,7 +22,7 @@ import { type Option } from '#root/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
-
+import WithUniqueId from '../../with-unique-id.ts';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({

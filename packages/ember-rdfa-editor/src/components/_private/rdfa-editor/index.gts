@@ -1,10 +1,9 @@
 import Component from '@glimmer/component';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { on } from '@ember/modifier';
-import RdfaPropertyEditor from './property-editor/index.ts';
-import RdfaRelationshipEditor from './relationship-editor/index.gts';
-import RdfaWrappingUtils from './wrapping-utils/index.ts';
-import RemoveNode from './remove-node/index.ts';
+import RdfaPropertyEditor from './property-editor/index.gts';
+import RdfaWrappingUtils from './wrapping-utils/index.gts';
+import RemoveNode from './remove-node/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
@@ -13,10 +12,11 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import ExternalTripleEditor from './external-triple-editor.gts';
 import type SayController from '#root/core/say-controller.ts';
 import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
+import ExternalTripleEditor from './external-triple-editor/index.gts';
+import BacklinkEditor from './backlink-editor/index.gts';
 
 type Args = {
   controller?: SayController;
@@ -115,16 +115,13 @@ export default class RdfaEditor extends Component<Args> {
               <Section>
                 <RdfaPropertyEditor
                   @node={{@node}}
-                  @controller={{@controller}}
+                  @controller={{this.controller}}
+                  @additionalImportedResources={{@additionalImportedResources}}
                 />
               </Section>
             {{/if}}
             <Section>
-              <RdfaRelationshipEditor
-                @node={{@node}}
-                @controller={{@controller}}
-                @additionalImportedResources={{@additionalImportedResources}}
-              />
+              <BacklinkEditor @controller={{this.controller}} @node={{@node}} />
             </Section>
             <Section>
               <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
