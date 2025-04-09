@@ -96,34 +96,43 @@ export default class BacklinkEditor extends Component<Args> {
   };
 
   addBacklink = (backlink: IncomingTriple) => {
-    this.controller.withTransaction(() => {
-      return addBacklinkToNode({
-        rdfaId: this.node.attrs['__rdfaId'] as string,
-        backlink,
-      })(this.controller.mainEditorState).transaction;
-    });
+    this.controller.withTransaction(
+      () => {
+        return addBacklinkToNode({
+          rdfaId: this.node.attrs['__rdfaId'] as string,
+          backlink,
+        })(this.controller.mainEditorState).transaction;
+      },
+      { view: this.controller.mainEditorView },
+    );
     this.status = undefined;
   };
 
   removeBacklink = (index: number) => {
-    this.controller.withTransaction(() => {
-      return removeBacklinkFromNode({
-        rdfaId: this.node.attrs['__rdfaId'] as string,
-        index,
-      })(this.controller.mainEditorState).transaction;
-    });
+    this.controller.withTransaction(
+      () => {
+        return removeBacklinkFromNode({
+          rdfaId: this.node.attrs['__rdfaId'] as string,
+          index,
+        })(this.controller.mainEditorState).transaction;
+      },
+      { view: this.controller.mainEditorView },
+    );
   };
 
   updateBacklink = (newBacklink: IncomingTriple) => {
     if (this.status?.mode === 'update') {
       const rdfaId = this.node.attrs['__rdfaId'] as string;
       const index = this.status.index;
-      this.controller.withTransaction(() => {
-        return transactionCombinator(this.controller.mainEditorState)([
-          removeBacklinkFromNode({ rdfaId, index }),
-          addBacklinkToNode({ rdfaId, backlink: newBacklink }),
-        ]).transaction;
-      });
+      this.controller.withTransaction(
+        () => {
+          return transactionCombinator(this.controller.mainEditorState)([
+            removeBacklinkFromNode({ rdfaId, index }),
+            addBacklinkToNode({ rdfaId, backlink: newBacklink }),
+          ]).transaction;
+        },
+        { view: this.controller.mainEditorView },
+      );
 
       this.status = undefined;
     }
