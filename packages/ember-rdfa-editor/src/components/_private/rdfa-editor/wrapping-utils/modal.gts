@@ -11,6 +11,7 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
+import { modifier } from 'ember-modifier';
 
 type Args = {
   closeModal: () => void;
@@ -19,6 +20,16 @@ type Args = {
 };
 
 export default class RelationshipEditorModal extends Component<Args> {
+  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
+    const ctrlEnterHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        formElement.requestSubmit();
+      }
+    };
+    window.addEventListener('keydown', ctrlEnterHandler);
+    return () => window.removeEventListener('keydown', ctrlEnterHandler);
+  });
+
   @tracked generateNewUri = 'yes';
   @tracked resourceUriBase = '';
 
@@ -54,7 +65,12 @@ export default class RelationshipEditorModal extends Component<Args> {
       >
         <:title>Wrap selection</:title>
         <:body>
-          <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
+          <form
+            class="au-c-form"
+            id={{formId}}
+            {{on "submit" this.save}}
+            {{this.setupFormSubmitShortcut}}
+          >
             <AuFormRow>
               {{#let (uniqueId) as |id|}}
                 <AuLabel

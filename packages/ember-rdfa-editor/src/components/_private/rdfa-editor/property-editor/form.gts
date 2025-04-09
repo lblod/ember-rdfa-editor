@@ -476,10 +476,10 @@ export default class PropertyEditorForm extends Component<Sig> {
 
   <template>
     <form
-      ...attributes
       {{on "submit" this.handleSubmit}}
       {{on "input" this.handleInput}}
       {{didInsert this.afterInsert}}
+      ...attributes
     >
       {{#if (this.isArray @importedResources)}}
         <AuFormRow>

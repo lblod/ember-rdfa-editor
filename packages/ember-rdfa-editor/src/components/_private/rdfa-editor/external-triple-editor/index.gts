@@ -20,8 +20,8 @@ import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import { isSome, type Option } from '#root/utils/_private/option.ts';
-import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import WithUniqueId from '../../with-unique-id.ts';
+import { modifier } from 'ember-modifier';
 
 interface EditModalSig {
   Args: {
@@ -32,30 +32,46 @@ interface EditModalSig {
   };
 }
 
-const EditModal: TemplateOnlyComponent<EditModalSig> = <template>
-  <WithUniqueId as |formId|>
-    <AuModal
-      @modalOpen={{@modalOpen}}
-      @closable={{true}}
-      @closeModal={{@onCancel}}
-    >
-      <:title>Edit external triples</:title>
-      <:body>
-        <ExternalTripleForm
-          @onSubmit={{@onSubmit}}
-          id={{formId}}
-          @triple={{@triple}}
-        />
-      </:body>
-      <:footer>
-        <AuButtonGroup>
-          <AuButton form={{formId}} type="submit">Save</AuButton>
-          <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
-        </AuButtonGroup>
-      </:footer>
-    </AuModal>
-  </WithUniqueId>
-</template>;
+class EditModal extends Component<EditModalSig> {
+  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
+    const ctrlEnterHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        formElement.requestSubmit();
+      }
+    };
+    window.addEventListener('keydown', ctrlEnterHandler);
+    return () => window.removeEventListener('keydown', ctrlEnterHandler);
+  });
+
+  <template>
+    <WithUniqueId as |formId|>
+      <AuModal
+        @modalOpen={{@modalOpen}}
+        @closable={{true}}
+        @closeModal={{@onCancel}}
+      >
+        <:title>Edit external triples</:title>
+        <:body>
+          <ExternalTripleForm
+            @onSubmit={{@onSubmit}}
+            id={{formId}}
+            @triple={{@triple}}
+            {{this.setupFormSubmitShortcut}}
+          />
+        </:body>
+        <:footer>
+          <AuButtonGroup>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
+            <AuButton
+              @skin="secondary"
+              {{on "click" @onCancel}}
+            >Cancel</AuButton>
+          </AuButtonGroup>
+        </:footer>
+      </AuModal>
+    </WithUniqueId>
+  </template>
+}
 
 interface ExternalTripleItemSig {
   Args: {

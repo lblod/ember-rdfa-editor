@@ -407,6 +407,16 @@ interface Sig {
 }
 
 class Modal extends Component<Sig> {
+  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
+    const ctrlEnterHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        formElement.requestSubmit();
+      }
+    };
+    window.addEventListener('keydown', ctrlEnterHandler);
+    return () => window.removeEventListener('keydown', ctrlEnterHandler);
+  });
+
   cancel = () => {
     this.args.onCancel();
   };
@@ -441,6 +451,7 @@ class Modal extends Component<Sig> {
             @importedResources={{@importedResources}}
             @predicateOptions={{@predicateOptions}}
             @objectOptions={{@objectOptions}}
+            {{this.setupFormSubmitShortcut}}
           />
         </:body>
         <:footer>

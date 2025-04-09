@@ -212,10 +212,10 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   });
   <template>
     <form
-      ...attributes
       {{on "submit" this.handleSubmit}}
       {{on "input" this.handleInput}}
       {{this.initAfterInsert}}
+      ...attributes
     >
 
       <StringField
