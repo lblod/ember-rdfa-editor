@@ -29,6 +29,8 @@ import {
   removeBacklinkFromNode,
 } from '#root/utils/rdfa-utils.ts';
 import { transactionCombinator } from '#root/utils/transaction-utils.ts';
+import type { Option } from '#root/utils/_private/option.ts';
+import { not } from 'ember-truth-helpers';
 
 type CreationStatus = {
   mode: 'creation';
@@ -48,6 +50,12 @@ export default class BacklinkEditor extends Component<Args> {
 
   get node(): PNode {
     return this.args.node.value;
+  }
+
+  get canAddBacklink() {
+    const attrs = this.node.attrs;
+    const rdfaNodeType = attrs['rdfaNodeType'] as Option<string>;
+    return rdfaNodeType === 'resource' || rdfaNodeType === 'literal';
   }
 
   get controller() {
@@ -134,6 +142,7 @@ export default class BacklinkEditor extends Component<Args> {
         <Group>
           <AuButton
             @icon={{PlusIcon}}
+            @disabled={{not this.canAddBacklink}}
             @skin="naked"
             {{on "click" this.startBacklinkCreation}}
           >
