@@ -8,11 +8,12 @@ import {
   literalTermSchema,
   namedNodeTermSchema,
 } from '../object-term-schemas.ts';
-import AuFormRow, {
-} from '@appuniversum/ember-appuniversum/components/au-form-row';
+import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
-import AuInput, { type AuInputSignature } from '@appuniversum/ember-appuniversum/components/au-input';
+import AuInput, {
+  type AuInputSignature,
+} from '@appuniversum/ember-appuniversum/components/au-input';
 import {
   languageOrDataType,
   sayDataFactory,
