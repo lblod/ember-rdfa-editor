@@ -43,16 +43,25 @@ class EditModal extends Component<EditModalSig> {
     return () => window.removeEventListener('keydown', ctrlEnterHandler);
   });
 
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   <template>
     <WithUniqueId as |formId|>
       <AuModal
         @modalOpen={{@modalOpen}}
         @closable={{true}}
         @closeModal={{@onCancel}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
       >
         <:title>Edit external triples</:title>
         <:body>
           <ExternalTripleForm
+            @initialFocus={{this.initialFocus}}
             @onSubmit={{@onSubmit}}
             id={{formId}}
             @triple={{@triple}}

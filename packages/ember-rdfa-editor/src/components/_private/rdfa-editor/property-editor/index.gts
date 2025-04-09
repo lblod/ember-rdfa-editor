@@ -417,6 +417,12 @@ class Modal extends Component<Sig> {
     return () => window.removeEventListener('keydown', ctrlEnterHandler);
   });
 
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   cancel = () => {
     this.args.onCancel();
   };
@@ -433,11 +439,14 @@ class Modal extends Component<Sig> {
         @modalOpen={{@modalOpen}}
         @closable={{true}}
         @closeModal={{this.cancel}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
       >
         <:title>{{this.title}}</:title>
         <:body>
           <PropertyEditorForm
             id={{formId}}
+            @initialFocus={{this.initialFocus}}
             @onSubmit={{this.save}}
             @termTypes={{array
               "NamedNode"

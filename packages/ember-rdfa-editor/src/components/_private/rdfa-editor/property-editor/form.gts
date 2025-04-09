@@ -34,6 +34,7 @@ import { eq } from 'ember-truth-helpers';
 import { uniqueId } from '@ember/helper';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
+import type { ModifierLike } from '@glint/template';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -52,6 +53,7 @@ const allTermTypes: SupportedTermType[] = [
 interface Sig {
   Args: {
     subject?: string;
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     triple?: OutgoingTriple;
     termTypes?: SupportedTermType[];
     defaultTermType?: SupportedTermType;
@@ -491,6 +493,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @requiredLabel="Required"
               >Subject</AuLabel>
               <PowerSelect
+                {{@initialFocus}}
                 id={{id}}
                 {{! For some reason need to manually set width }}
                 class="au-u-1-1"
@@ -520,6 +523,7 @@ export default class PropertyEditorForm extends Component<Sig> {
               @requiredLabel="Required"
             >Predicate</AuLabel>
             <PowerSelect
+              {{(unless (this.isArray @importedResources) @initialFocus)}}
               id={{id}}
               {{! For some reason need to manually set width }}
               class="au-u-1-1"

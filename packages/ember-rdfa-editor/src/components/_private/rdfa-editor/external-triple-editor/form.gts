@@ -8,10 +8,11 @@ import {
   literalTermSchema,
   namedNodeTermSchema,
 } from '../object-term-schemas.ts';
-import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
+import AuFormRow, {
+} from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
+import AuInput, { type AuInputSignature } from '@appuniversum/ember-appuniversum/components/au-input';
 import {
   languageOrDataType,
   sayDataFactory,
@@ -23,6 +24,7 @@ import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
 import WithUniqueId from '../../with-unique-id.ts';
+import type { ModifierLike } from '@glint/template';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({
@@ -47,6 +49,7 @@ type ValidationResult = ValidResult | InvalidResult;
 interface ExternalTripleFormSig {
   Element: HTMLFormElement;
   Args: {
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     onSubmit: (trip: FullTriple) => void;
     triple?: Option<FullTriple>;
   };
@@ -219,6 +222,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
     >
 
       <StringField
+        {{@initialFocus}}
         @name="subject.value"
         @required={{true}}
         @errors={{this.errors}}
@@ -276,6 +280,7 @@ interface StringFieldSig {
     default: [];
   };
   Args: FieldArgs & { value: string; disabled?: boolean };
+  Element: AuInputSignature['Element'];
 }
 
 const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
@@ -292,6 +297,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
         required={{@required}}
         @disabled={{@disabled}}
         @width="block"
+        ...attributes
       />
     </:default>
   </FormField>
@@ -305,6 +311,7 @@ interface SelectFieldArgs<T> extends FieldArgs {
 interface SelectFieldSig<T> {
   Args: SelectFieldArgs<T>;
   Blocks: { default: [] };
+  Element: HTMLElement;
 }
 
 // TOCs can't have a generic argument, so in this case we have to make a backing
@@ -330,6 +337,7 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
           @options={{@options}}
           @selected={{@selected}}
           @onChange={{this.onChange}}
+          ...attributes
           as |obj|
         >
           {{obj}}

@@ -13,10 +13,12 @@ import { uniqueId } from '@ember/helper';
 import { action } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/index.ts';
+import type { ModifierLike } from '@glint/template';
 
 interface BacklinkFormSig {
   Element: HTMLFormElement;
   Args: {
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     controller: SayController;
     onSubmit: (backlink: IncomingTriple) => void;
     backlink?: Option<IncomingTriple>;
@@ -103,6 +105,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
           >Subject</AuLabel>
           <PowerSelect
             id={{id}}
+            {{@initialFocus}}
             {{! For some reason need to manually set width }}
             class="au-u-1-1"
             @searchEnabled={{true}}

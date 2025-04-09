@@ -267,6 +267,12 @@ class Modal extends Component<BacklinkEditorModalSig> {
     return () => window.removeEventListener('keydown', ctrlEnterHandler);
   });
 
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   @action
   cancel() {
     this.args.onCancel();
@@ -283,11 +289,14 @@ class Modal extends Component<BacklinkEditorModalSig> {
         @modalOpen={{@modalOpen}}
         @closable={{true}}
         @closeModal={{this.cancel}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
       >
         <:title>{{@title}}</:title>
         <:body>
           <BacklinkForm
             id={{formId}}
+            @initialFocus={{this.initialFocus}}
             @onSubmit={{this.save}}
             @controller={{@controller}}
             @backlink={{@backlink}}
