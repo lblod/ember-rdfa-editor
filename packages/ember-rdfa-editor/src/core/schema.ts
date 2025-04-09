@@ -307,33 +307,37 @@ export function renderInvisibleRdfa(
         propElements.push(namedNodeSpan(subject, predicate, object.value));
         break;
       }
-      case 'ResourceNode': {
-        // TODO need a way to make sure links to literals are displayed in the rdfa tools for a
-        // document node with imported resources after reload
-        // case 'LiteralNode': {
+      case 'ResourceNode':
+      // eslint-disable-next-line no-fallthrough
+      case 'LiteralNode': {
         const importedResources = nodeOrMark.attrs[IMPORTED_RESOURCES_ATTR] as
           | string[]
           | undefined;
         if (importedResources && 'nodeSize' in nodeOrMark) {
-          // This is a document node that imports resources, so we need special handling of those
-          // properties
-          // continued TODO...
-          // let linkedToNodes: ResolvedPNode[];
-          // if (object.termType === 'ResourceNode') {
-          //   linkedToNodes = findNodesBySubject(nodeOrMark, object.value);
-          // } else {
-          //   const node = findNodeByRdfaId(nodeOrMark, object.value);
-          //   linkedToNodes = node ? [node] : [];
-          // }
           const subjects = getSubjectsFromBacklinksOfRelationship(
             nodeOrMark,
             importedResources,
             predicate,
             object,
           );
-          subjects.forEach((subject) => {
-            propElements.push(namedNodeSpan(subject, predicate, object.value));
-          });
+          if (object.termType === 'ResourceNode') {
+            subjects.forEach((subject) => {
+              propElements.push(
+                namedNodeSpan(subject, predicate, object.value),
+              );
+            });
+          } else {
+            // We need an invisible RDFa node which defines the subject to ensure that there is
+            // somewhere to store outgoingProps in a data attribute
+            subjects.forEach((subject) => {
+              propElements.push([
+                'span',
+                {
+                  about: subject,
+                },
+              ]);
+            });
+          }
         }
         break;
       }
