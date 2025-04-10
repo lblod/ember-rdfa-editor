@@ -14,12 +14,17 @@ import { action } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/index.ts';
 import type { ModifierLike } from '@glint/template';
+import { modifier } from 'ember-modifier';
 
 interface BacklinkFormSig {
   Element: HTMLFormElement;
   Args: {
     initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     controller: SayController;
+    onKeyDown?: (
+      form: HTMLFormElement,
+      event: KeyboardEvent,
+    ) => boolean | undefined;
     onSubmit: (backlink: IncomingTriple) => void;
     backlink?: Option<IncomingTriple>;
     predicateOptions?: string[];
@@ -30,6 +35,18 @@ const DEFAULT_BACKLINK: IncomingTriple = {
   predicate: '',
 };
 export default class BacklinkForm extends Component<BacklinkFormSig> {
+  formElement?: HTMLFormElement;
+  setupFormElement = modifier((element: HTMLFormElement) => {
+    this.formElement = element;
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (this.args.onKeyDown) {
+        this.args.onKeyDown(element, event);
+      }
+    };
+    window.addEventListener('keydown', keyDownHandler);
+    return () => window.removeEventListener('keydown', keyDownHandler);
+  });
+
   @localCopy('args.backlink.subject.value')
   subject: string = '';
 
@@ -52,8 +69,12 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
   updateSubject(subject: string) {
     this.subject = subject;
   }
+
   @action
-  onSubjectKeydown(select: Select, event: KeyboardEvent): undefined {
+  onPowerSelectKeydown(select: Select, event: KeyboardEvent) {
+    if (this.formElement && this.args.onKeyDown) {
+      this.args.onKeyDown(this.formElement, event);
+    }
     // Based on example from ember-power-select docs, allows for selecting a previously non-existent
     // entry by typing in the power-select 'search' and hitting 'enter'
     if (
@@ -63,6 +84,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
       !!select.searchText
     ) {
       select.actions.choose(select.searchText);
+      return false;
     }
     return;
   }
@@ -80,22 +102,14 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
     };
     this.args.onSubmit(backlink);
   };
-  @action
-  allowCustomSelection(select: Select, event: KeyboardEvent) {
-    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
-    // entry by typing in the power-select 'search' and hitting 'enter'
-    if (
-      event.key === 'Enter' &&
-      select.isOpen &&
-      !select.highlighted &&
-      !!select.searchText
-    ) {
-      select.actions.choose(select.searchText);
-    }
-    return true;
-  }
+
   <template>
-    <form class="au-c-form" {{on "submit" this.handleSubmit}} ...attributes>
+    <form
+      class="au-c-form"
+      {{on "submit" this.handleSubmit}}
+      {{this.setupFormElement}}
+      ...attributes
+    >
       <AuFormRow>
         {{#let (uniqueId) as |id|}}
           <AuLabel
@@ -112,7 +126,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
             @options={{this.subjectOptions}}
             @selected={{this.subject}}
             @onChange={{this.updateSubject}}
-            @onKeydown={{this.onSubjectKeydown}}
+            @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
           >
@@ -135,7 +149,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
             @options={{@predicateOptions}}
             @selected={{this.predicate}}
             @onChange={{this.updatePredicate}}
-            @onKeydown={{this.allowCustomSelection}}
+            @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
           >

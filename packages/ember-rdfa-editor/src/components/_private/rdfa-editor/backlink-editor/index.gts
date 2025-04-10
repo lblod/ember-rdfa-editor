@@ -257,15 +257,13 @@ interface BacklinkEditorModalSig {
 }
 
 class Modal extends Component<BacklinkEditorModalSig> {
-  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
-    const ctrlEnterHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-        formElement.requestSubmit();
-      }
-    };
-    window.addEventListener('keydown', ctrlEnterHandler);
-    return () => window.removeEventListener('keydown', ctrlEnterHandler);
-  });
+  @action
+  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      formElement.requestSubmit();
+    }
+    return true;
+  }
 
   @tracked initiallyFocusedElement?: HTMLElement;
 
@@ -301,7 +299,7 @@ class Modal extends Component<BacklinkEditorModalSig> {
             @controller={{@controller}}
             @backlink={{@backlink}}
             @predicateOptions={{@predicateOptions}}
-            {{this.setupFormSubmitShortcut}}
+            @onKeyDown={{this.onFormKeyDown}}
           />
         </:body>
         <:footer>
