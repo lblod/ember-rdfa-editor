@@ -37,13 +37,21 @@ export default class WrappingUtils extends Component<Args> {
       if (event.altKey && event.ctrlKey) {
         const key = event.key;
         switch (key) {
-          case 'i':
-          case 'I':
+          case 'r':
+            // Wrap with block resource
+            this.openModal(false);
+            break;
+          case 'R':
+            // Wrap with inline resource
             this.openModal(true);
             break;
-          case 'b':
-          case 'B':
-            this.openModal(false);
+          case 'l':
+            // Wrap with block literal
+            this.wrapWithLiteralNode();
+            break;
+          case 'L':
+            // Wrap with inline literal
+            this.wrapWithInlineLiteralNode();
             break;
         }
       }

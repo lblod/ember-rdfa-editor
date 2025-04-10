@@ -53,8 +53,8 @@ export default class BacklinkEditor extends Component<Args> {
       if (event.altKey && event.ctrlKey) {
         const key = event.key;
         switch (key) {
-          case 'l':
-          case 'L':
+          case 'b':
+          case 'B':
             this.startBacklinkCreation();
             break;
         }
