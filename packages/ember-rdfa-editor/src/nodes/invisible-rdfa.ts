@@ -1,8 +1,8 @@
 import { tagName } from '#root/utils/_private/dom-helpers.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
+import { type RdfaAttrs } from '../core/rdfa-types.ts';
 import {
   getRdfaAttrs,
-  type RdfaAttrs,
   rdfaAttrSpec,
   renderInvisibleRdfa,
   renderRdfaAttrs,

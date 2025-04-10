@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
+import { Mark, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
@@ -10,12 +10,10 @@ import type {
 } from './rdfa-processor.ts';
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
-import { findNodesBySubject, getBacklinks } from '#root/utils/rdfa-utils.ts';
-import { type ResolvedPNode } from '#root/utils/_private/types.ts';
+import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
 import {
   languageOrDataType,
   sayDataFactory,
-  SayNamedNode,
   type SayTerm,
   type WithoutEquals,
 } from './say-data-factory/index.ts';
@@ -27,8 +25,19 @@ import {
 } from './schema/_private/render-rdfa-attrs.ts';
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
 import type { NamedNode } from '@rdfjs/types';
+import { rdfaNodeTypes, type RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 // const logger = createLogger('core/schema');
+
+// Exports for backwards compatibility
+export {
+  rdfaNodeTypes,
+  type RdfaAwareAttrs,
+  type RdfaLiteralAttrs,
+  type RdfaResourceAttrs,
+  type RdfaAttrs,
+  isRdfaAttrs,
+} from './rdfa-types.ts';
 
 export type RdfaAttrConfig = {
   rdfaAware?: boolean;
@@ -105,7 +114,6 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   let rdfaNodeType = node.dataset['rdfaNodeType'] as
     | RdfaAttrs['rdfaNodeType']
     | undefined;
-  console.log(node.dataset);
   if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
     rdfaNodeType = 'literal';
   }
@@ -263,35 +271,6 @@ export const rdfaDomAttrs = {
   'data-rdfa-node-type': { default: undefined },
 };
 
-export const rdfaNodeTypes = ['resource', 'literal'] as const;
-export interface RdfaAwareAttrs {
-  __rdfaId: string;
-  rdfaNodeType: (typeof rdfaNodeTypes)[number];
-  backlinks: IncomingTriple[];
-  externalTriples?: FullTriple[];
-}
-export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'literal';
-  content: string | null;
-  datatype?: SayNamedNode | null;
-  language?: string | null;
-}
-export interface RdfaResourceAttrs extends RdfaAwareAttrs {
-  rdfaNodeType: 'resource';
-  externalTriples?: FullTriple[];
-  subject: string;
-  properties: OutgoingTriple[];
-}
-export type RdfaAttrs = RdfaLiteralAttrs | RdfaResourceAttrs;
-
-export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
-  return (
-    '__rdfaId' in attrs &&
-    'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'] as 'resource' | 'literal')
-  );
-}
-
 export const sharedRdfaNodeSpec = {
   isolating: true,
   selectable: true,
@@ -328,39 +307,36 @@ export function renderInvisibleRdfa(
         propElements.push(namedNodeSpan(subject, predicate, object.value));
         break;
       }
-      case 'ResourceNode': {
-        // TODO need a way to make sure links to literals are displayed in the rdfa tools for a
-        // document node with imported resources after reload
-        // case 'LiteralNode': {
-        const importedResources = nodeOrMark.attrs[
-          IMPORTED_RESOURCES_ATTR
-        ] as unknown;
+      case 'ResourceNode':
+      // eslint-disable-next-line no-fallthrough
+      case 'LiteralNode': {
+        const importedResources = nodeOrMark.attrs[IMPORTED_RESOURCES_ATTR] as
+          | string[]
+          | undefined;
         if (importedResources && 'nodeSize' in nodeOrMark) {
-          // This is a document node that imports resources, so we need special handling of those
-          // properties
-          // continued TODO...
-          // let linkedToNodes: ResolvedPNode[];
-          // if (object.termType === 'ResourceNode') {
-          //   linkedToNodes = findNodesBySubject(nodeOrMark, object.value);
-          // } else {
-          //   const node = findNodeByRdfaId(nodeOrMark, object.value);
-          //   linkedToNodes = node ? [node] : [];
-          // }
-          const linkedToNodes: ResolvedPNode[] = findNodesBySubject(
+          const subjects = getSubjectsFromBacklinksOfRelationship(
             nodeOrMark,
-            object.value,
+            importedResources,
+            predicate,
+            object,
           );
-          const backlinkToImportedResource = linkedToNodes
-            .flatMap((subj) => getBacklinks(subj.value))
-            .find((bl) => bl?.predicate === predicate);
-          if (backlinkToImportedResource) {
-            propElements.push(
-              namedNodeSpan(
-                backlinkToImportedResource.subject.value,
-                predicate,
-                object.value,
-              ),
-            );
+          if (object.termType === 'ResourceNode') {
+            subjects.forEach((subject) => {
+              propElements.push(
+                namedNodeSpan(subject, predicate, object.value),
+              );
+            });
+          } else {
+            // We need an invisible RDFa node which defines the subject to ensure that there is
+            // somewhere to store outgoingProps in a data attribute
+            subjects.forEach((subject) => {
+              propElements.push([
+                'span',
+                {
+                  about: subject,
+                },
+              ]);
+            });
           }
         }
         break;
@@ -449,7 +425,6 @@ export function renderInvisibleRdfa(
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
 ): Record<string, string | null> {
-  console.log('SayId: ', rdfaAttrs.__rdfaId);
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple: ContentTriple | null = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',

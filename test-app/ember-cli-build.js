@@ -30,6 +30,14 @@ module.exports = async function (defaults) {
 
       silenceDeprecations: ['import', 'global-builtin'],
     },
+
+    // We don't use ember-data or even depend on it directly, but it seems to get pulled in, even
+    // though it's an optional peer dependency of ember-changeset. This removes the deprecation.
+    emberData: {
+      deprecations: {
+        DEPRECATE_STORE_EXTENDS_EMBER_OBJECT: false,
+      },
+    },
   });
 
   const { maybeEmbroider } = require('@embroider/test-setup');

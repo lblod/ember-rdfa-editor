@@ -8,7 +8,7 @@ export { keydownHandler, keymap } from 'prosemirror-keymap';
 
 export { getRdfaAttrs, rdfaAttrs, rdfaAttrSpec } from '#root/core/schema.ts';
 
-export type { RdfaAttrs } from '#root/core/schema.ts';
+export type { RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 export {
   default as ProseMirror,

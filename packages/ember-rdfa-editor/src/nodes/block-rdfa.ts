@@ -1,8 +1,8 @@
 import { Node as PNode } from 'prosemirror-model';
+import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
-  isRdfaAttrs,
   rdfaAttrSpec,
   renderRdfaAware,
 } from '#root/core/schema.ts';
