@@ -29,6 +29,8 @@ import {
   removeBacklinkFromNode,
 } from '#root/utils/rdfa-utils.ts';
 import { transactionCombinator } from '#root/utils/transaction-utils.ts';
+import type { Option } from '#root/utils/_private/option.ts';
+import { not } from 'ember-truth-helpers';
 import { modifier } from 'ember-modifier';
 
 type CreationStatus = {
@@ -70,6 +72,12 @@ export default class BacklinkEditor extends Component<Args> {
     return this.args.node.value;
   }
 
+  get canAddBacklink() {
+    const attrs = this.node.attrs;
+    const rdfaNodeType = attrs['rdfaNodeType'] as Option<string>;
+    return rdfaNodeType === 'resource' || rdfaNodeType === 'literal';
+  }
+
   get controller() {
     return this.args.controller;
   }
@@ -108,34 +116,43 @@ export default class BacklinkEditor extends Component<Args> {
   };
 
   addBacklink = (backlink: IncomingTriple) => {
-    this.controller.withTransaction(() => {
-      return addBacklinkToNode({
-        rdfaId: this.node.attrs['__rdfaId'] as string,
-        backlink,
-      })(this.controller.mainEditorState).transaction;
-    });
+    this.controller.withTransaction(
+      () => {
+        return addBacklinkToNode({
+          rdfaId: this.node.attrs['__rdfaId'] as string,
+          backlink,
+        })(this.controller.mainEditorState).transaction;
+      },
+      { view: this.controller.mainEditorView },
+    );
     this.status = undefined;
   };
 
   removeBacklink = (index: number) => {
-    this.controller.withTransaction(() => {
-      return removeBacklinkFromNode({
-        rdfaId: this.node.attrs['__rdfaId'] as string,
-        index,
-      })(this.controller.mainEditorState).transaction;
-    });
+    this.controller.withTransaction(
+      () => {
+        return removeBacklinkFromNode({
+          rdfaId: this.node.attrs['__rdfaId'] as string,
+          index,
+        })(this.controller.mainEditorState).transaction;
+      },
+      { view: this.controller.mainEditorView },
+    );
   };
 
   updateBacklink = (newBacklink: IncomingTriple) => {
     if (this.status?.mode === 'update') {
       const rdfaId = this.node.attrs['__rdfaId'] as string;
       const index = this.status.index;
-      this.controller.withTransaction(() => {
-        return transactionCombinator(this.controller.mainEditorState)([
-          removeBacklinkFromNode({ rdfaId, index }),
-          addBacklinkToNode({ rdfaId, backlink: newBacklink }),
-        ]).transaction;
-      });
+      this.controller.withTransaction(
+        () => {
+          return transactionCombinator(this.controller.mainEditorState)([
+            removeBacklinkFromNode({ rdfaId, index }),
+            addBacklinkToNode({ rdfaId, backlink: newBacklink }),
+          ]).transaction;
+        },
+        { view: this.controller.mainEditorView },
+      );
 
       this.status = undefined;
     }
@@ -154,6 +171,7 @@ export default class BacklinkEditor extends Component<Args> {
         <Group>
           <AuButton
             @icon={{PlusIcon}}
+            @disabled={{not this.canAddBacklink}}
             @skin="naked"
             {{on "click" this.startBacklinkCreation}}
           >

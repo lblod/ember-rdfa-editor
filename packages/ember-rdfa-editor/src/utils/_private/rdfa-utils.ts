@@ -1,5 +1,6 @@
 import type {
   IncomingTriple,
+  LinkTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
 import { getSubject } from '#root/plugins/rdfa-info/plugin.ts';
@@ -12,13 +13,18 @@ import type {
 import {
   addBacklink,
   addProperty,
+  findNodeByRdfaId,
+  findNodesBySubject,
+  getBacklinks,
   getNodeByRdfaId,
   getNodesBySubject,
   isLinkToNode,
 } from '#root/plugins/rdfa-info/utils.ts';
-import { isRdfaAttrs } from '#root/core/schema.ts';
+import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import TransformUtils from './transform-utils.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import { type ResolvedPNode } from './types.ts';
+import { isSome } from './option.ts';
 
 export {
   addPropertyToNode,
@@ -216,4 +222,28 @@ export function removeBacklinkFromNode({
       result: true,
     };
   };
+}
+
+export function getSubjectsFromBacklinksOfRelationship(
+  doc: PNode,
+  importedResources: string[],
+  predicate: string,
+  linkedObject: LinkTriple['object'],
+) {
+  let linkedToNodes: ResolvedPNode[];
+  if (linkedObject.termType === 'ResourceNode') {
+    linkedToNodes = findNodesBySubject(doc, linkedObject.value);
+  } else {
+    const node = findNodeByRdfaId(doc, linkedObject.value);
+    linkedToNodes = node ? [node] : [];
+  }
+  return linkedToNodes
+    .flatMap((subj) => getBacklinks(subj.value))
+    .filter(
+      (bl) =>
+        bl?.predicate === predicate &&
+        importedResources.includes(bl.subject.value),
+    )
+    .map((bl) => bl?.subject.value)
+    .filter(isSome);
 }

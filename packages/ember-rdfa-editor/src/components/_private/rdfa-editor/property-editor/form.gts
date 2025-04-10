@@ -51,6 +51,7 @@ const allTermTypes: SupportedTermType[] = [
 
 interface Sig {
   Args: {
+    subject?: string;
     triple?: OutgoingTriple;
     termTypes?: SupportedTermType[];
     defaultTermType?: SupportedTermType;
@@ -98,8 +99,8 @@ export default class PropertyEditorForm extends Component<Sig> {
   @localCopy('args.triple.object.value')
   linkedLiteralNode?: string;
 
-  @tracked
-  subject: string | undefined = undefined;
+  @localCopy('args.subject')
+  subject: string | undefined;
   @localCopy('args.triple.predicate.value')
   predicate?: string;
   @localCopy('args.triple.object.value')

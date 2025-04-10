@@ -2,7 +2,7 @@ import {
   sayDataFactory,
   type SayNamedNode,
 } from '#root/core/say-data-factory/index.ts';
-import { isRdfaAttrs, type RdfaAttrs } from '../core/schema.ts';
+import { isRdfaAttrs, type RdfaAttrs } from '../core/rdfa-types.ts';
 import type { Attrs } from 'prosemirror-model';
 import type { OutgoingTriple } from '../core/rdfa-processor.ts';
 import { unwrap, type Option } from './_private/option.ts';

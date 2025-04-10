@@ -75,6 +75,10 @@ export type FullTriple = {
   object: SayNamedNode | SayLiteral;
 };
 
+export function isLinkTriple(triple: OutgoingTriple): triple is LinkTriple {
+  return ['ResourceNode', 'LiteralNode'].includes(triple.object.termType);
+}
+
 /**
  * Function responsible for computing the properties and backlinks of a given document.
  * The properties and backlinks are stored in data-attributes in the nodes themselves.

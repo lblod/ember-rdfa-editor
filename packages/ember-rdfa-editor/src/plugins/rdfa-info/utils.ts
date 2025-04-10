@@ -20,7 +20,7 @@ import type {
 } from '#root/utils/transaction-utils.ts';
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-property.ts';
-import { isRdfaAttrs, type RdfaAttrs } from '#root/core/schema.ts';
+import { isRdfaAttrs, type RdfaAttrs } from '#root/core/rdfa-types.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 
@@ -364,6 +364,14 @@ export function deepEqualProperty(a: OutgoingTriple, b: OutgoingTriple) {
     }
   }
   return false;
+}
+
+export function deepEqualPropertyList(
+  listA: OutgoingTriple[],
+  listB: OutgoingTriple[],
+) {
+  if (listA.length !== listB.length) return false;
+  return listA.every((a, i) => deepEqualProperty(a, listB[i]));
 }
 
 export function deepEqualBacklink(a: IncomingTriple, b: IncomingTriple) {

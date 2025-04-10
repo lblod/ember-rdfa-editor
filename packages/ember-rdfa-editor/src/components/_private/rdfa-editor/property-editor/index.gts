@@ -2,10 +2,15 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
-
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
-import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
+import {
+  isLinkTriple,
+  type OutgoingTriple,
+} from '#root/core/rdfa-processor.ts';
+import {
+  getSubjectsFromBacklinksOfRelationship,
+  isLinkToNode,
+} from '#root/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
@@ -19,11 +24,7 @@ import { on } from '@ember/modifier';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import AuDropdown from '@appuniversum/ember-appuniversum/components/au-dropdown';
 import { fn } from '@ember/helper';
-import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
-import { eq, not, or } from 'ember-truth-helpers';
-import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
-import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
-import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/select-node-by-subject.ts';
+import { not } from 'ember-truth-helpers';
 import type { PNode } from '#root/prosemirror-aliases.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
@@ -35,33 +36,21 @@ import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button
 import WithUniqueId from '../../with-unique-id.ts';
 import PropertyEditorForm from './form.gts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
+import { type Status, type StatusMessage } from '../types.ts';
+import PropertyDetails from '../property-details.gts';
 import { modifier } from 'ember-modifier';
 
-type Args = {
-  controller?: SayController;
-  node: ResolvedPNode;
-  additionalImportedResources?: string[];
-  predicateOptions?: string[];
-  objectOptions?: string[];
-};
-
-interface StatusMessage {
-  message: string;
-  type: 'info' | 'warning' | 'error' | 'success';
-}
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
 }
 
-type CreationStatus = {
-  mode: 'creation';
+type Args = {
+  controller: SayController;
+  node: ResolvedPNode;
+  additionalImportedResources?: string[];
+  objectOptions?: string[];
+  predicateOptions?: string[];
 };
-type UpdateStatus = {
-  mode: 'update';
-  index: number;
-  property: OutgoingTriple;
-};
-type Status = CreationStatus | UpdateStatus;
 
 export default class RdfaPropertyEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
@@ -98,7 +87,26 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   get properties() {
-    return this.args.node.value.attrs['properties'] as OutgoingTriple[];
+    const properties = this.args.node.value.attrs[
+      'properties'
+    ] as OutgoingTriple[];
+    if (this.isDocWithImportedResourcesEnabled) {
+      const importedResources = this.documentImportedResources;
+      if (importedResources) {
+        // TODO do we need to memoize these results?
+        return properties.filter(
+          (property) =>
+            !isLinkTriple(property) ||
+            getSubjectsFromBacklinksOfRelationship(
+              this.node,
+              importedResources,
+              property.predicate,
+              property.object,
+            ).length === 0,
+        );
+      }
+    }
+    return properties;
   }
 
   get isCreating() {
@@ -120,16 +128,16 @@ export default class RdfaPropertyEditor extends Component<Args> {
     }
     return null;
   }
-  set statusMessage(val: StatusMessage | null) {
+  setStatusMessage = (val: StatusMessage | null) => {
     if (val) {
       this._statusMessage = { ...val, node: this.node };
     } else {
       this._statusMessage = val;
     }
-  }
+  };
 
   closeStatusMessage = () => {
-    this.statusMessage = null;
+    this.setStatusMessage(null);
   };
 
   get type() {
@@ -146,22 +154,26 @@ export default class RdfaPropertyEditor extends Component<Args> {
     return getSubjects(this.controller.mainEditorState);
   }
 
-  get documentImportedResources(): string[] | false {
+  get isDocWithImportedResourcesEnabled(): boolean {
     return (
       this.type === 'document' &&
       !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
-      ] &&
+      ]
+    );
+  }
+  get docNodeImportedResources(): string[] | false {
+    return (
+      this.isDocWithImportedResourcesEnabled &&
       ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
     );
   }
-
-  get allImportedResources(): string[] | false {
+  get documentImportedResources(): string[] | false {
     return (
-      this.documentImportedResources &&
+      this.isDocWithImportedResourcesEnabled &&
       Array.from(
         new Set<string>([
-          ...(this.documentImportedResources || []),
+          ...(this.docNodeImportedResources || []),
           ...(this.args.additionalImportedResources || []),
         ]).values(),
       )
@@ -184,56 +196,16 @@ export default class RdfaPropertyEditor extends Component<Args> {
     );
   };
 
-  goToOutgoing = (outgoing: OutgoingTriple) => {
-    this.closeStatusMessage();
-    if (!isLinkToNode(outgoing)) {
-      return;
-    }
-    const { object } = outgoing;
-    if (!this.controller) {
-      this.statusMessage = {
-        message: 'No editor controller found. This is probably a bug.',
-        type: 'error',
-      };
-      return;
-    }
-    if (object.termType === 'LiteralNode') {
-      const result = this.controller.doCommand(
-        selectNodeByRdfaId({ rdfaId: object.value }),
-        { view: this.controller.mainEditorView },
-      );
-      if (!result) {
-        this.statusMessage = {
-          message: `No literal node found for id ${object.value}.`,
-          type: 'error',
-        };
-      }
-    } else {
-      const result = this.controller.doCommand(
-        selectNodeBySubject({ subject: object.value }),
-        { view: this.controller.mainEditorView },
-      );
-      if (!result) {
-        this.statusMessage = {
-          message: `No resource node found for ${object.value}.`,
-          type: 'info',
-        };
-      }
-    }
-    this.controller.focus();
-  };
-
   startPropertyCreation = () => {
     this.status = {
       mode: 'creation',
     };
   };
 
-  startPropertyUpdate = (index: number) => {
+  startPropertyUpdate = (property: OutgoingTriple) => {
     this.status = {
       mode: 'update',
-      index,
-      property: this.properties[index],
+      property,
     };
   };
 
@@ -251,8 +223,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
     if (resource) {
       const isNewImportedResource =
         (subject &&
-          this.documentImportedResources &&
-          !this.documentImportedResources.includes(subject)) ||
+          this.docNodeImportedResources &&
+          !this.docNodeImportedResources.includes(subject)) ||
         false;
       this.controller?.doCommand(
         addProperty({ resource, property, isNewImportedResource }),
@@ -267,23 +239,23 @@ export default class RdfaPropertyEditor extends Component<Args> {
   updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
     // TODO: make a command to do this in one go
     if (this.status?.mode === 'update') {
-      this.removeProperty(this.status.index);
+      this.removeProperty(this.status.property);
       this.addProperty(newProperty, subject);
       this.status = undefined;
     }
   };
 
-  removeProperty = (index: number) => {
+  removeProperty = (property: OutgoingTriple) => {
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
     if (this.currentResource || this.type === 'document') {
       const propertyToRemove =
         this.type !== 'document' && this.currentResource
-          ? { resource: this.currentResource, index }
+          ? { resource: this.currentResource, property }
           : {
               documentResourceNode: this.node,
               importedResources: this.documentImportedResources || [],
-              index,
+              property,
             };
       this.controller?.doCommand(removeProperty(propertyToRemove), {
         view: this.controller.mainEditorView,
@@ -295,13 +267,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.status = undefined;
   };
 
-  hasDataType = (obj: OutgoingTriple['object']) => {
-    return 'datatype' in obj;
-  };
-
-  hasLanguage = (obj: OutgoingTriple['object']) => {
-    return 'language' in obj;
-  };
   <template>
     <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
@@ -356,44 +321,21 @@ export default class RdfaPropertyEditor extends Component<Args> {
       {{/if}}
       {{#if this.properties.length}}
         <AuList @divider={{true}} as |Item|>
-          {{#each this.properties as |prop index|}}
+          {{#each this.properties as |prop|}}
             <Item
               class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
             >
-              <div class="au-u-padding-tiny">
-                <p><strong>predicate:</strong> {{prop.predicate}}</p>
-                {{#if (this.hasDataType prop.object)}}
-                  <p><strong>datatype:</strong>
-                    {{prop.object.datatype.value}}</p>
-                {{/if}}
-                {{#if (this.hasLanguage prop.object)}}
-                  <p><strong>language:</strong> {{prop.object.language}}</p>
-                {{/if}}
-                {{#if (eq prop.object.termType "ContentLiteral")}}
-                  <AuPill>content-predicate</AuPill>
-                {{else if
-                  (or
-                    (eq prop.object.termType "LiteralNode")
-                    (eq prop.object.termType "ResourceNode")
-                  )
-                }}
-                  <AuButton
-                    class="au-u-padding-left-none au-u-padding-right-none"
-                    @icon={{ExternalLinkIcon}}
-                    @skin="link"
-                    title={{prop.object.value}}
-                    {{on "click" (fn this.goToOutgoing prop)}}
-                  >value</AuButton>
-                {{else}}
-                  <p><strong>value:</strong> {{prop.object.value}}</p>
-                {{/if}}
-              </div>
+              <PropertyDetails
+                @controller={{@controller}}
+                @prop={{prop}}
+                @setStatusMessage={{this.setStatusMessage}}
+              />
               <AuDropdown @icon={{ThreeDotsIcon}} role="menu" @alignment="left">
                 <AuButton
                   @skin="link"
                   @icon={{PencilIcon}}
                   role="menuitem"
-                  {{on "click" (fn this.startPropertyUpdate index)}}
+                  {{on "click" (fn this.startPropertyUpdate prop)}}
                 >
                   Edit property
                 </AuButton>
@@ -402,7 +344,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
                   @icon={{BinIcon}}
                   role="menuitem"
                   class="au-c-button--alert"
-                  {{on "click" (fn this.removeProperty index)}}
+                  {{on "click" (fn this.removeProperty prop)}}
                 >
                   Remove property
                 </AuButton>
@@ -427,8 +369,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
     </AuContent>
     {{! Creation modal }}
     <Modal
-      @importedResources={{this.allImportedResources}}
-      @controller={{this.controller}}
+      @importedResources={{this.documentImportedResources}}
+      @controller={{@controller}}
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
       @onCancel={{this.cancel}}
@@ -437,8 +379,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
     />
     {{! Update modal }}
     <Modal
-      @importedResources={{this.allImportedResources}}
-      @controller={{this.controller}}
+      @importedResources={{this.documentImportedResources}}
+      @controller={{@controller}}
       @modalOpen={{this.isUpdating}}
       @onSave={{this.updateProperty}}
       @onCancel={{this.cancel}}
