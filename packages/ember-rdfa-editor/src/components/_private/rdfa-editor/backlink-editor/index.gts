@@ -31,6 +31,7 @@ import {
 import { transactionCombinator } from '#root/utils/transaction-utils.ts';
 import type { Option } from '#root/utils/_private/option.ts';
 import { not } from 'ember-truth-helpers';
+import { modifier } from 'ember-modifier';
 
 type CreationStatus = {
   mode: 'creation';
@@ -44,9 +45,28 @@ type Status = CreationStatus | UpdateStatus;
 type Args = {
   controller: SayController;
   node: ResolvedPNode;
+  predicateOptions?: string[];
 };
 export default class BacklinkEditor extends Component<Args> {
   @tracked status?: Status;
+
+  setUpListeners = modifier(() => {
+    const listenerHandler = (event: KeyboardEvent) => {
+      if (event.altKey && event.ctrlKey) {
+        const key = event.key;
+        switch (key) {
+          case 'b':
+          case 'B':
+            this.startBacklinkCreation();
+            break;
+        }
+      }
+    };
+    window.addEventListener('keydown', listenerHandler);
+    return () => {
+      window.removeEventListener('keydown', listenerHandler);
+    };
+  });
 
   get node(): PNode {
     return this.args.node.value;
@@ -143,7 +163,7 @@ export default class BacklinkEditor extends Component<Args> {
   };
 
   <template>
-    <AuContent @skin="tiny">
+    <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
           <AuHeading @level="5" @skin="5">Backlinks</AuHeading>
@@ -208,6 +228,7 @@ export default class BacklinkEditor extends Component<Args> {
       @modalOpen={{this.isCreating}}
       @onSave={{this.addBacklink}}
       @onCancel={{this.cancel}}
+      @predicateOptions={{@predicateOptions}}
     />
     {{! Update modal }}
     <Modal
@@ -218,6 +239,7 @@ export default class BacklinkEditor extends Component<Args> {
       @onCancel={{this.cancel}}
       {{! @glint-expect-error check if backlink is defined }}
       @backlink={{this.status.backlink}}
+      @predicateOptions={{@predicateOptions}}
     />
   </template>
 }
@@ -230,6 +252,7 @@ interface BacklinkEditorModalSig {
     modalOpen: boolean;
     onCancel: () => unknown;
     onSave: (backlink: IncomingTriple) => unknown;
+    predicateOptions?: string[];
   };
 }
 
@@ -258,6 +281,7 @@ class Modal extends Component<BacklinkEditorModalSig> {
             @onSubmit={{this.save}}
             @controller={{@controller}}
             @backlink={{@backlink}}
+            @predicateOptions={{@predicateOptions}}
           />
         </:body>
         <:footer>

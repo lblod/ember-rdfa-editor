@@ -59,6 +59,8 @@ interface Sig {
     onInput?(newTriple: Partial<OutgoingTriple>): void;
     onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
     importedResources?: string[] | false;
+    predicateOptions?: string[];
+    objectOptions?: string[];
   };
   Element: HTMLFormElement;
 }
@@ -99,6 +101,10 @@ export default class PropertyEditorForm extends Component<Sig> {
 
   @localCopy('args.subject')
   subject: string | undefined;
+  @localCopy('args.triple.predicate.value')
+  predicate?: string;
+  @localCopy('args.triple.object.value')
+  object?: string;
 
   @tracked
   errors: ValidationError[] = [];
@@ -209,6 +215,20 @@ export default class PropertyEditorForm extends Component<Sig> {
     );
   }
 
+  get documentSubjects(): string[] {
+    if (!this.controller) {
+      return [];
+    }
+    return getSubjects(this.controller.mainEditorState);
+  }
+
+  get objectOptions(): string[] {
+    return [
+      ...(this.args.objectOptions ?? []),
+      ...this.documentSubjects,
+    ] as string[];
+  }
+
   resourceNodeLabel = (resource: string): string => {
     return resource;
   };
@@ -241,10 +261,10 @@ export default class PropertyEditorForm extends Component<Sig> {
         case 'NamedNode': {
           const validated = namedNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'NamedNode',
-                value: formData.get('object.value')?.toString(),
+                value: this.object?.toString(),
               },
             },
             { abortEarly: false },
@@ -262,7 +282,7 @@ export default class PropertyEditorForm extends Component<Sig> {
         case 'Literal': {
           const { predicate, object } = literalSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'Literal',
                 value: formData.get('object.value')?.toString(),
@@ -299,7 +319,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { value },
           } = literalNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'LiteralNode',
                 value: this.selectedLiteralNode,
@@ -323,7 +343,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { value },
           } = resourceNodeSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'ResourceNode',
                 value: this.selectedResourceNode,
@@ -344,7 +364,7 @@ export default class PropertyEditorForm extends Component<Sig> {
             object: { datatype, language },
           } = contentLiteralSchema.validateSync(
             {
-              predicate: formData.get('predicate')?.toString(),
+              predicate: this.predicate?.toString(),
               object: {
                 termType: 'ContentLiteral',
                 datatype: {
@@ -393,7 +413,15 @@ export default class PropertyEditorForm extends Component<Sig> {
     this.subject = subject;
   }
   @action
-  onSubjectKeydown(select: Select, event: KeyboardEvent): undefined {
+  setPredicate(predicate: string) {
+    this.predicate = predicate;
+  }
+  @action
+  setObject(object: string) {
+    this.object = object;
+  }
+  @action
+  allowCustomSelection(select: Select, event: KeyboardEvent) {
     // Based on example from ember-power-select docs, allows for selecting a previously non-existent
     // entry by typing in the power-select 'search' and hitting 'enter'
     if (
@@ -404,7 +432,7 @@ export default class PropertyEditorForm extends Component<Sig> {
     ) {
       select.actions.choose(select.searchText);
     }
-    return;
+    return true;
   }
   @action
   setTermType(termType: SayTermType) {
@@ -470,7 +498,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @options={{@importedResources}}
                 @selected={{this.subject}}
                 @onChange={{this.setSubject}}
-                @onKeydown={{this.onSubjectKeydown}}
+                @onKeydown={{this.allowCustomSelection}}
                 @allowClear={{true}}
                 as |obj|
               >
@@ -491,13 +519,20 @@ export default class PropertyEditorForm extends Component<Sig> {
               @required={{true}}
               @requiredLabel="Required"
             >Predicate</AuLabel>
-            <AuInput
+            <PowerSelect
               id={{id}}
-              name={{name}}
-              value={{this.triple.predicate}}
-              required={{true}}
-              @width="block"
-            />
+              {{! For some reason need to manually set width }}
+              class="au-u-1-1"
+              @searchEnabled={{true}}
+              @options={{@predicateOptions}}
+              @selected={{this.predicate}}
+              @onChange={{this.setPredicate}}
+              @onKeydown={{this.allowCustomSelection}}
+              @allowClear={{true}}
+              as |obj|
+            >
+              {{obj}}
+            </PowerSelect>
             {{#if error}}
               <AuPill>{{error}}</AuPill>
             {{/if}}
@@ -541,13 +576,20 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @required={{true}}
                 @requiredLabel="Required"
               >URI</AuLabel>
-              <AuInput
+              <PowerSelect
                 id={{id}}
-                name={{name}}
-                value={{this.triple.object.value}}
-                required={{true}}
-                @width="block"
-              />
+                {{! For some reason need to manually set width }}
+                class="au-u-1-1"
+                @searchEnabled={{true}}
+                @options={{this.objectOptions}}
+                @selected={{this.object}}
+                @onChange={{this.setObject}}
+                @onKeydown={{this.allowCustomSelection}}
+                @allowClear={{true}}
+                as |obj|
+              >
+                {{obj}}
+              </PowerSelect>
               {{#if error}}
                 <AuPill>{{error}}</AuPill>
               {{/if}}
