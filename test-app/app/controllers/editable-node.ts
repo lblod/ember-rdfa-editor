@@ -88,7 +88,7 @@ export default class EditableBlockController extends Controller {
   ];
 
   propertyObjects = [
-    'http://data.vlaanderen.be/ns/besluit#behandelingVanAgendapunt',
+    'http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt',
     'http://data.vlaanderen.be/ns/besluit#agendapoint',
   ];
 
