@@ -423,10 +423,9 @@ Afterwards if you need to update the snapshots you can run `npm run e2e:run:vrt:
 > Playwright is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.
 
 ## Compatibility
-
-* Ember.js v3.28 or above
-* Ember CLI v3.28 or above
-* Node.js v18 or above
+  
+* Ember.js v4.12 or above
+* Embroider or ember-auto-import v2
 
 
 ## Contributing
