@@ -105,7 +105,6 @@
     "ember-cli-terser": "^4.0.2",
     "ember-concurrency": "^4.0.2",
     "ember-data": "~5.3.9",
-    "ember-fetch": "^8.1.2",
     "ember-intl": "^7.1.4",
     "ember-load-initializers": "^3.0.1",
     "ember-modifier": "^4.2.0",
