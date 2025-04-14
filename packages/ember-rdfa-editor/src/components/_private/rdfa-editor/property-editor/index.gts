@@ -39,6 +39,7 @@ import { isResourceNode } from '#root/utils/node-utils.ts';
 import { type Status, type StatusMessage } from '../types.ts';
 import PropertyDetails from '../property-details.gts';
 import { modifier } from 'ember-modifier';
+import { action } from '@ember/object';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -407,15 +408,13 @@ interface Sig {
 }
 
 class Modal extends Component<Sig> {
-  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
-    const ctrlEnterHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-        formElement.requestSubmit();
-      }
-    };
-    window.addEventListener('keydown', ctrlEnterHandler);
-    return () => window.removeEventListener('keydown', ctrlEnterHandler);
-  });
+  @action
+  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      formElement.requestSubmit();
+    }
+    return true;
+  }
 
   @tracked initiallyFocusedElement?: HTMLElement;
 
@@ -460,7 +459,7 @@ class Modal extends Component<Sig> {
             @importedResources={{@importedResources}}
             @predicateOptions={{@predicateOptions}}
             @objectOptions={{@objectOptions}}
-            {{this.setupFormSubmitShortcut}}
+            @onKeyDown={{this.onFormKeyDown}}
           />
         </:body>
         <:footer>

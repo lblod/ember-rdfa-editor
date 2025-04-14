@@ -22,6 +22,7 @@ import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import { isSome, type Option } from '#root/utils/_private/option.ts';
 import WithUniqueId from '../../with-unique-id.ts';
 import { modifier } from 'ember-modifier';
+import { action } from '@ember/object';
 
 interface EditModalSig {
   Args: {
@@ -33,15 +34,14 @@ interface EditModalSig {
 }
 
 class EditModal extends Component<EditModalSig> {
-  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
-    const ctrlEnterHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-        formElement.requestSubmit();
-      }
-    };
-    window.addEventListener('keydown', ctrlEnterHandler);
-    return () => window.removeEventListener('keydown', ctrlEnterHandler);
-  });
+
+  @action
+  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      formElement.requestSubmit();
+    }
+    return true;
+  }
 
   @tracked initiallyFocusedElement?: HTMLElement;
 
@@ -65,7 +65,7 @@ class EditModal extends Component<EditModalSig> {
             @onSubmit={{@onSubmit}}
             id={{formId}}
             @triple={{@triple}}
-            {{this.setupFormSubmitShortcut}}
+            @onKeyDown={{this.onFormKeyDown}}
           />
         </:body>
         <:footer>
