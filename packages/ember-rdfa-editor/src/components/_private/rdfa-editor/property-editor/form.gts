@@ -31,11 +31,11 @@ import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import { eq } from 'ember-truth-helpers';
-import { uniqueId } from '@ember/helper';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 import type { ModifierLike } from '@glint/template';
 import { modifier } from 'ember-modifier';
+import WithUniqueId from '../../with-unique-id.ts';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -511,22 +511,55 @@ export default class PropertyEditorForm extends Component<Sig> {
     >
       {{#if (this.isArray @importedResources)}}
         <AuFormRow>
-          {{#let (uniqueId) "subject" as |id name|}}
+          <WithUniqueId as |id|>
+            {{#let "subject" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >Subject</AuLabel>
+                <PowerSelect
+                  {{@initialFocus}}
+                  id={{id}}
+                  {{! For some reason need to manually set width }}
+                  class="au-u-1-1"
+                  @searchEnabled={{true}}
+                  @options={{@importedResources}}
+                  @selected={{this.subject}}
+                  @onChange={{this.setSubject}}
+                  @onKeydown={{this.onPowerSelectKeydown true}}
+                  @allowClear={{true}}
+                  as |obj|
+                >
+                  {{obj}}
+                </PowerSelect>
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
+            {{/let}}
+          </WithUniqueId>
+        </AuFormRow>
+      {{/if}}
+      <AuFormRow>
+        <WithUniqueId as |id|>
+          {{#let "predicate" as |name|}}
             {{#let (this.findError name) as |error|}}
               <AuLabel
                 for={{id}}
                 @required={{true}}
                 @requiredLabel="Required"
-              >Subject</AuLabel>
+              >Predicate</AuLabel>
               <PowerSelect
-                {{@initialFocus}}
+                {{(unless (this.isArray @importedResources) @initialFocus)}}
                 id={{id}}
                 {{! For some reason need to manually set width }}
                 class="au-u-1-1"
                 @searchEnabled={{true}}
-                @options={{@importedResources}}
-                @selected={{this.subject}}
-                @onChange={{this.setSubject}}
+                @options={{@predicateOptions}}
+                @selected={{this.predicate}}
+                @onChange={{this.setPredicate}}
                 @onKeydown={{this.onPowerSelectKeydown true}}
                 @allowClear={{true}}
                 as |obj|
@@ -538,243 +571,240 @@ export default class PropertyEditorForm extends Component<Sig> {
               {{/if}}
             {{/let}}
           {{/let}}
-        </AuFormRow>
-      {{/if}}
-      <AuFormRow>
-        {{#let (uniqueId) "predicate" as |id name|}}
-          {{#let (this.findError name) as |error|}}
-            <AuLabel
-              for={{id}}
-              @required={{true}}
-              @requiredLabel="Required"
-            >Predicate</AuLabel>
-            <PowerSelect
-              {{(unless (this.isArray @importedResources) @initialFocus)}}
-              id={{id}}
-              {{! For some reason need to manually set width }}
-              class="au-u-1-1"
-              @searchEnabled={{true}}
-              @options={{@predicateOptions}}
-              @selected={{this.predicate}}
-              @onChange={{this.setPredicate}}
-              @onKeydown={{this.onPowerSelectKeydown true}}
-              @allowClear={{true}}
-              as |obj|
-            >
-              {{obj}}
-            </PowerSelect>
-            {{#if error}}
-              <AuPill>{{error}}</AuPill>
-            {{/if}}
-          {{/let}}
-        {{/let}}
+        </WithUniqueId>
+
       </AuFormRow>
       <AuFormRow>
-        {{#let (uniqueId) "object.termType" as |id name|}}
-          {{#let (this.findError name) as |error|}}
-            <AuLabel
-              for={{id}}
-              @required={{true}}
-              @requiredLabel="Required"
-            >TermType</AuLabel>
-            <PowerSelect
-              id={{id}}
-              {{! For some reason need to manually set width }}
-              class="au-u-1-1"
-              @searchEnabled={{false}}
-              @options={{this.termTypes}}
-              @selected={{this.termType}}
-              @onChange={{this.setTermType}}
-              @onKeydown={{this.onPowerSelectKeydown false}}
-              @allowClear={{true}}
-              as |obj|
-            >
-              {{obj}}
-            </PowerSelect>
-            {{#if error}}
-              <AuPill>{{error}}</AuPill>
-            {{/if}}
+        <WithUniqueId as |id|>
+          {{#let "object.termType" as |name|}}
+            {{#let (this.findError name) as |error|}}
+              <AuLabel
+                for={{id}}
+                @required={{true}}
+                @requiredLabel="Required"
+              >TermType</AuLabel>
+              <PowerSelect
+                id={{id}}
+                {{! For some reason need to manually set width }}
+                class="au-u-1-1"
+                @searchEnabled={{false}}
+                @options={{this.termTypes}}
+                @selected={{this.termType}}
+                @onChange={{this.setTermType}}
+                @onKeydown={{this.onPowerSelectKeydown false}}
+                @allowClear={{true}}
+                as |obj|
+              >
+                {{obj}}
+              </PowerSelect>
+              {{#if error}}
+                <AuPill>{{error}}</AuPill>
+              {{/if}}
+            {{/let}}
           {{/let}}
-        {{/let}}
+        </WithUniqueId>
       </AuFormRow>
       {{! I tried deduplicating these, but they all need slightly different validation so there's no point}}
       {{#if (eq this.termType "NamedNode")}}
         <AuFormRow>
-          {{#let (uniqueId) "object.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{true}}
-                @requiredLabel="Required"
-              >URI</AuLabel>
-              <PowerSelect
-                id={{id}}
-                {{! For some reason need to manually set width }}
-                class="au-u-1-1"
-                @searchEnabled={{true}}
-                @options={{this.objectOptions}}
-                @selected={{this.object}}
-                @onChange={{this.setObject}}
-                @onKeydown={{this.onPowerSelectKeydown true}}
-                @allowClear={{true}}
-                as |obj|
-              >
-                {{obj}}
-              </PowerSelect>
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >URI</AuLabel>
+                <PowerSelect
+                  id={{id}}
+                  {{! For some reason need to manually set width }}
+                  class="au-u-1-1"
+                  @searchEnabled={{true}}
+                  @options={{this.objectOptions}}
+                  @selected={{this.object}}
+                  @onChange={{this.setObject}}
+                  @onKeydown={{this.onPowerSelectKeydown true}}
+                  @allowClear={{true}}
+                  as |obj|
+                >
+                  {{obj}}
+                </PowerSelect>
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
       {{else if (eq this.termType "Literal")}}
         <AuFormRow>
-          {{#let (uniqueId) "object.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{true}}
-                @requiredLabel="Required"
-              >Value</AuLabel>
-              <AuInput
-                id={{id}}
-                name={{name}}
-                value={{this.triple.object.value}}
-                required={{true}}
-                @width="block"
-              />
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >Value</AuLabel>
+                <AuInput
+                  id={{id}}
+                  name={{name}}
+                  value={{this.triple.object.value}}
+                  required={{true}}
+                  @width="block"
+                />
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
         <AuFormRow>
-          {{#let (uniqueId) "object.datatype.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{false}}
-                @requiredLabel="Required"
-              >Datatype</AuLabel>
-              <AuInput
-                id={{id}}
-                name={{name}}
-                value={{this.initialDatatypeValue}}
-                required={{false}}
-                @width="block"
-                @disabled={{this.hasLanguage}}
-              />
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.datatype.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{false}}
+                  @requiredLabel="Required"
+                >Datatype</AuLabel>
+                <AuInput
+                  id={{id}}
+                  name={{name}}
+                  value={{this.initialDatatypeValue}}
+                  required={{false}}
+                  @width="block"
+                  @disabled={{this.hasLanguage}}
+                />
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
         <AuFormRow>
-          {{#let (uniqueId) "object.language" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{false}}
-                @requiredLabel="Required"
-              >Language</AuLabel>
-              <AuInput
-                id={{id}}
-                name={{name}}
-                value={{this.initialLanguageValue}}
-                required={{false}}
-                @width="block"
-                @disabled={{this.hasDatatype}}
-              />
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.language" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{false}}
+                  @requiredLabel="Required"
+                >Language</AuLabel>
+                <AuInput
+                  id={{id}}
+                  name={{name}}
+                  value={{this.initialLanguageValue}}
+                  required={{false}}
+                  @width="block"
+                  @disabled={{this.hasDatatype}}
+                />
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
       {{else if (eq this.termType "LiteralNode")}}
-
         <AuFormRow>
-          {{#let (uniqueId) "object.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-                Object
-              </AuLabel>
-              <PowerSelect
-                id={{id}}
-                {{! For some reason need to manually set width }}
-                class="au-u-1-1"
-                @searchEnabled={{false}}
-                @options={{this.literals}}
-                @selected={{this.selectedLiteralNode}}
-                @onChange={{this.setLiteralNodeLink}}
-                @onKeydown={{this.onPowerSelectKeydown false}}
-                @allowClear={{true}}
-                @placeholder="Select a literal"
-                as |obj|
-              >
-                {{this.literalNodeLabel obj}}
-              </PowerSelect>
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >
+                  Object
+                </AuLabel>
+                <PowerSelect
+                  id={{id}}
+                  {{! For some reason need to manually set width }}
+                  class="au-u-1-1"
+                  @searchEnabled={{false}}
+                  @options={{this.literals}}
+                  @selected={{this.selectedLiteralNode}}
+                  @onChange={{this.setLiteralNodeLink}}
+                  @onKeydown={{this.onPowerSelectKeydown false}}
+                  @allowClear={{true}}
+                  @placeholder="Select a literal"
+                  as |obj|
+                >
+                  {{this.literalNodeLabel obj}}
+                </PowerSelect>
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
       {{else if (eq this.termType "ResourceNode")}}
         <AuFormRow>
-          {{#let (uniqueId) "object.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel for={{id}} @required={{true}} @requiredLabel="Required">
-                Object
-              </AuLabel>
-              <PowerSelect
-                id={{id}}
-                {{! For some reason need to manually set width }}
-                class="au-u-1-1"
-                @searchEnabled={{false}}
-                @options={{this.resources}}
-                @selected={{this.selectedResourceNode}}
-                @onChange={{this.setResourceNodeLink}}
-                @onKeydown={{this.onPowerSelectKeydown false}}
-                @allowClear={{true}}
-                @placeholder="Select a resource"
-                as |obj|
-              >
-                {{this.resourceNodeLabel obj}}
-              </PowerSelect>
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{true}}
+                  @requiredLabel="Required"
+                >
+                  Object
+                </AuLabel>
+                <PowerSelect
+                  id={{id}}
+                  {{! For some reason need to manually set width }}
+                  class="au-u-1-1"
+                  @searchEnabled={{false}}
+                  @options={{this.resources}}
+                  @selected={{this.selectedResourceNode}}
+                  @onChange={{this.setResourceNodeLink}}
+                  @onKeydown={{this.onPowerSelectKeydown false}}
+                  @allowClear={{true}}
+                  @placeholder="Select a resource"
+                  as |obj|
+                >
+                  {{this.resourceNodeLabel obj}}
+                </PowerSelect>
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
         </AuFormRow>
       {{else if (eq this.termType "ContentLiteral")}}
         <AuFormRow>
-          {{#let (uniqueId) "object.datatype.value" as |id name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{false}}
-                @requiredLabel="Required"
-              >Datatype</AuLabel>
-              <AuInput
-                id={{id}}
-                name={{name}}
-                value={{this.initialDatatypeValue}}
-                required={{false}}
-                @width="block"
-                @disabled={{this.hasLanguage}}
-              />
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+          <WithUniqueId as |id|>
+            {{#let "object.datatype.value" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{false}}
+                  @requiredLabel="Required"
+                >Datatype</AuLabel>
+                <AuInput
+                  id={{id}}
+                  name={{name}}
+                  value={{this.initialDatatypeValue}}
+                  required={{false}}
+                  @width="block"
+                  @disabled={{this.hasLanguage}}
+                />
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
+          </WithUniqueId>
+
         </AuFormRow>
         <AuFormRow>
-          {{#let (uniqueId) "object.language" as |id name|}}
+          <WithUniqueId as |id|>
+          {{#let "object.language" as |name|}}
             {{#let (this.findError name) as |error|}}
               <AuLabel
                 for={{id}}
@@ -794,6 +824,7 @@ export default class PropertyEditorForm extends Component<Sig> {
               {{/if}}
             {{/let}}
           {{/let}}
+          </WithUniqueId>
         </AuFormRow>
       {{/if}}
 

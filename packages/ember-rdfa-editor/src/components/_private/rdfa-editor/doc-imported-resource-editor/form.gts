@@ -7,7 +7,7 @@ import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
-import { uniqueId } from '@ember/helper';
+import WithUniqueId from '../../with-unique-id.ts';
 
 const resourceSchema = string().curie().required();
 
@@ -61,26 +61,28 @@ export default class PropertyEditorForm extends Component<Sig> {
   <template>
     <form ...attributes {{on "submit" this.handleSubmit}}>
       <AuFormRow>
-        {{#let (uniqueId) "resource" as |id name|}}
-          {{#let (this.findError name) as |error|}}
-            <AuLabel
-              for={{id}}
-              @required={{true}}
-              @requiredLabel="Required"
-            >Resource</AuLabel>
-            <AuInput
-              id={{id}}
-              name={{name}}
-              value={{this.resource}}
-              required={{true}}
-              @width="block"
-              {{on "input" this.handleInput}}
-            />
-            {{#if error}}
-              <AuPill>{{error}}</AuPill>
-            {{/if}}
+        <WithUniqueId as |id|>
+          {{#let "resource" as |name|}}
+            {{#let (this.findError name) as |error|}}
+              <AuLabel
+                for={{id}}
+                @required={{true}}
+                @requiredLabel="Required"
+              >Resource</AuLabel>
+              <AuInput
+                id={{id}}
+                name={{name}}
+                value={{this.resource}}
+                required={{true}}
+                @width="block"
+                {{on "input" this.handleInput}}
+              />
+              {{#if error}}
+                <AuPill>{{error}}</AuPill>
+              {{/if}}
+            {{/let}}
           {{/let}}
-        {{/let}}
+        </WithUniqueId>
       </AuFormRow>
     </form>
   </template>

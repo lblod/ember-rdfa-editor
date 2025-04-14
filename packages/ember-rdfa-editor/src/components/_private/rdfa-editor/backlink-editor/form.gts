@@ -9,12 +9,12 @@ import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
 import { type Option } from '#root/utils/_private/option.ts';
-import { uniqueId } from '@ember/helper';
 import { action } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/index.ts';
 import type { ModifierLike } from '@glint/template';
 import { modifier } from 'ember-modifier';
+import WithUniqueId from '../../with-unique-id.ts';
 
 interface BacklinkFormSig {
   Element: HTMLFormElement;
@@ -111,7 +111,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
       ...attributes
     >
       <AuFormRow>
-        {{#let (uniqueId) as |id|}}
+        <WithUniqueId as |id|>
           <AuLabel
             for={{id}}
             @required={{true}}
@@ -132,10 +132,10 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
           >
             {{obj}}
           </PowerSelect>
-        {{/let}}
+        </WithUniqueId>
       </AuFormRow>
       <AuFormRow>
-        {{#let (uniqueId) as |id|}}
+        <WithUniqueId as |id|>
           <AuLabel
             for={{id}}
             @required={{true}}
@@ -155,7 +155,7 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
           >
             {{obj}}
           </PowerSelect>
-        {{/let}}
+        </WithUniqueId>
       </AuFormRow>
     </form>
   </template>
