@@ -149,6 +149,10 @@
       "types": "./declarations/plugins/_private/editable-node/index.d.ts",
       "default": "./dist/plugins/_private/editable-node/index.js"
     },
+    "./components": {
+      "types": "./declarations/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    },
     "./components/_private/rdfa-editor": {
       "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
       "default": "./dist/components/_private/rdfa-editor/index.js"
@@ -368,6 +372,8 @@
       "./components/_private/rdfa-editor/types.js": "./dist/_app_/components/_private/rdfa-editor/types.js",
       "./components/_private/rdfa-editor/wrapping-utils/index.js": "./dist/_app_/components/_private/rdfa-editor/wrapping-utils/index.js",
       "./components/_private/rdfa-editor/wrapping-utils/modal.js": "./dist/_app_/components/_private/rdfa-editor/wrapping-utils/modal.js",
+      "./components/_private/rdfa-visualiser/rdfa-explorer.js": "./dist/_app_/components/_private/rdfa-visualiser/rdfa-explorer.js",
+      "./components/_private/rdfa-visualiser/visualiser-card.js": "./dist/_app_/components/_private/rdfa-visualiser/visualiser-card.js",
       "./components/_private/selection-tooltip.js": "./dist/_app_/components/_private/selection-tooltip.js",
       "./components/_private/with-unique-id.js": "./dist/_app_/components/_private/with-unique-id.js",
       "./components/au-native-toggle.js": "./dist/_app_/components/au-native-toggle.js",
@@ -379,6 +385,7 @@
       "./components/ember-node/inline-rdfa.js": "./dist/_app_/components/ember-node/inline-rdfa.js",
       "./components/ember-node/link.js": "./dist/_app_/components/ember-node/link.js",
       "./components/ember-node/slot.js": "./dist/_app_/components/ember-node/slot.js",
+      "./components/index.js": "./dist/_app_/components/index.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
       "./components/plugins/formatting/formatting-toggle.js": "./dist/_app_/components/plugins/formatting/formatting-toggle.js",
