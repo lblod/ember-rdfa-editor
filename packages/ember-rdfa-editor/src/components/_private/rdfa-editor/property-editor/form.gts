@@ -804,26 +804,26 @@ export default class PropertyEditorForm extends Component<Sig> {
         </AuFormRow>
         <AuFormRow>
           <WithUniqueId as |id|>
-          {{#let "object.language" as |name|}}
-            {{#let (this.findError name) as |error|}}
-              <AuLabel
-                for={{id}}
-                @required={{false}}
-                @requiredLabel="Required"
-              >Language</AuLabel>
-              <AuInput
-                id={{id}}
-                name={{name}}
-                value={{this.initialLanguageValue}}
-                required={{false}}
-                @width="block"
-                @disabled={{this.hasDatatype}}
-              />
-              {{#if error}}
-                <AuPill>{{error}}</AuPill>
-              {{/if}}
+            {{#let "object.language" as |name|}}
+              {{#let (this.findError name) as |error|}}
+                <AuLabel
+                  for={{id}}
+                  @required={{false}}
+                  @requiredLabel="Required"
+                >Language</AuLabel>
+                <AuInput
+                  id={{id}}
+                  name={{name}}
+                  value={{this.initialLanguageValue}}
+                  required={{false}}
+                  @width="block"
+                  @disabled={{this.hasDatatype}}
+                />
+                {{#if error}}
+                  <AuPill>{{error}}</AuPill>
+                {{/if}}
+              {{/let}}
             {{/let}}
-          {{/let}}
           </WithUniqueId>
         </AuFormRow>
       {{/if}}
