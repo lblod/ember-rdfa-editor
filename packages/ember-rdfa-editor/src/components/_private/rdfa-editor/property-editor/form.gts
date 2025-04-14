@@ -34,6 +34,8 @@ import { eq } from 'ember-truth-helpers';
 import { uniqueId } from '@ember/helper';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
+import type { ModifierLike } from '@glint/template';
+import { modifier } from 'ember-modifier';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -52,12 +54,17 @@ const allTermTypes: SupportedTermType[] = [
 interface Sig {
   Args: {
     subject?: string;
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     triple?: OutgoingTriple;
     termTypes?: SupportedTermType[];
     defaultTermType?: SupportedTermType;
     controller?: SayController;
     onInput?(newTriple: Partial<OutgoingTriple>): void;
     onSubmit?(newTriple: OutgoingTriple, subject?: string): void;
+    onKeyDown?: (
+      form: HTMLFormElement,
+      event: KeyboardEvent,
+    ) => boolean | undefined;
     importedResources?: string[] | false;
     predicateOptions?: string[];
     objectOptions?: string[];
@@ -90,6 +97,18 @@ const DEFAULT_TRIPLE: OutgoingTriple = {
   object: sayDataFactory.namedNode(''),
 };
 export default class PropertyEditorForm extends Component<Sig> {
+  formElement?: HTMLFormElement;
+  setupFormElement = modifier((element: HTMLFormElement) => {
+    this.formElement = element;
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (this.args.onKeyDown) {
+        this.args.onKeyDown(element, event);
+      }
+    };
+    window.addEventListener('keydown', keyDownHandler);
+    return () => window.removeEventListener('keydown', keyDownHandler);
+  });
+
   @localCopy('args.triple.object.termType')
   selectedTermType?: SayTermType;
 
@@ -420,20 +439,28 @@ export default class PropertyEditorForm extends Component<Sig> {
   setObject(object: string) {
     this.object = object;
   }
-  @action
-  allowCustomSelection(select: Select, event: KeyboardEvent) {
-    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
-    // entry by typing in the power-select 'search' and hitting 'enter'
-    if (
-      event.key === 'Enter' &&
-      select.isOpen &&
-      !select.highlighted &&
-      !!select.searchText
-    ) {
-      select.actions.choose(select.searchText);
-    }
-    return true;
-  }
+
+  onPowerSelectKeydown = (allowCustom: boolean) => {
+    return (select: Select, event: KeyboardEvent) => {
+      if (this.formElement && this.args.onKeyDown) {
+        this.args.onKeyDown(this.formElement, event);
+      }
+      // Based on example from ember-power-select docs, allows for selecting a previously non-existent
+      // entry by typing in the power-select 'search' and hitting 'enter'
+      if (
+        allowCustom &&
+        event.key === 'Enter' &&
+        select.isOpen &&
+        !select.highlighted &&
+        !!select.searchText
+      ) {
+        select.actions.choose(select.searchText);
+        return false;
+      }
+      return;
+    };
+  };
+
   @action
   setTermType(termType: SayTermType) {
     this.selectedTermType = termType;
@@ -476,10 +503,11 @@ export default class PropertyEditorForm extends Component<Sig> {
 
   <template>
     <form
-      ...attributes
       {{on "submit" this.handleSubmit}}
       {{on "input" this.handleInput}}
       {{didInsert this.afterInsert}}
+      {{this.setupFormElement}}
+      ...attributes
     >
       {{#if (this.isArray @importedResources)}}
         <AuFormRow>
@@ -491,6 +519,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @requiredLabel="Required"
               >Subject</AuLabel>
               <PowerSelect
+                {{@initialFocus}}
                 id={{id}}
                 {{! For some reason need to manually set width }}
                 class="au-u-1-1"
@@ -498,7 +527,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @options={{@importedResources}}
                 @selected={{this.subject}}
                 @onChange={{this.setSubject}}
-                @onKeydown={{this.allowCustomSelection}}
+                @onKeydown={{this.onPowerSelectKeydown true}}
                 @allowClear={{true}}
                 as |obj|
               >
@@ -520,6 +549,7 @@ export default class PropertyEditorForm extends Component<Sig> {
               @requiredLabel="Required"
             >Predicate</AuLabel>
             <PowerSelect
+              {{(unless (this.isArray @importedResources) @initialFocus)}}
               id={{id}}
               {{! For some reason need to manually set width }}
               class="au-u-1-1"
@@ -527,7 +557,7 @@ export default class PropertyEditorForm extends Component<Sig> {
               @options={{@predicateOptions}}
               @selected={{this.predicate}}
               @onChange={{this.setPredicate}}
-              @onKeydown={{this.allowCustomSelection}}
+              @onKeydown={{this.onPowerSelectKeydown true}}
               @allowClear={{true}}
               as |obj|
             >
@@ -555,6 +585,7 @@ export default class PropertyEditorForm extends Component<Sig> {
               @options={{this.termTypes}}
               @selected={{this.termType}}
               @onChange={{this.setTermType}}
+              @onKeydown={{this.onPowerSelectKeydown false}}
               @allowClear={{true}}
               as |obj|
             >
@@ -584,7 +615,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @options={{this.objectOptions}}
                 @selected={{this.object}}
                 @onChange={{this.setObject}}
-                @onKeydown={{this.allowCustomSelection}}
+                @onKeydown={{this.onPowerSelectKeydown true}}
                 @allowClear={{true}}
                 as |obj|
               >
@@ -678,6 +709,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @options={{this.literals}}
                 @selected={{this.selectedLiteralNode}}
                 @onChange={{this.setLiteralNodeLink}}
+                @onKeydown={{this.onPowerSelectKeydown false}}
                 @allowClear={{true}}
                 @placeholder="Select a literal"
                 as |obj|
@@ -705,6 +737,7 @@ export default class PropertyEditorForm extends Component<Sig> {
                 @options={{this.resources}}
                 @selected={{this.selectedResourceNode}}
                 @onChange={{this.setResourceNodeLink}}
+                @onKeydown={{this.onPowerSelectKeydown false}}
                 @allowClear={{true}}
                 @placeholder="Select a resource"
                 as |obj|
