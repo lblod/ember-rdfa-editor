@@ -1,5 +1,23 @@
 # @lblod/ember-rdfa-editor
 
+## 12.2.0
+
+### Minor Changes
+
+- [#1284](https://github.com/lblod/ember-rdfa-editor/pull/1284) [`c8b79ac`](https://github.com/lblod/ember-rdfa-editor/commit/c8b79acb5cc327506dbc05984b34accc4dbd6fcc) Thanks [@piemonkey](https://github.com/piemonkey)! - Add rdfa-util section for imported resources on documents that support them
+
+- [#1281](https://github.com/lblod/ember-rdfa-editor/pull/1281) [`e3fde85`](https://github.com/lblod/ember-rdfa-editor/commit/e3fde8596ee73ba92f7a76d9de983b037921cf29) Thanks [@elpoelma](https://github.com/elpoelma)! - Addition of new (private) `backlink-editor` component
+
+- [#1281](https://github.com/lblod/ember-rdfa-editor/pull/1281) [`a1daddd`](https://github.com/lblod/ember-rdfa-editor/commit/a1daddd9b03577fdcb7496356b6dcf0e0fa5780b) Thanks [@elpoelma](https://github.com/elpoelma)! - Merge `relationship-editor` and `property-editor` components.
+  The `property-editor` component now shows properties of all types:
+  - properties to a named-node/literal
+  - properties to a resource-node/literal-node
+  - content-literal properties
+
+### Patch Changes
+
+- [#1281](https://github.com/lblod/ember-rdfa-editor/pull/1281) [`4d20688`](https://github.com/lblod/ember-rdfa-editor/commit/4d206885b224f3e15ac4a147d0588d0c41a7cbc9) Thanks [@elpoelma](https://github.com/elpoelma)! - Move `external-triple-editor` component to seperate folder for consistency
+
 ## 12.1.0
 
 ### Minor Changes
