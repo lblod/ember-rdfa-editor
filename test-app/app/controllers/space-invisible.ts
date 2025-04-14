@@ -66,7 +66,6 @@ import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-applica
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import applyDevTools from 'prosemirror-dev-tools';
 
 export default class SpaceInvisibleController extends Controller {
   @tracked rdfaEditor?: SayController;
@@ -158,7 +157,6 @@ export default class SpaceInvisibleController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent, { doNotClean: true });
-    applyDevTools(this.rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
