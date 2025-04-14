@@ -88,8 +88,8 @@ export default class EditableBlockController extends Controller {
   ];
 
   propertyObjects = [
-    'http://data.vlaanderen.be/ns/besluit#behandelingVanAgendapunt',
-    'http://data.vlaanderen.be/ns/besluit#agendapoint',
+    'http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt',
+    'http://data.vlaanderen.be/ns/besluit#Agendapunt',
   ];
 
   backlinkPredicates = ['http://www.w3.org/ns/prov#wasGeneratedBy'];
