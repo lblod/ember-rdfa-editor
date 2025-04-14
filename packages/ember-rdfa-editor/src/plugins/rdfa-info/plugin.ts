@@ -96,7 +96,7 @@ export class RdfaInfo {
     this.state = state;
   }
 
-  async computeMappingsAsync(): Promise<InfoMaps> {
+  async computeMappingsAsync(abortSignal: AbortSignal): Promise<InfoMaps> {
     if (this._rdfaIdMapping && this._subjectMapping && this._topLevelSubjects) {
       return {
         rdfaIdMapping: this._rdfaIdMapping,
@@ -133,20 +133,26 @@ export class RdfaInfo {
 
     const info: InfoEntries[] = [];
     for (const infoProm of infoPromises) {
-      // Await promises serially to avoid Promise.all from running too much in one go
-      info.push(await infoProm);
+      if (!abortSignal.aborted) {
+        // Await promises serially to avoid Promise.all from running too much in one go
+        info.push(await infoProm);
+      }
     }
-    const newMaps = consolidateInfo(info);
-    if (
-      !this._rdfaIdMapping ||
-      !this._subjectMapping ||
-      !this._topLevelSubjects
-    ) {
-      this._rdfaIdMapping = newMaps.rdfaIdMapping;
-      this._subjectMapping = newMaps.subjectMapping;
-      this._topLevelSubjects = newMaps.topLevelSubjects;
+    if (!abortSignal.aborted) {
+      const newMaps = consolidateInfo(info);
+      if (
+        !this._rdfaIdMapping ||
+        !this._subjectMapping ||
+        !this._topLevelSubjects
+      ) {
+        this._rdfaIdMapping = newMaps.rdfaIdMapping;
+        this._subjectMapping = newMaps.subjectMapping;
+        this._topLevelSubjects = newMaps.topLevelSubjects;
+      }
+      return newMaps;
+    } else {
+      throw abortSignal.throwIfAborted();
     }
-    return newMaps;
   }
 
   private computeMappings() {

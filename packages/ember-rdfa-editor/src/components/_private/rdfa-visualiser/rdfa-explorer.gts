@@ -25,19 +25,33 @@ export default class RdfaExplorer extends Component<Sig> {
     ) as RdfaInfo;
   }
   computeMappingsTask = keepLatestTask(async () => {
-    await timeout(1);
-    const maps = await this.rdfaInfo?.computeMappingsAsync();
-    this.subjects = Array.from(maps.topLevelSubjects);
-    this.isRunning = false;
-    await timeout(200);
+    const abortController = new AbortController();
+    try {
+      await timeout(1);
+      const maps = await this.rdfaInfo?.computeMappingsAsync(
+        abortController.signal,
+      );
+      this.subjects = Array.from(maps.topLevelSubjects);
+      this.isRunning = false;
+      await timeout(200);
+    } finally {
+      abortController.abort();
+    }
   });
 
   @tracked subjects?: string[];
   @trackedReset<RdfaExplorer, boolean>({
     memo: 'rdfaInfo',
     update: (component) => {
-      component.computeMappingsTask.perform().catch((err) => {
-        console.error('Error computing mappings', err);
+      component.computeMappingsTask.perform().catch((err: unknown) => {
+        if (
+          !err ||
+          typeof err !== 'object' ||
+          !('name' in err) ||
+          err.name !== 'TaskCancelation'
+        ) {
+          console.error('Error computing mappings', err);
+        }
       });
       return true;
     },
