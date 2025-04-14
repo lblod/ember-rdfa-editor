@@ -24,6 +24,10 @@
       <:aside>
         <Sidebar>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
+          <this.VisualiserCard
+            @controller={{this.rdfaEditor}}
+            @node={{this.activeNode}}
+          />
           <this.RdfaEditor
             @node={{this.activeNode}}
             @controller={{this.rdfaEditor}}

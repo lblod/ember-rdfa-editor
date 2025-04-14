@@ -93,7 +93,7 @@ export default class RdfaEditor extends Component<Args> {
     }
   };
   <template>
-    <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
+    <AuPanel class="au-u-margin-top-tiny au-u-margin-bottom-tiny" as |Section|>
       <Section>
         <AuToolbar as |Group|>
           <Group>
