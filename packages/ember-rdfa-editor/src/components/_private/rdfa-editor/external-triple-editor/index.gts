@@ -34,7 +34,6 @@ interface EditModalSig {
 }
 
 class EditModal extends Component<EditModalSig> {
-
   @action
   onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
