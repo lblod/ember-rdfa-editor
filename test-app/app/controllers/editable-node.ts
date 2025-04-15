@@ -68,6 +68,7 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
+import LinkRdfaNodeButton from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/button';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -81,6 +82,7 @@ export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
   AttributeEditor = AttributeEditor;
   RdfaEditor = RdfaEditor;
+  LinkRdfaNodeButton = LinkRdfaNodeButton;
 
   propertyPredicates = [
     'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
