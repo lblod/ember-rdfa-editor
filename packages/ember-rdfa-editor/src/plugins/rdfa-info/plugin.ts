@@ -19,15 +19,21 @@ export function getSubject(node: PNode): string | undefined {
 interface InfoMaps {
   rdfaIdMapping: Map<string, ResolvedPNode>;
   subjectMapping: Map<string, ResolvedPNode[]>;
+  backlinkMapping: Map<string, Set<string>>;
   topLevelSubjects: Set<string>;
 }
 interface InfoEntries {
   rdfaIdMapping?: [string, ResolvedPNode];
   subjectMapping?: [string, ResolvedPNode];
+  backlinkMapping?: [string, number, string[]];
   topLevelSubjects?: string;
 }
 
-function processNode(node: PNode, pos: number): InfoEntries {
+function processNode(
+  node: PNode,
+  pos: number,
+  docOrDepth: PNode | number,
+): InfoEntries {
   const newInfo: InfoEntries = {};
   const rdfaId = getRdfaId(node);
   const subject = getSubject(node);
@@ -51,6 +57,19 @@ function processNode(node: PNode, pos: number): InfoEntries {
     const backlinks = getBacklinks(node);
     if (!backlinks || backlinks.length === 0) {
       newInfo.topLevelSubjects = subject;
+      // Use depth of -2 so subjects with no backlinks always appear as 'top level'. Only for
+      // 'loops' is the depth taken into account.
+      newInfo.backlinkMapping = [subject, -2, []];
+    } else {
+      const depth =
+        typeof docOrDepth === 'number'
+          ? docOrDepth
+          : docOrDepth.resolve(pos).depth;
+      newInfo.backlinkMapping = [
+        subject,
+        depth,
+        backlinks.map((backlink) => backlink.subject.value),
+      ];
     }
   }
   return newInfo;
@@ -58,9 +77,10 @@ function processNode(node: PNode, pos: number): InfoEntries {
 async function processNodeAsync(
   node: PNode,
   pos: number,
+  docOrDepth: PNode | number,
 ): Promise<InfoEntries> {
   return new Promise((resolve) => {
-    resolve(processNode(node, pos));
+    resolve(processNode(node, pos, docOrDepth));
   });
 }
 
@@ -70,9 +90,8 @@ function consolidateInfo(entries: InfoEntries[]): InfoMaps {
       entries.map((entry) => entry.rdfaIdMapping).filter(isSome),
     ),
     subjectMapping: new Map<string, ResolvedPNode[]>(),
-    topLevelSubjects: new Set<string>(
-      entries.map((entry) => entry.topLevelSubjects).filter(isSome),
-    ),
+    backlinkMapping: new Map<string, Set<string>>(),
+    topLevelSubjects: new Set<string>(),
   };
   entries
     .map((entry) => entry.subjectMapping)
@@ -80,6 +99,29 @@ function consolidateInfo(entries: InfoEntries[]): InfoMaps {
     .forEach(([subject, resolvedNode]) => {
       MapUtils.setOrPush(newMaps.subjectMapping, subject, resolvedNode);
     });
+  entries
+    .map((entry) => entry.backlinkMapping)
+    .filter(isSome)
+    .toSorted(([_, depthA], [__, depthB]) => depthA - depthB)
+    .forEach(([subject, _, backlinks]) => {
+      if (backlinks.length === 0 && !newMaps.backlinkMapping.has(subject)) {
+        newMaps.backlinkMapping.set(subject, new Set());
+      }
+      backlinks.forEach((backlink) => {
+        MapUtils.setOrAdd(newMaps.backlinkMapping, subject, backlink);
+      });
+    });
+  const seenSubjects: Set<string> = new Set();
+  newMaps.backlinkMapping.forEach((backlinks, subject) => {
+    seenSubjects.add(subject);
+    if (!backlinks || backlinks.size === 0) {
+      newMaps.topLevelSubjects.add(subject);
+    } else if (
+      Array.from(backlinks).every((backlink) => !seenSubjects.has(backlink))
+    ) {
+      newMaps.topLevelSubjects.add(subject);
+    }
+  });
 
   return newMaps;
 }
@@ -88,19 +130,24 @@ export class RdfaInfo {
   private state: EditorState;
   private _rdfaIdMapping?: Map<string, ResolvedPNode>;
   private _subjectMapping?: Map<string, ResolvedPNode[]>;
-  // TODO This isn't actually that useful as 'loops' with no 'top level' subject are very easy to
-  // set up. We need to figure out a better way to handle this, but for now just stick with this to
-  // work on debouncing
+  private _backlinkMapping?: Map<string, Set<string>>;
   private _topLevelSubjects?: Set<string>;
+
   constructor(state: EditorState) {
     this.state = state;
   }
 
   async computeMappingsAsync(abortSignal: AbortSignal): Promise<InfoMaps> {
-    if (this._rdfaIdMapping && this._subjectMapping && this._topLevelSubjects) {
+    if (
+      this._rdfaIdMapping &&
+      this._subjectMapping &&
+      this._topLevelSubjects &&
+      this._backlinkMapping
+    ) {
       return {
         rdfaIdMapping: this._rdfaIdMapping,
         subjectMapping: this._subjectMapping,
+        backlinkMapping: this._backlinkMapping,
         topLevelSubjects: this._topLevelSubjects,
       };
     }
@@ -125,11 +172,11 @@ export class RdfaInfo {
       });
     }
     const infoPromises: Promise<InfoEntries>[] = [];
+    infoPromises.push(processNodeAsync(doc, -1, -1));
     doc.descendants((node, pos) => {
-      infoPromises.push(processNodeAsync(node, pos));
+      infoPromises.push(processNodeAsync(node, pos, doc));
       return true;
     });
-    infoPromises.push(processNodeAsync(doc, -1));
 
     const info: InfoEntries[] = [];
     for (const infoProm of infoPromises) {
@@ -177,14 +224,15 @@ export class RdfaInfo {
       });
     }
     doc.descendants((node, pos) => {
-      newInfo.push(processNode(node, pos));
+      newInfo.push(processNode(node, pos, doc));
       return true;
     });
-    newInfo.push(processNode(doc, -1));
+    newInfo.push(processNode(doc, -1, doc));
     const newMaps = consolidateInfo(newInfo);
     this._rdfaIdMapping = newMaps.rdfaIdMapping;
     this._subjectMapping = newMaps.subjectMapping;
     this._topLevelSubjects = newMaps.topLevelSubjects;
+    this._backlinkMapping = newMaps.backlinkMapping;
   }
 
   get rdfaIdMapping() {
