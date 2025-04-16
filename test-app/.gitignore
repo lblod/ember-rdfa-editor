@@ -14,6 +14,9 @@
 /testem.log
 /yarn-error.log
 
+/playwright-report
+/test-results
+
 # ember-try
 /.node_modules.ember-try/
 /npm-shrinkwrap.json.ember-try

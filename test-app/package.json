@@ -22,6 +22,7 @@
     "start": "ember serve",
     "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
     "test:ember": "ember test",
+    "e2e": "playwright",
     "e2e:open": "playwright test --ui",
     "e2e:open:docker": "./scripts/e2e.sh test --ui",
     "e2e:run": "playwright test --grep-invert @vrt",
