@@ -38,6 +38,8 @@ import PropertyEditorForm from './form.gts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { type Status, type StatusMessage } from '../types.ts';
 import PropertyDetails from '../property-details.gts';
+import { modifier } from 'ember-modifier';
+import { action } from '@ember/object';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -47,12 +49,35 @@ type Args = {
   controller: SayController;
   node: ResolvedPNode;
   additionalImportedResources?: string[];
+  objectOptions?: string[];
+  predicateOptions?: string[];
 };
+
 export default class RdfaPropertyEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
   @tracked status?: Status;
 
   isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
+
+  setUpListeners = modifier(() => {
+    const listenerHandler = (event: KeyboardEvent) => {
+      if (event.altKey && event.ctrlKey) {
+        const key = event.key;
+        switch (key) {
+          case 'p':
+          case 'P':
+            if (this.canAddProperty) {
+              this.startPropertyCreation();
+            }
+            break;
+        }
+      }
+    };
+    window.addEventListener('keydown', listenerHandler);
+    return () => {
+      window.removeEventListener('keydown', listenerHandler);
+    };
+  });
 
   get node(): PNode {
     return this.args.node.value;
@@ -244,7 +269,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   };
 
   <template>
-    <AuContent @skin="tiny">
+    <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
           <AuHeading @level="5" @skin="5">Properties</AuHeading>
@@ -350,6 +375,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
       @onCancel={{this.cancel}}
+      @predicateOptions={{@predicateOptions}}
+      @objectOptions={{@objectOptions}}
     />
     {{! Update modal }}
     <Modal
@@ -360,23 +387,41 @@ export default class RdfaPropertyEditor extends Component<Args> {
       @onCancel={{this.cancel}}
       {{! @glint-expect-error check if property is defined }}
       @property={{this.status.property}}
+      @predicateOptions={{@predicateOptions}}
+      @objectOptions={{@objectOptions}}
     />
   </template>
 }
 
 interface Sig {
   Args: {
-    controller: SayController;
+    controller?: SayController;
     property?: OutgoingTriple;
     onCancel: () => void;
     onSave: (property: OutgoingTriple, subject?: string) => void;
     modalOpen: boolean;
     importedResources?: string[] | false;
     title?: string;
+    predicateOptions?: string[];
+    objectOptions?: string[];
   };
 }
 
 class Modal extends Component<Sig> {
+  @action
+  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      formElement.requestSubmit();
+    }
+    return true;
+  }
+
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   cancel = () => {
     this.args.onCancel();
   };
@@ -393,11 +438,14 @@ class Modal extends Component<Sig> {
         @modalOpen={{@modalOpen}}
         @closable={{true}}
         @closeModal={{this.cancel}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
       >
         <:title>{{this.title}}</:title>
         <:body>
           <PropertyEditorForm
             id={{formId}}
+            @initialFocus={{this.initialFocus}}
             @onSubmit={{this.save}}
             @termTypes={{array
               "NamedNode"
@@ -409,6 +457,9 @@ class Modal extends Component<Sig> {
             @controller={{@controller}}
             @triple={{@property}}
             @importedResources={{@importedResources}}
+            @predicateOptions={{@predicateOptions}}
+            @objectOptions={{@objectOptions}}
+            @onKeyDown={{this.onFormKeyDown}}
           />
         </:body>
         <:footer>
