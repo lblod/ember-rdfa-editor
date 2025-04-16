@@ -11,7 +11,9 @@ import {
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
+import AuInput, {
+  type AuInputSignature,
+} from '@appuniversum/ember-appuniversum/components/au-input';
 import {
   languageOrDataType,
   sayDataFactory,
@@ -23,6 +25,7 @@ import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
 import WithUniqueId from '../../with-unique-id.ts';
+import type { ModifierLike } from '@glint/template';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({
@@ -47,6 +50,11 @@ type ValidationResult = ValidResult | InvalidResult;
 interface ExternalTripleFormSig {
   Element: HTMLFormElement;
   Args: {
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
+    onKeyDown?: (
+      form: HTMLFormElement,
+      event: KeyboardEvent,
+    ) => boolean | undefined;
     onSubmit: (trip: FullTriple) => void;
     triple?: Option<FullTriple>;
   };
@@ -58,6 +66,18 @@ const DEFAULT_TRIPLE: FullTriple = {
 };
 export type SupportedTermType = 'NamedNode' | 'Literal';
 export default class ExternalTripleForm extends Component<ExternalTripleFormSig> {
+  formElement?: HTMLFormElement;
+  setupFormElement = modifier((element: HTMLFormElement) => {
+    this.formElement = element;
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (this.args.onKeyDown) {
+        this.args.onKeyDown(element, event);
+      }
+    };
+    window.addEventListener('keydown', keyDownHandler);
+    return () => window.removeEventListener('keydown', keyDownHandler);
+  });
+
   @localCopy('args.triple.subject.value')
   subject: string = '';
 
@@ -210,15 +230,27 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
     const formData = new FormData(form);
     this.currentFormData = formData;
   });
+
+  onPowerSelectKeydown = (
+    _select: Select,
+    event: KeyboardEvent,
+  ): boolean | undefined => {
+    if (this.formElement && this.args.onKeyDown) {
+      this.args.onKeyDown(this.formElement, event);
+    }
+    return;
+  };
   <template>
     <form
-      ...attributes
       {{on "submit" this.handleSubmit}}
       {{on "input" this.handleInput}}
       {{this.initAfterInsert}}
+      {{this.setupFormElement}}
+      ...attributes
     >
 
       <StringField
+        {{@initialFocus}}
         @name="subject.value"
         @required={{true}}
         @errors={{this.errors}}
@@ -235,6 +267,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         @selected={{this.termType}}
         @options={{this.termTypes}}
         @onChange={{this.selectTermType}}
+        @onKeyDown={{this.onPowerSelectKeydown}}
         @errors={{this.errors}}
         @required={{true}}
       >
@@ -276,6 +309,7 @@ interface StringFieldSig {
     default: [];
   };
   Args: FieldArgs & { value: string; disabled?: boolean };
+  Element: AuInputSignature['Element'];
 }
 
 const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
@@ -292,6 +326,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
         required={{@required}}
         @disabled={{@disabled}}
         @width="block"
+        ...attributes
       />
     </:default>
   </FormField>
@@ -301,10 +336,12 @@ interface SelectFieldArgs<T> extends FieldArgs {
   options: T[];
   selected: T;
   onChange: (newValue: T, select: Select, event?: Event) => void;
+  onKeyDown?: (select: Select, e: KeyboardEvent) => boolean | undefined;
 }
 interface SelectFieldSig<T> {
   Args: SelectFieldArgs<T>;
   Blocks: { default: [] };
+  Element: HTMLElement;
 }
 
 // TOCs can't have a generic argument, so in this case we have to make a backing
@@ -330,6 +367,8 @@ class SelectField<T> extends Component<SelectFieldSig<T>> {
           @options={{@options}}
           @selected={{@selected}}
           @onChange={{this.onChange}}
+          @onKeydown={{@onKeyDown}}
+          ...attributes
           as |obj|
         >
           {{obj}}

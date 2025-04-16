@@ -4,22 +4,30 @@ import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
 import { localCopy } from 'tracked-toolbox';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
-import PowerSelect from 'ember-power-select/components/power-select';
+import PowerSelect, {
+  type Select,
+} from 'ember-power-select/components/power-select';
 import { type Option } from '#root/utils/_private/option.ts';
-import type { Select } from 'ember-power-select/components/power-select';
-import { uniqueId } from '@ember/helper';
 import { action } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/index.ts';
+import type { ModifierLike } from '@glint/template';
+import { modifier } from 'ember-modifier';
+import WithUniqueId from '../../with-unique-id.ts';
 
 interface BacklinkFormSig {
   Element: HTMLFormElement;
   Args: {
+    initialFocus?: ModifierLike<{ Element: HTMLElement }>;
     controller: SayController;
+    onKeyDown?: (
+      form: HTMLFormElement,
+      event: KeyboardEvent,
+    ) => boolean | undefined;
     onSubmit: (backlink: IncomingTriple) => void;
     backlink?: Option<IncomingTriple>;
+    predicateOptions?: string[];
   };
 }
 const DEFAULT_BACKLINK: IncomingTriple = {
@@ -27,6 +35,18 @@ const DEFAULT_BACKLINK: IncomingTriple = {
   predicate: '',
 };
 export default class BacklinkForm extends Component<BacklinkFormSig> {
+  formElement?: HTMLFormElement;
+  setupFormElement = modifier((element: HTMLFormElement) => {
+    this.formElement = element;
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (this.args.onKeyDown) {
+        this.args.onKeyDown(element, event);
+      }
+    };
+    window.addEventListener('keydown', keyDownHandler);
+    return () => window.removeEventListener('keydown', keyDownHandler);
+  });
+
   @localCopy('args.backlink.subject.value')
   subject: string = '';
 
@@ -49,8 +69,12 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
   updateSubject(subject: string) {
     this.subject = subject;
   }
+
   @action
-  onSubjectKeydown(select: Select, event: KeyboardEvent): undefined {
+  onPowerSelectKeydown(select: Select, event: KeyboardEvent) {
+    if (this.formElement && this.args.onKeyDown) {
+      this.args.onKeyDown(this.formElement, event);
+    }
     // Based on example from ember-power-select docs, allows for selecting a previously non-existent
     // entry by typing in the power-select 'search' and hitting 'enter'
     if (
@@ -60,14 +84,14 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
       !!select.searchText
     ) {
       select.actions.choose(select.searchText);
+      return false;
     }
     return;
   }
 
   @action
-  updatePredicate(event: InputEvent) {
-    const target = event.target as HTMLInputElement;
-    this.predicate = target.value;
+  updatePredicate(value: string) {
+    this.predicate = value;
   }
 
   handleSubmit = (event: SubmitEvent) => {
@@ -78,10 +102,16 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
     };
     this.args.onSubmit(backlink);
   };
+
   <template>
-    <form class="au-c-form" {{on "submit" this.handleSubmit}} ...attributes>
+    <form
+      class="au-c-form"
+      {{on "submit" this.handleSubmit}}
+      {{this.setupFormElement}}
+      ...attributes
+    >
       <AuFormRow>
-        {{#let (uniqueId) as |id|}}
+        <WithUniqueId as |id|>
           <AuLabel
             for={{id}}
             @required={{true}}
@@ -89,35 +119,43 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
           >Subject</AuLabel>
           <PowerSelect
             id={{id}}
+            {{@initialFocus}}
             {{! For some reason need to manually set width }}
             class="au-u-1-1"
             @searchEnabled={{true}}
             @options={{this.subjectOptions}}
             @selected={{this.subject}}
             @onChange={{this.updateSubject}}
-            @onKeydown={{this.onSubjectKeydown}}
+            @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
           >
             {{obj}}
           </PowerSelect>
-        {{/let}}
+        </WithUniqueId>
       </AuFormRow>
       <AuFormRow>
-        {{#let (uniqueId) as |id|}}
+        <WithUniqueId as |id|>
           <AuLabel
             for={{id}}
             @required={{true}}
             @requiredLabel="Required"
           >Predicate</AuLabel>
-          <AuInput
+          <PowerSelect
             id={{id}}
-            value={{this.predicate}}
-            {{on "input" this.updatePredicate}}
-            required={{true}}
-            @width="block"
-          />
-        {{/let}}
+            {{! For some reason need to manually set width }}
+            class="au-u-1-1"
+            @searchEnabled={{true}}
+            @options={{@predicateOptions}}
+            @selected={{this.predicate}}
+            @onChange={{this.updatePredicate}}
+            @onKeydown={{this.onPowerSelectKeydown}}
+            @allowClear={{true}}
+            as |obj|
+          >
+            {{obj}}
+          </PowerSelect>
+        </WithUniqueId>
       </AuFormRow>
     </form>
   </template>

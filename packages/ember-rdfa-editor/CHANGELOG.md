@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 12.3.0
+
+### Minor Changes
+
+- [#1286](https://github.com/lblod/ember-rdfa-editor/pull/1286) [`932839a`](https://github.com/lblod/ember-rdfa-editor/commit/932839a755ff319aad88ecd2a04b5e0dbf32bbe0) Thanks [@elpoelma](https://github.com/elpoelma)! - Rdfa-tool components: add `Ctrl+Enter`/`Cmd+Enter` handler to submit creation/edit forms inside modals.
+
+- [#1286](https://github.com/lblod/ember-rdfa-editor/pull/1286) [`3eb67a0`](https://github.com/lblod/ember-rdfa-editor/commit/3eb67a0e03e2b3690afc639c1c33b6370a951384) Thanks [@elpoelma](https://github.com/elpoelma)! - RDFa tool forms/modals: initially focus relevant form inputs
+
+### Patch Changes
+
+- [#1289](https://github.com/lblod/ember-rdfa-editor/pull/1289) [`67f2e37`](https://github.com/lblod/ember-rdfa-editor/commit/67f2e372d212d036667e3f6d6448655b6be55423) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove usage of explicitly imported `uniqueId` helper, as this is not supported by ember 4.x
+
+- [#1285](https://github.com/lblod/ember-rdfa-editor/pull/1285) [`af66d48`](https://github.com/lblod/ember-rdfa-editor/commit/af66d48a4e0a5964f043baab9877a1afb958fa22) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Added shortcuts for the rdfa tools
+
 ## 12.2.0
 
 ### Minor Changes

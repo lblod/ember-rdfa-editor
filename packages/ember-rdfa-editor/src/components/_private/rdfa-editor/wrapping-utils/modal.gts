@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import type RdfaWrappingUtils from './index.ts';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
-import { uniqueId } from '@ember/helper';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
@@ -11,6 +10,8 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
+import { modifier } from 'ember-modifier';
+import WithUniqueId from '../../with-unique-id.ts';
 
 type Args = {
   closeModal: () => void;
@@ -19,6 +20,22 @@ type Args = {
 };
 
 export default class RelationshipEditorModal extends Component<Args> {
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {
+    const ctrlEnterHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        formElement.requestSubmit();
+      }
+    };
+    window.addEventListener('keydown', ctrlEnterHandler);
+    return () => window.removeEventListener('keydown', ctrlEnterHandler);
+  });
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   @tracked generateNewUri = 'yes';
   @tracked resourceUriBase = '';
 
@@ -46,17 +63,24 @@ export default class RelationshipEditorModal extends Component<Args> {
   }
 
   <template>
-    {{#let (uniqueId) as |formId|}}
+    <WithUniqueId as |formId|>
       <AuModal
         @modalOpen={{@modalOpen}}
         @closable={{true}}
         @closeModal={{@closeModal}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
       >
         <:title>Wrap selection</:title>
         <:body>
-          <form class="au-c-form" id={{formId}} {{on "submit" this.save}}>
+          <form
+            class="au-c-form"
+            id={{formId}}
+            {{on "submit" this.save}}
+            {{this.setupFormSubmitShortcut}}
+          >
             <AuFormRow>
-              {{#let (uniqueId) as |id|}}
+              <WithUniqueId as |id|>
                 <AuLabel
                   for={{id}}
                   @required={{true}}
@@ -76,10 +100,10 @@ export default class RelationshipEditorModal extends Component<Args> {
                   <Group.Radio @value="yes">Yes</Group.Radio>
                   <Group.Radio @value="no">No</Group.Radio>
                 </AuRadioGroup>
-              {{/let}}
+              </WithUniqueId>
             </AuFormRow>
             <AuFormRow>
-              {{#let (uniqueId) as |id|}}
+              <WithUniqueId as |id|>
                 <AuLabel
                   for={{id}}
                   @required={{true}}
@@ -88,6 +112,7 @@ export default class RelationshipEditorModal extends Component<Args> {
                   {{#if this.isNewUri}}URI base{{else}}Existing URI{{/if}}
                 </AuLabel>
                 <AuInput
+                  {{this.initialFocus}}
                   id={{id}}
                   required={{true}}
                   value={{this.resourceUriBase}}
@@ -95,7 +120,7 @@ export default class RelationshipEditorModal extends Component<Args> {
                   placeholder="http://example.com/resource/"
                   {{on "input" this.updateUriBase}}
                 />
-              {{/let}}
+              </WithUniqueId>
             </AuFormRow>
           </form>
         </:body>
@@ -115,6 +140,6 @@ export default class RelationshipEditorModal extends Component<Args> {
           </AuButtonGroup>
         </:footer>
       </AuModal>
-    {{/let}}
+    </WithUniqueId>
   </template>
 }

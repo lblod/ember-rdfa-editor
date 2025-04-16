@@ -24,7 +24,8 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuTextarea from '@appuniversum/ember-appuniversum/components/au-textarea';
 
-import { uniqueId } from '@ember/helper';
+import WithUniqueId from '../with-unique-id.ts';
+
 import { get } from '@ember/object';
 import { fn } from '@ember/helper';
 
@@ -163,7 +164,7 @@ export default class AttributeEditor extends Component<Signature> {
               <Item>
                 <div class="au-u-padding-tiny">
                   {{#if (and this.isEditing (this.isEditable key))}}
-                    {{#let (uniqueId) as |id|}}
+                    <WithUniqueId as |id|>
                       <AuLabel for={{id}}>
                         {{key}}
                       </AuLabel>
@@ -186,7 +187,7 @@ export default class AttributeEditor extends Component<Signature> {
                           />
                         {{/if}}
                       {{/let}}
-                    {{/let}}
+                    </WithUniqueId>
                   {{else}}
                     <p><strong>{{key}}</strong></p>
                     <pre>{{if

@@ -82,6 +82,18 @@ export default class EditableBlockController extends Controller {
   AttributeEditor = AttributeEditor;
   RdfaEditor = RdfaEditor;
 
+  propertyPredicates = [
+    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+    'http://www.w3.org/ns/prov#value',
+  ];
+
+  propertyObjects = [
+    'http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt',
+    'http://data.vlaanderen.be/ns/besluit#Agendapunt',
+  ];
+
+  backlinkPredicates = ['http://www.w3.org/ns/prov#wasGeneratedBy'];
+
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
   schema = new Schema({

@@ -20,8 +20,9 @@ import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import { isSome, type Option } from '#root/utils/_private/option.ts';
-import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import WithUniqueId from '../../with-unique-id.ts';
+import { modifier } from 'ember-modifier';
+import { action } from '@ember/object';
 
 interface EditModalSig {
   Args: {
@@ -32,30 +33,53 @@ interface EditModalSig {
   };
 }
 
-const EditModal: TemplateOnlyComponent<EditModalSig> = <template>
-  <WithUniqueId as |formId|>
-    <AuModal
-      @modalOpen={{@modalOpen}}
-      @closable={{true}}
-      @closeModal={{@onCancel}}
-    >
-      <:title>Edit external triples</:title>
-      <:body>
-        <ExternalTripleForm
-          @onSubmit={{@onSubmit}}
-          id={{formId}}
-          @triple={{@triple}}
-        />
-      </:body>
-      <:footer>
-        <AuButtonGroup>
-          <AuButton form={{formId}} type="submit">Save</AuButton>
-          <AuButton @skin="secondary" {{on "click" @onCancel}}>Cancel</AuButton>
-        </AuButtonGroup>
-      </:footer>
-    </AuModal>
-  </WithUniqueId>
-</template>;
+class EditModal extends Component<EditModalSig> {
+  @action
+  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      formElement.requestSubmit();
+    }
+    return true;
+  }
+
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
+  <template>
+    <WithUniqueId as |formId|>
+      <AuModal
+        @modalOpen={{@modalOpen}}
+        @closable={{true}}
+        @closeModal={{@onCancel}}
+        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+        @initialFocus={{this.initiallyFocusedElement}}
+      >
+        <:title>Edit external triples</:title>
+        <:body>
+          <ExternalTripleForm
+            @initialFocus={{this.initialFocus}}
+            @onSubmit={{@onSubmit}}
+            id={{formId}}
+            @triple={{@triple}}
+            @onKeyDown={{this.onFormKeyDown}}
+          />
+        </:body>
+        <:footer>
+          <AuButtonGroup>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
+            <AuButton
+              @skin="secondary"
+              {{on "click" @onCancel}}
+            >Cancel</AuButton>
+          </AuButtonGroup>
+        </:footer>
+      </AuModal>
+    </WithUniqueId>
+  </template>
+}
 
 interface ExternalTripleItemSig {
   Args: {
