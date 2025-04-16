@@ -3,11 +3,15 @@ import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { keepLatestTask, timeout } from 'ember-concurrency';
 import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import type SayController from '#root/core/say-controller.ts';
 import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/index.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { type RdfaInfo } from '#root/plugins/rdfa-info/plugin.ts';
+import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
 
 interface Sig {
   Args: {
@@ -58,6 +62,13 @@ export default class RdfaExplorer extends Component<Sig> {
   })
   isRunning = false;
 
+  goToSubject = (subject: string) => {
+    this.args.controller.doCommand(selectNodeBySubject({ subject }), {
+      view: this.args.controller.mainEditorView,
+    });
+    this.args.controller.focus();
+  };
+
   <template>
     {{#if this.isRunning}}
       <AuLoader @hideMessage={{true}}>
@@ -66,7 +77,10 @@ export default class RdfaExplorer extends Component<Sig> {
     {{/if}}
     <ul>
       {{#each this.subjects as |subject|}}
-        <li>{{subject}}</li>
+        <li><AuButton
+            @skin="link"
+            {{on "click" (fn this.goToSubject subject)}}
+          >{{subject}}</AuButton></li>
       {{/each}}
     </ul>
   </template>
