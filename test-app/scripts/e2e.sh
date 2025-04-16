@@ -14,9 +14,8 @@ fi
 
 docker run -it --rm \
 -v "$PWD":/e2e \
--v /tmp/.X11-unix:/tmp/.X11-unix \
 -e DISPLAY=$DISPLAY_ENV \
 -w /e2e \
 --platform linux/amd64 \
 mcr.microsoft.com/playwright:v1.50.0-jammy \
-npx playwright "$@"
+npm exec corepack enable && pnpx playwright "$@"
