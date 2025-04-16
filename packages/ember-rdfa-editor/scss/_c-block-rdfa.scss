@@ -1,24 +1,39 @@
 @use "@appuniversum/ember-appuniversum/styles/settings/s-root";
 
 .say-block-rdfa {
+  --padding: 0.5rem;
+  --border-size: 0.1rem;
+  --border-color: #c5cbd5;
+  --border-color-active: #0055cc;
+
+  --solid-border: var(--border-size) solid var(--border-color);
+  --solid-border-active: var(--border-size) solid var(--border-color-active);
+  --dotted-border: var(--border-size) dotted var(--border-color);
+
   position: relative;
-  padding-top: 0.5rem;
-  padding-right: 0.5rem;
-  border-radius: 0 3px 3px 0;
+  border-radius: 3px;
+  padding: var(--padding);
+
   margin-top: 1rem !important;
   margin-bottom: 0.5rem !important;
+  // offset the padding + the border so the borders on the left all overlap
+  margin-left: calc((var(--padding) + var(--border-size)) * -1);
 
+  border-top: var(--solid-border);
+  border-left: var(--dotted-border);
+  border-right: var(--dotted-border);
+  border-bottom: var(--dotted-border);
   &.say-active {
-    border: 1px solid #0055cc;
+    border: var(--solid-border-active);
+    .say-block-rdfa {
+      border-left: var(--solid-border-active);
+    }
   }
 
   &.ProseMirror-selectednode {
     background-color: var(--au-blue-200);
   }
 
-  border-top: 1px solid #c5cbd5;
-  border-right: 1px dotted #c5cbd5;
-  border-bottom: 1px dotted #c5cbd5;
 
   .say-block-rdfa--label {
     position: absolute;
@@ -35,5 +50,5 @@
 }
 
 .say-block-rdfa.say-active > .say-block-rdfa--label {
-  color: #0055cc;
+  color: var(--border-color-active);
 }
