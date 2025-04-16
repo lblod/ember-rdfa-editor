@@ -2,31 +2,36 @@
 
 .say-block-rdfa {
   position: relative;
-  outline: 1px solid #c5cbd5;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
-  padding-left: 0.5rem;
-  padding-right: 3.6rem;
-  border-radius: 3px;
-  margin-top: 2rem !important;
-  margin-bottom: 1rem !important;
+  padding-top: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 0 3px 3px 0;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+
   &.say-active {
-    outline: 2px solid #0055cc;
+    border: 1px solid #0055cc;
   }
+
   &.ProseMirror-selectednode {
     background-color: var(--au-blue-200);
   }
-}
 
-.say-block-rdfa--label {
-  position: absolute;
-  top: -12px;
-  right: 10px;
-  background-color: white;
-  padding-left: 0.6rem;
-  padding-right: 0.6rem;
-  color: #687483;
-  font-weight: 500;
+  border-top: 1px solid #c5cbd5;
+  border-right: 1px dotted #c5cbd5;
+  border-bottom: 1px dotted #c5cbd5;
+
+  .say-block-rdfa--label {
+    position: absolute;
+    top: -5px;
+    right: 10px;
+    background-color: white;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+    color: #687483;
+    line-height: 10px;
+
+    font-size: 1.2rem !important;
+  }
 }
 
 .say-block-rdfa.say-active > .say-block-rdfa--label {
