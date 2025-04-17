@@ -22,10 +22,10 @@ import { HeadlessForm } from 'ember-headless-form';
 import { fn } from '@ember/helper';
 import * as yup from 'yup';
 import { validateYup } from 'ember-headless-form-yup';
-import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
-import { get } from '@ember/helper';
 import t from 'ember-intl/helpers/t';
 import { unwrap } from '#root/utils/_private/option.ts';
+import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert.js';
+import { get } from '@ember/helper';
 
 type TermOptionGeneratorResult<TermType extends SayTerm> =
   | TermOption<TermType>[]
