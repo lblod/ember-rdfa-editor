@@ -28,6 +28,11 @@ import WithUniqueId from '../with-unique-id.ts';
 
 import { get } from '@ember/object';
 import { fn } from '@ember/helper';
+import { updateSubject } from '#root/plugins/rdfa-info/utils.ts';
+import {
+  transactionCombinator,
+  type TransactionMonad,
+} from '#root/utils/transaction-utils.ts';
 
 type Signature = {
   Args: {
@@ -87,14 +92,36 @@ export default class AttributeEditor extends Component<Signature> {
 
   saveChanges = () => {
     this.controller?.withTransaction((tr) => {
+      const setAttr =
+        (key: string, value: string): TransactionMonad<boolean> =>
+        (state) => {
+          const tr = state.tr;
+          TransformUtils.setAttribute(tr, this.node.pos, key, value);
+          return { transaction: tr, initialState: state, result: true };
+        };
+      const monads: TransactionMonad<boolean>[] = [];
       for (const change of unwrap(this.changeset).changes) {
         const { key, value } = change;
         if (!(typeof key === 'string')) {
           throw new TypeAssertionError();
         }
-        TransformUtils.setAttribute(tr, this.node.pos, key, value);
+
+        if (key === 'subject') {
+          monads.push(
+            updateSubject({
+              pos: this.node.pos,
+              targetSubject: value as string,
+              keepBacklinks: true,
+              keepExternalTriples: true,
+              keepProperties: true,
+            }),
+          );
+        } else {
+          monads.push(setAttr(key, value as string));
+        }
       }
-      return tr;
+      return transactionCombinator(this.controller.mainEditorState)(monads)
+        .transaction;
     });
     this.isEditing = false;
     this.changeset = undefined;

@@ -69,7 +69,7 @@ const rdfaAwareAttrSpec = {
   externalTriples: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
-  subject: { default: null },
+  subject: { default: null, editable: true },
   content: { default: null, editable: true },
   datatype: { default: null },
   language: { default: null, editable: true },
