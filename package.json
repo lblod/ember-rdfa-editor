@@ -32,9 +32,10 @@
     },
     "allowNonAppliedPatches": true,
     "onlyBuiltDependencies": [
-      "core-js",
       "@parcel/watcher",
-      "ember-source"
+      "core-js",
+      "ember-source",
+      "esbuild"
     ]
   },
   "packageManager": "pnpm@10.5.2",
