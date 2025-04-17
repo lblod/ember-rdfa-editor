@@ -273,7 +273,7 @@
     "@babel/eslint-parser": "^7.25.1",
     "@babel/plugin-transform-typescript": "^7.25.2",
     "@babel/runtime": "^7.26.10",
-    "@embroider/addon-dev": "^7.1.2",
+    "@embroider/addon-dev": "^7.1.4",
     "@eslint/js": "^9.17.0",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
