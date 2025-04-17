@@ -28,7 +28,6 @@ import WithUniqueId from '../with-unique-id.ts';
 
 import { get } from '@ember/object';
 import { fn } from '@ember/helper';
-import { updateSubject } from '#root/plugins/rdfa-info/utils.ts';
 import {
   transactionCombinator,
   type TransactionMonad,
@@ -42,6 +41,10 @@ type Signature = {
     onToggle?: (expanded: boolean) => void;
   };
 };
+export type AttributeEditHandler = (
+  pos: number,
+  value: string,
+) => TransactionMonad<boolean>;
 export default class AttributeEditor extends Component<Signature> {
   @localCopy('args.expanded', true) declare expanded: boolean;
 
@@ -79,6 +82,28 @@ export default class AttributeEditor extends Component<Signature> {
       | boolean
       | undefined;
   };
+  setAttrMonad =
+    (key: string) =>
+    (pos: number, value: string): TransactionMonad<boolean> =>
+    (state) => {
+      const tr = state.tr;
+      TransformUtils.setAttribute(tr, pos, key, value);
+      return { transaction: tr, initialState: state, result: true };
+    };
+  getHandler = (attr: string): AttributeEditHandler | null => {
+    if (this.isEditable(attr)) {
+      //@ts-expect-error handler is not defined on attribute-spec type
+      const handler = this.node.value.type.spec.attrs[attr].editHandler as
+        | AttributeEditHandler
+        | undefined;
+      if (handler) {
+        return handler;
+      } else {
+        return this.setAttrMonad(attr);
+      }
+    }
+    return null;
+  };
 
   enableEditingMode = () => {
     this.changeset = Changeset(this.node.value.attrs);
@@ -91,33 +116,16 @@ export default class AttributeEditor extends Component<Signature> {
   };
 
   saveChanges = () => {
-    this.controller?.withTransaction((tr) => {
-      const setAttr =
-        (key: string, value: string): TransactionMonad<boolean> =>
-        (state) => {
-          const tr = state.tr;
-          TransformUtils.setAttribute(tr, this.node.pos, key, value);
-          return { transaction: tr, initialState: state, result: true };
-        };
+    this.controller?.withTransaction(() => {
       const monads: TransactionMonad<boolean>[] = [];
       for (const change of unwrap(this.changeset).changes) {
         const { key, value } = change;
         if (!(typeof key === 'string')) {
           throw new TypeAssertionError();
         }
-
-        if (key === 'subject') {
-          monads.push(
-            updateSubject({
-              pos: this.node.pos,
-              targetSubject: value as string,
-              keepBacklinks: true,
-              keepExternalTriples: true,
-              keepProperties: true,
-            }),
-          );
-        } else {
-          monads.push(setAttr(key, value as string));
+        const handler = this.getHandler(key);
+        if (handler) {
+          monads.push(handler(this.node.pos, value as string));
         }
       }
       return transactionCombinator(this.controller.mainEditorState)(monads)
