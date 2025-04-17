@@ -67,33 +67,30 @@ export default class PropertyDetails extends Component<Sig> {
   };
 
   <template>
-    <div class="au-u-padding-tiny">
-      <p><strong>predicate:</strong> {{@prop.predicate}}</p>
-      {{#if (this.hasDataType @prop.object)}}
-        <p><strong>datatype:</strong>
-          {{@prop.object.datatype.value}}</p>
-      {{/if}}
-      {{#if (this.hasLanguage @prop.object)}}
-        <p><strong>language:</strong> {{@prop.object.language}}</p>
-      {{/if}}
-      {{#if (eq @prop.object.termType "ContentLiteral")}}
-        <AuPill>content-predicate</AuPill>
-      {{else if
-        (or
-          (eq @prop.object.termType "LiteralNode")
-          (eq @prop.object.termType "ResourceNode")
-        )
-      }}
-        <AuButton
-          class="au-u-padding-left-none au-u-padding-right-none"
-          @icon={{ExternalLinkIcon}}
-          @skin="link"
-          title={{@prop.object.value}}
-          {{on "click" (fn this.goToOutgoing @prop)}}
-        >value</AuButton>
-      {{else}}
-        <p><strong>value:</strong> {{@prop.object.value}}</p>
-      {{/if}}
-    </div>
+    {{#if (this.hasDataType @prop.object)}}
+      <p><strong>datatype:</strong>
+        {{@prop.object.datatype.value}}</p>
+    {{/if}}
+    {{#if (this.hasLanguage @prop.object)}}
+      <p><strong>language:</strong> {{@prop.object.language}}</p>
+    {{/if}}
+    {{#if (eq @prop.object.termType "ContentLiteral")}}
+      <AuPill>content-predicate</AuPill>
+    {{else if
+      (or
+        (eq @prop.object.termType "LiteralNode")
+        (eq @prop.object.termType "ResourceNode")
+      )
+    }}
+      <AuButton
+        class="au-u-padding-left-none au-u-padding-right-none"
+        @icon={{ExternalLinkIcon}}
+        @skin="link"
+        title={{@prop.object.value}}
+        {{on "click" (fn this.goToOutgoing @prop)}}
+      ><strong>value:</strong> {{@prop.object.value}}</AuButton>
+    {{else}}
+      <p><strong>value:</strong> {{@prop.object.value}}</p>
+    {{/if}}
   </template>
 }

@@ -38,6 +38,7 @@ import { array } from '@ember/helper';
 import { isSome } from '#root/utils/_private/option.ts';
 import { addProperty, removeProperty } from '#root/commands/index.ts';
 import { deepEqualPropertyList } from '#root/plugins/rdfa-info/utils.ts';
+import PredicateDisplay from '../predicate-display.gts';
 
 interface Sig {
   Args: {
@@ -263,10 +264,16 @@ export default class DocImportedResourceEditor extends Component<Sig> {
                   <Item
                     class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
                   >
-                    <PropertyDetails
-                      @controller={{@controller}}
-                      @prop={{prop}}
-                    />
+                    <div class="au-u-padding-tiny">
+                      <PredicateDisplay
+                        @controller={{@controller}}
+                        @prop={{prop}}
+                      />
+                      <PropertyDetails
+                        @controller={{@controller}}
+                        @prop={{prop}}
+                      />
+                    </div>
                     <AuDropdown
                       @icon={{ThreeDotsIcon}}
                       role="menu"

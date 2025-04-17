@@ -40,6 +40,7 @@ import { type Status, type StatusMessage } from '../types.ts';
 import PropertyDetails from '../property-details.gts';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
+import PredicateDisplay from '../predicate-display.gts';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -326,11 +327,14 @@ export default class RdfaPropertyEditor extends Component<Args> {
             <Item
               class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
             >
-              <PropertyDetails
-                @controller={{@controller}}
-                @prop={{prop}}
-                @setStatusMessage={{this.setStatusMessage}}
-              />
+              <div class="au-u-padding-tiny">
+                <PredicateDisplay @prop={{prop}} />
+                <PropertyDetails
+                  @controller={{@controller}}
+                  @prop={{prop}}
+                  @setStatusMessage={{this.setStatusMessage}}
+                />
+              </div>
               <AuDropdown @icon={{ThreeDotsIcon}} role="menu" @alignment="left">
                 <AuButton
                   @skin="link"
