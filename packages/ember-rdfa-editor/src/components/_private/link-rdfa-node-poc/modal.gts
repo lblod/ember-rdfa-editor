@@ -150,10 +150,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
             {{this.assignResetForm form.reset}}
             <form.Field @name="predicate" as |field|>
               <AuFormRow>
-                <AuLabel
-                  for={{field.id}}
-                  @required={{true}}
-                >
+                <AuLabel for={{field.id}} @required={{true}}>
                   Relatie-type
                   <AuBadge
                     @icon={{QuestionCircleIcon}}
@@ -186,7 +183,12 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                   {{/if}}
                 </PowerSelect>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
-                  <AuAlert class="au-u-margin-none" @skin="warning" @size="small" @icon="alert-triangle">
+                  <AuAlert
+                    class="au-u-margin-none"
+                    @skin="warning"
+                    @size="small"
+                    @icon="alert-triangle"
+                  >
                     {{#let (get errors 0) as |error|}}
                       {{error.message}}
                     {{/let}}
@@ -196,10 +198,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
             </form.Field>
             <form.Field @name="subject" as |field|>
               <AuFormRow>
-                <AuLabel
-                  for={{field.id}}
-                  @required={{true}}
-                >
+                <AuLabel for={{field.id}} @required={{true}}>
                   Onderwerp
                   <AuBadge
                     @icon={{QuestionCircleIcon}}
@@ -233,7 +232,12 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                   {{/if}}
                 </PowerSelect>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
-                  <AuAlert class="au-u-margin-none" @skin="warning" @size="small" @icon="alert-triangle">
+                  <AuAlert
+                    class="au-u-margin-none"
+                    @skin="warning"
+                    @size="small"
+                    @icon="alert-triangle"
+                  >
                     {{#let (get errors 0) as |error|}}
                       {{error.message}}
                     {{/let}}
