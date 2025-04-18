@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
-import { on } from '@ember/modifier';
 import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
-import { localCopy } from 'tracked-toolbox';
+import { trackedReset } from 'tracked-toolbox';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
@@ -9,12 +8,16 @@ import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
 import { type Option } from '#root/utils/_private/option.ts';
-import { action } from '@ember/object';
+import { action, get } from '@ember/object';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/index.ts';
 import type { ModifierLike } from '@glint/template';
 import { modifier } from 'ember-modifier';
-import WithUniqueId from '../../with-unique-id.ts';
+import * as yup from 'yup';
+import { validateYup } from 'ember-headless-form-yup';
+import { TrackedObject } from 'tracked-built-ins';
+import { HeadlessForm } from 'ember-headless-form';
+import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 
 interface BacklinkFormSig {
   Element: HTMLFormElement;
@@ -34,6 +37,17 @@ const DEFAULT_BACKLINK: IncomingTriple = {
   subject: sayDataFactory.resourceNode(''),
   predicate: '',
 };
+
+const formSchema = yup.object({
+  subject: yup.string().required().curie(),
+  predicate: yup.string().required().curie(),
+});
+
+type FormData = {
+  subject: string;
+  predicate: string;
+};
+
 export default class BacklinkForm extends Component<BacklinkFormSig> {
   formElement?: HTMLFormElement;
   setupFormElement = modifier((element: HTMLFormElement) => {
@@ -47,11 +61,16 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
     return () => window.removeEventListener('keydown', keyDownHandler);
   });
 
-  @localCopy('args.backlink.subject.value')
-  subject: string = '';
+  get initialFormData(): FormData {
+    return {
+      subject: this.backlink.subject.value,
+      predicate: this.backlink.predicate,
+    };
+  }
 
-  @localCopy('args.backlink.predicate')
-  predicate: string = '';
+  @trackedReset('initialFormData') formData = new TrackedObject(
+    this.initialFormData,
+  );
 
   get controller() {
     return this.args.controller;
@@ -66,8 +85,14 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
   }
 
   @action
-  updateSubject(subject: string) {
-    this.subject = subject;
+  updateField<F extends keyof FormData>(
+    validateFn: () => void,
+    updateFn: (value: FormData[F]) => void,
+  ) {
+    return (value: FormData[F]) => {
+      updateFn(value);
+      validateFn();
+    };
   }
 
   @action
@@ -89,74 +114,96 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
     return;
   }
 
-  @action
-  updatePredicate(value: string) {
-    this.predicate = value;
-  }
-
-  handleSubmit = (event: SubmitEvent) => {
-    event.preventDefault();
+  handleSubmit = (formData: FormData) => {
     const backlink: IncomingTriple = {
-      subject: sayDataFactory.resourceNode(this.subject),
-      predicate: this.predicate,
+      subject: sayDataFactory.resourceNode(formData.subject),
+      predicate: formData.predicate,
     };
     this.args.onSubmit(backlink);
   };
 
   <template>
-    <form
-      class="au-c-form"
-      {{on "submit" this.handleSubmit}}
+    <HeadlessForm
+      @data={{this.formData}}
+      @dataMode="mutable"
+      @onSubmit={{this.handleSubmit}}
+      @validate={{validateYup formSchema}}
       {{this.setupFormElement}}
+      class="au-c-form"
       ...attributes
+      as |form|
     >
-      <AuFormRow>
-        <WithUniqueId as |id|>
+      <form.Field @name="subject" as |field|>
+        <AuFormRow>
           <AuLabel
-            for={{id}}
+            for={{field.id}}
             @required={{true}}
             @requiredLabel="Required"
           >Subject</AuLabel>
           <PowerSelect
-            id={{id}}
+            id={{field.id}}
             {{@initialFocus}}
             {{! For some reason need to manually set width }}
             class="au-u-1-1"
             @searchEnabled={{true}}
             @options={{this.subjectOptions}}
-            @selected={{this.subject}}
-            @onChange={{this.updateSubject}}
+            @selected={{this.formData.subject}}
+            @onChange={{this.updateField field.triggerValidation field.setValue}}
             @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
           >
             {{obj}}
           </PowerSelect>
-        </WithUniqueId>
-      </AuFormRow>
-      <AuFormRow>
-        <WithUniqueId as |id|>
+          <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
+            <AuAlert
+              class="au-u-margin-none"
+              @skin="warning"
+              @size="small"
+              @icon="alert-triangle"
+            >
+              {{#let (get errors 0) as |error|}}
+                {{error.message}}
+              {{/let}}
+            </AuAlert>
+          </field.Errors>
+        </AuFormRow>
+      </form.Field>
+      <form.Field @name="predicate" as |field|>
+        <AuFormRow>
           <AuLabel
-            for={{id}}
+            for={{field.id}}
             @required={{true}}
             @requiredLabel="Required"
           >Predicate</AuLabel>
           <PowerSelect
-            id={{id}}
+            id={{field.id}}
             {{! For some reason need to manually set width }}
             class="au-u-1-1"
             @searchEnabled={{true}}
             @options={{@predicateOptions}}
-            @selected={{this.predicate}}
-            @onChange={{this.updatePredicate}}
+            @selected={{field.value}}
+            @onChange={{this.updateField field.triggerValidation field.setValue}}
             @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
           >
             {{obj}}
           </PowerSelect>
-        </WithUniqueId>
-      </AuFormRow>
-    </form>
+          <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
+            <AuAlert
+              class="au-u-margin-none"
+              @skin="warning"
+              @size="small"
+              @icon="alert-triangle"
+            >
+              {{#let (get errors 0) as |error|}}
+                {{error.message}}
+              {{/let}}
+            </AuAlert>
+          </field.Errors>
+        </AuFormRow>
+      </form.Field>
+    </HeadlessForm>
   </template>
 }
