@@ -28,9 +28,9 @@ $say-paper-box-shadow:
 .say-editor {
   background-color: $say-paper-background;
   padding: $say-editor-padding;
+  height: 100%;
+  overflow: auto;
   width: 100%;
-  position: relative;
-
   .say-container--paper & {
     background-color: $say-editor-background;
   }
@@ -77,18 +77,14 @@ $say-paper-box-shadow:
 .say-editor__inner {
   padding: $say-paper-padding;
   position: relative;
-  min-height: $say-paper-min-height;
   white-space: break-spaces;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  height: inherit;
 
   // Remove start styles
   &:focus {
     outline: 0;
-  }
-
-  .say-container--paper & {
-    min-height: calc(#{$say-paper-min-height} - #{$say-paper-padding} * 2);
   }
 
   .say-container:not(.say-container--paper) & {
