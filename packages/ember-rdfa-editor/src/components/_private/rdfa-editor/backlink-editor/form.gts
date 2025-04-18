@@ -148,7 +148,10 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
             @searchEnabled={{true}}
             @options={{this.subjectOptions}}
             @selected={{this.formData.subject}}
-            @onChange={{this.updateField field.triggerValidation field.setValue}}
+            @onChange={{this.updateField
+              field.triggerValidation
+              field.setValue
+            }}
             @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
@@ -183,7 +186,10 @@ export default class BacklinkForm extends Component<BacklinkFormSig> {
             @searchEnabled={{true}}
             @options={{@predicateOptions}}
             @selected={{field.value}}
-            @onChange={{this.updateField field.triggerValidation field.setValue}}
+            @onChange={{this.updateField
+              field.triggerValidation
+              field.setValue
+            }}
             @onKeydown={{this.onPowerSelectKeydown}}
             @allowClear={{true}}
             as |obj|
