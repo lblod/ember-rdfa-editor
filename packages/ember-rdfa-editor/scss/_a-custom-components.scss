@@ -3,16 +3,16 @@
    ================================== */
 
 // CUSTOM UI COMPONENTS
-@forward "./c-container.scss";
-@forward "./c-dropdown.scss";
-@forward "./c-content.scss";
 @forward "./c-editor.scss";
+@forward "./c-container.scss";
+@forward "./c-content.scss";
+@forward "./c-toolbar.scss";
+@forward "./c-dropdown.scss";
 @forward "./c-editor-hints.scss";
 @forward "./c-icon.scss";
 @forward "./c-link.scss";
 @forward "./c-placeholder.scss";
 @forward "./c-toast.scss";
-@forward "./c-toolbar.scss";
 @forward "./c-selection-tooltip.scss";
 @forward "./c-table.scss";
 @forward "./c-ember-node.scss";
