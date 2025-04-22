@@ -32,13 +32,15 @@
   max-width: 380px;
   max-height: 100%;
   overflow: auto;
-  padding: au-settings.$au-unit au-settings.$au-unit-small;
+  padding: au-settings.$au-unit-small au-settings.$au-unit-small +
+  au-settings.$au-unit-tiny;
 
   top: 0;
 
   @include au-tools.mq(1023px) {
     width: editor.$say-editor-sidebar-medium;
     max-width: editor.$say-editor-sidebar-medium;
+    padding: au-settings.$au-unit;
   }
 
   @include au-tools.mq(1280px) {
