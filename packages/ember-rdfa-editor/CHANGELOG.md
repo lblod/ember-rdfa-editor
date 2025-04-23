@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 12.4.0
+
+### Minor Changes
+
+- [#1293](https://github.com/lblod/ember-rdfa-editor/pull/1293) [`9ec47bd`](https://github.com/lblod/ember-rdfa-editor/commit/9ec47bd19fd3aeb2f67337d96cf100b2da8dffff) Thanks [@abeforgit](https://github.com/abeforgit)! - Add ability to change subject uris of resource nodes
+
+- [#1290](https://github.com/lblod/ember-rdfa-editor/pull/1290) [`aa741f7`](https://github.com/lblod/ember-rdfa-editor/commit/aa741f716071c3d6dca53686be52c4350383f055) Thanks [@abeforgit](https://github.com/abeforgit)! - Make the styling of rdfa-blocks a bit lighter
+
+### Patch Changes
+
+- [#1291](https://github.com/lblod/ember-rdfa-editor/pull/1291) [`0fbf761`](https://github.com/lblod/ember-rdfa-editor/commit/0fbf7612b88812f966a848e62ca0e975e740ef3f) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `@embroider/addon-dev` to version [7.1.4](https://github.com/embroider-build/embroider/releases/tag/v7.1.4-%40embroider%2Faddon-dev)
+
 ## 12.3.0
 
 ### Minor Changes
