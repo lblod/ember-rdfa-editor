@@ -28,6 +28,10 @@ import WithUniqueId from '../with-unique-id.ts';
 
 import { get } from '@ember/object';
 import { fn } from '@ember/helper';
+import {
+  transactionCombinator,
+  type TransactionMonad,
+} from '#root/utils/transaction-utils.ts';
 
 type Signature = {
   Args: {
@@ -37,6 +41,10 @@ type Signature = {
     onToggle?: (expanded: boolean) => void;
   };
 };
+export type AttributeEditHandler = (
+  pos: number,
+  value: string,
+) => TransactionMonad<boolean>;
 export default class AttributeEditor extends Component<Signature> {
   @localCopy('args.expanded', true) declare expanded: boolean;
 
@@ -74,6 +82,28 @@ export default class AttributeEditor extends Component<Signature> {
       | boolean
       | undefined;
   };
+  setAttrMonad =
+    (key: string) =>
+    (pos: number, value: string): TransactionMonad<boolean> =>
+    (state) => {
+      const tr = state.tr;
+      TransformUtils.setAttribute(tr, pos, key, value);
+      return { transaction: tr, initialState: state, result: true };
+    };
+  getHandler = (attr: string): AttributeEditHandler | null => {
+    if (this.isEditable(attr)) {
+      //@ts-expect-error handler is not defined on attribute-spec type
+      const handler = this.node.value.type.spec.attrs[attr].editHandler as
+        | AttributeEditHandler
+        | undefined;
+      if (handler) {
+        return handler;
+      } else {
+        return this.setAttrMonad(attr);
+      }
+    }
+    return null;
+  };
 
   enableEditingMode = () => {
     this.changeset = Changeset(this.node.value.attrs);
@@ -86,15 +116,20 @@ export default class AttributeEditor extends Component<Signature> {
   };
 
   saveChanges = () => {
-    this.controller?.withTransaction((tr) => {
+    this.controller?.withTransaction(() => {
+      const monads: TransactionMonad<boolean>[] = [];
       for (const change of unwrap(this.changeset).changes) {
         const { key, value } = change;
         if (!(typeof key === 'string')) {
           throw new TypeAssertionError();
         }
-        TransformUtils.setAttribute(tr, this.node.pos, key, value);
+        const handler = this.getHandler(key);
+        if (handler) {
+          monads.push(handler(this.node.pos, value as string));
+        }
       }
-      return tr;
+      return transactionCombinator(this.controller.mainEditorState)(monads)
+        .transaction;
     });
     this.isEditing = false;
     this.changeset = undefined;

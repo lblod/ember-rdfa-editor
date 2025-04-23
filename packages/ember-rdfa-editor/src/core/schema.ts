@@ -26,6 +26,7 @@ import {
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
 import type { NamedNode } from '@rdfjs/types';
 import { rdfaNodeTypes, type RdfaAttrs } from '#root/core/rdfa-types.ts';
+import { updateSubject } from '#root/plugins/rdfa-info/utils.ts';
 
 // const logger = createLogger('core/schema');
 
@@ -69,7 +70,18 @@ const rdfaAwareAttrSpec = {
   externalTriples: { default: [] },
   __rdfaId: { default: undefined },
   rdfaNodeType: { default: undefined },
-  subject: { default: null },
+  subject: {
+    default: null,
+    editable: true,
+    editHandler: (pos: number, value: string) =>
+      updateSubject({
+        pos,
+        targetSubject: value,
+        keepBacklinks: true,
+        keepExternalTriples: true,
+        keepProperties: true,
+      }),
+  },
   content: { default: null, editable: true },
   datatype: { default: null },
   language: { default: null, editable: true },
