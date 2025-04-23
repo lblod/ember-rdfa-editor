@@ -8,7 +8,6 @@
 
   --solid-border: var(--border-size) solid var(--border-color);
   --solid-border-active: var(--border-size) solid var(--border-color-active);
-  --dotted-border: var(--border-size) dotted var(--border-color);
 
   position: relative;
   border-radius: 3px;
@@ -19,10 +18,7 @@
   // offset the padding + the border so the borders on the left all overlap
   margin-left: calc((var(--padding) + var(--border-size)) * -1);
 
-  border-top: var(--solid-border);
-  border-left: var(--dotted-border);
-  border-right: var(--dotted-border);
-  border-bottom: var(--dotted-border);
+  border: var(--solid-border);
   &.say-active {
     border: var(--solid-border-active);
     .say-block-rdfa {
@@ -43,8 +39,6 @@
     padding-right: 0.6rem;
     color: #687483;
     line-height: 10px;
-
-    font-size: 1.2rem !important;
   }
 }
 
