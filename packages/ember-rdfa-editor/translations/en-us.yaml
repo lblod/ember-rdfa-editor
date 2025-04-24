@@ -85,6 +85,7 @@ ember-rdfa-editor:
       right: Right align
       justify: Justify
   utils:
+    required: Required
     save: Save
     cancel: Cancel
     back: Back
@@ -98,3 +99,22 @@ ember-rdfa-editor:
   text-styles: Text styles
   notifications:
     paste-size-limit-reached: Paste size limit reached, try again with a smaller image or use a tool to resize it
+  linking-ui-poc:
+    button:
+      label: Insert relationship
+    modal:
+      title: Insert relationship
+      form:
+        fields:
+          predicate:
+            label: Relationship type
+            validation:
+              required: Please select a relationship type
+          subject:
+            label: Subject
+            validation:
+              required: Please select a subject
+        submit:
+          label: Insert
+        cancel:
+          label: Cancel
