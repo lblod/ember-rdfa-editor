@@ -74,12 +74,23 @@ import {
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 import { getOwner } from '@ember/owner';
-import { isSome, optionMap, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import {
+  isSome,
+  optionMap,
+  unwrap,
+} from '@lblod/ember-rdfa-editor/utils/_private/option';
 import applyDevTools from 'prosemirror-dev-tools';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { getNodeByRdfaId, type DisplayGenerator, type RdfaVisualizerConfig } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
-import { getOutgoingTriple, namespace } from '@lblod/ember-rdfa-editor/utils/namespace';
+import {
+  getNodeByRdfaId,
+  type DisplayGenerator,
+  type RdfaVisualizerConfig,
+} from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import {
+  getOutgoingTriple,
+  namespace,
+} from '@lblod/ember-rdfa-editor/utils/namespace';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -94,10 +105,7 @@ const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
 };
 
 const ELI = namespace('http://data.europa.eu/eli/ontology#', 'eli');
-const RDF = namespace(
-  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-  'rdf',
-);
+const RDF = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf');
 
 const humanReadableResourceName: DisplayGenerator<PNode> = (
   node,
@@ -145,8 +153,10 @@ export default class EditableBlockController extends Controller {
     ],
     backlinkPredicates: ['http://www.w3.org/ns/prov#wasGeneratedBy'],
     visualizerConfig: {
-      predicate: humanReadablePredicateDisplay,
-      ResourceNode: humanReadableResourceName,
+      displayConfig: {
+        predicate: humanReadablePredicateDisplay,
+        ResourceNode: humanReadableResourceName,
+      },
     } as RdfaVisualizerConfig,
   };
 

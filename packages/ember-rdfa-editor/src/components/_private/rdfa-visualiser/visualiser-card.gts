@@ -18,7 +18,7 @@ interface Sig {
     node?: ResolvedPNode;
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
-    displayConfig: RdfaVisualizerConfig;
+    config: RdfaVisualizerConfig;
   };
 }
 export default class VisualiserCard extends Component<Sig> {
@@ -54,7 +54,7 @@ export default class VisualiserCard extends Component<Sig> {
             <RdfaExplorer
               @controller={{@controller}}
               @node={{@node}}
-              @displayConfig={{@displayConfig}}
+              @config={{@config}}
             />
           </Section>
         {{/if}}

@@ -6,7 +6,11 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import type SayController from '#root/core/say-controller.ts';
-import { type DisplayElement, type DisplayGenerator, type DisplayMeta } from '#root/plugins/rdfa-info/types.ts';
+import {
+  type DisplayElement,
+  type DisplayGenerator,
+  type DisplayMeta,
+} from '#root/plugins/rdfa-info/types.ts';
 
 export const predicateDisplay: DisplayGenerator<OutgoingTriple> = (triple) => {
   return [{ strong: 'predicate:' }, triple.predicate];

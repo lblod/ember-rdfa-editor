@@ -1,6 +1,9 @@
-import type SayController from "#root/core/say-controller.ts";
-import { type OutgoingTriple, type SayTermType } from "#root/core/rdfa-processor.ts";
-import type { PNode } from "#root/prosemirror-aliases.ts";
+import type SayController from '#root/core/say-controller.ts';
+import {
+  type OutgoingTriple,
+  type SayTermType,
+} from '#root/core/rdfa-processor.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 export type StringDisplay = string;
 export type StrongDisplay = { strong: string };
@@ -20,6 +23,16 @@ export type DisplayGenerator<T> = (
 ) => DisplayConfig | Promise<DisplayConfig>;
 
 export type RdfaVisualizerConfig = {
-  predicate?: DisplayGenerator<OutgoingTriple>;
-  ResourceNode?: DisplayGenerator<PNode>;
-} & Partial<Omit<Record<SayTermType, DisplayGenerator<OutgoingTriple>>, 'ResourceNode'>>;
+  debounceTime?: number;
+  /**
+   * Keep the visualiser displayed while refreshing to keep any expanded sections expanded.
+   * WARNING: This will cause lag on typing in larger documents, so should be used with care.
+   */
+  keepOpen?: boolean;
+  displayConfig: {
+    predicate?: DisplayGenerator<OutgoingTriple>;
+    ResourceNode?: DisplayGenerator<PNode>;
+  } & Partial<
+    Omit<Record<SayTermType, DisplayGenerator<OutgoingTriple>>, 'ResourceNode'>
+  >;
+};

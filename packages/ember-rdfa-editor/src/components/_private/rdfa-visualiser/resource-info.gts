@@ -11,11 +11,16 @@ import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import type SayController from '#root/core/say-controller.ts';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
 import { getNodesBySubject } from '#root/utils/rdfa-utils.ts';
-import ConfigurableRdfaDisplay, { predicateDisplay } from '../rdfa-editor/configurable-rdfa-display.gts';
+import ConfigurableRdfaDisplay, {
+  predicateDisplay,
+} from '../rdfa-editor/configurable-rdfa-display.gts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
 import PropertyDetails from '../rdfa-editor/property-details.gts';
-import type { DisplayGenerator, RdfaVisualizerConfig } from '#root/plugins/rdfa-info/types.ts';
+import type {
+  DisplayGenerator,
+  RdfaVisualizerConfig,
+} from '#root/plugins/rdfa-info/types.ts';
 import { get } from '@ember/helper';
 
 const backupResourceDisplay: DisplayGenerator<PNode> = (node) => {
@@ -30,7 +35,7 @@ export interface ResourceInfoSig {
     // In theory this could be used for optimisation but currently it is not...
     node?: PNode;
     expanded?: boolean;
-    displayConfig: RdfaVisualizerConfig;
+    displayConfig: RdfaVisualizerConfig['displayConfig'];
   };
 }
 
@@ -72,7 +77,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
       {{#if this.node}}
         <ConfigurableRdfaDisplay
           @value={{this.node}}
-          @generator={{(or @displayConfig.ResourceNode backupResourceDisplay)}}
+          @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
           @controller={{@controller}}
         />
         <AuButton
@@ -89,7 +94,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
               <Item class="au-u-padding-tiny">
                 <ConfigurableRdfaDisplay
                   @value={{prop}}
-                  @generator={{(or @displayConfig.predicate predicateDisplay)}}
+                  @generator={{or @displayConfig.predicate predicateDisplay}}
                   @controller={{@controller}}
                 />
                 {{#if (eq prop.object.termType "ResourceNode")}}
@@ -103,7 +108,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
                     @controller={{@controller}}
                     @subject={{prop.object.value}}
                     {{! @glint-expect-error}}
-                    @displayConfig={{(get @displayConfig prop.object.termType)}}
+                    @displayConfig={{get @displayConfig prop.object.termType}}
                   />
                 {{else}}
                   <PropertyDetails @prop={{prop}} @controller={{@controller}} />
