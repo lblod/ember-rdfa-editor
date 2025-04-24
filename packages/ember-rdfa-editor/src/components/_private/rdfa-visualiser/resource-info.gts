@@ -13,9 +13,9 @@ import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index
 import { getOutgoingTriple, namespace } from '#root/utils/namespace.ts';
 import { RDF } from '#root/utils/_private/namespaces.ts';
 import { isSome, optionMap } from '#root/utils/_private/option.ts';
-import { getNodesBySubject } from '#root/utils/rdfa-utils.ts';
+import { getNodeByRdfaId, getNodesBySubject } from '#root/utils/rdfa-utils.ts';
 import ConfigurableRdfaDisplay, {
-  type DisplayElement,
+  type DisplayGenerator,
 } from '../rdfa-editor/configurable-rdfa-display.gts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
@@ -24,12 +24,21 @@ import PropertyDetails from '../rdfa-editor/property-details.gts';
 const ELI = namespace('http://data.europa.eu/eli/ontology#', 'eli');
 
 // TODO move these to be config supplied fuctions
-export function humanReadablePredicateDisplay(
-  triple: OutgoingTriple,
-): DisplayElement[] {
-  return [{ strong: 'predicate:' }, triple.predicate];
-}
-export function humanReadableResourceName(node: PNode): DisplayElement[] {
+const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
+  triple,
+) => {
+  return {
+    meta: { title: triple.predicate },
+    elements: [
+      { strong: 'predicate:' },
+      triple.predicate.split(/[/#]/).at(-1) ?? triple.predicate,
+    ],
+  };
+};
+const humanReadableResourceName: DisplayGenerator<PNode> = (
+  node,
+  { controller },
+) => {
   const subject = node.attrs['subject'] as string;
   const type = optionMap(
     (triple) => triple.object?.value,
@@ -41,13 +50,19 @@ export function humanReadableResourceName(node: PNode): DisplayElement[] {
         (triple) => triple.object?.value,
         getOutgoingTriple(node.attrs, ELI('title')),
       );
-      return [{ pill: 'Besluit' }, title ?? subject];
+      const titleNode = title
+        ? getNodeByRdfaId(controller.mainEditorState, title)
+        : undefined;
+      return [
+        { pill: 'Besluit' },
+        titleNode?.value.textContent ?? title ?? subject,
+      ];
     } else {
       return [{ strong: `${type.split(/[/#]/).at(-1)}:` }, subject];
     }
   }
   return [subject];
-}
+};
 
 export interface ResourceInfoSig {
   Args: {
@@ -98,6 +113,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
         <ConfigurableRdfaDisplay
           @value={{this.node}}
           @generator={{humanReadableResourceName}}
+          @controller={{@controller}}
         />
         <AuButton
           @hideText={{true}}
@@ -114,6 +130,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
                 <ConfigurableRdfaDisplay
                   @value={{prop}}
                   @generator={{humanReadablePredicateDisplay}}
+                  @controller={{@controller}}
                 />
                 {{#if (eq prop.object.termType "ResourceNode")}}
                   <ResourceInfo

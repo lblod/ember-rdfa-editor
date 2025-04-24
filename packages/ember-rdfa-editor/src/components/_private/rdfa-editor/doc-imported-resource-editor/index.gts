@@ -267,10 +267,13 @@ export default class DocImportedResourceEditor extends Component<Sig> {
                     class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
                   >
                     <div class="au-u-padding-tiny">
-                      <ConfigurableRdfaDisplay
-                        @value={{prop}}
-                        @generator={{predicateDisplay}}
-                      />
+                      {{#if @controller}}
+                        <ConfigurableRdfaDisplay
+                          @value={{prop}}
+                          @generator={{predicateDisplay}}
+                          @controller={{@controller}}
+                        />
+                      {{/if}}
                       <PropertyDetails
                         @controller={{@controller}}
                         @prop={{prop}}

@@ -333,6 +333,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
                 <ConfigurableRdfaDisplay
                   @value={{prop}}
                   @generator={{predicateDisplay}}
+                  @controller={{@controller}}
                 />
                 <PropertyDetails
                   @controller={{@controller}}
