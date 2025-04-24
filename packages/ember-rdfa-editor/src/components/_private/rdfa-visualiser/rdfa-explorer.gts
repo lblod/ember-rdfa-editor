@@ -3,15 +3,14 @@ import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { keepLatestTask, timeout } from 'ember-concurrency';
 import t from 'ember-intl/helpers/t';
-import { on } from '@ember/modifier';
-import { fn } from '@ember/helper';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
-import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import type SayController from '#root/core/say-controller.ts';
 import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/index.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { type RdfaInfo } from '#root/plugins/rdfa-info/plugin.ts';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
+import ResourceInfo from '#root/components/_private/rdfa-visualiser/resource-info.gts';
 
 interface Sig {
   Args: {
@@ -31,13 +30,14 @@ export default class RdfaExplorer extends Component<Sig> {
   computeMappingsTask = keepLatestTask(async () => {
     const abortController = new AbortController();
     try {
+      // Wait until after interaction (e.g. typing) has been rendered...
       await timeout(1);
       const maps = await this.rdfaInfo?.computeMappingsAsync(
         abortController.signal,
       );
       this.subjects = Array.from(maps.topLevelSubjects);
       this.isRunning = false;
-      await timeout(200);
+      await timeout(1000);
     } finally {
       abortController.abort();
     }
@@ -75,13 +75,12 @@ export default class RdfaExplorer extends Component<Sig> {
         {{t "ember-rdfa-editor.utils.loading"}}
       </AuLoader>
     {{/if}}
-    <ul>
+    <AuList @divider={{true}} as |Item|>
       {{#each this.subjects as |subject|}}
-        <li><AuButton
-            @skin="link"
-            {{on "click" (fn this.goToSubject subject)}}
-          >{{subject}}</AuButton></li>
+        <Item>
+          <ResourceInfo @controller={{@controller}} @subject={{subject}} />
+        </Item>
       {{/each}}
-    </ul>
+    </AuList>
   </template>
 }
