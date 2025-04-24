@@ -84,6 +84,7 @@ ember-rdfa-editor:
       right: Rechts uitlijnen
       justify: Uitvullen
   utils:
+    required: Verplicht
     save: Opslaan
     cancel: Annuleren
     back: Terug
@@ -97,3 +98,22 @@ ember-rdfa-editor:
   text-styles: Tekststijlen
   notifications:
     paste-size-limit-reached: Limiet voor plakgrootte bereikt, probeer het opnieuw met een kleinere afbeelding of gebruik een hulpprogramma om de grootte aan te passen
+  linking-ui-poc:
+    button:
+      label: Voeg relatie toe
+    modal:
+      title: Voeg relatie toe
+      form:
+        fields:
+          predicate:
+            label: Relatie-type
+            validation:
+              required: Gelieve een relatie-type te selecteren
+          subject:
+            label: Onderwerp
+            validation:
+              required: Gelieve een onderwerp te selecteren
+        submit:
+          label: Invoegen
+        cancel:
+          label: Annuleren

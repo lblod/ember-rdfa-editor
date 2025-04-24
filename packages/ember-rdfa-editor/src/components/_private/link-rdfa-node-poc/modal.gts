@@ -24,6 +24,8 @@ import * as yup from 'yup';
 import { validateYup } from 'ember-headless-form-yup';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert.js';
 import { get } from '@ember/helper';
+import t from 'ember-intl/helpers/t';
+import { unwrap } from '#root/utils/_private/option.ts';
 
 type TermOptionGeneratorResult<TermType extends SayTerm> =
   | TermOption<TermType>[]
@@ -76,8 +78,16 @@ type FormData = {
 };
 
 const formSchema = yup.object({
-  predicate: yup.object().required('Gelieve een relatie-type te selecteren'),
-  subject: yup.object().required('Gelieve een onderwerp te selecteren'),
+  predicate: yup
+    .object()
+    .required(
+      'ember-rdfa-editor.linking-ui-poc.modal.form.fields.predicate.validation.required',
+    ),
+  subject: yup
+    .object()
+    .required(
+      'ember-rdfa-editor.linking-ui-poc.modal.form.fields.subject.validation.required',
+    ),
 });
 
 export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
@@ -135,7 +145,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
   <template>
     <WithUniqueId as |formId|>
       <AuModal @modalOpen={{true}} @closeModal={{this.onCancel}} ...attributes>
-        <:title>Voeg relatie toe</:title>
+        <:title>{{t "ember-rdfa-editor.linking-ui-poc.modal.title"}}</:title>
 
         <:body>
           <HeadlessForm
@@ -150,8 +160,14 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
             {{this.assignResetForm form.reset}}
             <form.Field @name="predicate" as |field|>
               <AuFormRow>
-                <AuLabel for={{field.id}} @required={{true}}>
-                  Relatie-type
+                <AuLabel
+                  for={{field.id}}
+                  @required={{true}}
+                  @requiredLabel={{t "ember-rdfa-editor.utils.required"}}
+                >
+                  {{t
+                    "ember-rdfa-editor.linking-ui-poc.modal.form.fields.predicate.label"
+                  }}
                   <AuBadge
                     @icon={{QuestionCircleIcon}}
                     @size="small"
@@ -190,7 +206,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                     @icon="alert-triangle"
                   >
                     {{#let (get errors 0) as |error|}}
-                      {{error.message}}
+                      {{t (unwrap error.message)}}
                     {{/let}}
                   </AuAlert>
                 </field.Errors>
@@ -198,8 +214,14 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
             </form.Field>
             <form.Field @name="subject" as |field|>
               <AuFormRow>
-                <AuLabel for={{field.id}} @required={{true}}>
-                  Onderwerp
+                <AuLabel
+                  for={{field.id}}
+                  @required={{true}}
+                  @requiredLabel={{t "ember-rdfa-editor.utils.required"}}
+                >
+                  {{t
+                    "ember-rdfa-editor.linking-ui-poc.modal.form.fields.subject.label"
+                  }}
                   <AuBadge
                     @icon={{QuestionCircleIcon}}
                     @size="small"
@@ -239,18 +261,19 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                     @icon="alert-triangle"
                   >
                     {{#let (get errors 0) as |error|}}
-                      {{error.message}}
+                      {{t (unwrap error.message)}}
                     {{/let}}
                   </AuAlert>
                 </field.Errors>
               </AuFormRow>
             </form.Field>
             <AuButtonGroup>
-              <AuButton form={{formId}} type="submit">Invoegen</AuButton>
-              <AuButton
-                @skin="secondary"
-                {{on "click" this.onCancel}}
-              >Annuleren</AuButton>
+              <AuButton form={{formId}} type="submit">{{t
+                  "ember-rdfa-editor.linking-ui-poc.modal.form.submit.label"
+                }}</AuButton>
+              <AuButton @skin="secondary" {{on "click" this.onCancel}}>{{t
+                  "ember-rdfa-editor.linking-ui-poc.modal.form.cancel.label"
+                }}</AuButton>
             </AuButtonGroup>
           </HeadlessForm>
         </:body>
