@@ -6,27 +6,11 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import type SayController from '#root/core/say-controller.ts';
+import { type DisplayElement, type DisplayGenerator, type DisplayMeta } from '#root/plugins/rdfa-info/types.ts';
 
 export const predicateDisplay: DisplayGenerator<OutgoingTriple> = (triple) => {
   return [{ strong: 'predicate:' }, triple.predicate];
 };
-
-export type StringDisplay = string;
-export type StrongDisplay = { strong: string };
-export type PillDisplay = { pill: string };
-export type DisplayElement = StringDisplay | StrongDisplay | PillDisplay;
-export type DisplayMeta = { title?: string };
-export type DisplayConfig =
-  | { meta: DisplayMeta; elements: DisplayElement[] }
-  | DisplayElement[];
-
-interface GeneratorContext {
-  controller: SayController;
-}
-export type DisplayGenerator<T> = (
-  value: T,
-  context: GeneratorContext,
-) => DisplayConfig | Promise<DisplayConfig>;
 
 interface Sig<T> {
   Args: {

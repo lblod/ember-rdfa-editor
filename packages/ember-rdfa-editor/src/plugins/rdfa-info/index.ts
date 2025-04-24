@@ -5,3 +5,4 @@ export {
   getRdfaIds,
   getSubjects,
 } from './utils.ts';
+export * from './types.ts';

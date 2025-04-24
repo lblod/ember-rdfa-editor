@@ -74,9 +74,59 @@ import {
 } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 import { getOwner } from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { isSome, optionMap, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import applyDevTools from 'prosemirror-dev-tools';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { getNodeByRdfaId, type DisplayGenerator, type RdfaVisualizerConfig } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
+import { getOutgoingTriple, namespace } from '@lblod/ember-rdfa-editor/utils/namespace';
+
+const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
+  triple,
+) => {
+  return {
+    meta: { title: triple.predicate },
+    elements: [
+      { strong: 'predicate:' },
+      triple.predicate.split(/[/#]/).at(-1) ?? triple.predicate,
+    ],
+  };
+};
+
+const ELI = namespace('http://data.europa.eu/eli/ontology#', 'eli');
+const RDF = namespace(
+  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  'rdf',
+);
+
+const humanReadableResourceName: DisplayGenerator<PNode> = (
+  node,
+  { controller },
+) => {
+  const subject = node.attrs['subject'] as string;
+  const type = optionMap(
+    (triple) => triple.object?.value,
+    getOutgoingTriple(node.attrs, RDF('type')),
+  );
+  if (isSome(type)) {
+    if (type === 'http://data.vlaanderen.be/ns/besluit#Besluit') {
+      const title = optionMap(
+        (triple) => triple.object?.value,
+        getOutgoingTriple(node.attrs, ELI('title')),
+      );
+      const titleNode = title
+        ? getNodeByRdfaId(controller.mainEditorState, title)
+        : undefined;
+      return [
+        { pill: 'Besluit' },
+        titleNode?.value.textContent ?? title ?? subject,
+      ];
+    } else {
+      return [{ strong: `${type.split(/[/#]/).at(-1)}:` }, subject];
+    }
+  }
+  return [subject];
+};
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -84,17 +134,21 @@ export default class EditableBlockController extends Controller {
   RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
 
-  propertyPredicates = [
-    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-    'http://www.w3.org/ns/prov#value',
-  ];
-
-  propertyObjects = [
-    'http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt',
-    'http://data.vlaanderen.be/ns/besluit#Agendapunt',
-  ];
-
-  backlinkPredicates = ['http://www.w3.org/ns/prov#wasGeneratedBy'];
+  rdfa = {
+    propertyPredicates: [
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+      'http://www.w3.org/ns/prov#value',
+    ],
+    propertyObjects: [
+      'http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt',
+      'http://data.vlaanderen.be/ns/besluit#Agendapunt',
+    ],
+    backlinkPredicates: ['http://www.w3.org/ns/prov#wasGeneratedBy'],
+    visualizerConfig: {
+      predicate: humanReadablePredicateDisplay,
+      ResourceNode: humanReadableResourceName,
+    } as RdfaVisualizerConfig,
+  };
 
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;

@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { localCopy } from 'tracked-toolbox';
-import { eq } from 'ember-truth-helpers';
+import { eq, or } from 'ember-truth-helpers';
 import { type PNode } from '#root/prosemirror-aliases.ts';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import { ChevronRightIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-right';
@@ -10,57 +10,16 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import type SayController from '#root/core/say-controller.ts';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
-import { getOutgoingTriple, namespace } from '#root/utils/namespace.ts';
-import { RDF } from '#root/utils/_private/namespaces.ts';
-import { isSome, optionMap } from '#root/utils/_private/option.ts';
-import { getNodeByRdfaId, getNodesBySubject } from '#root/utils/rdfa-utils.ts';
-import ConfigurableRdfaDisplay, {
-  type DisplayGenerator,
-} from '../rdfa-editor/configurable-rdfa-display.gts';
+import { getNodesBySubject } from '#root/utils/rdfa-utils.ts';
+import ConfigurableRdfaDisplay, { predicateDisplay } from '../rdfa-editor/configurable-rdfa-display.gts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
 import PropertyDetails from '../rdfa-editor/property-details.gts';
+import type { DisplayGenerator, RdfaVisualizerConfig } from '#root/plugins/rdfa-info/types.ts';
+import { get } from '@ember/helper';
 
-const ELI = namespace('http://data.europa.eu/eli/ontology#', 'eli');
-
-// TODO move these to be config supplied fuctions
-const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
-  triple,
-) => {
-  return {
-    meta: { title: triple.predicate },
-    elements: [
-      { strong: 'predicate:' },
-      triple.predicate.split(/[/#]/).at(-1) ?? triple.predicate,
-    ],
-  };
-};
-const humanReadableResourceName: DisplayGenerator<PNode> = (
-  node,
-  { controller },
-) => {
+const backupResourceDisplay: DisplayGenerator<PNode> = (node) => {
   const subject = node.attrs['subject'] as string;
-  const type = optionMap(
-    (triple) => triple.object?.value,
-    getOutgoingTriple(node.attrs, RDF('type')),
-  );
-  if (isSome(type)) {
-    if (type === 'http://data.vlaanderen.be/ns/besluit#Besluit') {
-      const title = optionMap(
-        (triple) => triple.object?.value,
-        getOutgoingTriple(node.attrs, ELI('title')),
-      );
-      const titleNode = title
-        ? getNodeByRdfaId(controller.mainEditorState, title)
-        : undefined;
-      return [
-        { pill: 'Besluit' },
-        titleNode?.value.textContent ?? title ?? subject,
-      ];
-    } else {
-      return [{ strong: `${type.split(/[/#]/).at(-1)}:` }, subject];
-    }
-  }
   return [subject];
 };
 
@@ -71,6 +30,7 @@ export interface ResourceInfoSig {
     // In theory this could be used for optimisation but currently it is not...
     node?: PNode;
     expanded?: boolean;
+    displayConfig: RdfaVisualizerConfig;
   };
 }
 
@@ -112,7 +72,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
       {{#if this.node}}
         <ConfigurableRdfaDisplay
           @value={{this.node}}
-          @generator={{humanReadableResourceName}}
+          @generator={{(or @displayConfig.ResourceNode backupResourceDisplay)}}
           @controller={{@controller}}
         />
         <AuButton
@@ -129,13 +89,21 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
               <Item class="au-u-padding-tiny">
                 <ConfigurableRdfaDisplay
                   @value={{prop}}
-                  @generator={{humanReadablePredicateDisplay}}
+                  @generator={{(or @displayConfig.predicate predicateDisplay)}}
                   @controller={{@controller}}
                 />
                 {{#if (eq prop.object.termType "ResourceNode")}}
                   <ResourceInfo
                     @controller={{@controller}}
                     @subject={{prop.object.value}}
+                    @displayConfig={{@displayConfig}}
+                  />
+                {{else if (get @displayConfig prop.object.termType)}}
+                  <ResourceInfo
+                    @controller={{@controller}}
+                    @subject={{prop.object.value}}
+                    {{! @glint-expect-error}}
+                    @displayConfig={{(get @displayConfig prop.object.termType)}}
                   />
                 {{else}}
                   <PropertyDetails @prop={{prop}} @controller={{@controller}} />

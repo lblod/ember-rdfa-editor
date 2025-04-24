@@ -6,7 +6,7 @@ import t from 'ember-intl/helpers/t';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import type SayController from '#root/core/say-controller.ts';
-import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/index.ts';
+import { rdfaInfoPluginKey, type RdfaVisualizerConfig } from '#root/plugins/rdfa-info/index.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { type RdfaInfo } from '#root/plugins/rdfa-info/plugin.ts';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
@@ -16,6 +16,7 @@ interface Sig {
   Args: {
     controller: SayController;
     node?: ResolvedPNode;
+    displayConfig: RdfaVisualizerConfig;
   };
 }
 
@@ -78,7 +79,11 @@ export default class RdfaExplorer extends Component<Sig> {
     <AuList @divider={{true}} as |Item|>
       {{#each this.subjects as |subject|}}
         <Item>
-          <ResourceInfo @controller={{@controller}} @subject={{subject}} />
+          <ResourceInfo
+            @controller={{@controller}}
+            @subject={{subject}}
+            @displayConfig={{@displayConfig}}
+          />
         </Item>
       {{/each}}
     </AuList>

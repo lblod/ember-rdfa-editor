@@ -27,13 +27,14 @@
           <this.VisualiserCard
             @controller={{this.rdfaEditor}}
             @node={{this.activeNode}}
+            @displayConfig={{this.rdfa.visualizerConfig}}
           />
           <this.RdfaEditor
             @node={{this.activeNode}}
             @controller={{this.rdfaEditor}}
-            @propertyPredicates={{this.propertyPredicates}}
-            @propertyObjects={{this.propertyObjects}}
-            @backlinkPredicates={{this.backlinkPredicates}}
+            @propertyPredicates={{this.rdfa.propertyPredicates}}
+            @propertyObjects={{this.rdfa.propertyObjects}}
+            @backlinkPredicates={{this.rdfa.backlinkPredicates}}
           />
           {{#if this.activeNode}}
             <this.DebugInfo @node={{this.activeNode}} />

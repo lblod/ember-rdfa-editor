@@ -9,6 +9,7 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import type SayController from '#root/core/say-controller.ts';
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
+import { type RdfaVisualizerConfig } from '#root/plugins/rdfa-info/types.ts';
 import RdfaExplorer from './rdfa-explorer.gts';
 
 interface Sig {
@@ -17,6 +18,7 @@ interface Sig {
     node?: ResolvedPNode;
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
+    displayConfig: RdfaVisualizerConfig;
   };
 }
 export default class VisualiserCard extends Component<Sig> {
@@ -49,7 +51,11 @@ export default class VisualiserCard extends Component<Sig> {
         </Section>
         {{#if this.expanded}}
           <Section>
-            <RdfaExplorer @controller={{@controller}} @node={{@node}} />
+            <RdfaExplorer
+              @controller={{@controller}}
+              @node={{@node}}
+              @displayConfig={{@displayConfig}}
+            />
           </Section>
         {{/if}}
       </AuPanel>
