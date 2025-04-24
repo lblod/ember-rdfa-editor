@@ -9,7 +9,6 @@ import LinkRdfaNodeModal, {
   type PredicateOptionGenerator,
   type SubjectOptionGenerator,
   type SubmissionBody,
-  type TermOption,
 } from './modal.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -17,10 +16,6 @@ import type SayController from '#root/core/say-controller.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
 import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
-import type {
-  ResourceNodeTerm,
-  SayNamedNode,
-} from '#root/core/say-data-factory/index.ts';
 import t from 'ember-intl/helpers/t';
 
 type LinkRdfaNodeButtonSig = {
@@ -28,6 +23,8 @@ type LinkRdfaNodeButtonSig = {
   Args: {
     controller: SayController;
     node: ResolvedPNode;
+    predicateOptionGenerator: PredicateOptionGenerator;
+    subjectOptionGenerator: SubjectOptionGenerator;
   };
 };
 export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig> {
@@ -78,62 +75,6 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
     }
   }
 
-  predicateOptionGenerator: PredicateOptionGenerator = ({
-    searchString = '',
-  } = {}) => {
-    const options: TermOption<SayNamedNode>[] = [
-      {
-        label: 'Titel',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        term: sayDataFactory.namedNode('eli:title'),
-      },
-      {
-        label: 'Beschrijving',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('dct:description'),
-      },
-      {
-        label: 'Motivering',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('besluit:motivering'),
-      },
-    ];
-    return options.filter(
-      (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  };
-
-  subjectOptionGenerator: SubjectOptionGenerator = ({
-    searchString = '',
-  } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
-      {
-        label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
-        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
-      },
-      {
-        label: 'Artikel 1',
-        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
-      },
-    ];
-    return options.filter(
-      (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  };
-
   <template>
     <AuButton
       @icon={{AddIcon}}
@@ -149,8 +90,8 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
         @selectedObject={{this.selectedObject}}
         @onSubmit={{this.onFormSubmit}}
         @onCancel={{this.onFormCancel}}
-        @predicateOptionGenerator={{this.predicateOptionGenerator}}
-        @subjectOptionGenerator={{this.subjectOptionGenerator}}
+        @predicateOptionGenerator={{@predicateOptionGenerator}}
+        @subjectOptionGenerator={{@subjectOptionGenerator}}
       />
     {{/if}}
   </template>
