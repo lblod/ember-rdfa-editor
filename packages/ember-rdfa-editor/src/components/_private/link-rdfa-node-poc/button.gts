@@ -142,7 +142,7 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
       {{on "click" this.openModal}}
       ...attributes
     >
-      {{t 'ember-rdfa-editor.linking-ui-poc.button.label'}}
+      {{t "ember-rdfa-editor.linking-ui-poc.button.label"}}
     </AuButton>
     {{#if this.modalOpen}}
       <LinkRdfaNodeModal
