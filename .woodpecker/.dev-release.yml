@@ -3,7 +3,7 @@ steps:
     image: node:22-slim
     directory: packages/ember-rdfa-editor
     commands:
-      - npm version --no-git-tag-version $(npm pkg get version | sed 's/"//g')-dev.${CI_COMMIT_SHA}
+      - npm version --no-git-tag-version ${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}
   publish:
     image: node:22-slim
     commands:
@@ -14,9 +14,10 @@ steps:
       - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
       - pnpm i --frozen-lockfile
       - pnpm build
-      - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
+      - pnpm publish packages/ember-rdfa-editor --access public --tag dev --no-git-checks
     environment:
       NPM_ACCESS_TOKEN:
         from_secret: npm_access_token
 when:
-  - event: manual
+  event: tag
+  ref: refs/tags/@lblod/ember-rdfa-editor@*-dev.*
