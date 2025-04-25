@@ -2,7 +2,6 @@ import AuButton, {
   type AuButtonSignature,
 } from '@appuniversum/ember-appuniversum/components/au-button';
 import { AddIcon } from '@appuniversum/ember-appuniversum/components/icons/add';
-import { on } from '@ember/modifier/on';
 import Component from '@glimmer/component';
 import { tracked } from 'tracked-built-ins';
 import LinkRdfaNodeModal, {
@@ -17,6 +16,7 @@ import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
 import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
 import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
 
 type LinkRdfaNodeButtonSig = {
   Element: AuButtonSignature['Element'];
