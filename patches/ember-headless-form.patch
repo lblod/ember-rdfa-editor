@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 3896eb3170897db1f5e72d12093f11894dc74857..50aab199e4ed5e8e6f51bb5a7875fcafc8103d1f 100644
+--- a/package.json
++++ b/package.json
+@@ -99,8 +99,7 @@
+       "types": "./dist/*.d.ts",
+       "default": "./dist/*.js"
+     },
+-    "./addon-main.js": "./addon-main.js",
+-    "./-private/*": null
++    "./addon-main.js": "./addon-main.js"
+   },
+   "typesVersions": {
+     "*": {
