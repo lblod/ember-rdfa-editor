@@ -87,6 +87,8 @@ import {
   sayDataFactory,
   type SayNamedNode,
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { restartableTask, timeout } from 'ember-concurrency';
+import type { Promisify } from 'test-app/utils/types';
 
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
@@ -221,38 +223,67 @@ export default class EditableBlockController extends Controller {
     console.warn('Live toggling plugins is currently not supported');
   }
 
-  predicateOptionGenerator: PredicateOptionGenerator = ({
-    searchString = '',
-  } = {}) => {
-    const options: TermOption<SayNamedNode>[] = [
-      {
-        label: 'Titel',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        term: sayDataFactory.namedNode('eli:title'),
-      },
-      {
-        label: 'Beschrijving',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('dct:description'),
-      },
-      {
-        label: 'Motivering',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('besluit:motivering'),
-      },
-    ];
-    return options.filter(
-      (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  };
+  predicateOptionsTask = restartableTask<
+    unknown,
+    Promisify<PredicateOptionGenerator>
+  >(async ({ searchString } = {}) => {
+    if (!searchString) {
+      return [];
+    }
+
+    await timeout(300);
+    const url = `https://lov.linkeddata.es/dataset/lov/api/v2/term/autocomplete?q=${searchString}&type=property&page_size=10`;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    try {
+      const response = await fetch(url, { signal });
+      const result = (await response.json()) as Record<string, unknown>;
+      const results = result['results'] as Record<string, unknown>[];
+      const predicateOptionTerms: TermOption<SayNamedNode>[] = results.map(
+        (result) => {
+          return {
+            term: sayDataFactory.namedNode(result['uri'] as string),
+          };
+        },
+      );
+      return predicateOptionTerms;
+    } finally {
+      controller.abort();
+    }
+  });
+
+  // predicateOptionGenerator: PredicateOptionGenerator = ({
+  //   searchString = '',
+  // } = {}) => {
+  //   const options: TermOption<SayNamedNode>[] = [
+  //     {
+  //       label: 'Titel',
+  //       description:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  //       term: sayDataFactory.namedNode('eli:title'),
+  //     },
+  //     {
+  //       label: 'Beschrijving',
+  //       description:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+  //       term: sayDataFactory.namedNode('dct:description'),
+  //     },
+  //     {
+  //       label: 'Motivering',
+  //       description:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+  //       term: sayDataFactory.namedNode('besluit:motivering'),
+  //     },
+  //   ];
+  //   return options.filter(
+  //     (option) =>
+  //       option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+  //       option.description
+  //         ?.toLowerCase()
+  //         .includes(searchString.toLowerCase()) ||
+  //       option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+  //   );
+  // };
 
   subjectOptionGenerator: SubjectOptionGenerator = ({
     searchString = '',
