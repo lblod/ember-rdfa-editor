@@ -16,7 +16,8 @@
     "prettier": "prettier --write .",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "tapp": "pnpm --filter test-app",
-    "release": "tsx scripts/release/run.mts"
+    "release": "tsx scripts/release/run.mts",
+    "dev-release": "tsx scripts/dev-release/run.mts"
   },
   "pnpm": {
     "peerDependencyRules": {

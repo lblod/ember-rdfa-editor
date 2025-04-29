@@ -179,7 +179,7 @@ async function getRemoteForBranch(branch: string) {
   return response?.stdout;
 }
 
-async function getRemote() {
+export async function getRemote() {
   const branch = await getCurrentBranch();
   return branch ? getRemoteForBranch(branch) : null;
 }
