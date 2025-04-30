@@ -22,7 +22,21 @@
         />
       </:default>
       <:aside>
-        <Sidebar>
+        <Sidebar as |Sb|>
+          <Sb.Collapsible
+            @title={{t "ember-rdfa-editor.insert"}}
+            @expanded={{true}}
+            as |Item|
+          >
+            <Item>
+              <this.LinkRdfaNodeButton
+                @controller={{this.rdfaEditor}}
+                @node={{this.activeNode}}
+                @predicateOptionGenerator={{this.predicateOptionGenerator}}
+                @subjectOptionGenerator={{this.subjectOptionGenerator}}
+              />
+            </Item>
+          </Sb.Collapsible>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
           <this.RdfaEditor
             @node={{this.activeNode}}
