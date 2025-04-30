@@ -225,7 +225,7 @@ export default class AttributeEditor extends Component<Signature> {
                     </WithUniqueId>
                   {{else}}
                     <p><strong>{{key}}</strong></p>
-                    <pre>{{if
+                    <pre class="say-attribute-editor__formatted-content">{{if
                         value
                         (this.formatValue value)
                         "<No value>"

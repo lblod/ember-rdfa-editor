@@ -68,6 +68,7 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
+import LinkRdfaNodeButton from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/button';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -79,7 +80,17 @@ import {
   optionMap,
   unwrap,
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import applyDevTools from 'prosemirror-dev-tools';
+
+import type {
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+  TermOption,
+} from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
+import {
+  ResourceNodeTerm,
+  sayDataFactory,
+  type SayNamedNode,
+} from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
@@ -141,6 +152,7 @@ export default class EditableBlockController extends Controller {
   AttributeEditor = AttributeEditor;
   RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
+  LinkRdfaNodeButton = LinkRdfaNodeButton;
 
   rdfa = {
     propertyPredicates: [
@@ -265,7 +277,6 @@ export default class EditableBlockController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent);
-    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
@@ -274,4 +285,60 @@ export default class EditableBlockController extends Controller {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
+
+  predicateOptionGenerator: PredicateOptionGenerator = ({
+    searchString = '',
+  } = {}) => {
+    const options: TermOption<SayNamedNode>[] = [
+      {
+        label: 'Titel',
+        description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        term: sayDataFactory.namedNode('eli:title'),
+      },
+      {
+        label: 'Beschrijving',
+        description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+        term: sayDataFactory.namedNode('dct:description'),
+      },
+      {
+        label: 'Motivering',
+        description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+        term: sayDataFactory.namedNode('besluit:motivering'),
+      },
+    ];
+    return options.filter(
+      (option) =>
+        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+        option.description
+          ?.toLowerCase()
+          .includes(searchString.toLowerCase()) ||
+        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+    );
+  };
+
+  subjectOptionGenerator: SubjectOptionGenerator = ({
+    searchString = '',
+  } = {}) => {
+    const options: TermOption<ResourceNodeTerm>[] = [
+      {
+        label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
+        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+      },
+      {
+        label: 'Artikel 1',
+        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+      },
+    ];
+    return options.filter(
+      (option) =>
+        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+        option.description
+          ?.toLowerCase()
+          .includes(searchString.toLowerCase()) ||
+        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+    );
+  };
 }
