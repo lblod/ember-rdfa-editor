@@ -79,7 +79,7 @@ import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import applyDevTools from 'prosemirror-dev-tools';
 import type {
   PredicateOptionGenerator,
-  SubjectOptionGenerator,
+  TargetOptionGenerator,
   TermOption,
 } from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
 import {
@@ -232,6 +232,13 @@ export default class EditableBlockController extends Controller {
         term: sayDataFactory.namedNode('eli:title'),
       },
       {
+        label: 'Has Titel',
+        description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        term: sayDataFactory.namedNode('eli:title'),
+        inverse: true,
+      },
+      {
         label: 'Beschrijving',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
@@ -254,7 +261,7 @@ export default class EditableBlockController extends Controller {
     );
   };
 
-  subjectOptionGenerator: SubjectOptionGenerator = ({
+  subjectOptionGenerator: TargetOptionGenerator = ({
     searchString = '',
   } = {}) => {
     const options: TermOption<ResourceNodeTerm>[] = [
@@ -264,6 +271,28 @@ export default class EditableBlockController extends Controller {
       },
       {
         label: 'Artikel 1',
+        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+      },
+    ];
+    return options.filter(
+      (option) =>
+        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+        option.description
+          ?.toLowerCase()
+          .includes(searchString.toLowerCase()) ||
+        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+    );
+  };
+  objectOptionGenerator: TargetOptionGenerator = ({
+    searchString = '',
+  } = {}) => {
+    const options: TermOption<ResourceNodeTerm>[] = [
+      {
+        label: 'Target 1',
+        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+      },
+      {
+        label: 'Target 2',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
       },
     ];

@@ -40,19 +40,19 @@ export type PredicateOptionGenerator = (
   args?: PredicateOptionGeneratorArgs,
 ) => TermOptionGeneratorResult<SayNamedNode>;
 
-type SubjectOptionGeneratorArgs = {
+type TargetOptionGeneratorArgs = {
   selectedObject?: SayTerm;
   selectedPredicate?: SayTerm;
   searchString?: string;
 };
 
-export type SubjectOptionGenerator = (
-  args?: SubjectOptionGeneratorArgs,
+export type TargetOptionGenerator = (
+  args?: TargetOptionGeneratorArgs,
 ) => TermOptionGeneratorResult<ResourceNodeTerm>;
 
 export type SubmissionBody = {
-  subject: ResourceNodeTerm;
-  predicate: SayNamedNode;
+  target: TermOption<ResourceNodeTerm>;
+  predicate: TermOption<SayNamedNode>;
 };
 
 type LinkRdfaNodeModalSig = {
@@ -62,7 +62,8 @@ type LinkRdfaNodeModalSig = {
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     predicateOptionGenerator: PredicateOptionGenerator;
-    subjectOptionGenerator: SubjectOptionGenerator;
+    subjectOptionGenerator: TargetOptionGenerator;
+    objectOptionGenerator: TargetOptionGenerator;
   };
 };
 
@@ -70,11 +71,12 @@ export type TermOption<TermType extends SayTerm> = {
   label?: string;
   description?: string;
   term: TermType;
+  inverse?: boolean;
 };
 
 type FormData = {
   predicate?: TermOption<SayNamedNode>;
-  subject?: TermOption<ResourceNodeTerm>;
+  target?: TermOption<ResourceNodeTerm>;
 };
 
 const formSchema = yup.object({
@@ -83,7 +85,7 @@ const formSchema = yup.object({
     .required(
       'ember-rdfa-editor.linking-ui-poc.modal.form.fields.predicate.validation.required',
     ),
-  subject: yup
+  target: yup
     .object()
     .required(
       'ember-rdfa-editor.linking-ui-poc.modal.form.fields.subject.validation.required',
@@ -100,8 +102,8 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
 
   onSubmit = (data: Required<FormData>) => {
     this.args.onSubmit({
-      subject: data.subject.term,
-      predicate: data.predicate.term,
+      target: data.target,
+      predicate: data.predicate,
     });
   };
 
@@ -118,11 +120,11 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
     validationFn();
   };
 
-  setSubject = (
+  setTarget = (
     validationFn: () => void,
     option: TermOption<ResourceNodeTerm>,
   ) => {
-    this.data.subject = option;
+    this.data.target = option;
     validationFn();
   };
 
@@ -134,8 +136,13 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
     return options;
   };
 
-  searchSubjects = async (searchString: string) => {
-    const options = await this.args.subjectOptionGenerator({
+  searchTargets = async (searchString: string) => {
+    console.log('hi');
+    console.log(this.data.predicate);
+    const generatorFunction = this.data.predicate?.inverse
+      ? this.args.objectOptionGenerator
+      : this.args.subjectOptionGenerator;
+    const options = await generatorFunction({
       searchString,
       selectedPredicate: this.data.predicate?.term,
       selectedObject: this.args.selectedObject,
@@ -212,7 +219,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                 </field.Errors>
               </AuFormRow>
             </form.Field>
-            <form.Field @name="subject" as |field|>
+            <form.Field @name="target" as |field|>
               <AuFormRow>
                 <AuLabel
                   for={{field.id}}
@@ -220,7 +227,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                   @requiredLabel={{t "ember-rdfa-editor.utils.required"}}
                 >
                   {{t
-                    "ember-rdfa-editor.linking-ui-poc.modal.form.fields.subject.label"
+                    "ember-rdfa-editor.linking-ui-poc.modal.form.fields.target.label"
                   }}
                   <AuBadge
                     @icon={{QuestionCircleIcon}}
@@ -231,11 +238,11 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                 <PowerSelect
                   id={{field.id}}
                   @selected={{field.value}}
-                  @onChange={{fn this.setSubject field.triggerValidation}}
+                  @onChange={{fn this.setTarget field.triggerValidation}}
                   @allowClear={{true}}
                   @disabled={{not this.data.predicate}}
-                  @options={{this.searchSubjects ""}}
-                  @search={{this.searchSubjects}}
+                  @options={{this.searchTargets ""}}
+                  @search={{this.searchTargets}}
                   @searchEnabled={{true}}
                   class="au-u-1-1"
                   as |option|

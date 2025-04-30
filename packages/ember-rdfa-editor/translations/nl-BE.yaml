@@ -110,9 +110,9 @@ ember-rdfa-editor:
             validation:
               required: Gelieve een relatie-type te selecteren
           subject:
-            label: Onderwerp
+            label: Doel
             validation:
-              required: Gelieve een onderwerp te selecteren
+              required: Gelieve een doel te selecteren
         submit:
           label: Invoegen
         cancel:
