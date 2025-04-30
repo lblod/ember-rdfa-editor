@@ -80,7 +80,6 @@ import {
   optionMap,
   unwrap,
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
-import applyDevTools from 'prosemirror-dev-tools';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
@@ -277,7 +276,6 @@ export default class EditableBlockController extends Controller {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent);
-    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }
