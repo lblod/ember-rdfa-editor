@@ -20,7 +20,9 @@
 }
 
 .say-container__main {
-  overflow: scroll;
+  position: relative;
+  min-height: 0;
+  flex-grow: 1;
 }
 
 .say-container__aside {
@@ -28,35 +30,17 @@
   bottom: 0;
   right: au-settings.$au-unit-small;
   max-width: 380px;
-  max-height: calc(100% - 44px);
+  max-height: 100%;
   overflow: auto;
   padding: au-settings.$au-unit-small au-settings.$au-unit-small +
     au-settings.$au-unit-tiny;
 
-  .say-container--toolbar-bottom & {
-    top: 0;
-    bottom: auto;
-  }
-
-  .say-container--paper.say-container--sidebar-right & {
-    top: 44px;
-  }
-
-  .say-container--paper.say-container--toolbar-bottom &,
-  .say-container--paper.say-container--toolbar-bottom.say-container--sidebar-right
-    & {
-    top: 0;
-  }
+  top: 0;
 
   @include au-tools.mq(1023px) {
     width: editor.$say-editor-sidebar-medium;
     max-width: editor.$say-editor-sidebar-medium;
-    min-height: calc(100% - 44px);
-
-    .say-container--paper.say-container--sidebar-right & {
-      padding: au-settings.$au-unit;
-      bottom: auto;
-    }
+    padding: au-settings.$au-unit;
   }
 
   @include au-tools.mq(1280px) {

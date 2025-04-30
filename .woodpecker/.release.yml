@@ -52,4 +52,6 @@ steps:
         from_secret: docker_password
 when:
   event: tag
-  ref: refs/tags/@lblod/ember-rdfa-editor@*
+  ref:
+    include: refs/tags/@lblod/ember-rdfa-editor@*
+    exclude: refs/tags/@lblod/ember-rdfa-editor@*-dev.*
