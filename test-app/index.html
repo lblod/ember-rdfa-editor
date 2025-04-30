@@ -18,6 +18,8 @@
     {{content-for "body"}}
 
     <script src="/@embroider/virtual/vendor.js"></script>
+    <!-- Needed for ember-inspector workaround. May be removed once it gets native vite support. -->
+    <script src="/node_modules/loader.js"></script>
     <script type="module">
       import Application from './app/app';
       import environment from './app/config/environment';
