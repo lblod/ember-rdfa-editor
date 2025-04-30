@@ -54,7 +54,6 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
         predicate: predicate.term.value,
         object: target.term,
       };
-      console.log(this.node.value.attrs);
       this.controller.doCommand(
         addProperty({
           resource: this.node.value.attrs['subject'] as string,
