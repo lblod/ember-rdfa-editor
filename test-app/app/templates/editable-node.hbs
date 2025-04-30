@@ -32,7 +32,7 @@
               <this.LinkRdfaNodeButton
                 @controller={{this.rdfaEditor}}
                 @node={{this.activeNode}}
-                @predicateOptionGenerator={{this.predicateOptionGenerator}}
+                @predicateOptionGenerator={{this.predicateOptionsTask.perform}}
                 @subjectOptionGenerator={{this.subjectOptionGenerator}}
               />
             </Item>
