@@ -49,7 +49,7 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
 
   onFormSubmit = (body: SubmissionBody) => {
     const { predicate, target } = body;
-    if (predicate.inverse) {
+    if (predicate.direction === 'property') {
       const property: OutgoingTriple = {
         predicate: predicate.term.value,
         object: target.term,
@@ -60,7 +60,7 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
           property,
         }),
       );
-    } else {
+    } else if (predicate.direction === 'backlink') {
       const backlink: IncomingTriple = {
         subject: target.term,
         predicate: predicate.term.value,

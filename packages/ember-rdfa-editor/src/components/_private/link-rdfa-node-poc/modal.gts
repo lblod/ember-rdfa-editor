@@ -71,7 +71,7 @@ export type TermOption<TermType extends SayTerm> = {
   label?: string;
   description?: string;
   term: TermType;
-  inverse?: boolean;
+  direction: 'backlink' | 'property';
 };
 
 type FormData = {
@@ -137,9 +137,10 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
   };
 
   searchTargets = async (searchString: string) => {
-    const generatorFunction = this.data.predicate?.inverse
-      ? this.args.objectOptionGenerator
-      : this.args.subjectOptionGenerator;
+    const generatorFunction =
+      this.data.predicate?.inverse === 'property'
+        ? this.args.objectOptionGenerator
+        : this.args.subjectOptionGenerator;
     const options = await generatorFunction({
       searchString,
       selectedPredicate: this.data.predicate?.term,
