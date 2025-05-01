@@ -295,25 +295,28 @@ export default class EditableBlockController extends Controller {
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         term: sayDataFactory.namedNode('eli:title'),
+        direction: 'backlink',
       },
       {
         label: 'Has Titel',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         term: sayDataFactory.namedNode('eli:title'),
-        inverse: true,
+        direction: 'property',
       },
       {
         label: 'Beschrijving',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
         term: sayDataFactory.namedNode('dct:description'),
+        direction: 'backlink',
       },
       {
         label: 'Motivering',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
         term: sayDataFactory.namedNode('besluit:motivering'),
+        direction: 'backlink',
       },
     ];
     return options.filter(
