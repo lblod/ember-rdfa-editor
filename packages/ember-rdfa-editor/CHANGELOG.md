@@ -1,5 +1,27 @@
 # @lblod/ember-rdfa-editor
 
+## 12.5.0
+
+### Minor Changes
+
+- [#1297](https://github.com/lblod/ember-rdfa-editor/pull/1297) [`f033208`](https://github.com/lblod/ember-rdfa-editor/commit/f033208b24dd7a13c0bab916b5be86d6b6bd9e93) Thanks [@piemonkey](https://github.com/piemonkey)! - Add a basic but configurable RDFa visualizer to the RDFa tools
+
+- [#1288](https://github.com/lblod/ember-rdfa-editor/pull/1288) [`8165571`](https://github.com/lblod/ember-rdfa-editor/commit/8165571aa1674cff2cd6480497abcd3ae61d3083) Thanks [@elpoelma](https://github.com/elpoelma)! - Move `test-app` to vite
+
+- [#1292](https://github.com/lblod/ember-rdfa-editor/pull/1292) [`84fc0a7`](https://github.com/lblod/ember-rdfa-editor/commit/84fc0a703ccccf277e604d6a2832db37084650c3) Thanks [@elpoelma](https://github.com/elpoelma)! - Add a user-friendly UI for creating relationships
+
+- [#1294](https://github.com/lblod/ember-rdfa-editor/pull/1294) [`ff31b17`](https://github.com/lblod/ember-rdfa-editor/commit/ff31b173c67cc1bfba527fc345e107786666ee9c) Thanks [@elpoelma](https://github.com/elpoelma)! - Add yup-based validation to backlink-editor form
+
+- [#1296](https://github.com/lblod/ember-rdfa-editor/pull/1296) [`2720af5`](https://github.com/lblod/ember-rdfa-editor/commit/2720af5af370c8273b75ccbec70e538a2db3c109) Thanks [@elpoelma](https://github.com/elpoelma)! - Simplify and improve styling of editor-container
+
+### Patch Changes
+
+- [#1296](https://github.com/lblod/ember-rdfa-editor/pull/1296) [`ed4cb45`](https://github.com/lblod/ember-rdfa-editor/commit/ed4cb458b71ca69d872d31e55b937c945e807952) Thanks [@elpoelma](https://github.com/elpoelma)! - Reorder `@forward` and `@use` rules to correctly expose variables and other configuration to consuming apps.
+
+- [#1300](https://github.com/lblod/ember-rdfa-editor/pull/1300) [`a539d43`](https://github.com/lblod/ember-rdfa-editor/commit/a539d43cb33b8805b9ad93672ba3faebf6931e17) Thanks [@elpoelma](https://github.com/elpoelma)! - Use `absolute` positioning instead of `fixed` positioning to position ember-velcro popups.
+  This ensures that these popups are still correctly positioned when the editor is used inside an embedded application in e.g. a shadow-root.
+  Check-out https://github.com/floating-ui/floating-ui/issues/2934 for more information about the issue with using the `fixed` strategy inside a shadow-root.
+
 ## 12.4.0
 
 ### Minor Changes
