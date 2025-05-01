@@ -1,5 +1,10 @@
 {{! @glint-nocheck: not typesafe yet }}
-<this.Velcro @placement="bottom" @offsetOptions={{hash mainAxis=3}} as |velcro|>
+<this.Velcro
+  @placement="bottom"
+  @offsetOptions={{hash mainAxis=3}}
+  @strategy="absolute"
+  as |velcro|
+>
   <Pill
     class={{this.class}}
     @skin="link"
