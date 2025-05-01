@@ -138,7 +138,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
 
   searchTargets = async (searchString: string) => {
     const generatorFunction =
-      this.data.predicate?.inverse === 'property'
+      this.data.predicate?.direction === 'property'
         ? this.args.objectOptionGenerator
         : this.args.subjectOptionGenerator;
     const options = await generatorFunction({
