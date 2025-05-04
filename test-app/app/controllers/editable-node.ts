@@ -336,10 +336,12 @@ export default class EditableBlockController extends Controller {
       {
         label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+        direction: 'backlink',
       },
       {
         label: 'Artikel 1',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+        direction: 'backlink',
       },
     ];
     return options.filter(
@@ -358,10 +360,12 @@ export default class EditableBlockController extends Controller {
       {
         label: 'Target 1',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+        direction: 'property',
       },
       {
         label: 'Target 2',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+        direction: 'property',
       },
     ];
     return options.filter(
