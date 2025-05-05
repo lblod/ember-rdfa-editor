@@ -88,7 +88,7 @@ const formSchema = yup.object({
   target: yup
     .object()
     .required(
-      'ember-rdfa-editor.linking-ui-poc.modal.form.fields.subject.validation.required',
+      'ember-rdfa-editor.linking-ui-poc.modal.form.fields.target.validation.required',
     ),
 });
 
