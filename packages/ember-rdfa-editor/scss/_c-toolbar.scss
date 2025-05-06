@@ -54,6 +54,8 @@ $say-toolbar-height: 44px !default;
   padding: 0.1rem au-settings.$au-unit-tiny 0; // Visually center the text in the pill
   background-color: $say-toolbar-background;
   z-index: 1;
+  width: max-content;
+  max-width: 100%; // should we use 100vh here?
 }
 
 .say-toolbar__main-dropdown {
