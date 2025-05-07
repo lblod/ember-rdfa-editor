@@ -1,37 +1,33 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import SayController from '#root/core/say-controller.ts';
-import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
-import TransformUtils from '#root/utils/_private/transform-utils.ts';
-import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import type { EmberChangeset } from 'ember-changeset';
-import { Changeset } from 'ember-changeset';
-import { localCopy, trackedReset } from 'tracked-toolbox';
-import { TypeAssertionError } from '#root/utils/_private/errors.ts';
+import { localCopy } from 'tracked-toolbox';
+import { HeadlessForm, type FormData } from 'ember-headless-form';
+import type { HeadlessFormFieldComponentSignature } from 'ember-headless-form/-private/components/field';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+import { and } from 'ember-truth-helpers';
+import type { Attrs } from 'prosemirror-model';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
-import { on } from '@ember/modifier';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
-import { and } from 'ember-truth-helpers';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuTextarea from '@appuniversum/ember-appuniversum/components/au-textarea';
-
-import WithUniqueId from '../with-unique-id.ts';
-
-import { get } from '@ember/object';
-import { fn } from '@ember/helper';
+import SayController from '#root/core/say-controller.ts';
+import type SayNodeSpec from '#root/core/say-node-spec.ts';
+import TransformUtils from '#root/utils/_private/transform-utils.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import {
   transactionCombinator,
   type TransactionMonad,
 } from '#root/utils/transaction-utils.ts';
+import WithUniqueId from '../with-unique-id.ts';
 
 type Signature = {
   Args: {
@@ -45,28 +41,17 @@ export type AttributeEditHandler = (
   pos: number,
   value: string,
 ) => TransactionMonad<boolean>;
+
 export default class AttributeEditor extends Component<Signature> {
   @localCopy('args.expanded', true) declare expanded: boolean;
-
-  @trackedReset<AttributeEditor, boolean>({
-    memo: 'node',
-    update: (component) => {
-      component.changeset = undefined;
-      return false;
-    },
-  })
-  isEditing = false;
-
-  @tracked changeset?: EmberChangeset;
-
-  get controller() {
-    return this.args.controller;
-  }
+  @tracked isEditing = false;
 
   get node() {
     return this.args.node;
   }
-
+  get nodeAttrs() {
+    return this.node.value.attrs;
+  }
   get nodespec() {
     return this.node.value.type.spec as SayNodeSpec;
   }
@@ -76,12 +61,10 @@ export default class AttributeEditor extends Component<Signature> {
     this.args.onToggle?.(this.expanded);
   };
 
-  isEditable = (attr: string) => {
-    //@ts-expect-error editable is not defined on attribute-spec type
-    return this.node.value.type.spec.attrs[attr].editable as
-      | boolean
-      | undefined;
+  isEditable = (attr: string): boolean | undefined => {
+    return this.nodespec.attrs?.[attr].editable;
   };
+
   setAttrMonad =
     (key: string) =>
     (pos: number, value: string): TransactionMonad<boolean> =>
@@ -90,6 +73,7 @@ export default class AttributeEditor extends Component<Signature> {
       TransformUtils.setAttribute(tr, pos, key, value);
       return { transaction: tr, initialState: state, result: true };
     };
+
   getHandler = (attr: string): AttributeEditHandler | null => {
     if (this.isEditable(attr)) {
       //@ts-expect-error handler is not defined on attribute-spec type
@@ -106,39 +90,36 @@ export default class AttributeEditor extends Component<Signature> {
   };
 
   enableEditingMode = () => {
-    this.changeset = Changeset(this.node.value.attrs);
     this.isEditing = true;
   };
-
-  cancelEditing = () => {
+  cancelEditing = (formReset: () => void) => {
     this.isEditing = false;
-    this.changeset = undefined;
+    formReset();
   };
 
-  saveChanges = () => {
-    this.controller?.withTransaction(() => {
+  setField = (
+    field: HeadlessFormFieldComponentSignature<Attrs>['Blocks']['default'][0],
+    value: Event,
+  ) => {
+    const newVal = (value.target as HTMLTextAreaElement).value;
+    field.setValue(newVal);
+  };
+
+  saveChanges = (newAttrs: FormData<Attrs>) => {
+    this.args.controller?.withTransaction(() => {
       const monads: TransactionMonad<boolean>[] = [];
-      for (const change of unwrap(this.changeset).changes) {
-        const { key, value } = change;
-        if (!(typeof key === 'string')) {
-          throw new TypeAssertionError();
-        }
-        const handler = this.getHandler(key);
-        if (handler) {
-          monads.push(handler(this.node.pos, value as string));
+      for (const key in newAttrs) {
+        if (newAttrs[key] !== this.nodeAttrs[key]) {
+          const handler = this.getHandler(key);
+          if (handler) {
+            monads.push(handler(this.node.pos, newAttrs[key] as string));
+          }
         }
       }
-      return transactionCombinator(this.controller.mainEditorState)(monads)
+      return transactionCombinator(this.args.controller.mainEditorState)(monads)
         .transaction;
     });
     this.isEditing = false;
-    this.changeset = undefined;
-  };
-
-  updateChangeset = (attr: string, event: InputEvent) => {
-    if (this.changeset) {
-      this.changeset[attr] = (event.target as HTMLTextAreaElement).value;
-    }
   };
 
   formatValue = (value: unknown) => {
@@ -150,93 +131,108 @@ export default class AttributeEditor extends Component<Signature> {
   };
 
   <template>
-    <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
-      <Section>
-        <AuToolbar as |Group|>
-          <Group>
-            <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
-          </Group>
-          <Group>
-            <AuButtonGroup>
-              {{#if this.isEditing}}
-                <AuButton
-                  @skin="naked"
-                  @iconAlignment="right"
-                  {{on "click" this.cancelEditing}}
-                >
-                  Cancel
-                </AuButton>
-                <AuButton
-                  @icon={{CheckIcon}}
-                  @iconAlignment="right"
-                  {{on "click" this.saveChanges}}
-                >
-                  Save
-                </AuButton>
-              {{else}}
-                <AuButton
-                  @skin="naked"
-                  @icon={{PencilIcon}}
-                  @iconAlignment="right"
-                  {{on "click" this.enableEditingMode}}
-                >
-                  Edit
-                </AuButton>
-              {{/if}}
-              <AuButton
-                @skin="naked"
-                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
-                {{on "click" this.toggleSection}}
-              />
-            </AuButtonGroup>
-          </Group>
-        </AuToolbar>
-      </Section>
-      {{#if this.expanded}}
-        <Section>
-          <AuList @divider={{true}} as |Item|>
-            {{#each-in this.node.value.attrs as |key value|}}
-              <Item>
-                <div class="au-u-padding-tiny">
-                  {{#if (and this.isEditing (this.isEditable key))}}
-                    <WithUniqueId as |id|>
-                      <AuLabel for={{id}}>
-                        {{key}}
-                      </AuLabel>
-                      {{#let (this.editorComponent key) as |EditorComponent|}}
-                        {{#if EditorComponent}}
-                          {{! @glint-expect-error fix types of dynamic element }}
-                          <EditorComponent
-                            id={{id}}
-                            value={{get this.changeset key}}
-                            {{! @glint-expect-error fix changeset types }}
-                            {{on "change" (fn this.updateChangeset key)}}
-                          />
-                        {{else}}
-                          <AuTextarea
-                            @width="block"
-                            id={{id}}
-                            {{! @glint-expect-error fix changeset types }}
-                            value={{get this.changeset key}}
-                            {{on "change" (fn this.updateChangeset key)}}
-                          />
-                        {{/if}}
-                      {{/let}}
-                    </WithUniqueId>
+    <WithUniqueId as |formId|>
+      <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
+        <HeadlessForm
+          id={{formId}}
+          @data={{this.nodeAttrs}}
+          @onSubmit={{this.saveChanges}}
+          as |form|
+        >
+          <Section>
+            <AuToolbar as |Group|>
+              <Group>
+                <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
+              </Group>
+              <Group>
+                <AuButtonGroup>
+                  {{#if this.isEditing}}
+                    <AuButton
+                      @skin="naked"
+                      @iconAlignment="right"
+                      {{on "click" (fn this.cancelEditing form.reset)}}
+                    >
+                      Cancel
+                    </AuButton>
+                    <AuButton
+                      type="submit"
+                      @icon={{CheckIcon}}
+                      @iconAlignment="right"
+                    >
+                      Save
+                    </AuButton>
                   {{else}}
-                    <p><strong>{{key}}</strong></p>
-                    <pre class="say-attribute-editor__formatted-content">{{if
-                        value
-                        (this.formatValue value)
-                        "<No value>"
-                      }}</pre>
+                    <AuButton
+                      @skin="naked"
+                      @icon={{PencilIcon}}
+                      @iconAlignment="right"
+                      {{on "click" this.enableEditingMode}}
+                    >
+                      Edit
+                    </AuButton>
                   {{/if}}
-                </div>
-              </Item>
-            {{/each-in}}
-          </AuList>
-        </Section>
-      {{/if}}
-    </AuPanel>
+                  <AuButton
+                    @skin="naked"
+                    @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
+                    {{on "click" this.toggleSection}}
+                  />
+                </AuButtonGroup>
+              </Group>
+            </AuToolbar>
+          </Section>
+          {{#if this.expanded}}
+            <Section>
+              <AuList @divider={{true}} as |Item|>
+                {{#each-in this.nodeAttrs as |key value|}}
+                  <Item>
+                    <div class="au-u-padding-tiny">
+                      {{#if (and this.isEditing (this.isEditable key))}}
+                        <form.Field @name={{key}} as |field|>
+                          <AuLabel for={{field.id}}>
+                            {{key}}
+                          </AuLabel>
+                          {{#let
+                            (this.editorComponent key)
+                            as |EditorComponent|
+                          }}
+                            {{#if EditorComponent}}
+                              {{! @glint-expect-error fix types of dynamic element }}
+                              <EditorComponent
+                                id={{field.id}}
+                                value={{field.value}}
+                                name={{key}}
+                                {{! @glint-expect-error glint has no Signature for the component}}
+                                {{on "change" (fn this.setField field)}}
+                              />
+                            {{else}}
+                              <AuTextarea
+                                @width="block"
+                                id={{field.id}}
+                                value={{field.value}}
+                                name={{key}}
+                                {{on "change" (fn this.setField field)}}
+                              />
+                            {{/if}}
+                          {{/let}}
+                        </form.Field>
+                      {{else}}
+                        <p><strong>{{key}}</strong></p>
+                        <pre
+                          class="say-attribute-editor__formatted-content"
+                        >{{if
+                            value
+                            (this.formatValue value)
+                            "<No value>"
+                          }}</pre>
+                      {{/if}}
+                    </div>
+                  </Item>
+                {{/each-in}}
+              </AuList>
+            </Section>
+          {{/if}}
+        </HeadlessForm>
+      </AuPanel>
+    </WithUniqueId>
   </template>
 }
