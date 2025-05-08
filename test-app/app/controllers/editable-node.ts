@@ -102,6 +102,7 @@ import {
   getOutgoingTriple,
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
+import DevModeToggle from 'test-app/components/dev-mode-toggle';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -153,6 +154,7 @@ export default class EditableBlockController extends Controller {
   RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
   LinkRdfaNodeButton = LinkRdfaNodeButton;
+  DevModeToggle = DevModeToggle;
 
   rdfa = {
     propertyPredicates: [
@@ -173,6 +175,12 @@ export default class EditableBlockController extends Controller {
   };
 
   @tracked rdfaEditor?: SayController;
+  @tracked devMode = true;
+
+  onDevModeToggle = (enabled: boolean) => {
+    this.devMode = enabled;
+  };
+
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {

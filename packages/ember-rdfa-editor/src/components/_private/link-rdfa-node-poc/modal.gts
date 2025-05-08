@@ -5,19 +5,24 @@ import AuModal, {
 } from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
 import WithUniqueId from '../with-unique-id.ts';
-import PowerSelect from 'ember-power-select/components/power-select';
+import PowerSelect, {
+  type Select,
+} from 'ember-power-select/components/power-select';
 import type { SayTerm } from '#root/core/say-data-factory/term.ts';
 import { TrackedObject } from 'tracked-built-ins';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { CommentIcon } from '@appuniversum/ember-appuniversum/components/icons/comment';
 import { QuestionCircleIcon } from '@appuniversum/ember-appuniversum/components/icons/question-circle';
-import { not, or } from 'ember-truth-helpers';
+import { not } from 'ember-truth-helpers';
 import AuBadge from '@appuniversum/ember-appuniversum/components/au-badge';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
 import type { SayNamedNode } from '#root/core/say-data-factory/named-node.ts';
-import type { ResourceNodeTerm } from '#root/core/say-data-factory/index.ts';
+import {
+  sayDataFactory,
+  type ResourceNodeTerm,
+} from '#root/core/say-data-factory/index.ts';
 import { HeadlessForm } from 'ember-headless-form';
 import { fn } from '@ember/helper';
 import * as yup from 'yup';
@@ -26,6 +31,7 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { get } from '@ember/helper';
 import t from 'ember-intl/helpers/t';
 import { unwrap } from '#root/utils/_private/option.ts';
+import { action } from '@ember/object';
 
 type TermOptionGeneratorResult<TermType extends SayTerm> =
   | TermOption<TermType>[]
@@ -68,6 +74,7 @@ type LinkRdfaNodeModalSig = {
     predicateOptionGenerator: PredicateOptionGenerator;
     subjectOptionGenerator: TargetOptionGenerator;
     objectOptionGenerator: TargetOptionGenerator;
+    devMode?: boolean;
   };
 };
 
@@ -101,6 +108,10 @@ const formSchema = yup.object({
 
 export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
   data: FormData = new TrackedObject({});
+
+  get devMode() {
+    return this.args.devMode;
+  }
 
   resetForm?: () => void;
   assignResetForm = (resetFn: () => void) => {
@@ -152,6 +163,38 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
     });
     return options;
   };
+
+  @action
+  onPowerSelectKeydown(select: Select, event: KeyboardEvent) {
+    if (!this.devMode) {
+      return;
+    }
+    // Based on example from ember-power-select docs, allows for selecting a previously non-existent
+    // entry by typing in the power-select 'search' and hitting 'enter'
+    if (
+      event.key === 'Enter' &&
+      select.isOpen &&
+      !select.highlighted &&
+      !!select.searchText
+    ) {
+      select.actions.choose({
+        term: sayDataFactory.resourceNode(select.searchText),
+      });
+      return false;
+    }
+    return;
+  }
+
+  optionLabel = (option: TermOption<SayTerm>) => {
+    if (this.devMode) {
+      const prefix = option.term.value;
+      const suffix = option.label ? ` (${option.label})` : '';
+      return prefix + suffix;
+    } else {
+      return option.label ?? option.term.value;
+    }
+  };
+
   <template>
     <WithUniqueId as |formId|>
       <AuModal @modalOpen={{true}} @closeModal={{this.onCancel}} ...attributes>
@@ -189,6 +232,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                   @selected={{field.value}}
                   @onChange={{fn this.setPredicate field.triggerValidation}}
                   @allowClear={{true}}
+                  @onKeydown={{this.onPowerSelectKeydown}}
                   @options={{this.searchPredicates ""}}
                   @search={{this.searchPredicates}}
                   @searchEnabled={{true}}
@@ -199,10 +243,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                     class="au-u-flex au-u-flex--spaced-tiny au-u-flex--vertical-center"
                   >
                     <AuIcon @icon={{CommentIcon}} />
-                    <p><strong>{{or
-                          option.label
-                          option.term.value
-                        }}</strong></p>
+                    <p><strong>{{this.optionLabel option}}</strong></p>
                   </div>
                   {{#if option.description}}
                     <p>{{option.description}}</p>
@@ -247,6 +288,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                   @options={{this.searchTargets ""}}
                   @search={{this.searchTargets}}
                   @searchEnabled={{true}}
+                  @onKeydown={{this.onPowerSelectKeydown}}
                   class="au-u-1-1"
                   as |option|
                 >
@@ -254,10 +296,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
                     class="au-u-flex au-u-flex--spaced-tiny au-u-flex--vertical-center"
                   >
                     <AuIcon @icon={{CommentIcon}} />
-                    <p><strong>{{or
-                          option.label
-                          option.term.value
-                        }}</strong></p>
+                    <p><strong>{{this.optionLabel option}}</strong></p>
                   </div>
                   {{#if option.description}}
                     <p>{{option.description}}</p>

@@ -30,6 +30,7 @@ type LinkRdfaNodeButtonSig = {
     predicateOptionGenerator: PredicateOptionGenerator;
     subjectOptionGenerator: TargetOptionGenerator;
     objectOptionGenerator: TargetOptionGenerator;
+    devMode?: boolean;
   };
 };
 export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig> {
@@ -113,6 +114,7 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
         @predicateOptionGenerator={{@predicateOptionGenerator}}
         @subjectOptionGenerator={{@subjectOptionGenerator}}
         @objectOptionGenerator={{@objectOptionGenerator}}
+        @devMode={{@devMode}}
       />
     {{/if}}
   </template>

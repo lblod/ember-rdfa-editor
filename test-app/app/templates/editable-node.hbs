@@ -11,7 +11,13 @@
         <SampleToolbarResponsive
           @controller={{this.rdfaEditor}}
           @enableHierarchicalList={{true}}
-        />
+        >
+          <this.DevModeToggle
+            @controller={{this.rdfaEditor}}
+            @enabled={{this.devMode}}
+            @onToggle={{this.onDevModeToggle}}
+          />
+        </SampleToolbarResponsive>
       </:top>
       <:default>
         <Editor
@@ -35,6 +41,7 @@
                 @predicateOptionGenerator={{this.predicateOptionGenerator}}
                 @subjectOptionGenerator={{this.subjectOptionGenerator}}
                 @objectOptionGenerator={{this.objectOptionGenerator}}
+                @devMode={{this.devMode}}
               />
             </Item>
           </Sb.Collapsible>
