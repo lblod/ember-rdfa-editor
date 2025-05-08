@@ -1,5 +1,12 @@
 # @lblod/ember-rdfa-editor
 
+## 12.5.1
+
+### Patch Changes
+
+- [#1305](https://github.com/lblod/ember-rdfa-editor/pull/1305) [`328ca61`](https://github.com/lblod/ember-rdfa-editor/commit/328ca619c48310d7dea5a335e6ddf803cd5fedc3) Thanks [@elpoelma](https://github.com/elpoelma)! - Toolbar main and side dropdowns: add `width: max-content` and `max-width: 100%` rules.
+  Essentially this means that these dropdowns take the space they need to show the content, but with a limit of 100% of the editor width.
+
 ## 12.5.0
 
 ### Minor Changes
