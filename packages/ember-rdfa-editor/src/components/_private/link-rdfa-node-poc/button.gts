@@ -6,7 +6,7 @@ import Component from '@glimmer/component';
 import { tracked } from 'tracked-built-ins';
 import LinkRdfaNodeModal, {
   type PredicateOptionGenerator,
-  type SubjectOptionGenerator,
+  type TargetOptionGenerator,
   type SubmissionBody,
 } from './modal.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
@@ -14,9 +14,13 @@ import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
-import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
+import type {
+  IncomingTriple,
+  OutgoingTriple,
+} from '#root/core/rdfa-processor.ts';
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
+import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 
 type LinkRdfaNodeButtonSig = {
   Element: AuButtonSignature['Element'];
@@ -24,7 +28,8 @@ type LinkRdfaNodeButtonSig = {
     controller: SayController;
     node: ResolvedPNode;
     predicateOptionGenerator: PredicateOptionGenerator;
-    subjectOptionGenerator: SubjectOptionGenerator;
+    subjectOptionGenerator: TargetOptionGenerator;
+    objectOptionGenerator: TargetOptionGenerator;
   };
 };
 export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig> {
@@ -43,19 +48,34 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
   };
 
   onFormSubmit = (body: SubmissionBody) => {
-    const backlink: IncomingTriple = {
-      subject: body.subject,
-      predicate: body.predicate.value,
-    };
-    this.controller.withTransaction(
-      () => {
-        return addBacklinkToNode({
-          rdfaId: this.node.value.attrs['__rdfaId'] as string,
-          backlink,
-        })(this.controller.mainEditorState).transaction;
-      },
-      { view: this.controller.mainEditorView },
-    );
+    const { predicate, target } = body;
+    if (predicate.direction === 'property') {
+      const property: OutgoingTriple = {
+        predicate: predicate.term.value,
+        object: target.term,
+      };
+      this.controller.doCommand(
+        addProperty({
+          resource: this.node.value.attrs['subject'] as string,
+          property,
+        }),
+      );
+    } else if (predicate.direction === 'backlink') {
+      const backlink: IncomingTriple = {
+        subject: target.term,
+        predicate: predicate.term.value,
+      };
+      this.controller.withTransaction(
+        () => {
+          return addBacklinkToNode({
+            rdfaId: this.node.value.attrs['__rdfaId'] as string,
+            backlink,
+          })(this.controller.mainEditorState).transaction;
+        },
+        { view: this.controller.mainEditorView },
+      );
+    }
+
     this.modalOpen = false;
   };
 
@@ -92,6 +112,7 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
         @onCancel={{this.onFormCancel}}
         @predicateOptionGenerator={{@predicateOptionGenerator}}
         @subjectOptionGenerator={{@subjectOptionGenerator}}
+        @objectOptionGenerator={{@objectOptionGenerator}}
       />
     {{/if}}
   </template>

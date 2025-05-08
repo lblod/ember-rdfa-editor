@@ -83,13 +83,13 @@ import {
 
 import type {
   PredicateOptionGenerator,
-  SubjectOptionGenerator,
+  TargetOptionGenerator,
   TermOption,
+  PredicateOption,
 } from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
 import {
   ResourceNodeTerm,
   sayDataFactory,
-  type SayNamedNode,
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -289,24 +289,34 @@ export default class EditableBlockController extends Controller {
   predicateOptionGenerator: PredicateOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<SayNamedNode>[] = [
+    const options: PredicateOption[] = [
       {
         label: 'Titel',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         term: sayDataFactory.namedNode('eli:title'),
+        direction: 'backlink',
+      },
+      {
+        label: 'Has Titel',
+        description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        term: sayDataFactory.namedNode('eli:title'),
+        direction: 'property',
       },
       {
         label: 'Beschrijving',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
         term: sayDataFactory.namedNode('dct:description'),
+        direction: 'backlink',
       },
       {
         label: 'Motivering',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
         term: sayDataFactory.namedNode('besluit:motivering'),
+        direction: 'backlink',
       },
     ];
     return options.filter(
@@ -319,7 +329,7 @@ export default class EditableBlockController extends Controller {
     );
   };
 
-  subjectOptionGenerator: SubjectOptionGenerator = ({
+  subjectOptionGenerator: TargetOptionGenerator = ({
     searchString = '',
   } = {}) => {
     const options: TermOption<ResourceNodeTerm>[] = [
@@ -329,6 +339,28 @@ export default class EditableBlockController extends Controller {
       },
       {
         label: 'Artikel 1',
+        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+      },
+    ];
+    return options.filter(
+      (option) =>
+        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+        option.description
+          ?.toLowerCase()
+          .includes(searchString.toLowerCase()) ||
+        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+    );
+  };
+  objectOptionGenerator: TargetOptionGenerator = ({
+    searchString = '',
+  } = {}) => {
+    const options: TermOption<ResourceNodeTerm>[] = [
+      {
+        label: 'Target 1',
+        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+      },
+      {
+        label: 'Target 2',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
       },
     ];
