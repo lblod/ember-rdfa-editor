@@ -90,7 +90,6 @@ import type {
 import {
   ResourceNodeTerm,
   sayDataFactory,
-  type SayNamedNode,
 } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
@@ -290,7 +289,7 @@ export default class EditableBlockController extends Controller {
   predicateOptionGenerator: PredicateOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<SayNamedNode>[] = [
+    const options: PredicateOption[] = [
       {
         label: 'Titel',
         description:
@@ -333,16 +332,14 @@ export default class EditableBlockController extends Controller {
   subjectOptionGenerator: TargetOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: PredicateOption[] = [
+    const options: TermOption<ResourceNodeTerm>[] = [
       {
         label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
-        direction: 'backlink',
       },
       {
         label: 'Artikel 1',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
-        direction: 'backlink',
       },
     ];
     return options.filter(
@@ -361,12 +358,10 @@ export default class EditableBlockController extends Controller {
       {
         label: 'Target 1',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
-        direction: 'property',
       },
       {
         label: 'Target 2',
         term: sayDataFactory.resourceNode('http://example.org/articles/1'),
-        direction: 'property',
       },
     ];
     return options.filter(

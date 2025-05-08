@@ -31,6 +31,10 @@ type TermOptionGeneratorResult<TermType extends SayTerm> =
   | TermOption<TermType>[]
   | Promise<TermOption<TermType>[]>;
 
+type PredicateOptionGeneratorResult =
+  | PredicateOption[]
+  | Promise<PredicateOption[]>;
+
 type PredicateOptionGeneratorArgs = {
   selectedObject?: SayTerm;
   searchString?: string;
@@ -38,7 +42,7 @@ type PredicateOptionGeneratorArgs = {
 
 export type PredicateOptionGenerator = (
   args?: PredicateOptionGeneratorArgs,
-) => TermOptionGeneratorResult<SayNamedNode>;
+) => PredicateOptionGeneratorResult;
 
 type TargetOptionGeneratorArgs = {
   selectedObject?: SayTerm;
