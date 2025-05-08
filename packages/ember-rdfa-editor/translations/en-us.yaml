@@ -110,10 +110,10 @@ ember-rdfa-editor:
             label: Relationship type
             validation:
               required: Please select a relationship type
-          subject:
-            label: Subject
+          target:
+            label: Target
             validation:
-              required: Please select a subject
+              required: Please select a target
         submit:
           label: Insert
         cancel:
