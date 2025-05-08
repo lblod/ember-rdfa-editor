@@ -85,6 +85,7 @@ import type {
   PredicateOptionGenerator,
   TargetOptionGenerator,
   TermOption,
+  PredicateOption,
 } from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
 import {
   ResourceNodeTerm,
@@ -332,7 +333,7 @@ export default class EditableBlockController extends Controller {
   subjectOptionGenerator: TargetOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
+    const options: PredicateOption[] = [
       {
         label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
