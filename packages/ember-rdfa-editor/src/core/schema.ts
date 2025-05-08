@@ -82,7 +82,7 @@ const rdfaAwareAttrSpec = {
         keepProperties: true,
       }),
   },
-  content: { default: null, editable: true },
+  content: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },
 };
