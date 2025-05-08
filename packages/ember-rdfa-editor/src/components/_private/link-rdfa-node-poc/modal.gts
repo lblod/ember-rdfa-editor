@@ -52,7 +52,7 @@ export type TargetOptionGenerator = (
 
 export type SubmissionBody = {
   target: TermOption<ResourceNodeTerm>;
-  predicate: TermOption<SayNamedNode>;
+  predicate: PredicateOption;
 };
 
 type LinkRdfaNodeModalSig = {
@@ -71,11 +71,14 @@ export type TermOption<TermType extends SayTerm> = {
   label?: string;
   description?: string;
   term: TermType;
+};
+
+export type PredicateOption = TermOption<SayNamedNode> & {
   direction: 'backlink' | 'property';
 };
 
 type FormData = {
-  predicate?: TermOption<SayNamedNode>;
+  predicate?: PredicateOption;
   target?: TermOption<ResourceNodeTerm>;
 };
 
@@ -112,10 +115,7 @@ export default class LinkRdfaNodeModal extends Component<LinkRdfaNodeModalSig> {
     this.args.onCancel();
   };
 
-  setPredicate = (
-    validationFn: () => void,
-    option: TermOption<SayNamedNode>,
-  ) => {
+  setPredicate = (validationFn: () => void, option: PredicateOption) => {
     this.data.predicate = option;
     validationFn();
   };
