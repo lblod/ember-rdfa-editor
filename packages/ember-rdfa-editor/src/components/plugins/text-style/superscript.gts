@@ -1,13 +1,22 @@
 import { SuperscriptIcon } from '@appuniversum/ember-appuniversum/components/icons/superscript';
-import Mark from '#root/components/toolbar/mark.ts';
+import Mark from '#root/components/toolbar/mark.gts';
 import t from 'ember-intl/helpers/t';
+import type SayController from '#root/core/say-controller.ts';
+import type { TOC } from '@ember/component/template-only';
 
-<template>
+type Signature = {
+  Args: {
+    controller?: SayController;
+  };
+};
+
+const Superscript: TOC<Signature> = <template>
   <Mark
     @icon={{SuperscriptIcon}}
     @title={{t "ember-rdfa-editor.superscript"}}
     @mark="superscript"
-    {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
   />
-</template>
+</template>;
+
+export default Superscript;
