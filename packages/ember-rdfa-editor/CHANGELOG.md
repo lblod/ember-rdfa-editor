@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 12.6.0
+
+### Minor Changes
+
+- [#1306](https://github.com/lblod/ember-rdfa-editor/pull/1306) [`e3e446a`](https://github.com/lblod/ember-rdfa-editor/commit/e3e446a4a2a01344f8baaadde409a21066402989) Thanks [@piemonkey](https://github.com/piemonkey)! - Remove dependency on ember-changeset and therefore peer dependency on ember-data
+
+- [#1303](https://github.com/lblod/ember-rdfa-editor/pull/1303) [`1d37e43`](https://github.com/lblod/ember-rdfa-editor/commit/1d37e4355a34ea9ef86633dcad9f7359488e476c) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Support adding links in both directions in UI
+
+### Patch Changes
+
+- [#1306](https://github.com/lblod/ember-rdfa-editor/pull/1306) [`9389852`](https://github.com/lblod/ember-rdfa-editor/commit/9389852f825ba7aab0998461e32af72c598bc23d) Thanks [@piemonkey](https://github.com/piemonkey)! - Move attribute-editor to use ember-headless-form instead of ember-changeset
+
 ## 12.5.1
 
 ### Patch Changes
