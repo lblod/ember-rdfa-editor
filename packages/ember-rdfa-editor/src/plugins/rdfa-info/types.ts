@@ -8,7 +8,12 @@ import type { PNode } from '#root/prosemirror-aliases.ts';
 export type StringDisplay = string;
 export type StrongDisplay = { strong: string };
 export type PillDisplay = { pill: string };
-export type DisplayElement = StringDisplay | StrongDisplay | PillDisplay;
+export type HiddenDisplay = { hidden: true };
+export type DisplayElement =
+  | StringDisplay
+  | StrongDisplay
+  | PillDisplay
+  | HiddenDisplay;
 export type DisplayMeta = { title?: string };
 export type DisplayConfig =
   | { meta: DisplayMeta; elements: DisplayElement[] }
