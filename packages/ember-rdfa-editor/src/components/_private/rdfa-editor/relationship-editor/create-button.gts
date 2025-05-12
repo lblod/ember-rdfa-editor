@@ -4,11 +4,6 @@ import AuButton, {
 import { AddIcon } from '@appuniversum/ember-appuniversum/components/icons/add';
 import Component from '@glimmer/component';
 import { tracked } from 'tracked-built-ins';
-import LinkRdfaNodeModal, {
-  type PredicateOptionGenerator,
-  type TargetOptionGenerator,
-  type SubmissionBody,
-} from './modal.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type SayController from '#root/core/say-controller.ts';
@@ -21,19 +16,24 @@ import type {
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
+import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
+import RelationshipEditorForm from './form.gts';
+import RelationshipEditorDevForm from './form-dev-mode.gts';
+import type { ObjectOptionGenerator, PredicateOptionGenerator, SubjectOptionGenerator, SubmissionBody } from './types.ts';
 
-type LinkRdfaNodeButtonSig = {
+
+type CreateRelationshipButtonSig = {
   Element: AuButtonSignature['Element'];
   Args: {
     controller: SayController;
-    node: ResolvedPNode;
+    node?: ResolvedPNode;
     predicateOptionGenerator: PredicateOptionGenerator;
-    subjectOptionGenerator: TargetOptionGenerator;
-    objectOptionGenerator: TargetOptionGenerator;
+    subjectOptionGenerator: SubjectOptionGenerator;
+    objectOptionGenerator: ObjectOptionGenerator;
     devMode?: boolean;
   };
 };
-export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig> {
+export default class CreateRelationshipButton extends Component<CreateRelationshipButtonSig> {
   @tracked modalOpen = false;
 
   get controller() {
@@ -49,12 +49,16 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
   };
 
   onFormSubmit = (body: SubmissionBody) => {
+    if (!this.node) {
+      return;
+    }
+    const node = this.node;
     const { predicate, target } = body;
     if (predicate.direction === 'property') {
-      const property: OutgoingTriple = {
+      const property = {
         predicate: predicate.term.value,
         object: target.term,
-      };
+      } as OutgoingTriple;
       this.controller.doCommand(
         addProperty({
           resource: this.node.value.attrs['subject'] as string,
@@ -62,14 +66,14 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
         }),
       );
     } else if (predicate.direction === 'backlink') {
-      const backlink: IncomingTriple = {
+      const backlink = {
         subject: target.term,
         predicate: predicate.term.value,
-      };
+      } as IncomingTriple;
       this.controller.withTransaction(
         () => {
           return addBacklinkToNode({
-            rdfaId: this.node.value.attrs['__rdfaId'] as string,
+            rdfaId: node.value.attrs['__rdfaId'] as string,
             backlink,
           })(this.controller.mainEditorState).transaction;
         },
@@ -80,14 +84,14 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
     this.modalOpen = false;
   };
 
-  onFormCancel = () => {
+  closeModal = () => {
     this.modalOpen = false;
   };
 
-  get selectedObject() {
+  get selectedNode() {
     const node = this.args.node;
-    if (!isRdfaAttrs(node.value.attrs)) {
-      throw new Error(`Expected node with pos ${node.pos} to be rdfa-aware`);
+    if (!node || !isRdfaAttrs(node.value.attrs)) {
+      return;
     }
     if (node.value.attrs.rdfaNodeType === 'resource') {
       return sayDataFactory.resourceNode(node.value.attrs.subject);
@@ -96,9 +100,20 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
     }
   }
 
+  get isDisabled() {
+    return !this.selectedNode;
+  }
+
+  get FormComponent() {
+    return this.args.devMode
+      ? RelationshipEditorDevForm
+      : RelationshipEditorForm;
+  }
+
   <template>
     <AuButton
       @icon={{AddIcon}}
+      @disabled={{this.isDisabled}}
       @iconAlignment="left"
       @skin="link"
       {{on "click" this.openModal}}
@@ -107,15 +122,20 @@ export default class LinkRdfaNodeButton extends Component<LinkRdfaNodeButtonSig>
       {{t "ember-rdfa-editor.linking-ui-poc.button.label"}}
     </AuButton>
     {{#if this.modalOpen}}
-      <LinkRdfaNodeModal
-        @selectedObject={{this.selectedObject}}
-        @onSubmit={{this.onFormSubmit}}
-        @onCancel={{this.onFormCancel}}
-        @predicateOptionGenerator={{@predicateOptionGenerator}}
-        @subjectOptionGenerator={{@subjectOptionGenerator}}
-        @objectOptionGenerator={{@objectOptionGenerator}}
-        @devMode={{@devMode}}
-      />
+      <AuModal @modalOpen={{true}} @closeModal={{this.closeModal}}>
+        <:title>{{t "ember-rdfa-editor.linking-ui-poc.modal.title"}}</:title>
+        <:body>
+          <this.FormComponent
+            {{! @glint-expect-error }}
+            @source={{this.selectedNode}}
+            @onSubmit={{this.onFormSubmit}}
+            @onCancel={{this.closeModal}}
+            @predicateOptionGenerator={{@predicateOptionGenerator}}
+            @subjectOptionGenerator={{@subjectOptionGenerator}}
+            @objectOptionGenerator={{@objectOptionGenerator}}
+          />
+        </:body>
+      </AuModal>
     {{/if}}
   </template>
 }

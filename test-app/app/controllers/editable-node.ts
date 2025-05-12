@@ -68,7 +68,6 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
-import LinkRdfaNodeButton from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/button';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -81,16 +80,7 @@ import {
   unwrap,
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
-import type {
-  PredicateOptionGenerator,
-  TargetOptionGenerator,
-  TermOption,
-  PredicateOption,
-} from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
-import {
-  ResourceNodeTerm,
-  sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
@@ -103,6 +93,15 @@ import {
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
+import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/create-button';
+import type {
+  ObjectOption,
+  ObjectOptionGenerator,
+  PredicateOption,
+  PredicateOptionGenerator,
+  SubjectOption,
+  SubjectOptionGenerator,
+} from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/types';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -153,7 +152,7 @@ export default class EditableBlockController extends Controller {
   AttributeEditor = AttributeEditor;
   RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
-  LinkRdfaNodeButton = LinkRdfaNodeButton;
+  CreateRelationshipButton = CreateRelationshipButton;
   DevModeToggle = DevModeToggle;
 
   rdfa = {
@@ -187,6 +186,7 @@ export default class EditableBlockController extends Controller {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
         rdfaAware: true,
+        hasResourceImports: true,
       }),
       paragraph,
 
@@ -296,6 +296,7 @@ export default class EditableBlockController extends Controller {
 
   predicateOptionGenerator: PredicateOptionGenerator = ({
     searchString = '',
+    direction,
   } = {}) => {
     const options: PredicateOption[] = [
       {
@@ -329,18 +330,21 @@ export default class EditableBlockController extends Controller {
     ];
     return options.filter(
       (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+        (option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+          option.description
+            ?.toLowerCase()
+            .includes(searchString.toLowerCase()) ||
+          option.term.value
+            .toLowerCase()
+            .includes(searchString.toLowerCase())) &&
+        (!direction || option.direction === direction),
     );
   };
 
-  subjectOptionGenerator: TargetOptionGenerator = ({
+  subjectOptionGenerator: SubjectOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
+    const options: SubjectOption[] = [
       {
         label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
@@ -359,10 +363,11 @@ export default class EditableBlockController extends Controller {
         option.term.value.toLowerCase().includes(searchString.toLowerCase()),
     );
   };
-  objectOptionGenerator: TargetOptionGenerator = ({
+
+  objectOptionGenerator: ObjectOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
+    const options: ObjectOption[] = [
       {
         label: 'Target 1',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
