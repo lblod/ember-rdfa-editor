@@ -683,7 +683,8 @@ export function updateSubject(
           rdfaId,
           backlinksToUpdate,
         ] of backlinksToUpdateGroupedByObjectRdfaId.entries()) {
-          const node = unwrap(getNodeByRdfaId(state, rdfaId));
+          const node = getNodeByRdfaId(state, rdfaId);
+          if (!node) continue; //If we don't find the node no need to do anything
           const backlinks = node.value.attrs['backlinks'] as IncomingTriple[];
           let backlinksUpdated = [...backlinks];
           if (!nodesWithSameOriginalSubject.length) {
@@ -712,7 +713,8 @@ export function updateSubject(
             rdfaId,
             backlinksToRemove,
           ] of backlinksToUpdateGroupedByObjectRdfaId.entries()) {
-            const node = unwrap(getNodeByRdfaId(state, rdfaId));
+            const node = getNodeByRdfaId(state, rdfaId);
+            if (!node) continue; //If we don't find the node no need to do anything
             const backlinks = node.value.attrs['backlinks'] as IncomingTriple[];
             const backlinksUpdated = backlinks.filter(
               (bl) => !backlinksToRemove.includes(bl),
@@ -760,7 +762,8 @@ export function updateSubject(
         rdfaId,
         propertiesToUpdate,
       ] of propertiesToUpdateGroupedBySubjectRdfaId.entries()) {
-        const node = unwrap(getNodeByRdfaId(state, rdfaId));
+        const node = getNodeByRdfaId(state, rdfaId);
+        if (!node) continue; //If we don't find the node no need to do anything
         const properties = node.value.attrs['properties'] as OutgoingTriple[];
         let propertiesUpdated = [...properties];
         if (!nodesWithSameOriginalSubject.length) {
@@ -793,7 +796,8 @@ export function updateSubject(
           rdfaId,
           propertiesToRemove,
         ] of propertiesToUpdateGroupedBySubjectRdfaId.entries()) {
-          const node = unwrap(getNodeByRdfaId(state, rdfaId));
+          const node = getNodeByRdfaId(state, rdfaId);
+          if (!node) continue; //If we don't find the node no need to do anything
           const properties = node.value.attrs['properties'] as OutgoingTriple[];
           const propertiesUpdated = properties.filter(
             (prop) => !propertiesToRemove.includes(prop),
