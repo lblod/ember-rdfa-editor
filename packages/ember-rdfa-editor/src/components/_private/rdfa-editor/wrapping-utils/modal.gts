@@ -19,7 +19,7 @@ type Args = {
   wrapWithResource: RdfaWrappingUtils['wrapWithResource'];
 };
 
-export default class RelationshipEditorModal extends Component<Args> {
+export default class WrappingUtilsModal extends Component<Args> {
   @tracked initiallyFocusedElement?: HTMLElement;
 
   setupFormSubmitShortcut = modifier((formElement: HTMLFormElement) => {

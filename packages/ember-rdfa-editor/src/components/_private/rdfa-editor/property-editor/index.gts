@@ -4,7 +4,6 @@ import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
-import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
@@ -23,19 +22,23 @@ import type { PNode } from '#root/prosemirror-aliases.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
-import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
-import { array } from '@ember/helper';
-import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
-import WithUniqueId from '../../with-unique-id.ts';
-import PropertyEditorForm from './form.gts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import { type Status, type StatusMessage } from '../types.ts';
 import PropertyDetails from '../property-details.gts';
 import { modifier } from 'ember-modifier';
-import { action } from '@ember/object';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
 } from '../configurable-rdfa-display.gts';
+import type {
+  ObjectOptionGenerator,
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+  SubmissionBody,
+} from '../relationship-editor/types.ts';
+import RelationshipEditorDevModal, {
+  type FormData,
+} from '../relationship-editor/modal-dev-mode.gts';
+import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -45,15 +48,14 @@ type Args = {
   controller: SayController;
   node: ResolvedPNode;
   additionalImportedResources?: string[];
-  objectOptions?: string[];
-  predicateOptions?: string[];
+  predicateOptionGenerator?: PredicateOptionGenerator;
+  subjectOptionGenerator?: SubjectOptionGenerator;
+  objectOptionGenerator?: ObjectOptionGenerator;
 };
 
 export default class RdfaPropertyEditor extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
   @tracked status?: Status;
-
-  isPlainTriple = (triple: OutgoingTriple) => !isLinkToNode(triple);
 
   setUpListeners = modifier(() => {
     const listenerHandler = (event: KeyboardEvent) => {
@@ -97,6 +99,33 @@ export default class RdfaPropertyEditor extends Component<Args> {
 
   get currentResource() {
     return this.args.node.value.attrs['subject'] as string;
+  }
+
+  get currentTerm() {
+    return sayDataFactory.resourceNode(this.currentResource);
+  }
+
+  get initialFormData(): FormData | undefined {
+    if (!this.status) {
+      return;
+    }
+    if (this.status.mode === 'update') {
+      return {
+        direction: 'property',
+        predicate: {
+          term: sayDataFactory.namedNode(this.status.property.predicate),
+          direction: 'property',
+        },
+        target: {
+          // @ts-expect-error fix types of outgoing-triple
+          term: this.status.property.object,
+        },
+      };
+    } else {
+      return {
+        direction: 'property',
+      };
+    }
   }
 
   get statusMessage(): StatusMessage | null {
@@ -162,11 +191,16 @@ export default class RdfaPropertyEditor extends Component<Args> {
     return isResourceNode(this.node);
   }
 
-  addProperty = (property: OutgoingTriple, subject?: string) => {
+  addProperty = (body: SubmissionBody) => {
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
-    const resource = this.currentResource || subject;
+    const resource = this.currentResource;
     if (resource) {
+      const property: OutgoingTriple = {
+        predicate: body.predicate.term.value,
+        // @ts-expect-error fix term types
+        object: body.target.term,
+      };
       this.controller?.doCommand(addProperty({ resource, property }), {
         view: this.controller.mainEditorView,
       });
@@ -174,11 +208,11 @@ export default class RdfaPropertyEditor extends Component<Args> {
     }
   };
 
-  updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
+  updateProperty = (body: SubmissionBody) => {
     // TODO: make a command to do this in one go
     if (this.status?.mode === 'update') {
       this.removeProperty(this.status.property);
-      this.addProperty(newProperty, subject);
+      this.addProperty(body);
       this.status = undefined;
     }
   };
@@ -197,6 +231,14 @@ export default class RdfaPropertyEditor extends Component<Args> {
   cancel = () => {
     this.status = undefined;
   };
+
+  get modalTitle() {
+    if (this.isUpdating) {
+      return 'Edit relationship';
+    } else {
+      return 'Add relationship';
+    }
+  }
 
   <template>
     <AuContent @skin="tiny" {{this.setUpListeners}}>
@@ -305,106 +347,17 @@ export default class RdfaPropertyEditor extends Component<Args> {
         </div>
       {{/if}}
     </AuContent>
-    {{! Creation modal }}
-    <Modal
-      @controller={{@controller}}
-      @modalOpen={{this.isCreating}}
-      @onSave={{this.addProperty}}
-      @onCancel={{this.cancel}}
-      @predicateOptions={{@predicateOptions}}
-      @objectOptions={{@objectOptions}}
-    />
-    {{! Update modal }}
-    <Modal
-      @controller={{@controller}}
-      @modalOpen={{this.isUpdating}}
-      @onSave={{this.updateProperty}}
-      @onCancel={{this.cancel}}
-      {{! @glint-expect-error check if property is defined }}
-      @property={{this.status.property}}
-      @predicateOptions={{@predicateOptions}}
-      @objectOptions={{@objectOptions}}
-    />
-  </template>
-}
-
-interface Sig {
-  Args: {
-    controller?: SayController;
-    property?: OutgoingTriple;
-    onCancel: () => void;
-    onSave: (property: OutgoingTriple, subject?: string) => void;
-    modalOpen: boolean;
-    title?: string;
-    predicateOptions?: string[];
-    objectOptions?: string[];
-  };
-}
-
-class Modal extends Component<Sig> {
-  @action
-  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-      formElement.requestSubmit();
-    }
-    return true;
-  }
-
-  @tracked initiallyFocusedElement?: HTMLElement;
-
-  initialFocus = modifier((element: HTMLElement) => {
-    this.initiallyFocusedElement = element;
-  });
-
-  cancel = () => {
-    this.args.onCancel();
-  };
-
-  save = (triple: OutgoingTriple, subject?: string) => {
-    this.args.onSave(triple, subject);
-  };
-  get title() {
-    return this.args.title ?? 'Edit';
-  }
-  <template>
-    <WithUniqueId as |formId|>
-      <AuModal
-        @modalOpen={{@modalOpen}}
-        @closable={{true}}
-        @closeModal={{this.cancel}}
-        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
-        @initialFocus={{this.initiallyFocusedElement}}
-      >
-        <:title>{{this.title}}</:title>
-        <:body>
-          <PropertyEditorForm
-            id={{formId}}
-            @initialFocus={{this.initialFocus}}
-            @onSubmit={{this.save}}
-            @termTypes={{array
-              "NamedNode"
-              "Literal"
-              "ContentLiteral"
-              "LiteralNode"
-              "ResourceNode"
-            }}
-            @controller={{@controller}}
-            @triple={{@property}}
-            @predicateOptions={{@predicateOptions}}
-            @objectOptions={{@objectOptions}}
-            @onKeyDown={{this.onFormKeyDown}}
-          />
-        </:body>
-        <:footer>
-          <AuButtonGroup>
-            <AuButton form={{formId}} type="submit">Save</AuButton>
-            <AuButton
-              @skin="secondary"
-              {{on "click" this.cancel}}
-            >Cancel</AuButton>
-          </AuButtonGroup>
-        </:footer>
-      </AuModal>
-    </WithUniqueId>
+    {{#if this.status}}
+      <RelationshipEditorDevModal
+        @title={{this.modalTitle}}
+        @initialData={{this.initialFormData}}
+        @source={{this.currentTerm}}
+        @subjectOptionGenerator={{@subjectOptionGenerator}}
+        @predicateOptionGenerator={{@predicateOptionGenerator}}
+        @objectOptionGenerator={{@objectOptionGenerator}}
+        @onSubmit={{if this.isCreating this.addProperty this.updateProperty}}
+        @onCancel={{this.cancel}}
+      />
+    {{/if}}
   </template>
 }

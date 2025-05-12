@@ -55,9 +55,9 @@
               <this.RdfaEditor
                 @node={{this.activeNode}}
                 @controller={{this.rdfaEditor}}
-                @propertyPredicates={{this.rdfa.propertyPredicates}}
-                @propertyObjects={{this.rdfa.propertyObjects}}
-                @backlinkPredicates={{this.rdfa.backlinkPredicates}}
+                @predicateOptionGenerator={{this.predicateOptionGenerator}}
+                @subjectOptionGenerator={{this.subjectOptionGenerator}}
+                @objectOptionGenerator={{this.objectOptionGenerator}}
               />
               <this.DebugInfo @node={{this.activeNode}} />
               <this.AttributeEditor

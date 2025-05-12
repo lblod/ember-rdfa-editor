@@ -19,19 +19,25 @@ import { fn } from '@ember/helper';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/select-node-by-subject.ts';
 import type { PNode } from '#root/prosemirror-aliases.ts';
-import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
-import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
-import BacklinkForm from './form.gts';
-import { v4 as uuidv4 } from 'uuid';
-import { action } from '@ember/object';
 import {
   addBacklinkToNode,
   removeBacklinkFromNode,
 } from '#root/utils/rdfa-utils.ts';
 import { transactionCombinator } from '#root/utils/transaction-utils.ts';
 import type { Option } from '#root/utils/_private/option.ts';
-import { not } from 'ember-truth-helpers';
+import { and, not } from 'ember-truth-helpers';
 import { modifier } from 'ember-modifier';
+import RelationshipEditorDevModal, {
+  type FormData,
+} from '../relationship-editor/modal-dev-mode.gts';
+import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import type {
+  ObjectOptionGenerator,
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+  SubmissionBody,
+} from '../relationship-editor/types.ts';
 
 type CreationStatus = {
   mode: 'creation';
@@ -45,7 +51,9 @@ type Status = CreationStatus | UpdateStatus;
 type Args = {
   controller: SayController;
   node: ResolvedPNode;
-  predicateOptions?: string[];
+  predicateOptionGenerator?: PredicateOptionGenerator;
+  subjectOptionGenerator?: SubjectOptionGenerator;
+  objectOptionGenerator?: ObjectOptionGenerator;
 };
 export default class BacklinkEditor extends Component<Args> {
   @tracked status?: Status;
@@ -115,7 +123,12 @@ export default class BacklinkEditor extends Component<Args> {
     };
   };
 
-  addBacklink = (backlink: IncomingTriple) => {
+  addBacklink = (data: SubmissionBody) => {
+    const backlink: IncomingTriple = {
+      predicate: data.predicate.term.value,
+      // @ts-expect-error fix term types
+      subject: data.target.term,
+    };
     this.controller.withTransaction(
       () => {
         return addBacklinkToNode({
@@ -140,8 +153,13 @@ export default class BacklinkEditor extends Component<Args> {
     );
   };
 
-  updateBacklink = (newBacklink: IncomingTriple) => {
+  updateBacklink = (data: SubmissionBody) => {
     if (this.status?.mode === 'update') {
+      const newBacklink: IncomingTriple = {
+        predicate: data.predicate.term.value,
+        // @ts-expect-error fix term types
+        subject: data.target.term,
+      };
       const rdfaId = this.node.attrs['__rdfaId'] as string;
       const index = this.status.index;
       this.controller.withTransaction(
@@ -161,6 +179,49 @@ export default class BacklinkEditor extends Component<Args> {
   cancel = () => {
     this.status = undefined;
   };
+
+  get modalTitle() {
+    if (this.isUpdating) {
+      return 'Edit relationship';
+    } else {
+      return 'Add relationship';
+    }
+  }
+
+  get currentTerm() {
+    const attrs = this.args.node.value.attrs;
+    if (!isRdfaAttrs(attrs)) {
+      return;
+    }
+
+    if (attrs.rdfaNodeType === 'resource') {
+      return sayDataFactory.resourceNode(attrs.subject);
+    } else {
+      return sayDataFactory.literalNode(attrs.__rdfaId);
+    }
+  }
+
+  get initialFormData(): FormData | undefined {
+    if (!this.status) {
+      return;
+    }
+    if (this.status.mode === 'update') {
+      return {
+        direction: 'backlink',
+        predicate: {
+          term: sayDataFactory.namedNode(this.status.backlink.predicate),
+          direction: 'backlink',
+        },
+        target: {
+          term: this.status.backlink.subject,
+        },
+      };
+    } else {
+      return {
+        direction: 'backlink',
+      };
+    }
+  }
 
   <template>
     <AuContent @skin="tiny" {{this.setUpListeners}}>
@@ -221,97 +282,18 @@ export default class BacklinkEditor extends Component<Args> {
         <p>This node doesn't have any backlinks yet.</p>
       {{/if}}
     </AuContent>
-    {{! Creation modal }}
-    <Modal
-      @title="Add backlink"
-      @controller={{@controller}}
-      @modalOpen={{this.isCreating}}
-      @onSave={{this.addBacklink}}
-      @onCancel={{this.cancel}}
-      @predicateOptions={{@predicateOptions}}
-    />
-    {{! Update modal }}
-    <Modal
-      @title="Edit backlink"
-      @controller={{@controller}}
-      @modalOpen={{this.isUpdating}}
-      @onSave={{this.updateBacklink}}
-      @onCancel={{this.cancel}}
-      {{! @glint-expect-error check if backlink is defined }}
-      @backlink={{this.status.backlink}}
-      @predicateOptions={{@predicateOptions}}
-    />
-  </template>
-}
-
-interface BacklinkEditorModalSig {
-  Args: {
-    title: string;
-    backlink?: IncomingTriple;
-    controller: SayController;
-    modalOpen: boolean;
-    onCancel: () => unknown;
-    onSave: (backlink: IncomingTriple) => unknown;
-    predicateOptions?: string[];
-  };
-}
-
-class Modal extends Component<BacklinkEditorModalSig> {
-  @action
-  onFormKeyDown(formElement: HTMLFormElement, event: KeyboardEvent) {
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-      formElement.requestSubmit();
-    }
-    return true;
-  }
-
-  @tracked initiallyFocusedElement?: HTMLElement;
-
-  initialFocus = modifier((element: HTMLElement) => {
-    this.initiallyFocusedElement = element;
-  });
-
-  @action
-  cancel() {
-    this.args.onCancel();
-  }
-
-  save = (backlink: IncomingTriple) => {
-    this.args.onSave(backlink);
-  };
-
-  <template>
-    {{! this was using unique-id but on our version of ember the exported helper seems to be undefined, so use uuid instead }}
-    {{#let (uuidv4) as |formId|}}
-      <AuModal
-        @modalOpen={{@modalOpen}}
-        @closable={{true}}
-        @closeModal={{this.cancel}}
-        {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
-        @initialFocus={{this.initiallyFocusedElement}}
-      >
-        <:title>{{@title}}</:title>
-        <:body>
-          <BacklinkForm
-            id={{formId}}
-            @initialFocus={{this.initialFocus}}
-            @onSubmit={{this.save}}
-            @controller={{@controller}}
-            @backlink={{@backlink}}
-            @predicateOptions={{@predicateOptions}}
-            @onKeyDown={{this.onFormKeyDown}}
-          />
-        </:body>
-        <:footer>
-          <AuButtonGroup>
-            <AuButton form={{formId}} type="submit">Save</AuButton>
-            <AuButton
-              @skin="secondary"
-              {{on "click" this.cancel}}
-            >Cancel</AuButton>
-          </AuButtonGroup>
-        </:footer>
-      </AuModal>
-    {{/let}}
+    {{#if (and this.status this.currentTerm)}}
+      <RelationshipEditorDevModal
+        @title={{this.modalTitle}}
+        @initialData={{this.initialFormData}}
+        {{! @glint-expect-error }}
+        @source={{this.currentTerm}}
+        @subjectOptionGenerator={{@subjectOptionGenerator}}
+        @predicateOptionGenerator={{@predicateOptionGenerator}}
+        @objectOptionGenerator={{@objectOptionGenerator}}
+        @onSubmit={{if this.isCreating this.addBacklink this.updateBacklink}}
+        @onCancel={{this.cancel}}
+      />
+    {{/if}}
   </template>
 }

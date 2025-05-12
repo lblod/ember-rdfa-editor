@@ -16,11 +16,15 @@ import type {
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
-import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
-import RelationshipEditorForm from './form.gts';
-import RelationshipEditorDevForm from './form-dev-mode.gts';
-import type { ObjectOptionGenerator, PredicateOptionGenerator, SubjectOptionGenerator, SubmissionBody } from './types.ts';
-
+import type {
+  ObjectOptionGenerator,
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+  SubmissionBody,
+} from './types.ts';
+import RelationshipEditorDevModal from './modal-dev-mode.gts';
+import RelationshipEditorModal from './modal.gts';
+import { and } from 'ember-truth-helpers';
 
 type CreateRelationshipButtonSig = {
   Element: AuButtonSignature['Element'];
@@ -104,10 +108,10 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     return !this.selectedNode;
   }
 
-  get FormComponent() {
+  get ModalComponent() {
     return this.args.devMode
-      ? RelationshipEditorDevForm
-      : RelationshipEditorForm;
+      ? RelationshipEditorDevModal
+      : RelationshipEditorModal;
   }
 
   <template>
@@ -121,21 +125,29 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     >
       {{t "ember-rdfa-editor.linking-ui-poc.button.label"}}
     </AuButton>
-    {{#if this.modalOpen}}
-      <AuModal @modalOpen={{true}} @closeModal={{this.closeModal}}>
-        <:title>{{t "ember-rdfa-editor.linking-ui-poc.modal.title"}}</:title>
-        <:body>
-          <this.FormComponent
-            {{! @glint-expect-error }}
-            @source={{this.selectedNode}}
-            @onSubmit={{this.onFormSubmit}}
-            @onCancel={{this.closeModal}}
-            @predicateOptionGenerator={{@predicateOptionGenerator}}
-            @subjectOptionGenerator={{@subjectOptionGenerator}}
-            @objectOptionGenerator={{@objectOptionGenerator}}
-          />
-        </:body>
-      </AuModal>
+    {{#if (and this.modalOpen this.selectedNode)}}
+      {{#if @devMode}}
+        <RelationshipEditorDevModal
+          {{! @glint-expect-error }}
+          @source={{this.selectedNode}}
+          @onSubmit={{this.onFormSubmit}}
+          @onCancel={{this.closeModal}}
+          @predicateOptionGenerator={{@predicateOptionGenerator}}
+          @subjectOptionGenerator={{@subjectOptionGenerator}}
+          @objectOptionGenerator={{@objectOptionGenerator}}
+        />
+      {{else}}
+        <RelationshipEditorModal
+          {{! @glint-expect-error }}
+          @source={{this.selectedNode}}
+          @onSubmit={{this.onFormSubmit}}
+          @onCancel={{this.closeModal}}
+          @predicateOptionGenerator={{@predicateOptionGenerator}}
+          @subjectOptionGenerator={{@subjectOptionGenerator}}
+          @objectOptionGenerator={{@objectOptionGenerator}}
+        />
+      {{/if}}
+
     {{/if}}
   </template>
 }

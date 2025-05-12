@@ -14,6 +14,11 @@ import BacklinkEditor from './backlink-editor/index.gts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import DocImportedResourceEditor from './doc-imported-resource-editor/index.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
+import type {
+  ObjectOptionGenerator,
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+} from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
 
 type Args = {
   controller: SayController;
@@ -21,9 +26,9 @@ type Args = {
   additionalImportedResources?: string[];
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;
-  propertyPredicates?: string[];
-  propertyObjects?: string[];
-  backlinkPredicates?: string[];
+  predicateOptionGenerator?: PredicateOptionGenerator;
+  subjectOptionGenerator?: SubjectOptionGenerator;
+  objectOptionGenerator?: ObjectOptionGenerator;
 };
 export default class RdfaEditor extends Component<Args> {
   @localCopy('args.expanded', true) declare expanded: boolean;
@@ -120,14 +125,17 @@ export default class RdfaEditor extends Component<Args> {
             @node={{@node}}
             @controller={{this.controller}}
             @additionalImportedResources={{@additionalImportedResources}}
-            @predicateOptions={{@propertyPredicates}}
-            @objectOptions={{@propertyObjects}}
+            @subjectOptionGenerator={{@subjectOptionGenerator}}
+            @predicateOptionGenerator={{@predicateOptionGenerator}}
+            @objectOptionGenerator={{@objectOptionGenerator}}
           />
         {{/if}}
         <BacklinkEditor
           @controller={{this.controller}}
           @node={{@node}}
-          @predicateOptions={{@backlinkPredicates}}
+          @subjectOptionGenerator={{@subjectOptionGenerator}}
+          @predicateOptionGenerator={{@predicateOptionGenerator}}
+          @objectOptionGenerator={{@objectOptionGenerator}}
         />
         <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
         <RemoveNode @node={{@node}} @controller={{@controller}} />
