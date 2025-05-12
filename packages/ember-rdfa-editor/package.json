@@ -166,6 +166,7 @@
       "default": "./dist/components/_private/debug-info/index.js"
     },
     "./vendor/*": "./vendor/*",
+    "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./ember-rdfa-editor.scss": "./ember-rdfa-editor.scss",
     "./*": {
