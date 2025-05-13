@@ -23,7 +23,10 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
-import { type Status, type StatusMessage } from '#root/components/_private/common/types.ts';
+import {
+  type Status,
+  type StatusMessage,
+} from '#root/components/_private/common/types.ts';
 import PropertyDetails from '#root/components/_private/common/property-details.gts';
 import { modifier } from 'ember-modifier';
 import ConfigurableRdfaDisplay, {

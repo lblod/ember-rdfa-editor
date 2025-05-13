@@ -23,7 +23,7 @@ import {
   literalTermSchema,
   namedNodeTermSchema,
   resourceNodeTermSchema,
-} from '../object-term-schemas.ts';
+} from '#root/components/_private/common/object-term-schemas.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { on } from '@ember/modifier';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';

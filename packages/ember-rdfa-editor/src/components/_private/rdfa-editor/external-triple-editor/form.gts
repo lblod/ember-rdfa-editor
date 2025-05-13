@@ -7,7 +7,7 @@ import { localCopy } from 'tracked-toolbox';
 import {
   literalTermSchema,
   namedNodeTermSchema,
-} from '../object-term-schemas.ts';
+} from '#root/components/_private/common/object-term-schemas.ts';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-label';
