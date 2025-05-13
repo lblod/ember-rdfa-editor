@@ -1,12 +1,10 @@
 import Component from '@glimmer/component';
 import type SayController from '#root/core/say-controller.ts';
-import AuContent from '@appuniversum/ember-appuniversum/components/au-content';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { tracked } from '@glimmer/tracking';
@@ -23,6 +21,133 @@ import { isSome, type Option } from '#root/utils/_private/option.ts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
+import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
+import { localCopy } from 'tracked-toolbox';
+
+interface Sig {
+  Args: {
+    controller: SayController;
+    node: ResolvedPNode;
+    expanded?: boolean;
+    onToggle?: (expanded: boolean) => void;
+  };
+}
+export default class ExternalTripleEditorCard extends Component<Sig> {
+  @localCopy('args.expanded', true) declare expanded: boolean;
+
+  @tracked
+  editModalOpen = false;
+  @tracked
+  indexBeingEdited?: number;
+
+  toggleSection = () => {
+    this.expanded = !this.expanded;
+    this.args.onToggle?.(this.expanded);
+  };
+
+  get node() {
+    return this.args.node;
+  }
+  get externalTriples(): FullTriple[] {
+    return (this.node.value.attrs['externalTriples'] as FullTriple[]) ?? [];
+  }
+  get controller() {
+    return this.args.controller;
+  }
+  get tripleBeingEdited(): Option<FullTriple> {
+    if (isSome(this.indexBeingEdited)) {
+      return this.externalTriples[this.indexBeingEdited];
+    }
+    return null;
+  }
+  closeModal = () => {
+    this.editModalOpen = false;
+  };
+  updateExternalTriples = (trip: FullTriple) => {
+    let tr;
+    if (isSome(this.indexBeingEdited)) {
+      const index = this.indexBeingEdited;
+      tr = transformExternalTriples((triples) => {
+        const copy = [...triples];
+        copy.splice(index, 1, trip);
+        return copy;
+      }, this.args.node.pos)(this.controller.mainEditorState).transaction;
+    } else {
+      tr = transformExternalTriples(
+        (triples) => triples.concat(trip),
+        this.args.node.pos,
+      )(this.controller.mainEditorState).transaction;
+    }
+
+    this.controller.mainEditorView.dispatch(tr);
+
+    this.closeModal();
+  };
+  startTripleEdit = (index?: number) => {
+    this.indexBeingEdited = index;
+
+    this.editModalOpen = true;
+  };
+  addTriple = () => {
+    this.startTripleEdit();
+  };
+  editTriple = (index: number) => {
+    this.startTripleEdit(index);
+  };
+  removeTriple = (index: number) => {
+    const tr = transformExternalTriples((triples) => {
+      const clone = [...triples];
+      clone.splice(index, 1);
+      return clone;
+    }, this.args.node.pos)(this.controller.mainEditorState).transaction;
+    this.controller.mainEditorView.dispatch(tr);
+  };
+  <template>
+    <AuCard
+      @size="small"
+      @expandable={{true}}
+      @manualControl={{true}}
+      @openSection={{this.toggleSection}}
+      @isExpanded={{this.expanded}}
+      as |c|
+    >
+      <c.header>
+        <AuHeading @level="1" @skin="6">External Triples</AuHeading>
+      </c.header>
+      <c.content class="au-c-content--small">
+        <AuToolbar @border="bottom" as |Group|>
+          <Group>
+            <AuButton
+              class="au-u-padding-none"
+              @skin="naked"
+              {{on "click" this.addTriple}}
+            >
+              Add triple
+            </AuButton>
+          </Group>
+        </AuToolbar>
+        <AuList @divider={{true}} as |Item|>
+          {{#each this.externalTriples as |trip index|}}
+            <Item>
+              <ExternalTripleItem
+                @trip={{trip}}
+                @index={{index}}
+                @onEdit={{this.editTriple}}
+                @onRemove={{this.removeTriple}}
+              />
+            </Item>
+          {{/each}}
+        </AuList>
+      </c.content>
+    </AuCard>
+    <EditModal
+      @modalOpen={{this.editModalOpen}}
+      @onCancel={{this.closeModal}}
+      @onSubmit={{this.updateExternalTriples}}
+      @triple={{this.tripleBeingEdited}}
+    />
+  </template>
+}
 
 interface EditModalSig {
   Args: {
@@ -136,110 +261,5 @@ class ExternalTripleItem extends Component<ExternalTripleItemSig> {
         Remove property
       </AuButton>
     </AuDropdown>
-  </template>
-}
-
-interface Sig {
-  Args: { controller: SayController; node: ResolvedPNode };
-}
-export default class ExternalTripleEditor extends Component<Sig> {
-  @tracked
-  editModalOpen = false;
-  @tracked
-  indexBeingEdited?: number;
-  get node() {
-    return this.args.node;
-  }
-  get externalTriples(): FullTriple[] {
-    return (this.node.value.attrs['externalTriples'] as FullTriple[]) ?? [];
-  }
-  get controller() {
-    return this.args.controller;
-  }
-  get tripleBeingEdited(): Option<FullTriple> {
-    if (isSome(this.indexBeingEdited)) {
-      return this.externalTriples[this.indexBeingEdited];
-    }
-    return null;
-  }
-  closeModal = () => {
-    this.editModalOpen = false;
-  };
-  updateExternalTriples = (trip: FullTriple) => {
-    let tr;
-    if (isSome(this.indexBeingEdited)) {
-      const index = this.indexBeingEdited;
-      tr = transformExternalTriples((triples) => {
-        const copy = [...triples];
-        copy.splice(index, 1, trip);
-        return copy;
-      }, this.args.node.pos)(this.controller.mainEditorState).transaction;
-    } else {
-      tr = transformExternalTriples(
-        (triples) => triples.concat(trip),
-        this.args.node.pos,
-      )(this.controller.mainEditorState).transaction;
-    }
-
-    this.controller.mainEditorView.dispatch(tr);
-
-    this.closeModal();
-  };
-  startTripleEdit = (index?: number) => {
-    this.indexBeingEdited = index;
-
-    this.editModalOpen = true;
-  };
-  addTriple = () => {
-    this.startTripleEdit();
-  };
-  editTriple = (index: number) => {
-    this.startTripleEdit(index);
-  };
-  removeTriple = (index: number) => {
-    const tr = transformExternalTriples((triples) => {
-      const clone = [...triples];
-      clone.splice(index, 1);
-      return clone;
-    }, this.args.node.pos)(this.controller.mainEditorState).transaction;
-    this.controller.mainEditorView.dispatch(tr);
-  };
-  <template>
-    <AuContent @skin="tiny">
-      <AuToolbar as |Group|>
-        <Group>
-          <AuHeading @level="6" @skin="6">External Triples</AuHeading>
-        </Group>
-        <Group>
-          <AuButton
-            @icon={{PlusIcon}}
-            @skin="naked"
-            {{on "click" this.addTriple}}
-          >
-            Add triple
-          </AuButton>
-        </Group>
-      </AuToolbar>
-
-      <AuList @divider={{true}} as |Item|>
-        {{#each this.externalTriples as |trip index|}}
-          <Item>
-            <ExternalTripleItem
-              @trip={{trip}}
-              @index={{index}}
-              @onEdit={{this.editTriple}}
-              @onRemove={{this.removeTriple}}
-            />
-          </Item>
-        {{/each}}
-
-      </AuList>
-    </AuContent>
-    <EditModal
-      @modalOpen={{this.editModalOpen}}
-      @onCancel={{this.closeModal}}
-      @onSubmit={{this.updateExternalTriples}}
-      @triple={{this.tripleBeingEdited}}
-    />
   </template>
 }
