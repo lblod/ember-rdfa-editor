@@ -68,6 +68,7 @@ import {
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
+import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -153,6 +154,7 @@ export default class EditableBlockController extends Controller {
   RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
   CreateRelationshipButton = CreateRelationshipButton;
+  NodeControlsCard = NodeControlsCard;
   DevModeToggle = DevModeToggle;
 
   rdfa = {

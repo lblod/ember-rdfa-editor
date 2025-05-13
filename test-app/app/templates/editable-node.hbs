@@ -51,6 +51,10 @@
               @controller={{this.rdfaEditor}}
               @config={{this.rdfa.visualizerConfig}}
             />
+            <this.NodeControlsCard
+              @node={{this.activeNode}}
+              @controller={{this.rdfaEditor}}
+            />
             {{#if this.activeNode}}
               <this.RdfaEditor
                 @node={{this.activeNode}}

@@ -3,8 +3,6 @@ import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import RdfaPropertyEditor from './property-editor/index.gts';
-import RdfaWrappingUtils from './wrapping-utils/index.gts';
-import RemoveNode from './remove-node/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
@@ -137,8 +135,6 @@ export default class RdfaEditor extends Component<Args> {
           @predicateOptionGenerator={{@predicateOptionGenerator}}
           @objectOptionGenerator={{@objectOptionGenerator}}
         />
-        <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
-        <RemoveNode @node={{@node}} @controller={{@controller}} />
       </c.content>
     </AuCard>
   </template>

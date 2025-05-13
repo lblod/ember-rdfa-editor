@@ -16,7 +16,7 @@ type Args = {
   controller: SayController;
 };
 
-export default class RemoveNode extends Component<Args> {
+export default class RemoveNodeButton extends Component<Args> {
   AlertTriangleIcon = AlertTriangleIcon;
 
   @tracked showDialog = false;
