@@ -16,7 +16,6 @@ import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 import type SayController from '#root/core/say-controller.ts';
-import { type PNode } from '#root/prosemirror-aliases.ts';
 import {
   addImportedResource,
   removeImportedResource,
@@ -27,7 +26,6 @@ import {
   type OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
 import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
-import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import PropertyDetails from '#root/components/_private/common/property-details.gts';
 import { type Status } from '#root/components/_private/common/types.ts';
@@ -38,7 +36,7 @@ import { deepEqualPropertyList } from '#root/plugins/rdfa-info/utils.ts';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
 } from '#root/components/_private/common/configurable-rdfa-display.gts';
-import ImportedResourceCreatorForm from './form.gts';
+import DefineImportedResourceForm from './form.gts';
 import PropertyEditorForm from '#root/components/_private/rdfa-editor/property-editor/form.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import { localCopy } from 'tracked-toolbox';
@@ -46,8 +44,7 @@ import { localCopy } from 'tracked-toolbox';
 interface Sig {
   Args: {
     controller: SayController;
-    node: ResolvedPNode;
-    additionalImportedResources?: string[];
+    additionalExportedResources?: string[];
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
   };
@@ -74,33 +71,24 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     this.args.onToggle?.(this.expanded);
   };
 
-  get node(): PNode {
-    return this.args.node.value;
-  }
-
   get controller() {
     return this.args.controller;
   }
 
-  get shouldShow() {
-    return (
-      this.node.type === this.controller?.schema.nodes['doc'] &&
-      !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
-        IMPORTED_RESOURCES_ATTR
-      ]
-    );
+  get documentNode() {
+    return this.controller.mainEditorState.doc;
   }
 
-  getSubjectPropertMap(): Record<string, OutgoingTriple[]> {
-    const importedResources = this.documentImportedResources;
-    const props = this.args.node.value.attrs['properties'] as OutgoingTriple[];
+  getSubjectPropertyMap(): Record<string, OutgoingTriple[]> {
+    const importedResources = this.documentExportedResources;
+    const props = this.documentNode.attrs['properties'] as OutgoingTriple[];
     if (!importedResources) return {};
     const propsAndSubjects = props.map((prop) => {
       if (!isLinkTriple(prop)) {
         return [];
       }
       const subjects = getSubjectsFromBacklinksOfRelationship(
-        this.node,
+        this.documentNode,
         importedResources,
         prop.predicate,
         prop.object,
@@ -125,7 +113,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       // eslint-disable-next-line ember/no-side-effects
       this.irCache = {};
     }
-    const newMap = this.getSubjectPropertMap();
+    const newMap = this.getSubjectPropertyMap();
     // Re-use cached arrays if there are no changes to avoid re-renders that mess with on-clicks
     // eslint-disable-next-line ember/no-side-effects
     this.irCache = Object.fromEntries(
@@ -148,24 +136,24 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
    * False if adding imported resources is not supported here, otherwise truthy, possibly empty
    * array
    */
-  get documentImportedResources(): string[] | false {
-    const docNodeImportedResources =
+  get documentExportedResources(): string[] | false {
+    const docNodeExportedResources =
       !!this.args.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
       ] &&
-      ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || []);
+      ((this.documentNode.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || []);
     return (
-      docNodeImportedResources &&
+      docNodeExportedResources &&
       Array.from(
         new Set<string>([
-          ...(docNodeImportedResources || []),
-          ...(this.args.additionalImportedResources || []),
+          ...(docNodeExportedResources || []),
+          ...(this.args.additionalExportedResources || []),
         ]).values(),
       )
     );
   }
 
-  addImportedResource = (resource: string) => {
+  addExportedResource = (resource: string) => {
     this.args.controller?.withTransaction(() => {
       if (!this.args.controller) return null;
       return addImportedResource({
@@ -174,7 +162,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     });
     this.closeResourceModal();
   };
-  removeImportedResource = (resource: string) => {
+  removeExportedResource = (resource: string) => {
     this.args.controller?.withTransaction(() => {
       if (!this.args.controller) return null;
       return removeImportedResource({
@@ -182,7 +170,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       })(this.args.controller.mainEditorState).transaction;
     });
   };
-  addPropToImported = (resource: string) => {
+  startPropertyCreation = (resource: string) => {
     this.propertyModalStatus = {
       mode: 'creation',
       subject: resource,
@@ -225,8 +213,8 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   // TODO de-dupe this from property-editor?
   removeProperty = (property: OutgoingTriple) => {
     const propertyToRemove = {
-      documentResourceNode: this.node,
-      importedResources: this.documentImportedResources || [],
+      documentResourceNode: this.documentNode,
+      importedResources: this.documentExportedResources || [],
       property,
     };
     this.args.controller?.doCommand(removeProperty(propertyToRemove), {
@@ -235,184 +223,178 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   };
 
   <template>
-    {{#if this.shouldShow}}
-      <AuCard
-        @size="small"
-        @expandable={{true}}
-        @manualControl={{true}}
-        @openSection={{this.toggleSection}}
-        @isExpanded={{this.expanded}}
-        as |c|
-      >
-        <c.header>
-          <AuHeading @level="1" @skin="6">Imported Resources</AuHeading>
-        </c.header>
-        <c.content class="au-c-content--tiny">
-          <AuToolbar @border="bottom" as |Group|>
-            <Group>
-              <AuButtonGroup>
-                <AuButton
-                  class="au-u-padding-none"
-                  @skin="naked"
-                  @disabled={{notTruthy this.documentImportedResources}}
-                  {{on "click" this.openResourceModal}}
+    <AuCard
+      @size="small"
+      @expandable={{true}}
+      @manualControl={{true}}
+      @openSection={{this.toggleSection}}
+      @isExpanded={{this.expanded}}
+      as |c|
+    >
+      <c.header>
+        <AuHeading @level="1" @skin="6">Document imported resources</AuHeading>
+      </c.header>
+      <c.content class="au-c-content--tiny">
+        <AuToolbar @border="bottom" as |Group|>
+          <Group>
+            <AuButton
+              class="au-u-padding-none"
+              @skin="naked"
+              @disabled={{notTruthy this.documentExportedResources}}
+              {{on "click" this.openResourceModal}}
+            >
+              Add
+            </AuButton>
+          </Group>
+        </AuToolbar>
+        {{#if
+          (and this.documentExportedResources this.importedResourceProperties)
+        }}
+          <AuList @divider={{true}} as |IRItem|>
+            {{#each-in
+              this.importedResourceProperties
+              as |importedResource props|
+            }}
+              <IRItem>
+                <div
+                  class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
                 >
-                  Add imported resource
-                </AuButton>
-              </AuButtonGroup>
-            </Group>
-          </AuToolbar>
-          {{#if
-            (and this.documentImportedResources this.importedResourceProperties)
-          }}
-            <AuList @divider={{true}} as |IRItem|>
-              {{#each-in
-                this.importedResourceProperties
-                as |importedResource props|
-              }}
-                <IRItem>
-                  <div
-                    class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-                  >
-                    <strong>{{importedResource}}</strong>
-                    <div>
-                      <AuButton
-                        @skin="link"
-                        @icon={{PlusIcon}}
-                        role="button"
-                        {{on
-                          "click"
-                          (fn this.addPropToImported importedResource)
-                        }}
-                      />
-                      <AuButton
-                        @skin="link"
-                        @alert={{true}}
-                        @icon={{CrossIcon}}
-                        @disabled={{not (isEmpty props)}}
-                        role="button"
-                        {{on
-                          "click"
-                          (fn this.removeImportedResource importedResource)
-                        }}
-                      />
-                    </div>
+                  <strong>{{importedResource}}</strong>
+                  <div>
+                    <AuButton
+                      @skin="link"
+                      @icon={{PlusIcon}}
+                      role="button"
+                      {{on
+                        "click"
+                        (fn this.startPropertyCreation importedResource)
+                      }}
+                    />
+                    <AuButton
+                      @skin="link"
+                      @alert={{true}}
+                      @icon={{CrossIcon}}
+                      @disabled={{not (isEmpty props)}}
+                      role="button"
+                      {{on
+                        "click"
+                        (fn this.removeExportedResource importedResource)
+                      }}
+                    />
                   </div>
-                  <AuList @divider={{true}} as |Item|>
-                    {{#each props as |prop|}}
-                      <Item
-                        class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-                      >
-                        <div class="au-u-padding-tiny">
-                          {{#if @controller}}
-                            <ConfigurableRdfaDisplay
-                              @value={{prop}}
-                              @generator={{predicateDisplay}}
-                              @controller={{@controller}}
-                            />
-                          {{/if}}
-                          <PropertyDetails
+                </div>
+                <AuList @divider={{true}} as |Item|>
+                  {{#each props as |prop|}}
+                    <Item
+                      class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+                    >
+                      <div class="au-u-padding-tiny">
+                        {{#if @controller}}
+                          <ConfigurableRdfaDisplay
+                            @value={{prop}}
+                            @generator={{predicateDisplay}}
                             @controller={{@controller}}
-                            @prop={{prop}}
                           />
-                        </div>
-                        <AuDropdown
-                          @icon={{ThreeDotsIcon}}
-                          role="menu"
-                          @alignment="left"
+                        {{/if}}
+                        <PropertyDetails
+                          @controller={{@controller}}
+                          @prop={{prop}}
+                        />
+                      </div>
+                      <AuDropdown
+                        @icon={{ThreeDotsIcon}}
+                        role="menu"
+                        @alignment="left"
+                      >
+                        <AuButton
+                          @skin="link"
+                          @icon={{PencilIcon}}
+                          role="menuitem"
+                          {{on
+                            "click"
+                            (fn this.startPropertyUpdate importedResource prop)
+                          }}
                         >
-                          <AuButton
-                            @skin="link"
-                            @icon={{PencilIcon}}
-                            role="menuitem"
-                            {{on
-                              "click"
-                              (fn
-                                this.startPropertyUpdate importedResource prop
-                              )
-                            }}
-                          >
-                            Edit property
-                          </AuButton>
-                          <AuButton
-                            @skin="link"
-                            @icon={{BinIcon}}
-                            role="menuitem"
-                            class="au-c-button--alert"
-                            {{on "click" (fn this.removeProperty prop)}}
-                          >
-                            Remove property
-                          </AuButton>
-                        </AuDropdown>
-                      </Item>
-                    {{/each}}
-                  </AuList>
-                </IRItem>
-              {{/each-in}}
-            </AuList>
-          {{/if}}
-        </c.content>
-      </AuCard>
+                          Edit property
+                        </AuButton>
+                        <AuButton
+                          @skin="link"
+                          @icon={{BinIcon}}
+                          role="menuitem"
+                          class="au-c-button--alert"
+                          {{on "click" (fn this.removeProperty prop)}}
+                        >
+                          Remove property
+                        </AuButton>
+                      </AuDropdown>
+                    </Item>
+                  {{/each}}
+                </AuList>
+              </IRItem>
+            {{/each-in}}
+          </AuList>
+        {{/if}}
+      </c.content>
+    </AuCard>
 
-      {{! Add imported resource modal }}
-      <WithUniqueId as |formId|>
-        <AuModal
-          @modalOpen={{this.isResourceModalOpen}}
-          @closable={{true}}
-          @closeModal={{this.closeResourceModal}}
-        >
-          <:title>Add Imported Resource</:title>
-          <:body>
-            <ImportedResourceCreatorForm
-              id={{formId}}
-              @onSave={{this.addImportedResource}}
-              @onCancel={{this.closeResourceModal}}
-              @controller={{@controller}}
-            />
-          </:body>
-          <:footer>
-            <AuButtonGroup>
-              <AuButton form={{formId}} type="submit">Save</AuButton>
-              <AuButton
-                @skin="secondary"
-                {{on "click" this.closeResourceModal}}
-              >Cancel</AuButton>
-            </AuButtonGroup>
-          </:footer>
-        </AuModal>
-      </WithUniqueId>
+    {{! Add imported resource modal }}
+    <WithUniqueId as |formId|>
+      <AuModal
+        @modalOpen={{this.isResourceModalOpen}}
+        @closable={{true}}
+        @closeModal={{this.closeResourceModal}}
+      >
+        <:title>Add Imported Resource</:title>
+        <:body>
+          <DefineImportedResourceForm
+            id={{formId}}
+            @onSave={{this.addExportedResource}}
+            @onCancel={{this.closeResourceModal}}
+            @controller={{@controller}}
+          />
+        </:body>
+        <:footer>
+          <AuButtonGroup>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
+            <AuButton
+              @skin="secondary"
+              {{on "click" this.closeResourceModal}}
+            >Cancel</AuButton>
+          </AuButtonGroup>
+        </:footer>
+      </AuModal>
+    </WithUniqueId>
 
-      {{! Add property modal }}
-      <WithUniqueId as |formId|>
-        <AuModal
-          @modalOpen={{isSome this.propertyModalStatus}}
-          @closable={{true}}
-          @closeModal={{this.closePropertyModal}}
-        >
-          <:title>Edit</:title>
-          <:body>
-            <PropertyEditorForm
-              id={{formId}}
-              @onSubmit={{this.updateProperty}}
-              @termTypes={{array "LiteralNode" "ResourceNode"}}
-              @controller={{@controller}}
-              @subject={{this.propertyModalStatus.subject}}
-              {{! @glint-expect-error check if status is defined }}
-              @triple={{this.propertyModalStatus.property}}
-              @importedResources={{this.documentImportedResources}}
-            />
-          </:body>
-          <:footer>
-            <AuButtonGroup>
-              <AuButton form={{formId}} type="submit">Save</AuButton>
-              <AuButton
-                @skin="secondary"
-                {{on "click" this.closePropertyModal}}
-              >Cancel</AuButton>
-            </AuButtonGroup>
-          </:footer>
-        </AuModal>
-      </WithUniqueId>
-    {{/if}}
+    {{! Add property modal }}
+    <WithUniqueId as |formId|>
+      <AuModal
+        @modalOpen={{isSome this.propertyModalStatus}}
+        @closable={{true}}
+        @closeModal={{this.closePropertyModal}}
+      >
+        <:title>Edit</:title>
+        <:body>
+          <PropertyEditorForm
+            id={{formId}}
+            @onSubmit={{this.updateProperty}}
+            @termTypes={{array "LiteralNode" "ResourceNode"}}
+            @controller={{@controller}}
+            @subject={{this.propertyModalStatus.subject}}
+            {{! @glint-expect-error check if status is defined }}
+            @triple={{this.propertyModalStatus.property}}
+            @importedResources={{this.documentExportedResources}}
+          />
+        </:body>
+        <:footer>
+          <AuButtonGroup>
+            <AuButton form={{formId}} type="submit">Save</AuButton>
+            <AuButton
+              @skin="secondary"
+              {{on "click" this.closePropertyModal}}
+            >Cancel</AuButton>
+          </AuButtonGroup>
+        </:footer>
+      </AuModal>
+    </WithUniqueId>
   </template>
 }

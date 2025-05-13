@@ -70,6 +70,7 @@ import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attrib
 import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
 import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
 import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card';
+import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card';
 import ExternalTripleEditorCard from '@lblod/ember-rdfa-editor/components/_private/external-triple-editor/card';
 
 import {
@@ -159,6 +160,7 @@ export default class EditableBlockController extends Controller {
   CreateRelationshipButton = CreateRelationshipButton;
   NodeControlsCard = NodeControlsCard;
   DocImportedResourceEditorCard = DocImportedResourceEditorCard;
+  ImportedResourceLinkerCard = ImportedResourceLinkerCard;
   ExternalTripleEditorCard = ExternalTripleEditorCard;
   DevModeToggle = DevModeToggle;
 

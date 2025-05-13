@@ -25,7 +25,7 @@ import {
   type TransactionMonad,
 } from '#root/utils/transaction-utils.ts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
-import AuCard from '@appuniversum/ember-appuniversum/components/au-card.js';
+import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 
 type Signature = {
   Args: {
@@ -137,6 +137,7 @@ export default class AttributeEditor extends Component<Signature> {
         as |form|
       >
         <AuCard
+          @flex={{true}}
           @size="small"
           @expandable={{true}}
           @manualControl={{true}}

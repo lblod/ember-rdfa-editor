@@ -366,6 +366,7 @@
       "./components/_private/doc-imported-resource-editor/form.js": "./dist/_app_/components/_private/doc-imported-resource-editor/form.js",
       "./components/_private/external-triple-editor/card.js": "./dist/_app_/components/_private/external-triple-editor/card.js",
       "./components/_private/external-triple-editor/form.js": "./dist/_app_/components/_private/external-triple-editor/form.js",
+      "./components/_private/imported-resource-linker/card.js": "./dist/_app_/components/_private/imported-resource-linker/card.js",
       "./components/_private/node-controls/card.js": "./dist/_app_/components/_private/node-controls/card.js",
       "./components/_private/node-controls/remove-node.js": "./dist/_app_/components/_private/node-controls/remove-node.js",
       "./components/_private/node-controls/wrapping-utils.js": "./dist/_app_/components/_private/node-controls/wrapping-utils.js",

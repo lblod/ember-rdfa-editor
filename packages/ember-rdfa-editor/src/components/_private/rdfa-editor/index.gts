@@ -18,7 +18,6 @@ import type {
 type Args = {
   controller: SayController;
   node: ResolvedPNode;
-  additionalImportedResources?: string[];
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;
   predicateOptionGenerator?: PredicateOptionGenerator;
@@ -100,7 +99,6 @@ export default class RdfaEditor extends Component<Args> {
           <RdfaPropertyEditor
             @node={{@node}}
             @controller={{this.controller}}
-            @additionalImportedResources={{@additionalImportedResources}}
             @subjectOptionGenerator={{@subjectOptionGenerator}}
             @predicateOptionGenerator={{@predicateOptionGenerator}}
             @objectOptionGenerator={{@objectOptionGenerator}}

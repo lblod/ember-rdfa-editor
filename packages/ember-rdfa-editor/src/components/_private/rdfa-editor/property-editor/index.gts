@@ -20,8 +20,6 @@ import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
 import type { PNode } from '#root/prosemirror-aliases.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
-import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import {
   type Status,
@@ -50,7 +48,6 @@ interface StatusMessageForNode extends StatusMessage {
 type Args = {
   controller: SayController;
   node: ResolvedPNode;
-  additionalImportedResources?: string[];
   predicateOptionGenerator?: PredicateOptionGenerator;
   subjectOptionGenerator?: SubjectOptionGenerator;
   objectOptionGenerator?: ObjectOptionGenerator;
@@ -150,33 +147,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
     this.setStatusMessage(null);
   };
 
-  get type() {
-    return this.node.attrs['rdfaNodeType'] as 'resource' | 'literal';
-  }
-
-  get allResources(): string[] {
-    if (!this.controller) {
-      return [];
-    }
-    return getSubjects(this.controller.mainEditorState);
-  }
-
-  get importedResources(): Record<string, string | undefined> | undefined {
-    return this.node.attrs['importedResources'] as
-      | Record<string, string | undefined>
-      | undefined;
-  }
-
-  linkImportedResource = (imported: string, linked: string) => {
-    const newImported = {
-      ...this.importedResources,
-      [imported]: linked,
-    };
-    this.controller?.withTransaction((tr) =>
-      tr.setNodeAttribute(this.args.node.pos, 'importedResources', newImported),
-    );
-  };
-
   startPropertyCreation = () => {
     this.status = {
       mode: 'creation',
@@ -247,7 +217,10 @@ export default class RdfaPropertyEditor extends Component<Args> {
     <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level="2" class="au-u-h6 au-u-muted">Properties</AuHeading>
+          <AuHeading
+            @level="2"
+            class="au-u-h6 au-u-muted"
+          >Properties</AuHeading>
         </Group>
         <Group>
           <AuButton
@@ -260,41 +233,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
           </AuButton>
         </Group>
       </AuToolbar>
-      {{#if this.importedResources}}
-        <div>
-          <AuHeading
-            @level="6"
-            @skin="6"
-            class="au-u-margin-bottom-small"
-          >Imported Resources</AuHeading>
-          <AuList @divider={{true}} as |Item|>
-            {{#each-in this.importedResources as |imported linked|}}
-              <Item
-                class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-              >
-                {{imported}}
-                <AuDropdown
-                  @icon={{if linked ChevronDownIcon PlusIcon}}
-                  @title={{linked}}
-                  role="menu"
-                  @alignment="left"
-                >
-                  {{#each this.allResources as |res|}}
-                    <AuButton
-                      @skin="link"
-                      @icon={{PencilIcon}}
-                      role="menuitem"
-                      {{on "click" (fn this.linkImportedResource imported res)}}
-                    >
-                      {{res}}
-                    </AuButton>
-                  {{/each}}
-                </AuDropdown>
-              </Item>
-            {{/each-in}}
-          </AuList>
-        </div>
-      {{/if}}
       {{#if this.properties.length}}
         <AuList @divider={{true}} as |Item|>
           {{#each this.properties as |prop|}}
