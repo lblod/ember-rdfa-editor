@@ -87,10 +87,14 @@ export default class AttributeEditor extends Component<Signature> {
     return null;
   };
 
-  enableEditingMode = () => {
+  enableEditingMode = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.isEditing = true;
   };
-  cancelEditing = (formReset: () => void) => {
+  cancelEditing = (formReset: () => void, event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.isEditing = false;
     formReset();
   };
@@ -137,7 +141,6 @@ export default class AttributeEditor extends Component<Signature> {
         as |form|
       >
         <AuCard
-          @flex={{true}}
           @size="small"
           @expandable={{true}}
           @manualControl={{true}}
@@ -145,31 +148,36 @@ export default class AttributeEditor extends Component<Signature> {
           @isExpanded={{this.expanded}}
           as |c|
         >
-          <c.header>
-            <AuHeading @level="1" @skin="6">Node attributes</AuHeading>
-          </c.header>
-          <c.content class="au-c-content--tiny">
-            <AuToolbar @border="bottom" as |Group|>
+          <c.header class="say-flex-grow">
+            <AuToolbar
+              class="au-u-flex au-u-flex-row au-u-flex--space-between"
+              as |Group|
+            >
+              <Group>
+                <AuHeading @level="1" @skin="6">Node attributes</AuHeading>
+              </Group>
               <Group>
                 <AuButtonGroup>
                   {{#if this.isEditing}}
                     <AuButton
-                      @skin="naked"
+                      @skin="link-secondary"
                       @iconAlignment="right"
                       {{on "click" (fn this.cancelEditing form.reset)}}
                     >
                       Cancel
                     </AuButton>
                     <AuButton
+                      @skin="link"
                       type="submit"
                       @icon={{CheckIcon}}
+                      onclick="event.stopPropagation();"
                       @iconAlignment="right"
                     >
                       Save
                     </AuButton>
                   {{else}}
                     <AuButton
-                      @skin="naked"
+                      @skin="link"
                       @icon={{PencilIcon}}
                       @iconAlignment="right"
                       {{on "click" this.enableEditingMode}}
@@ -180,6 +188,10 @@ export default class AttributeEditor extends Component<Signature> {
                 </AuButtonGroup>
               </Group>
             </AuToolbar>
+
+          </c.header>
+          <c.content class="au-c-content--tiny">
+
             <AuList @divider={{true}} as |Item|>
               {{#each-in this.nodeAttrs as |key value|}}
                 <Item>

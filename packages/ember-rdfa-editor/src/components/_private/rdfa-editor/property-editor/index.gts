@@ -226,7 +226,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
           <AuButton
             @disabled={{not this.canAddProperty}}
             @icon={{PlusIcon}}
-            @skin="naked"
+            @skin="link"
             {{on "click" this.startPropertyCreation}}
           >
             Add property

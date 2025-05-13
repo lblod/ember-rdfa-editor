@@ -170,7 +170,9 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       })(this.args.controller.mainEditorState).transaction;
     });
   };
-  startPropertyCreation = (resource: string) => {
+  startPropertyCreation = (resource: string, event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.propertyModalStatus = {
       mode: 'creation',
       subject: resource,
@@ -231,22 +233,27 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       @isExpanded={{this.expanded}}
       as |c|
     >
-      <c.header>
-        <AuHeading @level="1" @skin="6">Document imported resources</AuHeading>
-      </c.header>
-      <c.content class="au-c-content--tiny">
-        <AuToolbar @border="bottom" as |Group|>
+      <c.header class="say-flex-grow">
+
+        <AuToolbar
+          class="au-u-flex au-u-flex-row au-u-flex--space-between"
+          as |Group|
+        >
+          <Group>
+            <AuHeading @level="1" @skin="6">Document imported resources</AuHeading>
+          </Group>
           <Group>
             <AuButton
-              class="au-u-padding-none"
-              @skin="naked"
+              @skin="link"
               @disabled={{notTruthy this.documentExportedResources}}
               {{on "click" this.openResourceModal}}
             >
-              Add
+              Add resource
             </AuButton>
           </Group>
         </AuToolbar>
+      </c.header>
+      <c.content class="au-c-content--tiny">
         {{#if
           (and this.documentExportedResources this.importedResourceProperties)
         }}

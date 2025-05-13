@@ -374,7 +374,6 @@
       "./components/_private/rdfa-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/index.js",
       "./components/_private/rdfa-editor/property-editor/form.js": "./dist/_app_/components/_private/rdfa-editor/property-editor/form.js",
       "./components/_private/rdfa-editor/property-editor/index.js": "./dist/_app_/components/_private/rdfa-editor/property-editor/index.js",
-      "./components/_private/rdfa-editor/rdfa-type-convertor/index.js": "./dist/_app_/components/_private/rdfa-editor/rdfa-type-convertor/index.js",
       "./components/_private/rdfa-editor/relationship-editor/create-button.js": "./dist/_app_/components/_private/rdfa-editor/relationship-editor/create-button.js",
       "./components/_private/rdfa-editor/relationship-editor/modal-dev-mode.js": "./dist/_app_/components/_private/rdfa-editor/relationship-editor/modal-dev-mode.js",
       "./components/_private/rdfa-editor/relationship-editor/modal.js": "./dist/_app_/components/_private/rdfa-editor/relationship-editor/modal.js",

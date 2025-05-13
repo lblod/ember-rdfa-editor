@@ -233,7 +233,7 @@ export default class BacklinkEditor extends Component<Args> {
           <AuButton
             @icon={{PlusIcon}}
             @disabled={{not this.canAddBacklink}}
-            @skin="naked"
+            @skin="link"
             {{on "click" this.startBacklinkCreation}}
           >
             Add backlink

@@ -88,7 +88,9 @@ export default class ExternalTripleEditorCard extends Component<Sig> {
 
     this.editModalOpen = true;
   };
-  addTriple = () => {
+  addTriple = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.startTripleEdit();
   };
   editTriple = (index: number) => {
@@ -111,21 +113,22 @@ export default class ExternalTripleEditorCard extends Component<Sig> {
       @isExpanded={{this.expanded}}
       as |c|
     >
-      <c.header>
-        <AuHeading @level="1" @skin="6">External Triples</AuHeading>
-      </c.header>
-      <c.content class="au-c-content--small">
-        <AuToolbar @border="bottom" as |Group|>
+      <c.header class="say-flex-grow">
+        <AuToolbar
+          class="au-u-flex au-u-flex-row au-u-flex--space-between"
+          as |Group|
+        >
           <Group>
-            <AuButton
-              class="au-u-padding-none"
-              @skin="naked"
-              {{on "click" this.addTriple}}
-            >
+            <AuHeading @level="1" @skin="6">External Triples</AuHeading>
+          </Group>
+          <Group>
+            <AuButton @skin="link" {{on "click" this.addTriple}}>
               Add triple
             </AuButton>
           </Group>
         </AuToolbar>
+      </c.header>
+      <c.content class="au-c-content--small">
         <AuList @divider={{true}} as |Item|>
           {{#each this.externalTriples as |trip index|}}
             <Item>
