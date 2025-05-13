@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
-import SelectionTooltip from '../../_private/selection-tooltip.ts';
+import SelectionTooltip from '../../_private/common/selection-tooltip.ts';
 import {
   addColumnAfter,
   addColumnBefore,
