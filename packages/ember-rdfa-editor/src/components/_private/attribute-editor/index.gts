@@ -145,7 +145,7 @@ export default class AttributeEditor extends Component<Signature> {
           as |c|
         >
           <c.header>
-            <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
+            <AuHeading @level="1" @skin="6">Node attributes</AuHeading>
           </c.header>
           <c.content class="au-c-content--tiny">
             <AuToolbar @border="bottom" as |Group|>

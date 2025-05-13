@@ -7,7 +7,6 @@ import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import type SayController from '#root/core/say-controller.ts';
-import ExternalTripleEditor from './external-triple-editor/index.gts';
 import BacklinkEditor from './backlink-editor/index.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
@@ -92,16 +91,12 @@ export default class RdfaEditor extends Component<Args> {
         <div
           class="au-u-flex au-u-flex--row au-u-flex--vertical-center au-u-flex--spaced-small"
         >
-          <AuHeading @level="5" @skin="5">RDFa</AuHeading>
+          <AuHeading @level="1" @skin="6">RDFa</AuHeading>
           <AuPill>{{this.type}}</AuPill>
         </div>
       </c.header>
       <c.content>
         {{#if this.showPropertiesSection}}
-          <ExternalTripleEditor
-            @controller={{this.controller}}
-            @node={{@node}}
-          />
           <RdfaPropertyEditor
             @node={{@node}}
             @controller={{this.controller}}

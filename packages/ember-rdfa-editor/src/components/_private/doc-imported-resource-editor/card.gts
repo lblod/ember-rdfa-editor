@@ -245,7 +245,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
         as |c|
       >
         <c.header>
-          <AuHeading @level="5" @skin="5">Imported Resources</AuHeading>
+          <AuHeading @level="1" @skin="6">Imported Resources</AuHeading>
         </c.header>
         <c.content class="au-c-content--tiny">
           <AuToolbar @border="bottom" as |Group|>

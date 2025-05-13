@@ -227,7 +227,7 @@ export default class BacklinkEditor extends Component<Args> {
     <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level="6" @skin="6">Backlinks</AuHeading>
+          <AuHeading @level="2" class="au-u-h6 au-u-muted">Backlinks</AuHeading>
         </Group>
         <Group>
           <AuButton

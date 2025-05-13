@@ -33,7 +33,7 @@ export default class VisualiserCard extends Component<Sig> {
         as |c|
       >
         <c.header>
-          <AuHeading @level="5" @skin="5">RDFa visualiser</AuHeading>
+          <AuHeading @level="1" @skin="6">RDFa visualiser</AuHeading>
         </c.header>
         <c.content class="au-c-content--tiny">
           <RdfaExplorer @controller={{@controller}} @config={{@config}} />

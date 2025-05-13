@@ -34,7 +34,7 @@ export default class NodeControlsCard extends Component<Signature> {
       as |c|
     >
       <c.header>
-        <AuHeading @level="5" @skin="5">Node controls</AuHeading>
+        <AuHeading @level="1" @skin="6">Node controls</AuHeading>
       </c.header>
       <c.content class="au-c-content--small">
         <WrappingUtils @controller={{@controller}} />
