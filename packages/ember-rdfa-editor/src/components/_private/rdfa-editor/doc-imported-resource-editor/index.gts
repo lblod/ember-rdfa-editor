@@ -22,7 +22,7 @@ import {
   addImportedResource,
   removeImportedResource,
 } from '#root/plugins/rdfa-info/imported-resources.ts';
-import WithUniqueId from '#root/components/_private/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import {
   isLinkTriple,
   type OutgoingTriple,

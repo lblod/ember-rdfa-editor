@@ -1,8 +1,10 @@
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
-import AuModal, { type AuModalSignature } from '@appuniversum/ember-appuniversum/components/au-modal';
+import AuModal, {
+  type AuModalSignature,
+} from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
-import WithUniqueId from '../../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
@@ -269,7 +271,7 @@ export default class RelationshipEditorDevModal extends Component<RelationshipEd
     return this.args.source.termType === 'LiteralNode';
   }
 
-  get title(){
+  get title() {
     return this.args.title ?? 'Add relationship';
   }
 

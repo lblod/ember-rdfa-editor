@@ -1,8 +1,8 @@
-import type { ContentLiteralTerm } from "#root/core/say-data-factory/prosemirror-terms/content-literal.ts";
-import type { ResourceNodeTerm } from "#root/core/say-data-factory/prosemirror-terms/resource-node.ts";
-import type { SayTerm } from "#root/core/say-data-factory/term.ts";
-import type { Promisable } from "#root/utils/_private/types.ts";
-import type { Literal, NamedNode } from "@rdfjs/types";
+import type { ContentLiteralTerm } from '#root/core/say-data-factory/prosemirror-terms/content-literal.ts';
+import type { ResourceNodeTerm } from '#root/core/say-data-factory/prosemirror-terms/resource-node.ts';
+import type { SayTerm } from '#root/core/say-data-factory/term.ts';
+import type { Promisable } from '#root/utils/_private/types.ts';
+import type { Literal, NamedNode } from '@rdfjs/types';
 
 export type TermOption<TermType extends SayTerm> = {
   label?: string;

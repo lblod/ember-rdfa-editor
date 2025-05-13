@@ -206,7 +206,10 @@ export default class ResponsiveToolbar extends Component<Signature> {
               {{velcro.loop}}
               {{this.setUpMainDropdown}}
             >
-              {{yield (hash Group=ToolbarGroup Divider=ToolbarDivider) to="main"}}
+              {{yield
+                (hash Group=ToolbarGroup Divider=ToolbarDivider)
+                to="main"
+              }}
             </div>
           </Velcro>
         </div>
@@ -237,7 +240,10 @@ export default class ResponsiveToolbar extends Component<Signature> {
               {{velcro.loop}}
               {{this.setUpSideDropdown}}
             >
-              {{yield (hash Group=ToolbarGroup Divider=ToolbarDivider) to="side"}}
+              {{yield
+                (hash Group=ToolbarGroup Divider=ToolbarDivider)
+                to="side"
+              }}
             </div>
           </Velcro>
         </div>

@@ -35,7 +35,7 @@ import { eq } from 'ember-truth-helpers';
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 import type { ModifierLike } from '@glint/template';
 import { modifier } from 'ember-modifier';
-import WithUniqueId from '../../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 
 type SupportedTermType =
   | 'NamedNode'

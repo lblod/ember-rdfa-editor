@@ -11,7 +11,7 @@ import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-g
 import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
 import { modifier } from 'ember-modifier';
-import WithUniqueId from '../../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 
 type Args = {
   closeModal: () => void;

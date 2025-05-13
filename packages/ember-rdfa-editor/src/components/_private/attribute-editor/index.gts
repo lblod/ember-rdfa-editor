@@ -24,7 +24,7 @@ import {
   transactionCombinator,
   type TransactionMonad,
 } from '#root/utils/transaction-utils.ts';
-import WithUniqueId from '../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card.js';
 
 type Signature = {

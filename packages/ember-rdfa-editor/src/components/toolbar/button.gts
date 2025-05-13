@@ -10,8 +10,8 @@ type Signature = {
     active?: boolean;
     title?: string;
     disabled?: boolean;
-    icon: ComponentLike<{ Element: Element; }>;
-    optionsIcon?: ComponentLike<{ Element: Element; }>;
+    icon: ComponentLike<{ Element: Element }>;
+    optionsIcon?: ComponentLike<{ Element: Element }>;
     optionsLabel?: string;
     controller?: SayController;
   };

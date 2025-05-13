@@ -24,7 +24,7 @@ import { type Option } from '#root/utils/_private/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
-import WithUniqueId from '../../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ModifierLike } from '@glint/template';
 const predicateSchema = string().curie().required();
 

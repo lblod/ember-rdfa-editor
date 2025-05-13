@@ -7,7 +7,7 @@ import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
-import WithUniqueId from '../../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 
 const resourceSchema = string().curie().required();
 
