@@ -40,7 +40,7 @@ import { addProperty, removeProperty } from '#root/commands/index.ts';
 import { deepEqualPropertyList } from '#root/plugins/rdfa-info/utils.ts';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
-} from '../configurable-rdfa-display.gts';
+} from '#root/components/_private/common/configurable-rdfa-display.gts';
 
 interface Sig {
   Args: {

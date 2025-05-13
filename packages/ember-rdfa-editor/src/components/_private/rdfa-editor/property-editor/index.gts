@@ -28,7 +28,7 @@ import PropertyDetails from '../property-details.gts';
 import { modifier } from 'ember-modifier';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
-} from '../configurable-rdfa-display.gts';
+} from '#root/components/_private/common/configurable-rdfa-display.gts';
 import type {
   ObjectOptionGenerator,
   PredicateOptionGenerator,
