@@ -202,7 +202,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
     <AuContent @skin="tiny" {{this.setUpListeners}}>
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level="5" @skin="5">Properties</AuHeading>
+          <AuHeading @level="6" @skin="6">Properties</AuHeading>
         </Group>
         <Group>
           <AuButton
