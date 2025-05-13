@@ -31,8 +31,8 @@ import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.t
 import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import RelationshipEditorForm from './form.gts';
-import PropertyDetails from '../property-details.gts';
-import { type Status } from '../types.ts';
+import PropertyDetails from '#root/components/_private/common/property-details.gts';
+import { type Status } from '#root/components/_private/common/types.ts';
 import PropertyEditorForm from '../property-editor/form.gts';
 import { array } from '@ember/helper';
 import { isSome } from '#root/utils/_private/option.ts';

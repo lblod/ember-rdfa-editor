@@ -16,7 +16,7 @@ import ConfigurableRdfaDisplay, {
 } from '#root/components/_private/common/configurable-rdfa-display.gts';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/icons/external-link';
-import PropertyDetails from '../rdfa-editor/property-details.gts';
+import PropertyDetails from '#root/components/_private/common/property-details.gts';
 import type {
   DisplayGenerator,
   RdfaVisualizerConfig,
