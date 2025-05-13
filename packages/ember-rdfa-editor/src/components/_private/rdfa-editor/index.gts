@@ -9,8 +9,6 @@ import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import type SayController from '#root/core/say-controller.ts';
 import ExternalTripleEditor from './external-triple-editor/index.gts';
 import BacklinkEditor from './backlink-editor/index.gts';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
-import DocImportedResourceEditor from './doc-imported-resource-editor/index.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
   ObjectOptionGenerator,
@@ -58,15 +56,6 @@ export default class RdfaEditor extends Component<Args> {
     );
   }
 
-  get isDocWithImportedResources() {
-    return (
-      this.type === 'document' &&
-      !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
-        IMPORTED_RESOURCES_ATTR
-      ]
-    );
-  }
-
   goToNodeWithId = (id: string) => {
     if (this.controller) {
       const doc = this.controller.mainEditorState.doc;
@@ -108,12 +97,6 @@ export default class RdfaEditor extends Component<Args> {
         </div>
       </c.header>
       <c.content>
-        {{#if this.isDocWithImportedResources}}
-          <DocImportedResourceEditor
-            @controller={{@controller}}
-            @node={{@node}}
-          />
-        {{/if}}
         {{#if this.showPropertiesSection}}
           <ExternalTripleEditor
             @controller={{this.controller}}

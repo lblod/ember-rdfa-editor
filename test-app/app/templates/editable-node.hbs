@@ -63,6 +63,10 @@
                 @subjectOptionGenerator={{this.subjectOptionGenerator}}
                 @objectOptionGenerator={{this.objectOptionGenerator}}
               />
+              <this.DocImportedResourceEditorCard
+                @node={{this.activeNode}}
+                @controller={{this.rdfaEditor}}
+              />
               <this.DebugInfo @node={{this.activeNode}} />
               <this.AttributeEditor
                 @node={{this.activeNode}}

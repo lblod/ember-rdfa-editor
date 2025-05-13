@@ -20,7 +20,7 @@ interface Sig {
   Element: HTMLFormElement;
 }
 
-export default class PropertyEditorForm extends Component<Sig> {
+export default class ImportedResourceCreatorForm extends Component<Sig> {
   @tracked
   resource: string | undefined = undefined;
   @tracked

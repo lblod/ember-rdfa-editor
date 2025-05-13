@@ -158,8 +158,6 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   </template>
 }
 
-
-
 type ModalArgs = {
   closeModal: () => void;
   modalOpen: boolean;
