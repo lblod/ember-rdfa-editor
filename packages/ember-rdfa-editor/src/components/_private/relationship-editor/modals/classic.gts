@@ -9,7 +9,7 @@ import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
 import type { SayTerm } from '#root/core/say-data-factory/term.ts';
-import { TrackedObject } from 'tracked-built-ins';
+import { tracked, TrackedObject } from 'tracked-built-ins';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { CommentIcon } from '@appuniversum/ember-appuniversum/components/icons/comment';
 import { QuestionCircleIcon } from '@appuniversum/ember-appuniversum/components/icons/question-circle';
@@ -36,6 +36,7 @@ import type {
   SubmissionBody,
 } from '../types.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
+import { modifier } from 'ember-modifier';
 
 type RelationshipEditorModalSig = {
   Element: AuModalSignature['Element'];
@@ -66,6 +67,12 @@ const formSchema = yup.object({
 
 export default class RelationshipEditorClassicModal extends Component<RelationshipEditorModalSig> {
   data: FormData = new TrackedObject({});
+
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
 
   resetForm?: () => void;
   assignResetForm = (resetFn: () => void) => {
@@ -140,7 +147,12 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
   };
 
   <template>
-    <AuModal @modalOpen={{true}} @closeModal={{@onCancel}}>
+    <AuModal
+      @modalOpen={{true}}
+      @closeModal={{@onCancel}}
+      {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+      @initialFocus={{this.initiallyFocusedElement}}
+    >
       <:title>{{t "ember-rdfa-editor.linking-ui-poc.modal.title"}}</:title>
       <:body>
         <WithUniqueId as |formId|>
@@ -172,6 +184,7 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
                 </AuLabel>
                 <PowerSelect
                   id={{field.id}}
+                  {{this.initialFocus}}
                   @selected={{field.value}}
                   @onChange={{fn this.setPredicate field.triggerValidation}}
                   @allowClear={{true}}

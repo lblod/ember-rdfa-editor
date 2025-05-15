@@ -8,7 +8,7 @@ import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
-import { TrackedObject } from 'tracked-built-ins';
+import { tracked, TrackedObject } from 'tracked-built-ins';
 import { not } from 'ember-truth-helpers';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
@@ -41,6 +41,7 @@ import type {
 } from '../types.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { modifier } from 'ember-modifier';
 
 const OBJECT_TERM_TYPES = [
   'NamedNode',
@@ -77,7 +78,29 @@ const formSchema = yup.object({
   target: yup.object(),
 });
 
+const onFormKeyDown = (formElement: HTMLFormElement, event: KeyboardEvent) => {
+  if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+    formElement.requestSubmit();
+  }
+  return true;
+};
+
 export default class RelationshipEditorDevModeModal extends Component<RelationshipEditorDevModalSig> {
+  formElement?: HTMLFormElement;
+  setupFormElement = modifier((element: HTMLFormElement) => {
+    this.formElement = element;
+    const keyDownHandler = (event: KeyboardEvent) =>
+      onFormKeyDown(element, event);
+    window.addEventListener('keydown', keyDownHandler);
+    return () => window.removeEventListener('keydown', keyDownHandler);
+  });
+
+  @tracked initiallyFocusedElement?: HTMLElement;
+
+  initialFocus = modifier((element: HTMLElement) => {
+    this.initiallyFocusedElement = element;
+  });
+
   get supportedDirections(): Direction[] {
     return this.args.supportedDirections ?? ['property', 'backlink'];
   }
@@ -150,6 +173,9 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   };
 
   onPredicateSelectKeydown = (select: Select, event: KeyboardEvent) => {
+    if (this.formElement) {
+      onFormKeyDown(this.formElement, event);
+    }
     if (
       event.key === 'Enter' &&
       select.isOpen &&
@@ -170,6 +196,9 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   };
 
   onTargetSelectKeydown = (select: Select, event: KeyboardEvent) => {
+    if (this.formElement) {
+      onFormKeyDown(this.formElement, event);
+    }
     if (
       event.key === 'Enter' &&
       select.isOpen &&
@@ -303,7 +332,12 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   }
 
   <template>
-    <AuModal @modalOpen={{true}} @closeModal={{@onCancel}}>
+    <AuModal
+      @modalOpen={{true}}
+      @closeModal={{@onCancel}}
+      {{! @glint-expect-error appuniversum types should be adapted to accept an html element here }}
+      @initialFocus={{this.initiallyFocusedElement}}
+    >
       <:title>{{this.title}}</:title>
       <:body>
         <WithUniqueId as |formId|>
@@ -360,6 +394,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                 </AuLabel>
                 <PowerSelect
                   id={{field.id}}
+                  {{this.initialFocus}}
                   @selected={{field.value}}
                   @onKeydown={{this.onPredicateSelectKeydown}}
                   @onChange={{fn this.setPredicate field.triggerValidation}}
