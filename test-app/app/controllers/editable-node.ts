@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Schema } from '@lblod/ember-rdfa-editor';
+import { Schema, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import {
   em,
   strikethrough,
@@ -102,6 +102,7 @@ import {
   getOutgoingTriple,
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
+import type { SayEditorArgs } from '@lblod/ember-rdfa-editor/core/say-editor';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -255,12 +256,13 @@ export default class EditableBlockController extends Controller {
     editableNodePlugin(),
   ];
 
-  @tracked nodeViews = (controller: SayController) => {
+  @tracked nodeViews: SayEditorArgs['nodeViews'] = (controller) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
-      block_rdfa: (node: PNode) => new BlockRDFaView(node),
+      block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
+        new BlockRDFaView(args, controller),
     };
   };
 

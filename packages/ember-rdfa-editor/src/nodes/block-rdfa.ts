@@ -7,10 +7,12 @@ import {
   renderRdfaAware,
 } from '#root/core/schema.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
-import type { NodeView } from 'prosemirror-view';
+import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces.ts';
 import { getRDFFragment } from '../utils/namespace.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
+import type SayController from '#root/core/say-controller.js';
+import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -86,18 +88,43 @@ export class BlockRDFaView implements NodeView {
   labelElement: HTMLElement;
   contentDOM: HTMLElement;
   node: PNode;
-  constructor(node: PNode) {
-    this.node = node;
+  controller: SayController;
+  onClickRef: () => void;
+  constructor(
+    nodeViewArgs: Parameters<NodeViewConstructor>,
+    controller: SayController,
+  ) {
+    this.node = nodeViewArgs[0];
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'say-block-rdfa');
     this.labelElement = this.dom.appendChild(document.createElement('span'));
     this.labelElement.contentEditable = 'false';
     this.labelElement.textContent = getBlockRDFaLabel(
-      node,
+      this.node,
       FALLBACK_LABEL,
     ).toUpperCase();
     this.labelElement.setAttribute('class', 'say-block-rdfa--label');
+    // Save a ref to an arrow function as we can't use class methods directly here
+    this.onClickRef = () => this.onClick();
+    this.labelElement.addEventListener('click', this.onClickRef);
+    this.controller = controller;
     this.contentDOM = this.dom.appendChild(document.createElement('div'));
+  }
+
+  destroy() {
+    removeEventListener('click', this.onClickRef);
+  }
+
+  onClick() {
+    this.controller.doCommand(
+      selectNodeByRdfaId({
+        rdfaId: this.node.attrs['__rdfaId'] as string,
+        dontScroll: true,
+      }),
+      {
+        view: this.controller.mainEditorView,
+      },
+    );
   }
 
   update(node: PNode) {
