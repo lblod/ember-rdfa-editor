@@ -208,10 +208,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
       return;
     }
     const targetTerm = this.data.target.term;
-    console.log({
-      ...targetTerm,
-      termType,
-    });
     this.data.target = {
       ...this.data.target,
       term: sayDataFactory.fromTerm({

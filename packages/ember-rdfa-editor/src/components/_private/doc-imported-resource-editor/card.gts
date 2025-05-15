@@ -81,7 +81,12 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   @localCopy('args.expanded', true) declare expanded: boolean;
 
   @tracked isResourceModalOpen = false;
-  openResourceModal = () => (this.isResourceModalOpen = true);
+
+  openResourceModal = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isResourceModalOpen = true;
+  }
   closeResourceModal = () => (this.isResourceModalOpen = false);
 
   @tracked status?: Status;
@@ -223,7 +228,6 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   };
 
   onFormSubmit = (body: SubmissionBody) => {
-    console.log('On form submit: ', this.status);
     if (!this.status) {
       return;
     }
@@ -231,13 +235,11 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       this.removeProperty(this.status.property);
     }
     const { predicate, target } = body;
-    console.log('Predicate: ', predicate);
     if (predicate.direction === 'property') {
       const property = {
         predicate: predicate.term.value,
         object: target.term,
       };
-      console.log('Do command!!')
       this.args.controller.doCommand(
         addProperty({
           resource: this.status.subject,

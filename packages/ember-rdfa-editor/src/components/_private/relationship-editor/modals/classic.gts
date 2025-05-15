@@ -132,7 +132,6 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
         this.data.predicate?.direction === 'property' &&
         this.data.predicate.allowFreeTextTarget
       ) {
-        console.log('Choose literal');
         const term = sayDataFactory.literal(searchText);
         select.actions.choose({ term });
       }
