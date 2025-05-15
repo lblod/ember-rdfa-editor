@@ -67,8 +67,11 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
-import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
-import LinkRdfaNodeButton from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/button';
+import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
+import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card';
+import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card';
+import ExternalTripleEditorCard from '@lblod/ember-rdfa-editor/components/_private/external-triple-editor/card';
+import RelationshipEditorCard from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/card';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -81,16 +84,7 @@ import {
   unwrap,
 } from '@lblod/ember-rdfa-editor/utils/_private/option';
 
-import type {
-  PredicateOptionGenerator,
-  TargetOptionGenerator,
-  TermOption,
-  PredicateOption,
-} from '@lblod/ember-rdfa-editor/components/_private/link-rdfa-node-poc/modal';
-import {
-  ResourceNodeTerm,
-  sayDataFactory,
-} from '@lblod/ember-rdfa-editor/core/say-data-factory';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
@@ -102,6 +96,16 @@ import {
   getOutgoingTriple,
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
+import DevModeToggle from 'test-app/components/dev-mode-toggle';
+import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
+import type {
+  ObjectOption,
+  ObjectOptionGenerator,
+  PredicateOption,
+  PredicateOptionGenerator,
+  SubjectOption,
+  SubjectOptionGenerator,
+} from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/types';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -150,9 +154,14 @@ const humanReadableResourceName: DisplayGenerator<PNode> = (
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
   AttributeEditor = AttributeEditor;
-  RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
-  LinkRdfaNodeButton = LinkRdfaNodeButton;
+  CreateRelationshipButton = CreateRelationshipButton;
+  NodeControlsCard = NodeControlsCard;
+  DocImportedResourceEditorCard = DocImportedResourceEditorCard;
+  ImportedResourceLinkerCard = ImportedResourceLinkerCard;
+  ExternalTripleEditorCard = ExternalTripleEditorCard;
+  RelationshipEditorCard = RelationshipEditorCard;
+  DevModeToggle = DevModeToggle;
 
   rdfa = {
     propertyPredicates: [
@@ -173,12 +182,19 @@ export default class EditableBlockController extends Controller {
   };
 
   @tracked rdfaEditor?: SayController;
+  @tracked devMode = true;
+
+  onDevModeToggle = (enabled: boolean) => {
+    this.devMode = enabled;
+  };
+
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
         rdfaAware: true,
+        hasResourceImports: true,
       }),
       paragraph,
 
@@ -288,6 +304,7 @@ export default class EditableBlockController extends Controller {
 
   predicateOptionGenerator: PredicateOptionGenerator = ({
     searchString = '',
+    direction,
   } = {}) => {
     const options: PredicateOption[] = [
       {
@@ -302,6 +319,7 @@ export default class EditableBlockController extends Controller {
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         term: sayDataFactory.namedNode('eli:title'),
+        allowFreeTextTarget: true,
         direction: 'property',
       },
       {
@@ -321,18 +339,21 @@ export default class EditableBlockController extends Controller {
     ];
     return options.filter(
       (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+        (option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+          option.description
+            ?.toLowerCase()
+            .includes(searchString.toLowerCase()) ||
+          option.term.value
+            .toLowerCase()
+            .includes(searchString.toLowerCase())) &&
+        (!direction || option.direction === direction),
     );
   };
 
-  subjectOptionGenerator: TargetOptionGenerator = ({
+  subjectOptionGenerator: SubjectOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
+    const options: SubjectOption[] = [
       {
         label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
@@ -351,10 +372,11 @@ export default class EditableBlockController extends Controller {
         option.term.value.toLowerCase().includes(searchString.toLowerCase()),
     );
   };
-  objectOptionGenerator: TargetOptionGenerator = ({
+
+  objectOptionGenerator: ObjectOptionGenerator = ({
     searchString = '',
   } = {}) => {
-    const options: TermOption<ResourceNodeTerm>[] = [
+    const options: ObjectOption[] = [
       {
         label: 'Target 1',
         term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
