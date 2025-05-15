@@ -3,6 +3,7 @@ import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeBySubjectArgs = {
   subject: string;
+  dontScroll?: boolean;
 };
 
 /**
@@ -10,6 +11,7 @@ type SelectNodeBySubjectArgs = {
  */
 export function selectNodeBySubject({
   subject,
+  dontScroll,
 }: SelectNodeBySubjectArgs): Command {
   return (state, dispatch) => {
     const target = getNodesBySubject(state, subject)?.[0];
@@ -26,7 +28,9 @@ export function selectNodeBySubject({
     } else {
       tr.setSelection(new NodeSelection(tr.doc.resolve(target.pos)));
     }
-    tr.scrollIntoView();
+    if (!dontScroll) {
+      tr.scrollIntoView();
+    }
     dispatch(tr);
     return true;
   };

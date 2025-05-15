@@ -3,10 +3,12 @@ import { AllSelection, type Command, NodeSelection } from 'prosemirror-state';
 
 type SelectNodeByRdfaIdArgs = {
   rdfaId: string;
+  dontScroll?: boolean;
 };
 
 export function selectNodeByRdfaId({
   rdfaId,
+  dontScroll,
 }: SelectNodeByRdfaIdArgs): Command {
   return (state, dispatch) => {
     const target = getNodeByRdfaId(state, rdfaId);
@@ -23,7 +25,9 @@ export function selectNodeByRdfaId({
     } else {
       tr.setSelection(new NodeSelection(tr.doc.resolve(target.pos)));
     }
-    tr.scrollIntoView();
+    if (!dontScroll) {
+      tr.scrollIntoView();
+    }
     dispatch(tr);
     return true;
   };
