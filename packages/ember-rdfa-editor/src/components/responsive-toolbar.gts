@@ -3,8 +3,15 @@ import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { tracked } from 'tracked-built-ins';
+import { hash } from '@ember/helper';
+import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
+import ToolbarGroup from '#root/components/toolbar/group.gts';
+import ToolbarButton from '#root/components/toolbar/button.ts';
+import ToolbarDivider from '#root/components/toolbar/divider.gts';
+import type { ComponentLike } from '@glint/template';
 
 type ToolbarSection = {
   reference?: HTMLElement;
@@ -12,13 +19,15 @@ type ToolbarSection = {
   enableDropdown: boolean;
   showDropdown: boolean;
 };
+interface Sig {
+  Blocks: {
+    main: [{ Group: ComponentLike; Divider: ComponentLike }];
+    side: [{ Group: ComponentLike; Divider: ComponentLike }];
+  };
+}
 
-export default class ResponsiveToolbar extends Component {
-  ThreeDotsIcon = ThreeDotsIcon;
-  NavDownIcon = NavDownIcon;
-
+export default class ResponsiveToolbar extends Component<Sig> {
   toolbar?: HTMLElement;
-  Velcro = Velcro;
 
   main: ToolbarSection = tracked({
     enableDropdown: false,
@@ -159,4 +168,77 @@ export default class ResponsiveToolbar extends Component {
       }
     });
   }
+
+  <template>
+    <div class="say-toolbar" {{this.setUpToolbar}}>
+      {{#if (has-block "main")}}
+        <div class="say-toolbar__main" {{this.setUpMainToolbar}}>
+          {{yield (hash Group=ToolbarGroup Divider=ToolbarDivider) to="main"}}
+          <Velcro
+            @placement="bottom-end"
+            @offsetOptions={{hash mainAxis=10}}
+            @strategy="absolute"
+            as |velcro|
+          >
+            {{#if this.main.enableDropdown}}
+              <ToolbarGroup data-ignore-resize {{velcro.hook}}>
+                <ToolbarButton
+                  @icon={{ThreeDotsIcon}}
+                  title={{t "ember-rdfa-editor.utils.more-options"}}
+                  {{on "click" this.toggleMainDropdown}}
+                  @active={{this.main.showDropdown}}
+                />
+              </ToolbarGroup>
+            {{/if}}
+            <div
+              class="say-toolbar__main-dropdown"
+              data-ignore-resize
+              data-hidden={{if this.main.showDropdown "false" "true"}}
+              {{velcro.loop}}
+              {{this.setUpMainDropdown}}
+            >
+              {{yield
+                (hash Group=ToolbarGroup Divider=ToolbarDivider)
+                to="main"
+              }}
+            </div>
+          </Velcro>
+        </div>
+      {{/if}}
+      {{#if (has-block "side")}}
+        <div class="say-toolbar__side" {{this.setUpSideToolbar}}>
+          {{yield (hash Group=ToolbarGroup Divider=ToolbarDivider) to="side"}}
+          <Velcro
+            @placement="bottom-end"
+            @offsetOptions={{hash mainAxis=10}}
+            @strategy="absolute"
+            as |velcro|
+          >
+            {{#if this.side.enableDropdown}}
+              <ToolbarGroup data-ignore-resize {{velcro.hook}}>
+                <ToolbarButton
+                  @icon={{NavDownIcon}}
+                  title={{t "ember-rdfa-editor.utils.more-options"}}
+                  {{on "click" this.toggleSideDropdown}}
+                  @active={{this.side.showDropdown}}
+                />
+              </ToolbarGroup>
+            {{/if}}
+            <div
+              class="say-toolbar__side-dropdown"
+              data-ignore-resize
+              data-hidden={{if this.side.showDropdown "false" "true"}}
+              {{velcro.loop}}
+              {{this.setUpSideDropdown}}
+            >
+              {{yield
+                (hash Group=ToolbarGroup Divider=ToolbarDivider)
+                to="side"
+              }}
+            </div>
+          </Velcro>
+        </div>
+      {{/if}}
+    </div>
+  </template>
 }

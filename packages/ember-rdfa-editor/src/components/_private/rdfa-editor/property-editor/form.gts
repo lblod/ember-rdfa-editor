@@ -14,7 +14,6 @@ import {
   getSubjects,
   rdfaInfoPluginKey,
 } from '#root/plugins/rdfa-info/index.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
 import { localCopy } from 'tracked-toolbox';
 import { ValidationError, object, string } from 'yup';
 import {
@@ -36,6 +35,8 @@ import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 import type { ModifierLike } from '@glint/template';
 import { modifier } from 'ember-modifier';
 import WithUniqueId from '../../with-unique-id.ts';
+import type IntlService from 'ember-intl/services/intl';
+import { inject as service } from '@ember/service';
 
 type SupportedTermType =
   | 'NamedNode'
@@ -129,6 +130,7 @@ export default class PropertyEditorForm extends Component<Sig> {
   errors: ValidationError[] = [];
   @tracked
   currentFormData: FormData | null = null;
+  @service declare intl: IntlService;
   get termTypes(): SupportedTermType[] {
     return this.args.termTypes ?? allTermTypes;
   }
@@ -255,9 +257,11 @@ export default class PropertyEditorForm extends Component<Sig> {
     if (!this.controller) {
       return '';
     }
-    const node = unwrap(
-      getNodeByRdfaId(this.controller.mainEditorState, rdfaId),
-    );
+    const node = getNodeByRdfaId(this.controller.mainEditorState, rdfaId);
+    if (!node)
+      return `${this.intl.t(
+        'ember-rdfa-editor.property-editor.external-node',
+      )} (${rdfaId})`;
     const content = node.value.textContent;
     const truncatedContent =
       content.length <= 20 ? content : `${content.substring(0, 20)}...`;

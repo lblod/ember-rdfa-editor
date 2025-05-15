@@ -118,3 +118,5 @@ ember-rdfa-editor:
           label: Insert
         cancel:
           label: Cancel
+  property-editor:
+    external-node: External node
