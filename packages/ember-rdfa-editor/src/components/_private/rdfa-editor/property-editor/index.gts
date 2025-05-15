@@ -3,14 +3,8 @@ import { tracked } from '@glimmer/tracking';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
 import { removeProperty } from '#root/commands/rdfa-commands/remove-property.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import {
-  isLinkTriple,
-  type OutgoingTriple,
-} from '#root/core/rdfa-processor.ts';
-import {
-  getSubjectsFromBacklinksOfRelationship,
-  isLinkToNode,
-} from '#root/utils/rdfa-utils.ts';
+import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import { isLinkToNode } from '#root/utils/rdfa-utils.ts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
@@ -27,7 +21,6 @@ import { fn } from '@ember/helper';
 import { not } from 'ember-truth-helpers';
 import type { PNode } from '#root/prosemirror-aliases.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
-import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
@@ -91,26 +84,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   }
 
   get properties() {
-    const properties = this.args.node.value.attrs[
-      'properties'
-    ] as OutgoingTriple[];
-    if (this.isDocWithImportedResourcesEnabled) {
-      const importedResources = this.documentImportedResources;
-      if (importedResources) {
-        // TODO do we need to memoize these results?
-        return properties.filter(
-          (property) =>
-            !isLinkTriple(property) ||
-            getSubjectsFromBacklinksOfRelationship(
-              this.node,
-              importedResources,
-              property.predicate,
-              property.object,
-            ).length === 0,
-        );
-      }
-    }
-    return properties;
+    return this.args.node.value.attrs['properties'] as OutgoingTriple[];
   }
 
   get isCreating() {
@@ -145,9 +119,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
   };
 
   get type() {
-    if (this.node.type === this.controller?.schema.nodes['doc']) {
-      return 'document';
-    }
     return this.node.attrs['rdfaNodeType'] as 'resource' | 'literal';
   }
 
@@ -156,32 +127,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
       return [];
     }
     return getSubjects(this.controller.mainEditorState);
-  }
-
-  get isDocWithImportedResourcesEnabled(): boolean {
-    return (
-      this.type === 'document' &&
-      !!this.controller?.schema.nodes['doc']?.spec.attrs?.[
-        IMPORTED_RESOURCES_ATTR
-      ]
-    );
-  }
-  get docNodeImportedResources(): string[] | false {
-    return (
-      this.isDocWithImportedResourcesEnabled &&
-      ((this.node.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || [])
-    );
-  }
-  get documentImportedResources(): string[] | false {
-    return (
-      this.isDocWithImportedResourcesEnabled &&
-      Array.from(
-        new Set<string>([
-          ...(this.docNodeImportedResources || []),
-          ...(this.args.additionalImportedResources || []),
-        ]).values(),
-      )
-    );
   }
 
   get importedResources(): Record<string, string | undefined> | undefined {
@@ -214,10 +159,7 @@ export default class RdfaPropertyEditor extends Component<Args> {
   };
 
   get canAddProperty() {
-    return (
-      isResourceNode(this.node) ||
-      Boolean(this.node.attrs[IMPORTED_RESOURCES_ATTR])
-    );
+    return isResourceNode(this.node);
   }
 
   addProperty = (property: OutgoingTriple, subject?: string) => {
@@ -225,17 +167,9 @@ export default class RdfaPropertyEditor extends Component<Args> {
     // node is a document that imports resources (e.g. a snippet)
     const resource = this.currentResource || subject;
     if (resource) {
-      const isNewImportedResource =
-        (subject &&
-          this.docNodeImportedResources &&
-          !this.docNodeImportedResources.includes(subject)) ||
-        false;
-      this.controller?.doCommand(
-        addProperty({ resource, property, isNewImportedResource }),
-        {
-          view: this.controller.mainEditorView,
-        },
-      );
+      this.controller?.doCommand(addProperty({ resource, property }), {
+        view: this.controller.mainEditorView,
+      });
       this.status = undefined;
     }
   };
@@ -252,15 +186,8 @@ export default class RdfaPropertyEditor extends Component<Args> {
   removeProperty = (property: OutgoingTriple) => {
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
-    if (this.currentResource || this.type === 'document') {
-      const propertyToRemove =
-        this.type !== 'document' && this.currentResource
-          ? { resource: this.currentResource, property }
-          : {
-              documentResourceNode: this.node,
-              importedResources: this.documentImportedResources || [],
-              property,
-            };
+    if (this.currentResource) {
+      const propertyToRemove = { resource: this.currentResource, property };
       this.controller?.doCommand(removeProperty(propertyToRemove), {
         view: this.controller.mainEditorView,
       });
@@ -380,7 +307,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
     </AuContent>
     {{! Creation modal }}
     <Modal
-      @importedResources={{this.documentImportedResources}}
       @controller={{@controller}}
       @modalOpen={{this.isCreating}}
       @onSave={{this.addProperty}}
@@ -390,7 +316,6 @@ export default class RdfaPropertyEditor extends Component<Args> {
     />
     {{! Update modal }}
     <Modal
-      @importedResources={{this.documentImportedResources}}
       @controller={{@controller}}
       @modalOpen={{this.isUpdating}}
       @onSave={{this.updateProperty}}
@@ -410,7 +335,6 @@ interface Sig {
     onCancel: () => void;
     onSave: (property: OutgoingTriple, subject?: string) => void;
     modalOpen: boolean;
-    importedResources?: string[] | false;
     title?: string;
     predicateOptions?: string[];
     objectOptions?: string[];
@@ -466,7 +390,6 @@ class Modal extends Component<Sig> {
             }}
             @controller={{@controller}}
             @triple={{@property}}
-            @importedResources={{@importedResources}}
             @predicateOptions={{@predicateOptions}}
             @objectOptions={{@objectOptions}}
             @onKeyDown={{this.onFormKeyDown}}
