@@ -11,7 +11,6 @@ import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/n
 import ToolbarGroup from '#root/components/toolbar/group.gts';
 import ToolbarButton from '#root/components/toolbar/button.ts';
 import ToolbarDivider from '#root/components/toolbar/divider.gts';
-import type { ComponentLike } from '@glint/template';
 
 type ToolbarSection = {
   reference?: HTMLElement;
@@ -21,8 +20,8 @@ type ToolbarSection = {
 };
 interface Sig {
   Blocks: {
-    main: [{ Group: ComponentLike; Divider: ComponentLike }];
-    side: [{ Group: ComponentLike; Divider: ComponentLike }];
+    main: [{ Group: typeof ToolbarGroup; Divider: typeof ToolbarDivider }];
+    side: [{ Group: typeof ToolbarGroup; Divider: typeof ToolbarDivider }];
   };
 }
 
