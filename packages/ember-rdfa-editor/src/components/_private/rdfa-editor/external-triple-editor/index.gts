@@ -208,7 +208,7 @@ export default class ExternalTripleEditor extends Component<Sig> {
     <AuContent @skin="tiny">
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level="5" @skin="5">External Triples</AuHeading>
+          <AuHeading @level="6" @skin="6">External Triples</AuHeading>
         </Group>
         <Group>
           <AuButton

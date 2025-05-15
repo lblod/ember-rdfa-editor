@@ -215,7 +215,7 @@ export default class DocImportedResourceEditor extends Component<Sig> {
     <AuContent @skin="tiny" ...attributes>
       <AuToolbar as |Group|>
         <Group>
-          <AuHeading @level="5" @skin="5">Imported Resources</AuHeading>
+          <AuHeading @level="6" @skin="6">Imported Resources</AuHeading>
         </Group>
         <Group>
           <AuButton

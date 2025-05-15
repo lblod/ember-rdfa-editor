@@ -39,25 +39,26 @@
             </Item>
           </Sb.Collapsible>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
-          <this.VisualiserCard
-            @controller={{this.rdfaEditor}}
-            @node={{this.activeNode}}
-            @config={{this.rdfa.visualizerConfig}}
-          />
-          <this.RdfaEditor
-            @node={{this.activeNode}}
-            @controller={{this.rdfaEditor}}
-            @propertyPredicates={{this.rdfa.propertyPredicates}}
-            @propertyObjects={{this.rdfa.propertyObjects}}
-            @backlinkPredicates={{this.rdfa.backlinkPredicates}}
-          />
-          {{#if this.activeNode}}
-            <this.DebugInfo @node={{this.activeNode}} />
-            <this.AttributeEditor
-              @node={{this.activeNode}}
+          <div class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
+            <this.VisualiserCard
               @controller={{this.rdfaEditor}}
+              @config={{this.rdfa.visualizerConfig}}
             />
-          {{/if}}
+            {{#if this.activeNode}}
+              <this.RdfaEditor
+                @node={{this.activeNode}}
+                @controller={{this.rdfaEditor}}
+                @propertyPredicates={{this.rdfa.propertyPredicates}}
+                @propertyObjects={{this.rdfa.propertyObjects}}
+                @backlinkPredicates={{this.rdfa.backlinkPredicates}}
+              />
+              <this.DebugInfo @node={{this.activeNode}} />
+              <this.AttributeEditor
+                @node={{this.activeNode}}
+                @controller={{this.rdfaEditor}}
+              />
+            {{/if}}
+          </div>
         </Sidebar>
       </:aside>
     </EditorContainer>

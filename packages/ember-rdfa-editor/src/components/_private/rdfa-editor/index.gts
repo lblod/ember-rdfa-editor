@@ -1,27 +1,22 @@
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import { localCopy } from 'tracked-toolbox';
-import { on } from '@ember/modifier';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 import RdfaPropertyEditor from './property-editor/index.gts';
 import RdfaWrappingUtils from './wrapping-utils/index.gts';
 import RemoveNode from './remove-node/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
-import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
-import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
-import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import type SayController from '#root/core/say-controller.ts';
 import ExternalTripleEditor from './external-triple-editor/index.gts';
 import BacklinkEditor from './backlink-editor/index.gts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import DocImportedResourceEditor from './doc-imported-resource-editor/index.gts';
+import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 
 type Args = {
-  controller?: SayController;
+  controller: SayController;
   node: ResolvedPNode;
   additionalImportedResources?: string[];
   expanded?: boolean;
@@ -93,74 +88,50 @@ export default class RdfaEditor extends Component<Args> {
     }
   };
   <template>
-    <AuPanel class="au-u-margin-top-tiny au-u-margin-bottom-tiny" as |Section|>
-      <Section>
-        <AuToolbar as |Group|>
-          <Group>
-            <AuHeading @level="4" @skin="4">RDFa</AuHeading>
-          </Group>
-          {{#if @node}}
-            <Group>
-              <AuPill>{{this.type}}</AuPill>
-              <AuButton
-                @skin="naked"
-                @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
-                {{on "click" this.toggleSection}}
-              />
-            </Group>
-          {{/if}}
-        </AuToolbar>
-      </Section>
-      {{#if this.controller}}
-        {{#if @node}}
-          {{#if this.expanded}}
-            {{#if this.isDocWithImportedResources}}
-              <Section>
-                <DocImportedResourceEditor
-                  @controller={{@controller}}
-                  @node={{@node}}
-                />
-              </Section>
-            {{/if}}
-            {{#if this.showPropertiesSection}}
-              <Section>
-                <ExternalTripleEditor
-                  @controller={{this.controller}}
-                  @node={{@node}}
-                />
-              </Section>
-              <Section>
-                <RdfaPropertyEditor
-                  @node={{@node}}
-                  @controller={{this.controller}}
-                  @additionalImportedResources={{@additionalImportedResources}}
-                  @predicateOptions={{@propertyPredicates}}
-                  @objectOptions={{@propertyObjects}}
-                />
-              </Section>
-            {{/if}}
-            <Section>
-              <BacklinkEditor
-                @controller={{this.controller}}
-                @node={{@node}}
-                @predicateOptions={{@backlinkPredicates}}
-              />
-            </Section>
-            <Section>
-              <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
-            </Section>
-            <Section>
-              {{#if @controller}}
-                <RemoveNode @node={{@node}} @controller={{@controller}} />
-              {{/if}}
-            </Section>
-          {{/if}}
-        {{else}}
-          <Section>
-            <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
-          </Section>
+    <AuCard
+      @size="small"
+      @expandable={{true}}
+      @manualControl={{true}}
+      @openSection={{this.toggleSection}}
+      @isExpanded={{this.expanded}}
+      as |c|
+    >
+      <c.header>
+        <div
+          class="au-u-flex au-u-flex--row au-u-flex--vertical-center au-u-flex--spaced-small"
+        >
+          <AuHeading @level="5" @skin="5">RDFa</AuHeading>
+          <AuPill>{{this.type}}</AuPill>
+        </div>
+      </c.header>
+      <c.content>
+        {{#if this.isDocWithImportedResources}}
+          <DocImportedResourceEditor
+            @controller={{@controller}}
+            @node={{@node}}
+          />
         {{/if}}
-      {{/if}}
-    </AuPanel>
+        {{#if this.showPropertiesSection}}
+          <ExternalTripleEditor
+            @controller={{this.controller}}
+            @node={{@node}}
+          />
+          <RdfaPropertyEditor
+            @node={{@node}}
+            @controller={{this.controller}}
+            @additionalImportedResources={{@additionalImportedResources}}
+            @predicateOptions={{@propertyPredicates}}
+            @objectOptions={{@propertyObjects}}
+          />
+        {{/if}}
+        <BacklinkEditor
+          @controller={{this.controller}}
+          @node={{@node}}
+          @predicateOptions={{@backlinkPredicates}}
+        />
+        <RdfaWrappingUtils @node={{@node}} @controller={{@controller}} />
+        <RemoveNode @node={{@node}} @controller={{@controller}} />
+      </c.content>
+    </AuCard>
   </template>
 }
