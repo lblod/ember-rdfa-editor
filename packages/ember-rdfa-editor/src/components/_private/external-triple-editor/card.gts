@@ -128,19 +128,23 @@ export default class ExternalTripleEditorCard extends Component<Sig> {
           </Group>
         </AuToolbar>
       </c.header>
-      <c.content class="au-c-content--small">
-        <AuList @divider={{true}} as |Item|>
-          {{#each this.externalTriples as |trip index|}}
-            <Item>
-              <ExternalTripleItem
-                @trip={{trip}}
-                @index={{index}}
-                @onEdit={{this.editTriple}}
-                @onRemove={{this.removeTriple}}
-              />
-            </Item>
-          {{/each}}
-        </AuList>
+      <c.content class="au-c-content--tiny">
+        {{#if this.externalTriples.length}}
+          <AuList @divider={{true}} as |Item|>
+            {{#each this.externalTriples as |trip index|}}
+              <Item>
+                <ExternalTripleItem
+                  @trip={{trip}}
+                  @index={{index}}
+                  @onEdit={{this.editTriple}}
+                  @onRemove={{this.removeTriple}}
+                />
+              </Item>
+            {{/each}}
+          </AuList>
+        {{else}}
+          <p class="au-u-italic">This document does not define any external triples.</p>
+        {{/if}}
       </c.content>
     </AuCard>
     <EditModal

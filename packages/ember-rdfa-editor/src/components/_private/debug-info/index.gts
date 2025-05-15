@@ -40,7 +40,7 @@ export default class DebugInfo extends Component<Signature> {
       <c.header>
         <AuHeading @level="1" @skin="6">Debug Info</AuHeading>
       </c.header>
-      <c.content class="au-c-content--small">
+      <c.content class="au-c-content--tiny">
         <p><strong>Position: </strong>{{this.pos}}</p>
         <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
       </c.content>

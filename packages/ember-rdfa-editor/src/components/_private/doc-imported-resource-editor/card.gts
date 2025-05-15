@@ -86,7 +86,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     event.preventDefault();
     event.stopPropagation();
     this.isResourceModalOpen = true;
-  }
+  };
   closeResourceModal = () => (this.isResourceModalOpen = false);
 
   @tracked status?: Status;
@@ -395,6 +395,9 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
               </IRItem>
             {{/each-in}}
           </AuList>
+        {{else}}
+          <p class="au-u-italic">This document does not define any imported
+            resources.</p>
         {{/if}}
       </c.content>
     </AuCard>
@@ -431,7 +434,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       <RelationshipEditorDevModeModal
         @title={{this.modalTitle}}
         @initialData={{this.initialFormData}}
-        @supportedDirections={{array 'property'}}
+        @supportedDirections={{array "property"}}
         {{! @glint-expect-error }}
         @source={{this.currentTerm}}
         @subjectOptionGenerator={{@subjectOptionGenerator}}
