@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 12.6.1
+
+### Patch Changes
+
+- [#1308](https://github.com/lblod/ember-rdfa-editor/pull/1308) [`b574c6c`](https://github.com/lblod/ember-rdfa-editor/commit/b574c6c47f6df8510f141a25b0c77dd423dbd61a) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix problems with non-existing rdfa ids
+
 ## 12.6.0
 
 ### Minor Changes
