@@ -319,6 +319,7 @@ export default class EditableBlockController extends Controller {
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         term: sayDataFactory.namedNode('eli:title'),
+        allowFreeTextTarget: true,
         direction: 'property',
       },
       {

@@ -5,7 +5,9 @@ import AuModal, {
 } from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
-import PowerSelect from 'ember-power-select/components/power-select';
+import PowerSelect, {
+  type Select,
+} from 'ember-power-select/components/power-select';
 import type { SayTerm } from '#root/core/say-data-factory/term.ts';
 import { TrackedObject } from 'tracked-built-ins';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
@@ -25,11 +27,15 @@ import { get } from '@ember/helper';
 import t from 'ember-intl/helpers/t';
 import { unwrap } from '#root/utils/_private/option.ts';
 import type {
+  ObjectOption,
   ObjectOptionGenerator,
+  PredicateOption,
   PredicateOptionGenerator,
+  SubjectOption,
   SubjectOptionGenerator,
   SubmissionBody,
 } from '../types.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 
 type RelationshipEditorModalSig = {
   Element: AuModalSignature['Element'];
@@ -75,12 +81,21 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
     this.args.onCancel();
   };
 
-  setField = <FieldName extends keyof FormData>(
+  setPredicate = (
     validationFn: () => void,
-    field: FieldName,
-    value: FormData[FieldName],
+    predicateOption?: PredicateOption,
   ) => {
-    this.data[field] = value;
+    // @ts-expect-error fix PredicateOption types
+    this.data.predicate = predicateOption;
+    this.data.target = undefined;
+    validationFn();
+  };
+
+  setTarget = (
+    validationFn: () => void,
+    targetOption?: ObjectOption | SubjectOption,
+  ) => {
+    this.data.target = targetOption;
     validationFn();
   };
 
@@ -103,6 +118,26 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
       selectedSource: this.args.source,
     });
     return options;
+  };
+
+  onTargetSelectKeydown = (select: Select, event: KeyboardEvent) => {
+    if (
+      event.key === 'Enter' &&
+      select.isOpen &&
+      !select.highlighted &&
+      !!select.searchText
+    ) {
+      const { searchText } = select;
+      if (
+        this.data.predicate?.direction === 'property' &&
+        this.data.predicate.allowFreeTextTarget
+      ) {
+        console.log('Choose literal');
+        const term = sayDataFactory.literal(searchText);
+        select.actions.choose({ term });
+      }
+      return false;
+    }
   };
 
   <template>
@@ -139,11 +174,7 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
                 <PowerSelect
                   id={{field.id}}
                   @selected={{field.value}}
-                  @onChange={{fn
-                    this.setField
-                    field.triggerValidation
-                    "predicate"
-                  }}
+                  @onChange={{fn this.setPredicate field.triggerValidation}}
                   @allowClear={{true}}
                   @options={{this.searchPredicates ""}}
                   @search={{this.searchPredicates}}
@@ -197,15 +228,12 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
                 <PowerSelect
                   id={{field.id}}
                   @selected={{field.value}}
-                  @onChange={{fn
-                    this.setField
-                    field.triggerValidation
-                    "target"
-                  }}
+                  @onChange={{fn this.setTarget field.triggerValidation}}
                   @allowClear={{true}}
                   @disabled={{not this.data.predicate}}
                   @options={{this.searchTargets ""}}
                   @search={{this.searchTargets}}
+                  @onKeydown={{this.onTargetSelectKeydown}}
                   @searchEnabled={{true}}
                   class="au-u-1-1"
                   as |option|

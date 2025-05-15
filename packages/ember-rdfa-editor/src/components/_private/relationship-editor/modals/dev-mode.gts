@@ -32,7 +32,9 @@ import type {
   Direction,
   ObjectOption,
   ObjectOptionGenerator,
+  PredicateOption,
   PredicateOptionGenerator,
+  SubjectOption,
   SubjectOptionGenerator,
   SubmissionBody,
   TermOption,
@@ -61,7 +63,7 @@ type RelationshipEditorDevModalSig = {
     predicateOptionGenerator?: PredicateOptionGenerator;
     subjectOptionGenerator?: SubjectOptionGenerator;
     objectOptionGenerator?: ObjectOptionGenerator;
-    initialData?: FormData;
+    initialData?: Partial<FormData>;
   };
 };
 
@@ -123,12 +125,27 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     this.data.target = undefined;
   };
 
-  setField = <FieldName extends keyof FormData>(
+  setPredicate = (
     validationFn: () => void,
-    field: FieldName,
-    value: FormData[FieldName],
+    predicateOption?: PredicateOption,
   ) => {
-    this.data[field] = value;
+    if (!this.data.direction) {
+      return;
+    }
+    // @ts-expect-error fix PredicateOption types
+    this.data.predicate = {
+      ...predicateOption,
+      direction: this.data.direction,
+    };
+    this.data.target = undefined;
+    validationFn();
+  };
+
+  setTarget = (
+    validationFn: () => void,
+    targetOption?: ObjectOption | SubjectOption,
+  ) => {
+    this.data.target = targetOption;
     validationFn();
   };
 
@@ -320,7 +337,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   @selected={{field.value}}
                   @disabled={{this.directionFieldDisabled}}
                   @onChange={{fn this.setDirection field.triggerValidation}}
-                  @allowClear={{true}}
                   @options={{this.supportedDirections}}
                   class="au-u-1-1"
                   as |option|
@@ -350,11 +366,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   id={{field.id}}
                   @selected={{field.value}}
                   @onKeydown={{this.onPredicateSelectKeydown}}
-                  @onChange={{fn
-                    this.setField
-                    field.triggerValidation
-                    "predicate"
-                  }}
+                  @onChange={{fn this.setPredicate field.triggerValidation}}
                   @allowClear={{true}}
                   @options={{this.searchPredicates ""}}
                   @search={{this.searchPredicates}}
@@ -394,11 +406,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   id={{field.id}}
                   @selected={{field.value}}
                   @onKeydown={{this.onTargetSelectKeydown}}
-                  @onChange={{fn
-                    this.setField
-                    field.triggerValidation
-                    "target"
-                  }}
+                  @onChange={{fn this.setTarget field.triggerValidation}}
                   @allowClear={{true}}
                   @disabled={{not this.data.predicate}}
                   @options={{this.searchTargets ""}}
@@ -437,7 +445,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                       id={{id}}
                       @selected={{this.data.target.term.termType}}
                       @onChange={{this.setTermType}}
-                      @allowClear={{true}}
                       {{! @glint-expect-error }}
                       @options={{OBJECT_TERM_TYPES}}
                       class="au-u-1-1"
