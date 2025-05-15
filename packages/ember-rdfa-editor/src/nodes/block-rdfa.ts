@@ -88,13 +88,23 @@ export class BlockRDFaView implements NodeView {
   labelElement: HTMLElement;
   contentDOM: HTMLElement;
   node: PNode;
-  controller: SayController;
+  controller?: SayController;
   onClickRef: () => void;
+
+  /**
+   * @deprecated The SayController should now be passed to this nodeview to allow focusing nodes on
+   * label clicks
+   */
+  constructor(node: PNode);
   constructor(
     nodeViewArgs: Parameters<NodeViewConstructor>,
     controller: SayController,
+  );
+  constructor(
+    nodeViewArgs: Parameters<NodeViewConstructor> | PNode,
+    controller?: SayController,
   ) {
-    this.node = nodeViewArgs[0];
+    this.node = Array.isArray(nodeViewArgs) ? nodeViewArgs[0] : nodeViewArgs;
     this.dom = document.createElement('div');
     this.dom.setAttribute('class', 'say-block-rdfa');
     this.labelElement = this.dom.appendChild(document.createElement('span'));
@@ -116,15 +126,17 @@ export class BlockRDFaView implements NodeView {
   }
 
   onClick() {
-    this.controller.doCommand(
-      selectNodeByRdfaId({
-        rdfaId: this.node.attrs['__rdfaId'] as string,
-        dontScroll: true,
-      }),
-      {
-        view: this.controller.mainEditorView,
-      },
-    );
+    if (this.controller) {
+      this.controller.doCommand(
+        selectNodeByRdfaId({
+          rdfaId: this.node.attrs['__rdfaId'] as string,
+          dontScroll: true,
+        }),
+        {
+          view: this.controller.mainEditorView,
+        },
+      );
+    }
   }
 
   update(node: PNode) {
