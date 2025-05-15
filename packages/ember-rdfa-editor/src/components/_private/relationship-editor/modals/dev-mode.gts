@@ -27,8 +27,7 @@ import type {
   SayLiteral,
   SayTerm,
 } from '#root/core/say-data-factory/index.ts';
-import { array } from '@ember/helper';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input.js';
+import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import type {
   Direction,
   ObjectOption,
@@ -37,7 +36,7 @@ import type {
   SubjectOptionGenerator,
   SubmissionBody,
   TermOption,
-} from './types.ts';
+} from '../types.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 
@@ -53,6 +52,10 @@ type RelationshipEditorDevModalSig = {
   Args: {
     title?: string;
     source: LiteralNodeTerm | ResourceNodeTerm<string>;
+    supportedDirections?:
+      | ['property']
+      | ['backlink']
+      | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     predicateOptionGenerator?: PredicateOptionGenerator;
@@ -72,7 +75,15 @@ const formSchema = yup.object({
   target: yup.object(),
 });
 
-export default class RelationshipEditorDevModal extends Component<RelationshipEditorDevModalSig> {
+export default class RelationshipEditorDevModeModal extends Component<RelationshipEditorDevModalSig> {
+  get supportedDirections(): Direction[] {
+    return this.args.supportedDirections ?? ['property', 'backlink'];
+  }
+
+  get directionFieldDisabled() {
+    return this.sourceIsLiteral || this.supportedDirections.length === 1;
+  }
+
   get initialData(): FormData {
     const defaultDirection = this.sourceIsLiteral ? 'backlink' : 'property';
     if (this.args.initialData) {
@@ -131,7 +142,10 @@ export default class RelationshipEditorDevModal extends Component<RelationshipEd
       const { searchText } = select;
       const isUri = isFullUri(searchText) || isPrefixedUri(searchText);
       if (isUri) {
-        select.actions.choose({ term: sayDataFactory.namedNode(searchText) });
+        select.actions.choose({
+          direction: this.data.direction,
+          term: sayDataFactory.namedNode(searchText),
+        });
       }
       return false;
     }
@@ -304,10 +318,10 @@ export default class RelationshipEditorDevModal extends Component<RelationshipEd
                 <PowerSelect
                   id={{field.id}}
                   @selected={{field.value}}
-                  @disabled={{this.sourceIsLiteral}}
+                  @disabled={{this.directionFieldDisabled}}
                   @onChange={{fn this.setDirection field.triggerValidation}}
                   @allowClear={{true}}
-                  @options={{array "property" "backlink"}}
+                  @options={{this.supportedDirections}}
                   class="au-u-1-1"
                   as |option|
                 >

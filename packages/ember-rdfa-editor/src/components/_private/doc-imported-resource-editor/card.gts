@@ -28,25 +28,46 @@ import {
 import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import PropertyDetails from '#root/components/_private/common/property-details.gts';
-import { type Status } from '#root/components/_private/common/types.ts';
-import { array } from '@ember/helper';
-import { isSome } from '#root/utils/_private/option.ts';
 import { addProperty, removeProperty } from '#root/commands/index.ts';
 import { deepEqualPropertyList } from '#root/plugins/rdfa-info/utils.ts';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
 } from '#root/components/_private/common/configurable-rdfa-display.gts';
 import DefineImportedResourceForm from './form.gts';
-import PropertyEditorForm from '#root/components/_private/rdfa-editor/property-editor/form.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import { localCopy } from 'tracked-toolbox';
+import type {
+  ObjectOptionGenerator,
+  PredicateOptionGenerator,
+  SubjectOptionGenerator,
+  SubmissionBody,
+} from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
+import RelationshipEditorDevModeModal from '../relationship-editor/modals/dev-mode.gts';
+import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
+import { array } from '@ember/helper';
+
+type CreationStatus = {
+  mode: 'creation';
+  subject: string;
+};
+type UpdateStatus = {
+  mode: 'update';
+  subject: string;
+  property: OutgoingTriple;
+};
+
+export type Status = CreationStatus | UpdateStatus;
 
 interface Sig {
   Args: {
     controller: SayController;
-    additionalExportedResources?: string[];
+    additionalImportedResources?: string[];
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
+    predicateOptionGenerator?: PredicateOptionGenerator;
+    subjectOptionGenerator?: SubjectOptionGenerator;
+    objectOptionGenerator?: ObjectOptionGenerator;
   };
   Element: HTMLDivElement;
 }
@@ -63,8 +84,9 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   openResourceModal = () => (this.isResourceModalOpen = true);
   closeResourceModal = () => (this.isResourceModalOpen = false);
 
-  @tracked propertyModalStatus?: Status;
-  closePropertyModal = () => (this.propertyModalStatus = undefined);
+  @tracked status?: Status;
+  @tracked initialFormData?: FormData;
+  closeRelationshipModal = () => (this.status = undefined);
 
   toggleSection = () => {
     this.expanded = !this.expanded;
@@ -80,7 +102,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   }
 
   getSubjectPropertyMap(): Record<string, OutgoingTriple[]> {
-    const importedResources = this.documentExportedResources;
+    const importedResources = this.documentImportedResources;
     const props = this.documentNode.attrs['properties'] as OutgoingTriple[];
     if (!importedResources) return {};
     const propsAndSubjects = props.map((prop) => {
@@ -136,24 +158,24 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
    * False if adding imported resources is not supported here, otherwise truthy, possibly empty
    * array
    */
-  get documentExportedResources(): string[] | false {
-    const docNodeExportedResources =
+  get documentImportedResources(): string[] | false {
+    const docNodeImportedResources =
       !!this.args.controller?.schema.nodes['doc']?.spec.attrs?.[
         IMPORTED_RESOURCES_ATTR
       ] &&
       ((this.documentNode.attrs[IMPORTED_RESOURCES_ATTR] as string[]) || []);
     return (
-      docNodeExportedResources &&
+      docNodeImportedResources &&
       Array.from(
         new Set<string>([
-          ...(docNodeExportedResources || []),
-          ...(this.args.additionalExportedResources || []),
+          ...(docNodeImportedResources || []),
+          ...(this.args.additionalImportedResources || []),
         ]).values(),
       )
     );
   }
 
-  addExportedResource = (resource: string) => {
+  addImportedResource = (resource: string) => {
     this.args.controller?.withTransaction(() => {
       if (!this.args.controller) return null;
       return addImportedResource({
@@ -162,7 +184,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     });
     this.closeResourceModal();
   };
-  removeExportedResource = (resource: string) => {
+  removeImportedResource = (resource: string) => {
     this.args.controller?.withTransaction(() => {
       if (!this.args.controller) return null;
       return removeImportedResource({
@@ -173,56 +195,87 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
   startPropertyCreation = (resource: string, event: Event) => {
     event.preventDefault();
     event.stopPropagation();
-    this.propertyModalStatus = {
+    this.initialFormData = {
+      direction: 'property',
+    };
+    this.status = {
       mode: 'creation',
       subject: resource,
     };
   };
   startPropertyUpdate = (resource: string, property: OutgoingTriple) => {
-    this.propertyModalStatus = {
+    this.initialFormData = {
+      direction: 'property',
+      predicate: {
+        direction: 'property',
+        term: sayDataFactory.namedNode(property.predicate),
+      },
+      target: {
+        // @ts-expect-error remove Blanknode as possible type
+        term: property.object,
+      },
+    };
+    this.status = {
       mode: 'update',
       subject: resource,
       property,
     };
   };
 
-  // TODO de-dupe this from property-editor?
-  addProperty = (property: OutgoingTriple, subject?: string) => {
-    const resource = subject ?? this.propertyModalStatus?.subject;
-    if (resource) {
-      const isNewImportedResource =
-        subject !== this.propertyModalStatus?.subject;
-      this.args.controller?.doCommand(
-        addProperty({ resource, property, isNewImportedResource }),
+  onFormSubmit = (body: SubmissionBody) => {
+    console.log('On form submit: ', this.status);
+    if (!this.status) {
+      return;
+    }
+    if (this.status.mode === 'update') {
+      this.removeProperty(this.status.property);
+    }
+    const { predicate, target } = body;
+    console.log('Predicate: ', predicate);
+    if (predicate.direction === 'property') {
+      const property = {
+        predicate: predicate.term.value,
+        object: target.term,
+      };
+      console.log('Do command!!')
+      this.args.controller.doCommand(
+        addProperty({
+          resource: this.status.subject,
+          // @ts-expect-error fix types
+          property,
+        }),
         {
           view: this.args.controller.mainEditorView,
         },
       );
-      this.closePropertyModal();
     }
-  };
 
-  // TODO de-dupe this from property-editor?
-  updateProperty = (newProperty: OutgoingTriple, subject?: string) => {
-    // TODO: make a command to do this in one go
-    if (this.propertyModalStatus?.mode === 'update') {
-      this.removeProperty(this.propertyModalStatus.property);
-    }
-    this.addProperty(newProperty, subject);
-    this.closePropertyModal();
+    this.closeRelationshipModal();
   };
 
   // TODO de-dupe this from property-editor?
   removeProperty = (property: OutgoingTriple) => {
     const propertyToRemove = {
       documentResourceNode: this.documentNode,
-      importedResources: this.documentExportedResources || [],
+      importedResources: this.documentImportedResources || [],
       property,
     };
     this.args.controller?.doCommand(removeProperty(propertyToRemove), {
       view: this.args.controller.mainEditorView,
     });
   };
+
+  get currentTerm() {
+    return this.status && sayDataFactory.resourceNode(this.status.subject);
+  }
+
+  get modalTitle() {
+    if (this.status?.mode === 'update') {
+      return 'Edit relationship';
+    } else {
+      return 'Add relationship';
+    }
+  }
 
   <template>
     <AuCard
@@ -245,7 +298,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
           <Group>
             <AuButton
               @skin="link"
-              @disabled={{notTruthy this.documentExportedResources}}
+              @disabled={{notTruthy this.documentImportedResources}}
               {{on "click" this.openResourceModal}}
             >
               Add resource
@@ -255,7 +308,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       </c.header>
       <c.content class="au-c-content--tiny">
         {{#if
-          (and this.documentExportedResources this.importedResourceProperties)
+          (and this.documentImportedResources this.importedResourceProperties)
         }}
           <AuList @divider={{true}} as |IRItem|>
             {{#each-in
@@ -285,7 +338,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
                       role="button"
                       {{on
                         "click"
-                        (fn this.removeExportedResource importedResource)
+                        (fn this.removeImportedResource importedResource)
                       }}
                     />
                   </div>
@@ -355,7 +408,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
         <:body>
           <DefineImportedResourceForm
             id={{formId}}
-            @onSave={{this.addExportedResource}}
+            @onSave={{this.addImportedResource}}
             @onCancel={{this.closeResourceModal}}
             @controller={{@controller}}
           />
@@ -372,36 +425,19 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       </AuModal>
     </WithUniqueId>
 
-    {{! Add property modal }}
-    <WithUniqueId as |formId|>
-      <AuModal
-        @modalOpen={{isSome this.propertyModalStatus}}
-        @closable={{true}}
-        @closeModal={{this.closePropertyModal}}
-      >
-        <:title>Edit</:title>
-        <:body>
-          <PropertyEditorForm
-            id={{formId}}
-            @onSubmit={{this.updateProperty}}
-            @termTypes={{array "LiteralNode" "ResourceNode"}}
-            @controller={{@controller}}
-            @subject={{this.propertyModalStatus.subject}}
-            {{! @glint-expect-error check if status is defined }}
-            @triple={{this.propertyModalStatus.property}}
-            @importedResources={{this.documentExportedResources}}
-          />
-        </:body>
-        <:footer>
-          <AuButtonGroup>
-            <AuButton form={{formId}} type="submit">Save</AuButton>
-            <AuButton
-              @skin="secondary"
-              {{on "click" this.closePropertyModal}}
-            >Cancel</AuButton>
-          </AuButtonGroup>
-        </:footer>
-      </AuModal>
-    </WithUniqueId>
+    {{#if this.status}}
+      <RelationshipEditorDevModeModal
+        @title={{this.modalTitle}}
+        @initialData={{this.initialFormData}}
+        @supportedDirections={{array 'property'}}
+        {{! @glint-expect-error }}
+        @source={{this.currentTerm}}
+        @subjectOptionGenerator={{@subjectOptionGenerator}}
+        @predicateOptionGenerator={{@predicateOptionGenerator}}
+        @objectOptionGenerator={{@objectOptionGenerator}}
+        @onSubmit={{this.onFormSubmit}}
+        @onCancel={{this.closeRelationshipModal}}
+      />
+    {{/if}}
   </template>
 }

@@ -29,7 +29,7 @@ import type {
   PredicateOptionGenerator,
   SubjectOptionGenerator,
   SubmissionBody,
-} from './types.ts';
+} from '../types.ts';
 
 type RelationshipEditorModalSig = {
   Element: AuModalSignature['Element'];
@@ -58,7 +58,7 @@ const formSchema = yup.object({
     ),
 });
 
-export default class RelationshipEditorModal extends Component<RelationshipEditorModalSig> {
+export default class RelationshipEditorClassicModal extends Component<RelationshipEditorModalSig> {
   data: FormData = new TrackedObject({});
 
   resetForm?: () => void;

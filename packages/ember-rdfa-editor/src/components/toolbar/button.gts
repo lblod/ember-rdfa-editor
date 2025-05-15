@@ -3,7 +3,7 @@ import type { ComponentLike } from '@glint/template';
 import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
 import ToolbarDropdown, { type ToolbarDropdownSignature } from './dropdown.gts';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
-import type SayController from '#root/core/say-controller.js';
+import type SayController from '#root/core/say-controller.ts';
 
 type Signature = {
   Args: {

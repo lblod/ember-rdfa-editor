@@ -67,12 +67,11 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
 import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
 import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
-import RdfaEditor from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor';
 import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
 import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card';
 import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card';
 import ExternalTripleEditorCard from '@lblod/ember-rdfa-editor/components/_private/external-triple-editor/card';
-
+import RelationshipEditorCard from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/card';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
@@ -98,7 +97,7 @@ import {
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
-import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/create-button';
+import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
 import type {
   ObjectOption,
   ObjectOptionGenerator,
@@ -155,13 +154,13 @@ const humanReadableResourceName: DisplayGenerator<PNode> = (
 export default class EditableBlockController extends Controller {
   DebugInfo = DebugInfo;
   AttributeEditor = AttributeEditor;
-  RdfaEditor = RdfaEditor;
   VisualiserCard = VisualiserCard;
   CreateRelationshipButton = CreateRelationshipButton;
   NodeControlsCard = NodeControlsCard;
   DocImportedResourceEditorCard = DocImportedResourceEditorCard;
   ImportedResourceLinkerCard = ImportedResourceLinkerCard;
   ExternalTripleEditorCard = ExternalTripleEditorCard;
+  RelationshipEditorCard = RelationshipEditorCard;
   DevModeToggle = DevModeToggle;
 
   rdfa = {

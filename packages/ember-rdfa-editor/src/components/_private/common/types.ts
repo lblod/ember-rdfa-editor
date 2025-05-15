@@ -1,17 +1,21 @@
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import type {
+  IncomingTriple,
+  OutgoingTriple,
+} from '#root/core/rdfa-processor.ts';
 
 export interface StatusMessage {
   message: string;
   type: 'info' | 'warning' | 'error' | 'success';
 }
 
-export type CreationStatus = {
+export type PropertyOrBacklink = OutgoingTriple | IncomingTriple;
+type CreationStatus = {
   mode: 'creation';
   subject?: string;
 };
-export type UpdateStatus = {
+type UpdateStatus = {
   mode: 'update';
-  subject?: string;
-  property: OutgoingTriple;
+  propertyOrBacklink: PropertyOrBacklink;
 };
+
 export type Status = CreationStatus | UpdateStatus;

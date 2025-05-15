@@ -46,41 +46,43 @@
             </Item>
           </Sb.Collapsible>
           <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
-          <div class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
-            <this.VisualiserCard
-              @controller={{this.rdfaEditor}}
-              @config={{this.rdfa.visualizerConfig}}
-            />
-            <this.NodeControlsCard
-              @node={{this.activeNode}}
-              @controller={{this.rdfaEditor}}
-            />
-            {{#if this.activeNode}}
-              <this.RdfaEditor
-                @node={{this.activeNode}}
+          {{#if this.devMode}}
+            <div class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
+              <this.VisualiserCard
                 @controller={{this.rdfaEditor}}
-                @predicateOptionGenerator={{this.predicateOptionGenerator}}
-                @subjectOptionGenerator={{this.subjectOptionGenerator}}
-                @objectOptionGenerator={{this.objectOptionGenerator}}
+                @config={{this.rdfa.visualizerConfig}}
               />
-              <this.DocImportedResourceEditorCard
-                @controller={{this.rdfaEditor}}
-              />
-              <this.ImportedResourceLinkerCard
+              <this.NodeControlsCard
                 @node={{this.activeNode}}
                 @controller={{this.rdfaEditor}}
               />
-              <this.ExternalTripleEditorCard
-                @node={{this.activeNode}}
-                @controller={{this.rdfaEditor}}
-              />
-              <this.DebugInfo @node={{this.activeNode}} />
-              <this.AttributeEditor
-                @node={{this.activeNode}}
-                @controller={{this.rdfaEditor}}
-              />
-            {{/if}}
-          </div>
+              {{#if this.activeNode}}
+                <this.RelationshipEditorCard
+                  @node={{this.activeNode}}
+                  @controller={{this.rdfaEditor}}
+                  @predicateOptionGenerator={{this.predicateOptionGenerator}}
+                  @subjectOptionGenerator={{this.subjectOptionGenerator}}
+                  @objectOptionGenerator={{this.objectOptionGenerator}}
+                />
+                <this.DocImportedResourceEditorCard
+                  @controller={{this.rdfaEditor}}
+                />
+                <this.ImportedResourceLinkerCard
+                  @node={{this.activeNode}}
+                  @controller={{this.rdfaEditor}}
+                />
+                <this.ExternalTripleEditorCard
+                  @node={{this.activeNode}}
+                  @controller={{this.rdfaEditor}}
+                />
+                <this.DebugInfo @node={{this.activeNode}} />
+                <this.AttributeEditor
+                  @node={{this.activeNode}}
+                  @controller={{this.rdfaEditor}}
+                />
+              {{/if}}
+            </div>
+          {{/if}}
         </Sidebar>
       </:aside>
     </EditorContainer>

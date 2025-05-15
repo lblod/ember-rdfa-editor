@@ -22,8 +22,8 @@ import type {
   SubjectOptionGenerator,
   SubmissionBody,
 } from './types.ts';
-import RelationshipEditorDevModal from './modal-dev-mode.gts';
-import RelationshipEditorModal from './modal.gts';
+import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
+import RelationshipEditorClassicModal from './modals/classic.gts';
 import { and } from 'ember-truth-helpers';
 
 type CreateRelationshipButtonSig = {
@@ -110,8 +110,8 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
 
   get ModalComponent() {
     return this.args.devMode
-      ? RelationshipEditorDevModal
-      : RelationshipEditorModal;
+      ? RelationshipEditorDevModeModal
+      : RelationshipEditorClassicModal;
   }
 
   <template>
@@ -127,7 +127,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     </AuButton>
     {{#if (and this.modalOpen this.selectedNode)}}
       {{#if @devMode}}
-        <RelationshipEditorDevModal
+        <RelationshipEditorDevModeModal
           {{! @glint-expect-error }}
           @source={{this.selectedNode}}
           @onSubmit={{this.onFormSubmit}}
@@ -137,7 +137,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
           @objectOptionGenerator={{@objectOptionGenerator}}
         />
       {{else}}
-        <RelationshipEditorModal
+        <RelationshipEditorClassicModal
           {{! @glint-expect-error }}
           @source={{this.selectedNode}}
           @onSubmit={{this.onFormSubmit}}

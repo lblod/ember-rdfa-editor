@@ -1,4 +1,5 @@
 import type { ContentLiteralTerm } from '#root/core/say-data-factory/prosemirror-terms/content-literal.ts';
+import type { LiteralNodeTerm } from '#root/core/say-data-factory/prosemirror-terms/literal-node.ts';
 import type { ResourceNodeTerm } from '#root/core/say-data-factory/prosemirror-terms/resource-node.ts';
 import type { SayTerm } from '#root/core/say-data-factory/term.ts';
 import type { Promisable } from '#root/utils/_private/types.ts';
@@ -46,6 +47,7 @@ export type SubjectOptionGenerator =
 
 type ObjectOptionTermType =
   | ResourceNodeTerm
+  | LiteralNodeTerm
   | NamedNode
   | Literal
   | ContentLiteralTerm;
