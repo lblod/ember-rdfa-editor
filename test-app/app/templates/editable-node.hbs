@@ -66,6 +66,9 @@
                 />
                 <this.DocImportedResourceEditorCard
                   @controller={{this.rdfaEditor}}
+                  @predicateOptionGenerator={{this.predicateOptionGenerator}}
+                  @subjectOptionGenerator={{this.subjectOptionGenerator}}
+                  @objectOptionGenerator={{this.objectOptionGenerator}}
                 />
                 <this.ImportedResourceLinkerCard
                   @node={{this.activeNode}}
