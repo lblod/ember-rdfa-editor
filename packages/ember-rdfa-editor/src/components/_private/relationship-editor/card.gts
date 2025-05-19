@@ -11,7 +11,7 @@ import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
   Direction,
   SubmissionBody,
-} from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
+} from '#root/components/_private/relationship-editor/types.ts';
 import { tracked } from 'tracked-built-ins';
 import {
   addBacklinkToNode,

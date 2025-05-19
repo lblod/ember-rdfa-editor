@@ -102,7 +102,7 @@ import type {
   ObjectOption,
   PredicateOption,
   SubjectOption,
-} from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/types';
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 import type { OptionGeneratorConfig } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (

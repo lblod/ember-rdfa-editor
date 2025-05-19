@@ -36,7 +36,7 @@ import ConfigurableRdfaDisplay, {
 import DefineImportedResourceForm from './form.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import { localCopy } from 'tracked-toolbox';
-import type { SubmissionBody } from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
+import type { SubmissionBody } from '#root/components/_private/relationship-editor/types.ts';
 import RelationshipEditorDevModeModal from '../relationship-editor/modals/dev-mode.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
