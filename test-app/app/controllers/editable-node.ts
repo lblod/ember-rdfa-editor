@@ -100,12 +100,10 @@ import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
 import type {
   ObjectOption,
-  ObjectOptionGenerator,
   PredicateOption,
-  PredicateOptionGenerator,
   SubjectOption,
-  SubjectOptionGenerator,
 } from '@lblod/ember-rdfa-editor/components/_private/rdfa-editor/relationship-editor/types';
+import type { OptionGeneratorConfig } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -302,97 +300,90 @@ export default class EditableBlockController extends Controller {
     console.warn('Live toggling plugins is currently not supported');
   }
 
-  predicateOptionGenerator: PredicateOptionGenerator = ({
-    searchString = '',
-    direction,
-  } = {}) => {
-    const options: PredicateOption[] = [
-      {
-        label: 'Titel',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        term: sayDataFactory.namedNode('eli:title'),
-        direction: 'backlink',
-      },
-      {
-        label: 'Has Titel',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        term: sayDataFactory.namedNode('eli:title'),
-        allowFreeTextTarget: true,
-        direction: 'property',
-      },
-      {
-        label: 'Beschrijving',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('dct:description'),
-        direction: 'backlink',
-      },
-      {
-        label: 'Motivering',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-        term: sayDataFactory.namedNode('besluit:motivering'),
-        direction: 'backlink',
-      },
-    ];
-    return options.filter(
-      (option) =>
-        (option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+  optionGeneratorConfig: OptionGeneratorConfig = {
+    subjects: ({ searchString = '' } = {}) => {
+      const options: SubjectOption[] = [
+        {
+          label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
+          term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+        },
+        {
+          label: 'Artikel 1',
+          term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+        },
+      ];
+      return options.filter(
+        (option) =>
+          option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
           option.description
             ?.toLowerCase()
             .includes(searchString.toLowerCase()) ||
-          option.term.value
-            .toLowerCase()
-            .includes(searchString.toLowerCase())) &&
-        (!direction || option.direction === direction),
-    );
-  };
-
-  subjectOptionGenerator: SubjectOptionGenerator = ({
-    searchString = '',
-  } = {}) => {
-    const options: SubjectOption[] = [
-      {
-        label: '(Besluit) Kennisname van de definitieve verkiezingsuitslag',
-        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
-      },
-      {
-        label: 'Artikel 1',
-        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
-      },
-    ];
-    return options.filter(
-      (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  };
-
-  objectOptionGenerator: ObjectOptionGenerator = ({
-    searchString = '',
-  } = {}) => {
-    const options: ObjectOption[] = [
-      {
-        label: 'Target 1',
-        term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
-      },
-      {
-        label: 'Target 2',
-        term: sayDataFactory.resourceNode('http://example.org/articles/1'),
-      },
-    ];
-    return options.filter(
-      (option) =>
-        option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
-        option.description
-          ?.toLowerCase()
-          .includes(searchString.toLowerCase()) ||
-        option.term.value.toLowerCase().includes(searchString.toLowerCase()),
-    );
+          option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+      );
+    },
+    predicates: ({ searchString = '', direction } = {}) => {
+      const options: PredicateOption[] = [
+        {
+          label: 'Titel',
+          description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+          term: sayDataFactory.namedNode('eli:title'),
+          direction: 'backlink',
+        },
+        {
+          label: 'Has Titel',
+          description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+          term: sayDataFactory.namedNode('eli:title'),
+          allowFreeTextTarget: true,
+          direction: 'property',
+        },
+        {
+          label: 'Beschrijving',
+          description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+          term: sayDataFactory.namedNode('dct:description'),
+          direction: 'backlink',
+        },
+        {
+          label: 'Motivering',
+          description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+          term: sayDataFactory.namedNode('besluit:motivering'),
+          direction: 'backlink',
+        },
+      ];
+      return options.filter(
+        (option) =>
+          (option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+            option.description
+              ?.toLowerCase()
+              .includes(searchString.toLowerCase()) ||
+            option.term.value
+              .toLowerCase()
+              .includes(searchString.toLowerCase())) &&
+          (!direction || option.direction === direction),
+      );
+    },
+    objects: ({ searchString = '' } = {}) => {
+      const options: ObjectOption[] = [
+        {
+          label: 'Target 1',
+          term: sayDataFactory.resourceNode('http://example.org/decisions/1'),
+        },
+        {
+          label: 'Target 2',
+          term: sayDataFactory.resourceNode('http://example.org/articles/1'),
+        },
+      ];
+      return options.filter(
+        (option) =>
+          option.label?.toLowerCase().includes(searchString.toLowerCase()) ||
+          option.description
+            ?.toLowerCase()
+            .includes(searchString.toLowerCase()) ||
+          option.term.value.toLowerCase().includes(searchString.toLowerCase()),
+      );
+    },
   };
 }

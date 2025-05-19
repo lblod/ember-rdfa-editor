@@ -56,6 +56,12 @@ export type ObjectOption = TermOption<ObjectOptionTermType>;
 
 export type ObjectOptionGenerator = TargetOptionGenerator<ObjectOptionTermType>;
 
+export type OptionGeneratorConfig = {
+  subjects?: SubjectOptionGenerator;
+  predicates?: PredicateOptionGenerator;
+  objects?: ObjectOptionGenerator;
+};
+
 export type SubmissionBody =
   | {
       target: SubjectOption;

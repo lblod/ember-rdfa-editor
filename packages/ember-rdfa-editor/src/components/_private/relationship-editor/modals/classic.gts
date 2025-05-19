@@ -28,11 +28,9 @@ import t from 'ember-intl/helpers/t';
 import { unwrap } from '#root/utils/_private/option.ts';
 import type {
   ObjectOption,
-  ObjectOptionGenerator,
+  OptionGeneratorConfig,
   PredicateOption,
-  PredicateOptionGenerator,
   SubjectOption,
-  SubjectOptionGenerator,
   SubmissionBody,
 } from '../types.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
@@ -44,9 +42,7 @@ type RelationshipEditorModalSig = {
     source: SayTerm;
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
-    predicateOptionGenerator: PredicateOptionGenerator;
-    subjectOptionGenerator: SubjectOptionGenerator;
-    objectOptionGenerator: ObjectOptionGenerator;
+    optionGeneratorConfig?: OptionGeneratorConfig;
   };
 };
 
@@ -107,24 +103,24 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
   };
 
   searchPredicates = async (searchString: string) => {
-    const options = await this.args.predicateOptionGenerator({
+    const options = await this.args.optionGeneratorConfig?.predicates?.({
       searchString,
       selectedSource: this.args.source,
     });
-    return options;
+    return options ?? [];
   };
 
   searchTargets = async (searchString: string) => {
     const generatorFunction =
       this.data.predicate?.direction === 'property'
-        ? this.args.objectOptionGenerator
-        : this.args.subjectOptionGenerator;
-    const options = await generatorFunction({
+        ? this.args.optionGeneratorConfig?.objects
+        : this.args.optionGeneratorConfig?.subjects;
+    const options = await generatorFunction?.({
       searchString,
       selectedPredicate: this.data.predicate?.term,
       selectedSource: this.args.source,
     });
-    return options;
+    return options ?? [];
   };
 
   onTargetSelectKeydown = (select: Select, event: KeyboardEvent) => {

@@ -38,9 +38,7 @@
               <this.CreateRelationshipButton
                 @controller={{this.rdfaEditor}}
                 @node={{this.activeNode}}
-                @predicateOptionGenerator={{this.predicateOptionGenerator}}
-                @subjectOptionGenerator={{this.subjectOptionGenerator}}
-                @objectOptionGenerator={{this.objectOptionGenerator}}
+                @optionGeneratorConfig={{this.optionGeneratorConfig}}
                 @devMode={{this.devMode}}
               />
             </Item>
@@ -60,15 +58,11 @@
                 <this.RelationshipEditorCard
                   @node={{this.activeNode}}
                   @controller={{this.rdfaEditor}}
-                  @predicateOptionGenerator={{this.predicateOptionGenerator}}
-                  @subjectOptionGenerator={{this.subjectOptionGenerator}}
-                  @objectOptionGenerator={{this.objectOptionGenerator}}
+                  @optionGeneratorConfig={{this.optionGeneratorConfig}}
                 />
                 <this.DocImportedResourceEditorCard
                   @controller={{this.rdfaEditor}}
-                  @predicateOptionGenerator={{this.predicateOptionGenerator}}
-                  @subjectOptionGenerator={{this.subjectOptionGenerator}}
-                  @objectOptionGenerator={{this.objectOptionGenerator}}
+                  @optionGeneratorConfig={{this.optionGeneratorConfig}}
                 />
                 <this.ImportedResourceLinkerCard
                   @node={{this.activeNode}}

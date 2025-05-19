@@ -31,11 +31,9 @@ import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import type {
   Direction,
   ObjectOption,
-  ObjectOptionGenerator,
+  OptionGeneratorConfig,
   PredicateOption,
-  PredicateOptionGenerator,
   SubjectOption,
-  SubjectOptionGenerator,
   SubmissionBody,
   TermOption,
 } from '../types.ts';
@@ -61,9 +59,7 @@ type RelationshipEditorDevModalSig = {
       | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
-    predicateOptionGenerator?: PredicateOptionGenerator;
-    subjectOptionGenerator?: SubjectOptionGenerator;
-    objectOptionGenerator?: ObjectOptionGenerator;
+    optionGeneratorConfig?: OptionGeneratorConfig;
     initialData?: Partial<FormData>;
   };
 };
@@ -290,7 +286,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   };
 
   searchPredicates = async (searchString: string) => {
-    const options = await this.args.predicateOptionGenerator?.({
+    const options = await this.args.optionGeneratorConfig?.predicates?.({
       searchString,
       selectedSource: this.args.source,
       direction: this.data.direction,
@@ -301,8 +297,8 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   searchTargets = async (searchString: string) => {
     const generatorFunction =
       this.data.predicate?.direction === 'property'
-        ? this.args.objectOptionGenerator
-        : this.args.subjectOptionGenerator;
+        ? this.args.optionGeneratorConfig?.objects
+        : this.args.optionGeneratorConfig?.subjects;
     const options = await generatorFunction?.({
       searchString,
       selectedPredicate: this.data.predicate?.term,

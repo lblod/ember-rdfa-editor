@@ -12,12 +12,7 @@ import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
-import type {
-  ObjectOptionGenerator,
-  PredicateOptionGenerator,
-  SubjectOptionGenerator,
-  SubmissionBody,
-} from './types.ts';
+import type { OptionGeneratorConfig, SubmissionBody } from './types.ts';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
 import RelationshipEditorClassicModal from './modals/classic.gts';
 import { and } from 'ember-truth-helpers';
@@ -27,9 +22,7 @@ type CreateRelationshipButtonSig = {
   Args: {
     controller: SayController;
     node?: ResolvedPNode;
-    predicateOptionGenerator: PredicateOptionGenerator;
-    subjectOptionGenerator: SubjectOptionGenerator;
-    objectOptionGenerator: ObjectOptionGenerator;
+    optionGeneratorConfig?: OptionGeneratorConfig;
     devMode?: boolean;
   };
 };
@@ -130,9 +123,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
           @source={{this.selectedNode}}
           @onSubmit={{this.onFormSubmit}}
           @onCancel={{this.closeModal}}
-          @predicateOptionGenerator={{@predicateOptionGenerator}}
-          @subjectOptionGenerator={{@subjectOptionGenerator}}
-          @objectOptionGenerator={{@objectOptionGenerator}}
+          @optionGeneratorConfig={{@optionGeneratorConfig}}
         />
       {{else}}
         <RelationshipEditorClassicModal
@@ -140,9 +131,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
           @source={{this.selectedNode}}
           @onSubmit={{this.onFormSubmit}}
           @onCancel={{this.closeModal}}
-          @predicateOptionGenerator={{@predicateOptionGenerator}}
-          @subjectOptionGenerator={{@subjectOptionGenerator}}
-          @objectOptionGenerator={{@objectOptionGenerator}}
+          @optionGeneratorConfig={{@optionGeneratorConfig}}
         />
       {{/if}}
 

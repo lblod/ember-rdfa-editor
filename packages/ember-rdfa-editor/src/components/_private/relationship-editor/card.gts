@@ -10,9 +10,6 @@ import type SayController from '#root/core/say-controller.ts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
   Direction,
-  ObjectOptionGenerator,
-  PredicateOptionGenerator,
-  SubjectOptionGenerator,
   SubmissionBody,
 } from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
 import { tracked } from 'tracked-built-ins';
@@ -50,6 +47,7 @@ import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from './modals/dev-mode.gts';
 import { modifier } from 'ember-modifier';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
+import type { OptionGeneratorConfig } from './types.ts';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -60,9 +58,7 @@ type Args = {
   node: ResolvedPNode;
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;
-  predicateOptionGenerator?: PredicateOptionGenerator;
-  subjectOptionGenerator?: SubjectOptionGenerator;
-  objectOptionGenerator?: ObjectOptionGenerator;
+  optionGeneratorConfig?: OptionGeneratorConfig;
 };
 export default class RelationshipEditorCard extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
@@ -175,7 +171,7 @@ export default class RelationshipEditorCard extends Component<Args> {
       const property = {
         predicate: predicate.term.value,
         object: target.term,
-      }
+      };
       this.controller.doCommand(
         addProperty({
           resource,
@@ -486,9 +482,7 @@ export default class RelationshipEditorCard extends Component<Args> {
         @title={{this.modalTitle}}
         @initialData={{this.initialFormData}}
         @source={{this.currentTerm}}
-        @subjectOptionGenerator={{@subjectOptionGenerator}}
-        @predicateOptionGenerator={{@predicateOptionGenerator}}
-        @objectOptionGenerator={{@objectOptionGenerator}}
+        @optionGeneratorConfig={{@optionGeneratorConfig}}
         @onSubmit={{this.onFormSubmit}}
         @onCancel={{this.cancel}}
       />

@@ -36,16 +36,12 @@ import ConfigurableRdfaDisplay, {
 import DefineImportedResourceForm from './form.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import { localCopy } from 'tracked-toolbox';
-import type {
-  ObjectOptionGenerator,
-  PredicateOptionGenerator,
-  SubjectOptionGenerator,
-  SubmissionBody,
-} from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
+import type { SubmissionBody } from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
 import RelationshipEditorDevModeModal from '../relationship-editor/modals/dev-mode.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
 import { array } from '@ember/helper';
+import type { OptionGeneratorConfig } from '../relationship-editor/types.ts';
 
 type CreationStatus = {
   mode: 'creation';
@@ -65,9 +61,7 @@ interface Sig {
     additionalImportedResources?: string[];
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
-    predicateOptionGenerator?: PredicateOptionGenerator;
-    subjectOptionGenerator?: SubjectOptionGenerator;
-    objectOptionGenerator?: ObjectOptionGenerator;
+    optionGeneratorConfig?: OptionGeneratorConfig;
   };
   Element: HTMLDivElement;
 }
@@ -437,9 +431,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
         @supportedDirections={{array "property"}}
         {{! @glint-expect-error }}
         @source={{this.currentTerm}}
-        @subjectOptionGenerator={{@subjectOptionGenerator}}
-        @predicateOptionGenerator={{@predicateOptionGenerator}}
-        @objectOptionGenerator={{@objectOptionGenerator}}
+        @optionGeneratorConfig={{@optionGeneratorConfig}}
         @onSubmit={{this.onFormSubmit}}
         @onCancel={{this.closeRelationshipModal}}
       />
