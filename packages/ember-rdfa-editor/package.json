@@ -374,6 +374,7 @@
       "./components/_private/rdfa-visualiser/resource-info.js": "./dist/_app_/components/_private/rdfa-visualiser/resource-info.js",
       "./components/_private/rdfa-visualiser/visualiser-card.js": "./dist/_app_/components/_private/rdfa-visualiser/visualiser-card.js",
       "./components/_private/relationship-editor/card.js": "./dist/_app_/components/_private/relationship-editor/card.js",
+      "./components/_private/relationship-editor/configs.js": "./dist/_app_/components/_private/relationship-editor/configs.js",
       "./components/_private/relationship-editor/create-button.js": "./dist/_app_/components/_private/relationship-editor/create-button.js",
       "./components/_private/relationship-editor/modals/classic.js": "./dist/_app_/components/_private/relationship-editor/modals/classic.js",
       "./components/_private/relationship-editor/modals/dev-mode.js": "./dist/_app_/components/_private/relationship-editor/modals/dev-mode.js",
