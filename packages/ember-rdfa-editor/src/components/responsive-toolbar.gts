@@ -3,14 +3,15 @@ import Component from '@glimmer/component';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import { tracked } from 'tracked-built-ins';
+import { hash } from '@ember/helper';
+import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
-import { hash } from '@ember/helper';
-import ToolbarButton from './toolbar/button.gts';
-import ToolbarGroup from './toolbar/group.gts';
-import ToolbarDivider from './toolbar/divider.gts';
-import { on } from '@ember/modifier';
-import t from 'ember-intl/helpers/t';
+import ToolbarGroup from '#root/components/toolbar/group.gts';
+import ToolbarButton from '#root/components/toolbar/button.gts';
+import ToolbarDivider from '#root/components/toolbar/divider.gts';
+
 type ToolbarSection = {
   reference?: HTMLElement;
   dropdown?: HTMLElement;

@@ -15,10 +15,6 @@ import type {
   SubjectOptionGenerator,
   SubmissionBody,
 } from '#root/components/_private/rdfa-editor/relationship-editor/types.ts';
-import type {
-  IncomingTriple,
-  OutgoingTriple,
-} from '#root/core/rdfa-processor.ts';
 import { tracked } from 'tracked-built-ins';
 import {
   addBacklinkToNode,
@@ -179,10 +175,11 @@ export default class RelationshipEditorCard extends Component<Args> {
       const property = {
         predicate: predicate.term.value,
         object: target.term,
-      } as OutgoingTriple;
+      }
       this.controller.doCommand(
         addProperty({
           resource,
+          // @ts-expect-error fix type of property
           property,
         }),
       );
@@ -190,11 +187,12 @@ export default class RelationshipEditorCard extends Component<Args> {
       const backlink = {
         subject: target.term,
         predicate: predicate.term.value,
-      } as IncomingTriple;
+      };
       this.controller.withTransaction(
         () => {
           return addBacklinkToNode({
             rdfaId: node.value.attrs['__rdfaId'] as string,
+            // @ts-expect-error fix type of backlink
             backlink,
           })(this.controller.mainEditorState).transaction;
         },

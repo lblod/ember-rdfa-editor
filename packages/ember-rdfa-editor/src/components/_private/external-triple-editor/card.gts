@@ -143,7 +143,8 @@ export default class ExternalTripleEditorCard extends Component<Sig> {
             {{/each}}
           </AuList>
         {{else}}
-          <p class="au-u-italic">This document does not define any external triples.</p>
+          <p class="au-u-italic">This document does not define any external
+            triples.</p>
         {{/if}}
       </c.content>
     </AuCard>

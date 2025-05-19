@@ -9,10 +9,6 @@ import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
-import type {
-  IncomingTriple,
-  OutgoingTriple,
-} from '#root/core/rdfa-processor.ts';
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
@@ -62,10 +58,11 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
       const property = {
         predicate: predicate.term.value,
         object: target.term,
-      } as OutgoingTriple;
+      };
       this.controller.doCommand(
         addProperty({
           resource: this.node.value.attrs['subject'] as string,
+          // @ts-expect-error fix type of property
           property,
         }),
       );
@@ -73,11 +70,12 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
       const backlink = {
         subject: target.term,
         predicate: predicate.term.value,
-      } as IncomingTriple;
+      };
       this.controller.withTransaction(
         () => {
           return addBacklinkToNode({
             rdfaId: node.value.attrs['__rdfaId'] as string,
+            // @ts-expect-error fix type of backlink
             backlink,
           })(this.controller.mainEditorState).transaction;
         },
