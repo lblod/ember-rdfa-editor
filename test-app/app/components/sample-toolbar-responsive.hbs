@@ -6,23 +6,30 @@
       <Plugins::History::Redo @controller={{@controller}} />
     </Tb.Group>
     <Tb.Group>
-      <Plugins::TextStyle::Bold @controller={{@controller}} />
-      <Plugins::TextStyle::Italic @controller={{@controller}} />
-      <Plugins::TextStyle::Strikethrough @controller={{@controller}} />
-      <Plugins::TextStyle::Underline @controller={{@controller}} />
-      <Tb.Divider />
-      <Plugins::TextStyle::Subscript @controller={{@controller}} />
-      <Plugins::TextStyle::Superscript @controller={{@controller}} />
-      <CodeMark::ToolbarButton @controller={{@controller}} />
+     <Toolbar::Dropdown  @icon={{this.FormatTextIcon}} @direction='horizontal' as |Menu|>
+      <Plugins::TextStyle::Bold @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      <Plugins::TextStyle::Italic @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      <Plugins::TextStyle::Strikethrough @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      <Plugins::TextStyle::Underline @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      <Plugins::TextStyle::Subscript @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      <Plugins::TextStyle::Superscript @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+
+      <Plugins::Heading::HeadingMenu @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+    </Toolbar::Dropdown>
+     <Plugins::TextStyle::Color
+        @controller={{@controller}}
+        @defaultColor="#000000"
+      />
       <Plugins::TextStyle::Highlight
         @controller={{@controller}}
         @defaultColor="#FFEA00"
       />
-      <Plugins::TextStyle::Color
-        @controller={{@controller}}
-        @defaultColor="#000000"
-      />
     </Tb.Group>
+    {{#if this.supportsTables}}
+      <Tb.Group>
+        <Plugins::Table::TableMenu @controller={{@controller}} />
+      </Tb.Group>
+    {{/if}}
     <Tb.Group>
       <Plugins::List::Unordered @controller={{@controller}} />
       <Plugins::List::Ordered
@@ -31,36 +38,23 @@
       />
     </Tb.Group>
     <Tb.Group>
+      <Plugins::Alignment::AlignmentMenu @controller={{@controller}} />
+    </Tb.Group>
+    <Tb.Group>
       <Plugins::Indentation::IndentationMenu @controller={{@controller}} />
     </Tb.Group>
     <Tb.Group>
-      <Plugins::Link::LinkMenu @controller={{@controller}} />
-      <Plugins::Image::InsertMenu @controller={{@controller}} />
-    </Tb.Group>
-    {{#if this.supportsTables}}
-      <Tb.Group>
-        <Plugins::Table::TableMenu @controller={{@controller}} />
-      </Tb.Group>
-    {{/if}}
-    <Tb.Group>
-      <Plugins::Heading::HeadingMenu @controller={{@controller}} />
-    </Tb.Group>
-    <Tb.Group>
-      <Plugins::Alignment::AlignmentMenu @controller={{@controller}} />
+      <Toolbar::Dropdown  @icon={{this.PlusIcon}} @direction='horizontal' as |Menu|>
+        <Plugins::Link::LinkMenu @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+        <Plugins::Image::InsertMenu @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
+      </Toolbar::Dropdown>
     </Tb.Group>
   </:main>
   <:side as |Tb|>
     <Tb.Group>
-      <this.DocumentLanguagePill @controller={{@controller}} />
-      <this.DocumentInfoPill @controller={{@controller}} />
-    </Tb.Group>
-    <Tb.Group>
-      {{#if @controller}}
-        <Plugins::HtmlEditor::Menu @controller={{@controller}} />
-      {{/if}}
-    </Tb.Group>
-    <Tb.Group>
-      <Plugins::Formatting::FormattingToggle @controller={{@controller}} />
+      <Toolbar::Dropdown  @icon={{this.ThreeDotsIcon}} @direction='horizontal' as |Menu|>
+        <Plugins::HtmlEditor::Menu @controller={{@controller}} @onActivate={{Menu.closeDropdown}} />
+      </Toolbar::Dropdown>
     </Tb.Group>
   </:side>
 </ResponsiveToolbar>

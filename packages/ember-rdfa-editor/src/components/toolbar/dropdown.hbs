@@ -1,7 +1,7 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div class="say-dropdown" ...attributes>
   <this.Velcro
-    @placement="bottom"
+    @placement="bottom-start"
     @offsetOptions={{hash mainAxis=6}}
     @strategy="absolute"
     as |velcro|
@@ -16,7 +16,9 @@
       disabled={{@disabled}}
       {{velcro.hook}}
     >
-      <span class={{if @hideLabel "au-u-hidden-visually" ""}}>{{@label}}</span>
+      {{#unless @hideLabel}}
+        <span class="say-dropdown__label">{{@label}}</span>
+      {{/unless}}
       {{#if @icon}}
         <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size="large" />
       {{/if}}
@@ -29,7 +31,7 @@
             clickOutsideDeactivates=this.clickOutsideDeactivates
           )
         }}
-        class="say-dropdown__menu is-visible"
+        class="say-dropdown__menu is-visible {{if this.isHorizontal 'say-dropdown__menu-horizontal'}}"
         role="menu"
         tabindex="-1"
         {{velcro.loop}}
@@ -39,6 +41,7 @@
             Item=(component
               "toolbar/dropdown-item" onActivate=this.closeDropdown
             )
+            closeDropdown=this.closeDropdown
           )
         }}
       </div>

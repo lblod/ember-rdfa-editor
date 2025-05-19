@@ -32,7 +32,7 @@ $say-dropdown-caret-size: 0.4rem !default;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: var(--au-gray-600);
+  color: var(--au-gray-900);
   height: toolbar.$say-toolbar-height;
   min-width: toolbar.$say-toolbar-height;
   background-color: transparent;
@@ -41,13 +41,13 @@ $say-dropdown-caret-size: 0.4rem !default;
   margin: 0;
 
   & + & {
-    border-left: 0.1rem solid var(--au-gray-200);
+    border-left: 0.1rem solid var(--au-gray-300);
   }
 
   &:hover,
   &:focus {
-    color: var(--au-gray-700);
-    background-color: transparent;
+    color: var(--au-gray-900);
+    background-color: var(--au-gray-300);
   }
 
   &:focus {
@@ -58,12 +58,13 @@ $say-dropdown-caret-size: 0.4rem !default;
   &.is-active {
     color: var(--au-gray-900);
     background-color: var(--au-gray-300);
-    box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-400);
+    box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-900);
   }
 
   &:disabled {
-    color: var(--au-gray-400);
+    color: var(--au-gray-500);
     cursor: not-allowed;
+    background-color: transparent;
   }
 }
 
@@ -85,7 +86,6 @@ $say-dropdown-caret-size: 0.4rem !default;
   z-index: var(--au-z-index-beta);
   background-color: au-settings.$au-white;
   display: flex;
-  flex-direction: column;
   flex-wrap: nowrap;
   width: auto;
   box-shadow:
@@ -93,7 +93,10 @@ $say-dropdown-caret-size: 0.4rem !default;
     0 0 2px rgba(au-settings.$au-gray-900, 0.1);
   border-radius: 0.3rem;
   display: none;
-
+  flex-direction: column;
+  &.say-dropdown__menu-horizontal {
+    flex-direction: row;
+  }
   &:before,
   &:after {
     bottom: 100%;
@@ -195,4 +198,7 @@ $say-dropdown-caret-size: 0.4rem !default;
 
 .say-dropdown__menu [role="menuitem"] input {
   margin-left: au-settings.$au-unit-tiny;
+}
+
+.say-dropdown__label {
 }

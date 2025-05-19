@@ -10,6 +10,7 @@ type Args = {
   mark: string;
   icon: ComponentLike;
   title: string;
+  onActivate?: () => void;
 };
 export default class MarkComponent extends Component<Args> {
   get controller() {
@@ -43,6 +44,7 @@ export default class MarkComponent extends Component<Args> {
     if (this.mark) {
       this.controller.focus();
       this.controller.doCommand(toggleMarkAddFirst(this.mark));
+      this.args.onActivate?.();
     }
   }
 }
