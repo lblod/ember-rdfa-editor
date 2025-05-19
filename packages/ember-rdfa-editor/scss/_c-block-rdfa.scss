@@ -28,6 +28,10 @@
 
   &.ProseMirror-selectednode {
     background-color: var(--au-blue-200);
+
+    & > .say-block-rdfa--label {
+      cursor: grab;
+    }
   }
 
   .say-block-rdfa--label {
@@ -38,7 +42,7 @@
     padding: 0.2rem 0.6rem;
     color: #687483;
     line-height: 10px;
-    cursor: cell;
+    cursor: pointer;
   }
 }
 
