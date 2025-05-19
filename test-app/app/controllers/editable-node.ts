@@ -107,6 +107,9 @@ import type { SayEditorArgs } from '@lblod/ember-rdfa-editor/core/say-editor';
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
 ) => {
+  if (RDF('type').matches(triple.predicate)) {
+    return [{ hidden: true }];
+  }
   return {
     meta: { title: triple.predicate },
     elements: [
