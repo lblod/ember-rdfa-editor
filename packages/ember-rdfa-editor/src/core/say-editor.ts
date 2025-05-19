@@ -38,7 +38,7 @@ import { ProseParser } from '#root/prosemirror-aliases.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
-interface SayEditorArgs {
+export interface SayEditorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
