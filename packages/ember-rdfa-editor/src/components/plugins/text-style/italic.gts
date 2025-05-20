@@ -1,15 +1,24 @@
 import { ItalicIcon } from '@appuniversum/ember-appuniversum/components/icons/italic';
 import Mark from '#root/components/toolbar/mark.ts';
 import t from 'ember-intl/helpers/t';
+import type SayController from '#root/core/say-controller.js';
+import type { TOC } from '@ember/component/template-only';
 
-<template>
+type Signature = {
+  Args: {
+    controller: SayController;
+    onActivate?: () => void;
+  };
+};
+
+const ItalicMark: TOC<Signature> = <template>
   <Mark
     @icon={{ItalicIcon}}
     @title={{t "ember-rdfa-editor.italic"}}
     @mark="em"
-    {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
-    {{! @glint-expect-error: not typesafe yet }}
     @onActivate={{@onActivate}}
   />
-</template>
+</template>;
+
+export default ItalicMark;
