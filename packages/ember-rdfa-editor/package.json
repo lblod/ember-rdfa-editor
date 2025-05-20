@@ -274,7 +274,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.8.0",
+    "@appuniversum/ember-appuniversum": "^3.10.0",
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.25.1",
     "@babel/plugin-transform-typescript": "^7.25.2",
