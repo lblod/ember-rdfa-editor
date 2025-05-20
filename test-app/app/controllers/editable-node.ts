@@ -97,7 +97,18 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/namespace';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
-import { documentConfig } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
+import {
+  combineConfigs,
+  documentConfig,
+  lovConfig,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
+import type {
+  OptionGeneratorConfig,
+  PredicateOptionGeneratorArgs,
+  TargetOptionGeneratorArgs,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
+import { restartableTask, timeout } from 'ember-concurrency';
+
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
 ) => {
@@ -294,6 +305,37 @@ export default class EditableBlockController extends Controller {
   }
 
   get optionGeneratorConfig() {
-    return this.rdfaEditor && documentConfig(this.rdfaEditor);
+    if (this.rdfaEditor) {
+      return combineConfigs(documentConfig(this.rdfaEditor), lovConfig());
+    }
   }
+
+  subjectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.subjects?.(args)) ?? [];
+      return result;
+    },
+  );
+  predicateOptionGeneratorTask = restartableTask(
+    async (args?: PredicateOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.predicates?.(args)) ?? [];
+      return result;
+    },
+  );
+  objectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.objects?.(args)) ?? [];
+      return result;
+    },
+  );
+
+  optionGeneratorConfigTaskified: OptionGeneratorConfig = {
+    subjects: this.subjectOptionGeneratorTask.perform.bind(this),
+    predicates: this.predicateOptionGeneratorTask.perform.bind(this),
+    objects: this.objectOptionGeneratorTask.perform.bind(this),
+  };
 }
