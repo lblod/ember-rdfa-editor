@@ -84,10 +84,10 @@ $say-dropdown-caret-size: 0.4rem !default;
   font-family: var(--au-font);
   font-weight: var(--au-regular);
   z-index: var(--au-z-index-beta);
-  background-color: au-settings.$au-white;
+  background-color: var(--au-gray-100);
   display: flex;
   flex-wrap: nowrap;
-  width: auto;
+  width: max-content;
   box-shadow:
     0 0 12px rgba(au-settings.$au-gray-900, 0.15),
     0 0 2px rgba(au-settings.$au-gray-900, 0.1);
@@ -200,5 +200,3 @@ $say-dropdown-caret-size: 0.4rem !default;
   margin-left: au-settings.$au-unit-tiny;
 }
 
-.say-dropdown__label {
-}
