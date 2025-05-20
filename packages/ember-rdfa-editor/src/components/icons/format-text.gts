@@ -4,6 +4,8 @@
     width="24"
     height="24"
     viewBox="0 0 24 24"
+    {{! @glint-expect-error: not typesafe yet }}
+    ...attributes
   >
     <rect width="24" height="24" fill="transparent" />
     <g clip-path="url(#clip0_261_637)">

@@ -9,6 +9,7 @@ import t from 'ember-intl/helpers/t';
     @mark="em"
     {{! @glint-expect-error: not typesafe yet }}
     @controller={{@controller}}
+    {{! @glint-expect-error: not typesafe yet }}
     @onActivate={{@onActivate}}
   />
 </template>

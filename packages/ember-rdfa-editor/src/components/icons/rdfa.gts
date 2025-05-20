@@ -5,6 +5,7 @@
     height="24"
     viewBox="0 0 24 24"
     fill="none"
+    {{! @glint-expect-error: not typesafe yet }}
     ...attributes
   >
     <rect width="24" height="24" fill="none" />
