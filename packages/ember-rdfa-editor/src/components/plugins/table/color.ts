@@ -66,7 +66,6 @@ export default class ColorMenu extends Component<Args> {
     this.dropdownOpen = false;
     await paintCycleHappened();
     this.args.controller.focus();
-
   }
 
   @action async clickOutsideDropdown(event: InputEvent) {

@@ -15,7 +15,11 @@
       {{velcro.hook}}
       {{this.setupDropdownButton}}
     >
-      <AuIcon @icon={{this.currentAlignIcon}} @ariaHidden={{true}} @size="large" />
+      <AuIcon
+        @icon={{this.currentAlignIcon}}
+        @ariaHidden={{true}}
+        @size="large"
+      />
     </button>
     {{#if this.dropdownOpen}}
       <div

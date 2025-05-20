@@ -8,6 +8,7 @@ import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
 import FontColorIcon from '#root/components/icons/font-color.gts';
 import type SayController from '#root/core/say-controller.ts';
+import type { ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;
@@ -19,7 +20,7 @@ export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
   Velcro = Velcro;
-  FontColorIcon = FontColorIcon;
+  FontColorIcon = FontColorIcon as ComponentLike;
 
   setupDropdownButton = modifier((element: HTMLElement) => {
     this.dropdownButton = element;
