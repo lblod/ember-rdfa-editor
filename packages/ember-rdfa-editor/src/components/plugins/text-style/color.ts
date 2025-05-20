@@ -6,19 +6,21 @@ import { clearColor, setColor } from '#root/plugins/color/index.ts';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { modifier } from 'ember-modifier';
 import { Velcro } from 'ember-velcro';
-import { WordIcon } from '@appuniversum/ember-appuniversum/components/icons/word';
+import FontColorIcon from '#root/components/icons/font-color.gts';
 import type SayController from '#root/core/say-controller.ts';
+import type { ComponentLike } from '@glint/template';
 
 type Args = {
   controller: SayController;
   defaultColor: string;
+  onActivate?: () => void;
 };
 
 export default class ColorMenu extends Component<Args> {
   dropdownButton?: HTMLElement;
   htmlSafe = htmlSafe;
   Velcro = Velcro;
-  WordIcon = WordIcon;
+  FontColorIcon = FontColorIcon as ComponentLike;
 
   setupDropdownButton = modifier((element: HTMLElement) => {
     this.dropdownButton = element;
@@ -78,5 +80,6 @@ export default class ColorMenu extends Component<Args> {
       this.controller.doCommand(clearColor);
     }
     await this.closeDropdown();
+    this.args.onActivate?.();
   }
 }
