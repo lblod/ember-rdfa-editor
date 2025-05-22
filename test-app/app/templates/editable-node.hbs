@@ -38,7 +38,7 @@
               <this.CreateRelationshipButton
                 @controller={{this.rdfaEditor}}
                 @node={{this.activeNode}}
-                @optionGeneratorConfig={{this.optionGeneratorConfig}}
+                @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 @devMode={{this.devMode}}
               />
             </Item>
@@ -58,11 +58,11 @@
                 <this.RelationshipEditorCard
                   @node={{this.activeNode}}
                   @controller={{this.rdfaEditor}}
-                  @optionGeneratorConfig={{this.optionGeneratorConfig}}
+                  @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 />
                 <this.DocImportedResourceEditorCard
                   @controller={{this.rdfaEditor}}
-                  @optionGeneratorConfig={{this.optionGeneratorConfig}}
+                  @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 />
                 <this.ImportedResourceLinkerCard
                   @node={{this.activeNode}}

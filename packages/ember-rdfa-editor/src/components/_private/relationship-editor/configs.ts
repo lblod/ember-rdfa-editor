@@ -84,3 +84,102 @@ export const documentConfig: (
     );
   },
 });
+
+const fetchLovApi: (args: {
+  type: 'property' | 'class';
+  pageSize: number;
+  searchString: string;
+}) => Promise<Record<string, unknown>[]> = async ({
+  type,
+  pageSize,
+  searchString,
+}) => {
+  const abortController = new AbortController();
+  try {
+    const url = `https://lov.linkeddata.es/dataset/lov/api/v2/term/autocomplete?q=${searchString}&type=${type}&page_size=${pageSize}`;
+    const response = await fetch(url, { signal: abortController.signal });
+    const result = (await response.json()) as Record<string, unknown>;
+    const results = result['results'] as Record<string, unknown>[];
+    return results;
+  } finally {
+    abortController.abort();
+  }
+};
+
+export const lovConfig: (args?: {
+  pageSize?: number;
+}) => OptionGeneratorConfig = ({ pageSize = 10 } = {}) => ({
+  subjects: () => {
+    return [];
+  },
+  predicates: async ({ searchString = '', direction } = {}) => {
+    if (!searchString) {
+      return [];
+    }
+
+    const results = await fetchLovApi({
+      type: 'property',
+      pageSize,
+      searchString,
+    });
+    const predicateOptionTerms: PredicateOption[] = results.flatMap(
+      (result) => {
+        return [
+          {
+            direction: 'property',
+            term: sayDataFactory.namedNode(result['uri'] as string),
+          },
+          {
+            direction: 'backlink',
+            term: sayDataFactory.namedNode(result['uri'] as string),
+          },
+        ];
+      },
+    );
+    return predicateOptionTerms.filter(
+      (option) => !direction || option.direction === direction,
+    );
+  },
+  objects: async ({ searchString = '' } = {}) => {
+    if (!searchString) {
+      return [];
+    }
+
+    const results = await fetchLovApi({
+      type: 'class',
+      pageSize,
+      searchString,
+    });
+    const objectOptionTerms: ObjectOption[] = results.flatMap((result) => {
+      return [
+        {
+          term: sayDataFactory.namedNode(result['uri'] as string),
+        },
+      ];
+    });
+    return objectOptionTerms;
+  },
+});
+
+export const combineConfigs = (
+  ...configs: OptionGeneratorConfig[]
+): OptionGeneratorConfig => ({
+  subjects: async (args) => {
+    const results = await Promise.all(
+      configs.map((config) => config.subjects?.(args) ?? []),
+    );
+    return results.flat();
+  },
+  predicates: async (args) => {
+    const results = await Promise.all(
+      configs.map((config) => config.predicates?.(args) ?? []),
+    );
+    return results.flat();
+  },
+  objects: async (args) => {
+    const results = await Promise.all(
+      configs.map((config) => config.objects?.(args) ?? []),
+    );
+    return results.flat();
+  },
+});
