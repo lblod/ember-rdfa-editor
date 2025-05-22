@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
-import { and, isEmpty, not } from 'ember-truth-helpers';
+import { isEmpty, not } from 'ember-truth-helpers';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
@@ -42,6 +42,7 @@ import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
 import { array } from '@ember/helper';
 import type { OptionGeneratorConfig } from '../relationship-editor/types.ts';
+import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert.js';
 
 type CreationStatus = {
   mode: 'creation';
@@ -67,8 +68,12 @@ interface Sig {
 }
 
 /** truth-helpers 'not' incorrectly treats [] as falsey */
-function notTruthy(maybe: unknown) {
-  return !maybe;
+function truthy(maybe: unknown) {
+  return !!maybe;
+}
+
+function isObjectEmpty(obj: Record<string, unknown>) {
+  return Object.keys(obj).length === 0;
 }
 
 export default class DocImportedResourceEditorCard extends Component<Sig> {
@@ -291,107 +296,110 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
           <Group>
             <AuHeading @level="1" @skin="6">Document imported resources</AuHeading>
           </Group>
-          <Group>
-            <AuButton
-              @skin="link"
-              @disabled={{notTruthy this.documentImportedResources}}
-              {{on "click" this.openResourceModal}}
-            >
-              Add resource
-            </AuButton>
-          </Group>
+          {{#if (truthy this.documentImportedResources)}}
+            <Group>
+              <AuButton @skin="link" {{on "click" this.openResourceModal}}>
+                Add resource
+              </AuButton>
+            </Group>
+          {{/if}}
         </AuToolbar>
       </c.header>
       <c.content class="au-c-content--tiny">
-        {{#if
-          (and this.documentImportedResources this.importedResourceProperties)
-        }}
-          <AuList @divider={{true}} as |IRItem|>
-            {{#each-in
-              this.importedResourceProperties
-              as |importedResource props|
-            }}
-              <IRItem>
-                <div
-                  class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-                >
-                  <strong>{{importedResource}}</strong>
-                  <div>
-                    <AuButton
-                      @skin="link"
-                      @icon={{PlusIcon}}
-                      role="button"
-                      {{on
-                        "click"
-                        (fn this.startPropertyCreation importedResource)
-                      }}
-                    />
-                    <AuButton
-                      @skin="link"
-                      @alert={{true}}
-                      @icon={{CrossIcon}}
-                      @disabled={{not (isEmpty props)}}
-                      role="button"
-                      {{on
-                        "click"
-                        (fn this.removeImportedResource importedResource)
-                      }}
-                    />
+        {{#if (truthy this.documentImportedResources)}}
+          {{#if (not (isObjectEmpty this.importedResourceProperties))}}
+            <AuList @divider={{true}} as |IRItem|>
+              {{#each-in
+                this.importedResourceProperties
+                as |importedResource props|
+              }}
+                <IRItem>
+                  <div
+                    class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
+                  >
+                    <strong>{{importedResource}}</strong>
+                    <div>
+                      <AuButton
+                        @skin="link"
+                        @icon={{PlusIcon}}
+                        role="button"
+                        {{on
+                          "click"
+                          (fn this.startPropertyCreation importedResource)
+                        }}
+                      />
+                      <AuButton
+                        @skin="link"
+                        @alert={{true}}
+                        @icon={{CrossIcon}}
+                        @disabled={{not (isEmpty props)}}
+                        role="button"
+                        {{on
+                          "click"
+                          (fn this.removeImportedResource importedResource)
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <AuList @divider={{true}} as |Item|>
-                  {{#each props as |prop|}}
-                    <Item
-                      class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
-                    >
-                      <div class="au-u-padding-tiny">
-                        {{#if @controller}}
-                          <ConfigurableRdfaDisplay
-                            @value={{prop}}
-                            @generator={{predicateDisplay}}
-                            @controller={{@controller}}
-                          />
-                        {{/if}}
-                        <PropertyDetails
-                          @controller={{@controller}}
-                          @prop={{prop}}
-                        />
-                      </div>
-                      <AuDropdown
-                        @icon={{ThreeDotsIcon}}
-                        role="menu"
-                        @alignment="left"
+                  <AuList @divider={{true}} as |Item|>
+                    {{#each props as |prop|}}
+                      <Item
+                        class="au-u-flex au-u-flex--row au-u-flex--between au-u-flex--vertical-center"
                       >
-                        <AuButton
-                          @skin="link"
-                          @icon={{PencilIcon}}
-                          role="menuitem"
-                          {{on
-                            "click"
-                            (fn this.startPropertyUpdate importedResource prop)
-                          }}
+                        <div class="au-u-padding-tiny">
+                          {{#if @controller}}
+                            <ConfigurableRdfaDisplay
+                              @value={{prop}}
+                              @generator={{predicateDisplay}}
+                              @controller={{@controller}}
+                            />
+                          {{/if}}
+                          <PropertyDetails
+                            @controller={{@controller}}
+                            @prop={{prop}}
+                          />
+                        </div>
+                        <AuDropdown
+                          @icon={{ThreeDotsIcon}}
+                          role="menu"
+                          @alignment="left"
                         >
-                          Edit property
-                        </AuButton>
-                        <AuButton
-                          @skin="link"
-                          @icon={{BinIcon}}
-                          role="menuitem"
-                          class="au-c-button--alert"
-                          {{on "click" (fn this.removeProperty prop)}}
-                        >
-                          Remove property
-                        </AuButton>
-                      </AuDropdown>
-                    </Item>
-                  {{/each}}
-                </AuList>
-              </IRItem>
-            {{/each-in}}
-          </AuList>
+                          <AuButton
+                            @skin="link"
+                            @icon={{PencilIcon}}
+                            role="menuitem"
+                            {{on
+                              "click"
+                              (fn
+                                this.startPropertyUpdate importedResource prop
+                              )
+                            }}
+                          >
+                            Edit property
+                          </AuButton>
+                          <AuButton
+                            @skin="link"
+                            @icon={{BinIcon}}
+                            role="menuitem"
+                            class="au-c-button--alert"
+                            {{on "click" (fn this.removeProperty prop)}}
+                          >
+                            Remove property
+                          </AuButton>
+                        </AuDropdown>
+                      </Item>
+                    {{/each}}
+                  </AuList>
+                </IRItem>
+              {{/each-in}}
+            </AuList>
+          {{else}}
+            <p class="au-u-italic">This document does not define any imported
+              resources.</p>
+          {{/if}}
         {{else}}
-          <p class="au-u-italic">This document does not define any imported
-            resources.</p>
+          <AuAlert @icon="alert-triangle" @skin="warning">This document does not
+            support defining imported resources.</AuAlert>
         {{/if}}
       </c.content>
     </AuCard>
