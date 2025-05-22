@@ -152,7 +152,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
       return;
     }
     // @ts-expect-error fix PredicateOption types
-    this.data.predicate = {
+    this.data.predicate = predicateOption && {
       ...predicateOption,
       direction: this.data.direction,
     };
