@@ -41,6 +41,10 @@ import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { modifier } from 'ember-modifier';
 
+function truthy(obj: unknown) {
+  return !!obj;
+}
+
 const OBJECT_TERM_TYPES = [
   'NamedNode',
   'LiteralNode',
@@ -500,6 +504,8 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                       <AuLabel for={{id}}>Datatype</AuLabel>
                       <AuInput
                         id={{id}}
+                        {{! @glint-expect-error }}
+                        @disabled={{truthy this.data.target.term.language}}
                         {{on "input" this.setDatatype}}
                         {{! @glint-expect-error }}
                         value={{this.data.target.term.datatype.value}}
