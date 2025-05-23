@@ -42,7 +42,7 @@ import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
 import { array } from '@ember/helper';
 import type { OptionGeneratorConfig } from '../relationship-editor/types.ts';
-import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert.js';
+import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 
 type CreationStatus = {
   mode: 'creation';
