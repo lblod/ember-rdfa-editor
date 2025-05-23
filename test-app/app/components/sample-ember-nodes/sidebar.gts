@@ -38,10 +38,14 @@ export default class SampleEmberNodesSidebar extends Component<Signature> {
     this.insert(this.schema.nodes['dropdown']);
   }
 
+  @action
+  insertBlock() {
+    this.insert(this.schema.nodes['sample_block']);
+  }
   insert(type?: NodeType) {
     if (type) {
       this.controller.withTransaction((tr) => {
-        return tr.replaceSelectionWith(type.create()).scrollIntoView();
+        return tr.replaceSelectionWith(type.createAndFill()!).scrollIntoView();
       });
     }
   }
@@ -81,6 +85,16 @@ export default class SampleEmberNodesSidebar extends Component<Signature> {
             {{on "click" this.insertDropdown}}
           >
             Insert Dropdown
+          </AuButton>
+        </Item>
+        <Item>
+          <AuButton
+            @icon="add"
+            @iconAlignment="left"
+            @skin="link"
+            {{on "click" this.insertBlock}}
+          >
+            Insert Sample block
           </AuButton>
         </Item>
       </sidebar.Collapsible>

@@ -71,6 +71,10 @@ import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading'
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
 import { modifier } from 'ember-modifier';
+import {
+  sample_block,
+  sampleBlockView,
+} from 'test-app/dummy-nodes/sample-block';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
@@ -132,6 +136,7 @@ export default class IndexController extends Controller {
       card,
       counter,
       dropdown,
+      sample_block,
       link: link(this.linkOptions),
     },
     marks: {
@@ -163,6 +168,7 @@ export default class IndexController extends Controller {
       dropdown: dropdownView(proseController),
       link: linkView(this.linkOptions)(proseController),
       image: imageView(proseController),
+      sample_block: sampleBlockView(proseController),
     };
   };
   @tracked plugins: PluginConfig = [
