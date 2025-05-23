@@ -1,6 +1,6 @@
 import type { Quad_Subject, Quad_Predicate, NamedNode } from '@rdfjs/types';
 import { TwoWayMap } from '../map-utils.ts';
-import type { IncomingTriple } from '#root/core/rdfa-processor.js';
+import type { IncomingTriple } from '#root/core/rdfa-processor.ts';
 
 export interface SubAndContentPred {
   subject: Quad_Subject;

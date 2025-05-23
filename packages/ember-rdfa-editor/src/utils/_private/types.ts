@@ -40,3 +40,5 @@ export type ResolvedPNode = {
   value: PNode;
   pos: number;
 };
+
+export type Promisable<T> = T | PromiseLike<T>;
