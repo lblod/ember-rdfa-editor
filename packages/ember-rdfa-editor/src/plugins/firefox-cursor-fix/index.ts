@@ -1,5 +1,5 @@
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { TextSelection } from 'prosemirror-state';
 import { ProsePlugin } from '#root/prosemirror-aliases.ts';
 import SayView from '#root/core/say-view.ts';
 import { gecko } from '#root/utils/_private/browser.ts';
@@ -67,34 +67,6 @@ export function firefoxCursorFix(): ProsePlugin {
               .scrollIntoView(),
           );
           return true;
-        }
-        return;
-      },
-      decorations(state: EditorState): DecorationSet | undefined {
-        if (!gecko) {
-          return;
-        }
-        const { $from, from, to } = state.selection;
-        if (from !== to) {
-          return;
-        }
-        const nextNode = $from.nodeAfter;
-        const prevNode = $from.nodeBefore;
-        if (
-          (nextNode?.type.spec['needsFFKludge'] && !prevNode) ||
-          prevNode?.type.spec['needsFFKludge']
-        ) {
-          return DecorationSet.create(state.doc, [
-            Decoration.widget(
-              from,
-              () => {
-                const fakeCursor = document.createElement('span');
-                fakeCursor.classList.add('ProseMirror-firefox-fake-cursor');
-                return fakeCursor;
-              },
-              { side: 1 },
-            ),
-          ]);
         }
         return;
       },
