@@ -29,7 +29,10 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/node-map.ts';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
-import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 
 export type ModelTerm<N> =
@@ -985,8 +988,12 @@ export class RdfaParser<N> {
     attributes: Record<string, string>,
     predicateAttribute = 'property',
   ) => {
+    // TODO: the issue here is that `activeTag.text` is not yet (fully) populated.
+    // This function is called during the `onTagOpen` phase, while the `activeTag.text` attribute is only fully populated during the `onTagClose` phase.
+    // This means we need to adjust this logic to ensure the `activeTag.text` attribute is fully populated before this function is called.
+    const content = attributes['content'] ?? activeTag.text?.join('') ?? '';
     this.contentNodeMapping.set(node, {
-      subject: sayDataFactory.resourceNode(
+      subject: sayDataFactory.namedNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
           .value,
       ),
@@ -997,7 +1004,11 @@ export class RdfaParser<N> {
         true,
         true,
         false,
-      ).value,
+      ),
+      object: sayDataFactory.literal(
+        content,
+        languageOrDataType(activeTag.language, activeTag.datatype),
+      ),
     });
   };
 
@@ -1399,7 +1410,6 @@ export class RdfaParser<N> {
     pattern: IRdfaPattern<N>,
     root: boolean,
     rootPatternId: string,
-    node?: N,
   ) {
     // Stop on detection of cyclic patterns
     if (
@@ -1410,7 +1420,7 @@ export class RdfaParser<N> {
       return;
     }
 
-    this.onTagOpen(pattern.name, pattern.attributes, node);
+    this.onTagOpen(pattern.name, pattern.attributes);
     for (const text of pattern.text) {
       this.onText(text);
     }
