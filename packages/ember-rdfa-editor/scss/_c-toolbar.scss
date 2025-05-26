@@ -21,7 +21,7 @@ $say-toolbar-height: 44px !default;
   min-height: $say-toolbar-height; // Fixes height bug on Safari
   height: $say-toolbar-height;
   background-color: $say-toolbar-background;
-  border-bottom: 1px solid $say-toolbar-border;
+  border-bottom: 1px solid var(--au-gray-300);
 
   .say-container--toolbar-bottom & {
     border-bottom: 0;
