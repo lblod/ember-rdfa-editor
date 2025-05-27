@@ -264,7 +264,11 @@ class EmberNodeView implements NodeView {
     // A dragstart event can come from non-content DOM and be valid, so don't stop it
     // Stopping the event results in the rendered HTML being used for the drag event, rather than
     // the serialized HTML, so breaks drag-drop for many EmberNodes
-    if (event.type === 'dragstart') {
+    if (
+      ['dragstart', 'dragend', 'drop', 'dragover', 'dragenter'].includes(
+        event.type,
+      )
+    ) {
       return false;
     }
 
