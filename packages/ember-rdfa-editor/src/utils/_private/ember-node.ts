@@ -258,7 +258,10 @@ class EmberNodeView implements NodeView {
     }
 
     if (this.config.stopEvent) {
-      return this.config.stopEvent(event);
+      const configStop = this.config.stopEvent(event);
+      if (configStop !== null) {
+        return configStop;
+      }
     }
 
     // A dragstart event can come from non-content DOM and be valid, so don't stop it
@@ -379,10 +382,11 @@ export type EmberNodeConfig = {
   /**
    * Prevents the editor view from handling events which are inside the ember-node but not inside it's editable content.
    * By default this will stop events which occur inside the ember-node but not inside it's content.
-   * Only override if you know what you are doing.
+   * Returning a boolean will stop or not stop an event, returning null will hand over to the default logic.
+   * Only override the default logic if you know what you are doing.
    * @param event The event to check
    */
-  stopEvent?: (event: Event) => boolean;
+  stopEvent?: (event: Event) => boolean | null;
   /**
    * Determines whether a DOM mutation should be ignored by prosemirror.
    * Use this to avoid rerendering a component for every change.
