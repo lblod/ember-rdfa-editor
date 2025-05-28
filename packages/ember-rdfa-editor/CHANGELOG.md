@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 12.7.0
+
+### Minor Changes
+
+- [#1311](https://github.com/lblod/ember-rdfa-editor/pull/1311) [`ddc5958`](https://github.com/lblod/ember-rdfa-editor/commit/ddc595858e6f0beb284e06aa8990704147c588da) Thanks [@elpoelma](https://github.com/elpoelma)! - rdfa-tools: disable `Add property` button when doc node is selected, as this functionality is now covered by the imported-resource editor
+
+- [#1315](https://github.com/lblod/ember-rdfa-editor/pull/1315) [`11f6188`](https://github.com/lblod/ember-rdfa-editor/commit/11f61880a652ed7427567b74992330f389e5abd2) Thanks [@piemonkey](https://github.com/piemonkey)! - Add click handler for rdfa block labels that selects the block
+
+- [#1307](https://github.com/lblod/ember-rdfa-editor/pull/1307) [`e76c7f7`](https://github.com/lblod/ember-rdfa-editor/commit/e76c7f73d1d23012f6ad47c2b441c4c17ea858fe) Thanks [@piemonkey](https://github.com/piemonkey)! - Add support for hiding elements from the rdfa-visualizer
+
 ## 12.6.1
 
 ### Patch Changes
