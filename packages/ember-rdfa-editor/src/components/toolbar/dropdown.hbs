@@ -1,10 +1,6 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div class="say-dropdown" ...attributes>
-  <this.Velcro
-    @placement="bottom-start"
-    @strategy="absolute"
-    as |velcro|
-  >
+  <this.Velcro @placement="bottom-start" @strategy="absolute" as |velcro|>
     <button
       {{this.reference}}
       class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"

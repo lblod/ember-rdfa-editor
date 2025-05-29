@@ -1,14 +1,12 @@
 {{! @glint-nocheck: not typesafe yet }}
 {{#if @controller}}
   <div class="say-toolbar__button say-toolbar__highlight-button">
-    <this.Velcro
-      @placement="bottom-start"
-      @strategy="absolute"
-      as |velcro|
-    >
+    <this.Velcro @placement="bottom-start" @strategy="absolute" as |velcro|>
       <button
         type="button"
-        class="main  {{if this.dropdownOpen 'is-active' ''}} {{if @disabled 'is-disabled'}}"
+        class="main
+          {{if this.dropdownOpen 'is-active' ''}}
+          {{if @disabled 'is-disabled'}}"
         title={{t "ember-rdfa-editor.color.button-label"}}
         {{velcro.hook}}
         {{on "click" this.toggleDropdown}}
