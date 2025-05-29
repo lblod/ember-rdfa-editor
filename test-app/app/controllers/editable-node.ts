@@ -259,7 +259,9 @@ export default class EditableBlockController extends Controller {
     editableNodePlugin(),
   ];
 
-  @tracked nodeViews: SayEditorArgs['nodeViews'] = (controller) => {
+  @tracked nodeViews: SayEditorArgs['nodeViews'] = (
+    controller: SayController,
+  ) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),

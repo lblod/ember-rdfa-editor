@@ -10,6 +10,7 @@ import type { ComponentLike } from '@glint/template';
 type Args = {
   controller: SayController;
   icon: ComponentLike;
+  direction?: 'vertical' | 'horizontal';
 };
 export default class ToolbarDropdown extends Component<Args> {
   @tracked referenceElement?: Element = undefined;
@@ -23,6 +24,10 @@ export default class ToolbarDropdown extends Component<Args> {
   @action
   openDropdown() {
     this.dropdownOpen = true;
+  }
+
+  get isHorizontal() {
+    return this.args.direction === 'horizontal';
   }
 
   @action

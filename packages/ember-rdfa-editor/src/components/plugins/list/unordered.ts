@@ -6,14 +6,14 @@ import { autoJoin, chainCommands } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
 import SayController from '#root/core/say-controller.ts';
-import { UnorderedListIcon } from '@appuniversum/ember-appuniversum/components/icons/unordered-list';
+import { ListBulletsIcon } from '@appuniversum/ember-appuniversum/components/icons/list-bullets';
 
 type Args = {
   controller: SayController;
 };
 
 export default class ListUnordered extends Component<Args> {
-  UnorderedListIcon = UnorderedListIcon;
+  UnorderedListIcon = ListBulletsIcon;
 
   get firstListParent() {
     return findParentNode(
