@@ -79,46 +79,50 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
           @value={{this.node}}
           @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
           @controller={{@controller}}
-        />
-        <AuButton
-          @hideText={{true}}
-          @icon={{ExternalLinkIcon}}
-          @skin="link"
-          {{on "click" (fn this.goToSubject @subject)}}
         >
-          Go to subject
-        </AuButton>
-        {{#if this.expanded}}
-          <AuList class="au-u-margin-left" @divider={{true}} as |Item|>
-            {{#each this.nodeProps as |prop|}}
-              <Item class="au-u-padding-tiny">
+          <AuButton
+            @hideText={{true}}
+            @icon={{ExternalLinkIcon}}
+            @skin="link"
+            {{on "click" (fn this.goToSubject @subject)}}
+          >
+            Go to subject
+          </AuButton>
+          {{#if this.expanded}}
+            <AuList class="au-u-margin-left" @divider={{true}} as |Item|>
+              {{#each this.nodeProps as |prop|}}
                 <ConfigurableRdfaDisplay
                   @value={{prop}}
                   @generator={{or @displayConfig.predicate predicateDisplay}}
                   @controller={{@controller}}
-                />
-                {{#if (eq prop.object.termType "ResourceNode")}}
-                  <ResourceInfo
-                    @controller={{@controller}}
-                    @subject={{prop.object.value}}
-                    @displayConfig={{@displayConfig}}
-                  />
-                {{else if (get @displayConfig prop.object.termType)}}
-                  <ResourceInfo
-                    @controller={{@controller}}
-                    @subject={{prop.object.value}}
-                    {{! @glint-expect-error}}
-                    @displayConfig={{get @displayConfig prop.object.termType}}
-                  />
-                {{else}}
-                  <PropertyDetails @prop={{prop}} @controller={{@controller}} />
-                {{/if}}
-              </Item>
-            {{else}}
-              <p class="au-u-muted">No properties</p>
-            {{/each}}
-          </AuList>
-        {{/if}}
+                  @wrapper={{Item}}
+                >
+                  {{#if (eq prop.object.termType "ResourceNode")}}
+                    <ResourceInfo
+                      @controller={{@controller}}
+                      @subject={{prop.object.value}}
+                      @displayConfig={{@displayConfig}}
+                    />
+                  {{else if (get @displayConfig prop.object.termType)}}
+                    <ResourceInfo
+                      @controller={{@controller}}
+                      @subject={{prop.object.value}}
+                      {{! @glint-expect-error}}
+                      @displayConfig={{get @displayConfig prop.object.termType}}
+                    />
+                  {{else}}
+                    <PropertyDetails
+                      @prop={{prop}}
+                      @controller={{@controller}}
+                    />
+                  {{/if}}
+                </ConfigurableRdfaDisplay>
+              {{else}}
+                <p class="au-u-muted">No properties</p>
+              {{/each}}
+            </AuList>
+          {{/if}}
+        </ConfigurableRdfaDisplay>
       {{else}}
         {{@subject}}
       {{/if}}

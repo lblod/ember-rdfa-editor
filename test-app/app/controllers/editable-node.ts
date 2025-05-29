@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Schema } from '@lblod/ember-rdfa-editor';
+import { Schema, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import {
   em,
   strikethrough,
@@ -102,10 +102,14 @@ import {
   getOutgoingTriple,
   namespace,
 } from '@lblod/ember-rdfa-editor/utils/namespace';
+import type { SayEditorArgs } from '@lblod/ember-rdfa-editor/core/say-editor';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
 ) => {
+  if (RDF('type').matches(triple.predicate)) {
+    return [{ hidden: true }];
+  }
   return {
     meta: { title: triple.predicate },
     elements: [
@@ -255,13 +259,16 @@ export default class EditableBlockController extends Controller {
     editableNodePlugin(),
   ];
 
-  @tracked nodeViews = (controller: SayController) => {
+  @tracked nodeViews: SayEditorArgs['nodeViews'] = (controller) => {
     return {
       link: linkView(this.linkOptions)(controller),
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
-      block_rdfa: (node: PNode) => new BlockRDFaView(node),
-    };
+      block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
+        // @ts-expect-error The types do not agree here due to private members, but this is not seen
+        // in tests in a consuming app, so there must be something wrong with the test-app config
+        new BlockRDFaView(args, controller),
+    } as unknown as Record<string, NodeViewConstructor>;
   };
 
   get activeNode() {
