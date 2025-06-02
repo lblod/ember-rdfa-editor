@@ -1,5 +1,16 @@
 # @lblod/ember-rdfa-editor
 
+## 12.8.0
+
+### Minor Changes
+
+- [#1320](https://github.com/lblod/ember-rdfa-editor/pull/1320) [`6b74bea`](https://github.com/lblod/ember-rdfa-editor/commit/6b74beafb484244bde27f17a2c45ac3eb036fcef) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of two new ember-node options:
+
+  - `domClassNames`: classnames to apply to the nodeview which is created
+  - `contentDomClassNames`: classnames to apply to the content node within the nodeview
+
+- [#1320](https://github.com/lblod/ember-rdfa-editor/pull/1320) [`b5e2d05`](https://github.com/lblod/ember-rdfa-editor/commit/b5e2d056e9eefc6ea7a389d7279fbf0f6dd63c29) Thanks [@elpoelma](https://github.com/elpoelma)! - Remove obsolete firefox fake cursor styling. The fake cursor is no longer needed, the native browser cursor can now be used without issues.
+
 ## 12.7.0
 
 ### Minor Changes
