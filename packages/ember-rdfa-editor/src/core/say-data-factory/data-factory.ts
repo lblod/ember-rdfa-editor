@@ -115,38 +115,6 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
   ): ContentLiteralTerm {
     return new ContentLiteralTerm(languageOrDataType);
   }
-  // createNode(args: CreateNodeArgs) {
-  //   const { termType } = args;
-  //   switch (termType) {
-  //     case 'Literal': {
-  //       const { value, languageOrDatatype } = args;
-  //       return this.literal(value, languageOrDatatype);
-  //     }
-  //     case 'NamedNode': {
-  //       const { value } = args;
-  //       return this.namedNode(value);
-  //     }
-  //     case 'BlankNode': {
-  //       const { value } = args;
-  //       return this.blankNode(value);
-  //     }
-  //     case 'Variable': {
-  //       const { value } = args;
-  //       return this.variable(value);
-  //     }
-  //     case 'DefaultGraph': {
-  //       return this.defaultGraph();
-  //     }
-  //     case 'LiteralNode': {
-  //       const { value } = args;
-  //       return this.literalNode(value);
-  //     }
-  //     case 'ResourceNode': {
-  //       const { value } = args;
-  //       return this.resourceNode(value);
-  //     }
-  //   }
-  // }
 
   public fromTerm<T extends WithoutEquals<SayTerm>>(original: T): SayTerm {
     switch (original.termType) {

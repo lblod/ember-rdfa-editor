@@ -2,6 +2,7 @@ import type { ComponentLike } from '@glint/template';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import type { NodeSpec } from 'prosemirror-model';
 import type { NodeSerializer } from './say-serializer.ts';
+import type { NodeSpecOnChanged } from '#root/plugins/on-changed/plugin.ts';
 
 export interface SayAttributeSpec {
   default?: unknown;
@@ -28,6 +29,12 @@ export default interface SayNodeSpec extends NodeSpec {
     [name: string]: SayAttributeSpec;
   };
   classNames?: string[] | ((node: PNode) => string[]);
+  /**
+   * A callback which will be picked up by the on-changed plugin any time a node matching this spec
+   * is modified in a transaction. The results of the returned TransactionMonads will be appended to
+   * the transaction
+   */
+  onChanged?: NodeSpecOnChanged;
 }
 
 export const isEditable = (node: PNode) => {

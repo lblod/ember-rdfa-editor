@@ -30,7 +30,7 @@ import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 type Signature = {
   Args: {
     controller: SayController;
-    node: ResolvedPNode;
+    node: ResolvedPNode | undefined;
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
   };
@@ -48,10 +48,10 @@ export default class AttributeEditor extends Component<Signature> {
     return this.args.node;
   }
   get nodeAttrs() {
-    return this.node.value.attrs;
+    return this.node?.value.attrs ?? {};
   }
   get nodespec() {
-    return this.node.value.type.spec as SayNodeSpec;
+    return this.node?.value.type.spec as SayNodeSpec;
   }
 
   toggleSection = () => {
@@ -113,7 +113,7 @@ export default class AttributeEditor extends Component<Signature> {
       for (const key in newAttrs) {
         if (newAttrs[key] !== this.nodeAttrs[key]) {
           const handler = this.getHandler(key);
-          if (handler) {
+          if (handler && this.node) {
             monads.push(handler(this.node.pos, newAttrs[key] as string));
           }
         }

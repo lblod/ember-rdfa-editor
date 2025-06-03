@@ -35,10 +35,11 @@ import { removePropertiesOfDeletedNodes } from '#root/plugins/remove-properties-
 import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import { ProseParser } from '#root/prosemirror-aliases.ts';
+import { onChangedPlugin } from '#root/plugins/on-changed/plugin.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
-interface SayEditorArgs {
+export interface SayEditorArgs {
   owner: Owner;
   target: Element;
   schema: Schema;
@@ -128,6 +129,7 @@ export default class SayEditor {
         ]),
         removePropertiesOfDeletedNodes(),
         rdfaInfoPlugin(),
+        onChangedPlugin,
       ];
     }
 
