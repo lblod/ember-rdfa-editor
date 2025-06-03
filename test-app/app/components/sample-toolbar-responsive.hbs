@@ -13,7 +13,7 @@
       <Tb.Divider />
       <Plugins::TextStyle::Subscript @controller={{@controller}} />
       <Plugins::TextStyle::Superscript @controller={{@controller}} />
-      <CodeMark::ToolbarButton @controller={{@controller}} />
+      <CodeMark @controller={{@controller}} />
       <Plugins::TextStyle::Highlight
         @controller={{@controller}}
         @defaultColor="#FFEA00"
@@ -62,5 +62,6 @@
     <Tb.Group>
       <Plugins::Formatting::FormattingToggle @controller={{@controller}} />
     </Tb.Group>
+    {{yield}}
   </:side>
 </ResponsiveToolbar>

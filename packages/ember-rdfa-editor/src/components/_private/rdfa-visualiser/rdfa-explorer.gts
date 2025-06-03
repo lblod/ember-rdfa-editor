@@ -11,7 +11,6 @@ import {
   rdfaInfoPluginKey,
   type RdfaVisualizerConfig,
 } from '#root/plugins/rdfa-info/index.ts';
-import { type ResolvedPNode } from '#root/utils/_private/types.ts';
 import { type RdfaInfo } from '#root/plugins/rdfa-info/plugin.ts';
 import { selectNodeBySubject } from '#root/commands/_private/rdfa-commands/index.ts';
 import ResourceInfo from '#root/components/_private/rdfa-visualiser/resource-info.gts';
@@ -19,7 +18,6 @@ import ResourceInfo from '#root/components/_private/rdfa-visualiser/resource-inf
 interface Sig {
   Args: {
     controller: SayController;
-    node?: ResolvedPNode;
     config: RdfaVisualizerConfig;
   };
 }

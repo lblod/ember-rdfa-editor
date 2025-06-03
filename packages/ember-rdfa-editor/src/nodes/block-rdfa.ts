@@ -11,7 +11,7 @@ import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces.ts';
 import { getRDFFragment } from '../utils/namespace.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import type SayController from '#root/core/say-controller.js';
+import type SayController from '#root/core/say-controller.ts';
 import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
 
 const FALLBACK_LABEL = 'Data-object';

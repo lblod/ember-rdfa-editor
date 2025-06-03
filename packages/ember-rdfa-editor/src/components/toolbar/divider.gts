@@ -1,7 +1,7 @@
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 
 interface Sig {
-  Element: HTMLElement;
+  Element: HTMLDivElement;
 }
 
 const ToolbarDivider: TemplateOnlyComponent<Sig> = <template>

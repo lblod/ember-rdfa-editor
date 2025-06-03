@@ -14,6 +14,40 @@ import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import type { Option } from '#root/utils/_private/option.ts';
 import { SayQuad } from './quad.ts';
 
+// type CreateNodeArgs =
+//   | {
+//       termType: 'NamedNode';
+//       value: string;
+//     }
+//   | {
+//       termType: 'Literal';
+//       value: string;
+//       languageOrDatatype?: string | NamedNode;
+//     }
+//   | {
+//       termType: 'BlankNode';
+//       value?: string;
+//     }
+//   | {
+//       termType: 'Variable';
+//       value: string;
+//     }
+//   | {
+//       termType: 'DefaultGraph';
+//     }
+//   | {
+//       termType: 'LiteralNode';
+//       value: string;
+//     }
+//   | {
+//       termType: 'ResourceNode';
+//       value: string;
+//     }
+//   | {
+//       termType: 'ContentLiteral';
+//       languageOrDatatype?: string | NamedNode;
+//     };
+
 export type WithoutEquals<T extends SayTerm> = Omit<T, 'equals'>;
 let dataFactoryCounter = 0;
 
@@ -93,7 +127,10 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
           original as unknown as WithoutEquals<SayLiteral>;
         return this.literal(
           original.value,
-          languageOrDataType(language, this.fromTerm(datatype) as SayNamedNode),
+          languageOrDataType(
+            language,
+            datatype && (this.fromTerm(datatype) as SayNamedNode),
+          ),
         );
       }
       case 'Variable':
@@ -119,7 +156,10 @@ export class SayDataFactory<Q extends BaseQuad = Quad>
         const { datatype, language } =
           original as WithoutEquals<ContentLiteralTerm>;
         return this.contentLiteral(
-          languageOrDataType(language, this.fromTerm(datatype) as NamedNode),
+          languageOrDataType(
+            language,
+            datatype && (this.fromTerm(datatype) as NamedNode),
+          ),
         );
       }
     }

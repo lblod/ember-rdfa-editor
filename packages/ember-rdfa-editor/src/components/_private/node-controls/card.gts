@@ -3,25 +3,21 @@ import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { localCopy } from 'tracked-toolbox';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
+import type SayController from '#root/core/say-controller.ts';
+import WrappingUtils from './wrapping-utils.gts';
+import RemoveNodeButton from './remove-node.gts';
 
 type Signature = {
   Args: {
-    node: ResolvedPNode;
+    controller: SayController;
+    node?: ResolvedPNode;
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
   };
 };
 
-export default class DebugInfo extends Component<Signature> {
+export default class NodeControlsCard extends Component<Signature> {
   @localCopy('args.expanded', true) declare expanded: boolean;
-
-  get pos() {
-    return this.args.node.pos;
-  }
-
-  get nodeType() {
-    return this.args.node.value.type.name;
-  }
 
   toggleSection = () => {
     this.expanded = !this.expanded;
@@ -38,11 +34,13 @@ export default class DebugInfo extends Component<Signature> {
       as |c|
     >
       <c.header>
-        <AuHeading @level="1" @skin="6">Debug Info</AuHeading>
+        <AuHeading @level="1" @skin="6">Node controls</AuHeading>
       </c.header>
       <c.content class="au-c-content--tiny">
-        <p><strong>Position: </strong>{{this.pos}}</p>
-        <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
+        <WrappingUtils @controller={{@controller}} />
+        {{#if @node}}
+          <RemoveNodeButton @node={{@node}} @controller={{@controller}} />
+        {{/if}}
       </c.content>
     </AuCard>
   </template>

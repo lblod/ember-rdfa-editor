@@ -9,7 +9,7 @@ import { on } from '@ember/modifier';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import ToolbarGroup from '#root/components/toolbar/group.gts';
-import ToolbarButton from '#root/components/toolbar/button.ts';
+import ToolbarButton from '#root/components/toolbar/button.gts';
 import ToolbarDivider from '#root/components/toolbar/divider.gts';
 
 type ToolbarSection = {
@@ -18,14 +18,25 @@ type ToolbarSection = {
   enableDropdown: boolean;
   showDropdown: boolean;
 };
-interface Sig {
-  Blocks: {
-    main: [{ Group: typeof ToolbarGroup; Divider: typeof ToolbarDivider }];
-    side: [{ Group: typeof ToolbarGroup; Divider: typeof ToolbarDivider }];
-  };
-}
 
-export default class ResponsiveToolbar extends Component<Sig> {
+type Signature = {
+  Blocks: {
+    main: [
+      {
+        Group: typeof ToolbarGroup;
+        Divider: typeof ToolbarDivider;
+      },
+    ];
+    side: [
+      {
+        Group: typeof ToolbarGroup;
+        Divider: typeof ToolbarDivider;
+      },
+    ];
+  };
+};
+
+export default class ResponsiveToolbar extends Component<Signature> {
   toolbar?: HTMLElement;
 
   main: ToolbarSection = tracked({
