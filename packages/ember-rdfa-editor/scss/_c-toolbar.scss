@@ -38,7 +38,9 @@ $say-toolbar-height: 44px !default;
     display: flex;
     align-items: center;
     flex-shrink: 1;
-    border-left: 1px solid var(--au-gray-300);
+    .say-toolbar__group {
+      border-left: 1px solid var(--au-gray-300);
+    }
   }
 
   *[data-hidden="true"] {
