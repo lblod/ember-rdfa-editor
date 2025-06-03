@@ -1,5 +1,44 @@
 # @lblod/ember-rdfa-editor
 
+## 12.9.0
+
+### Minor Changes
+
+- [#1312](https://github.com/lblod/ember-rdfa-editor/pull/1312) [`03e9f1e`](https://github.com/lblod/ember-rdfa-editor/commit/03e9f1ecdb21c04c7fd329ea2770220f630666bf) Thanks [@elpoelma](https://github.com/elpoelma)! - rdfa-tools: reduce size and standardize rdfa-tool cards
+
+- [#1316](https://github.com/lblod/ember-rdfa-editor/pull/1316) [`d9ad2c4`](https://github.com/lblod/ember-rdfa-editor/commit/d9ad2c404324f51cf9ee50a6cff5b1a2351c8b24) Thanks [@elpoelma](https://github.com/elpoelma)! - relationship-editor: add sample document config
+
+- [#1317](https://github.com/lblod/ember-rdfa-editor/pull/1317) [`b24057e`](https://github.com/lblod/ember-rdfa-editor/commit/b24057e7d3d08afa73a060ed2c8c52e2c44c47b2) Thanks [@elpoelma](https://github.com/elpoelma)! - relationship-editor: add utility `combineConfigs` function
+
+- [#1310](https://github.com/lblod/ember-rdfa-editor/pull/1310) [`7886d5d`](https://github.com/lblod/ember-rdfa-editor/commit/7886d5d3c35e7c65fadc8c958c69244739ac804b) Thanks [@elpoelma](https://github.com/elpoelma)! - Updates to the `OptionGenerator` interfaces
+
+  - The `subjectOptionGenerator`, `predicateOptionGenerator` and `objectOptionGenerator` have been collected into a single `optionGeneratorConfig` argument. This makes it easier to provide sample/default configs as a single variable/export.
+  - `PredicateOption`: if the `direction` is 'property', an optional `allowFreeTextTarget` may be passed. This allows end-users to type in a free-text literal as object when that specific predicate option is selected.
+  - the `PredicateOptionGenerator` now also optionally receives a `Direction` ('property'/'backlink') as filter input.
+
+- [#1310](https://github.com/lblod/ember-rdfa-editor/pull/1310) [`7886d5d`](https://github.com/lblod/ember-rdfa-editor/commit/7886d5d3c35e7c65fadc8c958c69244739ac804b) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a dev-mode of the new relationship form
+  This form replaces both the old backlink and property editor forms.
+  The `relationship-editor/create-button` can be configured in dev-mode or user-mode.
+  The `relationship-editor/card` is (for now) only a dev-mode tool.
+
+- [#1321](https://github.com/lblod/ember-rdfa-editor/pull/1321) [`f588378`](https://github.com/lblod/ember-rdfa-editor/commit/f5883786a460ae0f1ac95cfd5f6b3d956afb2cba) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix bug with drag-and-drop for ember-nodes such as snippets
+
+- [#1310](https://github.com/lblod/ember-rdfa-editor/pull/1310) [`7886d5d`](https://github.com/lblod/ember-rdfa-editor/commit/7886d5d3c35e7c65fadc8c958c69244739ac804b) Thanks [@elpoelma](https://github.com/elpoelma)! - Seperate rdfa-tools into seperate components:
+
+  - `attribute-editor`
+  - `debug-info`
+  - `doc-imported-resource-editor`
+  - `external-triple-editor`
+  - `imported-resource-linker`
+  - `node-controls`
+  - `rdfa-visualizer`
+  - `relationship-editor` (contains both the old property and backlink editors)
+    Each of these tools/components has one specific purpose and can be enabled/disabled seperately.
+
+- [#1321](https://github.com/lblod/ember-rdfa-editor/pull/1321) [`38aab25`](https://github.com/lblod/ember-rdfa-editor/commit/38aab25d10d47f369a3ba08e3644ef1ad34c69d4) Thanks [@piemonkey](https://github.com/piemonkey)! - Add on-changed plugin as a way to generate transactions any time a node of a particular type is changed in the editor, e.g. to keep RDFa links up to date
+
+- [#1317](https://github.com/lblod/ember-rdfa-editor/pull/1317) [`b24057e`](https://github.com/lblod/ember-rdfa-editor/commit/b24057e7d3d08afa73a060ed2c8c52e2c44c47b2) Thanks [@elpoelma](https://github.com/elpoelma)! - relationship-editor: add sample `lov` (https://lov.linkeddata.es/dataset/lov/) config
+
 ## 12.8.0
 
 ### Minor Changes
