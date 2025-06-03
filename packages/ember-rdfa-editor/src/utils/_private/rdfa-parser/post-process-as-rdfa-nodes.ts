@@ -120,7 +120,9 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
       } else {
         if (
           truthyAttribute(attributes, 'about') &&
-          !truthyAttribute(attributes, 'data-literal-node')
+          !truthyAttribute(attributes, 'data-literal-node') &&
+          // Is this correct, an alternative solution would be to check on the presence of a `resource` attr here?
+          !truthyAttribute(attributes, 'datatype')
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
           markAsResourceNode(
