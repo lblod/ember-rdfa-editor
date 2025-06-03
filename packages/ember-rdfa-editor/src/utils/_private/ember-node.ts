@@ -220,6 +220,13 @@ class EmberNodeView implements NodeView {
       },
     );
     this.dom = node;
+    if (this.config.domClassNames) {
+      this.dom.classList.add(...this.config.domClassNames);
+    }
+    if (this.config.contentDomClassNames && this.contentDOM) {
+      this.contentDOM.classList.add(...this.config.contentDomClassNames);
+    }
+
     this.emberComponent = component;
   }
 
@@ -387,6 +394,8 @@ export type EmberNodeConfig = {
    * @param event The event to check
    */
   stopEvent?: (event: Event) => boolean | null;
+  domClassNames?: string[];
+  contentDomClassNames?: string[];
   /**
    * Determines whether a DOM mutation should be ignored by prosemirror.
    * Use this to avoid rerendering a component for every change.
