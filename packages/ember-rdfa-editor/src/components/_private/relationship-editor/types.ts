@@ -18,7 +18,7 @@ export type PredicateOption<D extends Direction = Direction> =
     allowFreeTextTarget?: D extends 'property' ? boolean : never;
   };
 
-type PredicateOptionGeneratorArgs<D extends Direction = Direction> = {
+export type PredicateOptionGeneratorArgs<D extends Direction = Direction> = {
   selectedSource?: SayTerm;
   searchString?: string;
   direction?: D;
@@ -28,7 +28,7 @@ export type PredicateOptionGenerator<D extends Direction = Direction> = (
   args?: PredicateOptionGeneratorArgs<D>,
 ) => Promisable<PredicateOption<D>[]>;
 
-type TargetOptionGeneratorArgs = {
+export type TargetOptionGeneratorArgs = {
   selectedSource?: SayTerm;
   selectedPredicate?: SayTerm;
   searchString?: string;
