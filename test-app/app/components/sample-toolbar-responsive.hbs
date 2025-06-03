@@ -53,6 +53,7 @@
     <Tb.Group>
       <Toolbar::Dropdown  @icon={{this.ThreeDotsIcon}} @direction='horizontal' as |Menu|>
         <Plugins::HtmlEditor::Menu @controller={{@controller}} @onActivate={{Menu.closeDropdown}} />
+        <Plugins::Formatting::FormattingToggle @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
       </Toolbar::Dropdown>
     </Tb.Group>
   </:side>

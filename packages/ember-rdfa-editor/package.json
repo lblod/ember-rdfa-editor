@@ -275,7 +275,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.10.0",
+    "@appuniversum/ember-appuniversum": "^3.11.0",
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.25.1",
     "@babel/plugin-transform-typescript": "^7.25.2",
@@ -329,7 +329,7 @@
     "webpack": "^5.97.1"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.5.0",
+    "@appuniversum/ember-appuniversum": "^3.11.0",
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
     "@glimmer/component": "^1.1.2 || ^2.0.0",
     "@glimmer/tracking": "^1.1.2",

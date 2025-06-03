@@ -237,8 +237,8 @@ importers:
         version: 1.6.1
     devDependencies:
       '@appuniversum/ember-appuniversum':
-        specifier: ^3.10.0
-        version: 3.10.0(aa4c30eb1a49e2cc2468bfa975d0d115)
+        specifier: ^3.11.0
+        version: 3.11.0(aa4c30eb1a49e2cc2468bfa975d0d115)
       '@babel/core':
         specifier: ^7.25.2
         version: 7.26.9
@@ -393,8 +393,8 @@ importers:
   test-app:
     devDependencies:
       '@appuniversum/ember-appuniversum':
-        specifier: ^3.10.0
-        version: 3.10.0(aa4c30eb1a49e2cc2468bfa975d0d115)
+        specifier: ^3.11.0
+        version: 3.11.0(aa4c30eb1a49e2cc2468bfa975d0d115)
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.9
@@ -702,8 +702,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@appuniversum/ember-appuniversum@3.10.0':
-    resolution: {integrity: sha512-6zTeTjmogWAggyqiIfnmO2TtpjO/ptlD7dpf+MVVDVPUN4heZUH/JT6GiF2jkldNlCGeMJSkOXOIoOv4vdUAtw==}
+  '@appuniversum/ember-appuniversum@3.11.0':
+    resolution: {integrity: sha512-Lm0b35THcdtzBz3PnBzoAWM1I3VDCiWhDqFS4EvZrMp0yGrtSm2ezv1BeotqjV1TEZ5DQhMxIMTKKi2/HL+C3Q==}
     engines: {node: '>= 18'}
     peerDependencies:
       ember-source: ^4.12.0 || ^5.0.0 || ^6.0.0
@@ -6973,6 +6973,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
@@ -9938,7 +9939,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@appuniversum/ember-appuniversum@3.10.0(aa4c30eb1a49e2cc2468bfa975d0d115)':
+  '@appuniversum/ember-appuniversum@3.11.0(aa4c30eb1a49e2cc2468bfa975d0d115)':
     dependencies:
       '@babel/core': 7.26.9
       '@duetds/date-picker': 1.4.0
