@@ -273,7 +273,6 @@ export default class EditableBlockController extends Controller {
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
       block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
-        // @ts-expect-error The types do not agree here due to private members, but this is not seen
         // in tests in a consuming app, so there must be something wrong with the test-app config
         new BlockRDFaView(args, controller),
     } as unknown as Record<string, NodeViewConstructor>;
