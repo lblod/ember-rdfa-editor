@@ -13,7 +13,12 @@ type Args = {
   icon: ComponentLike;
   direction?: 'vertical' | 'horizontal';
   Blocks: {
-    default: [{ Item: WithBoundArgs<typeof DropdownItem, 'onActivate'> }];
+    default: [
+      {
+        Item: WithBoundArgs<typeof DropdownItem, 'onActivate'>;
+        closeDropdown: () => void;
+      },
+    ];
   };
 };
 export default class ToolbarDropdown extends Component<Args> {
