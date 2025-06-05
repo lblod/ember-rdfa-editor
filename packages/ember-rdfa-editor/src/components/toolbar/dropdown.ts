@@ -5,12 +5,16 @@ import { modifier } from 'ember-modifier';
 import SayController from '#root/core/say-controller.ts';
 import { paintCycleHappened } from '#root/utils/_private/editor-utils.ts';
 import { Velcro } from 'ember-velcro';
-import type { ComponentLike } from '@glint/template';
+import type { ComponentLike, WithBoundArgs } from '@glint/template';
+import type DropdownItem from './dropdown-item';
 
 type Args = {
   controller: SayController;
   icon: ComponentLike;
   direction?: 'vertical' | 'horizontal';
+  Blocks: {
+    default: [{ Item: WithBoundArgs<typeof DropdownItem, 'onActivate'> }];
+  };
 };
 export default class ToolbarDropdown extends Component<Args> {
   @tracked referenceElement?: Element = undefined;
