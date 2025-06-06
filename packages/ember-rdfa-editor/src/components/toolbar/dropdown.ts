@@ -12,7 +12,8 @@ type Args = {
   controller: SayController;
   icon: ComponentLike;
   direction?: 'vertical' | 'horizontal';
-  Blocks: {
+  title?: string;
+  Blocks?: {
     default: [
       {
         Item: WithBoundArgs<typeof DropdownItem, 'onActivate'>;
