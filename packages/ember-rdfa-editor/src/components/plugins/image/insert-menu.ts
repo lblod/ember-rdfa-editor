@@ -10,6 +10,7 @@ const DEFAULT_SVG_HEIGHT = 100;
 type Args = {
   controller: SayController;
   defaultSvgHeight?: number;
+  onActivate?: () => void;
 };
 
 export default class ImageInsertMenu extends Component<Args> {
@@ -104,5 +105,6 @@ export default class ImageInsertMenu extends Component<Args> {
     });
     this.resetValues();
     await this.closeModal();
+    this.args.onActivate?.();
   }
 }

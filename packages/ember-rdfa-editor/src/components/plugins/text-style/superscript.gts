@@ -6,17 +6,19 @@ import type { TOC } from '@ember/component/template-only';
 
 type Signature = {
   Args: {
-    controller?: SayController;
+    controller: SayController;
+    onActivate?: () => void;
   };
 };
 
-const Superscript: TOC<Signature> = <template>
+const SuperscriptMark: TOC<Signature> = <template>
   <Mark
     @icon={{SuperscriptIcon}}
     @title={{t "ember-rdfa-editor.superscript"}}
     @mark="superscript"
     @controller={{@controller}}
+    @onActivate={{@onActivate}}
   />
 </template>;
 
-export default Superscript;
+export default SuperscriptMark;

@@ -63,17 +63,3 @@
     </Menu.Item>
   {{/if}}
 </Toolbar::Dropdown>
-<Toolbar::Button
-  @title={{t "ember-rdfa-editor.table.add-column-after"}}
-  @icon={{this.TableColumnEndAddIcon}}
-  {{on "click" this.insertColumnAfter}}
-  @disabled={{not this.isInTable}}
-/>
-<Toolbar::Button
-  @title={{t "ember-rdfa-editor.table.add-row-below"}}
-  @icon={{this.TableRowEndAddIcon}}
-  {{on "click" this.insertRowBelow}}
-  @disabled={{not this.isInTable}}
-/>
-<Plugins::Table::Color @controller={{@controller}} />
-<Plugins::Table::VerticalAlign @controller={{@controller}} />

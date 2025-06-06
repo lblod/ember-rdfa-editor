@@ -10,6 +10,7 @@ import type { NodeType } from 'prosemirror-model';
 
 type Args = {
   controller?: SayController;
+  onActivate?: () => void;
 };
 export default class HeadingsMenu extends Component<Args> {
   CheckIcon = CheckIcon;
@@ -55,7 +56,10 @@ export default class HeadingsMenu extends Component<Args> {
 
   @action
   enable(nodeType: NodeType, attrs?: Record<string, unknown>) {
-    this.controller?.doCommand(setBlockType(nodeType, attrs, true));
+    if (this.controller) {
+      this.controller.doCommand(setBlockType(nodeType, attrs, true));
+      this.args.onActivate?.();
+    }
   }
 
   get canEnableText() {

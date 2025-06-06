@@ -22,10 +22,17 @@ export type ToolbarDropdownSignature = {
     disabled?: boolean;
     hideLabel?: boolean;
     label?: string;
+    direction?: 'vertical' | 'horizontal';
+    title?: string;
   };
   Element: HTMLDivElement;
   Blocks: {
-    default: [{ Item: WithBoundArgs<typeof DropdownItem, 'onActivate'> }];
+    default: [
+      {
+        Item: WithBoundArgs<typeof DropdownItem, 'onActivate'>;
+        closeDropdown: () => void;
+      },
+    ];
   };
 };
 export default class ToolbarDropdown extends Component<ToolbarDropdownSignature> {
@@ -53,6 +60,10 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
     this.dropdownOpen = !this.dropdownOpen;
   }
 
+  get isHorizontal() {
+    return this.args.direction === 'horizontal';
+  }
+
   @action
   async clickOutsideDeactivates(event: InputEvent) {
     const isClosedByToggleButton = this.referenceElement?.contains(
@@ -66,15 +77,11 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
 
   <template>
     <div class="say-dropdown" ...attributes>
-      <Velcro
-        @placement="bottom"
-        @offsetOptions={{hash mainAxis=6}}
-        @strategy="absolute"
-        as |velcro|
-      >
+      <Velcro @placement="bottom" @strategy="absolute" as |velcro|>
         <button
           {{this.reference}}
           class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"
+          title={{@title}}
           aria-haspopup="true"
           aria-expanded="{{if this.dropdownOpen 'true' 'false'}}"
           type="button"
@@ -82,9 +89,9 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
           disabled={{@disabled}}
           {{velcro.hook}}
         >
-          <span
-            class={{if @hideLabel "au-u-hidden-visually" ""}}
-          >{{@label}}</span>
+          {{#unless @hideLabel}}
+            <span class="say-dropdown__label">{{@label}}</span>
+          {{/unless}}
           {{#if @icon}}
             <AuIcon @icon={{@icon}} @ariaHidden={{true}} @size="large" />
           {{/if}}
@@ -97,13 +104,17 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
                 clickOutsideDeactivates=this.clickOutsideDeactivates
               )
             }}
-            class="say-dropdown__menu is-visible"
+            class="say-dropdown__menu is-visible
+              {{if this.isHorizontal 'say-dropdown__menu-horizontal'}}"
             role="menu"
             tabindex="-1"
             {{velcro.loop}}
           >
             {{yield
-              (hash Item=(component DropdownItem onActivate=this.closeDropdown))
+              (hash
+                Item=(component DropdownItem onActivate=this.closeDropdown)
+                closeDropdown=this.closeDropdown
+              )
             }}
           </div>
         {{/if}}

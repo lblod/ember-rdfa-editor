@@ -6,17 +6,19 @@ import type { TOC } from '@ember/component/template-only';
 
 type Signature = {
   Args: {
-    controller?: SayController;
+    controller: SayController;
+    onActivate?: () => void;
   };
 };
 
-const Strikethrough: TOC<Signature> = <template>
+const StrikethroughMark: TOC<Signature> = <template>
   <Mark
     @icon={{StrikethroughIcon}}
     @title={{t "ember-rdfa-editor.strikethrough"}}
     @mark="strikethrough"
     @controller={{@controller}}
+    @onActivate={{@onActivate}}
   />
 </template>;
 
-export default Strikethrough;
+export default StrikethroughMark;

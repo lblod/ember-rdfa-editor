@@ -5,12 +5,15 @@ import {
   selectActiveState,
 } from '@say-editor/prosemirror-invisibles';
 import SayController from '#root/core/say-controller.ts';
+import { ParagraphIcon } from '@appuniversum/ember-appuniversum/components/icons/paragraph';
 
 type Args = {
   controller?: SayController;
+  onActivate?: () => void;
 };
 
 export default class FormattingToggleComponent extends Component<Args> {
+  ParagraphIcon = ParagraphIcon;
   get controller() {
     return this.args.controller;
   }
@@ -30,6 +33,7 @@ export default class FormattingToggleComponent extends Component<Args> {
       this.controller.doCommand(commands.toggleActiveState(), {
         view: this.controller.mainEditorView,
       });
+      this.args.onActivate?.();
     }
   }
 }

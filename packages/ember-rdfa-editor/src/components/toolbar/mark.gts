@@ -14,6 +14,7 @@ type Signature = {
     mark: string;
     icon: ComponentLike<{ Element: Element }>;
     title: string;
+    onActivate?: () => void;
   };
 };
 
@@ -54,6 +55,7 @@ export default class ToolbarMark extends Component<Signature> {
     if (this.controller && this.mark) {
       this.controller.focus();
       this.controller.doCommand(toggleMarkAddFirst(this.mark));
+      this.args.onActivate?.();
     }
   }
 
