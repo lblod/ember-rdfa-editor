@@ -77,11 +77,7 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
 
   <template>
     <div class="say-dropdown" ...attributes>
-      <Velcro
-        @placement="bottom"
-        @strategy="absolute"
-        as |velcro|
-      >
+      <Velcro @placement="bottom" @strategy="absolute" as |velcro|>
         <button
           {{this.reference}}
           class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"
