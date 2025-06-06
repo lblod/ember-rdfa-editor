@@ -7,7 +7,7 @@ import {
 } from '#root/core/schema.ts';
 import { optionMapOr } from '#root/utils/_private/option.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import NumberEditor from '#root/components/_private/number-editor/index.gts';
+import NumberEditor from '#root/components/_private/utils/number-editor.gts';
 import type { ComponentLike } from '@glint/template';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment/index.ts';
 import { HEADING_ELEMENTS } from '#root/utils/_private/constants.ts';

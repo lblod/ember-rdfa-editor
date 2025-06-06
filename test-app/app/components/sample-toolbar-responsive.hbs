@@ -6,7 +6,7 @@
       <Plugins::History::Redo @controller={{@controller}} />
     </Tb.Group>
     <Tb.Group>
-     <Toolbar::Dropdown  @icon={{this.FormatTextIcon}} @direction='horizontal' as |Menu|>
+     <Toolbar::Dropdown @icon={{this.FormatTextIcon}} @direction='horizontal' as |Menu|>
       <Plugins::TextStyle::Bold @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
       <Plugins::TextStyle::Italic @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
       <Plugins::TextStyle::Strikethrough @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
@@ -56,5 +56,6 @@
         <Plugins::Formatting::FormattingToggle @controller={{@controller}} @onActivate={{Menu.closeDropdown}}/>
       </Toolbar::Dropdown>
     </Tb.Group>
+    {{yield}}
   </:side>
 </ResponsiveToolbar>
