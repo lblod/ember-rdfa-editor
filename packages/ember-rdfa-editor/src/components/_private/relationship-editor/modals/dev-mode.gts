@@ -8,6 +8,7 @@ import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
+import PowerSelectWithCreate from 'ember-power-select-with-create/components/power-select-with-create';
 import { tracked, TrackedObject } from 'tracked-built-ins';
 import { not } from 'ember-truth-helpers';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
@@ -150,74 +151,61 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
 
   setPredicate = (
     validationFn: () => void,
-    predicateOption?: PredicateOption,
+    predicateOption?: PredicateOption | string,
   ) => {
     if (!this.data.direction) {
       return;
     }
-    // @ts-expect-error fix PredicateOption types
-    this.data.predicate = predicateOption && {
-      ...predicateOption,
-      direction: this.data.direction,
-    };
+    if (typeof predicateOption === 'string') {
+      const isUri =
+        isFullUri(predicateOption) || isPrefixedUri(predicateOption);
+      if (isUri) {
+        this.data.predicate = {
+          direction: this.data.direction,
+          term: sayDataFactory.namedNode(predicateOption),
+        };
+      }
+    } else {
+      // @ts-expect-error fix PredicateOption types
+      this.data.predicate = predicateOption && {
+        ...predicateOption,
+        direction: this.data.direction,
+      };
+    }
     this.data.target = undefined;
     validationFn();
   };
 
   setTarget = (
     validationFn: () => void,
-    targetOption?: ObjectOption | SubjectOption,
+    targetOption?: ObjectOption | SubjectOption | string,
   ) => {
-    this.data.target = targetOption;
-    validationFn();
-  };
-
-  onPredicateSelectKeydown = (select: Select, event: KeyboardEvent) => {
-    if (this.formElement) {
-      onFormKeyDown(this.formElement, event);
-    }
-    if (
-      event.key === 'Enter' &&
-      select.isOpen &&
-      !select.highlighted &&
-      !!select.searchText
-    ) {
-      const { searchText } = select;
-      const isUri = isFullUri(searchText) || isPrefixedUri(searchText);
-      if (isUri) {
-        select.actions.choose({
-          direction: this.data.direction,
-          term: sayDataFactory.namedNode(searchText),
-        });
-      }
-      return false;
-    }
-    return;
-  };
-
-  onTargetSelectKeydown = (select: Select, event: KeyboardEvent) => {
-    if (this.formElement) {
-      onFormKeyDown(this.formElement, event);
-    }
-    if (
-      event.key === 'Enter' &&
-      select.isOpen &&
-      !select.highlighted &&
-      !!select.searchText
-    ) {
-      const { searchText } = select;
-      const isUri = isFullUri(searchText) || isPrefixedUri(searchText);
+    if (typeof targetOption === 'string') {
+      const isUri = isFullUri(targetOption) || isPrefixedUri(targetOption);
       if (
         this.data.direction === 'property' ||
         (this.data.direction === 'backlink' && isUri)
       ) {
         const term = isUri
-          ? sayDataFactory.namedNode(searchText)
-          : sayDataFactory.literal(searchText);
-        select.actions.choose({ term });
+          ? sayDataFactory.namedNode(targetOption)
+          : sayDataFactory.literal(targetOption);
+        this.data.target = {
+          term,
+        };
       }
-      return false;
+    } else {
+      this.data.target = targetOption;
     }
+    validationFn();
+  };
+
+  buildPowerSelectWithCreateSuggestion = (term: string) => term;
+
+  onPowerSelectKeyDown = (_select: Select, event: KeyboardEvent) => {
+    if (this.formElement) {
+      onFormKeyDown(this.formElement, event);
+    }
+    return true;
   };
 
   get showTargetTermTypeSelector() {
@@ -392,12 +380,14 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                 <AuLabel for={{field.id}}>
                   Predicate
                 </AuLabel>
-                <PowerSelect
+                <PowerSelectWithCreate
                   id={{field.id}}
                   {{this.initialFocus}}
                   @selected={{field.value}}
-                  @onKeydown={{this.onPredicateSelectKeydown}}
+                  @onKeydown={{this.onPowerSelectKeyDown}}
                   @onChange={{fn this.setPredicate field.triggerValidation}}
+                  @onCreate={{fn this.setPredicate field.triggerValidation}}
+                  @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
                   @allowClear={{true}}
                   @options={{this.searchPredicates ""}}
                   @search={{this.searchPredicates}}
@@ -413,7 +403,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   {{#if option.description}}
                     <p>{{option.description}}</p>
                   {{/if}}
-                </PowerSelect>
+                </PowerSelectWithCreate>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
                   <AuAlert
                     class="au-u-margin-none"
@@ -433,11 +423,13 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                 <AuLabel for={{field.id}}>
                   {{this.targetLabel}}
                 </AuLabel>
-                <PowerSelect
+                <PowerSelectWithCreate
                   id={{field.id}}
                   @selected={{field.value}}
-                  @onKeydown={{this.onTargetSelectKeydown}}
+                  @onKeydown={{this.onPowerSelectKeyDown}}
                   @onChange={{fn this.setTarget field.triggerValidation}}
+                  @onCreate={{fn this.setTarget field.triggerValidation}}
+                  @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
                   @allowClear={{true}}
                   @disabled={{not this.data.predicate}}
                   @options={{this.searchTargets ""}}
@@ -454,7 +446,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   {{#if option.description}}
                     <p>{{option.description}}</p>
                   {{/if}}
-                </PowerSelect>
+                </PowerSelectWithCreate>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
                   <AuAlert
                     class="au-u-margin-none"
