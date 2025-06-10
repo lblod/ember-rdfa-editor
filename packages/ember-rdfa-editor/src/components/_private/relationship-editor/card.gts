@@ -491,7 +491,7 @@ export default class RelationshipEditorCard extends Component<Args> {
                 <Group>
                   {{#if this.editingContentPredicate}}
                     <AuButton
-                      {{on 'click' this.onContentPredicateFormCancel}}
+                      {{on "click" this.onContentPredicateFormCancel}}
                       @skin="link-secondary"
                     >Cancel</AuButton>
                     <AuButton
