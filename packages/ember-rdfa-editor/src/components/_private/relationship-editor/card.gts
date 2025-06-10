@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { localCopy } from 'tracked-toolbox';
+import { localCopy, trackedReset } from 'tracked-toolbox';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 // import RdfaPropertyEditor from './property-editor/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -74,7 +74,7 @@ export default class RelationshipEditorCard extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
   @tracked status?: Status;
   @tracked initialFormData?: FormData;
-  @tracked editingContentPredicate: boolean = false;
+  @trackedReset('args.node') editingContentPredicate: boolean = false;
 
   @localCopy('args.expanded', true) declare expanded: boolean;
 
