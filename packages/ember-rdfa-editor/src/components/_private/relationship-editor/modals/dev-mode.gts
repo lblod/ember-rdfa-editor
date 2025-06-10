@@ -149,6 +149,14 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     this.data.target = undefined;
   };
 
+  isValidPredicate = (term: string) => {
+    if (!term) {
+      return false;
+    }
+    const isUri = isFullUri(term) || isPrefixedUri(term);
+    return isUri;
+  };
+
   setPredicate = (
     validationFn: () => void,
     predicateOption?: PredicateOption | string,
@@ -174,6 +182,17 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     }
     this.data.target = undefined;
     validationFn();
+  };
+
+  isValidTarget = (term: string) => {
+    if (!term) {
+      return false;
+    }
+    const isUri = isFullUri(term) || isPrefixedUri(term);
+    return (
+      this.data.direction === 'property' ||
+      (this.data.direction === 'backlink' && isUri)
+    );
   };
 
   setTarget = (
@@ -387,6 +406,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   @onKeydown={{this.onPowerSelectKeyDown}}
                   @onChange={{fn this.setPredicate field.triggerValidation}}
                   @onCreate={{fn this.setPredicate field.triggerValidation}}
+                  @showCreateWhen={{this.isValidPredicate}}
                   @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
                   @allowClear={{true}}
                   @options={{this.searchPredicates ""}}
@@ -429,6 +449,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   @onKeydown={{this.onPowerSelectKeyDown}}
                   @onChange={{fn this.setTarget field.triggerValidation}}
                   @onCreate={{fn this.setTarget field.triggerValidation}}
+                  @showCreateWhen={{this.isValidTarget}}
                   @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
                   @allowClear={{true}}
                   @disabled={{not this.data.predicate}}
