@@ -274,7 +274,6 @@ export default class RelationshipEditorCard extends Component<Args> {
       this.controller.doCommand(
         addProperty({
           resource,
-          //
           property,
         }),
       );
