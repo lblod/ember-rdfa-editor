@@ -43,7 +43,10 @@ import type {
   Status,
   StatusMessage,
 } from '../common/types.ts';
-import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from './modals/dev-mode.gts';
 import { modifier } from 'ember-modifier';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
@@ -52,6 +55,9 @@ import ContentPredicateForm, {
   type SubmissionBody as ContentPredicateFormSubmissionBody,
 } from './content-predicate-form.gts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.js';
+import type { OutgoingTriple } from '#root/core/rdfa-processor.js';
+import { htmlSafe } from '@ember/template';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -219,9 +225,25 @@ export default class RelationshipEditorCard extends Component<Args> {
     }
   }
 
+  contentPredicateTextRepr = (contentPredicateProperty: OutgoingTriple) => {
+    const predicate = contentPredicateProperty.predicate;
+    const object = contentPredicateProperty.object as ContentLiteralTerm;
+    const languageSuffix = object.language ? `@${object.language}` : '';
+    const datatypeSuffix = object.datatype
+      ? `^^"${object.datatype.value}"`
+      : '';
+    return `<strong>${predicate}</strong>${languageSuffix}${datatypeSuffix}`;
+  };
+
   get contentPredicateInitialFormData() {
+    const predicate = this.contentPredicateProperty?.predicate;
+    const object = this.contentPredicateProperty?.object as
+      | ContentLiteralTerm
+      | undefined;
     return {
-      contentPredicate: this.contentPredicateProperty?.predicate,
+      contentPredicate: predicate,
+      language: object?.language,
+      datatype: object?.datatype.value,
     };
   }
 
@@ -237,7 +259,12 @@ export default class RelationshipEditorCard extends Component<Args> {
     if (body.contentPredicate) {
       const property = {
         predicate: body.contentPredicate,
-        object: sayDataFactory.contentLiteral(),
+        object: sayDataFactory.contentLiteral(
+          languageOrDataType(
+            body.language,
+            body.datatype ? sayDataFactory.namedNode(body.datatype) : undefined,
+          ),
+        ),
       };
       const resource =
         this.nodeAttrs.rdfaNodeType === 'resource' && this.nodeAttrs.subject;
@@ -484,7 +511,11 @@ export default class RelationshipEditorCard extends Component<Args> {
                 />
               {{else}}
                 {{#if this.contentPredicateProperty}}
-                  <p>{{this.contentPredicateProperty.predicate}}</p>
+                  <p>{{htmlSafe
+                      (this.contentPredicateTextRepr
+                        this.contentPredicateProperty
+                      )
+                    }}</p>
                 {{else}}
                   <p class="au-u-italic">This node does not define a content
                     predicate.</p>
