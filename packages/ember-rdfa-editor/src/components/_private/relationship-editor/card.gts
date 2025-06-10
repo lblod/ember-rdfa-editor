@@ -58,6 +58,7 @@ import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.js';
 import type { OutgoingTriple } from '#root/core/rdfa-processor.js';
 import { htmlSafe } from '@ember/template';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check.js';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -249,6 +250,10 @@ export default class RelationshipEditorCard extends Component<Args> {
 
   startEditingContentPredicate = () => {
     this.editingContentPredicate = true;
+  };
+
+  onContentPredicateFormCancel = () => {
+    this.editingContentPredicate = false;
   };
 
   onContentPredicateFormSubmit = (body: ContentPredicateFormSubmissionBody) => {
@@ -486,7 +491,12 @@ export default class RelationshipEditorCard extends Component<Args> {
                 <Group>
                   {{#if this.editingContentPredicate}}
                     <AuButton
+                      {{on 'click' this.onContentPredicateFormCancel}}
+                      @skin="link-secondary"
+                    >Cancel</AuButton>
+                    <AuButton
                       type="submit"
+                      @icon={{CheckIcon}}
                       form={{formId}}
                       @skin="link"
                     >Save</AuButton>
