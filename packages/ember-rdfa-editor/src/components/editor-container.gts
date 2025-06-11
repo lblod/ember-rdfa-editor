@@ -1,7 +1,10 @@
 import Component from '@glimmer/component';
+import { hash } from '@ember/helper';
 import { and } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
+import type { Option } from '#root/utils/_private/option.ts';
+import type SayController from '#root/core/say-controller.ts';
 
 type EditorOptions = {
   showPaper?: boolean;
@@ -13,15 +16,17 @@ type EditorOptions = {
 type Signature = {
   Element: HTMLDivElement;
   Args: {
+    controller: Option<SayController>;
     editorOptions?: EditorOptions;
     loading?: boolean;
   };
   Blocks: {
     default: [];
-    top: [];
-    aside: [];
+    top: [{ controller: SayController }];
+    aside: [{ controller: SayController }];
   };
 };
+
 export default class EditorContainer extends Component<Signature> {
   get showPaper() {
     return this.args.editorOptions?.showPaper ?? false;
@@ -49,7 +54,9 @@ export default class EditorContainer extends Component<Signature> {
         }}
         {{if this.showToolbarBottom 'say-container--toolbar-bottom'}}"
     >
-      {{yield to="top"}}
+      {{#if @controller}}
+        {{yield (hash controller=@controller) to="top"}}
+      {{/if}}
       <div class="say-container__main">
         {{#if @loading}}
           <AuLoader @hideMessage={{true}}>
@@ -63,7 +70,9 @@ export default class EditorContainer extends Component<Signature> {
         </div>
         {{#if (and (has-block "aside") this.showSidebarRight)}}
           <div class="say-container__aside">
-            {{yield to="aside"}}
+            {{#if @controller}}
+              {{yield (hash controller=@controller) to="aside"}}
+            {{/if}}
           </div>
         {{/if}}
       </div>

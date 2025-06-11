@@ -5,6 +5,7 @@
   </:header>
   <:content>
     <EditorContainer
+      @controller={{this.rdfaEditor}}
       @editorOptions={{hash
         showPaper=true
         showToolbarBottom=null
@@ -12,9 +13,9 @@
         showSidebarRight=false
       }}
     >
-      <:top>
+      <:top as |container|>
         <SampleToolbarResponsive
-          @controller={{this.rdfaEditor}}
+          @controller={{container.controller}}
           @enableHierarchicalList={{true}}
         />
       </:top>
@@ -29,9 +30,9 @@
           <Plugins::Table::TableTooltip @controller={{this.rdfaEditor}} />
         {{/if}}
       </:default>
-      <:aside>
+      <:aside as |container|>
         <Sidebar>
-          <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
+          <Plugins::Link::LinkEditor @controller={{container.controller}} />
         </Sidebar>
       </:aside>
     </EditorContainer>
