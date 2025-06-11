@@ -5,10 +5,11 @@
   </:header>
   <:content>
     <EditorContainer
+      @controller={{this.rdfaEditor}}
       @editorOptions={{hash showPaper=true showToolbarBottom=null}}
     >
-      <:top>
-        <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
+      <:top as |container|>
+        <SampleToolbarResponsive @controller={{container.controller}} />
       </:top>
       <:default>
         <Editor
@@ -18,11 +19,11 @@
           @rdfaEditorInit={{this.rdfaEditorInit}}
         />
       </:default>
-      <:aside>
+      <:aside as |container|>
         <SampleEmberNodes::Sidebar
           @expanded={{this.sidebarExpanded}}
           @onToggle={{this.onSidebarToggle}}
-          @controller={{this.rdfaEditor}}
+          @controller={{container.controller}}
         />
       </:aside>
     </EditorContainer>
