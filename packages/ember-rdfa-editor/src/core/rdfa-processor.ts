@@ -197,7 +197,6 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     const { subject, predicate } = object;
 
     const incomingProp: IncomingTriple = {
-      // @ts-expect-error the incorrect termtype seems to be used here
       subject,
       predicate: predicate.value,
     };
@@ -217,7 +216,6 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
             const backlink = datastore.getContentNodeMap().get(child);
             if (backlink) {
               extraBacklinks.push({
-                // @ts-expect-error the incorrect termtype seems to be used here
                 subject: backlink.subject,
                 predicate: backlink.predicate.value,
               });
@@ -245,7 +243,7 @@ function quadToProperties(
   // check if quad refers to a contentNode
   if (quad.object.termType === 'Literal') {
     const contentNodes = datastore.getContentNodeMap().getValues({
-      subject: quad.subject as NamedNode<string>,
+      subject: sayDataFactory.resourceNode(quad.subject.value),
       predicate: quad.predicate as NamedNode<string>,
       object: quad.object,
     });
