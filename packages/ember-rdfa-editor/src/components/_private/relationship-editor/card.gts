@@ -514,7 +514,7 @@ export default class RelationshipEditorCard extends Component<Args> {
 
               {{#if this.editingContentPredicate}}
                 <ContentPredicateForm
-                  {{!-- @glint-expect-error --}}
+                  {{! @glint-expect-error }}
                   @source={{this.currentTerm}}
                   @optionGeneratorConfig={{@optionGeneratorConfig}}
                   id={{formId}}
