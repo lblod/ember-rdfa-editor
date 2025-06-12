@@ -8,7 +8,7 @@
       @controller={{this.rdfaEditor}}
       @editorOptions={{hash showPaper="true" showToolbarBottom=null}}
     >
-      <:top as |container|>
+      <:toolbar as |container|>
         <SampleToolbarResponsive
           @controller={{container.controller}}
           @enableHierarchicalList={{true}}
@@ -19,7 +19,7 @@
             @onToggle={{this.onDevModeToggle}}
           />
         </SampleToolbarResponsive>
-      </:top>
+      </:toolbar>
       <:default>
         <Editor
           @plugins={{this.plugins}}
@@ -28,7 +28,7 @@
           @rdfaEditorInit={{this.rdfaEditorInit}}
         />
       </:default>
-      <:aside as |container|>
+      <:sidebarRight as |container|>
         <Sidebar as |Sb|>
           <Sb.Collapsible
             @title={{t "ember-rdfa-editor.insert"}}
@@ -82,7 +82,7 @@
             </div>
           {{/if}}
         </Sidebar>
-      </:aside>
+      </:sidebarRight>
     </EditorContainer>
   </:content>
 </DummyContainer>

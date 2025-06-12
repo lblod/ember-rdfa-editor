@@ -30,11 +30,11 @@
           <Plugins::Table::TableTooltip @controller={{this.rdfaEditor}} />
         {{/if}}
       </:default>
-      <:aside as |container|>
+      <:sidebarRight as |container|>
         <Sidebar>
           <Plugins::Link::LinkEditor @controller={{container.controller}} />
         </Sidebar>
-      </:aside>
+      </:sidebarRight>
     </EditorContainer>
   </:content>
 </DummyContainer>
