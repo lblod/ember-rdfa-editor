@@ -81,6 +81,22 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
     markAsResourceNode,
   } = args;
   const node = activeTag.node;
+  const representsExternalTriple =
+    node instanceof Node &&
+    node.parentElement?.dataset['externalTripleContainer'];
+  if (representsExternalTriple) {
+    markAsResourceNode(
+      node,
+      unwrap(activeTag.subject),
+      activeTag,
+      activeTag.predicates?.find(
+        (pred) => pred.value === attributes['property'],
+      ),
+      activeTag.datatype,
+      activeTag.language,
+    );
+    return;
+  }
   if (!activeTag.skipElement && node) {
     // no rel or rev
     if (
