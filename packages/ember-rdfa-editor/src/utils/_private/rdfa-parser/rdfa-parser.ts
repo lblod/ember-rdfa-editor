@@ -29,10 +29,7 @@ import {
   rdfaResourceNodeMap,
 } from '../datastore/node-map.ts';
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
-import {
-  languageOrDataType,
-  sayDataFactory,
-} from '#root/core/say-data-factory/index.ts';
+import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 
 export type ModelTerm<N> =
@@ -186,6 +183,7 @@ export class RdfaParser<N> {
       listMapping: {},
       listMappingLocal: {},
       name: '',
+      attributes: {},
       prefixesAll: {
         ...INITIAL_CONTEXT['@context'],
         ...(this.features.xhtmlInitialContext
@@ -285,6 +283,7 @@ export class RdfaParser<N> {
       listMappingLocal: parentTag.listMapping,
       localBaseIRI: parentTag.localBaseIRI,
       name,
+      attributes,
       prefixesAll: {},
       prefixesCustom: {},
       skipElement: false,
@@ -971,15 +970,7 @@ export class RdfaParser<N> {
     // 13: Save evaluation context into active tag
     activeTag.subject = newSubject || parentTag.subject;
     activeTag.object = currentObjectResource || newSubject;
-
-    postProcessTagAsRdfaNode({
-      activeTag,
-      attributes,
-      isRootTag,
-      typedResource,
-      markAsLiteralNode: this.markAsLiteralNode,
-      markAsResourceNode: this.markAsResourceNode,
-    });
+    activeTag.typedResource = typedResource;
   }
 
   markAsLiteralNode = (
@@ -988,10 +979,8 @@ export class RdfaParser<N> {
     attributes: Record<string, string>,
     predicateAttribute = 'property',
   ) => {
-    // TODO: the issue here is that `activeTag.text` is not yet (fully) populated.
-    // This function is called during the `onTagOpen` phase, while the `activeTag.text` attribute is only fully populated during the `onTagClose` phase.
-    // This means we need to adjust this logic to ensure the `activeTag.text` attribute is fully populated before this function is called.
-    const content = attributes['content'] ?? activeTag.text?.join('') ?? '';
+    const textSegments: string[] = activeTag.text || [];
+    const object = this.util.createLiteral(textSegments.join(''), activeTag);
     this.contentNodeMapping.set(node, {
       subject: sayDataFactory.namedNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
@@ -1005,10 +994,7 @@ export class RdfaParser<N> {
         true,
         false,
       ),
-      object: sayDataFactory.literal(
-        content,
-        languageOrDataType(activeTag.language, activeTag.datatype),
-      ),
+      object,
     });
   };
 
@@ -1131,7 +1117,8 @@ export class RdfaParser<N> {
 
         // Reset text, unless the parent is also collecting text
         if (!parentTag.predicates) {
-          activeTag.text = null;
+          // Can we simply remove this statement?
+          // activeTag.text = null;
         }
       }
 
@@ -1210,6 +1197,15 @@ export class RdfaParser<N> {
         parentTag.text = parentTag.text.concat(activeTag.text);
       }
     }
+    const isRootTag: boolean = this.activeTagStack.length === 1;
+    postProcessTagAsRdfaNode({
+      activeTag,
+      attributes: activeTag.attributes,
+      isRootTag,
+      typedResource: activeTag.typedResource ?? null,
+      markAsLiteralNode: this.markAsLiteralNode,
+      markAsResourceNode: this.markAsResourceNode,
+    });
   }
 
   public onEnd() {

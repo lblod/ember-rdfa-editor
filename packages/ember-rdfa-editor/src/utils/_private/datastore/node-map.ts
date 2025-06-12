@@ -33,7 +33,7 @@ export function rdfaContentNodeMap<N>(
 ): RdfaContentNodeMap<N> {
   return TwoWayMap.withValueStringHashing<N, RdfaContentNodeMapEntry>({
     valueHasher: ({ subject, predicate, object }) => {
-      return `${subject.value}__${predicate.value}__${object.value}${object.language ? `@${object.language}` : ''}^^${object.datatype.value}`;
+      return `${subject.value}__${predicate.value}__${object.value}${object.language ? `@${object.language.toLowerCase()}` : ''}^^${object.datatype.value}`;
     },
     init,
   });
