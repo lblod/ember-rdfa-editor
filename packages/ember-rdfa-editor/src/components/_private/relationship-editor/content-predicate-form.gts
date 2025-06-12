@@ -1,3 +1,4 @@
+import type { ResourceNodeTerm } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
@@ -11,6 +12,9 @@ import { TrackedObject } from 'tracked-built-ins';
 import { trackedReset } from 'tracked-toolbox';
 import type { InferType } from 'yup';
 import * as yup from 'yup';
+import type { OptionGeneratorConfig } from './types.ts';
+import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import PowerSelectWithCreate from 'ember-power-select-with-create/components/power-select-with-create';
 
 function truthy(obj: unknown) {
   return !!obj;
@@ -28,6 +32,8 @@ export type SubmissionBody = FormData;
 
 type Signature = {
   Args: {
+    source: ResourceNodeTerm<string>;
+    optionGeneratorConfig?: OptionGeneratorConfig;
     initialFormData?: FormData;
     onSubmit: (body: SubmissionBody) => unknown;
   };
@@ -43,8 +49,26 @@ export default class ContentPredicateForm extends Component<Signature> {
     this.args.onSubmit(body);
   };
 
-  setPredicate = (validationFn: () => void, event: Event) => {
-    const value = (event.target as HTMLInputElement).value;
+  searchPredicates = async (searchString: string) => {
+    const options = await this.args.optionGeneratorConfig?.predicates?.({
+      searchString,
+      selectedSource: this.args.source,
+      direction: 'property',
+    });
+    return options?.map((option) => option.term.value) ?? [];
+  };
+
+  isValidPredicate = (term: string) => {
+    if (!term) {
+      return false;
+    }
+    const isUri = isFullUri(term) || isPrefixedUri(term);
+    return isUri;
+  };
+
+  buildPowerSelectWithCreateSuggestion = (term: string) => term;
+
+  setPredicate = (validationFn: () => void, value?: string) => {
     this.formData.contentPredicate = value;
     validationFn();
   };
@@ -77,13 +101,22 @@ export default class ContentPredicateForm extends Component<Signature> {
           <AuLabel class="au-u-hidden-visually" for={{field.id}}>
             Content Predicate
           </AuLabel>
-          <AuInput
-            @width="block"
+          <PowerSelectWithCreate
             id={{field.id}}
-            value={{field.value}}
-            name="contentPredicate"
-            {{on "change" (fn this.setPredicate field.triggerValidation)}}
-          />
+            @selected={{field.value}}
+            @onChange={{fn this.setPredicate field.triggerValidation}}
+            @onCreate={{fn this.setPredicate field.triggerValidation}}
+            @showCreateWhen={{this.isValidPredicate}}
+            @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
+            @allowClear={{true}}
+            @options={{this.searchPredicates ""}}
+            @search={{this.searchPredicates}}
+            @searchEnabled={{true}}
+            class="au-u-1-1"
+            as |option|
+          >
+            {{option}}
+          </PowerSelectWithCreate>
           <field.Errors />
         </form.Field>
       </AuFormRow>
