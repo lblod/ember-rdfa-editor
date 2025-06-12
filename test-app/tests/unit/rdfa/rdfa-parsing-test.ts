@@ -733,4 +733,96 @@ module('rdfa | parsing', function () {
     const resultingDocument = controller.mainEditorState.doc;
     assert.propEqual(resultingDocument.toJSON(), initialDocument.toJSON());
   });
+  test('Older documents with older style literal nodes should be correctly parsed', function (assert) {
+    QUnit.dump.maxDepth = 10;
+    const html = `
+    <div
+    lang="nl-BE"
+    data-say-document="true"
+    data-literal-node="true"
+    >
+      <div
+        style="display: none"
+        class="say-hidden"
+        data-rdfa-container="true"
+      ></div>
+      <div data-content-container="true">
+        <div
+          class="say-editable say-block-rdfa"
+          about="http://data.lblod.info/id/besluiten/1"
+          data-say-id="30e2d215-a8b6-4bab-9d8b-aaab634589ea"
+        >
+          <div
+            style="display: none"
+            class="say-hidden"
+            data-rdfa-container="true"
+          >
+            <span
+              about="http://data.lblod.info/id/besluiten/1"
+              property="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+              resource="http://data.vlaanderen.be/ns/besluit#Besluit"
+            ></span>
+          </div>
+          <div data-content-container="true">
+            <h4
+              property="http://data.europa.eu/eli/ontology#title"
+              about="http://data.lblod.info/id/besluiten/1"
+              datatype="http://www.w3.org/2001/XMLSchema#string"
+              data-say-id="literal-1"
+              lang=""
+            >Decision title</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+    const { doc, block_rdfa, heading } = testBuilders;
+    const df = new SayDataFactory();
+    const expectedDoc = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://data.lblod.info/id/besluiten/1',
+          __rdfaId: '30e2d215-a8b6-4bab-9d8b-aaab634589ea',
+          properties: [
+            {
+              predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+              object: df.namedNode(
+                'http://data.vlaanderen.be/ns/besluit#Besluit',
+              ),
+            },
+            {
+              predicate: 'http://data.europa.eu/eli/ontology#title',
+              object: df.literalNode('literal-1'),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        heading(
+          {
+            rdfaNodeType: 'literal',
+            __rdfaId: 'literal-1',
+            backlinks: [
+              {
+                predicate: 'http://data.europa.eu/eli/ontology#title',
+                subject: sayDataFactory.resourceNode(
+                  'http://data.lblod.info/id/besluiten/1',
+                ),
+              },
+            ],
+            datatype: sayDataFactory.namedNode(
+              'http://www.w3.org/2001/XMLSchema#string',
+            ),
+            language: '',
+            level: 4,
+          },
+          'Decision title',
+        ),
+      ),
+    );
+    const { controller } = testEditor(schema, plugins);
+    controller.initialize(html);
+    const actualDoc = controller.mainEditorState.doc;
+    assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
+  });
 });
