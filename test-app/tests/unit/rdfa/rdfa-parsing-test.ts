@@ -690,4 +690,47 @@ module('rdfa | parsing', function () {
     const secondState = controller.mainEditorState.doc;
     assert.propEqual(secondState.toJSON(), initialState.toJSON());
   });
+  test('Literal relationships with the same subject and predicate are correctly parsed', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialDocument = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/1',
+          __rdfaId: 'id1',
+          properties: [
+            {
+              predicate: 'http://testPred',
+              object: df.literal('Inline literal'),
+            },
+            { predicate: 'http://testPred', object: df.literalNode('id2') },
+          ] satisfies OutgoingTriple[],
+          backlinks: [] satisfies IncomingTriple[],
+        },
+        paragraph('value'),
+      ),
+      block_rdfa(
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'id2',
+          backlinks: [
+            {
+              subject: df.resourceNode('http://test/1'),
+              predicate: 'http://testPred',
+            },
+          ] satisfies IncomingTriple[],
+        },
+        paragraph('Literal'),
+      ),
+    );
+    QUnit.dump.maxDepth = 10;
+    const state = EditorState.create({ schema, plugins, doc: initialDocument });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const resultingDocument = controller.mainEditorState.doc;
+    assert.propEqual(resultingDocument.toJSON(), initialDocument.toJSON());
+  });
 });
