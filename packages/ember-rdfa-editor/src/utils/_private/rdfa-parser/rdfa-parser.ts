@@ -980,7 +980,7 @@ export class RdfaParser<N> {
     predicateAttribute = 'property',
   ) => {
     const textSegments: string[] = activeTag.text || [];
-    const object = this.util.createLiteral(textSegments.join(''), activeTag);
+    const object = this.util.createLiteral(attributes['content'] ?? textSegments.join(''), activeTag);
     this.contentNodeMapping.set(node, {
       subject: sayDataFactory.resourceNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
