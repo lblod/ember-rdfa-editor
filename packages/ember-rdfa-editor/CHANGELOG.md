@@ -1,5 +1,21 @@
 # @lblod/ember-rdfa-editor
 
+## 12.10.0
+
+### Minor Changes
+
+- [#1318](https://github.com/lblod/ember-rdfa-editor/pull/1318) [`067f970`](https://github.com/lblod/ember-rdfa-editor/commit/067f97053fe8874d87e9bf0e500f07a7328ef474) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Toolbar redesign
+
+- [#1327](https://github.com/lblod/ember-rdfa-editor/pull/1327) [`a450dba`](https://github.com/lblod/ember-rdfa-editor/commit/a450dbad4a2d6056096649cc1555894b468a012a) Thanks [@elpoelma](https://github.com/elpoelma)! - Add support for predicate autocompletion in the content-predicate form
+
+- [#1322](https://github.com/lblod/ember-rdfa-editor/pull/1322) [`2075bf9`](https://github.com/lblod/ember-rdfa-editor/commit/2075bf913c47eceee83cf9a6b1e95e06f1ed8e44) Thanks [@elpoelma](https://github.com/elpoelma)! - Align table popup menu design with new toolbar design
+
+- [#1325](https://github.com/lblod/ember-rdfa-editor/pull/1325) [`b97f37f`](https://github.com/lblod/ember-rdfa-editor/commit/b97f37f883920a5eb42406136f5886c0489d7037) Thanks [@elpoelma](https://github.com/elpoelma)! - Add section to relationship-editor to edit content predicate
+
+### Patch Changes
+
+- [#1324](https://github.com/lblod/ember-rdfa-editor/pull/1324) [`10d9841`](https://github.com/lblod/ember-rdfa-editor/commit/10d9841b996b116c8b16b6350368cea326d004d1) Thanks [@elpoelma](https://github.com/elpoelma)! - Improve UX when entering a custom predicate/target option in the relationship-editor
+
 ## 12.9.0
 
 ### Minor Changes
