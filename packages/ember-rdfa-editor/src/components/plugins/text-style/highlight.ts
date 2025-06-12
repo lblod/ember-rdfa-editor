@@ -13,6 +13,7 @@ import type SayController from '#root/core/say-controller.ts';
 type Args = {
   controller: SayController;
   defaultColor: string;
+  onActivate?: () => void;
 };
 
 export default class HighlightMenu extends Component<Args> {
@@ -64,5 +65,6 @@ export default class HighlightMenu extends Component<Args> {
       this.controller.doCommand(clearHighlight);
     }
     await this.closeDropdown();
+    this.args.onActivate?.();
   }
 }

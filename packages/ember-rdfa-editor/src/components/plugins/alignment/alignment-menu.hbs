@@ -1,11 +1,6 @@
 {{! @glint-nocheck: not typesafe yet }}
 <div class="say-dropdown options">
-  <this.Velcro
-    @placement="bottom"
-    @offsetOptions={{hash mainAxis=6}}
-    @strategy="absolute"
-    as |velcro|
-  >
+  <this.Velcro @placement="bottom-start" @strategy="absolute" as |velcro|>
     <button
       type="button"
       class="say-dropdown__button {{if this.dropdownOpen 'is-active' ''}}"
@@ -15,12 +10,15 @@
       {{velcro.hook}}
       {{this.setupDropdownButton}}
     >
-      {{this.htmlSafe this.currentAlignIcon}}
-      <AuIcon @icon={{this.NavDownIcon}} @ariaHidden={{true}} @size="large" />
+      <AuIcon
+        @icon={{this.currentAlignIcon}}
+        @ariaHidden={{true}}
+        @size="large"
+      />
     </button>
     {{#if this.dropdownOpen}}
       <div
-        class="say-dropdown__menu is-visible"
+        class="say-dropdown__menu is-visible say-dropdown__menu-horizontal"
         role="menu"
         tabindex="-1"
         {{velcro.loop}}
@@ -38,11 +36,7 @@
             title={{style.label}}
             {{on "click" (fn this.setAlignment style.value)}}
           >
-            {{#if (this.alignActive style.value)}}
-              <AuIcon @icon={{this.CheckIcon}} @ariaHidden={{true}} />
-            {{/if}}
-            {{this.htmlSafe style.icon}}
-            {{style.label}}
+            <AuIcon @icon={{style.icon}} @ariaHidden={{true}} @size="large" />
           </button>
         {{/each}}
       </div>
