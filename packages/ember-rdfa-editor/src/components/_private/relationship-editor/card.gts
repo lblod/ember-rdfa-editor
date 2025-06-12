@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { localCopy } from 'tracked-toolbox';
+import { localCopy, trackedReset } from 'tracked-toolbox';
 import { isResourceNode } from '#root/utils/node-utils.ts';
 // import RdfaPropertyEditor from './property-editor/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -43,11 +43,22 @@ import type {
   Status,
   StatusMessage,
 } from '../common/types.ts';
-import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
+import {
+  languageOrDataType,
+  sayDataFactory,
+} from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from './modals/dev-mode.gts';
 import { modifier } from 'ember-modifier';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
 import type { OptionGeneratorConfig } from './types.ts';
+import ContentPredicateForm, {
+  type SubmissionBody as ContentPredicateFormSubmissionBody,
+} from './content-predicate-form.gts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.js';
+import type { OutgoingTriple } from '#root/core/rdfa-processor.js';
+import { htmlSafe } from '@ember/template';
+import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check.js';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -64,6 +75,8 @@ export default class RelationshipEditorCard extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;
   @tracked status?: Status;
   @tracked initialFormData?: FormData;
+  @trackedReset('args.node') editingContentPredicate: boolean = false;
+
   @localCopy('args.expanded', true) declare expanded: boolean;
 
   setUpListeners = modifier(() => {
@@ -203,6 +216,75 @@ export default class RelationshipEditorCard extends Component<Args> {
     this.status = undefined;
   };
 
+  get contentPredicateProperty() {
+    if (this.nodeAttrs.rdfaNodeType === 'resource') {
+      return this.nodeAttrs.properties.find(
+        (prop) => prop.object.termType === 'ContentLiteral',
+      );
+    } else {
+      return;
+    }
+  }
+
+  contentPredicateTextRepr = (contentPredicateProperty: OutgoingTriple) => {
+    const predicate = contentPredicateProperty.predicate;
+    const object = contentPredicateProperty.object as ContentLiteralTerm;
+    const languageSuffix = object.language ? `@${object.language}` : '';
+    const datatypeSuffix = object.datatype
+      ? `^^"${object.datatype.value}"`
+      : '';
+    return `<strong>${predicate}</strong>${languageSuffix}${datatypeSuffix}`;
+  };
+
+  get contentPredicateInitialFormData() {
+    const predicate = this.contentPredicateProperty?.predicate;
+    const object = this.contentPredicateProperty?.object as
+      | ContentLiteralTerm
+      | undefined;
+    return {
+      contentPredicate: predicate,
+      language: object?.language,
+      datatype: object?.datatype.value,
+    };
+  }
+
+  startEditingContentPredicate = () => {
+    this.editingContentPredicate = true;
+  };
+
+  onContentPredicateFormCancel = () => {
+    this.editingContentPredicate = false;
+  };
+
+  onContentPredicateFormSubmit = (body: ContentPredicateFormSubmissionBody) => {
+    this.editingContentPredicate = false;
+    if (this.contentPredicateProperty) {
+      this.removePropertyOrBacklink(this.contentPredicateProperty);
+    }
+    if (body.contentPredicate) {
+      const property = {
+        predicate: body.contentPredicate,
+        object: sayDataFactory.contentLiteral(
+          languageOrDataType(
+            body.language,
+            body.datatype ? sayDataFactory.namedNode(body.datatype) : undefined,
+          ),
+        ),
+      };
+      const resource =
+        this.nodeAttrs.rdfaNodeType === 'resource' && this.nodeAttrs.subject;
+      if (!resource) {
+        return;
+      }
+      this.controller.doCommand(
+        addProperty({
+          resource,
+          property,
+        }),
+      );
+    }
+  };
+
   removePropertyOrBacklink = (propertyOrBacklink: PropertyOrBacklink) => {
     // This function can only be called when the selected node defines a resource or the selected
     // node is a document that imports resources (e.g. a snippet)
@@ -275,7 +357,9 @@ export default class RelationshipEditorCard extends Component<Args> {
 
   get properties() {
     return this.nodeAttrs.rdfaNodeType === 'resource'
-      ? this.nodeAttrs.properties
+      ? this.nodeAttrs.properties.filter(
+          (prop) => prop.object.termType !== 'ContentLiteral',
+        )
       : undefined;
   }
 
@@ -397,6 +481,57 @@ export default class RelationshipEditorCard extends Component<Args> {
               <p class="au-u-italic">This node doesn't have any properties yet.</p>
             {{/if}}
           {{/if}}
+          {{#if this.isResourceNode}}
+            <WithUniqueId as |formId|>
+              <AuToolbar as |Group|>
+                <Group>
+                  <AuHeading @level="2" class="au-u-h6 au-u-muted">Content
+                    predicate</AuHeading>
+                </Group>
+                <Group>
+                  {{#if this.editingContentPredicate}}
+                    <AuButton
+                      {{on "click" this.onContentPredicateFormCancel}}
+                      @skin="link-secondary"
+                    >Cancel</AuButton>
+                    <AuButton
+                      type="submit"
+                      @icon={{CheckIcon}}
+                      form={{formId}}
+                      @skin="link"
+                    >Save</AuButton>
+                  {{else}}
+                    <AuButton
+                      {{on "click" this.startEditingContentPredicate}}
+                      @icon={{PencilIcon}}
+                      @skin="link"
+                    >
+                      Edit
+                    </AuButton>
+                  {{/if}}
+                </Group>
+              </AuToolbar>
+
+              {{#if this.editingContentPredicate}}
+                <ContentPredicateForm
+                  id={{formId}}
+                  @initialFormData={{this.contentPredicateInitialFormData}}
+                  @onSubmit={{this.onContentPredicateFormSubmit}}
+                />
+              {{else}}
+                {{#if this.contentPredicateProperty}}
+                  <p>{{htmlSafe
+                      (this.contentPredicateTextRepr
+                        this.contentPredicateProperty
+                      )
+                    }}</p>
+                {{else}}
+                  <p class="au-u-italic">This node does not define a content
+                    predicate.</p>
+                {{/if}}
+              {{/if}}
+            </WithUniqueId>
+          {{/if}}
           <AuToolbar as |Group|>
             <Group>
               <AuHeading
@@ -462,6 +597,7 @@ export default class RelationshipEditorCard extends Component<Args> {
           {{else}}
             <p class="au-u-italic">This node doesn't have any backlinks yet.</p>
           {{/if}}
+
           {{#if this.statusMessage}}
             <div>
               <AuAlert
