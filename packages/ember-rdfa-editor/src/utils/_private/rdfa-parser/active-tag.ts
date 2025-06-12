@@ -16,6 +16,8 @@ import type {
  */
 export interface IActiveTag<N> {
   name: string;
+  attributes: Record<string, string>;
+  typedResource?: ModelNamedNode<N> | ModelBlankNode<N> | true | null;
   prefixesAll: Record<string, string>;
   prefixesCustom: Record<string, string>;
   subject?: ModelNamedNode<N> | ModelBlankNode<N> | boolean;
