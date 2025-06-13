@@ -38,9 +38,14 @@ export type ToolbarDropdownSignature = {
 export default class ToolbarDropdown extends Component<ToolbarDropdownSignature> {
   @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
+  @tracked dropdownMenu?: Element = undefined;
 
   reference = modifier((element) => {
     this.referenceElement = element;
+  });
+
+  dropdownMenuReference = modifier((element) => {
+    this.dropdownMenu = element;
   });
 
   @action
@@ -102,6 +107,7 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
               shouldSelfFocus=true
               focusTrapOptions=(hash
                 clickOutsideDeactivates=this.clickOutsideDeactivates
+                fallbackFocus=this.dropdownMenu
               )
             }}
             class="say-dropdown__menu is-visible
@@ -110,12 +116,14 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
             tabindex="-1"
             {{velcro.loop}}
           >
-            {{yield
-              (hash
-                Item=(component DropdownItem onActivate=this.closeDropdown)
-                closeDropdown=this.closeDropdown
-              )
-            }}
+            <div tabindex="-1" {{this.dropdownMenuReference}}>
+              {{yield
+                (hash
+                  Item=(component DropdownItem onActivate=this.closeDropdown)
+                  closeDropdown=this.closeDropdown
+                )
+              }}
+            </div>
           </div>
         {{/if}}
       </Velcro>
