@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 12.10.1
+
+### Patch Changes
+
+- [#1328](https://github.com/lblod/ember-rdfa-editor/pull/1328) [`dca8e0b`](https://github.com/lblod/ember-rdfa-editor/commit/dca8e0b0a5d80a5974a1c7e2e7d68592e3867bef) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix bug with toolbar dropdown
+
 ## 12.10.0
 
 ### Minor Changes
