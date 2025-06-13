@@ -103,6 +103,7 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
         </button>
         {{#if this.dropdownOpen}}
           <div
+            {{this.dropdownMenuReference}}
             {{focusTrap
               shouldSelfFocus=true
               focusTrapOptions=(hash
@@ -116,14 +117,12 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
             tabindex="-1"
             {{velcro.loop}}
           >
-            <div tabindex="-1" {{this.dropdownMenuReference}}>
-              {{yield
-                (hash
-                  Item=(component DropdownItem onActivate=this.closeDropdown)
-                  closeDropdown=this.closeDropdown
-                )
-              }}
-            </div>
+            {{yield
+              (hash
+                Item=(component DropdownItem onActivate=this.closeDropdown)
+                closeDropdown=this.closeDropdown
+              )
+            }}
           </div>
         {{/if}}
       </Velcro>
