@@ -38,9 +38,14 @@ export type ToolbarDropdownSignature = {
 export default class ToolbarDropdown extends Component<ToolbarDropdownSignature> {
   @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
+  @tracked dropdownMenu?: Element = undefined;
 
   reference = modifier((element) => {
     this.referenceElement = element;
+  });
+
+  dropdownMenuReference = modifier((element) => {
+    this.dropdownMenu = element;
   });
 
   @action
@@ -98,10 +103,12 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
         </button>
         {{#if this.dropdownOpen}}
           <div
+            {{this.dropdownMenuReference}}
             {{focusTrap
               shouldSelfFocus=true
               focusTrapOptions=(hash
                 clickOutsideDeactivates=this.clickOutsideDeactivates
+                fallbackFocus=this.dropdownMenu
               )
             }}
             class="say-dropdown__menu is-visible
