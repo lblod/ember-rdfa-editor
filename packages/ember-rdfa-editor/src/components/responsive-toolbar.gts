@@ -20,6 +20,9 @@ type ToolbarSection = {
 };
 
 type Signature = {
+  Args: {
+    disableResponsiveness?: boolean;
+  };
   Blocks: {
     main: [
       {
@@ -129,6 +132,7 @@ export default class ResponsiveToolbar extends Component<Signature> {
   }
 
   handleResize() {
+    if (this.args.disableResponsiveness) return;
     requestAnimationFrame(() => {
       this.main.enableDropdown = false;
       this.side.enableDropdown = false;
