@@ -5,6 +5,7 @@ export interface PostProcessArgs<N> {
   activeTag: IActiveTag<N>;
   attributes: Record<string, string>;
   isRootTag: boolean;
+  isExternalTriple: boolean;
   typedResource: true | ModelBlankNode<N> | ModelNamedNode<N> | null;
   markAsLiteralNode: (
     node: N,
@@ -76,11 +77,25 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
     activeTag,
     attributes,
     isRootTag,
+    isExternalTriple,
     typedResource,
     markAsLiteralNode,
     markAsResourceNode,
   } = args;
   const node = activeTag.node;
+  if (node && isExternalTriple) {
+    markAsResourceNode(
+      node,
+      unwrap(activeTag.subject),
+      activeTag,
+      activeTag.predicates?.find(
+        (pred) => pred.value === attributes['property'],
+      ),
+      activeTag.datatype,
+      activeTag.language,
+    );
+    return;
+  }
   if (!activeTag.skipElement && node) {
     // no rel or rev
     if (
@@ -120,7 +135,9 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
       } else {
         if (
           truthyAttribute(attributes, 'about') &&
-          !truthyAttribute(attributes, 'data-literal-node')
+          !truthyAttribute(attributes, 'data-literal-node') &&
+          // Is this correct, an alternative solution would be to check on the presence of a `resource` attr here?
+          !truthyAttribute(attributes, 'datatype')
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
           markAsResourceNode(
