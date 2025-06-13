@@ -5,6 +5,7 @@ export interface PostProcessArgs<N> {
   activeTag: IActiveTag<N>;
   attributes: Record<string, string>;
   isRootTag: boolean;
+  isExternalTriple: boolean;
   typedResource: true | ModelBlankNode<N> | ModelNamedNode<N> | null;
   markAsLiteralNode: (
     node: N,
@@ -76,15 +77,13 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
     activeTag,
     attributes,
     isRootTag,
+    isExternalTriple,
     typedResource,
     markAsLiteralNode,
     markAsResourceNode,
   } = args;
   const node = activeTag.node;
-  const representsExternalTriple =
-    node instanceof Node &&
-    node.parentElement?.dataset['externalTripleContainer'];
-  if (representsExternalTriple) {
+  if (node && isExternalTriple) {
     markAsResourceNode(
       node,
       unwrap(activeTag.subject),
