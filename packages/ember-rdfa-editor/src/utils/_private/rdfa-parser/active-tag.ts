@@ -25,6 +25,7 @@ export interface IActiveTag<N> {
   predicates?: ModelNamedNode<N>[] | null;
   object?: ModelNamedNode<N> | ModelBlankNode<N> | boolean | null;
   text?: string[] | null;
+  content?: string | null; // contains `text` concatenated, or the `content` attribute
   vocab?: string;
   language?: string;
   datatype?: ModelNamedNode<N>;

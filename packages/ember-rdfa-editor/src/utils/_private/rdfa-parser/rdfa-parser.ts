@@ -979,11 +979,7 @@ export class RdfaParser<N> {
     attributes: Record<string, string>,
     predicateAttribute = 'property',
   ) => {
-    const textSegments: string[] = activeTag.text || [];
-    const object = this.util.createLiteral(
-      attributes['content'] ?? textSegments.join(''),
-      activeTag,
-    );
+    const object = this.util.createLiteral(activeTag.content ?? '', activeTag);
     this.contentNodeMapping.set(node, {
       subject: sayDataFactory.resourceNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
@@ -1048,6 +1044,14 @@ export class RdfaParser<N> {
       this.activeTagStack[this.activeTagStack.length - 1];
     const parentTag: IActiveTag<N> =
       this.activeTagStack[this.activeTagStack.length - 2];
+
+    let textSegments: string[] = activeTag.text || [];
+    if (activeTag.collectChildTags && parentTag.collectChildTags) {
+      // If we are inside an XMLLiteral child that also has RDFa content, ignore the tag name that was collected.
+      textSegments = textSegments.slice(1);
+    }
+    activeTag.content =
+      activeTag.attributes['content'] ?? textSegments.join('');
 
     if (
       !(
@@ -1120,8 +1124,7 @@ export class RdfaParser<N> {
 
         // Reset text, unless the parent is also collecting text
         if (!parentTag.predicates) {
-          // Can we simply remove this statement?
-          // activeTag.text = null;
+          activeTag.text = null;
         }
       }
 
