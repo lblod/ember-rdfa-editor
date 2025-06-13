@@ -92,7 +92,7 @@ const schema = new Schema({
       tableGroup: 'block',
       cellContent: 'block+',
     }),
-    heading: headingWithConfig({ rdfaAware: true }),
+    heading: headingWithConfig(),
     blockquote,
 
     horizontal_rule,
