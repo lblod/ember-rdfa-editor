@@ -221,7 +221,7 @@ export default class EditableBlockController extends Controller {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading: headingWithConfig({ rdfaAware: false }),
+      heading: headingWithConfig(),
       blockquote,
 
       horizontal_rule,

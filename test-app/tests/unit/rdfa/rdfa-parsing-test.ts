@@ -92,7 +92,7 @@ const schema = new Schema({
       tableGroup: 'block',
       cellContent: 'block+',
     }),
-    heading: headingWithConfig({ rdfaAware: true }),
+    heading: headingWithConfig(),
     blockquote,
 
     horizontal_rule,
@@ -798,7 +798,7 @@ module('rdfa | parsing', function () {
             },
           ] satisfies OutgoingTriple[],
         },
-        heading(
+        block_rdfa(
           {
             rdfaNodeType: 'literal',
             __rdfaId: 'literal-1',
@@ -814,9 +814,13 @@ module('rdfa | parsing', function () {
               'http://www.w3.org/2001/XMLSchema#string',
             ),
             language: '',
-            level: 4,
           },
-          'Decision title',
+          heading(
+            {
+              level: 4,
+            },
+            'Decision title',
+          ),
         ),
       ),
     );
