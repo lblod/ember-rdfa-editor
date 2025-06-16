@@ -13,12 +13,12 @@
         showSidebarRight=false
       }}
     >
-      <:top as |container|>
+      <:toolbar as |container|>
         <SampleToolbarResponsive
           @controller={{container.controller}}
           @enableHierarchicalList={{true}}
         />
-      </:top>
+      </:toolbar>
       <:default>
         <Editor
           @plugins={{this.plugins}}
