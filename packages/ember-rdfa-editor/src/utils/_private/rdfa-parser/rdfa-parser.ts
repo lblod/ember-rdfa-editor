@@ -1204,7 +1204,9 @@ export class RdfaParser<N> {
       }
     }
     const isRootTag: boolean = this.activeTagStack.length === 1;
-    const isExternalTriple = Boolean(parentTag?.attributes['data-external-triple-container']);
+    const isExternalTriple = Boolean(
+      parentTag?.attributes['data-external-triple-container'],
+    );
     postProcessTagAsRdfaNode({
       activeTag,
       attributes: activeTag.attributes,
