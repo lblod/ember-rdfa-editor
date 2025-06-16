@@ -1,10 +1,15 @@
-<template>
+import type { TOC } from '@ember/component/template-only';
+
+type Signature = {
+  Element: SVGElement;
+};
+
+const FormatTextIcon: TOC<Signature> = <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
     viewBox="0 0 24 24"
-    {{! @glint-expect-error: not typesafe yet }}
     ...attributes
   >
     <rect width="24" height="24" fill="transparent" />
@@ -23,3 +28,5 @@
     </defs>
   </svg>
 </template>
+
+export default FormatTextIcon;
