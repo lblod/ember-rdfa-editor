@@ -6,16 +6,18 @@ import type { TOC } from '@ember/component/template-only';
 
 type Signature = {
   Args: {
-    controller?: SayController;
+    controller: SayController;
+    onActivate?: () => void;
   };
 };
-const Bold: TOC<Signature> = <template>
+const BoldMark: TOC<Signature> = <template>
   <Mark
     @icon={{BoldIcon}}
     @title={{t "ember-rdfa-editor.bold"}}
     @mark="strong"
     @controller={{@controller}}
+    @onActivate={{@onActivate}}
   />
 </template>;
 
-export default Bold;
+export default BoldMark;

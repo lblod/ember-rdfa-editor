@@ -7,6 +7,7 @@ import type SayController from '#root/core/say-controller.ts';
 
 type Args = {
   controller: SayController;
+  onActivate?: () => void;
 };
 export default class LinkMenu extends Component<Args> {
   LinkIcon = LinkIcon;
@@ -44,6 +45,7 @@ export default class LinkMenu extends Component<Args> {
         }),
       );
       this.controller.focus();
+      this.args.onActivate?.();
     }
   }
 }

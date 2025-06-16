@@ -6,17 +6,19 @@ import type { TOC } from '@ember/component/template-only';
 
 type Signature = {
   Args: {
-    controller?: SayController;
+    controller: SayController;
+    onActivate?: () => void;
   };
 };
 
-const Subscript: TOC<Signature> = <template>
+const SubscriptMark: TOC<Signature> = <template>
   <Mark
     @icon={{SubscriptIcon}}
     @title={{t "ember-rdfa-editor.subscript"}}
     @mark="subscript"
     @controller={{@controller}}
+    @onActivate={{@onActivate}}
   />
 </template>;
 
-export default Subscript;
+export default SubscriptMark;
