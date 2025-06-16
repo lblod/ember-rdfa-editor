@@ -37,6 +37,6 @@ const RdfaIcon: TOC<Signature> = <template>
       </clipPath>
     </defs>
   </svg>
-</template>
+</template>;
 
 export default RdfaIcon;

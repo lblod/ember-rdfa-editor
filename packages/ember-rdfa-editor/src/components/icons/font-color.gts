@@ -31,6 +31,6 @@ const FontColorIcon: TOC<Signature> = <template>
       </clipPath>
     </defs>
   </svg>
-</template>
+</template>;
 
 export default FontColorIcon;

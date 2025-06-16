@@ -27,6 +27,6 @@ const FormatTextIcon: TOC<Signature> = <template>
       </clipPath>
     </defs>
   </svg>
-</template>
+</template>;
 
 export default FormatTextIcon;
