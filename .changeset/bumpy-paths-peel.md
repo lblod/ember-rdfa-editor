@@ -2,4 +2,4 @@
 '@lblod/ember-rdfa-editor': patch
 ---
 
-Fix dropdown positioning and the argument to disable the responsiveness of the toolbar
+Fix dropdown positioning and a icon import that was giving errors
