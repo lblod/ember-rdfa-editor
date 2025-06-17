@@ -5,20 +5,21 @@
   </:header>
   <:content>
     <EditorContainer
+      @controller={{this.rdfaEditor}}
       @editorOptions={{hash showPaper="true" showToolbarBottom=null}}
     >
-      <:top>
+      <:toolbar as |container|>
         <SampleToolbarResponsive
-          @controller={{this.rdfaEditor}}
+          @controller={{container.controller}}
           @enableHierarchicalList={{true}}
         >
           <this.DevModeToggle
-            @controller={{this.rdfaEditor}}
+            @controller={{container.controller}}
             @enabled={{this.devMode}}
             @onToggle={{this.onDevModeToggle}}
           />
         </SampleToolbarResponsive>
-      </:top>
+      </:toolbar>
       <:default>
         <Editor
           @plugins={{this.plugins}}
@@ -27,7 +28,7 @@
           @rdfaEditorInit={{this.rdfaEditorInit}}
         />
       </:default>
-      <:aside>
+      <:sidebarRight as |container|>
         <Sidebar as |Sb|>
           <Sb.Collapsible
             @title={{t "ember-rdfa-editor.insert"}}
@@ -36,52 +37,52 @@
           >
             <Item>
               <this.CreateRelationshipButton
-                @controller={{this.rdfaEditor}}
+                @controller={{container.controller}}
                 @node={{this.activeNode}}
                 @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 @devMode={{this.devMode}}
               />
             </Item>
           </Sb.Collapsible>
-          <Plugins::Link::LinkEditor @controller={{this.rdfaEditor}} />
+          <Plugins::Link::LinkEditor @controller={{container.controller}} />
           {{#if this.devMode}}
             <div class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
               <this.VisualiserCard
-                @controller={{this.rdfaEditor}}
+                @controller={{container.controller}}
                 @config={{this.rdfa.visualizerConfig}}
               />
               <this.NodeControlsCard
                 @node={{this.activeNode}}
-                @controller={{this.rdfaEditor}}
+                @controller={{container.controller}}
               />
               {{#if this.activeNode}}
                 <this.RelationshipEditorCard
                   @node={{this.activeNode}}
-                  @controller={{this.rdfaEditor}}
+                  @controller={{container.controller}}
                   @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 />
                 <this.DocImportedResourceEditorCard
-                  @controller={{this.rdfaEditor}}
+                  @controller={{container.controller}}
                   @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                 />
                 <this.ImportedResourceLinkerCard
                   @node={{this.activeNode}}
-                  @controller={{this.rdfaEditor}}
+                  @controller={{container.controller}}
                 />
                 <this.ExternalTripleEditorCard
                   @node={{this.activeNode}}
-                  @controller={{this.rdfaEditor}}
+                  @controller={{container.controller}}
                 />
                 <this.DebugInfo @node={{this.activeNode}} />
                 <this.AttributeEditor
                   @node={{this.activeNode}}
-                  @controller={{this.rdfaEditor}}
+                  @controller={{container.controller}}
                 />
               {{/if}}
             </div>
           {{/if}}
         </Sidebar>
-      </:aside>
+      </:sidebarRight>
     </EditorContainer>
   </:content>
 </DummyContainer>
