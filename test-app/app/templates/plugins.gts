@@ -1,4 +1,3 @@
-import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
@@ -75,11 +74,19 @@ import {
   sample_block,
   sampleBlockView,
 } from 'test-app/dummy-nodes/sample-block';
+import Component from '@glimmer/component';
+import DummyContainer from 'test-app/components/dummy-container';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import { hash } from '@ember/helper';
+import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
+import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
+import Editor from '@lblod/ember-rdfa-editor/components/editor';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
 
-export default class IndexController extends Controller {
+export default class extends Component {
   @tracked sidebarExpanded: boolean = DEFAULT_SIDEBAR_EXPANDED;
 
   loadConfig = modifier(() => {
@@ -202,4 +209,39 @@ export default class IndexController extends Controller {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
+
+  <template>
+    <DummyContainer {{this.loadConfig}}>
+      <:header>
+        <DebugTools @controller={{this.rdfaEditor}} />
+      </:header>
+      <:content>
+        <EditorContainer @editorOptions={{hash showPaper=true}}>
+          <:top>
+            {{#if this.rdfaEditor}}
+              <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
+            {{/if}}
+          </:top>
+          <:default>
+            <Editor
+              @plugins={{this.plugins}}
+              @schema={{this.schema}}
+              {{! @glint-expect-error }}
+              @nodeViews={{this.nodeViews}}
+              @rdfaEditorInit={{this.rdfaEditorInit}}
+            />
+          </:default>
+          <:aside>
+            {{#if this.rdfaEditor}}
+              <Sidebar
+                @expanded={{this.sidebarExpanded}}
+                @onToggle={{this.onSidebarToggle}}
+                @controller={{this.rdfaEditor}}
+              />
+            {{/if}}
+          </:aside>
+        </EditorContainer>
+      </:content>
+    </DummyContainer>
+  </template>
 }
