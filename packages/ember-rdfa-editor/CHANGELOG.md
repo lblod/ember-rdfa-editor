@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 12.10.2
+
+### Patch Changes
+
+- [#1330](https://github.com/lblod/ember-rdfa-editor/pull/1330) [`3040bdf`](https://github.com/lblod/ember-rdfa-editor/commit/3040bdf050b4726f28f0295484248a949e53168a) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix dropdown positioning and a icon import that was giving errors
+
 ## 12.10.1
 
 ### Patch Changes
