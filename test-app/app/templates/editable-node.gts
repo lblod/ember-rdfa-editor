@@ -1,4 +1,3 @@
-import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
 import { Schema, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
@@ -109,6 +108,17 @@ import type {
 } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 import { restartableTask, timeout } from 'ember-concurrency';
 import type { SayEditorArgs } from '@lblod/ember-rdfa-editor/core/say-editor';
+import Component from '@glimmer/component';
+import DummyContainer from 'test-app/components/dummy-container';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import Editor from '@lblod/ember-rdfa-editor/components/editor';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
+import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
+
+import t from 'ember-intl/helpers/t';
+import { hash } from '@ember/helper';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -157,18 +167,7 @@ const humanReadableResourceName: DisplayGenerator<PNode> = (
   return [subject];
 };
 
-export default class EditableBlockController extends Controller {
-  DebugInfo = DebugInfo;
-  AttributeEditor = AttributeEditor;
-  VisualiserCard = VisualiserCard;
-  CreateRelationshipButton = CreateRelationshipButton;
-  NodeControlsCard = NodeControlsCard;
-  DocImportedResourceEditorCard = DocImportedResourceEditorCard;
-  ImportedResourceLinkerCard = ImportedResourceLinkerCard;
-  ExternalTripleEditorCard = ExternalTripleEditorCard;
-  RelationshipEditorCard = RelationshipEditorCard;
-  DevModeToggle = DevModeToggle;
-
+export default class extends Component {
   rdfa = {
     propertyPredicates: [
       'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
@@ -346,4 +345,96 @@ export default class EditableBlockController extends Controller {
     predicates: this.predicateOptionGeneratorTask.perform.bind(this),
     objects: this.objectOptionGeneratorTask.perform.bind(this),
   };
+
+  <template>
+    <DummyContainer>
+      <:header>
+        <DebugTools @controller={{this.rdfaEditor}} />
+      </:header>
+      <:content>
+        <EditorContainer @editorOptions={{hash showPaper=true}}>
+          <:top>
+            {{#if this.rdfaEditor}}
+              <SampleToolbarResponsive
+                @controller={{this.rdfaEditor}}
+                @enableHierarchicalList={{true}}
+              >
+                <DevModeToggle
+                  @enabled={{this.devMode}}
+                  @onToggle={{this.onDevModeToggle}}
+                />
+              </SampleToolbarResponsive>
+            {{/if}}
+          </:top>
+          <:default>
+            <Editor
+              @plugins={{this.plugins}}
+              @schema={{this.schema}}
+              @nodeViews={{this.nodeViews}}
+              @rdfaEditorInit={{this.rdfaEditorInit}}
+            />
+          </:default>
+          <:aside>
+            {{#if this.rdfaEditor}}
+              <Sidebar as |Sb|>
+                <Sb.Collapsible
+                  @title={{t "ember-rdfa-editor.insert"}}
+                  @expanded={{true}}
+                  as |Item|
+                >
+                  <Item>
+                    <CreateRelationshipButton
+                      @controller={{this.rdfaEditor}}
+                      @node={{this.activeNode}}
+                      @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
+                      @devMode={{this.devMode}}
+                    />
+                  </Item>
+                </Sb.Collapsible>
+                <LinkEditor @controller={{this.rdfaEditor}} />
+                {{#if this.devMode}}
+                  <div
+                    class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny"
+                  >
+                    <VisualiserCard
+                      @controller={{this.rdfaEditor}}
+                      @config={{this.rdfa.visualizerConfig}}
+                    />
+                    <NodeControlsCard
+                      @node={{this.activeNode}}
+                      @controller={{this.rdfaEditor}}
+                    />
+                    {{#if this.activeNode}}
+                      <RelationshipEditorCard
+                        @node={{this.activeNode}}
+                        @controller={{this.rdfaEditor}}
+                        @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
+                      />
+                      <DocImportedResourceEditorCard
+                        @controller={{this.rdfaEditor}}
+                        @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
+                      />
+                      <ImportedResourceLinkerCard
+                        @node={{this.activeNode}}
+                        @controller={{this.rdfaEditor}}
+                      />
+                      <ExternalTripleEditorCard
+                        @node={{this.activeNode}}
+                        @controller={{this.rdfaEditor}}
+                      />
+                      <DebugInfo @node={{this.activeNode}} />
+                      <AttributeEditor
+                        @node={{this.activeNode}}
+                        @controller={{this.rdfaEditor}}
+                      />
+                    {{/if}}
+                  </div>
+                {{/if}}
+              </Sidebar>
+            {{/if}}
+          </:aside>
+        </EditorContainer>
+      </:content>
+    </DummyContainer>
+  </template>
 }

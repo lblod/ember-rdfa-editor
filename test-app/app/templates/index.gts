@@ -1,7 +1,6 @@
-import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
-import { Schema } from '@lblod/ember-rdfa-editor';
+import { Schema, type PluginConfig } from '@lblod/ember-rdfa-editor';
 import {
   em,
   strikethrough,
@@ -9,7 +8,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -24,14 +23,19 @@ import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisibl
 import {
   tableKeymap,
   tableNodes,
-  tablePlugin,
+  tablePlugins,
 } from '@lblod/ember-rdfa-editor/plugins/table';
-import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
+import {
+  imageWithConfig,
+  imageView,
+  checkPasteSize,
+} from '@lblod/ember-rdfa-editor/plugins/image';
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bulletListWithConfig,
   listItemWithConfig,
+  listTrackingPlugin,
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -49,7 +53,6 @@ import {
   hardBreak,
   heading as headingInvisible,
   paragraph as paragraphInvisible,
-  space,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
 import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
 import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
@@ -61,13 +64,24 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
-import type { PluginConfig } from '@lblod/ember-rdfa-editor';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import Component from '@glimmer/component';
+import DummyContainer from 'test-app/components/dummy-container';
+import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
 
-export default class SpaceInvisibleController extends Controller {
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import Editor from '@lblod/ember-rdfa-editor/components/editor';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
+import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
+
+import { hash } from '@ember/helper';
+
+export default class extends Component {
   @tracked rdfaEditor?: SayController;
   @service declare intl: IntlService;
   schema = new Schema({
@@ -79,14 +93,17 @@ export default class SpaceInvisibleController extends Controller {
 
       repaired_block: repairedBlockWithConfig(),
 
-      list_item: listItemWithConfig(),
-      ordered_list: orderedListWithConfig(),
-      bullet_list: bulletListWithConfig(),
+      list_item: listItemWithConfig({ enableHierarchicalList: true }),
+      ordered_list: orderedListWithConfig({ enableHierarchicalList: true }),
+      bullet_list: bulletListWithConfig({ enableHierarchicalList: true }),
       placeholder,
       ...tableNodes({
         tableGroup: 'block',
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+        rowBackground: {
+          odd: 'whitesmoke',
+        },
       }),
       heading: headingWithConfig(),
       blockquote,
@@ -96,7 +113,7 @@ export default class SpaceInvisibleController extends Controller {
 
       text,
 
-      image,
+      image: imageWithConfig({ allowBase64Images: true }),
 
       hard_break,
       invisible_rdfa: invisibleRdfaWithConfig(),
@@ -124,18 +141,16 @@ export default class SpaceInvisibleController extends Controller {
   }
 
   @tracked plugins: PluginConfig = [
+    listTrackingPlugin(),
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,
-    tablePlugin,
+    ...tablePlugins,
     tableKeymap,
     linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin(
-      [hardBreak, paragraphInvisible, headingInvisible, space],
-      {
-        shouldShowInvisibles: false,
-      },
-    ),
+    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
+      shouldShowInvisibles: false,
+    }),
     inputRules({
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
@@ -143,6 +158,7 @@ export default class SpaceInvisibleController extends Controller {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
+    checkPasteSize({}),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
@@ -165,4 +181,47 @@ export default class SpaceInvisibleController extends Controller {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
+
+  <template>
+    <DummyContainer>
+      <:header>
+        <DebugTools @controller={{this.rdfaEditor}} />
+      </:header>
+      <:content>
+        <EditorContainer
+          @editorOptions={{hash
+            showPaper=true
+            showSidebarLeft=false
+            showSidebarRight=false
+          }}
+        >
+          <:top>
+            {{#if this.rdfaEditor}}
+              <SampleToolbarResponsive
+                @controller={{this.rdfaEditor}}
+                @enableHierarchicalList={{true}}
+              />
+            {{/if}}
+          </:top>
+          <:default>
+            <Editor
+              @plugins={{this.plugins}}
+              @schema={{this.schema}}
+              {{! @glint-expect-error }}
+              @nodeViews={{this.nodeViews}}
+              @rdfaEditorInit={{this.rdfaEditorInit}}
+            />
+            {{#if this.rdfaEditor}}
+              <TableTooltip @controller={{this.rdfaEditor}} />
+            {{/if}}
+          </:default>
+          <:aside>
+            <Sidebar>
+              <LinkEditor @controller={{this.rdfaEditor}} />
+            </Sidebar>
+          </:aside>
+        </EditorContainer>
+      </:content>
+    </DummyContainer>
+  </template>
 }
