@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
+import { deprecate } from '@ember/debug';
 import { and, or } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
@@ -16,7 +17,8 @@ type EditorOptions = {
 type Signature = {
   Element: HTMLDivElement;
   Args: {
-    controller: Option<SayController>;
+    // TODO in the next major release, this should become `controller: Option<SayController>`
+    controller?: Option<SayController>;
     editorOptions?: EditorOptions;
     loading?: boolean;
   };
@@ -32,6 +34,24 @@ type Signature = {
 };
 
 export default class EditorContainer extends Component<Signature> {
+  constructor(owner: unknown, args: Signature['Args']) {
+    super(owner, args);
+
+    deprecate(
+      'EditorContainer now requires a controller argument, so that it can pass this to child blocks when it exists',
+      'controller' in args,
+      {
+        id: '@lblod/ember-rdfa-editor.editor-container.controller-argument',
+        until: '13.0.0',
+        for: '@lblod/ember-rdfa-editor',
+        since: {
+          available: '12.11.0',
+          enabled: '12.11.0',
+        },
+      },
+    );
+  }
+
   get showPaper() {
     return this.args.editorOptions?.showPaper ?? false;
   }
