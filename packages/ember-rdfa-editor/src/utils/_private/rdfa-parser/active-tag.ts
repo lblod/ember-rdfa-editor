@@ -16,6 +16,8 @@ import type {
  */
 export interface IActiveTag<N> {
   name: string;
+  attributes: Record<string, string>;
+  typedResource?: ModelNamedNode<N> | ModelBlankNode<N> | true | null;
   prefixesAll: Record<string, string>;
   prefixesCustom: Record<string, string>;
   subject?: ModelNamedNode<N> | ModelBlankNode<N> | boolean;
@@ -23,6 +25,7 @@ export interface IActiveTag<N> {
   predicates?: ModelNamedNode<N>[] | null;
   object?: ModelNamedNode<N> | ModelBlankNode<N> | boolean | null;
   text?: string[] | null;
+  content?: string | null; // contains `text` concatenated, or the `content` attribute
   vocab?: string;
   language?: string;
   datatype?: ModelNamedNode<N>;

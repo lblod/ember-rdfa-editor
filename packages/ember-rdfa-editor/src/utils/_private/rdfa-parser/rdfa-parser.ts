@@ -183,6 +183,7 @@ export class RdfaParser<N> {
       listMapping: {},
       listMappingLocal: {},
       name: '',
+      attributes: {},
       prefixesAll: {
         ...INITIAL_CONTEXT['@context'],
         ...(this.features.xhtmlInitialContext
@@ -282,6 +283,7 @@ export class RdfaParser<N> {
       listMappingLocal: parentTag.listMapping,
       localBaseIRI: parentTag.localBaseIRI,
       name,
+      attributes,
       prefixesAll: {},
       prefixesCustom: {},
       skipElement: false,
@@ -968,15 +970,7 @@ export class RdfaParser<N> {
     // 13: Save evaluation context into active tag
     activeTag.subject = newSubject || parentTag.subject;
     activeTag.object = currentObjectResource || newSubject;
-
-    postProcessTagAsRdfaNode({
-      activeTag,
-      attributes,
-      isRootTag,
-      typedResource,
-      markAsLiteralNode: this.markAsLiteralNode,
-      markAsResourceNode: this.markAsResourceNode,
-    });
+    activeTag.typedResource = typedResource;
   }
 
   markAsLiteralNode = (
@@ -985,6 +979,7 @@ export class RdfaParser<N> {
     attributes: Record<string, string>,
     predicateAttribute = 'property',
   ) => {
+    const object = this.util.createLiteral(activeTag.content ?? '', activeTag);
     this.contentNodeMapping.set(node, {
       subject: sayDataFactory.resourceNode(
         this.util.getResourceOrBaseIri(unwrap(activeTag.subject), activeTag)
@@ -997,7 +992,8 @@ export class RdfaParser<N> {
         true,
         true,
         false,
-      ).value,
+      ),
+      object,
     });
   };
 
@@ -1048,6 +1044,14 @@ export class RdfaParser<N> {
       this.activeTagStack[this.activeTagStack.length - 1];
     const parentTag: IActiveTag<N> =
       this.activeTagStack[this.activeTagStack.length - 2];
+
+    let textSegments: string[] = activeTag.text || [];
+    if (activeTag.collectChildTags && parentTag.collectChildTags) {
+      // If we are inside an XMLLiteral child that also has RDFa content, ignore the tag name that was collected.
+      textSegments = textSegments.slice(1);
+    }
+    activeTag.content =
+      activeTag.attributes['content'] ?? textSegments.join('');
 
     if (
       !(
@@ -1199,6 +1203,19 @@ export class RdfaParser<N> {
         parentTag.text = parentTag.text.concat(activeTag.text);
       }
     }
+    const isRootTag: boolean = this.activeTagStack.length === 1;
+    const isExternalTriple = Boolean(
+      parentTag?.attributes['data-external-triple-container'],
+    );
+    postProcessTagAsRdfaNode({
+      activeTag,
+      attributes: activeTag.attributes,
+      isRootTag,
+      isExternalTriple,
+      typedResource: activeTag.typedResource ?? null,
+      markAsLiteralNode: this.markAsLiteralNode,
+      markAsResourceNode: this.markAsResourceNode,
+    });
   }
 
   public onEnd() {
@@ -1399,7 +1416,6 @@ export class RdfaParser<N> {
     pattern: IRdfaPattern<N>,
     root: boolean,
     rootPatternId: string,
-    node?: N,
   ) {
     // Stop on detection of cyclic patterns
     if (
@@ -1410,7 +1426,7 @@ export class RdfaParser<N> {
       return;
     }
 
-    this.onTagOpen(pattern.name, pattern.attributes, node);
+    this.onTagOpen(pattern.name, pattern.attributes);
     for (const text of pattern.text) {
       this.onText(text);
     }
