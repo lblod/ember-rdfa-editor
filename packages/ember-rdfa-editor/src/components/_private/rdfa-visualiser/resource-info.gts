@@ -22,6 +22,14 @@ import type {
   RdfaVisualizerConfig,
 } from '#root/plugins/rdfa-info/types.ts';
 import { get } from '@ember/helper';
+import type { TemplateOnlyComponent } from '@ember/component/template-only';
+
+const Div: TemplateOnlyComponent<{
+  Element: HTMLDivElement;
+  Blocks: { default: [] };
+}> = <template>
+  <div ...attributes>{{yield}}</div>
+</template>;
 
 const backupResourceDisplay: DisplayGenerator<PNode> = (node) => {
   const subject = node.attrs['subject'] as string;
@@ -104,11 +112,12 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
                       @displayConfig={{@displayConfig}}
                     />
                   {{else if (get @displayConfig prop.object.termType)}}
-                    <ResourceInfo
+                    <ConfigurableRdfaDisplay
+                      @wrapper={{Div}}
+                      @value={{prop}}
+                      {{! @glint-expect-error }}
+                      @generator={{get @displayConfig prop.object.termType}}
                       @controller={{@controller}}
-                      @subject={{prop.object.value}}
-                      {{! @glint-expect-error}}
-                      @displayConfig={{get @displayConfig prop.object.termType}}
                     />
                   {{else}}
                     <PropertyDetails
