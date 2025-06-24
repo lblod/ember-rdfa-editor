@@ -113,15 +113,24 @@ import type { SayEditorArgs } from '@lblod/ember-rdfa-editor/core/say-editor';
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
 ) => {
-  if (RDF('type').matches(triple.predicate)) {
-    return [{ hidden: true }];
-  }
+  // if (RDF('type').matches(triple.predicate)) {
+  //   return [{ hidden: true }];
+  // }
   return {
     meta: { title: triple.predicate },
     elements: [
       { strong: 'predicate:' },
       triple.predicate.split(/[/#]/).at(-1) ?? triple.predicate,
     ],
+  };
+};
+
+const humanReadableNamedNodeDisplay: DisplayGenerator<OutgoingTriple> = (
+  triple,
+) => {
+  return {
+    meta: { title: triple.object.value },
+    elements: [{ strong: 'object:' }, triple.object.value],
   };
 };
 
@@ -183,6 +192,7 @@ export default class EditableBlockController extends Controller {
       displayConfig: {
         predicate: humanReadablePredicateDisplay,
         ResourceNode: humanReadableResourceName,
+        NamedNode: humanReadableNamedNodeDisplay,
       },
     } as RdfaVisualizerConfig,
   };
