@@ -23,6 +23,7 @@ import type {
 } from '#root/plugins/rdfa-info/types.ts';
 import { get } from '@ember/helper';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
+import type { TOC } from '@ember/component/template-only';
 
 const Div: TemplateOnlyComponent<{
   Element: HTMLDivElement;
@@ -46,6 +47,22 @@ export interface ResourceInfoSig {
     displayConfig: RdfaVisualizerConfig['displayConfig'];
   };
 }
+
+const ResourceNodeWrapper: TOC<{
+  Element: HTMLDivElement;
+  Args: { expanded?: boolean; onToggle: (event: MouseEvent) => void };
+  Blocks: { default: [] };
+}> = <template>
+  <div ...attributes>
+    <AuButton
+      @skin="link"
+      @hideText={{true}}
+      @icon={{if @expanded ChevronUpIcon ChevronRightIcon}}
+      {{on "click" @onToggle}}
+    >Toggle</AuButton>
+    {{yield}}
+  </div>
+</template>;
 
 export default class ResourceInfo extends Component<ResourceInfoSig> {
   @localCopy('args.localCopy') expanded = false;
@@ -75,66 +92,62 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
   };
 
   <template>
-    <div>
-      <AuButton
-        @skin="link"
-        @hideText={{true}}
-        @icon={{if this.expanded ChevronUpIcon ChevronRightIcon}}
-        {{on "click" this.toggleExpanded}}
-      >Toggle</AuButton>
-      {{#if this.node}}
-        <ConfigurableRdfaDisplay
-          @value={{this.node}}
-          @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
-          @controller={{@controller}}
+    {{#if this.node}}
+      <ConfigurableRdfaDisplay
+        @value={{this.node}}
+        @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
+        @controller={{@controller}}
+        @wrapper={{component
+          ResourceNodeWrapper
+          expanded=this.expanded
+          onToggle=this.toggleExpanded
+        }}
+      >
+        <AuButton
+          @hideText={{true}}
+          @icon={{ExternalLinkIcon}}
+          @skin="link"
+          {{on "click" (fn this.goToSubject @subject)}}
         >
-          <AuButton
-            @hideText={{true}}
-            @icon={{ExternalLinkIcon}}
-            @skin="link"
-            {{on "click" (fn this.goToSubject @subject)}}
-          >
-            Go to subject
-          </AuButton>
-          {{#if this.expanded}}
-            <AuList class="au-u-margin-left" @divider={{true}} as |Item|>
-              {{#each this.nodeProps as |prop|}}
-                <ConfigurableRdfaDisplay
-                  @value={{prop}}
-                  @generator={{or @displayConfig.predicate predicateDisplay}}
-                  @controller={{@controller}}
-                  @wrapper={{Item}}
-                >
-                  {{#if (eq prop.object.termType "ResourceNode")}}
-                    <ResourceInfo
-                      @controller={{@controller}}
-                      @subject={{prop.object.value}}
-                      @displayConfig={{@displayConfig}}
-                    />
-                  {{else if (get @displayConfig prop.object.termType)}}
-                    <ConfigurableRdfaDisplay
-                      @wrapper={{Div}}
-                      @value={{prop}}
-                      {{! @glint-expect-error }}
-                      @generator={{get @displayConfig prop.object.termType}}
-                      @controller={{@controller}}
-                    />
-                  {{else}}
-                    <PropertyDetails
-                      @prop={{prop}}
-                      @controller={{@controller}}
-                    />
-                  {{/if}}
-                </ConfigurableRdfaDisplay>
-              {{else}}
-                <p class="au-u-muted">No properties</p>
-              {{/each}}
-            </AuList>
-          {{/if}}
-        </ConfigurableRdfaDisplay>
-      {{else}}
+          Go to subject
+        </AuButton>
+        {{#if this.expanded}}
+          <AuList class="au-u-margin-left" @divider={{true}} as |Item|>
+            {{#each this.nodeProps as |prop|}}
+              <ConfigurableRdfaDisplay
+                @value={{prop}}
+                @generator={{or @displayConfig.predicate predicateDisplay}}
+                @controller={{@controller}}
+                @wrapper={{Item}}
+              >
+                {{#if (eq prop.object.termType "ResourceNode")}}
+                  <ResourceInfo
+                    @controller={{@controller}}
+                    @subject={{prop.object.value}}
+                    @displayConfig={{@displayConfig}}
+                  />
+                {{else if (get @displayConfig prop.object.termType)}}
+                  <ConfigurableRdfaDisplay
+                    @wrapper={{Div}}
+                    @value={{prop}}
+                    {{! @glint-expect-error }}
+                    @generator={{get @displayConfig prop.object.termType}}
+                    @controller={{@controller}}
+                  />
+                {{else}}
+                  <PropertyDetails @prop={{prop}} @controller={{@controller}} />
+                {{/if}}
+              </ConfigurableRdfaDisplay>
+            {{else}}
+              <p class="au-u-muted">No properties</p>
+            {{/each}}
+          </AuList>
+        {{/if}}
+      </ConfigurableRdfaDisplay>
+    {{else}}
+      <div>
         {{@subject}}
-      {{/if}}
-    </div>
+      </div>
+    {{/if}}
   </template>
 }
