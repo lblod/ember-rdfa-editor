@@ -24,6 +24,7 @@ import type {
 import { get } from '@ember/helper';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import type { TOC } from '@ember/component/template-only';
+import type { ComponentLike } from '@glint/template';
 
 const Div: TemplateOnlyComponent<{
   Element: HTMLDivElement;
@@ -37,6 +38,40 @@ const backupResourceDisplay: DisplayGenerator<PNode> = (node) => {
   return [subject];
 };
 
+const ResourceNodeWrapper: TOC<{
+  Element: HTMLElement;
+  Args: {
+    expanded?: boolean;
+    onToggle: (event: MouseEvent) => void;
+    wrapper?: ComponentLike<{ Blocks: { default: [] } }>;
+  };
+  Blocks: { default: [] };
+}> = <template>
+  {{#if @wrapper}}
+    <@wrapper>
+      <div ...attributes>
+        <AuButton
+          @skin="link"
+          @hideText={{true}}
+          @icon={{if @expanded ChevronUpIcon ChevronRightIcon}}
+          {{on "click" @onToggle}}
+        >Toggle</AuButton>
+        {{yield}}
+      </div>
+    </@wrapper>
+  {{else}}
+    <div ...attributes>
+      <AuButton
+        @skin="link"
+        @hideText={{true}}
+        @icon={{if @expanded ChevronUpIcon ChevronRightIcon}}
+        {{on "click" @onToggle}}
+      >Toggle</AuButton>
+      {{yield}}
+    </div>
+  {{/if}}
+</template>;
+
 export interface ResourceInfoSig {
   Args: {
     controller: SayController;
@@ -45,24 +80,9 @@ export interface ResourceInfoSig {
     node?: PNode;
     expanded?: boolean;
     displayConfig: RdfaVisualizerConfig['displayConfig'];
+    wrapper?: ComponentLike<{ Blocks: { default: [] } }>;
   };
 }
-
-const ResourceNodeWrapper: TOC<{
-  Element: HTMLDivElement;
-  Args: { expanded?: boolean; onToggle: (event: MouseEvent) => void };
-  Blocks: { default: [] };
-}> = <template>
-  <div ...attributes>
-    <AuButton
-      @skin="link"
-      @hideText={{true}}
-      @icon={{if @expanded ChevronUpIcon ChevronRightIcon}}
-      {{on "click" @onToggle}}
-    >Toggle</AuButton>
-    {{yield}}
-  </div>
-</template>;
 
 export default class ResourceInfo extends Component<ResourceInfoSig> {
   @localCopy('args.localCopy') expanded = false;
@@ -101,6 +121,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
           ResourceNodeWrapper
           expanded=this.expanded
           onToggle=this.toggleExpanded
+          wrapper=@wrapper
         }}
       >
         <AuButton
@@ -145,9 +166,17 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
         {{/if}}
       </ConfigurableRdfaDisplay>
     {{else}}
-      <div>
-        {{@subject}}
-      </div>
+      {{#if @wrapper}}
+        <@wrapper>
+          <div>
+            {{@subject}}
+          </div>
+        </@wrapper>
+      {{else}}
+        <div>
+          {{@subject}}
+        </div>
+      {{/if}}
     {{/if}}
   </template>
 }
