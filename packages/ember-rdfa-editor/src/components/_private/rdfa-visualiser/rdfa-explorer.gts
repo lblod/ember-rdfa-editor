@@ -80,13 +80,12 @@ export default class RdfaExplorer extends Component<Sig> {
     {{#if (or @config.keepOpen (not this.isRunning))}}
       <AuList @divider={{true}} as |Item|>
         {{#each this.subjects as |subject|}}
-          <Item>
-            <ResourceInfo
-              @controller={{@controller}}
-              @subject={{subject}}
-              @displayConfig={{@config.displayConfig}}
-            />
-          </Item>
+          <ResourceInfo
+            @wrapper={{Item}}
+            @controller={{@controller}}
+            @subject={{subject}}
+            @displayConfig={{@config.displayConfig}}
+          />
         {{/each}}
       </AuList>
     {{/if}}
