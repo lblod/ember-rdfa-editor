@@ -1,5 +1,31 @@
 # @lblod/ember-rdfa-editor
 
+## 12.11.0
+
+### Minor Changes
+
+- [#1326](https://github.com/lblod/ember-rdfa-editor/pull/1326) [`ae822bc`](https://github.com/lblod/ember-rdfa-editor/commit/ae822bcaea7962873ff373fcc7df53d2c4e74c04) Thanks [@piemonkey](https://github.com/piemonkey)! - Add always defined controller block param to EditorContainer to allow cutting down on boilerplate is-not-undefined checks in editor components.
+  This requires a SayController be passed to EditorContainer.
+  For backwards compatibility, the blocks that are only shown when the controller exists are named differently to the previous blocks.
+
+### Patch Changes
+
+- [#1319](https://github.com/lblod/ember-rdfa-editor/pull/1319) [`9687035`](https://github.com/lblod/ember-rdfa-editor/commit/96870354a0d30fd9bf6f72181706198019db21ec) Thanks [@elpoelma](https://github.com/elpoelma)! - rdfa-parser: fix issue where two relationships with the same subject and predicate pointing to literal-nodes/literals was not correctly parsed
+
+- [#1323](https://github.com/lblod/ember-rdfa-editor/pull/1323) [`75be90b`](https://github.com/lblod/ember-rdfa-editor/commit/75be90bbcfc3d99c7326945ed6e57a9a1fd1abcb) Thanks [@elpoelma](https://github.com/elpoelma)! - Add extra check to `postProcessTagAsRdfaNode` function to correctly parse older style literal nodes
+
+## 12.10.2
+
+### Patch Changes
+
+- [#1330](https://github.com/lblod/ember-rdfa-editor/pull/1330) [`3040bdf`](https://github.com/lblod/ember-rdfa-editor/commit/3040bdf050b4726f28f0295484248a949e53168a) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix dropdown positioning and a icon import that was giving errors
+
+## 12.10.1
+
+### Patch Changes
+
+- [#1328](https://github.com/lblod/ember-rdfa-editor/pull/1328) [`dca8e0b`](https://github.com/lblod/ember-rdfa-editor/commit/dca8e0b0a5d80a5974a1c7e2e7d68592e3867bef) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix bug with toolbar dropdown
+
 ## 12.10.0
 
 ### Minor Changes
