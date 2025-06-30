@@ -189,20 +189,19 @@ export default class extends Component {
       </:header>
       <:content>
         <EditorContainer
+          @controller={{this.rdfaEditor}}
           @editorOptions={{hash
             showPaper=true
             showSidebarLeft=false
             showSidebarRight=false
           }}
         >
-          <:top>
-            {{#if this.rdfaEditor}}
-              <SampleToolbarResponsive
-                @controller={{this.rdfaEditor}}
-                @enableHierarchicalList={{true}}
-              />
-            {{/if}}
-          </:top>
+          <:toolbar as |container|>
+            <SampleToolbarResponsive
+              @controller={{container.controller}}
+              @enableHierarchicalList={{true}}
+            />
+          </:toolbar>
           <:default>
             <Editor
               @plugins={{this.plugins}}
@@ -215,11 +214,11 @@ export default class extends Component {
               <TableTooltip @controller={{this.rdfaEditor}} />
             {{/if}}
           </:default>
-          <:aside>
+          <:sidebarRight as |container|>
             <Sidebar>
-              <LinkEditor @controller={{this.rdfaEditor}} />
+              <LinkEditor @controller={{container.controller}} />
             </Sidebar>
-          </:aside>
+          </:sidebarRight>
         </EditorContainer>
       </:content>
     </DummyContainer>

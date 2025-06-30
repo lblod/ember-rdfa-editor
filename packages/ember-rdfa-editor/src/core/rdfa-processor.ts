@@ -8,7 +8,7 @@ import {
   type default as Datastore,
   EditorStore,
 } from '#root/utils/_private/datastore/datastore.ts';
-import type { Quad } from '@rdfjs/types';
+import type { NamedNode, Quad } from '@rdfjs/types';
 import {
   SayLiteral,
   SayNamedNode,
@@ -196,11 +196,11 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
   for (const [node, object] of datastore.getContentNodeMap().entries()) {
     const { subject, predicate } = object;
 
-    const incomingProp = {
+    const incomingProp: IncomingTriple = {
       subject,
-      predicate,
+      predicate: predicate.value,
     };
-    const extraBacklinks = [];
+    const extraBacklinks: IncomingTriple[] = [];
     if (isElement(node)) {
       const firstChild = node.firstElementChild;
       if (
@@ -215,7 +215,10 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
           ) {
             const backlink = datastore.getContentNodeMap().get(child);
             if (backlink) {
-              extraBacklinks.push(backlink);
+              extraBacklinks.push({
+                subject: backlink.subject,
+                predicate: backlink.predicate.value,
+              });
             }
           }
         }
@@ -241,7 +244,8 @@ function quadToProperties(
   if (quad.object.termType === 'Literal') {
     const contentNodes = datastore.getContentNodeMap().getValues({
       subject: sayDataFactory.resourceNode(quad.subject.value),
-      predicate: quad.predicate.value,
+      predicate: quad.predicate as NamedNode<string>,
+      object: quad.object,
     });
     if (contentNodes) {
       for (const contentNode of contentNodes) {
