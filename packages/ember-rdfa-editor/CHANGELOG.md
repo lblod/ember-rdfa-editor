@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 12.12.0
+
+### Minor Changes
+
+- [#1331](https://github.com/lblod/ember-rdfa-editor/pull/1331) [`f68bff4`](https://github.com/lblod/ember-rdfa-editor/commit/f68bff4d9b031261fcf9316cb875b405e47baeee) Thanks [@elpoelma](https://github.com/elpoelma)! - Add explicit support for ember-source version 6.x
+
+- [#1334](https://github.com/lblod/ember-rdfa-editor/pull/1334) [`0945144`](https://github.com/lblod/ember-rdfa-editor/commit/09451449a9bcde555ea2c331c5672f2e7c552948) Thanks [@piemonkey](https://github.com/piemonkey)! - Add context to RDFa visualiser components that says if a resource is at the top level so the display can be changed accordingly
+
+### Patch Changes
+
+- [#1333](https://github.com/lblod/ember-rdfa-editor/pull/1333) [`ba2ebd0`](https://github.com/lblod/ember-rdfa-editor/commit/ba2ebd045613efb37db16122aa74a49e0d4859ef) Thanks [@elpoelma](https://github.com/elpoelma)! - rdfa-visualizer: fully hide resource node when it is marked as `hidden: true` in the visualizer configuration.
+
+- [#1332](https://github.com/lblod/ember-rdfa-editor/pull/1332) [`f73d5f1`](https://github.com/lblod/ember-rdfa-editor/commit/f73d5f144b9516e1c069eb4c02e559abff5ebaa5) Thanks [@elpoelma](https://github.com/elpoelma)! - rdfa-visualizer: correctly render property objects using `ConfigurableRdfaDisplay` instead of `ResourceInfo`
+
 ## 12.11.0
 
 ### Minor Changes
