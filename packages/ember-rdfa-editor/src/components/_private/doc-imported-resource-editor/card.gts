@@ -43,6 +43,7 @@ import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
 import { array } from '@ember/helper';
 import type { OptionGeneratorConfig } from '../relationship-editor/types.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
+import { hash } from '@ember/helper';
 
 type CreationStatus = {
   mode: 'creation';
@@ -347,8 +348,10 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
                             <ConfigurableRdfaDisplay
                               @value={{prop}}
                               @generator={{predicateDisplay}}
-                              @controller={{@controller}}
-                              @isTopLevel={{false}}
+                              @context={{hash
+                                controller=@controller
+                                isTopLevel=false
+                              }}
                             />
                           {{/if}}
                           <PropertyDetails

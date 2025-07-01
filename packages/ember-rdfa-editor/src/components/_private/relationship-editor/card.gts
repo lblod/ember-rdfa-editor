@@ -25,7 +25,7 @@ import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { on } from '@ember/modifier';
-import { fn } from '@ember/helper';
+import { fn, hash } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import ConfigurableRdfaDisplay, {
   predicateDisplay,
@@ -443,7 +443,10 @@ export default class RelationshipEditorCard extends Component<Args> {
                       <ConfigurableRdfaDisplay
                         @value={{prop}}
                         @generator={{predicateDisplay}}
-                        @controller={{@controller}}
+                        @context={{hash
+                          controller=@controller
+                          isTopLevel=false
+                        }}
                       />
                       <PropertyDetails
                         @controller={{@controller}}

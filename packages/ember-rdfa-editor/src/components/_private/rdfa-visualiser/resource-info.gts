@@ -19,6 +19,7 @@ import { ExternalLinkIcon } from '@appuniversum/ember-appuniversum/components/ic
 import PropertyDetails from '#root/components/_private/common/property-details.gts';
 import type {
   DisplayGenerator,
+  GeneratorContext,
   RdfaVisualizerConfig,
 } from '#root/plugins/rdfa-info/types.ts';
 import { get } from '@ember/helper';
@@ -101,6 +102,11 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
     return (this.node?.attrs['properties'] as OutgoingTriple[]) ?? [];
   }
 
+  generatorContext = (isTopLevel: boolean): GeneratorContext => ({
+    controller: this.args.controller,
+    isTopLevel,
+  });
+
   toggleExpanded = () => {
     this.expanded = !this.expanded;
   };
@@ -117,8 +123,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
       <ConfigurableRdfaDisplay
         @value={{this.node}}
         @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
-        @controller={{@controller}}
-        @isTopLevel={{@isTopLevel}}
+        @context={{this.generatorContext @isTopLevel}}
         @wrapper={{component
           ResourceNodeWrapper
           expanded=this.expanded
@@ -140,8 +145,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
               <ConfigurableRdfaDisplay
                 @value={{prop}}
                 @generator={{or @displayConfig.predicate predicateDisplay}}
-                @controller={{@controller}}
-                @isTopLevel={{false}}
+                @context={{this.generatorContext false}}
                 @wrapper={{Item}}
               >
                 {{#if (eq prop.object.termType "ResourceNode")}}
@@ -157,7 +161,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
                     @value={{prop}}
                     {{! @glint-expect-error }}
                     @generator={{get @displayConfig prop.object.termType}}
-                    @controller={{@controller}}
+                    @context={{this.generatorContext false}}
                   />
                 {{else}}
                   <PropertyDetails @prop={{prop}} @controller={{@controller}} />

@@ -7,11 +7,11 @@ import { trackedFunction } from 'reactiveweb/function';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import { type OutgoingTriple } from '#root/core/rdfa-processor.ts';
-import type SayController from '#root/core/say-controller.ts';
 import {
   type DisplayElement,
   type DisplayGenerator,
   type DisplayMeta,
+  type GeneratorContext,
 } from '#root/plugins/rdfa-info/types.ts';
 
 interface SpanSig {
@@ -30,8 +30,7 @@ export const predicateDisplay: DisplayGenerator<OutgoingTriple> = (triple) => {
 
 interface Sig<T> {
   Args: {
-    controller: SayController;
-    isTopLevel: boolean;
+    context: GeneratorContext;
     value: T;
     generator: DisplayGenerator<T>;
     wrapper?: ComponentLike<SpanSig>;
@@ -43,10 +42,7 @@ interface Sig<T> {
 
 export default class ConfigurableRdfaDisplay<T> extends Component<Sig<T>> {
   elementConfig = trackedFunction(this, () => {
-    return this.args.generator(this.args.value, {
-      controller: this.args.controller,
-      isTopLevel: this.args.isTopLevel,
-    });
+    return this.args.generator(this.args.value, this.args.context);
   });
   get elements(): DisplayElement[] {
     const conf = this.elementConfig.value;
