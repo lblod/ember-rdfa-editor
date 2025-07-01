@@ -97,12 +97,8 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     this.args.onToggle?.(this.expanded);
   };
 
-  get controller() {
-    return this.args.controller;
-  }
-
   get documentNode() {
-    return this.controller.mainEditorState.doc;
+    return this.args.controller.mainEditorState.doc;
   }
 
   getSubjectPropertyMap(): Record<string, OutgoingTriple[]> {
@@ -352,6 +348,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
                               @value={{prop}}
                               @generator={{predicateDisplay}}
                               @controller={{@controller}}
+                              @isTopLevel={{false}}
                             />
                           {{/if}}
                           <PropertyDetails

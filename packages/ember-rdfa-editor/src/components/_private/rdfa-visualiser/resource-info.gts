@@ -76,6 +76,7 @@ export interface ResourceInfoSig {
   Args: {
     controller: SayController;
     subject: string;
+    isTopLevel: boolean;
     // In theory this could be used for optimisation but currently it is not...
     node?: PNode;
     expanded?: boolean;
@@ -85,7 +86,7 @@ export interface ResourceInfoSig {
 }
 
 export default class ResourceInfo extends Component<ResourceInfoSig> {
-  @localCopy('args.localCopy') expanded = false;
+  @localCopy('args.expanded') expanded = false;
 
   get node(): PNode | undefined {
     return (
@@ -117,6 +118,7 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
         @value={{this.node}}
         @generator={{or @displayConfig.ResourceNode backupResourceDisplay}}
         @controller={{@controller}}
+        @isTopLevel={{@isTopLevel}}
         @wrapper={{component
           ResourceNodeWrapper
           expanded=this.expanded
@@ -139,12 +141,14 @@ export default class ResourceInfo extends Component<ResourceInfoSig> {
                 @value={{prop}}
                 @generator={{or @displayConfig.predicate predicateDisplay}}
                 @controller={{@controller}}
+                @isTopLevel={{false}}
                 @wrapper={{Item}}
               >
                 {{#if (eq prop.object.termType "ResourceNode")}}
                   <ResourceInfo
                     @controller={{@controller}}
                     @subject={{prop.object.value}}
+                    @isTopLevel={{false}}
                     @displayConfig={{@displayConfig}}
                   />
                 {{else if (get @displayConfig prop.object.termType)}}

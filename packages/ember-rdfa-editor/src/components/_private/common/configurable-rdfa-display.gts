@@ -31,6 +31,7 @@ export const predicateDisplay: DisplayGenerator<OutgoingTriple> = (triple) => {
 interface Sig<T> {
   Args: {
     controller: SayController;
+    isTopLevel: boolean;
     value: T;
     generator: DisplayGenerator<T>;
     wrapper?: ComponentLike<SpanSig>;
@@ -44,6 +45,7 @@ export default class ConfigurableRdfaDisplay<T> extends Component<Sig<T>> {
   elementConfig = trackedFunction(this, () => {
     return this.args.generator(this.args.value, {
       controller: this.args.controller,
+      isTopLevel: this.args.isTopLevel,
     });
   });
   get elements(): DisplayElement[] {

@@ -148,7 +148,7 @@ const RDF = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf');
 
 const humanReadableResourceName: DisplayGenerator<PNode> = (
   node,
-  { controller },
+  { controller, isTopLevel },
 ) => {
   const subject = node.attrs['subject'] as string;
   const type = optionMap(
@@ -168,6 +168,11 @@ const humanReadableResourceName: DisplayGenerator<PNode> = (
         { pill: 'Besluit' },
         titleNode?.value.textContent ?? title ?? subject,
       ];
+    } else if (
+      type === 'http://mu.semte.ch/vocabularies/ext/Snippet' &&
+      isTopLevel
+    ) {
+      return [{ hidden: true }];
     } else {
       return [{ strong: `${type.split(/[/#]/).at(-1)}:` }, subject];
     }
