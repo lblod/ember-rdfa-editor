@@ -84,6 +84,7 @@ export default class RdfaExplorer extends Component<Sig> {
             @wrapper={{Item}}
             @controller={{@controller}}
             @subject={{subject}}
+            @isTopLevel={{true}}
             @displayConfig={{@config.displayConfig}}
           />
         {{/each}}
