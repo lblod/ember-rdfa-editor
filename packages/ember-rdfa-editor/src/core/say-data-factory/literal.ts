@@ -37,7 +37,7 @@ export class SayLiteral implements RDF.Literal {
     }
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other &&
       other.termType === 'Literal' &&
@@ -45,7 +45,7 @@ export class SayLiteral implements RDF.Literal {
       other.language === this.language &&
       this.datatype.equals(other.datatype)
     );
-  };
+  }
 
   toJSON() {
     return {
