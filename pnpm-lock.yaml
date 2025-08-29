@@ -182,8 +182,8 @@ importers:
         specifier: 0.11.10
         version: 0.11.10
       prosemirror-commands:
-        specifier: ^1.5.2
-        version: 1.7.0
+        specifier: ^1.7.1
+        version: 1.7.1
       prosemirror-dropcursor:
         specifier: ^1.8.1
         version: 1.8.1
@@ -8088,8 +8088,8 @@ packages:
   property-expr@2.0.6:
     resolution: {integrity: sha512-SVtmxhRE/CGkn3eZY1T6pC8Nln6Fr/lu1mKSgRud0eC73whjGfoAogbn78LkD8aFL0zz3bAFerKSnOl7NlErBA==}
 
-  prosemirror-commands@1.7.0:
-    resolution: {integrity: sha512-6toodS4R/Aah5pdsrIwnTYPEjW70SlO5a66oo5Kk+CIrgJz3ukOoS+FYDGqvQlAX5PxoGWDX1oD++tn5X3pyRA==}
+  prosemirror-commands@1.7.1:
+    resolution: {integrity: sha512-rT7qZnQtx5c0/y/KlYaGvtG411S97UaL6gdp6RIZ23DLHanMYLyfGBV5DtSnZdthQql7W+lEVbpSfwtO8T+L2w==}
 
   prosemirror-dev-tools@4.2.0:
     resolution: {integrity: sha512-Hm1HRgK0Fxhb+Dy507R1uHgP3Ixuwbh7ZHD6NUZGEAl26BKW95L70nwdA1P4odPfxPsx0lBZm1KMpulsOJMwpQ==}
@@ -19971,7 +19971,7 @@ snapshots:
 
   property-expr@2.0.6: {}
 
-  prosemirror-commands@1.7.0:
+  prosemirror-commands@1.7.1:
     dependencies:
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
