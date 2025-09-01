@@ -138,7 +138,7 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
           !truthyAttribute(attributes, 'data-literal-node') &&
           // temporary workaround for parsing bugs, needs rdfa handling rework
           // to fully solve
-          !hackyCheckIfOldLiteralNode(node as unknown as Node, attributes, 3)
+          !hackyCheckIfOldLiteralNode(node as unknown as Node, attributes)
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
           markAsResourceNode(
