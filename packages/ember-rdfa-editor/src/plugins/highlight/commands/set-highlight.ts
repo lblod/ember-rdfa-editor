@@ -1,5 +1,5 @@
 import type { Command } from 'prosemirror-state';
-import { toggleMarkAddFirst } from '#root/commands/toggle-mark-add-first.ts';
+import { toggleMark } from 'prosemirror-commands';
 
 export function setHighlight(color: string): Command {
   return function (state, dispatch) {
@@ -11,10 +11,9 @@ export function setHighlight(color: string): Command {
         const mark = schema.marks['highlight'].create(markAttrs);
         tr.addStoredMark(mark);
       } else {
-        return toggleMarkAddFirst(schema.marks['highlight'], markAttrs)(
-          state,
-          dispatch,
-        );
+        return toggleMark(schema.marks['highlight'], markAttrs, {
+          removeWhenPresent: false,
+        })(state, dispatch);
       }
       dispatch(tr);
     }

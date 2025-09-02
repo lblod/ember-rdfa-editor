@@ -2,7 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { MarkType } from 'prosemirror-model';
 import type { ComponentLike } from '@glint/template';
-import { toggleMarkAddFirst } from '#root/commands/index.ts';
+import { toggleMark } from '#root/commands/index.ts';
 import SayController from '#root/core/say-controller.ts';
 import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
@@ -46,7 +46,9 @@ export default class ToolbarMark extends Component<Signature> {
     return (
       this.controller &&
       this.mark &&
-      this.controller.checkCommand(toggleMarkAddFirst(this.mark))
+      this.controller.checkCommand(
+        toggleMark(this.mark, null, { removeWhenPresent: false }),
+      )
     );
   }
 
@@ -54,7 +56,9 @@ export default class ToolbarMark extends Component<Signature> {
   toggle() {
     if (this.controller && this.mark) {
       this.controller.focus();
-      this.controller.doCommand(toggleMarkAddFirst(this.mark));
+      this.controller.doCommand(
+        toggleMark(this.mark, null, { removeWhenPresent: false }),
+      );
       this.args.onActivate?.();
     }
   }
