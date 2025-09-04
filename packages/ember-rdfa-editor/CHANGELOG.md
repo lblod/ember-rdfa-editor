@@ -1,5 +1,25 @@
 # @lblod/ember-rdfa-editor
 
+## 12.12.1
+
+### Patch Changes
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`a5bb5eb`](https://github.com/lblod/ember-rdfa-editor/commit/a5bb5eb4321482292aed4365fec57053c1da7f4e) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-inputrules` to version 1.5.0
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`eb306d8`](https://github.com/lblod/ember-rdfa-editor/commit/eb306d83913640dfa04e595ef4d0faa2802bdb21) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-schema-list` to version 1.5.1
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`5992dc4`](https://github.com/lblod/ember-rdfa-editor/commit/5992dc4bc2fcb281ecc9060d219ba3a2e02940c6) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-commands` to version 1.7.1
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`8dd20bf`](https://github.com/lblod/ember-rdfa-editor/commit/8dd20bfd7915f5fcc18b01eb80bffe12d1619f3c) Thanks [@elpoelma](https://github.com/elpoelma)! - Deprecate `toggleMarkAddFirst` command, use the the `toggleMark` command with the `removeWhenPresent` option instead.
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`8f5c620`](https://github.com/lblod/ember-rdfa-editor/commit/8f5c6206ce7394ef8522b1ca511e24f2a0cbc204) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-transform` dependency to version 1.10.4
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`d59e43b`](https://github.com/lblod/ember-rdfa-editor/commit/d59e43b6f30040340bbc41cd4b8e0af5beed70b3) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-view` dependency to version 1.40.1
+
+- [#1336](https://github.com/lblod/ember-rdfa-editor/pull/1336) [`61ca675`](https://github.com/lblod/ember-rdfa-editor/commit/61ca675af52b1c0a6c4caa76dda460b1b30014df) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `prosemirror-model` to version 1.25.3
+
+- [#1337](https://github.com/lblod/ember-rdfa-editor/pull/1337) [`f7533b0`](https://github.com/lblod/ember-rdfa-editor/commit/f7533b0555925143815be5134cf5a069d9fac202) Thanks [@abeforgit](https://github.com/abeforgit)! - fix parsing of resourcenodes with contentLiterals
+
 ## 12.12.0
 
 ### Minor Changes
