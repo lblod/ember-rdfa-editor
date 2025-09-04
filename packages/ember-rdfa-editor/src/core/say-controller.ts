@@ -111,7 +111,6 @@ export default class SayController {
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(view.state, view.dispatch, view);
   }
 
