@@ -36,3 +36,10 @@ export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
     rdfaNodeTypes.includes(attrs['rdfaNodeType'] as 'resource' | 'literal')
   );
 }
+
+export function isResourceAttrs(attrs: RdfaAttrs): attrs is RdfaResourceAttrs {
+  return attrs.rdfaNodeType === 'resource';
+}
+export function isLiteralAttrs(attrs: RdfaAttrs): attrs is RdfaLiteralAttrs {
+  return attrs.rdfaNodeType === 'literal';
+}
