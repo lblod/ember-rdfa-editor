@@ -43,3 +43,10 @@ export function isResourceAttrs(attrs: RdfaAttrs): attrs is RdfaResourceAttrs {
 export function isLiteralAttrs(attrs: RdfaAttrs): attrs is RdfaLiteralAttrs {
   return attrs.rdfaNodeType === 'literal';
 }
+
+export type ModelMigration = {
+  /** A modified contentElement function to allow for nested structures to be modified **/
+  contentElement?: (element: HTMLElement) => HTMLElement;
+  /** A modified getAttrs that returns attrs matching the new model **/
+  getAttrs?: (element: HTMLElement) => RdfaAttrs;
+};

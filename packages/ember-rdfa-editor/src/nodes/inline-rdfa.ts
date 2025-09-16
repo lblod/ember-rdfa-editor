@@ -13,7 +13,7 @@ import {
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa.ts';
 import type { ComponentLike } from '@glint/template';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import type { RdfaAttrs } from '#root/core/rdfa-types.js';
+import type { ModelMigration, RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 type Options = {
   rdfaAware?: boolean;
@@ -21,14 +21,7 @@ type Options = {
    * Migrations to apply to nodes parsed as inline-rdfa, to modify the data model.
    * @returns false to use the default parsing or an object to define overrides
    **/
-  modelMigrations?: (attrs: RdfaAttrs) =>
-    | false
-    | {
-        /** A modified contentElement function to allow for nested structures to be modified **/
-        contentElement?: (element: HTMLElement) => HTMLElement;
-        /** A modified getAttrs that returns attrs matching the new model **/
-        getAttrs?: (element: HTMLElement) => RdfaAttrs;
-      };
+  modelMigrations?: (attrs: RdfaAttrs) => false | ModelMigration;
 };
 
 const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
