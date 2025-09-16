@@ -13,7 +13,10 @@ import {
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa.ts';
 import type { ComponentLike } from '@glint/template';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import type { ModelMigration, RdfaAttrs } from '#root/core/rdfa-types.ts';
+import type {
+  ModelMigrationGenerator,
+  RdfaAttrs,
+} from '#root/core/rdfa-types.ts';
 
 type Options = {
   rdfaAware?: boolean;
@@ -21,12 +24,12 @@ type Options = {
    * Migrations to apply to nodes parsed as inline-rdfa, to modify the data model.
    * @returns false to use the default parsing or an object to define overrides
    **/
-  modelMigrations?: (attrs: RdfaAttrs) => false | ModelMigration;
+  modelMigrations?: ModelMigrationGenerator[];
 };
 
 const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
   rdfaAware = false,
-  modelMigrations,
+  modelMigrations = [],
 } = {}) => {
   return {
     name: 'inline-rdfa',
@@ -67,22 +70,25 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
           }
           const attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
-            const migrations =
-              modelMigrations && modelMigrations(attrs as unknown as RdfaAttrs);
-            if (migrations && migrations.getAttrs) {
-              return migrations.getAttrs(element);
+            const migration = modelMigrations.find((migration) =>
+              migration(attrs as unknown as RdfaAttrs),
+            )?.(attrs as unknown as RdfaAttrs);
+            if (migration && migration.getAttrs) {
+              return migration.getAttrs(element);
             }
             return attrs;
           }
           return false;
         },
         contentElement: (element) => {
-          if (rdfaAware && modelMigrations) {
+          if (rdfaAware && modelMigrations.length > 0) {
             const attrs = getRdfaAttrs(element, { rdfaAware });
             if (attrs) {
-              const migrations = modelMigrations(attrs);
-              if (migrations && migrations.contentElement) {
-                return migrations.contentElement(element);
+              const migration = modelMigrations.find((migration) =>
+                migration(attrs as unknown as RdfaAttrs),
+              )?.(attrs as unknown as RdfaAttrs);
+              if (migration && migration.contentElement) {
+                return migration.contentElement(element);
               }
             }
           }

@@ -50,3 +50,6 @@ export type ModelMigration = {
   /** A modified getAttrs that returns attrs matching the new model **/
   getAttrs?: (element: HTMLElement) => RdfaAttrs;
 };
+export type ModelMigrationGenerator = (
+  attrs: RdfaAttrs,
+) => false | ModelMigration;
