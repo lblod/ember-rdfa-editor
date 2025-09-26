@@ -4,8 +4,9 @@
 /tests/dummy/app/config/sample-data.*
 
 # compiled output
-/dist/
-/tmp/
+/**/dist/
+/**/tmp/
+/**/declarations/
 
 # dependencies
 /bower_components/
