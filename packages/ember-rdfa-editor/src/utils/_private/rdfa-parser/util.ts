@@ -20,15 +20,14 @@ import type {
   ModelTerm,
 } from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
 
-export class ModelDataFactory<N> extends DataFactory {
+export class ModelDataFactory<N> extends DataFactory<ModelQuad<N>> {
   quad(
     subject: ModelQuadSubject<N>,
     predicate: ModelQuadPredicate<N>,
     object: ModelQuadObject<N>,
     graph: Quad_Graph,
   ): ModelQuad<N> {
-    const quad = super.quad(subject, predicate, object, graph);
-    return { ...quad, subject, predicate, object, graph };
+    return super.quad(subject, predicate, object, graph);
   }
 
   namedNode<N, I extends string = string>(

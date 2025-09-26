@@ -33,14 +33,14 @@ export class ContentLiteralTerm {
     }
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other &&
       other.termType === 'ContentLiteral' &&
       other.language === this.language &&
       this.datatype.equals(other.datatype)
     );
-  };
+  }
 
   toJSON() {
     return {
