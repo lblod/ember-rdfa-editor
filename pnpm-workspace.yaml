@@ -45,7 +45,7 @@ catalog:
   '@lblod/marawa': 0.8.0-beta.6
   '@manypkg/get-packages': ^2.2.2
   '@modyfi/vite-plugin-yaml': ^1.1.1
-  '@playwright/test': ^1.55.1
+  '@playwright/test': 1.50.0
   '@prosopo/vite-plugin-watch-workspace': ^2.6.7
   '@rdfjs/to-ntriples': ^3.0.1
   '@rdfjs/types': ^1.1.2
