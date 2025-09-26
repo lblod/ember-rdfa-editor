@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 12.13.0
+
+### Minor Changes
+
+- [#1338](https://github.com/lblod/ember-rdfa-editor/pull/1338) [`18d97bc`](https://github.com/lblod/ember-rdfa-editor/commit/18d97bcea68a87782ff5457c7f7396ab77973430) Thanks [@piemonkey](https://github.com/piemonkey)! - Add preliminary support for data model migrations when parsing documents
+
 ## 12.12.1
 
 ### Patch Changes
