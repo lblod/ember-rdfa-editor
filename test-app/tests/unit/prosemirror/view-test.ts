@@ -58,7 +58,7 @@ module('ProseMirror | view', function () {
     </div>
     `;
     view.setHtmlContent(htmlToInsert);
-    assert.strictEqual(view.htmlContent, expectedHtml);
+    assert.htmlStringEqual(view.htmlContent, expectedHtml);
   });
   test('setHtmlContent should be able to replace a specific range when specified', function (assert) {
     const schema = SAMPLE_SCHEMA;
@@ -119,7 +119,7 @@ module('ProseMirror | view', function () {
     view.setHtmlContent('<strong>um dolor s</strong><p>new paragraph </p>', {
       range: { from: 10, to: 20 },
     });
-    assert.strictEqual(view.htmlContent, expectedHtml);
+    assert.htmlStringEqual(view.htmlContent, expectedHtml);
   });
 
   test('setHtmlContent will leave not clean the HTML if asked not to', function (assert) {
@@ -157,6 +157,6 @@ module('ProseMirror | view', function () {
     </div>
     `;
     view.setHtmlContent(htmlToInsert, { doNotClean: true });
-    assert.strictEqual(view.htmlContent, expectedHtml);
+    assert.htmlStringEqual(view.htmlContent, expectedHtml);
   });
 });
