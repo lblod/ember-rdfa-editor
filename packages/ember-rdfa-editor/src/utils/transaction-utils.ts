@@ -139,7 +139,9 @@ export function transactionCombinator<R>(
       appliedTransactions.push(...transactions);
 
       results.push(result);
-      for (const step of transaction.steps) {
+      for (const step of transactions.flatMap(
+        (transaction) => transaction.steps,
+      )) {
         tr.step(step);
       }
     }
