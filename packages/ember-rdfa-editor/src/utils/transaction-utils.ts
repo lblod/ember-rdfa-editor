@@ -144,6 +144,7 @@ export function transactionCombinator<R>(
       )) {
         tr.step(step);
       }
+      tr.setSelection(state.selection.getBookmark().resolve(tr.doc));
     }
     return {
       transaction: tr,
