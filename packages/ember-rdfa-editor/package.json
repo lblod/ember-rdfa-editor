@@ -312,6 +312,7 @@
     "eslint-plugin-ember": "^12.3.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^17.15.1",
+    "execa": "^9.6.0",
     "globals": "^15.14.0",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
@@ -325,6 +326,7 @@
     "tracked-built-ins": "^3.4.0",
     "typescript": "~5.7.0",
     "typescript-eslint": "^7.18.0",
+    "walk-sync": "^4.0.1",
     "webpack": "^5.97.1"
   },
   "peerDependencies": {
