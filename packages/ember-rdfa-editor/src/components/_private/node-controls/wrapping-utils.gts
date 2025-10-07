@@ -235,6 +235,7 @@ class Modal extends Component<ModalArgs> {
                 </AuLabel>
                 <AuRadioGroup
                   id={{id}}
+                  {{!-- @glint-expect-error fix `AuRadioGroup` signature --}}
                   required={{true}}
                   @name="isNew"
                   @selected={{this.generateNewUri}}
