@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 
 export default function rollupDeclarationsPlugin(
   declarationsDir,
-  command = 'glint --declaration'
+  command = 'glint --declaration',
 ) {
   let glintPromise;
 
@@ -68,7 +68,7 @@ async function fixDeclarationsInMatchingFiles(dir) {
       const content = await readFile(file, { encoding: 'utf8' });
 
       await writeFile(file, fixDeclarations(content));
-    })
+    }),
   );
 }
 

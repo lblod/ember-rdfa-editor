@@ -64,7 +64,7 @@ export default class Collapsible extends Component<CollapsibleSignature> {
               <AuButton
                 @skin="link"
                 aria-hidden="true"
-                {{!-- @glint-expect-error we should check if we can pass this attribute --}}
+                {{! @glint-expect-error we should check if we can pass this attribute }}
                 focusable="false"
                 aria-expanded="{{if this.expanded 'true' 'false'}}"
               >

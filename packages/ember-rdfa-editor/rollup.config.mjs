@@ -189,7 +189,10 @@ export default [
       addon.gjs(),
 
       // Emit .d.ts declaration files
-      rollupDeclarationsPlugin('declarations', "pnpm ember-tsc --build --declaration --emitDeclarationOnly"),
+      rollupDeclarationsPlugin(
+        'declarations',
+        'pnpm ember-tsc --build --declaration --emitDeclarationOnly',
+      ),
 
       // addons are allowed to contain imports of .css files, which we want rollup
       // to leave alone and keep in the published output.
