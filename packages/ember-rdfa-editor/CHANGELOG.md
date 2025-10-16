@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 12.14.0
+
+### Minor Changes
+
+- [#1341](https://github.com/lblod/ember-rdfa-editor/pull/1341) [`85f3652`](https://github.com/lblod/ember-rdfa-editor/commit/85f3652dbcce2f4861f0c2384466503bc965c899) Thanks [@elpoelma](https://github.com/elpoelma)! - `transactionCombinator`: apply manual selection changes performed in the transaction-monads
+
+- [#1341](https://github.com/lblod/ember-rdfa-editor/pull/1341) [`85f3652`](https://github.com/lblod/ember-rdfa-editor/commit/85f3652dbcce2f4861f0c2384466503bc965c899) Thanks [@elpoelma](https://github.com/elpoelma)! - `transactionCombinator`: apply all steps of the resulting transactions coming from `State.apply`
+
+## 12.13.0
+
+### Minor Changes
+
+- [#1338](https://github.com/lblod/ember-rdfa-editor/pull/1338) [`18d97bc`](https://github.com/lblod/ember-rdfa-editor/commit/18d97bcea68a87782ff5457c7f7396ab77973430) Thanks [@piemonkey](https://github.com/piemonkey)! - Add preliminary support for data model migrations when parsing documents
+
 ## 12.12.1
 
 ### Patch Changes
