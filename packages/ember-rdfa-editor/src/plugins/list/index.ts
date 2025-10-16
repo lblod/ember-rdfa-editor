@@ -92,6 +92,7 @@ function updateListItems(
     if (child.type.name === 'list_item') {
       const newPath = [...path, { pos: counter, hierarchical, style }];
       tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
+      tr.setMeta('sayIsOnChanged', true);
       updateListItems(
         child,
         newPath,
