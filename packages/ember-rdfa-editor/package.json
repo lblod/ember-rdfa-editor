@@ -213,7 +213,7 @@
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "lint:types": "glint",
+    "lint:types": "ember-tsc --noEmit",
     "prepack": "pnpm build",
     "start": "rollup --config --watch",
     "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
@@ -284,10 +284,8 @@
     "@eslint/js": "^9.17.0",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
-    "@glint/core": "^1.5.2",
-    "@glint/environment-ember-loose": "^1.5.2",
-    "@glint/environment-ember-template-imports": "1.5.2",
-    "@glint/template": "^1.5.2",
+    "@glint/ember-tsc": "^1.0.3",
+    "@glint/template": "^1.6.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-inject": "^5.0.5",
@@ -314,6 +312,7 @@
     "eslint-plugin-ember": "^12.3.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^17.15.1",
+    "execa": "^9.6.0",
     "globals": "^15.14.0",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
@@ -327,6 +326,7 @@
     "tracked-built-ins": "^3.4.0",
     "typescript": "~5.7.0",
     "typescript-eslint": "^7.18.0",
+    "walk-sync": "^4.0.1",
     "webpack": "^5.97.1"
   },
   "peerDependencies": {

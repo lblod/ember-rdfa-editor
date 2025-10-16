@@ -52,3 +52,6 @@ testem.log
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# typescript
+tsconfig.tsbuildinfo
