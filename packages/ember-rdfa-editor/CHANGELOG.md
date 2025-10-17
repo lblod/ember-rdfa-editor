@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 12.15.1
+
+### Patch Changes
+
+- [#1345](https://github.com/lblod/ember-rdfa-editor/pull/1345) [`c051aad`](https://github.com/lblod/ember-rdfa-editor/commit/c051aad98a86fa12c495a4ed8b5ec8cf9420f326) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix ListTracking and onChanged plugins were looping
+
 ## 12.15.0
 
 ### Minor Changes
