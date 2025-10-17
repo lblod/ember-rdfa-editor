@@ -4,6 +4,7 @@ import { optionMapOr, unwrap } from '#root/utils/_private/option.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import { tagName } from '#root/utils/_private/dom-helpers.ts';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import { onChanged } from './on-changed.ts';
 
 export type OrderListStyle =
   | 'decimal'
@@ -41,6 +42,7 @@ export const orderedListWithConfig: (options?: Config) => SayNodeSpec = ({
     content: 'list_item+',
     group: 'block list',
     classNames: ['say-ordered-list'],
+    onChanged: onChanged,
     parseDOM: [
       {
         tag: 'ol',
@@ -101,6 +103,7 @@ export const bulletListWithConfig: (options?: Config) => SayNodeSpec = () => {
       hierarchical: { default: false },
     },
     classNames: ['say-bullet-list'],
+    onChanged: onChanged,
     parseDOM: [
       {
         tag: 'ul',
@@ -144,6 +147,7 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
     defining: true,
     attrs: enableHierarchicalList ? { listPath: { default: [] } } : undefined,
     classNames: ['say-list-item'],
+    onChanged: onChanged,
     parseDOM: [
       {
         tag: 'li',
