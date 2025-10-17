@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 12.15.0
+
+### Minor Changes
+
+- [#1340](https://github.com/lblod/ember-rdfa-editor/pull/1340) [`7e6de75`](https://github.com/lblod/ember-rdfa-editor/commit/7e6de75995d22a8ba62472de0fd9f9b3fdf617c1) Thanks [@abeforgit](https://github.com/abeforgit)! - Add new semantic html string comparison assertion
+
+- [#1343](https://github.com/lblod/ember-rdfa-editor/pull/1343) [`10127b5`](https://github.com/lblod/ember-rdfa-editor/commit/10127b51e87b8dfa54d28a80b77140906bef19ad) Thanks [@elpoelma](https://github.com/elpoelma)! - Add support for model migrations to `block_rdfa` node
+
+- [#1340](https://github.com/lblod/ember-rdfa-editor/pull/1340) [`7e6de75`](https://github.com/lblod/ember-rdfa-editor/commit/7e6de75995d22a8ba62472de0fd9f9b3fdf617c1) Thanks [@abeforgit](https://github.com/abeforgit)! - Move all dependencies to pnpm catalogs
+
+### Patch Changes
+
+- [#1340](https://github.com/lblod/ember-rdfa-editor/pull/1340) [`7e6de75`](https://github.com/lblod/ember-rdfa-editor/commit/7e6de75995d22a8ba62472de0fd9f9b3fdf617c1) Thanks [@abeforgit](https://github.com/abeforgit)! - bump dependencies
+
 ## 12.14.0
 
 ### Minor Changes
@@ -101,7 +115,6 @@
 - [#1317](https://github.com/lblod/ember-rdfa-editor/pull/1317) [`b24057e`](https://github.com/lblod/ember-rdfa-editor/commit/b24057e7d3d08afa73a060ed2c8c52e2c44c47b2) Thanks [@elpoelma](https://github.com/elpoelma)! - relationship-editor: add utility `combineConfigs` function
 
 - [#1310](https://github.com/lblod/ember-rdfa-editor/pull/1310) [`7886d5d`](https://github.com/lblod/ember-rdfa-editor/commit/7886d5d3c35e7c65fadc8c958c69244739ac804b) Thanks [@elpoelma](https://github.com/elpoelma)! - Updates to the `OptionGenerator` interfaces
-
   - The `subjectOptionGenerator`, `predicateOptionGenerator` and `objectOptionGenerator` have been collected into a single `optionGeneratorConfig` argument. This makes it easier to provide sample/default configs as a single variable/export.
   - `PredicateOption`: if the `direction` is 'property', an optional `allowFreeTextTarget` may be passed. This allows end-users to type in a free-text literal as object when that specific predicate option is selected.
   - the `PredicateOptionGenerator` now also optionally receives a `Direction` ('property'/'backlink') as filter input.
@@ -114,7 +127,6 @@
 - [#1321](https://github.com/lblod/ember-rdfa-editor/pull/1321) [`f588378`](https://github.com/lblod/ember-rdfa-editor/commit/f5883786a460ae0f1ac95cfd5f6b3d956afb2cba) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix bug with drag-and-drop for ember-nodes such as snippets
 
 - [#1310](https://github.com/lblod/ember-rdfa-editor/pull/1310) [`7886d5d`](https://github.com/lblod/ember-rdfa-editor/commit/7886d5d3c35e7c65fadc8c958c69244739ac804b) Thanks [@elpoelma](https://github.com/elpoelma)! - Seperate rdfa-tools into seperate components:
-
   - `attribute-editor`
   - `debug-info`
   - `doc-imported-resource-editor`
@@ -134,7 +146,6 @@
 ### Minor Changes
 
 - [#1320](https://github.com/lblod/ember-rdfa-editor/pull/1320) [`6b74bea`](https://github.com/lblod/ember-rdfa-editor/commit/6b74beafb484244bde27f17a2c45ac3eb036fcef) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of two new ember-node options:
-
   - `domClassNames`: classnames to apply to the nodeview which is created
   - `contentDomClassNames`: classnames to apply to the content node within the nodeview
 
@@ -301,19 +312,16 @@
 ### Minor Changes
 
 - [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`e627cfa`](https://github.com/lblod/ember-rdfa-editor/commit/e627cfadd10ad5b50d2d1363f31288f60921d38d) Thanks [@elpoelma](https://github.com/elpoelma)! - `collapsible` component: add option to manually control toggled state through arguments:
-
   - `expanded` (optional, default: `false`)
   - `onToggle` (optional)
 
   The `expandedInitally` argument has been marked as deprecated, and should be replaced by the `expanded` argument
 
 - [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`8fabad2`](https://github.com/lblod/ember-rdfa-editor/commit/8fabad240e7c4a4895f1b1a00141ebe2ff479f5a) Thanks [@elpoelma](https://github.com/elpoelma)! - `AttributeEditor` component, add arguments to control `expanded` state:
-
   - `onToggle` (optional)
   - `expanded` (optional, default: `true`)
 
 - [#1256](https://github.com/lblod/ember-rdfa-editor/pull/1256) [`5de517b`](https://github.com/lblod/ember-rdfa-editor/commit/5de517b6255dc9bae7499e649944feb25b29b609) Thanks [@elpoelma](https://github.com/elpoelma)! - `DebugInfo` component, add arguments to control `expanded` state:
-
   - `onToggle` (optional)
   - `expanded` (optional, default: `true`)
 
@@ -348,21 +356,18 @@
 - [#1241](https://github.com/lblod/ember-rdfa-editor/pull/1241) [`1517357`](https://github.com/lblod/ember-rdfa-editor/commit/151735798a51452e2318d2393a1385b87f354eda) Thanks [@elpoelma](https://github.com/elpoelma)! - **Adjustments to the `@editorOptions` argument of the `editor-container` component**
 
   The following (legacy) properties are no longer supported:
-
   - `@editorOptions.showRdfaHover`
   - `@editorOptions.showRdfa`
   - `@editorOptions.showRdfaHighlight`
   - `@editorOptions.editRdfa`
 
   The following `@editorOptions` properties have been added:
-
   - `@editorOptions.showSidebarLeft` (default: `true`)
   - `@editorOptions.showSidebarRight` (default: `true`)
 
   These options replace the `@hideSidebar` argument, which is no longer supported.
 
 - [#1241](https://github.com/lblod/ember-rdfa-editor/pull/1241) [`1517357`](https://github.com/lblod/ember-rdfa-editor/commit/151735798a51452e2318d2393a1385b87f354eda) Thanks [@elpoelma](https://github.com/elpoelma)! - **Removal of the following SASS stylesheets**
-
   - `_c-annotation.scss`
   - `_c-annotation-content-en.scss`
   - `_c-annotation-content-nl.scss`
@@ -499,12 +504,10 @@
 ### Minor Changes
 
 - [#1224](https://github.com/lblod/ember-rdfa-editor/pull/1224) [`e37b476`](https://github.com/lblod/ember-rdfa-editor/commit/e37b476a8683f8bd071760e907e7813dfbaad107) Thanks [@elpoelma](https://github.com/elpoelma)! - Simply gap-cursor styling:
-
   - Add small margins
   - Remove unnecessary `position: absolute` and `:after` css rules
 
 - [#1224](https://github.com/lblod/ember-rdfa-editor/pull/1224) [`2cd7ca5`](https://github.com/lblod/ember-rdfa-editor/commit/2cd7ca54ba0fd89662cc416272170328694fca2a) Thanks [@elpoelma](https://github.com/elpoelma)! - Rework `block_rdfa` UX/UI:
-
   - Introduction of `BlockRDFaView` nodeview
   - Addition of a descriptive `label` component to the `block_rdfa` view.
 
@@ -661,7 +664,6 @@
 ### Minor Changes
 
 - [#1195](https://github.com/lblod/ember-rdfa-editor/pull/1195) [`1b7a7fc`](https://github.com/lblod/ember-rdfa-editor/commit/1b7a7fca607c41cbbfb9477cde19c30d710be2e1) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4820: Preprocess RDFa on paste
-
   - Preprocess RDFa on paste
   - Expose `recreateUuidsOnPaste` plugin `key` to allow overriding the plugin
 
@@ -738,7 +740,6 @@
 - [#1148](https://github.com/lblod/ember-rdfa-editor/pull/1148) [`d310875`](https://github.com/lblod/ember-rdfa-editor/commit/d310875b4d17465e3ff79acafc92420c4fb95c43) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option to provide `EditorRange` object to `setHtmlContent` method in order to only replace a part of the document
 
 - [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`4d0e54c`](https://github.com/lblod/ember-rdfa-editor/commit/4d0e54ca52268a6eac653f006ee9300ce97e2f56) Thanks [@elpoelma](https://github.com/elpoelma)! - Clean-up debug-tools component:
-
   - Usage of new `codemirror` modifier
   - Removal of `xml` support
 
@@ -752,7 +753,6 @@
 - [#1170](https://github.com/lblod/ember-rdfa-editor/pull/1170) [`16e083e`](https://github.com/lblod/ember-rdfa-editor/commit/16e083eb0a401c47d30581e5d701db3206b82902) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4707: Vertical alignment in table cells
 
 - [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e15912`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
-
   - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
   - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
     - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
@@ -764,7 +764,6 @@
   For more information, check out [A new approach to handle RDFa in documents](https://github.com/lblod/ember-rdfa-editor/blob/9c32a9dea0da13df4092c39d9a092ba0803a3f42/README.md#experimental-a-new-approach-to-handle-rdfa-in-documents)
 
   #### Deprecations
-
   - Passing the `keyMapOptions` argument to the `RdfaEditor` is deprecated. The behaviour of `selectBlockRdfaNode` is included by default. This feature will be removed in the next major release.
   - The `rdfaAttrs` constant is deprecated, use the `rdfaAttrSpec` function instead
   - `inline_rdfa` is deprecated, use `inlineRdfaWithConfig` instead
@@ -825,7 +824,6 @@
 - [#1148](https://github.com/lblod/ember-rdfa-editor/pull/1148) [`d310875`](https://github.com/lblod/ember-rdfa-editor/commit/d310875b4d17465e3ff79acafc92420c4fb95c43) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option to provide `EditorRange` object to `setHtmlContent` method in order to only replace a part of the document
 
 - [#1151](https://github.com/lblod/ember-rdfa-editor/pull/1151) [`4d0e54c`](https://github.com/lblod/ember-rdfa-editor/commit/4d0e54ca52268a6eac653f006ee9300ce97e2f56) Thanks [@elpoelma](https://github.com/elpoelma)! - Clean-up debug-tools component:
-
   - Usage of new `codemirror` modifier
   - Removal of `xml` support
 
@@ -839,7 +837,6 @@
 - [#1170](https://github.com/lblod/ember-rdfa-editor/pull/1170) [`16e083e`](https://github.com/lblod/ember-rdfa-editor/commit/16e083eb0a401c47d30581e5d701db3206b82902) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4707: Vertical alignment in table cells
 
 - [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e15912`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
-
   - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
   - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
     - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
@@ -851,7 +848,6 @@
   For more information, check out [A new approach to handle RDFa in documents](https://github.com/lblod/ember-rdfa-editor/blob/9c32a9dea0da13df4092c39d9a092ba0803a3f42/README.md#experimental-a-new-approach-to-handle-rdfa-in-documents)
 
   #### Deprecations
-
   - Passing the `keyMapOptions` argument to the `RdfaEditor` is deprecated. The behaviour of `selectBlockRdfaNode` is included by default. This feature will be removed in the next major release.
   - The `rdfaAttrs` constant is deprecated, use the `rdfaAttrSpec` function instead
   - `inline_rdfa` is deprecated, use `inlineRdfaWithConfig` instead
@@ -966,7 +962,6 @@
 ### Major Changes
 
 - [#1051](https://github.com/lblod/ember-rdfa-editor/pull/1051) [`0e159129`](https://github.com/lblod/ember-rdfa-editor/commit/0e15912922f5bdcd6f9a46a1fc396626d38f0402) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option for the document (top) node to be parsed using `parseDOM` parse-rules. When setting the content of a document, using either `setHTMLContent` or `initialize`, three options are possible:
-
   - The `topNode` (often `doc`) has no parse-rules: a default node of type `topNode` is created (without any attributes). The html provided to `setHTMLContent` or `intialize` is parsed as its content.
   - The `topNode` has 1 or more parse-rules: the parser searches the provided html for a node that matches a parse-rule of the `topNode`.
     - If a node is found: the node is parsed as the `topNode` and its content is parsed as the `topNode` content
@@ -1213,7 +1208,6 @@
   ```
 
 - [#1064](https://github.com/lblod/ember-rdfa-editor/pull/1064) [`35c4ca44`](https://github.com/lblod/ember-rdfa-editor/commit/35c4ca44d0d71a98c31ecebd9019174457970e87) Thanks [@elpoelma](https://github.com/elpoelma)! - Add shortcuts for setting the alignment of paragraphs/headers:
-
   - `Ctrl`+`Shift`+`L`: left align
   - `Ctrl`+`Shift`+`E`: center align
   - `Ctrl`+`Shift`+`R`: right align
@@ -1256,7 +1250,6 @@
 ### Patch Changes
 
 - [#1053](https://github.com/lblod/ember-rdfa-editor/pull/1053) [`c2e4e2a1`](https://github.com/lblod/ember-rdfa-editor/commit/c2e4e2a1e13c35ff99646f01eab0e236c68a4867) Thanks [@dkozickis](https://github.com/dkozickis)! - GN-4621: Add styling for selected table cell
-
   - `.selectedCell` to style the cell that is selected. `.selectedCell` comes from the `prosemirror-tables` plugin.
   - `::selection` to hide the selection on the text inside the cell.
 
@@ -1281,7 +1274,6 @@
 - [#1044](https://github.com/lblod/ember-rdfa-editor/pull/1044) [`0a2472c1`](https://github.com/lblod/ember-rdfa-editor/commit/0a2472c1e459091f10cb5cffdbe44e7b14bd2df3) Thanks [@elpoelma](https://github.com/elpoelma)! - Add shift+enter handler to `embeddedEditorBaseKeymap`
 
 - [#1027](https://github.com/lblod/ember-rdfa-editor/pull/1027) [`8d310cf1`](https://github.com/lblod/ember-rdfa-editor/commit/8d310cf1a3421935a858ad8a9483c4f83c4d7f66) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a custom gap-cursor plugin containing several fixes compared to the original version:
-
   - The click handler has been replaced by a mousedown handler in order to intercept a click event earlier
   - The types of the GapCursor class have been fixed
   - Addition of a fix when resolving the position returned by view.posAtCoords.
@@ -1349,7 +1341,6 @@
 ### Minor Changes
 
 - [#1027](https://github.com/lblod/ember-rdfa-editor/pull/1027) [`8d310cf1`](https://github.com/lblod/ember-rdfa-editor/commit/8d310cf1a3421935a858ad8a9483c4f83c4d7f66) Thanks [@elpoelma](https://github.com/elpoelma)! - Introduction of a custom gap-cursor plugin containing several fixes compared to the original version:
-
   - The click handler has been replaced by a mousedown handler in order to intercept a click event earlier
   - The types of the GapCursor class have been fixed
   - Addition of a fix when resolving the position returned by view.posAtCoords.
@@ -1461,7 +1452,6 @@
 - [#955](https://github.com/lblod/ember-rdfa-editor/pull/955) [`0f6da258`](https://github.com/lblod/ember-rdfa-editor/commit/0f6da25859f9d34be8ebce28b998f1bda192d9ad) Thanks [@elpoelma](https://github.com/elpoelma)! - GN-4479: allow for option to pass nodeviews object to embedded-editor component
 
 - [#962](https://github.com/lblod/ember-rdfa-editor/pull/962) [`49e52fb4`](https://github.com/lblod/ember-rdfa-editor/commit/49e52fb4c7cb8696898372e0d31df88036b56f2e) Thanks [@x-m-el](https://github.com/x-m-el)! - - Fix `leave-on-enter-key` modifier to always use the correct position to leave a node from.
-
   - Add `leave-with-arrow-keys` modifier, which can be used to leave an node's element with the left and right arrow key.
   - Add `select-node-on-click` modifier, which can be used to select a given node when clicking the bound element.
 
