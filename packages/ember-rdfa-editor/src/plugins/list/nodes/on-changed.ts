@@ -2,10 +2,7 @@ import { PNode } from '#root/prosemirror-aliases.ts';
 import { Transaction, Selection } from 'prosemirror-state';
 import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
 import type { ListPathEntry } from '../nodes/list-nodes.ts';
-import {
-  IS_ON_CHANGED,
-  type NodeSpecOnChanged,
-} from '../../on-changed/plugin.ts';
+import type { NodeSpecOnChanged } from '../../on-changed/plugin.ts';
 
 export const onChanged: NodeSpecOnChanged = {
   doOnce: true,
@@ -79,10 +76,9 @@ function updateListItems(
   node.content.forEach((child: PNode, offset: number) => {
     if (child.type.name === 'list_item') {
       const newPath = [...path, { pos: counter, hierarchical, style }];
-      tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
-      // We set the meta of the on changed plugin so it gets ignored there and doesn't enter an infinite loop
-      // TODO: migrate this whole plugin to an onChangged attribute
-      tr.setMeta(IS_ON_CHANGED, true);
+      if (!areEqualPaths(newPath, child.attrs['listPath'] as ListPathEntry[])) {
+        tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
+      }
       updateListItems(
         child,
         newPath,
@@ -115,4 +111,19 @@ function updateListItems(
       );
     }
   });
+}
+
+function areEqualPaths(path1: ListPathEntry[], path2: ListPathEntry[]) {
+  if (path1.length !== path2.length) return false;
+  for (let i = 0; i < path1.length; i++) {
+    const entry1 = path1[i];
+    const entry2 = path2[i];
+    if (
+      entry1.pos !== entry2.pos ||
+      entry1.hierarchical !== entry2.hierarchical ||
+      entry1.style !== entry2.style
+    )
+      return false;
+  }
+  return true;
 }
