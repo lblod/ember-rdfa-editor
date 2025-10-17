@@ -93,6 +93,8 @@ function updateListItems(
     if (child.type.name === 'list_item') {
       const newPath = [...path, { pos: counter, hierarchical, style }];
       tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
+      // We set the meta of the on changed plugin so it gets ignored there and doesn't enter an infinite loop
+      // TODO: migrate this whole plugin to an onChangged attribute
       tr.setMeta(IS_ON_CHANGED, true);
       updateListItems(
         child,
