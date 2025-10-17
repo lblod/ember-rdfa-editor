@@ -11,12 +11,13 @@ steps:
       - cat .npmrc
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
       - npm i -g corepack@0.31
-      - pnpm config --location project set '//registry.npmjs.org/:_authToken' $NPM_ACCESS_TOKEN
+      # pnpm doesn't handle this setting well, so we do it with npm
+      - npm config set --location project '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm publish packages/ember-rdfa-editor --access public --tag dev --no-git-checks
     environment:
-      NPM_ACCESS_TOKEN:
+      NPM_TOKEN:
         from_secret: npm_access_token
 when:
   event: tag
