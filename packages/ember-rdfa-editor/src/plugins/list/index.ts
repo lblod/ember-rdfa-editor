@@ -2,6 +2,7 @@ import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
 import { EditorState, Transaction, Selection } from 'prosemirror-state';
 import { changedDescendants } from '#root/utils/_private/changed-descendants.ts';
 import type { ListPathEntry } from './nodes/list-nodes.ts';
+import { IS_ON_CHANGED } from '../on-changed/plugin.ts';
 
 export { toggleList } from './commands/toggle-list.ts';
 export { liftOutOfNestedLists } from './commands/lift-out-of-nested-lists.ts';
@@ -92,6 +93,9 @@ function updateListItems(
     if (child.type.name === 'list_item') {
       const newPath = [...path, { pos: counter, hierarchical, style }];
       tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
+      // We set the meta of the on changed plugin so it gets ignored there and doesn't enter an infinite loop
+      // TODO: migrate this whole plugin to an onChangged attribute
+      tr.setMeta(IS_ON_CHANGED, true);
       updateListItems(
         child,
         newPath,
