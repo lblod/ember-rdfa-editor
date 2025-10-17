@@ -4,7 +4,6 @@ steps:
     commands:
       - echo "inject-workspace-packages=true" >> .npmrc
       - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
-      - cat .npmrc
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
       - npm i -g corepack@0.31
       - pnpm i --no-frozen-lockfile
