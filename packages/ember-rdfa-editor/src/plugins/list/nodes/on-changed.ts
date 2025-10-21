@@ -34,7 +34,6 @@ export const onChanged: NodeSpecOnChanged = {
           for (const { node, pos } of changedLists) {
             calculateListTree(node, pos, tr);
           }
-          console.log(tr);
           // A bit of a hack: we want to make sure to preserve the old selection, this allows us to easily copy it
           const newSelection = Selection.fromJSON(
             tr.doc,
