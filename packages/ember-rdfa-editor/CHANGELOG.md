@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.0.0
+
+### Major Changes
+
+- [#1346](https://github.com/lblod/ember-rdfa-editor/pull/1346) [`51a2729`](https://github.com/lblod/ember-rdfa-editor/commit/51a27291cb902bbe8597d0b2d7d020672eaa9694) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Remove list tracking plugin and add a onChange property on list nodes
+
 ## 12.15.1
 
 ### Patch Changes
