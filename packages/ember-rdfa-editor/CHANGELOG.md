@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.1.0
+
+### Minor Changes
+
+- [#1348](https://github.com/lblod/ember-rdfa-editor/pull/1348) [`a09a6f4`](https://github.com/lblod/ember-rdfa-editor/commit/a09a6f41fd4dbce52f09878094423f1781efba11) Thanks [@piemonkey](https://github.com/piemonkey)! - Only apply RDFa block and inline styling when within the editor, to avoid extra borders in previewed content
+
 ## 13.0.0
 
 ### Major Changes
