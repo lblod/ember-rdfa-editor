@@ -158,7 +158,6 @@ class EmberNodeView implements NodeView {
     this.config = emberNodeConfig;
     const { name, component: componentClass, atom, inline } = emberNodeConfig;
 
-    // @ts-expect-error not typesafe yet
     this.template = hbs`<this.component
                           @getPos={{this.getPos}}
                           @node={{this.node}}

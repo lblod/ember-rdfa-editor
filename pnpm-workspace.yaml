@@ -28,7 +28,7 @@ catalog:
   '@embroider/compat': ^4.1.4
   '@embroider/config-meta-loader': ^1.0.0
   '@embroider/core': ^4.2.1
-  '@embroider/macros': ^1.18.2
+  '@embroider/macros': ^1.19.5
   '@embroider/test-setup': ^4.0.0
   '@embroider/vite': ^1.2.1
   '@eslint/js': ^9.36.0
@@ -37,10 +37,8 @@ catalog:
   '@glimmer/runtime': ^0.94.11
   '@glimmer/tracking': ^1.1.2
   '@glimmer/validator': ^0.94.8
-  '@glint/core': ^1.5.2
-  '@glint/environment-ember-loose': ^1.5.2
-  '@glint/environment-ember-template-imports': ^1.5.2
-  '@glint/template': ^1.5.2
+  '@glint/ember-tsc': '^1.0.8'
+  '@glint/template': '^1.7.3'
   '@graphy/memory.dataset.fast': 4.3.3
   '@lblod/marawa': 0.8.0-beta.6
   '@manypkg/get-packages': ^2.2.2
@@ -171,5 +169,6 @@ catalog:
   unified: ^11.0.5
   uuid: ^9.0.1
   vite: ^6.3.6
+  'walk-sync': '^4.0.1'
   webpack: ^5.101.3
   yup: ^1.7.1
