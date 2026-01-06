@@ -302,7 +302,7 @@
     "autoprefixer": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "concurrently": "catalog:",
-    "ember-auto-import": "^2.10.1",
+    "ember-auto-import": "^2.12.0",
     "ember-basic-dropdown": "catalog:",
     "ember-concurrency": "catalog:",
     "ember-intl": "catalog:",
