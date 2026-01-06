@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@appuniversum/ember-appuniversum':
-      specifier: ^3.13.0
-      version: 3.13.0
+      specifier: ^3.15.0
+      version: 3.15.0
     '@babel/core':
       specifier: ^7.28.4
       version: 7.28.4
@@ -515,6 +515,9 @@ catalogs:
       version: 1.7.1
 
 patchedDependencies:
+  '@appuniversum/ember-appuniversum':
+    hash: aae41718c2ae9146fbb6fea4d6a35c2ae575768702a0a4944536fe5086296a15
+    path: patches/@appuniversum__ember-appuniversum.patch
   '@embroider/addon-dev@7.1.2':
     hash: 53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8
     path: patches/@embroider__addon-dev.patch
@@ -754,7 +757,7 @@ importers:
     devDependencies:
       '@appuniversum/ember-appuniversum':
         specifier: 'catalog:'
-        version: 3.13.0(758ae1df3e52e08cbe591a8c7828a55d)
+        version: 3.15.0(patch_hash=aae41718c2ae9146fbb6fea4d6a35c2ae575768702a0a4944536fe5086296a15)(758ae1df3e52e08cbe591a8c7828a55d)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.28.4
@@ -917,7 +920,7 @@ importers:
     devDependencies:
       '@appuniversum/ember-appuniversum':
         specifier: 'catalog:'
-        version: 3.13.0(758ae1df3e52e08cbe591a8c7828a55d)
+        version: 3.15.0(patch_hash=aae41718c2ae9146fbb6fea4d6a35c2ae575768702a0a4944536fe5086296a15)(758ae1df3e52e08cbe591a8c7828a55d)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.28.4
@@ -1228,8 +1231,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@appuniversum/ember-appuniversum@3.13.0':
-    resolution: {integrity: sha512-h/rVwViEEt766YvDkfJ/oD+p0krPbcXYa6cHrfEXS5Pxw4+Gw+63lkNqkjLQTtMLDMabMngozsHCGjDUhjD/Mg==}
+  '@appuniversum/ember-appuniversum@3.15.0':
+    resolution: {integrity: sha512-2CI/goN/e6dvV3atJbfd+jXgcHrB8Y44F8Xh/3vmGU8Lq+m/C2u7j1X1PJLfla9R10tEOfkg9UYnHtI2rnAotQ==}
     engines: {node: '>= 18'}
     peerDependencies:
       ember-source: ^4.12.0 || ^5.0.0 || ^6.0.0
@@ -10528,7 +10531,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@appuniversum/ember-appuniversum@3.13.0(758ae1df3e52e08cbe591a8c7828a55d)':
+  '@appuniversum/ember-appuniversum@3.15.0(patch_hash=aae41718c2ae9146fbb6fea4d6a35c2ae575768702a0a4944536fe5086296a15)(758ae1df3e52e08cbe591a8c7828a55d)':
     dependencies:
       '@babel/core': 7.28.4
       '@duetds/date-picker': 1.4.0
