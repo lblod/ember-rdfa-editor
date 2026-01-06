@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { decentLocaleMatch } from '@lblod/ember-rdfa-editor/utils/intl-utils';
 import type IntlService from 'ember-intl/services/intl';
 
