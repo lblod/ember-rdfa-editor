@@ -47,6 +47,7 @@
     "@embroider/compat": "catalog:",
     "@embroider/config-meta-loader": "catalog:",
     "@embroider/core": "catalog:",
+    "@embroider/legacy-inspector-support": "catalog:",
     "@embroider/test-setup": "catalog:",
     "@embroider/vite": "catalog:",
     "@eslint/js": "catalog:",
