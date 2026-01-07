@@ -1,0 +1,15 @@
+diff --git a/addon/components/au-card.gts b/addon/components/au-card.gts
+index ae027bc36f49bdde478c09fa743bfd71cdcd6453..ab6ba78f708feffba880259f4715382752e9c0d1 100644
+--- a/addon/components/au-card.gts
++++ b/addon/components/au-card.gts
+@@ -195,7 +195,9 @@ export default class AuCard extends Component<AuCardSignature> {
+         {{/if}}
+         {{#if this.sectionOpen}}
+           <div tabindex="0">
+-            {{yield (hash content=Content)}}
++            {{yield
++              (hash content=(component Content disableAuContent=@disableAuContent))
++            }}
+           </div>
+         {{/if}}
+       {{else}}

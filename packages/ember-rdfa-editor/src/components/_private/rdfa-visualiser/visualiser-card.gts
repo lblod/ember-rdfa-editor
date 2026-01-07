@@ -30,6 +30,7 @@ export default class VisualiserCard extends Component<Sig> {
         @manualControl={{true}}
         @openSection={{this.toggleSection}}
         @isExpanded={{this.expanded}}
+        @disableAuContent={{true}}
         as |c|
       >
         <c.header>
