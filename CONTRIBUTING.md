@@ -2,28 +2,28 @@
 
 ## NPM and node
 
-This project is primarily developed with npm v8.19.3 on node v18.13.0.
+This project requires [node](https://nodejs.org/en/download/) (currently tested on v22) and
+[pnpm](https://pnpm.io/installation).
 
 ## Installation
 
-* `git clone <repository-url>`
-* `cd lblod-ember-rdfa-editor`
-* `npm install`
+* `git clone https://github.com/lblod/ember-rdfa-editor.git`
+* `cd ember-rdfa-editor`
+* `pnpm install`
 
 ## Linting
 
-* `npm run lint`
-* `npm run lint:fix`
+* `pnpm lint`
+* `pnpm lint:fix`
 
 ## Running tests
 
-* `ember test` – Runs the test suite on the current Ember version
-* `ember test --server` – Runs the test suite in "watch mode"
-* `ember try:each` – Runs the test suite against multiple Ember versions
+* `pnpm test`
+* Alternatively, start the dummy application and visit [http://localhost:4200/tests](http://localhost:4200/tests)
 
 ## Running the dummy application
 
-* `ember serve`
+* `pnpm start`
 * Visit the dummy application at [http://localhost:4200](http://localhost:4200).
 
 For more information on using ember-cli, visit [https://cli.emberjs.com/release/](https://cli.emberjs.com/release/).
