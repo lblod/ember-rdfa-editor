@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import sampleData from '../config/sample-data';
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { decentLocaleMatch } from '@lblod/ember-rdfa-editor/utils/intl-utils';
 import type IntlService from 'ember-intl/services/intl';
 
@@ -45,9 +44,5 @@ export default class ApplicationRoute extends Route {
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.intl.addTranslations(locale, translations);
-  }
-
-  model() {
-    return sampleData;
   }
 }

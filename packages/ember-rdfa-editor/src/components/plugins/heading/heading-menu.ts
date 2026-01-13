@@ -1,5 +1,5 @@
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { setBlockType } from '#root/commands/set-block-type.ts';
 import type IntlService from 'ember-intl/services/intl';

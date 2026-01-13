@@ -282,6 +282,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       @manualControl={{true}}
       @openSection={{this.toggleSection}}
       @isExpanded={{this.expanded}}
+      @disableAuContent={{true}}
       as |c|
     >
       <c.header class="say-flex-grow">
