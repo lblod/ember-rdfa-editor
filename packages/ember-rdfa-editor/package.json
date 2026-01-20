@@ -255,7 +255,6 @@
     "js-beautify": "catalog:",
     "linkifyjs": "catalog:",
     "mdn-polyfills": "catalog:",
-    "mongoose": "catalog:",
     "process": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-dropcursor": "catalog:",

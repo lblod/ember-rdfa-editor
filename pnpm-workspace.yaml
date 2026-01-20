@@ -124,7 +124,6 @@ catalog:
   loader.js: ^4.7.0
   mdast-util-to-string: ^4.0.0
   mdn-polyfills: ^5.20.0
-  mongoose: ^8.21.0
   octokit: ^4.1.4
   postcss: ^8.5.6
   prettier: ^3.8.0
