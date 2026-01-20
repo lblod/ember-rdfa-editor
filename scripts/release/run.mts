@@ -54,20 +54,20 @@
  *
  */
 
-import { execa } from "execa";
-import readline from "readline/promises";
-import getReleasePlan from "@changesets/get-release-plan";
+import { execa } from 'execa';
+import readline from 'readline/promises';
+import getReleasePlan from '@changesets/get-release-plan';
 import {
   createRelease,
   determinePackagesToRelease,
   yesNoQuestion,
-} from "./utils.mts";
-import { Octokit } from "octokit";
+} from './utils.mts';
+import { Octokit } from 'octokit';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 if (!GITHUB_TOKEN) {
-  console.error("\nPlease provided the GITHUB_TOKEN environment variable");
+  console.error('\nPlease provided the GITHUB_TOKEN environment variable');
   process.exit(1);
 }
 
@@ -84,21 +84,24 @@ const gitDiffResult = await execa({
 
 if (gitDiffResult.failed) {
   console.error(
-    "\nYou have outstanding changes in your working directory. Please commit or stash them first before proceeding."
+    '\nYou have outstanding changes in your working directory. Please commit or stash them first before proceeding.',
   );
   process.exit(1);
 }
 
-console.log("\nPreparing to version packages...");
+console.log('\nPreparing to version packages...');
 
 const releasePlan = await getReleasePlan(process.cwd());
 
 if (releasePlan.changesets.length === 0) {
-  console.error("\nNo changesets found...");
+  console.error('\nNo changesets found...');
   process.exit(1);
 }
 
-const statusResult = await execa({ reject: false, preferLocal: true })`changeset status --verbose`;
+const statusResult = await execa({
+  reject: false,
+  preferLocal: true,
+})`changeset status --verbose`;
 if (statusResult.failed) {
   console.error(statusResult.stderr);
   process.exit(1);
@@ -106,14 +109,17 @@ if (statusResult.failed) {
 
 console.log(`${statusResult.stdout}\n`);
 
-const versionResult = await execa({ reject: false, preferLocal: true })`changeset version`;
+const versionResult = await execa({
+  reject: false,
+  preferLocal: true,
+})`changeset version`;
 if (versionResult.failed) {
   console.error(versionResult.stderr);
   process.exit(1);
 }
-console.log("\n");
+console.log('\n');
 
-const shouldCommit = await yesNoQuestion(prompt, "\nCommit ?", {
+const shouldCommit = await yesNoQuestion(prompt, '\nCommit ?', {
   defaultAnswer: true,
 });
 if (!shouldCommit) {
@@ -131,28 +137,31 @@ if (stageResult.failed) {
 
 const commitResult = await execa({
   reject: false,
-})`git commit -m ${"Version packages"}`;
+})`git commit -m ${'Version packages'}`;
 
 if (commitResult.failed) {
   console.error(commitResult.stderr);
   process.exit(1);
 }
 
-const shouldTag = await yesNoQuestion(prompt, "\nCreate tags?", {
+const shouldTag = await yesNoQuestion(prompt, '\nCreate tags?', {
   defaultAnswer: true,
 });
 if (!shouldTag) {
   process.exit(0);
 }
 
-const tagResult = await execa({ reject: false, preferLocal: true })`changeset tag`;
+const tagResult = await execa({
+  reject: false,
+  preferLocal: true,
+})`changeset tag`;
 
 if (tagResult.failed) {
   console.error(tagResult.stderr);
   process.exit(1);
 }
 
-const shouldPush = await yesNoQuestion(prompt, "\nPush to git forge?", {
+const shouldPush = await yesNoQuestion(prompt, '\nPush to git forge?', {
   defaultAnswer: true,
 });
 if (!shouldPush) {
@@ -167,7 +176,7 @@ if (pushResult.failed) {
 
 console.log(`\n ${pushResult.stdout}`);
 
-const shouldRelease = await yesNoQuestion(prompt, "\nRelease to Github?");
+const shouldRelease = await yesNoQuestion(prompt, '\nRelease to Github?');
 if (!shouldRelease) {
   process.exit(1);
 }
@@ -185,14 +194,14 @@ for (const { pkg, tagName } of packagesToRelease) {
   } catch (e) {
     console.error(e);
     console.error(
-      `\nSomething went wrong while releasing ${pkg.packageJson.name}`
+      `\nSomething went wrong while releasing ${pkg.packageJson.name}`,
     );
     process.exit(1);
   }
 }
 
-console.log("\nGithub releases: ");
-console.log("-------------------");
+console.log('\nGithub releases: ');
+console.log('-------------------');
 for (const release of releases) {
   console.log(`🔗 ${release}`);
 }

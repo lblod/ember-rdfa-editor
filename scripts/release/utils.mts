@@ -54,26 +54,26 @@
  *
  */
 
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkStringify from "remark-stringify";
-import { toString as mdastToString } from "mdast-util-to-string";
-import { getPackages, Package } from "@manypkg/get-packages";
-import fs from "node:fs/promises";
-import path from "node:path";
-import readline from "readline/promises";
-import { Octokit } from "octokit";
-import { execa } from "execa";
-import GitUrlParse from "git-url-parse";
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkStringify from 'remark-stringify';
+import { toString as mdastToString } from 'mdast-util-to-string';
+import { getPackages, Package } from '@manypkg/get-packages';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import readline from 'readline/promises';
+import { Octokit } from 'octokit';
+import { execa } from 'execa';
+import GitUrlParse from 'git-url-parse';
 
 export async function determinePackagesToRelease(changesetTagOutput: string) {
   const packagesToRelease: { pkg: Package; tagName: string }[] = [];
   const { packages, tool } = await getPackages(process.cwd());
-  if (tool.type !== "root") {
+  if (tool.type !== 'root') {
     let newTagRegex = /New tag:\s+(@[^/]+\/[^@]+|[^/]+)@([^\s]+)/;
     let packagesByName = new Map(packages.map((x) => [x.packageJson.name, x]));
 
-    for (let line of changesetTagOutput.split("\n")) {
+    for (let line of changesetTagOutput.split('\n')) {
       let match = line.match(newTagRegex);
       if (match === null) {
         continue;
@@ -90,11 +90,11 @@ export async function determinePackagesToRelease(changesetTagOutput: string) {
     }
   } else {
     if (packages.length === 0) {
-      throw new Error(`No package found.` + "This is probably a bug.");
+      throw new Error(`No package found.` + 'This is probably a bug.');
     }
     let pkg = packages[0];
     let newTagRegex = /New tag:/;
-    for (let line of changesetTagOutput.split("\n")) {
+    for (let line of changesetTagOutput.split('\n')) {
       let match = line.match(newTagRegex);
 
       if (match) {
@@ -132,11 +132,11 @@ export function getChangelogEntry(changelog: string, version: string) {
 
   for (let i = 0; i < nodes.length; i++) {
     let node = nodes[i];
-    if (node.type === "heading") {
+    if (node.type === 'heading') {
       let stringified = mdastToString(node);
       let match = stringified.toLowerCase().match(/(major|minor|patch)/);
       if (match !== null) {
-        let level = BumpLevels[match[0] as "major" | "minor" | "patch"];
+        let level = BumpLevels[match[0] as 'major' | 'minor' | 'patch'];
         highestLevel = Math.max(level, highestLevel);
       }
       if (headingStartInfo === undefined && stringified === version) {
@@ -167,14 +167,14 @@ export function getChangelogEntry(changelog: string, version: string) {
 
 async function getCurrentBranch() {
   const response = await execa`git rev-parse --abbrev-ref HEAD`.catch(
-    () => null
+    () => null,
   );
   return response?.stdout;
 }
 
 async function getRemoteForBranch(branch: string) {
   const response = await execa`git config --get branch.${branch}.remote`.catch(
-    () => null
+    () => null,
   );
   return response?.stdout;
 }
@@ -185,25 +185,25 @@ export async function getRemote() {
 }
 
 export async function getRepoInfo() {
-  const remote = (await getRemote()) ?? "origin";
+  const remote = (await getRemote()) ?? 'origin';
   const url = (await execa`git remote get-url ${remote}`).stdout;
-  return GitUrlParse(url)
+  return GitUrlParse(url);
 }
 
 export async function createRelease(
   octokit: Octokit,
-  { pkg, tagName }: { pkg: Package; tagName: string }
+  { pkg, tagName }: { pkg: Package; tagName: string },
 ) {
-  let changelogFileName = path.join(pkg.dir, "CHANGELOG.md");
+  let changelogFileName = path.join(pkg.dir, 'CHANGELOG.md');
 
-  let changelog = await fs.readFile(changelogFileName, "utf8");
+  let changelog = await fs.readFile(changelogFileName, 'utf8');
 
   let changelogEntry = getChangelogEntry(changelog, pkg.packageJson.version);
   if (!changelogEntry) {
     // we can find a changelog but not the entry for this version
     // if this is true, something has probably gone wrong
     throw new Error(
-      `Could not find changelog entry for ${pkg.packageJson.name}@${pkg.packageJson.version}`
+      `Could not find changelog entry for ${pkg.packageJson.name}@${pkg.packageJson.version}`,
     );
   }
   const { owner, name } = await getRepoInfo();
@@ -211,7 +211,7 @@ export async function createRelease(
     name: tagName,
     tag_name: tagName,
     body: changelogEntry.content,
-    prerelease: pkg.packageJson.version.includes("-"),
+    prerelease: pkg.packageJson.version.includes('-'),
     repo: name,
     owner,
   });
@@ -221,8 +221,8 @@ export async function createRelease(
 export async function yesNoQuestion(
   rl: readline.Interface,
   question: string,
-  { defaultAnswer = false } = {}
+  { defaultAnswer = false } = {},
 ) {
   const answer = (await rl.question(`${question} (Y/n) `)).trim();
-  return answer ? answer === "Y" || answer === "y" : defaultAnswer;
+  return answer ? answer === 'Y' || answer === 'y' : defaultAnswer;
 }

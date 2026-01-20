@@ -6,9 +6,8 @@
 @use "@lblod/ember-rdfa-editor";
 @use "c-dummy";
 
-
-
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   display: flex;
@@ -20,5 +19,3 @@ code {
   font-family: courier, monospace;
   padding: 0 3px;
 }
-
-

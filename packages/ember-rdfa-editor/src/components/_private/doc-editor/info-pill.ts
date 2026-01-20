@@ -9,6 +9,7 @@ type Args = {
 };
 
 export default class DocumentInfoPill extends Component<Args> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   AttributeEditor = AttributeEditor;
   @tracked
   modalOpen = false;

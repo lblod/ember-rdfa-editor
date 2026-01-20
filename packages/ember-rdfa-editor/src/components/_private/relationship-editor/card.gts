@@ -261,12 +261,16 @@ export default class RelationshipEditorCard extends Component<Args> {
     if (this.contentPredicateProperty) {
       this.removePropertyOrBacklink(this.contentPredicateProperty);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (body.contentPredicate) {
       const property = {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         predicate: body.contentPredicate,
         object: sayDataFactory.contentLiteral(
           languageOrDataType(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
             body.language,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             body.datatype ? sayDataFactory.namedNode(body.datatype) : undefined,
           ),
         ),

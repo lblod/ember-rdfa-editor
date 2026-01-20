@@ -100,6 +100,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
   }
 
   get ModalComponent() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.args.devMode
       ? RelationshipEditorDevModeModal
       : RelationshipEditorClassicModal;

@@ -235,7 +235,6 @@ class Modal extends Component<ModalArgs> {
                 </AuLabel>
                 <AuRadioGroup
                   id={{id}}
-                  required={{true}}
                   @name="isNew"
                   @selected={{this.generateNewUri}}
                   @onChange={{this.shouldGenerateNewUri}}

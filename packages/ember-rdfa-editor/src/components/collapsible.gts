@@ -64,7 +64,6 @@ export default class Collapsible extends Component<CollapsibleSignature> {
               <AuButton
                 @skin="link"
                 aria-hidden="true"
-                focusable="false"
                 aria-expanded="{{if this.expanded 'true' 'false'}}"
               >
                 {{@title}}
