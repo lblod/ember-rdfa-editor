@@ -54,9 +54,9 @@ let dataFactoryCounter = 0;
 /**
  * A factory for instantiating Say RDF terms and quads.
  */
-export class SayDataFactory<Q extends BaseQuad = Quad>
-  implements DataFactory<Q>
-{
+export class SayDataFactory<
+  Q extends BaseQuad = Quad,
+> implements DataFactory<Q> {
   private readonly blankNodePrefix: string;
   private blankNodeCounter = 0;
 

@@ -15,13 +15,10 @@ import { single } from '../iterator-utils.ts';
  * There is no meaningful way to define order on the terms,
  * so don't count on consistent ordering between them.
  */
-export class TermMapping<T extends RDF.Term, N>
-  implements
-    Iterable<{
-      term: T;
-      nodes: N[];
-    }>
-{
+export class TermMapping<T extends RDF.Term, N> implements Iterable<{
+  term: T;
+  nodes: N[];
+}> {
   private termMap: Map<T, N[]>;
   private getPrefix: PrefixMapping;
 

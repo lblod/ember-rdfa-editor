@@ -43,8 +43,10 @@ export type ModelQuadObject<N> =
   | ModelBlankNode<N>
   | ModelLiteral<N>;
 
-export interface ModelNamedNode<N, I extends string = string>
-  extends RDF.NamedNode<I> {
+export interface ModelNamedNode<
+  N,
+  I extends string = string,
+> extends RDF.NamedNode<I> {
   node?: N;
 }
 

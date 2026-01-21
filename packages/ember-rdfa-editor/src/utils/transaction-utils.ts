@@ -75,8 +75,9 @@ export type TransactionMonad<R> = (
   transactionMeta?: TransactionMeta,
 ) => TransactionMonadResult<R>;
 
-export interface TransactionCombinatorResult<R>
-  extends TransactionMonadResult<R[]> {
+export interface TransactionCombinatorResult<R> extends TransactionMonadResult<
+  R[]
+> {
   /**
    * All the transactions that were applied in sequence to achieve this result, including any potential extra transactions from plugins.
    * This allows calling code to inspect and use any non-document state that may have been lost
