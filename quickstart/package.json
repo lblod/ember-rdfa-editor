@@ -55,6 +55,7 @@
     "@glint/environment-ember-loose": "^1.5.2",
     "@glint/environment-ember-template-imports": "^1.5.2",
     "@glint/template": "^1.7.3",
+    "@lblod/ember-rdfa-editor": "workspace:*",
     "@rollup/plugin-babel": "^6.1.0",
     "@types/qunit": "^2.19.13",
     "@types/rsvp": "^4.0.9",
