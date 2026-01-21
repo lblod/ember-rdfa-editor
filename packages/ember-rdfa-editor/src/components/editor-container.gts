@@ -6,6 +6,7 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/_private/option.ts';
 import type SayController from '#root/core/say-controller.ts';
+import type Owner from '@ember/owner';
 
 type EditorOptions = {
   showPaper?: boolean;
@@ -34,7 +35,7 @@ type Signature = {
 };
 
 export default class EditorContainer extends Component<Signature> {
-  constructor(owner: unknown, args: Signature['Args']) {
+  constructor(owner: Owner, args: Signature['Args']) {
     super(owner, args);
 
     deprecate(

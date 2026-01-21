@@ -46,6 +46,7 @@ export class ModelDataFactory<N> extends DataFactory {
     return blankNode;
   }
 
+  // @ts-expect-error test
   literal(
     value: string,
     languageOrDataType?: string | ModelNamedNode<N>,

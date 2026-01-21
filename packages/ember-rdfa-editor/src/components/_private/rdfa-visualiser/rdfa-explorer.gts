@@ -36,7 +36,7 @@ export default class RdfaExplorer extends Component<Sig> {
       const maps = await this.rdfaInfo?.computeMappingsAsync(
         abortController.signal,
       );
-      this.subjects = Array.from(maps.topLevelSubjects);
+      this.subjects = Array.from(maps?.topLevelSubjects ?? []);
       this.isRunning = false;
       await timeout(this.args.config.debounceTime || 1000);
     } finally {

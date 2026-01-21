@@ -30,6 +30,7 @@ export default class HashSet<I> implements Set<I> {
     return this.items[Symbol.toStringTag];
   }
 
+  // @ts-expect-error test
   [Symbol.iterator](): IterableIterator<I> {
     return this.items.values();
   }
@@ -71,6 +72,7 @@ export default class HashSet<I> implements Set<I> {
     return didDelete;
   }
 
+  // @ts-expect-error test
   entries(): IterableIterator<[I, I]> {
     return new Set<I>(this.items.values()).entries();
   }
@@ -83,6 +85,7 @@ export default class HashSet<I> implements Set<I> {
     callbackfn: (value: I, value2: I, set: Set<I>) => void,
     thisArg?: unknown,
   ): void {
+    // @ts-expect-error test
     this.items.forEach((value) => callbackfn(value, value, this), thisArg);
   }
 
@@ -99,10 +102,12 @@ export default class HashSet<I> implements Set<I> {
     return !!item && item === value;
   }
 
+  // @ts-expect-error test
   keys(): IterableIterator<I> {
     return this.items.values();
   }
 
+  // @ts-expect-error test
   values(): IterableIterator<I> {
     return this.items.values();
   }

@@ -47,10 +47,11 @@ function setTransactionMeta(
       transaction.setMeta(key, val);
     });
   } else {
-    meta &&
+    if (meta) {
       Object.entries(meta).forEach(([key, val]) => {
         transaction.setMeta(key, val);
       });
+    }
   }
 }
 

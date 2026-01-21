@@ -153,7 +153,7 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     event.preventDefault();
     event.stopPropagation();
     if (this.image && handlePosition) {
-      this.handleReferences;
+      // this.handleReferences;
       this.resizeState = {
         handle: HANDLES[handlePosition],
         initialPosition: { x: event.clientX, y: event.clientY },

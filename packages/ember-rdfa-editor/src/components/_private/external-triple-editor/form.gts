@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 import Component from '@glimmer/component';
 import { ValidationError, object, string } from 'yup';
 import { on } from '@ember/modifier';

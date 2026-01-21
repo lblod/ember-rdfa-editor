@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import type { ComponentLike } from '@glint/template';
 
-const PILL_SIZES = ['small'] as const;
+type PILL_SIZES = 'small';
 
 type PillComponentArgs = {
   skin?:
@@ -12,7 +12,7 @@ type PillComponentArgs = {
     | 'success'
     | 'warning'
     | 'error';
-  size?: (typeof PILL_SIZES)[number];
+  size?: PILL_SIZES;
   iconAlignment?: 'left' | 'right';
   icon?: ComponentLike;
 };

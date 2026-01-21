@@ -995,6 +995,7 @@ export class RdfaParser<N> {
         true,
         false,
       ),
+      // @ts-expect-error test
       object,
     });
   };

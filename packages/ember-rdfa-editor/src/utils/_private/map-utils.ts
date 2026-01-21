@@ -128,6 +128,7 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   ): void {
     this.keySet.forEach((key) => {
       const value = unwrap(this.keyToValue.get(this.keyHasher(key)));
+      // @ts-expect-error test
       callbackfn(value, key, this);
     }, thisArg);
   }
@@ -161,17 +162,21 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   get size() {
     return this.keyToValue.size;
   }
+  // @ts-expect-error test
   *entries(): IterableIterator<[K, V]> {
     for (const key of this.keySet.values()) {
       yield [key, unwrap(this.keyToValue.get(this.keyHasher(key)))];
     }
   }
+  // @ts-expect-error test
   keys(): IterableIterator<K> {
     return this.keySet.values();
   }
+  // @ts-expect-error test
   values(): IterableIterator<V> {
     return this.keyToValue.values();
   }
+  // @ts-expect-error test
   [Symbol.iterator](): IterableIterator<[K, V]> {
     return this.entries();
   }

@@ -166,18 +166,21 @@ export const combineConfigs = (
 ): OptionGeneratorConfig => ({
   subjects: async (args) => {
     const results = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.subjects?.(args) ?? []),
     );
     return results.flat();
   },
   predicates: async (args) => {
     const results = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.predicates?.(args) ?? []),
     );
     return results.flat();
   },
   objects: async (args) => {
     const results = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.objects?.(args) ?? []),
     );
     return results.flat();

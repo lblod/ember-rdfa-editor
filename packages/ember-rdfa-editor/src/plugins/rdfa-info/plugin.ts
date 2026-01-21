@@ -137,7 +137,9 @@ export class RdfaInfo {
     this.state = state;
   }
 
-  async computeMappingsAsync(abortSignal: AbortSignal): Promise<InfoMaps> {
+  async computeMappingsAsync(
+    abortSignal: AbortSignal,
+  ): Promise<InfoMaps | undefined> {
     if (
       this._rdfaIdMapping &&
       this._subjectMapping &&
@@ -198,7 +200,7 @@ export class RdfaInfo {
       }
       return newMaps;
     } else {
-      throw abortSignal.throwIfAborted();
+      abortSignal.throwIfAborted();
     }
   }
 

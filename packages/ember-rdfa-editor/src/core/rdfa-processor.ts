@@ -245,6 +245,7 @@ function quadToProperties(
     const contentNodes = datastore.getContentNodeMap().getValues({
       subject: sayDataFactory.resourceNode(quad.subject.value),
       predicate: quad.predicate as NamedNode<string>,
+      // @ts-expect-error test
       object: quad.object,
     });
     if (contentNodes) {

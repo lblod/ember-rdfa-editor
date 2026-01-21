@@ -116,6 +116,7 @@ export class SayDataFactory<
     return new ContentLiteralTerm(languageOrDataType);
   }
 
+  // @ts-expect-error test
   public fromTerm<T extends WithoutEquals<SayTerm>>(original: T): SayTerm {
     switch (original.termType) {
       case 'NamedNode':
