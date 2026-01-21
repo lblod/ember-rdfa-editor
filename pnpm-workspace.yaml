@@ -174,3 +174,6 @@ catalog:
   vite: ^6.3.6
   webpack: ^5.101.3
   yup: ^1.7.1
+
+overrides:
+  js-beautify>glob: ^10.5.0
