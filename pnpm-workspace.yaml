@@ -8,7 +8,7 @@ catalog:
   '@babel/eslint-parser': ^7.28.6
   '@babel/plugin-proposal-decorators': ^7.28.6
   '@babel/plugin-transform-runtime': ^7.28.5
-  '@babel/plugin-transform-typescript': 7.27.0
+  '@babel/plugin-transform-typescript': 7.28.6
   '@babel/runtime': ^7.28.6
   '@changesets/changelog-github': ^0.5.2
   '@changesets/cli': ^2.29.8
@@ -23,7 +23,7 @@ catalog:
   '@ember/render-modifiers': ^3.0.0
   '@ember/string': ^4.0.1
   '@ember/test-helpers': ^5.4.1
-  '@embroider/addon-dev': ^7.1.6
+  '@embroider/addon-dev': ^8.2.0
   '@embroider/addon-shim': ^1.10.2
   '@embroider/compat': ^4.1.12
   '@embroider/config-meta-loader': ^1.0.0
@@ -34,24 +34,24 @@ catalog:
   '@embroider/vite': ^1.5.0
   '@eslint/js': ^9.39.2
   '@floating-ui/dom': ^1.7.4
-  '@glimmer/component': ^1.1.2
+  '@glimmer/component': ^2.0.0
   '@glimmer/runtime': ^0.94.11
   '@glimmer/tracking': ^1.1.2
-  '@glimmer/validator': ^0.94.8
+  '@glimmer/validator': ^0.95.0
   '@glint/core': ^1.5.2
   '@glint/environment-ember-loose': ^1.5.2
   '@glint/environment-ember-template-imports': ^1.5.2
   '@glint/template': ^1.7.3
-  '@graphy/memory.dataset.fast': 4.3.3
+  '@graphy/memory.dataset.fast': 4.3.7
   '@lblod/marawa': 0.8.0-beta.6
-  '@manypkg/get-packages': ^2.2.2
+  '@manypkg/get-packages': ^3.1.0
   '@modyfi/vite-plugin-yaml': ^1.1.1
-  '@playwright/test': 1.50.0
+  '@playwright/test': 1.57.0
   '@prosopo/vite-plugin-watch-workspace': ^2.6.31
   '@rdfjs/to-ntriples': ^3.0.1
-  '@rdfjs/types': ^1.1.2
+  '@rdfjs/types': ^2.0.1
   '@rollup/plugin-babel': ^6.1.0
-  '@rollup/plugin-commonjs': ^28.0.9
+  '@rollup/plugin-commonjs': ^29.0.0
   '@rollup/plugin-inject': ^5.0.5
   '@rollup/plugin-json': ^6.1.0
   '@rollup/plugin-node-resolve': ^16.0.3
@@ -60,39 +60,39 @@ catalog:
   '@tsconfig/ember': ^3.0.12
   '@types/common-tags': ^1.8.4
   '@types/debug': ^4.1.12
-  '@types/eslint__js': ^8.42.3
-  '@types/git-url-parse': ^9.0.3
+  '@types/eslint__js': ^9.14.0
+  '@types/git-url-parse': ^16.0.2
   '@types/htmlbars-inline-precompile': ^3.0.4
   '@types/js-beautify': ^1.14.3
-  '@types/node': ^20.19.30
+  '@types/node': ^25.0.9
   '@types/prosemirror-dev-tools': ^3.0.6
   '@types/qunit': ^2.19.13
-  '@types/react': 19.1.13
+  '@types/react': 19.2.9
   '@types/responselike': ^1.0.3
   '@types/rsvp': ^4.0.9
-  '@types/sinon': ^17.0.4
-  '@types/uuid': ^9.0.8
+  '@types/sinon': ^21.0.0
+  '@types/uuid': ^11.0.0
   '@typescript-eslint/eslint-plugin': ^8.53.1
   '@typescript-eslint/parser': ^8.53.1
   autoprefixer: ^10.4.23
-  babel-plugin-ember-template-compilation: ^2.4.1
+  babel-plugin-ember-template-compilation: ^4.0.0
   codemirror: ^6.0.2
   common-tags: ^1.8.2
   concurrently: ^9.2.1
   crypto-browserify: ^3.12.1
   debug: ^4.4.3
   decorator-transforms: ^2.3.1
-  dompurify: 3.2.4
+  dompurify: 3.3.1
   ember-auto-import: ^2.12.0
   ember-basic-dropdown: ^8.11.0
-  ember-cli: ~6.5.0
+  ember-cli: ~6.9.1
   ember-cli-babel: ^8.2.0
-  ember-cli-htmlbars: ^6.3.0
-  ember-concurrency: ^4.0.6
+  ember-cli-htmlbars: ^7.0.0
+  ember-concurrency: ^5.1.0
   ember-focus-trap: ^1.1.1
   ember-headless-form: ^1.1.1
   ember-headless-form-yup: ^1.0.0
-  ember-intl: ^7.4.1
+  ember-intl: ^8.0.3
   ember-load-initializers: ^3.0.1
   ember-modifier: ^4.2.2
   ember-page-title: ^9.0.3
@@ -103,12 +103,12 @@ catalog:
   ember-source: ^6.10.0
   ember-source-channel-url: ^3.0.0
   ember-template-imports: ^4.4.0
-  ember-template-lint: ^6.1.0
+  ember-template-lint: ^7.9.3
   ember-truth-helpers: ^5.0.0
   ember-try: ^4.0.0
   ember-velcro: ^2.2.0
   eslint: ^9.39.2
-  eslint-config-prettier: ^9.1.2
+  eslint-config-prettier: ^10.1.8
   eslint-plugin-ember: ^12.7.5
   eslint-plugin-import: ^2.32.0
   eslint-plugin-n: ^17.23.2
@@ -117,14 +117,14 @@ catalog:
   eslint-plugin-qunit: ^8.2.5
   execa: ^9.6.1
   git-url-parse: ^16.1.0
-  globals: ^15.15.0
+  globals: ^17.0.0
   iter-tools: ^7.5.4
   js-beautify: ^1.15.4
   linkifyjs: ^4.3.2
   loader.js: ^4.7.0
   mdast-util-to-string: ^4.0.0
   mdn-polyfills: ^5.20.0
-  octokit: ^4.1.4
+  octokit: ^5.0.5
   postcss: ^8.5.6
   prettier: ^3.8.0
   prettier-plugin-ember-template-tag: ^2.1.2
@@ -132,7 +132,7 @@ catalog:
   prosemirror-commands: ^1.7.1
   prosemirror-dev-tools: ^4.2.0
   prosemirror-dropcursor: ^1.8.2
-  prosemirror-history: 1.4.1
+  prosemirror-history: 1.5.0
   prosemirror-inputrules: ^1.5.1
   prosemirror-keymap: ^1.2.3
   prosemirror-model: ^1.25.4
@@ -140,36 +140,36 @@ catalog:
   prosemirror-schema-list: ^1.5.1
   prosemirror-state: ^1.4.4
   prosemirror-test-builder: ^1.1.1
-  prosemirror-transform: ^1.10.5
+  prosemirror-transform: ^1.11.0
   prosemirror-view: ^1.41.5
   qunit: ^2.25.0
   qunit-dom: ^3.5.0
-  rdf-data-factory: ^1.1.3
-  react: ^18.3.1
-  react-dom: ^18.3.1
+  rdf-data-factory: ^2.0.2
+  react: ^19.2.3
+  react-dom: ^19.2.3
   reactiveweb: ^1.9.1
-  read-package-up: ^11.0.0
+  read-package-up: ^12.0.0
   relative-to-absolute-iri: ^1.0.7
   remark-parse: ^11.0.0
   remark-stringify: ^11.0.0
-  rimraf: ^5.0.10
-  rollup: ^4.55.2
+  rimraf: ^6.1.2
+  rollup: ^4.55.3
   rollup-plugin-copy: ^3.5.0
   rollup-plugin-node-globals: ^1.4.0
   rollup-plugin-sass: ^1.15.3
   sass: ^1.97.2
-  sinon: ^19.0.5
+  sinon: ^21.0.1
   stream-browserify: ^3.0.0
-  stylelint: ^16.26.1
-  stylelint-config-standard: ^36.0.1
+  stylelint: ^17.0.0
+  stylelint-config-standard: ^40.0.0
   stylelint-prettier: ^5.0.3
   tracked-built-ins: ^4.1.0
   tracked-toolbox: ^2.2.0
   tsx: ^4.21.0
   typescript: ^5.9.3
-  typescript-eslint: ^7.18.0
+  typescript-eslint: ^8.53.1
   unified: ^11.0.5
-  uuid: ^9.0.1
-  vite: ^6.4.1
+  uuid: ^13.0.0
+  vite: ^7.3.1
   webpack: ^5.104.1
   yup: ^1.7.1
