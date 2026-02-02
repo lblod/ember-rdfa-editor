@@ -177,3 +177,5 @@ catalog:
 
 overrides:
   js-beautify>glob: ^10.5.0
+  # We get errors from prosemirror-dev-tools if we have mismatching versions
+  prosemirror-view: "catalog:"
