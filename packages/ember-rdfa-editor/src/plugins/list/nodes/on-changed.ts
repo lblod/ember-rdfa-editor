@@ -75,7 +75,7 @@ function updateListItems(
   node.content.forEach((child: PNode, offset: number) => {
     if (child.type.name === 'list_item') {
       const newPath = [...path, { pos: counter, hierarchical, style }];
-      if (!areEqualPaths(newPath, child.attrs['listPath'] as ListPathEntry[])) {
+      if (!child.attrs['listPath'] || !areEqualPaths(newPath, child.attrs['listPath'] as ListPathEntry[])) {
         tr.setNodeAttribute(docPosOffset + offset + 1, 'listPath', newPath);
       }
       updateListItems(
