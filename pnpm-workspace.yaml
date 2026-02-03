@@ -179,3 +179,5 @@ overrides:
   js-beautify>glob: ^10.5.0
   # We get errors from prosemirror-dev-tools if we have mismatching versions
   prosemirror-view: "catalog:"
+  # Chalk <4 doesn't work with esm it seems. A few ancient ember tools still use v2.
+  chalk@^2.0.0: ^4.1.2
