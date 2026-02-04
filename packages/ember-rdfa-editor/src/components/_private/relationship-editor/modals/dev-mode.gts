@@ -489,7 +489,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                       id={{id}}
                       @selected={{this.data.target.term.termType}}
                       @onChange={{this.setTermType}}
-                      {{! @glint-expect-error }}
                       @options={{OBJECT_TERM_TYPES}}
                       class="au-u-1-1"
                       as |option|
