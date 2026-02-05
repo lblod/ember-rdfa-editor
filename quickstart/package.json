@@ -25,7 +25,10 @@
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
     "start": "vite",
-    "test": "vite build --mode development && ember test --path dist"
+    "test": "vite build --mode development && ember test --path dist",
+    "ci": "concurrently 'npm:lint:js' 'npm:lint:types' 'npm:test'",
+    "setup": "cd .. && ./quickstart/set-up-quickstart-app.sh && cd quickstart",
+    "teardown": "git checkout package.json"
   },
   "exports": {
     "./tests/*": "./tests/*",

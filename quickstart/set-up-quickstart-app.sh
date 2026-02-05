@@ -18,8 +18,5 @@ sed -i s/'workspace:\*'/"$PACKAGE_FILE"/ package.json
 rm -f package-lock.json
 # Run installs specified in the readme
 npm install --save-dev @appuniversum/ember-appuniversum @ember/test-helpers @glimmer/component @glimmer/tracking @glint/template ember-basic-dropdown ember-concurrency 'ember-intl@^7.0.0' ember-power-select ember-power-select-with-create ember-source tracked-built-ins
-npm run lint:js
-npm run lint:types
-sed -i "s/$PACKAGE_FILE/workspace:\*/" package.json
-git checkout package.json
+npm install --save-dev sass
 cd ..

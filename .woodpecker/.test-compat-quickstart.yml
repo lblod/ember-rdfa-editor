@@ -1,11 +1,24 @@
 steps:
-  test-compat:
+  setup:
     image: node:22-slim
     commands:
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
       - npm i -g corepack@0.31
       - pnpm i --no-frozen-lockfile
-      - pnpm test:quickstart
+      - pnpm test:quickstart:setup
+  lint:
+    image: node:22-slim
+    depends_on: [setup]
+    commands:
+      - cd quickstart
+      - npm run lint:js
+      - npm run lint:types
+  test:
+    image: danlynn/ember-cli:6.1.0
+    depends_on: [setup]
+    commands:
+      - cd quickstart
+      - npm run test
 
 when:
   event:
