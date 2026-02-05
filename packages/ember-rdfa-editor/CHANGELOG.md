@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.1.1
+
+### Patch Changes
+
+- [#1352](https://github.com/lblod/ember-rdfa-editor/pull/1352) [`02b7d3a`](https://github.com/lblod/ember-rdfa-editor/commit/02b7d3ad477003c78388ba20526e4d05518ab4a1) Thanks [@piemonkey](https://github.com/piemonkey)! - Upgrade some minor or patch versions of dependencies
+
+- [#1349](https://github.com/lblod/ember-rdfa-editor/pull/1349) [`d68bae9`](https://github.com/lblod/ember-rdfa-editor/commit/d68bae949baa71aa5c8b919b86c02a09290e1df5) Thanks [@piemonkey](https://github.com/piemonkey)! - Remove deprecated internal use of AuContent within AuCard components
+
 ## 13.1.0
 
 ### Minor Changes
