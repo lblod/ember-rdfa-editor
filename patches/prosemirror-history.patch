@@ -1,3 +1,177 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index e0e1020d3a68c383dd393741a50fc61efe9af068..13b1793c8abae66a38adafe078380d5ba62bc70f 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -1,11 +1,11 @@
+ 'use strict';
+ 
+ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
++function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
++function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
++function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
++function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
++function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+ var RopeSequence = require('rope-sequence');
+ var prosemirrorTransform = require('prosemirror-transform');
+ var prosemirrorState = require('prosemirror-state');
+@@ -16,7 +16,7 @@ var Branch = function () {
+     this.items = items;
+     this.eventCount = eventCount;
+   }
+-  _createClass(Branch, [{
++  return _createClass(Branch, [{
+     key: "popEvent",
+     value: function popEvent(state, preserveItems) {
+       var _this = this;
+@@ -195,7 +195,6 @@ var Branch = function () {
+       return new Branch(RopeSequence.from(items.reverse()), events);
+     }
+   }]);
+-  return Branch;
+ }();
+ Branch.empty = new Branch(RopeSequence.empty, 0);
+ function cutOffEvents(items, n) {
+@@ -215,8 +214,9 @@ var Item = function () {
+     this.step = step;
+     this.selection = selection;
+     this.mirrorOffset = mirrorOffset;
++    this.id = "".concat(Date.now());
+   }
+-  _createClass(Item, [{
++  return _createClass(Item, [{
+     key: "merge",
+     value: function merge(other) {
+       if (this.step && other.step && !other.selection) {
+@@ -225,7 +225,6 @@ var Item = function () {
+       }
+     }
+   }]);
+-  return Item;
+ }();
+ var HistoryState = _createClass(function HistoryState(done, undone, prevRanges, prevTime, prevComposition) {
+   _classCallCheck(this, HistoryState);
+@@ -371,9 +370,21 @@ function redoDepth(state) {
+ function isHistoryTransaction(tr) {
+   return tr.getMeta(historyKey) != null;
+ }
++function getHistoryStateId(state) {
++  var _a;
++  var hist = historyKey.getState(state);
++  if (!hist || hist.done.eventCount === 0) return;
++  var items = hist.done.items;
++  return (_a = items.get(items.length - 1)) === null || _a === void 0 ? void 0 : _a.id;
++}
++function matchesTaggedHistory(state, id) {
++  return getHistoryStateId(state) === id;
++}
+ exports.closeHistory = closeHistory;
++exports.getHistoryStateId = getHistoryStateId;
+ exports.history = history;
+ exports.isHistoryTransaction = isHistoryTransaction;
++exports.matchesTaggedHistory = matchesTaggedHistory;
+ exports.redo = redo;
+ exports.redoDepth = redoDepth;
+ exports.redoNoScroll = redoNoScroll;
+diff --git a/dist/index.d.cts b/dist/index.d.cts
+index ba077f149426e8a0fc53ef4b42f3aa219d65ffc0..70aa2a0653804f40107c774083339ac8a7120a1d 100644
+--- a/dist/index.d.cts
++++ b/dist/index.d.cts
+@@ -1,4 +1,4 @@
+-import { Transaction, Plugin, Command, EditorState } from 'prosemirror-state';
++import { Transaction, EditorState, Plugin, Command } from 'prosemirror-state';
+ 
+ /**
+ Set a flag on the given transaction that will prevent further steps
+@@ -60,5 +60,16 @@ Returns true if the given transaction was generated by the history
+ plugin.
+ */
+ declare function isHistoryTransaction(tr: Transaction): boolean;
++/**
++Returns the unique ID of the current history for a given editor state.
++This can for example be used to compare against a saved state, to
++determine if there are changes since then.
++*/
++declare function getHistoryStateId(state: EditorState): string | undefined;
++/**
++Whether the unique IDs of the history for the given editor state matches
++the passed ID.
++*/
++declare function matchesTaggedHistory(state: EditorState, id: string): boolean;
+ 
+-export { closeHistory, history, isHistoryTransaction, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
++export { closeHistory, getHistoryStateId, history, isHistoryTransaction, matchesTaggedHistory, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index ba077f149426e8a0fc53ef4b42f3aa219d65ffc0..70aa2a0653804f40107c774083339ac8a7120a1d 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -1,4 +1,4 @@
+-import { Transaction, Plugin, Command, EditorState } from 'prosemirror-state';
++import { Transaction, EditorState, Plugin, Command } from 'prosemirror-state';
+ 
+ /**
+ Set a flag on the given transaction that will prevent further steps
+@@ -60,5 +60,16 @@ Returns true if the given transaction was generated by the history
+ plugin.
+ */
+ declare function isHistoryTransaction(tr: Transaction): boolean;
++/**
++Returns the unique ID of the current history for a given editor state.
++This can for example be used to compare against a saved state, to
++determine if there are changes since then.
++*/
++declare function getHistoryStateId(state: EditorState): string | undefined;
++/**
++Whether the unique IDs of the history for the given editor state matches
++the passed ID.
++*/
++declare function matchesTaggedHistory(state: EditorState, id: string): boolean;
+ 
+-export { closeHistory, history, isHistoryTransaction, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
++export { closeHistory, getHistoryStateId, history, isHistoryTransaction, matchesTaggedHistory, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
+diff --git a/dist/index.js b/dist/index.js
+index acd29d912b20016ae4f59fdce72c110a3a3dfcfd..d5bed7f3b9d2992b876aacdb551f7e80a9bb98a3 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -232,6 +232,7 @@ class Item {
+         this.step = step;
+         this.selection = selection;
+         this.mirrorOffset = mirrorOffset;
++        this.id = `${Date.now()}`;
+     }
+     merge(other) {
+         if (this.step && other.step && !other.selection) {
+@@ -449,5 +450,25 @@ plugin.
+ function isHistoryTransaction(tr) {
+     return tr.getMeta(historyKey) != null;
+ }
++/**
++Returns the unique ID of the current history for a given editor state.
++This can for example be used to compare against a saved state, to
++determine if there are changes since then.
++*/
++function getHistoryStateId(state) {
++    var _a;
++    let hist = historyKey.getState(state);
++    if (!hist || hist.done.eventCount === 0)
++        return;
++    let items = hist.done.items;
++    return (_a = items.get(items.length - 1)) === null || _a === void 0 ? void 0 : _a.id;
++}
++/**
++Whether the unique IDs of the history for the given editor state matches
++the passed ID.
++*/
++function matchesTaggedHistory(state, id) {
++    return getHistoryStateId(state) === id;
++}
+ 
+-export { closeHistory, history, isHistoryTransaction, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
++export { closeHistory, getHistoryStateId, history, isHistoryTransaction, matchesTaggedHistory, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
 diff --git a/src/history.ts b/src/history.ts
 index 3334b83aac908ca818159336c8507056bbf4766a..2fcd693f4bf43483ba121d51dcb7c51cd65dc60f 100644
 --- a/src/history.ts

@@ -1,11 +1,4 @@
-import { SayStore } from '#root/utils/_private/datastore/say-store.ts';
 import type Owner from '@ember/owner';
-import { unwrap } from '#root/utils/_private/option.ts';
-import { shallowEqual } from '#root/utils/_private/object-utils.ts';
-import { datastoreKey } from '#root/plugins/datastore/index.ts';
-import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';
-import SayView, { type SetHtmlOptions } from '#root/core/say-view.ts';
-import type SayEditor from '#root/core/say-editor.ts';
 import { tracked } from '@glimmer/tracking';
 import { type Attrs, MarkType, Schema } from 'prosemirror-model';
 import {
@@ -14,11 +7,23 @@ import {
   Selection,
   Transaction,
 } from 'prosemirror-state';
+import { getHistoryStateId } from 'prosemirror-history';
+import { SayStore } from '#root/utils/_private/datastore/say-store.ts';
+import { unwrap } from '#root/utils/_private/option.ts';
+import { shallowEqual } from '#root/utils/_private/object-utils.ts';
+import { datastoreKey } from '#root/plugins/datastore/index.ts';
+import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';
+import SayView, { type SetHtmlOptions } from '#root/core/say-view.ts';
+import type SayEditor from '#root/core/say-editor.ts';
 import { htmlToDoc } from '#root/utils/_private/html-utils.ts';
+
+const ALREADY_SAVED = 'ALREADY_SAVED';
 
 export default class SayController {
   @tracked
   private readonly editor: SayEditor;
+  @tracked
+  private savedStateId?: string;
 
   constructor(pm: SayEditor) {
     this.editor = pm;
@@ -69,6 +74,22 @@ export default class SayController {
     this.editor.setActiveView(view);
   }
 
+  /** Is the editor in the same state as the last time it was marked as clean */
+  get isDirty(): boolean {
+    if (!this.savedStateId) return true;
+    const stateId = getHistoryStateId(this.mainEditorState);
+    if (this.savedStateId === ALREADY_SAVED) {
+      // If we start in a saved state, then 'no history', i.e. undefined id, means we're not dirty
+      return !!stateId;
+    } else {
+      return this.savedStateId !== stateId;
+    }
+  }
+  /** Mark the history state at which the document will be considered 'clean' */
+  markClean() {
+    this.savedStateId = getHistoryStateId(this.mainEditorState);
+  }
+
   /**
    * Replaces the state (and current document) with a parsed version of the provided `html` string.
    * This method creates a new `doc` node and parses it correctly based on the provided html.
@@ -79,8 +100,12 @@ export default class SayController {
     {
       shouldFocus = true,
       doNotClean = false,
+      startsDirty = false,
     }: Exclude<SetHtmlOptions, 'range'> = {},
   ) {
+    if (!startsDirty) {
+      this.savedStateId = ALREADY_SAVED;
+    }
     const doc = htmlToDoc(html, {
       schema: this.schema,
       editorView: this.editor.mainView,
