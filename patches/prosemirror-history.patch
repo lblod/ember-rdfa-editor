@@ -1,0 +1,46 @@
+diff --git a/src/history.ts b/src/history.ts
+index 3334b83aac908ca818159336c8507056bbf4766a..2fcd693f4bf43483ba121d51dcb7c51cd65dc60f 100644
+--- a/src/history.ts
++++ b/src/history.ts
+@@ -218,6 +218,8 @@ function cutOffEvents(items: RopeSequence<Item>, n: number) {
+ }
+ 
+ class Item {
++  readonly id: string
++
+   constructor(
+     // The (forward) step map for this item.
+     readonly map: StepMap,
+@@ -229,8 +231,10 @@ class Item {
+     readonly selection?: SelectionBookmark,
+     // If this item is the inverse of a previous mapping on the stack,
+     // this points at the inverse's offset
+-    readonly mirrorOffset?: number
+-  ) {}
++    readonly mirrorOffset?: number,
++  ) {
++    this.id = `${Date.now()}`
++  }
+ 
+   merge(other: Item) {
+     if (this.step && other.step && !other.selection) {
+@@ -463,3 +467,19 @@ export function redoDepth(state: EditorState) {
+ export function isHistoryTransaction(tr: Transaction) {
+   return tr.getMeta(historyKey) != null
+ }
++
++/// Returns the unique ID of the current history for a given editor state.
++/// This can for example be used to compare against a saved state, to
++/// determine if there are changes since then.
++export function getHistoryStateId(state: EditorState): string | undefined {
++  let hist: HistoryState | undefined = historyKey.getState(state)
++  if (!hist || hist.done.eventCount === 0) return
++  let items = hist.done.items
++  return items.get(items.length - 1)?.id
++}
++
++/// Whether the unique IDs of the history for the given editor state matches
++/// the passed ID.
++export function matchesTaggedHistory(state: EditorState, id: string) {
++  return getHistoryStateId(state) === id
++}
