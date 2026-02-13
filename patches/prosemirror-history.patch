@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index e0e1020d3a68c383dd393741a50fc61efe9af068..13b1793c8abae66a38adafe078380d5ba62bc70f 100644
+index e0e1020d3a68c383dd393741a50fc61efe9af068..e56f1f969e350cb0efe2a5edd3cdfa8c129417a4 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -1,11 +1,11 @@
@@ -28,7 +28,48 @@ index e0e1020d3a68c383dd393741a50fc61efe9af068..13b1793c8abae66a38adafe078380d5b
      key: "popEvent",
      value: function popEvent(state, preserveItems) {
        var _this = this;
-@@ -195,7 +195,6 @@ var Branch = function () {
+@@ -34,7 +34,8 @@ var Branch = function () {
+         remap = this.remapping(end, this.items.length);
+         mapFrom = remap.maps.length;
+       }
+-      var transform = state.tr;
++      var transform = state.tr,
++        poppedId;
+       var selection, remaining;
+       var addAfter = [],
+         addBefore = [];
+@@ -64,25 +65,27 @@ var Branch = function () {
+         if (item.selection) {
+           selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection;
+           remaining = new Branch(_this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)), _this.eventCount - 1);
++          poppedId = item.id;
+           return false;
+         }
+       }, this.items.length, 0);
+       return {
+         remaining: remaining,
+         transform: transform,
+-        selection: selection
++        selection: selection,
++        itemId: poppedId
+       };
+     }
+   }, {
+     key: "addTransform",
+-    value: function addTransform(transform, selection, histOptions, preserveItems) {
++    value: function addTransform(transform, selection, histOptions, preserveItems, itemId) {
+       var newItems = [],
+         eventCount = this.eventCount;
+       var oldItems = this.items,
+         lastItem = !preserveItems && oldItems.length ? oldItems.get(oldItems.length - 1) : null;
+       for (var i = 0; i < transform.steps.length; i++) {
+         var step = transform.steps[i].invert(transform.docs[i]);
+-        var item = new Item(transform.mapping.maps[i], step, selection),
++        var item = new Item(transform.mapping.maps[i], step, selection, undefined, itemId),
+           merged = void 0;
+         if (merged = lastItem && lastItem.merge(item)) {
+           item = merged;
+@@ -195,7 +198,6 @@ var Branch = function () {
        return new Branch(RopeSequence.from(items.reverse()), events);
      }
    }]);
@@ -36,18 +77,25 @@ index e0e1020d3a68c383dd393741a50fc61efe9af068..13b1793c8abae66a38adafe078380d5b
  }();
  Branch.empty = new Branch(RopeSequence.empty, 0);
  function cutOffEvents(items, n) {
-@@ -215,8 +214,9 @@ var Item = function () {
+@@ -209,14 +211,15 @@ function cutOffEvents(items, n) {
+   return items.slice(cutPoint);
+ }
+ var Item = function () {
+-  function Item(map, step, selection, mirrorOffset) {
++  function Item(map, step, selection, mirrorOffset, id) {
+     _classCallCheck(this, Item);
+     this.map = map;
      this.step = step;
      this.selection = selection;
      this.mirrorOffset = mirrorOffset;
-+    this.id = "".concat(Date.now());
++    this.id = id !== null && id !== void 0 ? id : "".concat(Date.now());
    }
 -  _createClass(Item, [{
 +  return _createClass(Item, [{
      key: "merge",
      value: function merge(other) {
        if (this.step && other.step && !other.selection) {
-@@ -225,7 +225,6 @@ var Item = function () {
+@@ -225,7 +228,6 @@ var Item = function () {
        }
      }
    }]);
@@ -55,7 +103,16 @@ index e0e1020d3a68c383dd393741a50fc61efe9af068..13b1793c8abae66a38adafe078380d5b
  }();
  var HistoryState = _createClass(function HistoryState(done, undone, prevRanges, prevTime, prevComposition) {
    _classCallCheck(this, HistoryState);
-@@ -371,9 +370,21 @@ function redoDepth(state) {
+@@ -289,7 +291,7 @@ function histTransaction(history, state, redo) {
+   var pop = (redo ? history.undone : history.done).popEvent(state, preserveItems);
+   if (!pop) return null;
+   var selection = pop.selection.resolve(pop.transform.doc);
+-  var added = (redo ? history.done : history.undone).addTransform(pop.transform, state.selection.getBookmark(), histOptions, preserveItems);
++  var added = (redo ? history.done : history.undone).addTransform(pop.transform, state.selection.getBookmark(), histOptions, preserveItems, pop.itemId);
+   var newHist = new HistoryState(redo ? added : pop.remaining, redo ? pop.remaining : added, null, 0, -1);
+   return pop.transform.setSelection(selection).setMeta(historyKey, {
+     redo: redo,
+@@ -371,9 +373,21 @@ function redoDepth(state) {
  function isHistoryTransaction(tr) {
    return tr.getMeta(historyKey) != null;
  }
@@ -134,18 +191,65 @@ index ba077f149426e8a0fc53ef4b42f3aa219d65ffc0..70aa2a0653804f40107c774083339ac8
 -export { closeHistory, history, isHistoryTransaction, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
 +export { closeHistory, getHistoryStateId, history, isHistoryTransaction, matchesTaggedHistory, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
 diff --git a/dist/index.js b/dist/index.js
-index acd29d912b20016ae4f59fdce72c110a3a3dfcfd..d5bed7f3b9d2992b876aacdb551f7e80a9bb98a3 100644
+index acd29d912b20016ae4f59fdce72c110a3a3dfcfd..87da4cd7a5a46f1bece40e235cd3da59d024e097 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -232,6 +232,7 @@ class Item {
+@@ -42,7 +42,7 @@ class Branch {
+             remap = this.remapping(end, this.items.length);
+             mapFrom = remap.maps.length;
+         }
+-        let transform = state.tr;
++        let transform = state.tr, poppedId;
+         let selection, remaining;
+         let addAfter = [], addBefore = [];
+         this.items.forEach((item, i) => {
+@@ -72,18 +72,19 @@ class Branch {
+             if (item.selection) {
+                 selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection;
+                 remaining = new Branch(this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)), this.eventCount - 1);
++                poppedId = item.id;
+                 return false;
+             }
+         }, this.items.length, 0);
+-        return { remaining: remaining, transform, selection: selection };
++        return { remaining: remaining, transform, selection: selection, itemId: poppedId };
+     }
+     // Create a new branch with the given transform added.
+-    addTransform(transform, selection, histOptions, preserveItems) {
++    addTransform(transform, selection, histOptions, preserveItems, itemId) {
+         let newItems = [], eventCount = this.eventCount;
+         let oldItems = this.items, lastItem = !preserveItems && oldItems.length ? oldItems.get(oldItems.length - 1) : null;
+         for (let i = 0; i < transform.steps.length; i++) {
+             let step = transform.steps[i].invert(transform.docs[i]);
+-            let item = new Item(transform.mapping.maps[i], step, selection), merged;
++            let item = new Item(transform.mapping.maps[i], step, selection, undefined, itemId), merged;
+             if (merged = lastItem && lastItem.merge(item)) {
+                 item = merged;
+                 if (i)
+@@ -227,11 +228,12 @@ class Item {
+     selection, 
+     // If this item is the inverse of a previous mapping on the stack,
+     // this points at the inverse's offset
+-    mirrorOffset) {
++    mirrorOffset, id) {
+         this.map = map;
          this.step = step;
          this.selection = selection;
          this.mirrorOffset = mirrorOffset;
-+        this.id = `${Date.now()}`;
++        this.id = id !== null && id !== void 0 ? id : `${Date.now()}`;
      }
      merge(other) {
          if (this.step && other.step && !other.selection) {
-@@ -449,5 +450,25 @@ plugin.
+@@ -328,7 +330,7 @@ function histTransaction(history, state, redo) {
+     if (!pop)
+         return null;
+     let selection = pop.selection.resolve(pop.transform.doc);
+-    let added = (redo ? history.done : history.undone).addTransform(pop.transform, state.selection.getBookmark(), histOptions, preserveItems);
++    let added = (redo ? history.done : history.undone).addTransform(pop.transform, state.selection.getBookmark(), histOptions, preserveItems, pop.itemId);
+     let newHist = new HistoryState(redo ? added : pop.remaining, redo ? pop.remaining : added, null, 0, -1);
+     return pop.transform.setSelection(selection).setMeta(historyKey, { redo, historyState: newHist });
+ }
+@@ -449,5 +451,25 @@ plugin.
  function isHistoryTransaction(tr) {
      return tr.getMeta(historyKey) != null;
  }
@@ -173,10 +277,46 @@ index acd29d912b20016ae4f59fdce72c110a3a3dfcfd..d5bed7f3b9d2992b876aacdb551f7e80
 -export { closeHistory, history, isHistoryTransaction, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
 +export { closeHistory, getHistoryStateId, history, isHistoryTransaction, matchesTaggedHistory, redo, redoDepth, redoNoScroll, undo, undoDepth, undoNoScroll };
 diff --git a/src/history.ts b/src/history.ts
-index 3334b83aac908ca818159336c8507056bbf4766a..2fcd693f4bf43483ba121d51dcb7c51cd65dc60f 100644
+index 3334b83aac908ca818159336c8507056bbf4766a..f43652fa80e41f73f31b594ec0586005b557dbd4 100644
 --- a/src/history.ts
 +++ b/src/history.ts
-@@ -218,6 +218,8 @@ function cutOffEvents(items: RopeSequence<Item>, n: number) {
+@@ -40,7 +40,7 @@ class Branch {
+       remap = this.remapping(end, this.items.length)
+       mapFrom = remap.maps.length
+     }
+-    let transform = state.tr
++    let transform = state.tr, poppedId: string | undefined
+     let selection: SelectionBookmark | undefined, remaining: Branch | undefined
+     let addAfter: Item[] = [], addBefore: Item[] = []
+ 
+@@ -72,22 +72,23 @@ class Branch {
+       if (item.selection) {
+         selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection
+         remaining = new Branch(this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)), this.eventCount - 1)
++        poppedId = item.id
+         return false
+       }
+     }, this.items.length, 0)
+ 
+-    return {remaining: remaining!, transform, selection: selection!}
++    return {remaining: remaining!, transform, selection: selection!, itemId: poppedId}
+   }
+ 
+   // Create a new branch with the given transform added.
+   addTransform(transform: Transform, selection: SelectionBookmark | undefined,
+-               histOptions: Required<HistoryOptions>, preserveItems: boolean) {
++               histOptions: Required<HistoryOptions>, preserveItems: boolean, itemId?: string) {
+     let newItems = [], eventCount = this.eventCount
+     let oldItems = this.items, lastItem = !preserveItems && oldItems.length ? oldItems.get(oldItems.length - 1) : null
+ 
+     for (let i = 0; i < transform.steps.length; i++) {
+       let step = transform.steps[i].invert(transform.docs[i])
+-      let item = new Item(transform.mapping.maps[i], step, selection), merged
++      let item = new Item(transform.mapping.maps[i], step, selection, undefined, itemId), merged
+       if (merged = lastItem && lastItem.merge(item)) {
+         item = merged
+         if (i) newItems.pop()
+@@ -218,6 +219,8 @@ function cutOffEvents(items: RopeSequence<Item>, n: number) {
  }
  
  class Item {
@@ -185,20 +325,30 @@ index 3334b83aac908ca818159336c8507056bbf4766a..2fcd693f4bf43483ba121d51dcb7c51c
    constructor(
      // The (forward) step map for this item.
      readonly map: StepMap,
-@@ -229,8 +231,10 @@ class Item {
+@@ -229,8 +232,11 @@ class Item {
      readonly selection?: SelectionBookmark,
      // If this item is the inverse of a previous mapping on the stack,
      // this points at the inverse's offset
 -    readonly mirrorOffset?: number
 -  ) {}
 +    readonly mirrorOffset?: number,
++    id?: string,
 +  ) {
-+    this.id = `${Date.now()}`
++    this.id = id ?? `${Date.now()}`
 +  }
  
    merge(other: Item) {
      if (this.step && other.step && !other.selection) {
-@@ -463,3 +467,19 @@ export function redoDepth(state: EditorState) {
+@@ -336,7 +342,7 @@ function histTransaction(history: HistoryState, state: EditorState, redo: boolea
+ 
+   let selection = pop.selection!.resolve(pop.transform.doc)
+   let added = (redo ? history.done : history.undone).addTransform(pop.transform, state.selection.getBookmark(),
+-                                                                  histOptions, preserveItems)
++                                                                  histOptions, preserveItems, pop.itemId)
+ 
+   let newHist = new HistoryState(redo ? added : pop.remaining, redo ? pop.remaining : added, null, 0, -1)
+   return pop.transform.setSelection(selection).setMeta(historyKey, {redo, historyState: newHist})
+@@ -463,3 +469,19 @@ export function redoDepth(state: EditorState) {
  export function isHistoryTransaction(tr: Transaction) {
    return tr.getMeta(historyKey) != null
  }

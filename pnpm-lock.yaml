@@ -530,7 +530,7 @@ patchedDependencies:
     hash: d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621
     path: patches/ember-source@6.1.0.patch
   prosemirror-history:
-    hash: ffb086f6b1f7f661b7077fad47e99ac0661b17a91f071e33a10b0ff2e26df535
+    hash: 2e9256a234511dbcd6e3a6cb1a835efb95344074571c1659bd077d3817405c40
     path: patches/prosemirror-history.patch
 
 importers:
@@ -713,7 +713,7 @@ importers:
         version: 1.8.2
       prosemirror-history:
         specifier: 'catalog:'
-        version: 1.5.0(patch_hash=ffb086f6b1f7f661b7077fad47e99ac0661b17a91f071e33a10b0ff2e26df535)
+        version: 1.5.0(patch_hash=2e9256a234511dbcd6e3a6cb1a835efb95344074571c1659bd077d3817405c40)
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.1
@@ -18462,7 +18462,7 @@ snapshots:
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
 
-  prosemirror-history@1.5.0(patch_hash=ffb086f6b1f7f661b7077fad47e99ac0661b17a91f071e33a10b0ff2e26df535):
+  prosemirror-history@1.5.0(patch_hash=2e9256a234511dbcd6e3a6cb1a835efb95344074571c1659bd077d3817405c40):
     dependencies:
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
