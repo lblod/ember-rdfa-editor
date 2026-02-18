@@ -1,0 +1,51 @@
+@use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+
+.say-editor .say-block-rdfa {
+  --padding: 0.5rem;
+  --border-size: 0.1rem;
+  --border-color: #c5cbd5;
+  --border-color-active: #0055cc;
+
+  --solid-border: var(--border-size) solid var(--border-color);
+  --solid-border-active: var(--border-size) solid var(--border-color-active);
+
+  position: relative;
+  border-radius: 3px;
+  padding: var(--padding);
+
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  // offset the padding + the border so the borders on the left all overlap
+  margin-left: calc((var(--padding) + var(--border-size)) * -1);
+
+  border: var(--solid-border);
+  &.say-active {
+    border: var(--solid-border-active);
+    .say-block-rdfa {
+      border-left: var(--solid-border-active);
+    }
+  }
+
+  &.ProseMirror-selectednode {
+    background-color: var(--au-blue-200);
+
+    & > .say-block-rdfa--label {
+      cursor: grab;
+    }
+  }
+
+  .say-block-rdfa--label {
+    position: absolute;
+    top: -5px;
+    right: 10px;
+    background-color: white;
+    padding: 0.2rem 0.6rem;
+    color: #687483;
+    line-height: 10px;
+    cursor: pointer;
+  }
+}
+
+.say-block-rdfa.say-active > .say-block-rdfa--label {
+  color: var(--border-color-active);
+}

@@ -1,0 +1,54 @@
+@forward "./scss/custom-components.scss";
+@forward "./scss/_u-utilities.scss";
+@use "./scss/custom-components.scss" as *;
+/* ==================================
+   #SAY EDITOR
+   ================================== */
+
+/**
+ * CONTENTS
+ * ---
+ * VARIABLES: Project settings and variables
+ * TOOLS: Mixins
+ * OBJECTS: OOCSS unstyled objects (namespace: '.au-o-...')
+ * COMPONENTS: Components (namespace: '.au-c-...')
+ * CUSTOM COMPONENTS: Say editor components (namespace: '.say-...')
+ * UTILITIES: Single function helper classes (namespace: '.au-u-...')
+ * SHAME: Quick fixes
+ */
+// VARIABLES
+
+.ProseMirror-gapcursor {
+  display: none;
+  border-top: 1px solid black;
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 20px;
+}
+
+@keyframes ProseMirror-cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.ProseMirror-focused .ProseMirror-gapcursor {
+  display: block;
+}
+
+// CUSTOM COMPONENTS
+.u-hidden {
+  visibility: visible;
+  display: inline-block;
+  background: yellow;
+}
+
+ol > li[data-list-marker]::marker {
+  content: attr(data-list-marker);
+  font-variant-numeric: tabular-nums;
+}
+ol > *[data-content-container] > li[data-list-marker]::marker {
+  content: attr(data-list-marker);
+  font-variant-numeric: tabular-nums;
+}

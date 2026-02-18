@@ -1,33 +1,57 @@
 steps:
   install:
-    image: node:20-slim
+    image: node:22-slim
     commands:
       - corepack enable
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
   release-next:
-    image: plugins/npm
-    settings:
-      token:
+    image: node:22-slim
+    commands:
+      - npm config set ignore-scripts true
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      # pnpm doesn't handle this setting well, so we do it with npm
+      - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
+      - pnpm i --frozen-lockfile
+      - pnpm build
+      - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
+    environment:
+      NPM_TOKEN:
         from_secret: npm_access_token
-      tag: next
     when:
       ref:
-        include: refs/tags/*-next.*
+        include: refs/tags/@lblod/ember-rdfa-editor@*-next.*
   release:
-    image: plugins/npm
-    settings:
-      token:
+    image: node:22-slim
+    commands:
+      - npm config set ignore-scripts true
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      # pnpm doesn't handle this setting well, so we do it with npm
+      - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
+      - pnpm i --frozen-lockfile
+      - pnpm build
+      - pnpm publish packages/ember-rdfa-editor --access public --tag latest --no-git-checks
+    environment:
+      NPM_TOKEN:
         from_secret: npm_access_token
     when:
       ref:
-        exclude: refs/tags/*-*
+        exclude: refs/tags/@lblod/ember-rdfa-editor@*-*
   push-tagged-build:
     image: plugins/docker
     settings:
       repo: lblod/ember-rdfa-editor
-      tags: "${CI_COMMIT_TAG##v}"
+      tags: "${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}"
       purge: true
-    secrets: [ docker_username, docker_password ]
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
 when:
   event: tag
-  ref: refs/tags/v*
+  ref:
+    include: refs/tags/@lblod/ember-rdfa-editor@*
+    exclude: refs/tags/@lblod/ember-rdfa-editor@*-dev.*

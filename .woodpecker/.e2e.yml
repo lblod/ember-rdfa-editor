@@ -1,11 +1,17 @@
 steps:
   e2e:
     # this image must be the same as in `scripts/e2e.sh`
-    image: mcr.microsoft.com/playwright:v1.41.2-jammy
+    image: mcr.microsoft.com/playwright:v1.50.0-jammy
     commands:
-      - corepack enable
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
-      - pnpm playwright test
+      - pnpm build
+      - pnpm i -f
+      - pnpm --filter test-app e2e:run
+      # Ideally we would also run the visual regression tests, but we need to fix the update process
+      # for them first
+      # - pnpm playwright test
 when:
   event:
     - pull_request

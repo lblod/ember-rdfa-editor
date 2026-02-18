@@ -1,0 +1,17 @@
+steps:
+  test-compat:
+    image: danlynn/ember-cli:5.12.0-node_20.18
+    commands:
+      - echo "inject-workspace-packages=true" >> .npmrc
+      - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
+      - pnpm i --no-frozen-lockfile
+      - pnpm build
+      - pnpm --filter test-app exec ember try:one ember-lts-4.12 --skip-cleanup=true
+when:
+  event:
+    - pull_request
+
+depends_on:
+  - verify-pr

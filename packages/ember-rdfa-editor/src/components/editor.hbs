@@ -1,0 +1,7 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{! template-lint-disable no-at-ember-render-modifiers }}
+<div class="say-editor__paper" {{did-insert this.handleRawEditorInit}}>
+</div>
+{{#if this.notificationToaster}}
+  <AuToaster />
+{{/if}}

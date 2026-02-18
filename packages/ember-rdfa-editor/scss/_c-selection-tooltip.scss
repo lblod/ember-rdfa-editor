@@ -1,0 +1,9 @@
+@use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+
+$say-selection-tooltip-background: var(--au-gray-100) !default;
+
+.say-editor-selection-tooltip {
+  background: $say-selection-tooltip-background;
+  border: 0.1rem solid var(--au-gray-300);
+  border-radius: 0.5rem;
+}

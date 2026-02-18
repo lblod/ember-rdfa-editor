@@ -4,6 +4,7 @@
 /dist/
 /declarations/
 /tmp/
+vendor/
 
 # dependencies
 /bower_components/
@@ -23,6 +24,7 @@ npm-debug.log*
 yarn-error.log
 testem.log
 .DS_Store
+**/.lint-todo
 
 *~
 

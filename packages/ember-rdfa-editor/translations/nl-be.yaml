@@ -1,0 +1,121 @@
+ember-rdfa-editor:
+  undo: Ongedaan maken
+  redo: Opnieuw uitvoeren
+  bold: Vetgedrukt
+  italic: Cursief
+  underline: Onderstreept
+  strikethrough: Doorgehaald
+  subscript: Subscript
+  superscript: Superscript
+  unordered-list: Lijst met opsommingstekens
+  ordered-list:
+    button-label: Genummerde lijst
+    options-label: Lijststijlen
+    styles:
+      decimal: Getallen
+      lower-alpha: Letters
+      upper-alpha: Hoofdletters
+      upper-roman: Romeinse Cijfers
+      hierarchical: Hiërarchisch
+  unindent-list: Lijstniveau hoger
+  indent-list: Lijstniveau lager
+  table:
+    table-options: Tabelopties
+    insert-table: Tabel invoegen
+    add-row-below: Rij onder invoegen
+    add-row-above: Rij boven invoegen
+    add-column-after: Kolom rechts invoegen
+    add-column-before: Kolom links invoegen
+    delete-row: Rij verwijderen
+    delete-column: Kolom verwijderen
+    delete-table: Tabel verwijderen
+    toggle-header-row: Kopregel aan/uit
+    toggle-header-column: Kopkolom aan/uit
+    merge-cells: Cellen samenvoegen
+    split-cell: Cel splitsen
+    background-color: Achtergrondkleur
+    columns: Kolommen
+    rows: Rijen
+    vertical-align: Verticale uitlijning
+    vertical-align-options:
+      top: Boven
+      middle: Midden
+      bottom: Onder
+  normalText: Hoofdtekst
+  heading: Koptitel
+  insert-heading: Voeg koptitel toe
+
+  show-annotations: Toon annotaties
+  show-formatting-marks: Toon opmaakmarkeringen
+  insert: Invoegen
+  indent: Indentatie vergroten
+  unindent: Indentatie verkleinen
+  link:
+    insert: Snelkoppeling invoegen
+    placeholder:
+      text: Voeg tekst in
+      href: Voeg URL in
+    open: Snelkoppeling openen
+    ctrlClickDescription: Ctrl+klik om deze snelkoppeling te openen.
+    edit:
+      title: Snelkoppeling wijzigen
+      uncouple: Snelkoppeling loskoppelen
+  highlight:
+    button-label: Markeringskleur
+    options-label: Markeringsopties
+  color:
+    button-label: Tekstkleur
+  color-selector:
+    no-color: Geen kleur
+    additional-colors: Meer kleuren
+  image:
+    insert: Afbeelding invoegen
+    url-label: Afbeeldings-URL
+    url-error: Enkel afbeeldings-URLs die beginnen met http(s) zijn toegelaten
+    alt-label: Alternatieve tekst (Alt)
+  dummy:
+    counter:
+      label: Teller
+  alignment:
+    label: Uitlijning
+    options:
+      left: Links uitlijnen
+      center: Centreren
+      right: Rechts uitlijnen
+      justify: Uitvullen
+  utils:
+    required: Verplicht
+    save: Opslaan
+    cancel: Annuleren
+    back: Terug
+    more-options: Meer opties
+    loading: Aan het laden
+  html-editor:
+    toolbar-button:
+      label: HTML bewerken
+    modal:
+      title: HTML bewerken
+  text-styles: Tekststijlen
+  notifications:
+    paste-size-limit-reached: Limiet voor plakgrootte bereikt, probeer het opnieuw met een kleinere afbeelding of gebruik een hulpprogramma om de grootte aan te passen
+  linking-ui-poc:
+    button:
+      label: Voeg relatie toe
+    modal:
+      title: Voeg relatie toe
+      form:
+        fields:
+          predicate:
+            label: Relatie-type
+            validation:
+              required: Gelieve een relatie-type te selecteren
+          target:
+            label: Doel
+            validation:
+              required: Gelieve een doel te selecteren
+        submit:
+          label: Invoegen
+        cancel:
+          label: Annuleren
+  property-editor:
+    external-node: Externe node

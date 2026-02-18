@@ -1,0 +1,449 @@
+{
+  "name": "@lblod/ember-rdfa-editor",
+  "version": "13.1.1",
+  "description": "Ember addon wrapping an RDFa editor with a public API",
+  "keywords": [
+    "ember-addon"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
+  },
+  "license": "MIT",
+  "author": "redpencil.io",
+  "exports": {
+    ".": {
+      "types": "./declarations/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./addon-main.js": "./addon-main.cjs",
+    "./commands": {
+      "types": "./declarations/commands/index.d.ts",
+      "default": "./dist/commands/index.js"
+    },
+    "./core/say-data-factory": {
+      "types": "./declarations/core/say-data-factory/index.d.ts",
+      "default": "./dist/core/say-data-factory/index.js"
+    },
+    "./core/say-data-factory/prosemirror-terms": {
+      "types": "./declarations/core/say-data-factory/prosemirror-terms/index.d.ts",
+      "default": "./dist/core/say-data-factory/prosemirror-terms/index.js"
+    },
+    "./marks": {
+      "types": "./declarations/marks/index.d.ts",
+      "default": "./dist/marks/index.js"
+    },
+    "./nodes": {
+      "types": "./declarations/nodes/index.d.ts",
+      "default": "./dist/nodes/index.js"
+    },
+    "./plugins/alignment": {
+      "types": "./declarations/plugins/alignment/index.d.ts",
+      "default": "./dist/plugins/alignment/index.js"
+    },
+    "./plugins/blockquote": {
+      "types": "./declarations/plugins/blockquote/index.d.ts",
+      "default": "./dist/plugins/blockquote/index.js"
+    },
+    "./plugins/chrome-hacks-plugin": {
+      "types": "./declarations/plugins/chrome-hacks-plugin/index.d.ts",
+      "default": "./dist/plugins/chrome-hacks-plugin/index.js"
+    },
+    "./plugins/code": {
+      "types": "./declarations/plugins/code/index.d.ts",
+      "default": "./dist/plugins/code/index.js"
+    },
+    "./plugins/color": {
+      "types": "./declarations/plugins/color/index.d.ts",
+      "default": "./dist/plugins/color/index.js"
+    },
+    "./plugins/datastore": {
+      "types": "./declarations/plugins/datastore/index.d.ts",
+      "default": "./dist/plugins/datastore/index.js"
+    },
+    "./plugins/default-attribute-value-generation": {
+      "types": "./declarations/plugins/default-attribute-value-generation/index.d.ts",
+      "default": "./dist/plugins/default-attribute-value-generation/index.js"
+    },
+    "./plugins/editable-node": {
+      "types": "./declarations/plugins/editable-node/index.d.ts",
+      "default": "./dist/plugins/editable-node/index.js"
+    },
+    "./plugins/ember-application": {
+      "types": "./declarations/plugins/ember-application/index.d.ts",
+      "default": "./dist/plugins/ember-application/index.js"
+    },
+    "./plugins/firefox-cursor-fix": {
+      "types": "./declarations/plugins/firefox-cursor-fix/index.d.ts",
+      "default": "./dist/plugins/firefox-cursor-fix/index.js"
+    },
+    "./plugins/gap-cursor": {
+      "types": "./declarations/plugins/gap-cursor/index.d.ts",
+      "default": "./dist/plugins/gap-cursor/index.js"
+    },
+    "./plugins/heading": {
+      "types": "./declarations/plugins/heading/index.d.ts",
+      "default": "./dist/plugins/heading/index.js"
+    },
+    "./plugins/highlight": {
+      "types": "./declarations/plugins/highlight/index.d.ts",
+      "default": "./dist/plugins/highlight/index.js"
+    },
+    "./plugins/history": {
+      "types": "./declarations/plugins/history/index.d.ts",
+      "default": "./dist/plugins/history/index.js"
+    },
+    "./plugins/image": {
+      "types": "./declarations/plugins/image/index.d.ts",
+      "default": "./dist/plugins/image/index.js"
+    },
+    "./plugins/notification": {
+      "types": "./declarations/plugins/notification/index.d.ts",
+      "default": "./dist/plugins/notification/index.js"
+    },
+    "./plugins/imported-resources": {
+      "types": "./declarations/plugins/imported-resources/index.d.ts",
+      "default": "./dist/plugins/imported-resources/index.js"
+    },
+    "./plugins/invisibles": {
+      "types": "./declarations/plugins/invisibles/index.d.ts",
+      "default": "./dist/plugins/invisibles/index.js"
+    },
+    "./plugins/last-key-pressed": {
+      "types": "./declarations/plugins/last-key-pressed/index.d.ts",
+      "default": "./dist/plugins/last-key-pressed/index.js"
+    },
+    "./plugins/link": {
+      "types": "./declarations/plugins/link/index.d.ts",
+      "default": "./dist/plugins/link/index.js"
+    },
+    "./plugins/list": {
+      "types": "./declarations/plugins/list/index.d.ts",
+      "default": "./dist/plugins/list/index.js"
+    },
+    "./plugins/list/input_rules": {
+      "types": "./declarations/plugins/list/input_rules/index.d.ts",
+      "default": "./dist/plugins/list/input_rules/index.js"
+    },
+    "./plugins/placeholder": {
+      "types": "./declarations/plugins/placeholder/index.d.ts",
+      "default": "./dist/plugins/placeholder/index.js"
+    },
+    "./plugins/rdfa-info": {
+      "types": "./declarations/plugins/rdfa-info/index.d.ts",
+      "default": "./dist/plugins/rdfa-info/index.js"
+    },
+    "./plugins/remove-properties-of-deleted-nodes": {
+      "types": "./declarations/plugins/remove-properties-of-deleted-nodes/index.d.ts",
+      "default": "./dist/plugins/remove-properties-of-deleted-nodes/index.js"
+    },
+    "./plugins/table": {
+      "types": "./declarations/plugins/table/index.d.ts",
+      "default": "./dist/plugins/table/index.js"
+    },
+    "./plugins/text-style": {
+      "types": "./declarations/plugins/text-style/index.d.ts",
+      "default": "./dist/plugins/text-style/index.js"
+    },
+    "./plugins/_private/editable-node": {
+      "types": "./declarations/plugins/_private/editable-node/index.d.ts",
+      "default": "./dist/plugins/_private/editable-node/index.js"
+    },
+    "./components": {
+      "types": "./declarations/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    },
+    "./components/_private/rdfa-editor": {
+      "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
+      "default": "./dist/components/_private/rdfa-editor/index.js"
+    },
+    "./components/_private/attribute-editor": {
+      "types": "./declarations/components/_private/attribute-editor/index.d.ts",
+      "default": "./dist/components/_private/attribute-editor/index.js"
+    },
+    "./components/_private/debug-info": {
+      "types": "./declarations/components/_private/debug-info/index.d.ts",
+      "default": "./dist/components/_private/debug-info/index.js"
+    },
+    "./vendor/*": "./vendor/*",
+    "./translations/*": "./translations/*",
+    "./_index.scss": "./_index.scss",
+    "./ember-rdfa-editor.scss": "./ember-rdfa-editor.scss",
+    "./*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "imports": {
+    "#root": null,
+    "#root/index.ts": null,
+    "#root/*.ts": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*.ts"
+    },
+    "#root/*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "declarations/*"
+      ]
+    }
+  },
+  "files": [
+    "addon-main.cjs",
+    "declarations",
+    "dist",
+    "translations",
+    "_index.scss",
+    "ember-rdfa-editor.scss",
+    "scss",
+    "vendor"
+  ],
+  "scripts": {
+    "build": "rollup --config",
+    "format": "prettier . --cache --write",
+    "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
+    "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto && pnpm run format",
+    "lint:format": "prettier . --cache --check",
+    "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
+    "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "lint:types": "glint",
+    "prepack": "pnpm build",
+    "start": "rollup --config --watch",
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
+  },
+  "dependencies": {
+    "@codemirror/commands": "catalog:",
+    "@codemirror/lang-html": "catalog:",
+    "@codemirror/lang-xml": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@curvenote/prosemirror-utils": "catalog:",
+    "@ember/optional-features": "catalog:",
+    "@ember/render-modifiers": "catalog:",
+    "@embroider/addon-shim": "catalog:",
+    "@embroider/macros": "catalog:",
+    "@floating-ui/dom": "catalog:",
+    "@graphy/memory.dataset.fast": "catalog:",
+    "@lblod/marawa": "catalog:",
+    "@rdfjs/types": "catalog:",
+    "@say-editor/prosemirror-invisibles": "catalog:",
+    "@say-editor/prosemirror-tables": "catalog:",
+    "@types/react": "catalog:",
+    "codemirror": "catalog:",
+    "common-tags": "catalog:",
+    "crypto-browserify": "catalog:",
+    "debug": "catalog:",
+    "decorator-transforms": "catalog:",
+    "dompurify": "catalog:",
+    "ember-cli-babel": "catalog:",
+    "ember-cli-htmlbars": "catalog:",
+    "ember-focus-trap": "catalog:",
+    "ember-headless-form": "catalog:",
+    "ember-headless-form-yup": "catalog:",
+    "ember-modifier": "catalog:",
+    "ember-template-imports": "catalog:",
+    "ember-truth-helpers": "catalog:",
+    "ember-velcro": "catalog:",
+    "iter-tools": "catalog:",
+    "js-beautify": "catalog:",
+    "linkifyjs": "catalog:",
+    "mdn-polyfills": "catalog:",
+    "mongoose": "catalog:",
+    "process": "catalog:",
+    "prosemirror-commands": "catalog:",
+    "prosemirror-dropcursor": "catalog:",
+    "prosemirror-history": "catalog:",
+    "prosemirror-inputrules": "catalog:",
+    "prosemirror-keymap": "catalog:",
+    "prosemirror-model": "catalog:",
+    "prosemirror-schema-basic": "catalog:",
+    "prosemirror-schema-list": "catalog:",
+    "prosemirror-state": "catalog:",
+    "prosemirror-transform": "catalog:",
+    "prosemirror-view": "catalog:",
+    "rdf-data-factory": "catalog:",
+    "reactiveweb": "catalog:",
+    "relative-to-absolute-iri": "catalog:",
+    "stream-browserify": "catalog:",
+    "tracked-toolbox": "catalog:",
+    "uuid": "catalog:",
+    "yup": "catalog:"
+  },
+  "devDependencies": {
+    "@appuniversum/ember-appuniversum": "catalog:",
+    "@babel/core": "catalog:",
+    "@babel/eslint-parser": "catalog:",
+    "@babel/plugin-transform-typescript": "catalog:",
+    "@babel/runtime": "catalog:",
+    "@embroider/addon-dev": "catalog:",
+    "@eslint/js": "catalog:",
+    "@glimmer/component": "catalog:",
+    "@glimmer/tracking": "catalog:",
+    "@glint/core": "catalog:",
+    "@glint/environment-ember-loose": "catalog:",
+    "@glint/environment-ember-template-imports": "catalog:",
+    "@glint/template": "catalog:",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-commonjs": "catalog:",
+    "@rollup/plugin-inject": "catalog:",
+    "@rollup/plugin-json": "catalog:",
+    "@rollup/plugin-node-resolve": "catalog:",
+    "@tsconfig/ember": "catalog:",
+    "@types/debug": "catalog:",
+    "@types/js-beautify": "catalog:",
+    "@types/uuid": "catalog:",
+    "autoprefixer": "catalog:",
+    "babel-plugin-ember-template-compilation": "catalog:",
+    "concurrently": "catalog:",
+    "ember-auto-import": "^2.12.0",
+    "ember-basic-dropdown": "catalog:",
+    "ember-concurrency": "catalog:",
+    "ember-intl": "catalog:",
+    "ember-modifier": "catalog:",
+    "ember-power-select": "catalog:",
+    "ember-power-select-with-create": "catalog:",
+    "ember-source": "catalog:",
+    "ember-template-lint": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-ember": "catalog:",
+    "eslint-plugin-import": "catalog:",
+    "eslint-plugin-n": "catalog:",
+    "globals": "catalog:",
+    "postcss": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-ember-template-tag": "catalog:",
+    "prosemirror-test-builder": "catalog:",
+    "rollup": "catalog:",
+    "rollup-plugin-copy": "catalog:",
+    "rollup-plugin-node-globals": "catalog:",
+    "rollup-plugin-sass": "catalog:",
+    "sass": "catalog:",
+    "tracked-built-ins": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "webpack": "catalog:"
+  },
+  "peerDependencies": {
+    "@appuniversum/ember-appuniversum": "^3.11.0",
+    "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
+    "@glimmer/component": "^1.1.2 || ^2.0.0",
+    "@glimmer/tracking": "^1.1.2",
+    "@glint/template": ">= 1.0.0",
+    "ember-basic-dropdown": "^8.0.0",
+    "ember-concurrency": "^4.0.2 || ^5.0.0",
+    "ember-intl": "^6.4.0 || ^7.0.0",
+    "ember-power-select": "^7.0.0 || ^8.0.0",
+    "ember-power-select-with-create": "^2.0.0 || ^3.0.0",
+    "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
+    "tracked-built-ins": "^3.3.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@glint/template": {
+      "optional": true
+    }
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./components/_private/attribute-editor/index.js": "./dist/_app_/components/_private/attribute-editor/index.js",
+      "./components/_private/common/configurable-rdfa-display.js": "./dist/_app_/components/_private/common/configurable-rdfa-display.js",
+      "./components/_private/common/object-term-schemas.js": "./dist/_app_/components/_private/common/object-term-schemas.js",
+      "./components/_private/common/property-details.js": "./dist/_app_/components/_private/common/property-details.js",
+      "./components/_private/common/selection-tooltip.js": "./dist/_app_/components/_private/common/selection-tooltip.js",
+      "./components/_private/common/types.js": "./dist/_app_/components/_private/common/types.js",
+      "./components/_private/debug-info/index.js": "./dist/_app_/components/_private/debug-info/index.js",
+      "./components/_private/doc-editor/info-pill.js": "./dist/_app_/components/_private/doc-editor/info-pill.js",
+      "./components/_private/doc-editor/lang-pill.js": "./dist/_app_/components/_private/doc-editor/lang-pill.js",
+      "./components/_private/doc-imported-resource-editor/card.js": "./dist/_app_/components/_private/doc-imported-resource-editor/card.js",
+      "./components/_private/doc-imported-resource-editor/form.js": "./dist/_app_/components/_private/doc-imported-resource-editor/form.js",
+      "./components/_private/external-triple-editor/card.js": "./dist/_app_/components/_private/external-triple-editor/card.js",
+      "./components/_private/external-triple-editor/form.js": "./dist/_app_/components/_private/external-triple-editor/form.js",
+      "./components/_private/imported-resource-linker/card.js": "./dist/_app_/components/_private/imported-resource-linker/card.js",
+      "./components/_private/node-controls/card.js": "./dist/_app_/components/_private/node-controls/card.js",
+      "./components/_private/node-controls/remove-node.js": "./dist/_app_/components/_private/node-controls/remove-node.js",
+      "./components/_private/node-controls/wrapping-utils.js": "./dist/_app_/components/_private/node-controls/wrapping-utils.js",
+      "./components/_private/rdfa-visualiser/rdfa-explorer.js": "./dist/_app_/components/_private/rdfa-visualiser/rdfa-explorer.js",
+      "./components/_private/rdfa-visualiser/resource-info.js": "./dist/_app_/components/_private/rdfa-visualiser/resource-info.js",
+      "./components/_private/rdfa-visualiser/visualiser-card.js": "./dist/_app_/components/_private/rdfa-visualiser/visualiser-card.js",
+      "./components/_private/relationship-editor/card.js": "./dist/_app_/components/_private/relationship-editor/card.js",
+      "./components/_private/relationship-editor/configs.js": "./dist/_app_/components/_private/relationship-editor/configs.js",
+      "./components/_private/relationship-editor/content-predicate-form.js": "./dist/_app_/components/_private/relationship-editor/content-predicate-form.js",
+      "./components/_private/relationship-editor/create-button.js": "./dist/_app_/components/_private/relationship-editor/create-button.js",
+      "./components/_private/relationship-editor/modals/classic.js": "./dist/_app_/components/_private/relationship-editor/modals/classic.js",
+      "./components/_private/relationship-editor/modals/dev-mode.js": "./dist/_app_/components/_private/relationship-editor/modals/dev-mode.js",
+      "./components/_private/relationship-editor/types.js": "./dist/_app_/components/_private/relationship-editor/types.js",
+      "./components/_private/utils/number-editor.js": "./dist/_app_/components/_private/utils/number-editor.js",
+      "./components/_private/utils/with-unique-id.js": "./dist/_app_/components/_private/utils/with-unique-id.js",
+      "./components/au-native-toggle.js": "./dist/_app_/components/au-native-toggle.js",
+      "./components/collapsible.js": "./dist/_app_/components/collapsible.js",
+      "./components/debug-tools.js": "./dist/_app_/components/debug-tools.js",
+      "./components/editor-container.js": "./dist/_app_/components/editor-container.js",
+      "./components/editor.js": "./dist/_app_/components/editor.js",
+      "./components/ember-node/embedded-editor.js": "./dist/_app_/components/ember-node/embedded-editor.js",
+      "./components/ember-node/inline-rdfa.js": "./dist/_app_/components/ember-node/inline-rdfa.js",
+      "./components/ember-node/link.js": "./dist/_app_/components/ember-node/link.js",
+      "./components/ember-node/slot.js": "./dist/_app_/components/ember-node/slot.js",
+      "./components/icons/font-color.js": "./dist/_app_/components/icons/font-color.js",
+      "./components/icons/format-text.js": "./dist/_app_/components/icons/format-text.js",
+      "./components/icons/rdfa.js": "./dist/_app_/components/icons/rdfa.js",
+      "./components/index.js": "./dist/_app_/components/index.js",
+      "./components/pill.js": "./dist/_app_/components/pill.js",
+      "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
+      "./components/plugins/formatting/formatting-toggle.js": "./dist/_app_/components/plugins/formatting/formatting-toggle.js",
+      "./components/plugins/heading/heading-menu.js": "./dist/_app_/components/plugins/heading/heading-menu.js",
+      "./components/plugins/history/redo.js": "./dist/_app_/components/plugins/history/redo.js",
+      "./components/plugins/history/undo.js": "./dist/_app_/components/plugins/history/undo.js",
+      "./components/plugins/html-editor/menu.js": "./dist/_app_/components/plugins/html-editor/menu.js",
+      "./components/plugins/html-editor/modal.js": "./dist/_app_/components/plugins/html-editor/modal.js",
+      "./components/plugins/image/insert-menu.js": "./dist/_app_/components/plugins/image/insert-menu.js",
+      "./components/plugins/image/node.js": "./dist/_app_/components/plugins/image/node.js",
+      "./components/plugins/indentation/indentation-menu.js": "./dist/_app_/components/plugins/indentation/indentation-menu.js",
+      "./components/plugins/link/link-editor.js": "./dist/_app_/components/plugins/link/link-editor.js",
+      "./components/plugins/link/link-menu.js": "./dist/_app_/components/plugins/link/link-menu.js",
+      "./components/plugins/list/indentation-controls.js": "./dist/_app_/components/plugins/list/indentation-controls.js",
+      "./components/plugins/list/ordered.js": "./dist/_app_/components/plugins/list/ordered.js",
+      "./components/plugins/list/unordered.js": "./dist/_app_/components/plugins/list/unordered.js",
+      "./components/plugins/table/color.js": "./dist/_app_/components/plugins/table/color.js",
+      "./components/plugins/table/table-menu.js": "./dist/_app_/components/plugins/table/table-menu.js",
+      "./components/plugins/table/table-tooltip.js": "./dist/_app_/components/plugins/table/table-tooltip.js",
+      "./components/plugins/table/vertical-align.js": "./dist/_app_/components/plugins/table/vertical-align.js",
+      "./components/plugins/text-style/bold.js": "./dist/_app_/components/plugins/text-style/bold.js",
+      "./components/plugins/text-style/color.js": "./dist/_app_/components/plugins/text-style/color.js",
+      "./components/plugins/text-style/highlight.js": "./dist/_app_/components/plugins/text-style/highlight.js",
+      "./components/plugins/text-style/italic.js": "./dist/_app_/components/plugins/text-style/italic.js",
+      "./components/plugins/text-style/strikethrough.js": "./dist/_app_/components/plugins/text-style/strikethrough.js",
+      "./components/plugins/text-style/subscript.js": "./dist/_app_/components/plugins/text-style/subscript.js",
+      "./components/plugins/text-style/superscript.js": "./dist/_app_/components/plugins/text-style/superscript.js",
+      "./components/plugins/text-style/underline.js": "./dist/_app_/components/plugins/text-style/underline.js",
+      "./components/responsive-toolbar.js": "./dist/_app_/components/responsive-toolbar.js",
+      "./components/sidebar.js": "./dist/_app_/components/sidebar.js",
+      "./components/toolbar.js": "./dist/_app_/components/toolbar.js",
+      "./components/toolbar/button.js": "./dist/_app_/components/toolbar/button.js",
+      "./components/toolbar/divider.js": "./dist/_app_/components/toolbar/divider.js",
+      "./components/toolbar/dropdown-item.js": "./dist/_app_/components/toolbar/dropdown-item.js",
+      "./components/toolbar/dropdown.js": "./dist/_app_/components/toolbar/dropdown.js",
+      "./components/toolbar/group.js": "./dist/_app_/components/toolbar/group.js",
+      "./components/toolbar/mark.js": "./dist/_app_/components/toolbar/mark.js",
+      "./components/toolbar/spacer.js": "./dist/_app_/components/toolbar/spacer.js",
+      "./components/utils/au-pill-dropdown.js": "./dist/_app_/components/utils/au-pill-dropdown.js",
+      "./components/utils/color-selector.js": "./dist/_app_/components/utils/color-selector.js",
+      "./modifiers/_private/code-mirror.js": "./dist/_app_/modifiers/_private/code-mirror.js",
+      "./modifiers/_private/floating-ui.js": "./dist/_app_/modifiers/_private/floating-ui.js",
+      "./modifiers/leave-on-enter-key.js": "./dist/_app_/modifiers/leave-on-enter-key.js",
+      "./modifiers/leave-with-arrow-keys.js": "./dist/_app_/modifiers/leave-with-arrow-keys.js"
+    }
+  }
+}

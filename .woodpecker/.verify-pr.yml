@@ -1,37 +1,29 @@
 steps:
   install:
-    image: node:20-slim
+    image: node:22-slim
     commands:
+      - npm config set ignore-scripts true
+      # pinning to 10.0.0 because of https://github.com/nodejs/corepack/issues/612
+      # corepack use also runs an install
+      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
+      - npm i -g corepack@0.31
       - corepack enable
       - pnpm i --frozen-lockfile
-  lint-js:
-    image: node:20-slim
-    group: lint
+      - pnpm build
+      # resync injected addon build
+      - pnpm i -f
+  lint:
+    image: node:22-slim
+    depends_on: [install]
     commands:
-      - corepack enable
-      - pnpm lint:js
-  lint-hbs:
-    image: node:20-slim
-    group: lint
-    commands:
-      - corepack enable
-      - pnpm lint:hbs
-  lint-prettier:
-    image: node:20-slim
-    group: lint
-    commands:
-      - corepack enable
-      - pnpm lint:prettier
+      - npm i -g corepack@0.31
+      - pnpm lint
   test:
-    image: danlynn/ember-cli:4.12.1
+    image: danlynn/ember-cli:6.1.0
+    depends_on: [install]
     commands:
-      - corepack enable
-      - pnpm test:ember
-  prepack:
-    image: node:20-slim
-    commands:
-      - corepack enable
-      - pnpm prepack
+      - npm i -g corepack@0.31
+      - pnpm test
 when:
   event:
     - pull_request

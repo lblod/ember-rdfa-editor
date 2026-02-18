@@ -1,0 +1,39 @@
+@use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+
+// Highlighting
+.say-placeholder {
+  font-style: italic;
+  border-radius: 0.3rem;
+  color: var(--au-orange-700);
+  background-color: var(--au-orange-300);
+  padding-right: 0.05rem;
+  line-height: 1.2rem;
+
+  &[data-editor-position-level="1"],
+  &:hover,
+  &:focus,
+  &:focus-within {
+    opacity: 0.75;
+  }
+
+  &::selection {
+    background-color: var(--au-blue-200);
+  }
+
+  user-select: none;
+}
+
+.say-placeholder.ProseMirror-selectednode {
+  background-color: var(--au-blue-200);
+  outline: 2px solid var(--au-blue-500);
+  color: var(--au-black);
+}
+
+// Based on https://tiptap.dev/api/extensions/placeholder
+[data-placeholder]:empty::before {
+  color: var(--au-gray-400);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

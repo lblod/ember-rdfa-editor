@@ -1,0 +1,32 @@
+{{! @glint-nocheck: not typesafe yet }}
+<div {{this.setUpListeners}}>
+  <this.SelectionTooltip
+    @controller={{this.controller}}
+    @visible={{this.visible}}
+    class="say-table-tooltip"
+  >
+    {{#each this.tableActions as |row|}}
+      <div class="say-table-tooltip--actions">
+        {{#each row as |action|}}
+          {{#if action.command}}
+            <button
+              type="button"
+              title={{action.title}}
+              disabled={{not (this.canExecuteAction action)}}
+              {{on "click" (fn this.executeAction action)}}
+            >
+              {{#if action.icon}}
+                <AuIcon @icon={{action.icon}} @size="large" />
+              {{/if}}
+              {{#if action.label}}
+                <span>{{action.label}}</span>
+              {{/if}}
+            </button>
+          {{else}}
+            <action.component @controller={{this.controller}} />
+          {{/if}}
+        {{/each}}
+      </div>
+    {{/each}}
+  </this.SelectionTooltip>
+</div>

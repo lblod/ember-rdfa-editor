@@ -1,0 +1,7 @@
+{{! @glint-nocheck: not typesafe yet }}
+<Toolbar::Button
+  @active={{this.isActive}}
+  @title={{t "ember-rdfa-editor.show-formatting-marks"}}
+  @icon={{this.ParagraphIcon}}
+  {{on "click" this.toggle}}
+/>

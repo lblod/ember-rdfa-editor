@@ -1,0 +1,43 @@
+{{! @glint-nocheck: not typesafe yet }}
+{{#if @controller}}
+  <div class="say-toolbar__button say-toolbar__highlight-button">
+    <this.Velcro @placement="bottom-start" @strategy="absolute" as |velcro|>
+      <button
+        type="button"
+        class="main
+          {{if this.dropdownOpen 'is-active' ''}}
+          {{if @disabled 'is-disabled'}}"
+        title={{t "ember-rdfa-editor.color.button-label"}}
+        {{velcro.hook}}
+        {{on "click" this.toggleDropdown}}
+        {{this.setupDropdownButton}}
+      >
+        <AuIcon
+          @icon={{this.FontColorIcon}}
+          @ariaHidden={{true}}
+          @size="large"
+          style={{this.htmlSafe
+            (concat "border-bottom-color: " this.currentColor)
+          }}
+        />
+      </button>
+
+      {{#if this.dropdownOpen}}
+        <Utils::ColorSelector
+          class="say-dropdown__menu is-visible"
+          {{velcro.loop}}
+          {{focus-trap
+            shouldSelfFocus=true
+            focusTrapOptions=(hash
+              clickOutsideDeactivates=this.clickOutsideDropdown
+            )
+          }}
+          tabindex="-1"
+          @onChange={{this.setColor}}
+          @color={{this.currentColor}}
+          @presetColors={{@presetColors}}
+        />
+      {{/if}}
+    </this.Velcro>
+  </div>
+{{/if}}

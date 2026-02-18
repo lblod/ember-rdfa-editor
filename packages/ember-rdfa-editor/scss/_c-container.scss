@@ -1,0 +1,56 @@
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+@use "./c-editor.scss" as editor;
+/* ==================================
+   #SAY CONTAINER
+   ================================== */
+
+/* Component
+  ========================================================================== */
+
+.say-container {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &.say-container--toolbar-bottom {
+    flex-direction: column-reverse;
+  }
+}
+
+.say-container__main {
+  position: relative;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.say-container__aside {
+  position: absolute;
+  bottom: 0;
+  right: au-settings.$au-unit-small;
+  max-width: 380px;
+  max-height: 100%;
+  overflow: auto;
+  padding: au-settings.$au-unit-small au-settings.$au-unit-small +
+    au-settings.$au-unit-tiny;
+
+  top: 0;
+
+  @include au-tools.mq(1023px) {
+    width: editor.$say-editor-sidebar-medium;
+    max-width: editor.$say-editor-sidebar-medium;
+    padding: au-settings.$au-unit;
+  }
+
+  @include au-tools.mq(1280px) {
+    width: calc(
+      #{editor.$say-editor-sidebar-large} - #{au-settings.$au-unit-small +
+        au-settings.$au-unit-tiny}
+    );
+    max-width: calc(
+      #{editor.$say-editor-sidebar-large} - #{au-settings.$au-unit-small +
+        au-settings.$au-unit-tiny}
+    );
+  }
+}

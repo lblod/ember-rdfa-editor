@@ -1,8 +1,10 @@
 steps:
   changeset:
-    image: danlynn/ember-cli:4.12.1
+    image: danlynn/ember-cli:6.1.0
     commands:
       - git fetch origin master
       - git diff -wb --name-only origin/master..HEAD | grep "\.changeset/.*\.md"
 when:
-  - evaluate: 'CI_PIPELINE_EVENT == "pull_request" && not (CI_COMMIT_PULL_REQUEST_LABELS contains "dependabot")'
+  - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "dependabot") && not (CI_COMMIT_PULL_REQUEST_LABELS contains "no-changeset")'
+    event:
+      - pull_request
