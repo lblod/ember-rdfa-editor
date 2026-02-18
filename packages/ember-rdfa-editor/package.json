@@ -213,7 +213,7 @@
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "lint:types": "glint",
+    "lint:types": "ember-tsc --noEmit",
     "prepack": "pnpm build",
     "start": "rollup --config --watch",
     "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
@@ -230,6 +230,7 @@
     "@embroider/addon-shim": "catalog:",
     "@embroider/macros": "catalog:",
     "@floating-ui/dom": "catalog:",
+    "@glint/tsserver-plugin": "catalog:",
     "@graphy/memory.dataset.fast": "catalog:",
     "@lblod/marawa": "catalog:",
     "@rdfjs/types": "catalog:",
@@ -286,9 +287,7 @@
     "@eslint/js": "catalog:",
     "@glimmer/component": "catalog:",
     "@glimmer/tracking": "catalog:",
-    "@glint/core": "catalog:",
-    "@glint/environment-ember-loose": "catalog:",
-    "@glint/environment-ember-template-imports": "catalog:",
+    "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
@@ -316,6 +315,7 @@
     "eslint-plugin-ember": "catalog:",
     "eslint-plugin-import": "catalog:",
     "eslint-plugin-n": "catalog:",
+    "execa": "catalog:",
     "globals": "catalog:",
     "postcss": "catalog:",
     "prettier": "catalog:",
@@ -329,6 +329,7 @@
     "tracked-built-ins": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
+    "walk-sync": "catalog:",
     "webpack": "catalog:"
   },
   "peerDependencies": {

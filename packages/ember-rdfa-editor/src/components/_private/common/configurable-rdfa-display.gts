@@ -14,13 +14,13 @@ import {
   type GeneratorContext,
 } from '#root/plugins/rdfa-info/types.ts';
 
-interface SpanSig {
+interface HTMLElementSig {
   Blocks: {
     default: [];
   };
-  Element: HTMLSpanElement;
+  Element: HTMLElement;
 }
-const Span: TemplateOnlyComponent<SpanSig> = <template>
+const Span: TemplateOnlyComponent<HTMLElementSig> = <template>
   <span ...attributes>{{yield}}</span>
 </template>;
 
@@ -33,7 +33,7 @@ interface Sig<T> {
     context: GeneratorContext;
     value: T;
     generator: DisplayGenerator<T>;
-    wrapper?: ComponentLike<SpanSig>;
+    wrapper?: ComponentLike<HTMLElementSig>;
   };
   Blocks: {
     default: [];

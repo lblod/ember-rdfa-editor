@@ -1,4 +1,4 @@
-import '@glint/environment-ember-loose';
+import '@glint/ember-tsc/types';
 
 declare global {
   interface Assert {

@@ -47,7 +47,6 @@
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@changesets/get-release-plan": "catalog:",
-    "@glint/core": "catalog:",
     "@manypkg/get-packages": "catalog:",
     "@types/git-url-parse": "catalog:",
     "@types/node": "catalog:",
