@@ -4,6 +4,10 @@ import { wrapSelection } from '#root/commands/wrap-selection.ts';
 import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import type SayController from '#root/core/say-controller.ts';
+import ToolbarButton from '#root/components/toolbar/button.gts';
+import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
+import { not } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
@@ -48,4 +52,15 @@ export default class LinkMenu extends Component<Args> {
       this.args.onActivate?.();
     }
   }
+
+  <template>
+    {{#if @controller}}
+      <ToolbarButton
+        @title={{t "ember-rdfa-editor.link.insert"}}
+        @icon={{this.LinkIcon}}
+        {{on "click" this.insert}}
+        @disabled={{not this.canInsert}}
+      />
+    {{/if}}
+  </template>
 }

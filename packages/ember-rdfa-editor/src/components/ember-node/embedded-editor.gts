@@ -1,3 +1,7 @@
+// eslint-disable-next-line ember/no-at-ember-render-modifiers
+import didInsert from '@ember/render-modifiers/modifiers/did-insert';
+// eslint-disable-next-line ember/no-at-ember-render-modifiers
+import didUpdate from '@ember/render-modifiers/modifiers/did-update';
 /**
  *
  * Based on the footnotes example from https://github.com/ProseMirror/website
@@ -46,24 +50,27 @@ import type { NodeViewConstructor } from 'prosemirror-view';
 import { AttrStep, Step, StepMap } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 
-type Args = EmberNodeArgs & {
-  placeholder: string;
-  initEditor?: (view: SayView) => void;
-  /* override the keymap. */
-  keymap?: { [key: string]: Command };
-  /* editor plugins to add */
-  plugins?: Plugin[];
-  nodeViews?: {
-    [node: string]: NodeViewConstructor;
+type Signature = {
+  Element: HTMLSpanElement;
+  Args: EmberNodeArgs & {
+    placeholder?: string;
+    initEditor?: (view: SayView) => void;
+    /* override the keymap. */
+    keymap?: { [key: string]: Command };
+    /* editor plugins to add */
+    plugins?: Plugin[];
+    nodeViews?: {
+      [node: string]: NodeViewConstructor;
+    };
+    onSelected?: (selected: boolean, innerState: EditorState) => void;
   };
-  onSelected?: (selected: boolean, innerState: EditorState) => void;
 };
 
 /**
  * An embedded editor to use for *inline* content. This way you can specify extra content for an
  * inline (atom) node. For block content, use content directly instead ({{yield}} in ember-nodes).
  */
-export default class EmbeddedEditor extends Component<Args> {
+export default class EmbeddedEditor extends Component<Signature> {
   @service declare intl: IntlService;
   innerView: SayView | null = null;
 
@@ -322,4 +329,15 @@ export default class EmbeddedEditor extends Component<Args> {
     this.innerView?.destroy();
     this.innerView = null;
   }
+
+  <template>
+    <span
+      {{didInsert this.didInsertContentWrapper}}
+      {{didUpdate this.onNodeUpdate @node}}
+      {{didUpdate this.onSelected @selected}}
+      {{didUpdate this.onDecorationsUpdate @contentDecorations}}
+      ...attributes
+    >
+    </span>
+  </template>
 }

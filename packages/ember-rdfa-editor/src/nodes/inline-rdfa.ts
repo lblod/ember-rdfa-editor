@@ -10,7 +10,7 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
 } from '../utils/ember-node.ts';
-import InlineRdfaComponent from '../components/ember-node/inline-rdfa.ts';
+import InlineRdfaComponent from '../components/ember-node/inline-rdfa.gts';
 import type { ComponentLike } from '@glint/template';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import type {
