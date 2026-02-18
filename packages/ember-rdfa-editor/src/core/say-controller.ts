@@ -57,6 +57,18 @@ export default class SayController {
     return this.mainEditorView.domParser;
   }
 
+  get editable() {
+    return this.mainEditorView.editable;
+  }
+
+  setEditable(editable: boolean) {
+    this.mainEditorView.setProps({
+      editable: () => {
+        return editable;
+      },
+    });
+  }
+
   clone() {
     return new SayController(this.editor);
   }
@@ -111,7 +123,6 @@ export default class SayController {
   }
 
   doCommand(command: Command, { view = this.activeEditorView } = {}): boolean {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     return command(view.state, view.dispatch, view);
   }
 

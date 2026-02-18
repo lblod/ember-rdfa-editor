@@ -5,6 +5,7 @@
 /dist/
 /declarations/
 /vendor/
+CHANGELOG.md
 
 # misc
 /coverage/

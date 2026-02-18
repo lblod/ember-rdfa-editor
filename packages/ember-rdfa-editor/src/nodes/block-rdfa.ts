@@ -1,5 +1,9 @@
 import { Node as PNode } from 'prosemirror-model';
-import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
+import {
+  isRdfaAttrs,
+  type ModelMigrationGenerator,
+  type RdfaAttrs,
+} from '#root/core/rdfa-types.ts';
 import {
   getRdfaAttrs,
   getRdfaContentElement,
@@ -18,10 +22,16 @@ const FALLBACK_LABEL = 'Data-object';
 
 type Config = {
   rdfaAware?: boolean;
+  /**
+   * Migrations to apply to nodes parsed as block-rdfa, to modify the data model.
+   * @returns false to use the default parsing or an object to define overrides
+   **/
+  modelMigrations?: ModelMigrationGenerator[];
 };
 
 export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   rdfaAware = false,
+  modelMigrations = [],
 } = {}) => {
   return {
     content: 'block+',
@@ -43,17 +53,36 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         tag: `p, div, address, article, aside, blockquote, details, dialog, dd, dt, fieldset, figcaption, figure, footer, form, header, hgroup, hr, main, nav, pre, section`,
         // Default priority is 50, so this means a more specific definition matches before this one
         priority: 40,
-        getAttrs(node: string | HTMLElement) {
-          if (typeof node === 'string') {
+        getAttrs(element: string | HTMLElement) {
+          if (typeof element === 'string') {
             return false;
           }
-          const attrs = getRdfaAttrs(node, { rdfaAware });
+          const attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
-            return { ...attrs, label: node.dataset['label'] };
+            const migration = modelMigrations.find((migration) =>
+              migration(attrs as unknown as RdfaAttrs),
+            )?.(attrs as unknown as RdfaAttrs);
+            if (migration && migration.getAttrs) {
+              return migration.getAttrs(element);
+            }
+            return { ...attrs, label: element.dataset['label'] };
           }
           return false;
         },
-        contentElement: getRdfaContentElement,
+        contentElement: (element) => {
+          if (rdfaAware && modelMigrations.length > 0) {
+            const attrs = getRdfaAttrs(element, { rdfaAware });
+            if (attrs) {
+              const migration = modelMigrations.find((migration) =>
+                migration(attrs as unknown as RdfaAttrs),
+              )?.(attrs as unknown as RdfaAttrs);
+              if (migration && migration.contentElement) {
+                return migration.contentElement(element);
+              }
+            }
+          }
+          return getRdfaContentElement(element);
+        },
       },
     ],
     toDOM(node: PNode) {

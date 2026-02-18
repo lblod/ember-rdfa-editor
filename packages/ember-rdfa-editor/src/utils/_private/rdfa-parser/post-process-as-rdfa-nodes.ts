@@ -136,8 +136,9 @@ export function postProcessTagAsRdfaNode<N>(args: PostProcessArgs<N>): void {
         if (
           truthyAttribute(attributes, 'about') &&
           !truthyAttribute(attributes, 'data-literal-node') &&
-          // Is this correct, an alternative solution would be to check on the presence of a `resource` attr here?
-          !truthyAttribute(attributes, 'datatype')
+          // temporary workaround for parsing bugs, needs rdfa handling rework
+          // to fully solve
+          !hackyCheckIfOldLiteralNode(node as unknown as Node, attributes)
         ) {
           // same exception as above, we always interpret (property +about -content) cases as literal nodes
           markAsResourceNode(
@@ -230,6 +231,50 @@ function truthyAttribute(attrs: Record<string, string>, key: string) {
       return false;
     }
     return true;
+  }
+  return false;
+}
+/**
+ * With the current parsing logic there exists an ambiguity between
+ * resource nodes with a contentLiteral, and literal nodes. They both
+ * manifest in the same way in the html.
+ * In most cases this ambiguity is resolved by the data-literal-node
+ * attribute we add in newly created documents. However, there are still old
+ * documents where this was not added. This function attempts to solve for
+ * those specific cases we have identified, pending a rework of the rdfa
+ * system.
+ *
+ * The function attempts to find a parentnode which defines the resource
+ * the node is pointing to. If it exists, we can be reasonably certain this
+ * is intended to be a literal node.
+ *
+ * @param node The node being checked
+ * @param attributes the attributes of the node
+ * @param [searchDepthLimit=2] a safety limit for searching upwards to find
+ * a defining resource node
+ */
+function hackyCheckIfOldLiteralNode(
+  node: Node,
+  attributes: Record<string, string>,
+  searchDepthLimit = 2,
+): boolean {
+  const subject = attributes['about'];
+  if (!subject) {
+    return false;
+  }
+  let parent = node.parentElement;
+  if (!parent) {
+    return false;
+  }
+  let depth = 0;
+
+  while (parent && depth < searchDepthLimit) {
+    const parentSubject = parent.getAttribute('about');
+    if (parentSubject && parentSubject === subject) {
+      return true;
+    }
+    parent = parent.parentElement;
+    depth += 1;
   }
   return false;
 }

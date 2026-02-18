@@ -18,6 +18,8 @@ import {
  *
  * @param markType
  * @param attrs
+ *
+ * @deprecated Use the the `toggleMark` command with the `removeWhenPresent` option instead.
  */
 export function toggleMarkAddFirst(
   markType: MarkType,

@@ -19,8 +19,9 @@ export type DisplayConfig =
   | { meta: DisplayMeta; elements: DisplayElement[] }
   | DisplayElement[];
 
-interface GeneratorContext {
+export interface GeneratorContext {
   controller: SayController;
+  isTopLevel: boolean;
 }
 export type DisplayGenerator<T> = (
   value: T,

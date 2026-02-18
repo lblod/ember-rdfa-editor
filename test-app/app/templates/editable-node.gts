@@ -1,5 +1,6 @@
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
+import applyDevTools from 'prosemirror-dev-tools';
 import { Schema, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import {
   em,
@@ -31,7 +32,6 @@ import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bulletListWithConfig,
   listItemWithConfig,
-  listTrackingPlugin,
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -41,7 +41,7 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import {
   createInvisiblesPlugin,
@@ -148,7 +148,7 @@ const RDF = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf');
 
 const humanReadableResourceName: DisplayGenerator<PNode> = (
   node,
-  { controller },
+  { controller, isTopLevel },
 ) => {
   const subject = node.attrs['subject'] as string;
   const type = optionMap(
@@ -168,6 +168,11 @@ const humanReadableResourceName: DisplayGenerator<PNode> = (
         { pill: 'Besluit' },
         titleNode?.value.textContent ?? title ?? subject,
       ];
+    } else if (
+      type === 'http://mu.semte.ch/vocabularies/ext/Snippet' &&
+      isTopLevel
+    ) {
+      return [{ hidden: true }];
     } else {
       return [{ strong: `${type.split(/[/#]/).at(-1)}:` }, subject];
     }
@@ -265,7 +270,6 @@ export default class extends Component {
   }
 
   @tracked plugins: PluginConfig = [
-    listTrackingPlugin(),
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,
@@ -309,6 +313,7 @@ export default class extends Component {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent);
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

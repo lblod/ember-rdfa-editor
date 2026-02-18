@@ -35,7 +35,6 @@ import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
 import {
   bulletListWithConfig,
   listItemWithConfig,
-  listTrackingPlugin,
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
@@ -46,7 +45,7 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import {
   createInvisiblesPlugin,
@@ -141,7 +140,6 @@ export default class extends Component {
   }
 
   @tracked plugins: PluginConfig = [
-    listTrackingPlugin(),
     firefoxCursorFix(),
     chromeHacksPlugin(),
     lastKeyPressedPlugin,

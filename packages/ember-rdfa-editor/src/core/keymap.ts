@@ -6,7 +6,6 @@ import {
 } from 'prosemirror-schema-list';
 import type { Command } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-import { toggleMarkAddFirst } from '#root/commands/toggle-mark-add-first.ts';
 import {
   chainCommands,
   createParagraphNear,
@@ -20,6 +19,7 @@ import {
   selectTextblockEnd,
   selectTextblockStart,
   splitBlock,
+  toggleMark,
 } from 'prosemirror-commands';
 import {
   insertHardBreak,
@@ -136,12 +136,20 @@ export function pcBaseKeymap(schema: Schema, options?: KeymapOptions) {
     'Mod-Z': undo,
     'Mod-y': redo,
     'Mod-Y': redo,
-    'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
-    'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
-    'Mod-i': toggleMarkAddFirst(schema.marks['em']),
-    'Mod-I': toggleMarkAddFirst(schema.marks['em']),
-    'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
-    'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
+    'Mod-b': toggleMark(schema.marks['strong'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-B': toggleMark(schema.marks['strong'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-i': toggleMark(schema.marks['em'], null, { removeWhenPresent: false }),
+    'Mod-I': toggleMark(schema.marks['em'], null, { removeWhenPresent: false }),
+    'Mod-u': toggleMark(schema.marks['underline'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-U': toggleMark(schema.marks['underline'], null, {
+      removeWhenPresent: false,
+    }),
     Enter: chainCommands(
       splitListItem(schema.nodes['list_item']),
       newlineInCode,
@@ -198,12 +206,20 @@ export function macBaseKeymap(schema: Schema, options?: KeymapOptions) {
 
 export const embeddedEditorBaseKeymap: Keymap = (schema) => {
   return {
-    'Mod-b': toggleMarkAddFirst(schema.marks['strong']),
-    'Mod-B': toggleMarkAddFirst(schema.marks['strong']),
-    'Mod-i': toggleMarkAddFirst(schema.marks['em']),
-    'Mod-I': toggleMarkAddFirst(schema.marks['em']),
-    'Mod-u': toggleMarkAddFirst(schema.marks['underline']),
-    'Mod-U': toggleMarkAddFirst(schema.marks['underline']),
+    'Mod-b': toggleMark(schema.marks['strong'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-B': toggleMark(schema.marks['strong'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-i': toggleMark(schema.marks['em'], null, { removeWhenPresent: false }),
+    'Mod-I': toggleMark(schema.marks['em'], null, { removeWhenPresent: false }),
+    'Mod-u': toggleMark(schema.marks['underline'], null, {
+      removeWhenPresent: false,
+    }),
+    'Mod-U': toggleMark(schema.marks['underline'], null, {
+      removeWhenPresent: false,
+    }),
     Enter: chainCommands(
       newlineInCode,
       createParagraphNear,

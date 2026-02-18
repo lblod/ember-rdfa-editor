@@ -15,7 +15,7 @@ import SayController from '#root/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
 import { notificationPlugin } from '#root/plugins/notification/index.ts';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import type {
   Notification,
   NotificationOptions,
@@ -40,6 +40,7 @@ export interface RdfaEditorArgs {
   };
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
   keyMapOptions?: KeymapOptions;
+  editable?: boolean;
   notificationCallback?: (notification: Notification) => void;
   notificationToaster?: boolean;
 }
@@ -83,6 +84,10 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
 
   get baseIRI() {
     return this.args.baseIRI || window.document.baseURI;
+  }
+
+  get editable() {
+    return this.args.editable;
   }
 
   // We show the notification toaster unless told otherwise in the editor arguments
@@ -161,6 +166,9 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       nodeViews: this.args.nodeViews,
       defaultAttrGenerators: this.args.defaultAttrGenerators,
       keyMapOptions: this.args.keyMapOptions,
+      editable: () => {
+        return !(this.editable === false);
+      },
     });
     window.__PM = this.prosemirror;
     window.__PC = new SayController(this.prosemirror);

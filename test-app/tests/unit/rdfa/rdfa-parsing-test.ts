@@ -829,4 +829,35 @@ module('rdfa | parsing', function () {
     const actualDoc = controller.mainEditorState.doc;
     assert.propEqual(actualDoc.toJSON(), expectedDoc.toJSON());
   });
+
+  test('Resource nodes with contentLiterals should not be parsed as literalnodes', function (assert) {
+    const { doc, block_rdfa, paragraph } = testBuilders;
+    const df = new SayDataFactory();
+    const initialDocument = doc(
+      {},
+      block_rdfa(
+        {
+          rdfaNodeType: 'resource',
+          subject: 'http://test/1',
+          __rdfaId: 'test-id-1',
+          properties: [
+            {
+              predicate: 'http://example.org/contentLiteral',
+              object: df.contentLiteral(
+                df.namedNode('http://example.org/someDatatype'),
+              ),
+            },
+          ] satisfies OutgoingTriple[],
+        },
+        paragraph(),
+      ),
+    );
+    QUnit.dump.maxDepth = 10;
+    const state = EditorState.create({ schema, plugins, doc: initialDocument });
+    const { controller } = testEditor(schema, plugins, state);
+    const initialRender = controller.htmlContent;
+    controller.initialize(initialRender);
+    const resultingDocument = controller.mainEditorState.doc;
+    assert.propEqual(resultingDocument.toJSON(), initialDocument.toJSON());
+  });
 });

@@ -75,8 +75,9 @@ export type TransactionMonad<R> = (
   transactionMeta?: TransactionMeta,
 ) => TransactionMonadResult<R>;
 
-export interface TransactionCombinatorResult<R>
-  extends TransactionMonadResult<R[]> {
+export interface TransactionCombinatorResult<R> extends TransactionMonadResult<
+  R[]
+> {
   /**
    * All the transactions that were applied in sequence to achieve this result, including any potential extra transactions from plugins.
    * This allows calling code to inspect and use any non-document state that may have been lost
@@ -115,19 +116,25 @@ export function transactionCombinator<R>(
   return function (
     transactionMonads: TransactionMonad<R>[],
   ): TransactionCombinatorResult<R> {
-    const tr = initialState.tr;
+    const resultingTransaction = initialState.tr;
     const appliedTransactions: Transaction[] = [];
+    let currentState = initialState;
+
+    // Apply steps from `initialTransaction` (if it exists)
     if (initialTransaction) {
-      for (const step of initialTransaction.steps) {
-        tr.step(step);
+      setTransactionMeta(initialTransaction, transactionMeta);
+      const { state, transactions } =
+        initialState.applyTransaction(initialTransaction);
+      currentState = state;
+
+      for (const step of transactions.flatMap(
+        (transaction) => transaction.steps,
+      )) {
+        resultingTransaction.step(step);
       }
+      appliedTransactions.push(...transactions);
     }
 
-    // Need to set metadata before applying transaction to a state
-    setTransactionMeta(tr, transactionMeta);
-    const { state, transactions } = initialState.applyTransaction(tr);
-    let currentState = state;
-    appliedTransactions.push(...transactions);
     const results: R[] = [];
     for (const monad of transactionMonads) {
       const { transaction, result } = monad(currentState, transactionMeta);
@@ -139,12 +146,23 @@ export function transactionCombinator<R>(
       appliedTransactions.push(...transactions);
 
       results.push(result);
-      for (const step of transaction.steps) {
-        tr.step(step);
+      for (const step of transactions.flatMap(
+        (transaction) => transaction.steps,
+      )) {
+        resultingTransaction.step(step);
       }
     }
+
+    // Set the selection and storedMarks based on the state produced by the last transaction.
+    // We do not need to map these, as all steps have been applied
+    // We do need to serialize/deserialize the selection through a bookmark, as it needs to be resolved to the current document
+    resultingTransaction.setSelection(
+      currentState.selection.getBookmark().resolve(resultingTransaction.doc),
+    );
+    resultingTransaction.setStoredMarks(currentState.storedMarks);
+
     return {
-      transaction: tr,
+      transaction: resultingTransaction,
       result: results,
       initialState,
       transactions: appliedTransactions,

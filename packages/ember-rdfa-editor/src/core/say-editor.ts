@@ -49,6 +49,7 @@ export interface SayEditorArgs {
     controller: SayController,
   ) => Record<string, NodeViewConstructor>;
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
+  editable?: SayView['props']['editable'];
 }
 
 export default class SayEditor {
@@ -82,6 +83,7 @@ export default class SayEditor {
     },
     defaultAttrGenerators = [],
     keyMapOptions,
+    editable,
   }: SayEditorArgs & { keyMapOptions?: KeymapOptions }) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -147,6 +149,7 @@ export default class SayEditor {
       state,
       attributes: { class: 'say-editor__inner say-content' },
       nodeViews: nodeViews(new SayController(this)),
+      editable,
       dispatchTransaction: (tr) => {
         const newState = this.mainView.state.apply(tr);
         this.mainView.updateState(newState);

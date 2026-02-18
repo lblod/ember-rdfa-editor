@@ -43,6 +43,7 @@ import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
 import { array } from '@ember/helper';
 import type { OptionGeneratorConfig } from '../relationship-editor/types.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
+import { hash } from '@ember/helper';
 
 type CreationStatus = {
   mode: 'creation';
@@ -97,12 +98,8 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     this.args.onToggle?.(this.expanded);
   };
 
-  get controller() {
-    return this.args.controller;
-  }
-
   get documentNode() {
-    return this.controller.mainEditorState.doc;
+    return this.args.controller.mainEditorState.doc;
   }
 
   getSubjectPropertyMap(): Record<string, OutgoingTriple[]> {
@@ -285,6 +282,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       @manualControl={{true}}
       @openSection={{this.toggleSection}}
       @isExpanded={{this.expanded}}
+      @disableAuContent={{true}}
       as |c|
     >
       <c.header class="say-flex-grow">
@@ -351,7 +349,10 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
                             <ConfigurableRdfaDisplay
                               @value={{prop}}
                               @generator={{predicateDisplay}}
-                              @controller={{@controller}}
+                              @context={{hash
+                                controller=@controller
+                                isTopLevel=false
+                              }}
                             />
                           {{/if}}
                           <PropertyDetails

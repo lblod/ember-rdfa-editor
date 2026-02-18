@@ -7,7 +7,7 @@ import {
   type TransactionMonad,
 } from '#root/utils/transaction-utils.ts';
 
-const IS_ON_CHANGED = 'sayIsOnChanged';
+export const IS_ON_CHANGED = 'sayIsOnChanged';
 
 export interface NodeSpecOnChanged {
   doOnce?: boolean;
