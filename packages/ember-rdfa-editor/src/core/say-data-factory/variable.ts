@@ -13,11 +13,11 @@ export class SayVariable implements RDF.Variable {
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other && other.termType === 'Variable' && other.value === this.value
     );
-  };
+  }
 
   toJSON() {
     return {
