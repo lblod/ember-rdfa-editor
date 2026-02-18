@@ -57,6 +57,7 @@
     "@glimmer/validator": "catalog:",
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
+    "@glint/tsserver-plugin": "catalog:",
     "@lblod/ember-rdfa-editor": "workspace:*",
     "@modyfi/vite-plugin-yaml": "catalog:",
     "@playwright/test": "catalog:",

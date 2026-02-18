@@ -230,6 +230,7 @@
     "@embroider/addon-shim": "catalog:",
     "@embroider/macros": "catalog:",
     "@floating-ui/dom": "catalog:",
+    "@glint/tsserver-plugin": "catalog:",
     "@graphy/memory.dataset.fast": "catalog:",
     "@lblod/marawa": "catalog:",
     "@rdfjs/types": "catalog:",
