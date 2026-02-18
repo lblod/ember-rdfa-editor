@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "13.1.0",
+  "version": "13.1.1",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -300,7 +300,7 @@
     "autoprefixer": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "concurrently": "catalog:",
-    "ember-auto-import": "^2.10.1",
+    "ember-auto-import": "^2.12.0",
     "ember-basic-dropdown": "catalog:",
     "ember-concurrency": "catalog:",
     "ember-intl": "catalog:",
@@ -338,12 +338,12 @@
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
     "ember-basic-dropdown": "^8.0.0",
-    "ember-concurrency": "^4.0.2",
+    "ember-concurrency": "^4.0.2 || ^5.0.0",
     "ember-intl": "^6.4.0 || ^7.0.0",
     "ember-power-select": "^7.0.0 || ^8.0.0",
     "ember-power-select-with-create": "^2.0.0 || ^3.0.0",
     "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
-    "tracked-built-ins": "^3.3.0"
+    "tracked-built-ins": "^3.3.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
     "@glint/template": {

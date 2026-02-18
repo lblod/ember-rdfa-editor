@@ -1,5 +1,6 @@
 import { action } from '@ember/object';
 import { tracked } from 'tracked-built-ins';
+import applyDevTools from 'prosemirror-dev-tools';
 import { Schema, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import {
   em,
@@ -40,7 +41,7 @@ import {
   linkPasteHandler,
   linkView,
 } from '@lblod/ember-rdfa-editor/plugins/link';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import {
   createInvisiblesPlugin,
@@ -312,6 +313,7 @@ export default class extends Component {
     const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
     this.rdfaEditor = rdfaEditor;
     this.rdfaEditor.initialize(presetContent);
+    applyDevTools(rdfaEditor.mainEditorView);
     const editorDone = new CustomEvent('editor-done');
     window.dispatchEvent(editorDone);
   }

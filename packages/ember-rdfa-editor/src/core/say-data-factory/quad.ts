@@ -17,7 +17,7 @@ export class SayQuad implements RDF.BaseQuad {
     public readonly graph: RDF.Term,
   ) {}
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     // `|| !other.termType` is for backwards-compatibility with old factories without RDF* support.
     return (
       !!other &&
@@ -27,5 +27,5 @@ export class SayQuad implements RDF.BaseQuad {
       this.object.equals(other.object) &&
       this.graph.equals(other.graph)
     );
-  };
+  }
 }

@@ -7,12 +7,15 @@
     "build:test-app": "pnpm --filter test-app build",
     "lint": "pnpm --filter '*' lint",
     "lint:fix": "pnpm --filter '*' lint:fix",
+    "lint:types": "pnpm --filter '*' lint:types",
     "prepack": "pnpm build",
     "start": "pnpm build; concurrently 'pnpm:start:* {@}' --passthrough-arguments --restart-after 5000 --prefixColors auto",
     "start:addon": "pnpm --filter @lblod/ember-rdfa-editor start --no-watch.clearScreen",
     "start:test-app": "pnpm --filter test-app start",
     "test": "pnpm --filter '*' test",
     "test:ember": "pnpm --filter '*' test:ember",
+    "test:quickstart": "cd quickstart && npm run setup && npm run ci && npm run teardown",
+    "test:quickstart:setup": "cd quickstart && npm run setup",
     "prettier": "prettier --write .",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "tapp": "pnpm --filter test-app",
@@ -28,8 +31,8 @@
       }
     },
     "patchedDependencies": {
-      "ember-source@6.1.0": "./patches/ember-source@6.1.0.patch",
-      "@embroider/addon-dev@7.1.2": "./patches/@embroider__addon-dev.patch",
+      "ember-source@6.1.0": "patches/ember-source@6.1.0.patch",
+      "@embroider/addon-dev@7.1.2": "patches/@embroider__addon-dev.patch",
       "ember-headless-form": "patches/ember-headless-form.patch"
     },
     "allowUnusedPatches": true,

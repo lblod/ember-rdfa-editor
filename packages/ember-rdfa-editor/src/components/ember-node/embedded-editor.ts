@@ -23,7 +23,7 @@
  */
 
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import type IntlService from 'ember-intl/services/intl';
@@ -128,6 +128,9 @@ export default class EmbeddedEditor extends Component<Args> {
       this.contentWrapper,
       {
         decorations: () => this.args.contentDecorations,
+        editable: () => {
+          return this.outerView.editable;
+        },
         state: EditorState.create({
           doc: this.node,
           plugins: [keymap(this.keymap), ...this.plugins],
