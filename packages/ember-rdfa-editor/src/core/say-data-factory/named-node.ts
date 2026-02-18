@@ -5,9 +5,9 @@ import type { Option } from '#root/utils/_private/option.ts';
 /**
  * A term that contains an IRI.
  */
-export class SayNamedNode<Iri extends string = string>
-  implements RDF.NamedNode<Iri>
-{
+export class SayNamedNode<
+  Iri extends string = string,
+> implements RDF.NamedNode<Iri> {
   public readonly termType = 'NamedNode';
   public readonly value: Iri;
 

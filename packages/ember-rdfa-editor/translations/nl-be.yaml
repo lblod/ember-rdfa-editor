@@ -41,7 +41,7 @@ ember-rdfa-editor:
       top: Boven
       middle: Midden
       bottom: Onder
-  normalText: Normale tekst
+  normalText: Hoofdtekst
   heading: Koptitel
   insert-heading: Voeg koptitel toe
 

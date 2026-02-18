@@ -15,7 +15,7 @@ import SayController from '#root/core/say-controller.ts';
 import type { KeymapOptions } from '../core/keymap.ts';
 import { deprecate } from '@ember/debug';
 import { notificationPlugin } from '#root/plugins/notification/index.ts';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import type {
   Notification,
   NotificationOptions,

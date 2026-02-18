@@ -1,4 +1,9 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import {
+  type EditorState,
+  type Plugin,
+  type PluginKey,
+  type Transaction,
+} from 'prosemirror-state';
 
 /**
  * A generic container for the result of a transaction monad
@@ -19,6 +24,36 @@ export interface TransactionMonadResult<R> {
   result: R;
 }
 
+export const IS_DRY_RUN = 'sayIsDryRun';
+/**
+ * An object or map which holds metadata properties to be appended to transactions.
+ * There is one special meta key 'sayIsDryRun', which is used to flag transactions which are just
+ * being generated to check that they work, e.g. when checking a command.
+ */
+export type TransactionMeta =
+  | ({
+      [IS_DRY_RUN]?: boolean;
+      // sayIsDryRun being boolean is only enforced for an object of string keyed metadata, as I
+      // couldn't find a way to enforce it for a Map
+    } & Omit<Record<string, unknown>, typeof IS_DRY_RUN>)
+  | Map<string | Plugin | PluginKey, unknown>;
+
+function setTransactionMeta(
+  transaction: Transaction,
+  meta?: TransactionMeta,
+): void {
+  if (meta instanceof Map) {
+    meta.forEach((val, key) => {
+      transaction.setMeta(key, val);
+    });
+  } else {
+    meta &&
+      Object.entries(meta).forEach(([key, val]) => {
+        transaction.setMeta(key, val);
+      });
+  }
+}
+
 /**
  * In simple terms, a transaction monad takes a state and builds a transaction and returns it.
  * We return a {@link TransactionMonadResult} here instead to allow for some flexibility regarding failure values.
@@ -34,10 +69,15 @@ export interface TransactionMonadResult<R> {
  */
 export type TransactionMonad<R> = (
   state: EditorState,
+  /**
+   * Metadata to be set on the transaction output from the monad
+   */
+  transactionMeta?: TransactionMeta,
 ) => TransactionMonadResult<R>;
 
-export interface TransactionCombinatorResult<R>
-  extends TransactionMonadResult<R[]> {
+export interface TransactionCombinatorResult<R> extends TransactionMonadResult<
+  R[]
+> {
   /**
    * All the transactions that were applied in sequence to achieve this result, including any potential extra transactions from plugins.
    * This allows calling code to inspect and use any non-document state that may have been lost
@@ -65,41 +105,64 @@ export interface TransactionCombinatorResult<R>
  *
  * @param initialState the state to start from
  * @param initialTransaction optional initial transaction. If given, it must be made from the same state as you pass to initialState
+ * @param transactionMeta metadata to be set on the transactions produced by the combination process
  * @returns The resulting combinator
  */
 export function transactionCombinator<R>(
   initialState: EditorState,
   initialTransaction?: Transaction,
+  transactionMeta?: TransactionMeta,
 ) {
   return function (
     transactionMonads: TransactionMonad<R>[],
   ): TransactionCombinatorResult<R> {
-    const tr = initialState.tr;
+    const resultingTransaction = initialState.tr;
     const appliedTransactions: Transaction[] = [];
+    let currentState = initialState;
+
+    // Apply steps from `initialTransaction` (if it exists)
     if (initialTransaction) {
-      for (const step of initialTransaction.steps) {
-        tr.step(step);
+      setTransactionMeta(initialTransaction, transactionMeta);
+      const { state, transactions } =
+        initialState.applyTransaction(initialTransaction);
+      currentState = state;
+
+      for (const step of transactions.flatMap(
+        (transaction) => transaction.steps,
+      )) {
+        resultingTransaction.step(step);
       }
+      appliedTransactions.push(...transactions);
     }
 
-    const { state, transactions } = initialState.applyTransaction(tr);
-    let currentState = state;
-    appliedTransactions.push(...transactions);
     const results: R[] = [];
     for (const monad of transactionMonads) {
-      const { transaction, result } = monad(currentState);
+      const { transaction, result } = monad(currentState, transactionMeta);
+      // Need to set metadata before applying transaction to a state
+      setTransactionMeta(transaction, transactionMeta);
       const { state, transactions } =
         currentState.applyTransaction(transaction);
       currentState = state;
       appliedTransactions.push(...transactions);
 
       results.push(result);
-      for (const step of transaction.steps) {
-        tr.step(step);
+      for (const step of transactions.flatMap(
+        (transaction) => transaction.steps,
+      )) {
+        resultingTransaction.step(step);
       }
     }
+
+    // Set the selection and storedMarks based on the state produced by the last transaction.
+    // We do not need to map these, as all steps have been applied
+    // We do need to serialize/deserialize the selection through a bookmark, as it needs to be resolved to the current document
+    resultingTransaction.setSelection(
+      currentState.selection.getBookmark().resolve(resultingTransaction.doc),
+    );
+    resultingTransaction.setStoredMarks(currentState.storedMarks);
+
     return {
-      transaction: tr,
+      transaction: resultingTransaction,
       result: results,
       initialState,
       transactions: appliedTransactions,
@@ -114,13 +177,17 @@ export function transactionCombinator<R>(
 export function composeMonads(
   generator: (state: EditorState) => TransactionMonad<boolean>[],
 ): TransactionMonad<boolean> {
-  return (state) => {
+  return (state, transactionMeta) => {
     const monads: TransactionMonad<boolean>[] = generator(state);
     const {
       transactions: _,
       result,
       ...res
-    } = transactionCombinator<boolean>(state)(monads);
+    } = transactionCombinator<boolean>(
+      state,
+      undefined,
+      transactionMeta,
+    )(monads);
     return { ...res, result: result.every(Boolean) };
   };
 }

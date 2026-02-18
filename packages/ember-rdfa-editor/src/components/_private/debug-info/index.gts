@@ -1,13 +1,8 @@
 import Component from '@glimmer/component';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
-import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
-import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
-import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
-import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { on } from '@ember/modifier';
 import { localCopy } from 'tracked-toolbox';
+import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 
 type Signature = {
   Args: {
@@ -34,27 +29,22 @@ export default class DebugInfo extends Component<Signature> {
   };
 
   <template>
-    <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
-      <Section>
-        <AuToolbar as |Group|>
-          <Group>
-            <AuHeading @level="5" @skin="5">Debug Info</AuHeading>
-          </Group>
-          <Group>
-            <AuButton
-              @skin="naked"
-              @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
-              {{on "click" this.toggleSection}}
-            />
-          </Group>
-        </AuToolbar>
-      </Section>
-      {{#if this.expanded}}
-        <Section>
-          <p><strong>Position: </strong>{{this.pos}}</p>
-          <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
-        </Section>
-      {{/if}}
-    </AuPanel>
+    <AuCard
+      @size="small"
+      @expandable={{true}}
+      @manualControl={{true}}
+      @openSection={{this.toggleSection}}
+      @isExpanded={{this.expanded}}
+      @disableAuContent={{true}}
+      as |c|
+    >
+      <c.header>
+        <AuHeading @level="1" @skin="6">Debug Info</AuHeading>
+      </c.header>
+      <c.content class="au-c-content--tiny">
+        <p><strong>Position: </strong>{{this.pos}}</p>
+        <p><strong>Nodetype: </strong>{{this.nodeType}}</p>
+      </c.content>
+    </AuCard>
   </template>
 }

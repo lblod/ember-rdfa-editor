@@ -9,13 +9,10 @@ import { and } from 'ember-truth-helpers';
 import type { Attrs } from 'prosemirror-model';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
-import { ChevronDownIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-down';
-import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
-import AuPanel from '@appuniversum/ember-appuniversum/components/au-panel';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuTextarea from '@appuniversum/ember-appuniversum/components/au-textarea';
@@ -27,7 +24,8 @@ import {
   transactionCombinator,
   type TransactionMonad,
 } from '#root/utils/transaction-utils.ts';
-import WithUniqueId from '../with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 
 type Signature = {
   Args: {
@@ -89,10 +87,14 @@ export default class AttributeEditor extends Component<Signature> {
     return null;
   };
 
-  enableEditingMode = () => {
+  enableEditingMode = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.isEditing = true;
   };
-  cancelEditing = (formReset: () => void) => {
+  cancelEditing = (formReset: () => void, event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.isEditing = false;
     formReset();
   };
@@ -132,38 +134,51 @@ export default class AttributeEditor extends Component<Signature> {
 
   <template>
     <WithUniqueId as |formId|>
-      <AuPanel class="au-u-margin-bottom-tiny" as |Section|>
-        <HeadlessForm
-          id={{formId}}
-          @data={{this.nodeAttrs}}
-          @onSubmit={{this.saveChanges}}
-          as |form|
+      <HeadlessForm
+        id={{formId}}
+        @data={{this.nodeAttrs}}
+        @onSubmit={{this.saveChanges}}
+        as |form|
+      >
+        <AuCard
+          @size="small"
+          @expandable={{true}}
+          @manualControl={{true}}
+          @openSection={{this.toggleSection}}
+          @isExpanded={{this.expanded}}
+          @disableAuContent={{true}}
+          as |c|
         >
-          <Section>
-            <AuToolbar as |Group|>
+          <c.header class="say-flex-grow">
+            <AuToolbar
+              class="au-u-flex au-u-flex-row au-u-flex--space-between"
+              as |Group|
+            >
               <Group>
-                <AuHeading @level="5" @skin="5">Node attributes</AuHeading>
+                <AuHeading @level="1" @skin="6">Node attributes</AuHeading>
               </Group>
               <Group>
                 <AuButtonGroup>
                   {{#if this.isEditing}}
                     <AuButton
-                      @skin="naked"
+                      @skin="link-secondary"
                       @iconAlignment="right"
                       {{on "click" (fn this.cancelEditing form.reset)}}
                     >
                       Cancel
                     </AuButton>
                     <AuButton
+                      @skin="link"
                       type="submit"
                       @icon={{CheckIcon}}
+                      onclick="event.stopPropagation();"
                       @iconAlignment="right"
                     >
                       Save
                     </AuButton>
                   {{else}}
                     <AuButton
-                      @skin="naked"
+                      @skin="link"
                       @icon={{PencilIcon}}
                       @iconAlignment="right"
                       {{on "click" this.enableEditingMode}}
@@ -171,68 +186,58 @@ export default class AttributeEditor extends Component<Signature> {
                       Edit
                     </AuButton>
                   {{/if}}
-                  <AuButton
-                    @skin="naked"
-                    @icon={{if this.expanded ChevronUpIcon ChevronDownIcon}}
-                    {{on "click" this.toggleSection}}
-                  />
                 </AuButtonGroup>
               </Group>
             </AuToolbar>
-          </Section>
-          {{#if this.expanded}}
-            <Section>
-              <AuList @divider={{true}} as |Item|>
-                {{#each-in this.nodeAttrs as |key value|}}
-                  <Item>
-                    <div class="au-u-padding-tiny">
-                      {{#if (and this.isEditing (this.isEditable key))}}
-                        <form.Field @name={{key}} as |field|>
-                          <AuLabel for={{field.id}}>
-                            {{key}}
-                          </AuLabel>
-                          {{#let
-                            (this.editorComponent key)
-                            as |EditorComponent|
-                          }}
-                            {{#if EditorComponent}}
-                              {{! @glint-expect-error fix types of dynamic element }}
-                              <EditorComponent
-                                id={{field.id}}
-                                value={{field.value}}
-                                name={{key}}
-                                {{! @glint-expect-error glint has no Signature for the component}}
-                                {{on "change" (fn this.setField field)}}
-                              />
-                            {{else}}
-                              <AuTextarea
-                                @width="block"
-                                id={{field.id}}
-                                value={{field.value}}
-                                name={{key}}
-                                {{on "change" (fn this.setField field)}}
-                              />
-                            {{/if}}
-                          {{/let}}
-                        </form.Field>
-                      {{else}}
-                        <p><strong>{{key}}</strong></p>
-                        <pre
-                          class="say-attribute-editor__formatted-content"
-                        >{{if
-                            value
-                            (this.formatValue value)
-                            "<No value>"
-                          }}</pre>
-                      {{/if}}
-                    </div>
-                  </Item>
-                {{/each-in}}
-              </AuList>
-            </Section>
-          {{/if}}
-        </HeadlessForm>
-      </AuPanel>
+
+          </c.header>
+          <c.content class="au-c-content--tiny">
+
+            <AuList @divider={{true}} as |Item|>
+              {{#each-in this.nodeAttrs as |key value|}}
+                <Item>
+                  <div class="au-u-padding-tiny">
+                    {{#if (and this.isEditing (this.isEditable key))}}
+                      <form.Field @name={{key}} as |field|>
+                        <AuLabel for={{field.id}}>
+                          {{key}}
+                        </AuLabel>
+                        {{#let (this.editorComponent key) as |EditorComponent|}}
+                          {{#if EditorComponent}}
+                            {{! @glint-expect-error fix types of dynamic element }}
+                            <EditorComponent
+                              id={{field.id}}
+                              value={{field.value}}
+                              name={{key}}
+                              {{! @glint-expect-error glint has no Signature for the component}}
+                              {{on "change" (fn this.setField field)}}
+                            />
+                          {{else}}
+                            <AuTextarea
+                              @width="block"
+                              id={{field.id}}
+                              value={{field.value}}
+                              name={{key}}
+                              {{on "change" (fn this.setField field)}}
+                            />
+                          {{/if}}
+                        {{/let}}
+                      </form.Field>
+                    {{else}}
+                      <p><strong>{{key}}</strong></p>
+                      <pre class="say-attribute-editor__formatted-content">{{if
+                          value
+                          (this.formatValue value)
+                          "<No value>"
+                        }}</pre>
+                    {{/if}}
+                  </div>
+                </Item>
+              {{/each-in}}
+            </AuList>
+          </c.content>
+        </AuCard>
+      </HeadlessForm>
     </WithUniqueId>
   </template>
 }

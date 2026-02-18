@@ -120,17 +120,19 @@ table.ProseMirror-selectednode,
   button {
     outline: none;
     border: 0;
-    color: var(--au-gray-600);
+    color: var(--au-gray-900);
     padding: au-settings.$au-unit-small;
 
     &:hover,
     &:focus {
-      color: var(--au-gray-700);
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-300);
     }
 
     &:disabled {
-      color: var(--au-gray-400);
+      color: var(--au-gray-500);
       cursor: not-allowed;
+      background-color: transparent;
     }
   }
 }
