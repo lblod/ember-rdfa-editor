@@ -14,6 +14,8 @@
     "start:test-app": "pnpm --filter test-app start",
     "test": "pnpm --filter '*' test",
     "test:ember": "pnpm --filter '*' test:ember",
+    "test:quickstart": "cd quickstart && npm run setup && npm run ci && npm run teardown",
+    "test:quickstart:setup": "cd quickstart && npm run setup",
     "prettier": "prettier --write .",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "tapp": "pnpm --filter test-app",
@@ -46,7 +48,6 @@
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@changesets/get-release-plan": "catalog:",
-    "@glint/core": "catalog:",
     "@manypkg/get-packages": "catalog:",
     "@types/git-url-parse": "catalog:",
     "@types/node": "catalog:",

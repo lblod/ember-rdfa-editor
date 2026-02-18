@@ -278,8 +278,19 @@ You can discover additional examples on how to write Prosemirror schemas, plugin
 ## Styling
 
 Ember-rdfa-editor requires users of the addon to import its SASS stylesheets as well as those of appuniversum.
+You need to add imports for the bundled styles:
 
-For newer Ember apps, this is a matter of renaming your `app.css` file to `app.scss` and importing it in your `app/app.ts` file.
+```
+/* app/styles/app.scss */
+@import "@appuniversum/ember-appuniversum/styles";
+@import "@lblod/ember-rdfa-editor";
+```
+
+For newer Ember apps, this is a matter of renaming your `app.css` file to `app.scss` and importing it in your `app/app.ts` file and installing `sass`:
+
+```sh
+pnpm install --save-dev sass
+```
 
 ```javascript
 // app/app.ts
@@ -287,14 +298,6 @@ import './styles/app.scss';
 ```
 
 For older Ember apps you'll need to [install ember-cli-sass](https://github.com/adopted-ember-addons/ember-cli-sass#installation).
-
-You then need to add imports for the bundled styles:
-
-```
-/* app/styles/app.scss */
-@import "@appuniversum/ember-appuniversum/styles";
-@import "@lblod/ember-rdfa-editor";
-```
 
 ### Customisation
 

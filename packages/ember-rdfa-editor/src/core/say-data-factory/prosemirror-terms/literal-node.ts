@@ -12,11 +12,11 @@ export class LiteralNodeTerm {
     this.value = value;
   }
 
-  equals = (other?: Option<SayTerm>) => {
+  equals(other?: Option<SayTerm>) {
     return (
       !!other && other.termType === 'LiteralNode' && other.value === this.value
     );
-  };
+  }
 
   toJSON() {
     return {

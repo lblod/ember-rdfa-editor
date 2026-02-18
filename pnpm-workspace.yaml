@@ -38,10 +38,10 @@ catalog:
   '@glimmer/runtime': ^0.94.11
   '@glimmer/tracking': ^1.1.2
   '@glimmer/validator': ^0.94.8
-  '@glint/core': ^1.5.2
-  '@glint/environment-ember-loose': ^1.5.2
-  '@glint/environment-ember-template-imports': ^1.5.2
-  '@glint/template': ^1.5.2
+  '@glint/ember-tsc': ^1.0.8
+  '@glint/template': ^1.7.3
+  '@glint/tsserver-plugin': 2.1.0
+  '@glint/typescript-plugin': 1.4.1-unstable.9b657e4
   '@graphy/memory.dataset.fast': 4.3.3
   '@lblod/marawa': 0.8.0-beta.6
   '@manypkg/get-packages': ^2.2.2
@@ -172,12 +172,11 @@ catalog:
   unified: ^11.0.5
   uuid: ^9.0.1
   vite: ^6.4.1
+  walk-sync: ^4.0.1
   webpack: ^5.101.3
   yup: ^1.7.1
 
 overrides:
-  js-beautify>glob: ^10.5.0
-  # We get errors from prosemirror-dev-tools if we have mismatching versions
-  prosemirror-view: "catalog:"
-  # Chalk <4 doesn't work with esm it seems. A few ancient ember tools still use v2.
   chalk@^2.0.0: ^4.1.2
+  js-beautify>glob: ^10.5.0
+  prosemirror-view: 'catalog:'

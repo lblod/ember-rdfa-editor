@@ -128,6 +128,9 @@ export default class EmbeddedEditor extends Component<Args> {
       this.contentWrapper,
       {
         decorations: () => this.args.contentDecorations,
+        editable: () => {
+          return this.outerView.editable;
+        },
         state: EditorState.create({
           doc: this.node,
           plugins: [keymap(this.keymap), ...this.plugins],
