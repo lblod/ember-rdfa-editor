@@ -8040,7 +8040,7 @@ packages:
     resolution: {integrity: sha512-CCk6Gyx9+Tt2sbYk5NK0nB1ukHi2ryaRgadV/LvyNuO3ena1payM2z6Cg0vO1ebK8cxbzo41ku2DE5Axj1Zuiw==}
 
   prosemirror-history@file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz:
-    resolution: {integrity: sha512-pVNjlRr3jA5SDdV0s0qAZ7PYlHKWXfmQAxvfzaROoOfMw/WtZCwpgJT/NdiO6RZrXrKn7t2QY0qqdJW4p2/N5Q==, tarball: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz}
+    resolution: {integrity: sha512-ZAWHmwOfno48Umt/lYmWz7TFjtEvn7vVxJfgsAnWaQ8076iFBWhmlrXp8JS2k1Qxw3Uqcz9t9uoDVQfuJRGjzg==, tarball: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz}
     version: 1.5.0
 
   prosemirror-inputrules@1.5.1:
