@@ -37,7 +37,6 @@
     },
     "allowUnusedPatches": true,
     "onlyBuiltDependencies": [
-      "prosemirror-history",
       "@parcel/watcher",
       "core-js",
       "ember-source",

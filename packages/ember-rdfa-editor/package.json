@@ -201,7 +201,8 @@
     "_index.scss",
     "ember-rdfa-editor.scss",
     "scss",
-    "vendor"
+    "vendor",
+    "vendored-deps"
   ],
   "scripts": {
     "build": "rollup --config",
@@ -260,7 +261,7 @@
     "process": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-dropcursor": "catalog:",
-    "prosemirror-history": "catalog:",
+    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "prosemirror-inputrules": "catalog:",
     "prosemirror-keymap": "catalog:",
     "prosemirror-model": "catalog:",

@@ -390,9 +390,6 @@ catalogs:
     prosemirror-dropcursor:
       specifier: ^1.8.2
       version: 1.8.2
-    prosemirror-history:
-      specifier: github:lblod/prosemirror-history.git#dfb438d72fda4b344477609c112997b935a46072
-      version: 1.5.0
     prosemirror-inputrules:
       specifier: ^1.5.1
       version: 1.5.1
@@ -709,8 +706,8 @@ importers:
         specifier: 'catalog:'
         version: 1.8.2
       prosemirror-history:
-        specifier: 'catalog:'
-        version: https://codeload.github.com/lblod/prosemirror-history/tar.gz/dfb438d72fda4b344477609c112997b935a46072
+        specifier: ./vendored-deps/prosemirror-history-1.5.0.tgz
+        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.1
@@ -8042,8 +8039,8 @@ packages:
   prosemirror-dropcursor@1.8.2:
     resolution: {integrity: sha512-CCk6Gyx9+Tt2sbYk5NK0nB1ukHi2ryaRgadV/LvyNuO3ena1payM2z6Cg0vO1ebK8cxbzo41ku2DE5Axj1Zuiw==}
 
-  prosemirror-history@https://codeload.github.com/lblod/prosemirror-history/tar.gz/dfb438d72fda4b344477609c112997b935a46072:
-    resolution: {tarball: https://codeload.github.com/lblod/prosemirror-history/tar.gz/dfb438d72fda4b344477609c112997b935a46072}
+  prosemirror-history@file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz:
+    resolution: {integrity: sha512-pVNjlRr3jA5SDdV0s0qAZ7PYlHKWXfmQAxvfzaROoOfMw/WtZCwpgJT/NdiO6RZrXrKn7t2QY0qqdJW4p2/N5Q==, tarball: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz}
     version: 1.5.0
 
   prosemirror-inputrules@1.5.1:
@@ -18388,7 +18385,7 @@ snapshots:
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
 
-  prosemirror-history@https://codeload.github.com/lblod/prosemirror-history/tar.gz/dfb438d72fda4b344477609c112997b935a46072:
+  prosemirror-history@file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz:
     dependencies:
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0

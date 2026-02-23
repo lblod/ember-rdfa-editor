@@ -133,7 +133,6 @@ catalog:
   prosemirror-commands: ^1.7.1
   prosemirror-dev-tools: ^4.2.0
   prosemirror-dropcursor: ^1.8.2
-  prosemirror-history: github:lblod/prosemirror-history.git#dfb438d72fda4b344477609c112997b935a46072
   prosemirror-inputrules: ^1.5.1
   prosemirror-keymap: ^1.2.3
   prosemirror-model: ^1.25.4
