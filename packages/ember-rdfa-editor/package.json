@@ -260,7 +260,6 @@
     "process": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-dropcursor": "catalog:",
-    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "prosemirror-inputrules": "catalog:",
     "prosemirror-keymap": "catalog:",
     "prosemirror-model": "catalog:",
@@ -278,6 +277,7 @@
     "yup": "catalog:"
   },
   "devDependencies": {
+    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
@@ -346,9 +346,6 @@
     "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
     "tracked-built-ins": "^3.3.0 || ^4.0.0"
   },
-  "bundledDependencies": [
-    "prosemirror-history"
-  ],
   "peerDependenciesMeta": {
     "@glint/template": {
       "optional": true

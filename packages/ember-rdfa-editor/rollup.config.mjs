@@ -71,6 +71,7 @@ const BUNDLED_DEPS = [
   '@graphy/memory.dataset.fast',
   'crypto-browserify',
   'stream-browserify',
+  'prosemirror-history',
   'process',
 ];
 export default [

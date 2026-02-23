@@ -134,6 +134,7 @@ catalog:
   prosemirror-dev-tools: ^4.2.0
   prosemirror-dropcursor: ^1.8.2
   prosemirror-inputrules: ^1.5.1
+  prosemirror-history: ./packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
   prosemirror-keymap: ^1.2.3
   prosemirror-model: ^1.25.4
   prosemirror-schema-basic: ^1.2.4

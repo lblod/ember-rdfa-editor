@@ -705,9 +705,6 @@ importers:
       prosemirror-dropcursor:
         specifier: 'catalog:'
         version: 1.8.2
-      prosemirror-history:
-        specifier: ./vendored-deps/prosemirror-history-1.5.0.tgz
-        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.1
@@ -877,6 +874,9 @@ importers:
       prettier-plugin-ember-template-tag:
         specifier: 'catalog:'
         version: 2.1.2(prettier@3.8.0)
+      prosemirror-history:
+        specifier: ./vendored-deps/prosemirror-history-1.5.0.tgz
+        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-test-builder:
         specifier: 'catalog:'
         version: 1.1.1
@@ -6883,7 +6883,6 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
