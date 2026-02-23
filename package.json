@@ -35,7 +35,14 @@
       "@embroider/addon-dev@7.1.2": "patches/@embroider__addon-dev.patch",
       "ember-headless-form": "patches/ember-headless-form.patch"
     },
-    "allowUnusedPatches": true
+    "allowUnusedPatches": true,
+    "onlyBuiltDependencies": [
+      "prosemirror-history",
+      "@parcel/watcher",
+      "core-js",
+      "ember-source",
+      "esbuild"
+    ]
   },
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
