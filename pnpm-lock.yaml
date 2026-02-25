@@ -390,9 +390,6 @@ catalogs:
     prosemirror-dropcursor:
       specifier: ^1.8.2
       version: 1.8.2
-    prosemirror-history:
-      specifier: 1.4.1
-      version: 1.4.1
     prosemirror-inputrules:
       specifier: ^1.5.1
       version: 1.5.1
@@ -515,9 +512,9 @@ catalogs:
       version: 1.7.1
 
 overrides:
+  chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
   prosemirror-view: ^1.41.5
-  chalk@^2.0.0: ^4.1.2
 
 patchedDependencies:
   '@embroider/addon-dev@7.1.2':
@@ -708,9 +705,6 @@ importers:
       prosemirror-dropcursor:
         specifier: 'catalog:'
         version: 1.8.2
-      prosemirror-history:
-        specifier: 'catalog:'
-        version: 1.4.1
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.1
@@ -880,6 +874,9 @@ importers:
       prettier-plugin-ember-template-tag:
         specifier: 'catalog:'
         version: 2.1.2(prettier@3.8.0)
+      prosemirror-history:
+        specifier: ./vendored-deps/prosemirror-history-1.5.0.tgz
+        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-test-builder:
         specifier: 'catalog:'
         version: 1.1.1
@@ -6886,7 +6883,6 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
@@ -8042,8 +8038,9 @@ packages:
   prosemirror-dropcursor@1.8.2:
     resolution: {integrity: sha512-CCk6Gyx9+Tt2sbYk5NK0nB1ukHi2ryaRgadV/LvyNuO3ena1payM2z6Cg0vO1ebK8cxbzo41ku2DE5Axj1Zuiw==}
 
-  prosemirror-history@1.4.1:
-    resolution: {integrity: sha512-2JZD8z2JviJrboD9cPuX/Sv/1ChFng+xh2tChQ2X4bB2HeK+rra/bmJ3xGntCcjhOqIzSDG6Id7e8RJ9QPXLEQ==}
+  prosemirror-history@file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz:
+    resolution: {integrity: sha512-ZAWHmwOfno48Umt/lYmWz7TFjtEvn7vVxJfgsAnWaQ8076iFBWhmlrXp8JS2k1Qxw3Uqcz9t9uoDVQfuJRGjzg==, tarball: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz}
+    version: 1.5.0
 
   prosemirror-inputrules@1.5.1:
     resolution: {integrity: sha512-7wj4uMjKaXWAQ1CDgxNzNtR9AlsuwzHfdFH1ygEHA2KHF2DOEaXl1CJfNPAKCg9qNEh4rum975QLaCiQPyY6Fw==}
@@ -18387,7 +18384,7 @@ snapshots:
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
 
-  prosemirror-history@1.4.1:
+  prosemirror-history@file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz:
     dependencies:
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
