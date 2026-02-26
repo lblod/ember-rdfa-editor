@@ -7,7 +7,6 @@ import { Velcro } from 'ember-velcro';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
-import type { EditorState } from 'prosemirror-state';
 import { hash } from '@ember/helper';
 import EmbeddedEditor from './embedded-editor.gts';
 import { and } from 'ember-truth-helpers';
@@ -45,16 +44,6 @@ export default class Link extends Component<EmberNodeArgs> {
 
   get class() {
     return getClassnamesFromNode(this.node);
-  }
-
-  @action
-  onSelectEmbedded(selected: boolean, innerState: EditorState) {
-    if (!selected && !this.href) {
-      const href = linkToHref(innerState.doc.textContent);
-      if (href) {
-        this.href = href;
-      }
-    }
   }
 
   @action
@@ -114,7 +103,6 @@ export default class Link extends Component<EmberNodeArgs> {
           @view={{@view}}
           @getPos={{@getPos}}
           @selected={{@selected}}
-          @onSelected={{this.onSelectEmbedded}}
           @placeholder={{t "ember-rdfa-editor.link.placeholder.text"}}
           @contentDecorations={{@contentDecorations}}
           @updateAttribute={{@updateAttribute}}
