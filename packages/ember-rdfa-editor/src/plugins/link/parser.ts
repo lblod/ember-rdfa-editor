@@ -1,6 +1,5 @@
 import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
 
-
 export type LinkParserResult =
   | {
       isSuccessful: true;
