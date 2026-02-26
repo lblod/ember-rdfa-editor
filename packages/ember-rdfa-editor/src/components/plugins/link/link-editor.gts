@@ -1,6 +1,5 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { NodeSelection } from 'prosemirror-state';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 import type SayController from '#root/core/say-controller.ts';
@@ -11,68 +10,44 @@ import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuLinkExternal from '@appuniversum/ember-appuniversum/components/au-link-external';
-import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { tracked } from 'tracked-built-ins';
-import { trackedReset } from 'tracked-toolbox';
-import { modifier } from 'ember-modifier';
+import { cached } from '@glimmer/tracking';
+import type { LinkParser } from '#root/plugins/link/parser.js';
+import { defaultLinkParser } from '#root/plugins/link/parser.ts';
+import type { PNode } from '#root/prosemirror-aliases.js';
 
 type Args = {
-  controller?: SayController;
-  linkParser?: LinkParser;
+  controller: SayController;
+  linkParser: LinkParser;
+  link: { pos: number; node: PNode };
+  showTitle?: boolean;
 };
-
-export type LinkParserResult =
-  | {
-      isSuccessful: true;
-      value: string;
-      errors?: never;
-    }
-  | {
-      isSuccessful: false;
-      value?: never;
-      errors: [string, ...string[]];
-    };
-export type LinkParser = (input: string) => LinkParserResult;
 
 export default class LinkEditor extends Component<Args> {
   @tracked amountOfInputChanges = 0;
-  @trackedReset('href') linkParserResult?: LinkParserResult | null;
 
-  resetLinkParserResultOnDestroy = modifier(() => {
-    return () => {
-      this.linkParserResult = this.href ? this.linkParser(this.href) : null;
-    };
-  });
+  parseLink: LinkParser = (input?: string) => {
+    return this.args.linkParser
+      ? this.args.linkParser(input)
+      : defaultLinkParser(input);
+  };
 
-  get linkParser(): LinkParser {
-    return (
-      this.args.linkParser ??
-      ((input: string) => {
-        let link = input.trim();
-        if (!link) {
-          return { isSuccessful: false, errors: ['URL mag niet leeg zijn'] };
-        }
-        if (!linkifyTest(link)) {
-          return {
-            isSuccessful: false,
-            errors: ['De ingegeven URL is niet geldig'],
-          };
-        }
-        link = linkifyFind(link)[0].href;
-        return {
-          isSuccessful: true,
-          value: link,
-        };
-      })
-    );
+  @cached
+  get linkParserResult() {
+    return this.parseLink(this.href);
   }
+
   get controller() {
     return this.args.controller;
   }
 
+  get link() {
+    return this.args.link;
+  }
+
   get href() {
-    return this.link?.node.attrs['href'] as string | undefined;
+    return this.link.node.attrs['href'] as string | undefined;
   }
 
   set href(value: string | undefined) {
@@ -86,47 +61,17 @@ export default class LinkEditor extends Component<Args> {
     }
   }
 
-  validateInput = (input: string) => {
-    this.linkParserResult = this.linkParser(input);
-    return this.linkParserResult;
-  };
-
-  get isValidLink() {
-    return this.href && linkifyTest(this.href);
-  }
-
-  get isFileLink() {
-    return this.href && this.href.startsWith('file://');
-  }
-
   @action
   setHref(event: InputEvent) {
     const text = (event.target as HTMLInputElement).value;
-    const result = this.validateInput(text);
-    if (!result.isSuccessful) {
-      return;
-    }
-    this.href = result.value;
+    const result = this.parseLink(text);
+    this.href = result.value ?? text;
   }
 
   @action
   selectHref(event: FocusEvent) {
     (event.target as HTMLInputElement).select();
   }
-
-  get link() {
-    if (this.controller) {
-      const { selection } = this.controller.mainEditorState;
-      if (
-        selection instanceof NodeSelection &&
-        selection.node.type === this.controller.schema.nodes['link']
-      ) {
-        return { pos: selection.from, node: selection.node };
-      }
-    }
-    return;
-  }
-
   @action
   remove() {
     if (this.controller && this.link) {
@@ -143,7 +88,6 @@ export default class LinkEditor extends Component<Args> {
   <template>
     {{#if this.link}}
       <AuCard
-        {{this.resetLinkParserResultOnDestroy}}
         @flex={{true}}
         @expandable={{false}}
         @shadow={{true}}
@@ -151,11 +95,13 @@ export default class LinkEditor extends Component<Args> {
         @disableAuContent={{true}}
         as |c|
       >
-        <c.header>
-          <AuHeading @level="3" @skin="5">{{t
-              "ember-rdfa-editor.link.edit.title"
-            }}</AuHeading>
-        </c.header>
+        {{#if @showTitle}}
+          <c.header>
+            <AuHeading @level="3" @skin="5">{{t
+                "ember-rdfa-editor.link.edit.title"
+              }}</AuHeading>
+          </c.header>
+        {{/if}}
         <c.content class="au-c-content--small">
           <AuInput
             value={{this.href}}
