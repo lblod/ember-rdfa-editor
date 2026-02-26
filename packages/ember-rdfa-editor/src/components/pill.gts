@@ -5,7 +5,7 @@ import { eq, notEq } from 'ember-truth-helpers';
 
 const PILL_SIZES = ['small'] as const;
 
-type PillComponentSignature = {
+export type PillComponentSignature = {
   Element: HTMLSpanElement;
   Args: {
     skin?:
