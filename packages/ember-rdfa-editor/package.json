@@ -274,6 +274,7 @@
     "relative-to-absolute-iri": "catalog:",
     "stream-browserify": "catalog:",
     "tracked-toolbox": "catalog:",
+    "typedoc": "^0.28.17",
     "uuid": "catalog:",
     "yup": "catalog:"
   },
@@ -446,5 +447,9 @@
       "./modifiers/leave-on-enter-key.js": "./dist/_app_/modifiers/leave-on-enter-key.js",
       "./modifiers/leave-with-arrow-keys.js": "./dist/_app_/modifiers/leave-with-arrow-keys.js"
     }
+  },
+  "typedocOptions": {
+    "tsconfig": "tsconfig.typedoc.json",
+    "out": "docs",
   }
 }

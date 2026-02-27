@@ -1,0 +1,418 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@lblod/ember-rdfa-editor</title><meta name="description" content="Documentation for @lblod/ember-rdfa-editor"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">@lblod/ember-rdfa-editor</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>@lblod/ember-rdfa-editor</h1></div><div class="tsd-panel tsd-typography"><h1 id="lblodember-rdfa-editor" class="tsd-anchor-link">@lblod/ember-rdfa-editor<a href="#lblodember-rdfa-editor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p><a href="https://build.redpencil.io/repos/402"><img src="https://build.redpencil.io/api/badges/402/status.svg" alt="Build Status"></a></p>
+<p>Ember.js addon that provides an RDFa aware rich text editor based on the <a href="https://prosemirror.net/">Prosemirror toolkit</a>.</p>
+<p>Main features:</p>
+<ul>
+<li>basic styling, lists and tables</li>
+<li>support for plugins</li>
+<li>RDFa aware</li>
+<li><a href="#experimental-a-new-approach-to-handle-rdfa-in-documents">Experimental RDFa editing tools</a></li>
+</ul>
+<p>This addon needs an Ember.js application to be integrated into.
+If using Ember.js is not practical, for example, for use in an existing app built in a different framework, there is <a href="https://github.com/lblod/frontend-embeddable-notule-editor/">a pre-packaged version</a> of this project, designed to be imported from NPM and used directly.</p>
+<h2 id="installation" class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="sh"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@lblod/ember-rdfa-editor</span><br/><span class="hl-3"># or</span><br/><span class="hl-0">ember</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@lblod/ember-rdfa-editor</span>
+</code><button type="button">Copy</button></pre>
+
+<p>This package has a number of peer dependencies. These will need to be installed separately if not
+already installed. For example, to install all these dependencies in one command:</p>
+<pre><code class="sh"><span class="hl-0">pnpm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-4">--save-dev</span><span class="hl-1"> </span><span class="hl-2">@appuniversum/ember-appuniversum</span><span class="hl-1"> </span><span class="hl-2">@ember/test-helpers</span><span class="hl-1"> </span><span class="hl-2">@glimmer/component</span><span class="hl-1"> </span><span class="hl-2">@glimmer/tracking</span><span class="hl-1"> </span><span class="hl-2">@glint/template</span><span class="hl-1"> </span><span class="hl-2">ember-basic-dropdown</span><span class="hl-1"> </span><span class="hl-2">ember-concurrency</span><span class="hl-1"> </span><span class="hl-2">&#39;ember-intl@^7.0.0&#39;</span><span class="hl-1"> </span><span class="hl-2">ember-power-select</span><span class="hl-1"> </span><span class="hl-2">ember-power-select-with-create</span><span class="hl-1"> </span><span class="hl-2">ember-source</span><span class="hl-1"> </span><span class="hl-2">tracked-built-ins</span>
+</code><button type="button">Copy</button></pre>
+
+<p>In order to correctly style the editor, you'll need to use the packaged styles.
+See <a href="#styling">the styling section</a> for details.</p>
+<p>In order for ember-intl to know which language to display, the locale needs to be set.
+See <a href="#translation">the translation section</a> for details or see <a href="https://ember-intl.github.io/ember-intl/versions/v7.4.1/docs/quickstart#set-your-app-s-locale">their quickstart instructions</a>.</p>
+<h2 id="basic-example" class="tsd-anchor-link">Basic example<a href="#basic-example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This section includes a basic example on how to include an instance of the editor in you application.
+This addon provides the <code>RdfaEditor</code> component as a main entryway to add an instance of the editor.
+The <code>EditorContainer</code> component handles the UI around the editor page, such as the toolbar and sidebar.</p>
+<p>The following component is an example on how you can include the editor:</p>
+<pre><code class="gts">// app/components/editor.gts
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { Schema } from '@lblod/ember-rdfa-editor';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import RdfaEditor from '@lblod/ember-rdfa-editor/components/editor';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import ResponsiveToolbar from '@lblod/ember-rdfa-editor/components/responsive-toolbar';
+import Undo from '@lblod/ember-rdfa-editor/components/plugins/history/undo';
+import Redo from '@lblod/ember-rdfa-editor/components/plugins/history/redo';
+import Bold from '@lblod/ember-rdfa-editor/components/plugins/text-style/bold';
+import Italic from '@lblod/ember-rdfa-editor/components/plugins/text-style/italic';
+import Strikethrough from '@lblod/ember-rdfa-editor/components/plugins/text-style/strikethrough';
+import Underline from '@lblod/ember-rdfa-editor/components/plugins/text-style/underline';
+import TableMenu from '@lblod/ember-rdfa-editor/components/plugins/table/table-menu';
+import {
+  blockRdfaWithConfig,
+  docWithConfig,
+  hard_break,
+  horizontal_rule,
+  paragraph,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import {
+  inlineRdfaWithConfig,
+  inlineRdfaWithConfigView,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import {
+  em,
+  strikethrough,
+  strong,
+  underline,
+} from '@lblod/ember-rdfa-editor/plugins/text-style';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugins,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
+
+export default class Editor extends Component<void> {
+  @tracked controller?: SayController;
+
+  get schema() {
+    // A prosemirror schema which determines how documents are parsed and written to the DOM.
+    return new Schema({
+      nodes: {
+        doc: docWithConfig({
+          defaultLanguage: 'nl-BE',
+        }),
+        paragraph,
+        ...tableNodes({
+          tableGroup: 'block',
+          cellContent: 'block+',
+        }),
+        heading: headingWithConfig(),
+        blockquote,
+        horizontal_rule,
+        code_block,
+        text,
+        hard_break,
+        block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+        inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
+      },
+      marks: {
+        em,
+        strikethrough,
+        strong,
+        underline
+      }
+    });
+  }
+
+  get nodeViews() {
+    return (controller: SayController) => ({
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
+    });
+  }
+
+  get editorOptions() {
+    return {
+      showPaper: true,
+      showSidebarLeft: false,
+      showSidebarRight: false,
+    };
+  }
+
+  get plugins() {
+    // A list of prosemirror plugins you want to enable. More information about prosemirror plugins can be found on https://prosemirror.net/docs/guide/#state.plugins.
+    return [...tablePlugins, tableKeymap];
+  }
+
+  editorInit = (controller: SayController) => {
+    this.controller = controller;
+    // This method may contain code that runs when the editor has just loaded. It can be useful to e.g. load a document into the editor.
+  }
+
+  <template>
+    <EditorContainer
+      @editorOptions={{this.editorOptions}}
+      @controller={{this.controller}}
+    >
+      <:toolbar as |container|>
+        <ResponsiveToolbar>
+          <:main as |Toolbar|>
+            <Toolbar.Group>
+              <Undo @controller={{container.controller}}/>
+              <Redo @controller={{container.controller}}/>
+            </Toolbar.Group>
+            <Toolbar.Group>
+              <Bold @controller={{container.controller}}/>
+              <Italic @controller={{container.controller}}/>
+              <Strikethrough @controller={{container.controller}}/>
+              <Underline @controller={{container.controller}}/>
+            </Toolbar.Group>
+            <Toolbar.Group>
+              <TableMenu @controller={{container.controller}}/>
+            </Toolbar.Group>
+          </:main>
+        </ResponsiveToolbar>
+      </:toolbar>
+      <:default>
+        <RdfaEditor
+          @rdfaEditorInit={{this.editorInit}}
+          @schema={{this.schema}}
+          @plugins={{this.plugins}}
+        />
+      </:default>
+    </EditorContainer>
+  </template>
+}
+</code><button type="button">Copy</button></pre>
+
+<p>The above template includes a <code>ResponsiveToolbar</code> component including options for:</p>
+<ul>
+<li>undoing/redoing editor actions</li>
+<li>applying bold, italic, strikethrough or underline styling to text</li>
+<li>table insertion
+Many plugins also provide components intended to be placed in the <code>&lt;:sidebarRight&gt;</code> block of the <code>EditorContainer</code>.</li>
+</ul>
+<p>The callback provided to <code>rdfaEditorInit</code> is called when the editor element is inserted and provides an instance of a <code>SayController</code> which can be used to insert documents inside the editor and execute commands.</p>
+<p>The dummy application of this addon includes an extended example on <a href="test-app/app/templates/index.gts">how to include an editor</a>.</p>
+<h2 id="the-component" class="tsd-anchor-link">The <code>RdfaEditor</code> component<a href="#the-component" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The main editor component expects the following arguments:</p>
+<ul>
+<li><code>rdfaEditorInit</code>: a callback function which is called on initialization of the editor. It receives an instance of a <code>SayController</code></li>
+<li><code>schema</code>: an prosemirror <code>Schema</code> instance which contain a series of nodes and marks that are supported in the editor</li>
+</ul>
+<p>It optionally takes other arguments, the most common of which are:</p>
+<ul>
+<li><code>plugins</code>: a list of prosemirror plugins which should be enabled in the editor</li>
+<li><code>nodeViews</code>: a function which expects an argument of type <code>SayController</code> and returns a series of prosemirror `</li>
+</ul>
+<h3 id="the-property" class="tsd-anchor-link">The <code>rdfaEditorInit</code> property<a href="#the-property" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>A function which is called on initialization of the editor. It receives an instance of a <code>SayController</code>. This function is typically used to load documents into the editor.</p>
+<h3 id="the-property-1" class="tsd-anchor-link">The <code>schema</code> property<a href="#the-property-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>A Prosemirror schema which should be used to parse and serialize the document. It contains both a series of nodes and marks. More information about Prosemirror schemas can be found on <a href="https://prosemirror.net/docs/guide/#schema">https://prosemirror.net/docs/guide/#schema</a>. This packages already provides some nodes and marks which you can use to compose your own schema.</p>
+<h3 id="the-property-2" class="tsd-anchor-link">The <code>plugins</code> property<a href="#the-property-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>A list of Prosemirror plugins which can modify the behaviour of the editor. Examples include keymaps to add shortcuts. More information can be found on <a href="https://prosemirror.net/docs/guide/#state.plugins">https://prosemirror.net/docs/guide/#state.plugins</a>.</p>
+<h3 id="the-property-3" class="tsd-anchor-link">The <code>nodeViews</code> property<a href="#the-property-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>A function with the type <code>(controller: SayController) =&gt; Record&lt;string, NodeViewConstructor&gt;</code>.</p>
+<p>It allows you to provide an object contain a series of <code>NodeViewConstructor</code> functions which replace the default nodeviews of specific node types. Nodeviews typically allow you to override the behaviour of the nodes inside the editor, e.g. to add custom elements. More information about nodeviews can be found on <a href="https://prosemirror.net/docs/ref/#view.NodeView">https://prosemirror.net/docs/ref/#view.NodeView</a>.</p>
+<h2 id="the-component-1" class="tsd-anchor-link">The <code>EditorContainer</code> component<a href="#the-component-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The editor container component expects the following arguments:</p>
+<ul>
+<li><code>controller</code>: The <code>SayController</code> instance that was passed to you in the <code>rdfaEditorInit</code> callback</li>
+<li><code>editorOptions</code>: an object containing different options for the editor</li>
+<li><code>loading</code>: whether to show a loading indicator</li>
+</ul>
+<h3 id="the-property-4" class="tsd-anchor-link">The <code>editorOptions</code> property<a href="#the-property-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>This object contains a series of <code>string:boolean</code> pairs. It may contain the following entries:</p>
+<ul>
+<li>showPaper: Show the editor inside a paper like container</li>
+<li>showToolbarBottom: Display the toolbar at the bottom of the screen</li>
+<li>showSidebarLeft: Hide the sidebar to the left of the editor (default: <code>true</code>)</li>
+<li>showSidebarRight: Hide the sidebar to the right of the editor (default: <code>true</code>)</li>
+</ul>
+<h2 id="the-class" class="tsd-anchor-link">The <code>SayController</code> class<a href="#the-class" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Instances of the <code>SayController</code> class can be used to control different aspects of the editor.
+🚧 interface docs under construction, refer to <a href="packages/ember-rdfa-editor/src/core/say-controller.ts">the source files</a> for now 🚧</p>
+<h2 id="experimental-a-new-approach-to-handle-rdfa-in-documents" class="tsd-anchor-link">Experimental: a new approach to handle RDFa in documents<a href="#experimental-a-new-approach-to-handle-rdfa-in-documents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This package also contains an opt-in, experimental way in how RDFa is handled.</p>
+<h3 id="changes" class="tsd-anchor-link">Changes<a href="#changes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Instead of using and dealing with plain RDFa attributes, this approach introduces an new <code>rdfaAware</code> API:
+Two types of RDFa-aware node types are introduced: <code>resource</code> nodes and <code>literal</code> nodes.</p>
+<h4 id="resource-nodes" class="tsd-anchor-link">Resource nodes<a href="#resource-nodes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Resource nodes as the name suggests, define a <code>resource</code> in a document. This resource is always represented by a URI.
+A document may contain multiple resource nodes, which may define the same or different resources.
+In equivalent RDFa, a resource node will typically be serialized to an html element with the RDFa <code>about</code> attribute.
+Resource nodes may contain the following prosemirror attributes:</p>
+<ul>
+<li><code>subject</code>: the URI of the resource</li>
+<li><code>properties</code>: a list of properties defined on the subject/resource. These properties correspond with RDF triples for which the resource URI is the subject.</li>
+<li><code>backlinks</code>: contains the 'inverses' of properties. Corresponds with RDF triples for which the resource URI is the object. The <code>subject</code> of these backlinks will typically also be defined in the document using a resource node.</li>
+<li><code>__rdfaId</code>: a unique id representing the resource node. You can use this id to search specific nodes in a document.</li>
+</ul>
+<h4 id="literal-nodes" class="tsd-anchor-link">Literal nodes<a href="#literal-nodes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Literal nodes define a <code>literal</code> in a document. This node will typically be the target of a property defined by a resource node. The content of the <code>literal</code> is defined by the content inside a literal node.
+Literal nodes may contain the following prosemirror attributes:</p>
+<ul>
+<li><code>backlinks</code>: contains the 'inverses' of properties. Corresponds with RDF triples for which the literal is the object. The <code>subject</code> of these backlinks will typically also be defined in the document using a resource node. Literal nodes will typically only have 1 backlink.</li>
+<li><code>__rdfaId</code>: a unique id representing the literal node. You can use this id to search specific nodes in a document.
+Note: literal nodes do not have <code>subject</code> or <code>properties</code> attributes. Literals can not define the subject of an RDF triple.</li>
+</ul>
+<h4 id="changes-to-existing-node-specs" class="tsd-anchor-link">Changes to existing node-specs<a href="#changes-to-existing-node-specs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Most of the nodes contained in this package (<code>block_rdfa</code>, <code>inline_rdfa</code>, <code>heading</code> etc.) are now provided in two versions: an <code>rdfaAware</code> version an a non-<code>rdfaAware</code> version:
+<code>blockRdfaWithConfig</code> replaces <code>block_rdfa</code>: <code>blockRdfaWithConfig</code> is a configurable node-spec which allows developers to specify whether the node-spec should work in an <code>rdfaAware</code> way or not.
+Similar to <code>blockRdfaWithConfig</code>, other node-specs have also been replaced by a configurable version.
+The configurable node-specs are by default non-<code>rdfaAware</code>.</p>
+<h4 id="other-changes-included-as-part-of-the-system" class="tsd-anchor-link">Other changes included as part of the <code>rdfaAware</code> system<a href="#other-changes-included-as-part-of-the-system" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Apart from the changes included to the node-specs and the ways we handle RDFa, the <code>rdfaAware</code> system also comes with several new (experimental) tools and APIs.
+Some of these tools are marked as private (such as experimental GUI tools and API) and are thus not part of the public API.
+Among these, the following tools/API are included:</p>
+<ul>
+<li>A new parser/serializer system that allows to correctly parse and serialize <code>rdfaAware</code> nodes and documents</li>
+<li>New prosemirror commands to work with the <code>rdfaAware</code> system</li>
+<li>GUI tools (some of these are private API) to operate and interact with <code>rdfaAware</code> nodes and documents</li>
+</ul>
+<h2 id="more-examples" class="tsd-anchor-link">More examples<a href="#more-examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>More examples on how to integrate this editor in your application can be found in the dummy app of this addon or in the <a href="https://github.com/lblod/ember-rdfa-editor-lblod-plugins">plugins repository of the LBLOD project</a>.</p>
+<p>You can discover additional examples on how to write Prosemirror schemas, plugins, node-specs etc. on <a href="https://prosemirror.net/examples/">https://prosemirror.net/examples/</a>.</p>
+<h2 id="styling" class="tsd-anchor-link">Styling<a href="#styling" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Ember-rdfa-editor requires users of the addon to import its SASS stylesheets as well as those of appuniversum.
+You need to add imports for the bundled styles:</p>
+<pre><code><span class="hl-3">/* app/styles/app.scss */</span><br/><span class="hl-1">@</span><span class="hl-5">import</span><span class="hl-1"> </span><span class="hl-2">&quot;@appuniversum/ember-appuniversum/styles&quot;</span><span class="hl-1">;</span><br/><span class="hl-1">@</span><span class="hl-5">import</span><span class="hl-1"> </span><span class="hl-2">&quot;@lblod/ember-rdfa-editor&quot;</span><span class="hl-1">;</span>
+</code><button>Copy</button></pre>
+
+<p>For newer Ember apps, this is a matter of renaming your <code>app.css</code> file to <code>app.scss</code> and importing it in your <code>app/app.ts</code> file and installing <code>sass</code>:</p>
+<pre><code class="sh"><span class="hl-0">pnpm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-4">--save-dev</span><span class="hl-1"> </span><span class="hl-2">sass</span>
+</code><button type="button">Copy</button></pre>
+
+<pre><code class="javascript"><span class="hl-3">// app/app.ts</span><br/><span class="hl-6">import</span><span class="hl-1"> </span><span class="hl-2">&#39;./styles/app.scss&#39;</span><span class="hl-1">;</span>
+</code><button type="button">Copy</button></pre>
+
+<p>For older Ember apps you'll need to <a href="https://github.com/adopted-ember-addons/ember-cli-sass#installation">install ember-cli-sass</a>.</p>
+<h3 id="customisation" class="tsd-anchor-link">Customisation<a href="#customisation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>This addon uses CSS variables to customise the styling. You can override these variables by including and overriding the following variables:</p>
+<pre><code class="css"><span class="hl-7">:root</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-8">--au-white</span><span class="hl-1">: </span><span class="hl-9">#FFFFFF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-100</span><span class="hl-1">: </span><span class="hl-9">#F4F5F6</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-200</span><span class="hl-1">: </span><span class="hl-9">#E6E8EB</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-300</span><span class="hl-1">: </span><span class="hl-9">#CCD1D9</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-400</span><span class="hl-1">: </span><span class="hl-9">#A1ABBA</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-500</span><span class="hl-1">: </span><span class="hl-9">#8E98A6</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-600</span><span class="hl-1">: </span><span class="hl-9">#69717C</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-700</span><span class="hl-1">: </span><span class="hl-9">#545961</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-800</span><span class="hl-1">: </span><span class="hl-10">2</span><span class="hl-1">A2D31;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-900</span><span class="hl-1">: </span><span class="hl-9">#212326</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-gray-1000</span><span class="hl-1">: </span><span class="hl-9">#000000</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-100</span><span class="hl-1">: </span><span class="hl-9">#FAF4FF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-200</span><span class="hl-1">: </span><span class="hl-9">#F2E0FF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-300</span><span class="hl-1">: </span><span class="hl-9">#E1B8FF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-500</span><span class="hl-1">: </span><span class="hl-9">#B34BFF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-600</span><span class="hl-1">: </span><span class="hl-9">#A933FF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-700</span><span class="hl-1">: </span><span class="hl-9">#9000FA</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-800</span><span class="hl-1">: </span><span class="hl-9">#7700CE</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-blue-900</span><span class="hl-1">: </span><span class="hl-9">#550094</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-100</span><span class="hl-1">: </span><span class="hl-9">#FFF9D5</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-200</span><span class="hl-1">: </span><span class="hl-9">#FFF29B</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-300</span><span class="hl-1">: </span><span class="hl-9">#FEE539</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-400</span><span class="hl-1">: </span><span class="hl-9">#FFC515</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-600</span><span class="hl-1">: </span><span class="hl-9">#7F6E3B</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-yellow-900</span><span class="hl-1">: </span><span class="hl-9">#473D21</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-100</span><span class="hl-1">: </span><span class="hl-9">#FCF3F3</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-200</span><span class="hl-1">: </span><span class="hl-9">#F7E3E3</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-500</span><span class="hl-1">: </span><span class="hl-9">#FF4141</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-600</span><span class="hl-1">: </span><span class="hl-9">#D92626</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-700</span><span class="hl-1">: </span><span class="hl-9">#AB1F1F</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-red-900</span><span class="hl-1">: </span><span class="hl-9">#470000</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-100</span><span class="hl-1">: </span><span class="hl-9">#F7FAE5</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-200</span><span class="hl-1">: </span><span class="hl-9">#ECF2CD</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-400</span><span class="hl-1">: </span><span class="hl-9">#B3E000</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-500</span><span class="hl-1">: </span><span class="hl-9">#8BAE00</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-700</span><span class="hl-1">: </span><span class="hl-9">#5F750B</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-green-900</span><span class="hl-1">: </span><span class="hl-9">#323D08</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-global-font-size</span><span class="hl-1">: </span><span class="hl-10">1.5rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-global-line-height</span><span class="hl-1">: </span><span class="hl-10">1.5</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-font</span><span class="hl-1">: BlinkMacSystemFont, -apple-system, </span><span class="hl-2">&quot;Segoe UI&quot;</span><span class="hl-1">, Roboto, </span><span class="hl-9">Helvetica</span><span class="hl-1">, </span><span class="hl-9">Arial</span><span class="hl-1">, </span><span class="hl-9">sans-serif</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-light</span><span class="hl-1">: </span><span class="hl-10">300</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-regular</span><span class="hl-1">: </span><span class="hl-10">400</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-medium</span><span class="hl-1">: </span><span class="hl-10">500</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-bold</span><span class="hl-1">: </span><span class="hl-10">700</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-page-bg</span><span class="hl-1">: </span><span class="hl-9">#FFFFFF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-select-text-color</span><span class="hl-1">: </span><span class="hl-9">#212326</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-select-text-bg</span><span class="hl-1">: </span><span class="hl-9">#F2E0FF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-radius</span><span class="hl-1">: </span><span class="hl-10">.3rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-border</span><span class="hl-1">: </span><span class="hl-10">.2rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline-color</span><span class="hl-1">: </span><span class="hl-9">#B34BFF</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline-border</span><span class="hl-1">: </span><span class="hl-10">.3rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline-border-style</span><span class="hl-1">: </span><span class="hl-9">solid</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline</span><span class="hl-1">: </span><span class="hl-10">.3rem</span><span class="hl-1"> </span><span class="hl-9">solid</span><span class="hl-1"> </span><span class="hl-0">rgba</span><span class="hl-1">(</span><span class="hl-9">#A933FF</span><span class="hl-1">,</span><span class="hl-10">.65</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline-offset</span><span class="hl-1">: </span><span class="hl-10">.2rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-outline-offset-negative</span><span class="hl-1">: </span><span class="hl-10">-.3rem</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-duration</span><span class="hl-1">: </span><span class="hl-10">.125s</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-easing</span><span class="hl-1">: </span><span class="hl-0">cubic-bezier</span><span class="hl-1">(</span><span class="hl-10">0.190</span><span class="hl-1">,  </span><span class="hl-10">1.000</span><span class="hl-1">, </span><span class="hl-10">0.220</span><span class="hl-1">, </span><span class="hl-10">1.000</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-8">--au-transition</span><span class="hl-1">: </span><span class="hl-10">.125s</span><span class="hl-1"> </span><span class="hl-0">cubic-bezier</span><span class="hl-1">(</span><span class="hl-10">0.190</span><span class="hl-1">,  </span><span class="hl-10">1.000</span><span class="hl-1">, </span><span class="hl-10">0.220</span><span class="hl-1">, </span><span class="hl-10">1.000</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-8">--au-z-index-alpha</span><span class="hl-1">: </span><span class="hl-10">1</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-z-index-beta</span><span class="hl-1">: </span><span class="hl-10">2</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--au-z-index-gamma</span><span class="hl-1">: </span><span class="hl-10">3</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-8">--duet-color-primary</span><span class="hl-1">: </span><span class="hl-9">#A933FF</span><span class="hl-1">;</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="override-node-classes" class="tsd-anchor-link">Override node classes<a href="#override-node-classes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>You can also customize the look of your editor by either adding styles to the class of each node, or even changing that class to your custom one.
+The classes asigned to each node are the following:</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Css class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Heading</td>
+<td>say-heading</td>
+</tr>
+<tr>
+<td>Paragraph</td>
+<td>say-paragraph</td>
+</tr>
+<tr>
+<td>RepairedBlock</td>
+<td>say-repaired-block</td>
+</tr>
+<tr>
+<td>ListItem</td>
+<td>say-list-item</td>
+</tr>
+<tr>
+<td>OrderedList</td>
+<td>say-ordered-list</td>
+</tr>
+<tr>
+<td>BulletList</td>
+<td>say-bullet-list</td>
+</tr>
+<tr>
+<td>Placeholder</td>
+<td>say-placeholder</td>
+</tr>
+<tr>
+<td>Table</td>
+<td>say-table</td>
+</tr>
+<tr>
+<td>TableRow</td>
+<td>say-table-row</td>
+</tr>
+<tr>
+<td>TableCell</td>
+<td>say-table-cell</td>
+</tr>
+<tr>
+<td>TableHeader</td>
+<td>say-table-header</td>
+</tr>
+<tr>
+<td>Blockquote</td>
+<td>say-blockquote</td>
+</tr>
+<tr>
+<td>HorizontalRule</td>
+<td>say-horizontal-rule</td>
+</tr>
+<tr>
+<td>HardBreak</td>
+<td>say-hard-break</td>
+</tr>
+<tr>
+<td>InvisibleRdfa</td>
+<td>say-invisible-rdfa</td>
+</tr>
+<tr>
+<td>BlockRdfa</td>
+<td>say-block-rdfa</td>
+</tr>
+<tr>
+<td>InlineRdfa</td>
+<td>say-inline-rdfa</td>
+</tr>
+<tr>
+<td>Link</td>
+<td>say-pill say-link</td>
+</tr>
+</tbody>
+</table>
+<p>In order to replace this classes you just have to replace the property class names when using that node in the schema, for example:</p>
+<pre><code class="js"><span class="hl-5">schema</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-0">Schema</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-5">nodes:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-5">doc:</span><span class="hl-1"> </span><span class="hl-0">docWithConfig</span><span class="hl-1">({</span><br/><span class="hl-1">        </span><span class="hl-5">defaultLanguage:</span><span class="hl-1"> </span><span class="hl-2">&#39;nl-BE&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      }),</span><br/><span class="hl-1">      paragraph; {...</span><span class="hl-5">paragraph</span><span class="hl-1">, </span><span class="hl-11">classNames</span><span class="hl-1">: [</span><span class="hl-2">&#39;my-custom-class&#39;</span><span class="hl-1">]},</span><br/>
+</code><button type="button">Copy</button></pre>
+
+<p>except on the table, where you will need to add the classNames to the options of the tableNodes function</p>
+<pre><code class="js"><span class="hl-1"> ...</span><span class="hl-0">tableNodes</span><span class="hl-1">({</span><br/><span class="hl-1">        </span><span class="hl-5">tableGroup:</span><span class="hl-1"> </span><span class="hl-2">&#39;block&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-5">cellContent:</span><span class="hl-1"> </span><span class="hl-2">&#39;block+&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-5">inlineBorderStyle:</span><span class="hl-1"> { </span><span class="hl-5">width:</span><span class="hl-1"> </span><span class="hl-2">&#39;0.5px&#39;</span><span class="hl-1">, </span><span class="hl-5">color:</span><span class="hl-1"> </span><span class="hl-2">&#39;#CCD1D9&#39;</span><span class="hl-1"> },</span><br/><span class="hl-1">        </span><span class="hl-5">rowBackground:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-5">odd:</span><span class="hl-1"> </span><span class="hl-2">&#39;whitesmoke&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">        },</span><br/><span class="hl-1">        </span><span class="hl-5">classNames:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-5">table:</span><span class="hl-1"> [</span><span class="hl-2">&#39;custom-table-class&#39;</span><span class="hl-1">];</span><br/><span class="hl-1">          </span><span class="hl-5">table_row</span><span class="hl-1">: [</span><span class="hl-2">&#39;custom-table-row-class&#39;</span><span class="hl-1">];</span><br/><span class="hl-1">          </span><span class="hl-5">table_cell</span><span class="hl-1">: [</span><span class="hl-2">&#39;custom-table-cell-class&#39;</span><span class="hl-1">];</span><br/><span class="hl-1">          </span><span class="hl-5">table_header</span><span class="hl-1">: [</span><span class="hl-2">&#39;custom-table-header-class&#39;</span><span class="hl-1">];</span><br/><span class="hl-1">        };</span><br/><span class="hl-1">  }),</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="embroider" class="tsd-anchor-link">Embroider<a href="#embroider" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>To use <code>@lblod/ember-rdfa-editor</code> with Embroider some extra Webpack configuration is needed, which you can import like this:</p>
+<pre><code class="js"><span class="hl-3">// ember-cli-build.js</span><br/><span class="hl-1">  </span><span class="hl-3">// ...</span><br/><span class="hl-1">  </span><span class="hl-4">const</span><span class="hl-1"> { </span><span class="hl-12">Webpack</span><span class="hl-1"> } = </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&#39;@embroider/webpack&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-6">return</span><span class="hl-1"> </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&#39;@embroider/compat&#39;</span><span class="hl-1">).</span><span class="hl-0">compatBuild</span><span class="hl-1">(</span><span class="hl-5">app</span><span class="hl-1">, </span><span class="hl-5">Webpack</span><span class="hl-1">, {</span><br/><span class="hl-1">    </span><span class="hl-3">// other Embroider options</span><br/><span class="hl-1">    </span><span class="hl-5">packagerOptions:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-5">webpackConfig:</span><span class="hl-1"> </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&#39;@lblod/ember-rdfa-editor/webpack-config&#39;</span><span class="hl-1">),</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-5">extraPublicTrees:</span><span class="hl-1"> [],</span><br/><span class="hl-1">  });</span><br/><span class="hl-1">};</span>
+</code><button type="button">Copy</button></pre>
+
+<p>If you already provide some Webpack configuration, you can deep merge that with the config object we provide.</p>
+<h2 id="translation" class="tsd-anchor-link">Translation<a href="#translation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Translations are provided for UI elements using ember-intl.
+Currently the only languages supported are English (en-US) and Dutch (nl-BE).
+Other languages can be added by copying the contents of the file <code>translations/en-us.yaml</code> into the relevant language file in your <code>translations</code> folder and translating all of the strings.</p>
+<p>The desired locale(s) must be explicitly set, for example in the application route:</p>
+<pre><code class="typescript"><span class="hl-3">// app/routes/application.ts</span><br/><span class="hl-6">import</span><span class="hl-1"> </span><span class="hl-5">Route</span><span class="hl-1"> </span><span class="hl-6">from</span><span class="hl-1"> </span><span class="hl-2">&#39;@ember/routing/route&#39;</span><span class="hl-1">;</span><br/><span class="hl-6">import</span><span class="hl-1"> { </span><span class="hl-5">service</span><span class="hl-1"> } </span><span class="hl-6">from</span><span class="hl-1"> </span><span class="hl-2">&#39;@ember/service&#39;</span><span class="hl-1">;</span><br/><span class="hl-6">import</span><span class="hl-1"> </span><span class="hl-6">type</span><span class="hl-1"> </span><span class="hl-5">IntlService</span><span class="hl-1"> </span><span class="hl-6">from</span><span class="hl-1"> </span><span class="hl-2">&#39;ember-intl/services/intl&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-6">export</span><span class="hl-1"> </span><span class="hl-6">default</span><span class="hl-1"> </span><span class="hl-4">class</span><span class="hl-1"> </span><span class="hl-13">ApplicationRoute</span><span class="hl-1"> </span><span class="hl-4">extends</span><span class="hl-1"> </span><span class="hl-13">Route</span><span class="hl-1"> {</span><br/><span class="hl-1">  @</span><span class="hl-5">service</span><span class="hl-1"> </span><span class="hl-4">declare</span><span class="hl-1"> </span><span class="hl-5">intl</span><span class="hl-1">: </span><span class="hl-13">IntlService</span><span class="hl-1">;</span><br/><br/><span class="hl-1">  </span><span class="hl-0">beforeModel</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-4">this</span><span class="hl-1">.</span><span class="hl-5">intl</span><span class="hl-1">.</span><span class="hl-0">setLocale</span><span class="hl-1">([</span><span class="hl-2">&#39;en-US&#39;</span><span class="hl-1">]);</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<p>A helper function is provided to assist with finding a reasonable fallback locale, for example providing <code>en-US</code> translations if <code>en</code> is requested.
+See <a href="test-app/app/routes/application.ts">the test app</a> for example of it's usage.</p>
+<h2 id="testing" class="tsd-anchor-link">Testing<a href="#testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="playwright" class="tsd-anchor-link">Playwright<a href="#playwright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>We use Playwright for testing in the browser. There are two types of tests:</p>
+<ul>
+<li>Visual regression tests (VRT) - verifying how the content is rendered in the editor, tagged with <code>@vrt</code>.</li>
+<li>Integration tests - verifying the behaviour of the editor, no tags.</li>
+</ul>
+<h4 id="available-commands" class="tsd-anchor-link">Available commands<a href="#available-commands" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<ul>
+<li><code>e2e:open</code> - opens Playwright UI locally</li>
+<li><code>e2e:open:docker</code> - opens Playwright UI in Docker and attempts to connect to your XServer</li>
+<li><code>e2e:run</code> - runs Playwright tests locally, skipping tests tagged with <code>@vrt</code></li>
+<li><code>e2e:run:docker</code> - runs all Playwright tests in Docker</li>
+<li><code>e2e:run:vrt</code> - runs visual regression tests in Docker</li>
+<li><code>e2e:run:vrt:update</code> - updates visual regression tests after running them in Docker</li>
+<li><code>e2e:show-report</code> - shows the report of the last run</li>
+</ul>
+<h4 id="visual-regression-tests-vrt" class="tsd-anchor-link">Visual regression tests (VRT)<a href="#visual-regression-tests-vrt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>To run visual regression tests locally you need to run <code>npm run e2e:run:vrt</code>.<br>
+Afterwards if you need to update the snapshots you can run <code>npm run e2e:run:vrt:update</code>.</p>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+Playwright is run in Docker to ensure consistent snapshot comparison results, as it guarantees the same environment for each run.</p>
+</div>
+<h2 id="compatibility" class="tsd-anchor-link">Compatibility<a href="#compatibility" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li>Ember.js v4.12 or above</li>
+<li>Embroider or ember-auto-import v2</li>
+</ul>
+<h2 id="contributing" class="tsd-anchor-link">Contributing<a href="#contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>See the <a href="CONTRIBUTING.md">Contributing</a> guide for details.</p>
+<h1 id="credits" class="tsd-anchor-link">Credits<a href="#credits" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>This project makes use of the <a href="https://prosemirror.net/">ProseMirror toolkit</a>, created by <a href="https://github.com/marijnh">Marijn Haverbeke</a>.</p>
+<p>This project makes use of a modified version of <a href="https://github.com/rubensworks/rdfa-streaming-parser.js">rdfa-streaming-parser</a>,
+created by <a href="https://github.com/rubensworks">Ruben Taelman</a> and distributed under the <a href="https://github.com/rubensworks/rdfa-streaming-parser.js/blob/master/LICENSE.txt">MIT license</a>.</p>
+<p>Due to unique requirements which would not benefit the original project we opted to make our modifications
+in-house rather than contributing to the upstream.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#lblodember-rdfa-editor"><span>@lblod/ember-<wbr/>rdfa-<wbr/>editor</span></a><ul><li><a href="#installation"><span>Installation</span></a></li><li><a href="#basic-example"><span>Basic example</span></a></li><li><a href="#the-component"><span>The  component</span></a></li><li><ul><li><a href="#the-property"><span>The  property</span></a></li><li><a href="#the-property-1"><span>The  property</span></a></li><li><a href="#the-property-2"><span>The  property</span></a></li><li><a href="#the-property-3"><span>The  property</span></a></li></ul></li><li><a href="#the-component-1"><span>The  component</span></a></li><li><ul><li><a href="#the-property-4"><span>The  property</span></a></li></ul></li><li><a href="#the-class"><span>The  class</span></a></li><li><a href="#experimental-a-new-approach-to-handle-rdfa-in-documents"><span>Experimental: a new approach to handle <wbr/>RD<wbr/>Fa in documents</span></a></li><li><ul><li><a href="#changes"><span>Changes</span></a></li><li><ul><li><a href="#resource-nodes"><span>Resource nodes</span></a></li><li><a href="#literal-nodes"><span>Literal nodes</span></a></li><li><a href="#changes-to-existing-node-specs"><span>Changes to existing node-<wbr/>specs</span></a></li><li><a href="#other-changes-included-as-part-of-the-system"><span>Other changes included as part of the  system</span></a></li></ul></li></ul></li><li><a href="#more-examples"><span>More examples</span></a></li><li><a href="#styling"><span>Styling</span></a></li><li><ul><li><a href="#customisation"><span>Customisation</span></a></li><li><ul><li><a href="#override-node-classes"><span>Override node classes</span></a></li></ul></li></ul></li><li><a href="#embroider"><span>Embroider</span></a></li><li><a href="#translation"><span>Translation</span></a></li><li><a href="#testing"><span>Testing</span></a></li><li><ul><li><a href="#playwright"><span>Playwright</span></a></li><li><ul><li><a href="#available-commands"><span>Available commands</span></a></li><li><a href="#visual-regression-tests-vrt"><span>Visual regression tests (<wbr/>VRT)</span></a></li></ul></li></ul></li><li><a href="#compatibility"><span>Compatibility</span></a></li><li><a href="#contributing"><span>Contributing</span></a></li></ul><a href="#credits"><span>Credits</span></a></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">@lblod/ember-rdfa-editor</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

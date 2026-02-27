@@ -1,0 +1,28 @@
+{
+  "extends": "@tsconfig/ember/tsconfig.json",
+
+  "compilerOptions": {
+    "baseUrl": "./",
+    "allowImportingTsExtensions": true
+
+  },
+  "typedocOptions": {
+    "entryPoints": [
+      "declarations/index.d.ts",
+      "declarations/plugins/*/index.d.ts",
+      "declarations/commands/index.d.ts",
+      "declarations/components/*.d.ts",
+      "declarations/components/ember-node/*.d.ts",
+      "declarations/components/icons/*.d.ts",
+      "declarations/components/toolbar/*.d.ts",
+      "declarations/components/utils/*.d.ts",
+      "declarations/components/plugins/**/*.d.ts",
+      "declarations/core/**/*.d.ts",
+      "declarations/marks/index.d.ts",
+      "declarations/modifiers/*.d.ts",
+      "declarations/nodes/*.d.ts",
+      "declarations/utils/*.d.ts"
+    ]
+  },
+  "include": ["declarations/*.d.ts", "declarations/**/*.d.ts"]
+}
