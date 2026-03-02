@@ -451,5 +451,6 @@
   "typedocOptions": {
     "tsconfig": "tsconfig.typedoc.json",
     "out": "docs",
+    "readme": "./README.md"
   }
 }
