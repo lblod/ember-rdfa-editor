@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.2.1
+
+### Patch Changes
+
+- [`3e89ffc`](https://github.com/lblod/ember-rdfa-editor/commit/3e89ffc1a1c7304ba253c5d1813601a72c55c6a8) Thanks [@abeforgit](https://github.com/abeforgit)! - Remove obsolete package patches
+
 ## 13.2.0
 
 ### Minor Changes
