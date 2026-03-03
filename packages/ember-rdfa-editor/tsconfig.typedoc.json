@@ -4,7 +4,6 @@
   "compilerOptions": {
     "baseUrl": "./",
     "allowImportingTsExtensions": true
-
   },
   "typedocOptions": {
     "entryPoints": [
