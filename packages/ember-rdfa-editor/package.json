@@ -274,7 +274,6 @@
     "relative-to-absolute-iri": "catalog:",
     "stream-browserify": "catalog:",
     "tracked-toolbox": "catalog:",
-    "typedoc": "^0.28.17",
     "uuid": "catalog:",
     "yup": "catalog:"
   },
