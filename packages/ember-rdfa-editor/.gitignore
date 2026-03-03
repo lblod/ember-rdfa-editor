@@ -7,6 +7,7 @@
 # compiled output
 dist/
 declarations/
+docs/
 
 # npm/pnpm/yarn pack output
 *.tgz
