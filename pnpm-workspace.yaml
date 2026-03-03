@@ -173,7 +173,7 @@ catalog:
   uuid: ^9.0.1
   vite: ^6.4.1
   walk-sync: ^4.0.1
-  webpack: ^5.101.3
+  webpack: ^5.104.1
   yup: ^1.7.1
 
 overrides:
