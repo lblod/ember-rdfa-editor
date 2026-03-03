@@ -517,15 +517,9 @@ overrides:
   prosemirror-view: ^1.41.5
 
 patchedDependencies:
-  '@embroider/addon-dev@7.1.2':
-    hash: 53e2d1aced0efe02a771b310e047e987d526d2e698413f3ed74efa9d963bc9a8
-    path: patches/@embroider__addon-dev.patch
   ember-headless-form:
     hash: 3ffd83a43b842fdb4a0b3056a043c8a1a03cf60563de70328abd79a49a1707dd
     path: patches/ember-headless-form.patch
-  ember-source@6.1.0:
-    hash: d32aa61e94f436a274cc301f3c510ae238ec94c607b9502691574e8fcd223621
-    path: patches/ember-source@6.1.0.patch
 
 importers:
 
@@ -6883,6 +6877,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
