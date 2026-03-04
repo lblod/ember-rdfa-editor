@@ -29,7 +29,7 @@ export type DocumentRange = {
 export default class SayView extends EditorView {
   isSayView = true;
   @tracked declare state: EditorState;
-  @tracked parent?: SayView;
+  @tracked parent?: EditorView;
   domParser: ProseParser;
 
   constructor(
@@ -41,7 +41,7 @@ export default class SayView extends EditorView {
         }
       | null,
     props: DirectEditorProps,
-    parent?: SayView,
+    parent?: EditorView,
   ) {
     super(place, props);
     this.domParser =
