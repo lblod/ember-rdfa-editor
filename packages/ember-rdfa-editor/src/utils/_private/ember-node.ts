@@ -22,6 +22,7 @@ import type {
 } from 'prosemirror-model';
 import {
   Decoration,
+  type EditorView,
   type DecorationSource,
   type NodeView,
 } from 'prosemirror-view';
@@ -33,7 +34,6 @@ import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import type { NodeSerializer } from '#root/core/say-serializer.ts';
-import type SayView from '#root/core/say-view.ts';
 import { NodeSelection } from 'prosemirror-state';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
@@ -59,7 +59,7 @@ export interface EmberNodeArgs {
    */
   selectNode: () => void;
   controller: SayController;
-  view: SayView;
+  view: EditorView;
   selected: boolean;
   contentDecorations?: DecorationSource;
 }
@@ -150,7 +150,7 @@ class EmberNodeView implements NodeView {
     controller: SayController,
     emberNodeConfig: EmberNodeConfig,
     pNode: PNode,
-    view: SayView,
+    view: EditorView,
     getPos: () => number | undefined,
   ) {
     // when a node gets updated, `update()` is called.
@@ -502,7 +502,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
 
 export type SayNodeViewConstructor = (
   node: PNode,
-  view: SayView,
+  view: EditorView,
   getPos: () => number | undefined,
 ) => NodeView;
 /**
@@ -511,7 +511,7 @@ export type SayNodeViewConstructor = (
  */
 export function createEmberNodeView(config: EmberNodeConfig) {
   return function (controller: SayController): SayNodeViewConstructor {
-    return function (node, view: SayView, getPos) {
+    return function (node, view: EditorView, getPos) {
       return new EmberNodeView(controller, config, node, view, getPos);
     };
   };
