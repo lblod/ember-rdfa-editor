@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/ember/tsconfig.json",
-  "include": ["src/**/*", "unpublished-development-types/**/*"],
+  "include": ["src/**/*", "unpublished-development-types/**/*", "vendored-deps/*"],
   "compilerOptions": {
     "allowJs": true,
     "declaration": true,
