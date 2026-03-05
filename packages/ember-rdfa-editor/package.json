@@ -277,7 +277,6 @@
     "yup": "catalog:"
   },
   "devDependencies": {
-    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
@@ -320,6 +319,7 @@
     "postcss": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-ember-template-tag": "catalog:",
+    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "prosemirror-test-builder": "catalog:",
     "rollup": "catalog:",
     "rollup-plugin-copy": "catalog:",
