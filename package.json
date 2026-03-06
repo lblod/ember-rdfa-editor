@@ -21,9 +21,9 @@
     "tapp": "pnpm --filter test-app",
     "release": "tsx scripts/release/run.mts",
     "dev-release": "tsx scripts/dev-release/run.mts",
-    "docs": "pnpm run docs:generate && pnpm run docs:serve",
-    "docs:generate": "cd ./packages/ember-rdfa-editor && npx typedoc && cd ../..",
-    "docs:serve": "npx static-server ./packages/ember-rdfa-editor/docs"
+    "documentation": "pnpm run documentation:generate && pnpm run documentation:serve",
+    "documentation:generate": "pnpm say documentation:generate",
+    "documentation:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
   },
   "pnpm": {
     "peerDependencyRules": {

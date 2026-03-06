@@ -216,7 +216,8 @@
     "lint:types": "ember-tsc --noEmit",
     "prepack": "pnpm build",
     "start": "rollup --config --watch",
-    "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
+    "documentation:generate": "pnpm typedoc"
   },
   "dependencies": {
     "@codemirror/commands": "catalog:",
@@ -274,6 +275,7 @@
     "relative-to-absolute-iri": "catalog:",
     "stream-browserify": "catalog:",
     "tracked-toolbox": "catalog:",
+    "typedoc": "^0.28.17",
     "uuid": "catalog:",
     "yup": "catalog:"
   },
