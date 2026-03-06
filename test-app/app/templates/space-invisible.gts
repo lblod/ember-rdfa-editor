@@ -72,7 +72,7 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
-import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
 import { hash } from '@ember/helper';
 
 export default class extends Component {
@@ -202,7 +202,7 @@ export default class extends Component {
           </:default>
           <:aside>
             <Sidebar>
-              <LinkEditor @controller={{this.rdfaEditor}} />
+              <LinkSidebarWidget @controller={{this.rdfaEditor}} />
             </Sidebar>
           </:aside>
         </EditorContainer>

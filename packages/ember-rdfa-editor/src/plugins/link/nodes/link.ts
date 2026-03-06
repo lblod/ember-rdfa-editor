@@ -11,7 +11,7 @@ import {
   type EmberNodeConfig,
 } from '../../../utils/ember-node.ts';
 import type { ComponentLike } from '@glint/template';
-import Link from '#root/components/ember-node/link.ts';
+import Link from '#root/components/ember-node/link.gts';
 
 type LinkOptions = {
   interactive?: boolean;
