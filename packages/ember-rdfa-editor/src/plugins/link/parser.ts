@@ -33,8 +33,8 @@ export const defaultLinkParser: LinkParser = (input?: string) => {
   if (phoneNumber) {
     const phoneNumberUri = phoneNumber.getURI();
     const value = link.startsWith('sms:')
-    // libphonenumber-js transforms sms: automatically to tel:, so revert this transform if necessary
-      ? phoneNumberUri.replace('tel:', 'sms:')
+      ? // libphonenumber-js transforms sms: automatically to tel:, so revert this transform if necessary
+        phoneNumberUri.replace('tel:', 'sms:')
       : phoneNumberUri;
     return {
       isSuccessful: true,
