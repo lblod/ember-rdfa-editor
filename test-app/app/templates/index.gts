@@ -75,10 +75,10 @@ import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
-import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
 import { hash } from '@ember/helper';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
 
 export default class extends Component {
   @tracked rdfaEditor?: SayController;
@@ -214,7 +214,7 @@ export default class extends Component {
           </:default>
           <:sidebarRight as |container|>
             <Sidebar>
-              <LinkEditor @controller={{container.controller}} />
+              <LinkSidebarWidget @controller={{container.controller}} />
             </Sidebar>
           </:sidebarRight>
         </EditorContainer>

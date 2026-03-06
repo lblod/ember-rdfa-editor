@@ -114,10 +114,10 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
-import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
 
 import t from 'ember-intl/helpers/t';
 import { hash } from '@ember/helper';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -404,7 +404,7 @@ export default class extends Component {
                   />
                 </Item>
               </Sb.Collapsible>
-              <LinkEditor @controller={{container.controller}} />
+              <LinkSidebarWidget @controller={{container.controller}} />
               {{#if this.devMode}}
                 <div class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
                   <VisualiserCard
