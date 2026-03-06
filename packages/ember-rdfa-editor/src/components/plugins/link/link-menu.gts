@@ -27,7 +27,7 @@ export default class LinkMenu extends Component<Args> {
   parseLink: LinkParser = (input?: string) => {
     return this.args.linkParser
       ? this.args.linkParser(input)
-      : defaultLinkParser(input);
+      : defaultLinkParser()(input);
   };
 
   get schema() {

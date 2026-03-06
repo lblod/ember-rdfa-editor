@@ -31,7 +31,7 @@ export default class LinkEditor extends Component<Args> {
   parseLink: LinkParser = (input?: string) => {
     return this.args.linkParser
       ? this.args.linkParser(input)
-      : defaultLinkParser(input);
+      : defaultLinkParser()(input);
   };
 
   @cached
@@ -55,6 +55,7 @@ export default class LinkEditor extends Component<Args> {
   setHref(event: InputEvent) {
     const text = (event.target as HTMLInputElement).value;
     const result = this.parseLink(text);
+    
     if (this.link && this.controller) {
       const { pos } = this.link;
       this.controller.withTransaction(

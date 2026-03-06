@@ -12,7 +12,7 @@ type Args = {
 
 export default class LinkSidebarWidget extends Component<Args> {
   get linkParser() {
-    return this.args.linkParser ?? defaultLinkParser;
+    return this.args.linkParser ?? defaultLinkParser();
   }
 
   get controller() {
