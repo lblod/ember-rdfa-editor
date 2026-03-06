@@ -1,4 +1,5 @@
 import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
+import parsePhoneNumber from 'libphonenumber-js';
 
 export type LinkParserResult =
   | {
@@ -14,19 +15,35 @@ export type LinkParserResult =
 export type LinkParser = (input?: string) => LinkParserResult;
 
 export const defaultLinkParser: LinkParser = (input?: string) => {
-  let link = input?.trim();
+  const link = input?.trim();
   if (!link) {
     return { isSuccessful: false, errors: ['URL mag niet leeg zijn'] };
   }
-  if (!linkifyTest(link)) {
+
+  const isURL = linkifyTest(link);
+  if (isURL) {
+    const url = linkifyFind(link)[0].href;
     return {
-      isSuccessful: false,
-      errors: ['De ingegeven URL is niet geldig'],
+      isSuccessful: true,
+      value: url,
     };
   }
-  link = linkifyFind(link)[0].href;
+
+  const phoneNumber = parsePhoneNumber(link, 'BE');
+  if (phoneNumber) {
+    const phoneNumberUri = phoneNumber.getURI();
+    const value = link.startsWith('sms:')
+    // libphonenumber-js transforms sms: automatically to tel:, so revert this transform if necessary
+      ? phoneNumberUri.replace('tel:', 'sms:')
+      : phoneNumberUri;
+    return {
+      isSuccessful: true,
+      value,
+    };
+  }
+
   return {
-    isSuccessful: true,
-    value: link,
+    isSuccessful: false,
+    errors: ['De ingegeven URL/link is niet geldig'],
   };
 };

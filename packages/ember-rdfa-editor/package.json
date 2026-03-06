@@ -253,6 +253,7 @@
     "ember-velcro": "catalog:",
     "iter-tools": "catalog:",
     "js-beautify": "catalog:",
+    "libphonenumber-js": "^1.12.38",
     "linkifyjs": "catalog:",
     "mdn-polyfills": "catalog:",
     "mongoose": "catalog:",
