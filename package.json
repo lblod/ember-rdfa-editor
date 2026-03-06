@@ -20,7 +20,10 @@
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "tapp": "pnpm --filter test-app",
     "release": "tsx scripts/release/run.mts",
-    "dev-release": "tsx scripts/dev-release/run.mts"
+    "dev-release": "tsx scripts/dev-release/run.mts",
+    "documentation": "pnpm run documentation:generate && pnpm run documentation:serve",
+    "documentation:generate": "pnpm say documentation:generate",
+    "documentation:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
   },
   "pnpm": {
     "peerDependencyRules": {
