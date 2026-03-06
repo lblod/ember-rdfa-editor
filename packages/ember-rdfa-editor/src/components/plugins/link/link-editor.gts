@@ -16,7 +16,8 @@ import { cached } from '@glimmer/tracking';
 import type { LinkParser } from '#root/plugins/link/parser.js';
 import { defaultLinkParser } from '#root/plugins/link/parser.ts';
 import type { PNode } from '#root/prosemirror-aliases.js';
-
+import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
+import { MessageIcon } from '@appuniversum/ember-appuniversum/components/icons/message';
 type Args = {
   controller: SayController;
   linkParser: LinkParser;
@@ -50,26 +51,38 @@ export default class LinkEditor extends Component<Args> {
     return this.link.node.attrs['href'] as string | undefined;
   }
 
-  set href(value: string | undefined) {
+  @action
+  setHref(event: InputEvent) {
+    const text = (event.target as HTMLInputElement).value;
+    const result = this.parseLink(text);
     if (this.link && this.controller) {
       const { pos } = this.link;
       this.controller.withTransaction(
-        (tr) => tr.setNodeAttribute(pos, 'href', value),
+        (tr) => tr.setNodeAttribute(pos, 'href', result.value ?? text),
         // After reload the default (activeEditorView) is just the link text, so use the main view
         { view: this.controller.mainEditorView },
       );
     }
   }
 
-  @action
-  setHref(event: InputEvent) {
-    const text = (event.target as HTMLInputElement).value;
-    const result = this.parseLink(text);
-    this.href = result.value ?? text;
+  get linkText() {
+    return this.link.node.textContent;
   }
 
   @action
-  selectHref(event: FocusEvent) {
+  setLinkText(event: InputEvent) {
+    const text = (event.target as HTMLInputElement).value;
+    if (this.link && this.controller) {
+      const { pos, node } = this.link;
+      this.controller.withTransaction(
+        (tr) => tr.insertText(text, pos + 1, pos + node.nodeSize - 1),
+        { view: this.controller.mainEditorView },
+      );
+    }
+  }
+
+  @action
+  selectInputElement(event: FocusEvent) {
     (event.target as HTMLInputElement).select();
   }
   @action
@@ -104,10 +117,19 @@ export default class LinkEditor extends Component<Args> {
         {{/if}}
         <c.content class="au-c-content--small">
           <AuInput
+            value={{this.linkText}}
+            @width="block"
+            @icon={{MessageIcon}}
+            {{on "change" this.setLinkText}}
+            {{on "focus" this.selectInputElement}}
+            placeholder={{t "ember-rdfa-editor.link.placeholder.text"}}
+          />
+          <AuInput
             value={{this.href}}
             @width="block"
+            @icon={{LinkIcon}}
             {{on "change" this.setHref}}
-            {{on "focus" this.selectHref}}
+            {{on "focus" this.selectInputElement}}
             placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
           />
           {{#if this.linkParserResult}}
