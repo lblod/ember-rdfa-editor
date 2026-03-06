@@ -10,6 +10,7 @@ import nodeGlobals from 'rollup-plugin-node-globals';
 import postcss from 'postcss';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
+import rollupDeclarationsPlugin from './rollup-plugins/declarations.mjs';
 
 const nodeResolvePlugin = nodeResolve({
   preferBuiltins: false,
@@ -70,6 +71,7 @@ const BUNDLED_DEPS = [
   '@graphy/memory.dataset.fast',
   'crypto-browserify',
   'stream-browserify',
+  'prosemirror-history',
   'process',
 ];
 export default [
@@ -188,7 +190,10 @@ export default [
       addon.gjs(),
 
       // Emit .d.ts declaration files
-      addon.declarations('declarations'),
+      rollupDeclarationsPlugin(
+        'declarations',
+        'pnpm ember-tsc --build --declaration --emitDeclarationOnly',
+      ),
 
       // addons are allowed to contain imports of .css files, which we want rollup
       // to leave alone and keep in the published output.

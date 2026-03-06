@@ -15,6 +15,11 @@ export interface SetHtmlOptions {
    * Defaults to false.
    */
   doNotClean?: boolean;
+  /**
+   * Whether the initial state should be considered as a 'dirty' state e.g. if this is a new
+   * document that has not yet been saved.
+   */
+  startsDirty?: boolean;
 }
 export type DocumentRange = {
   from: number;
@@ -47,7 +52,8 @@ export default class SayView extends EditorView {
   /**
    * Replaces the state (and current document) with a parsed version of the provided `html` string.
    * This method creates a new `doc` node and parses it correctly based on the provided html.
-   * Note: plugin state is not preserved when using this method (e.g. the history-plugin state is reset).
+   * Note: plugin state is preserved but a new transaction setting the new content will be
+   * dispatched.
    */
   setHtmlContent(content: string, options: SetHtmlOptions = {}) {
     const { shouldFocus = true, doNotClean } = options;

@@ -77,6 +77,7 @@ import { hash } from '@ember/helper';
 
 export default class extends Component {
   @tracked rdfaEditor?: SayController;
+  @tracked editable = true;
   @service declare intl: IntlService;
   schema = new Schema({
     nodes: {
@@ -130,6 +131,10 @@ export default class extends Component {
       interactive: true,
     };
   }
+
+  toggleEditable = () => {
+    this.editable = !this.editable;
+  };
 
   @tracked plugins: PluginConfig = [
     firefoxCursorFix(),

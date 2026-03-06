@@ -204,12 +204,11 @@ export default class AttributeEditor extends Component<Signature> {
                         </AuLabel>
                         {{#let (this.editorComponent key) as |EditorComponent|}}
                           {{#if EditorComponent}}
-                            {{! @glint-expect-error fix types of dynamic element }}
                             <EditorComponent
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               id={{field.id}}
                               value={{field.value}}
                               name={{key}}
-                              {{! @glint-expect-error glint has no Signature for the component}}
                               {{on "change" (fn this.setField field)}}
                             />
                           {{else}}
