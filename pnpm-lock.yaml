@@ -351,6 +351,9 @@ catalogs:
     js-beautify:
       specifier: ^1.15.4
       version: 1.15.4
+    libphonenumber-js:
+      specifier: ^1.12.38
+      version: 1.12.38
     linkifyjs:
       specifier: ^4.3.2
       version: 4.3.2
@@ -682,7 +685,7 @@ importers:
         specifier: 'catalog:'
         version: 1.15.4
       libphonenumber-js:
-        specifier: ^1.12.38
+        specifier: 'catalog:'
         version: 1.12.38
       linkifyjs:
         specifier: 'catalog:'
@@ -6880,6 +6883,7 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
