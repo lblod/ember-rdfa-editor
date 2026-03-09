@@ -2,9 +2,7 @@ import leaveOnEnterKey from '#root/modifiers/leave-on-enter-key.ts';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
-import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { Velcro } from 'ember-velcro';
-import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 import { hash } from '@ember/helper';
 import EmbeddedEditor from './embedded-editor.gts';
 import { and } from 'ember-truth-helpers';
@@ -16,8 +14,14 @@ import {
   defaultLinkParser,
   type LinkParser,
 } from '#root/plugins/link/parser.ts';
+import { cached } from '@glimmer/tracking';
+import { service } from '@ember/service';
+import type IntlService from 'ember-intl/services/intl';
+import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 
 export default class Link extends Component<EmberNodeArgs> {
+  @service declare intl: IntlService;
+
   get href() {
     return this.args.node.attrs['href'] as string;
   }
@@ -40,6 +44,27 @@ export default class Link extends Component<EmberNodeArgs> {
     );
   }
 
+  @cached
+  get linkParserResult() {
+    return this.linkParser(this.href);
+  }
+
+  get linkTitle() {
+    if (this.linkParserResult.isSuccessful) {
+      return this.intl.t('ember-rdfa-editor.link.ctrlClickDescription');
+    } else {
+      return this.linkParserResult.errors[0];
+    }
+  }
+
+  get linkIcon() {
+    if (this.linkParserResult.isSuccessful) {
+      return;
+    } else {
+      return CircleXIcon;
+    }
+  }
+
   get controller() {
     return this.args.controller;
   }
@@ -57,9 +82,8 @@ export default class Link extends Component<EmberNodeArgs> {
   }
 
   get class() {
-    return getClassnamesFromNode(this.node);
+    return `say-pill ${this.linkParserResult.isSuccessful ? '' : 'say-pill--error'}`;
   }
-
 
   @action
   onClick(event: PointerEvent) {
@@ -78,7 +102,8 @@ export default class Link extends Component<EmberNodeArgs> {
       <Pill
         class={{this.class}}
         @skin="link"
-        title={{t "ember-rdfa-editor.link.ctrlClickDescription"}}
+        @icon={{this.linkIcon}}
+        title={{this.linkTitle}}
         aria-describedby="link-tooltip"
         {{velcro.hook}}
         {{on "click" this.onClick}}

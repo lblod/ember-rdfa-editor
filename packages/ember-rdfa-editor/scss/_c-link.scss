@@ -56,7 +56,6 @@
 }
 
 .say-pill {
-  gap: 0;
   vertical-align: bottom;
   min-height: 2.55rem;
   margin-bottom: -0.1rem;
@@ -74,6 +73,17 @@
     cursor: text;
     color: var(--au-blue-700);
   }
+
+  &--error {
+    color: var(--au-red-700);
+    background-color: var(--au-red-200);
+    border-color: var(--au-red-300);
+    text-decoration-color: var(--au-red-300);
+
+    [contenteditable] {
+      color: var(--au-red-700);
+    }
+  }
 }
 
 .ember-node.ProseMirror-selectednode {
@@ -84,6 +94,15 @@
 
     ::selection {
       background-color: var(--au-blue-300);
+    }
+
+    &--error {
+      background-color: var(--au-red-200);
+      outline: 2px solid var(--au-red-500);
+
+      ::selection {
+        background-color: var(--au-red-300);
+      }
     }
   }
 }
