@@ -118,6 +118,7 @@ import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import t from 'ember-intl/helpers/t';
 import { hash } from '@ember/helper';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -283,6 +284,7 @@ export default class extends Component {
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
         ordered_list_input_rule(this.schema.nodes.ordered_list),
+        link_input_rule({ nodeType: this.schema.nodes.link }),
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
