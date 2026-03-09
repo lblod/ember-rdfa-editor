@@ -4,18 +4,18 @@ import Component from '@glimmer/component';
 import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { Velcro } from 'ember-velcro';
-import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
-import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 import { hash } from '@ember/helper';
 import EmbeddedEditor from './embedded-editor.gts';
 import { and } from 'ember-truth-helpers';
-import AuLinkExternal from '@appuniversum/ember-appuniversum/components/au-link-external';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
-import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import Pill from '#root/components/pill.gts';
+import LinkEditor from '../plugins/link/link-editor.gts';
+import {
+  defaultLinkParser,
+  type LinkParser,
+} from '#root/plugins/link/parser.ts';
 
 export default class Link extends Component<EmberNodeArgs> {
   get href() {
@@ -24,6 +24,24 @@ export default class Link extends Component<EmberNodeArgs> {
 
   set href(value: string) {
     this.args.updateAttribute('href', value);
+  }
+
+  get link() {
+    const pos = this.args.getPos();
+    if (!pos) {
+      return;
+    }
+    return {
+      node: this.args.node,
+      pos,
+    };
+  }
+
+  get linkParser() {
+    return (
+      (this.node.attrs['linkParser'] as LinkParser | null) ??
+      defaultLinkParser()
+    );
   }
 
   get controller() {
@@ -84,9 +102,9 @@ export default class Link extends Component<EmberNodeArgs> {
 
   <template>
     <Velcro
-      @placement="bottom"
+      @placement="bottom-start"
       @offsetOptions={{hash mainAxis=3}}
-      @strategy="absolute"
+      @strategy="fixed"
       as |velcro|
     >
       <Pill
@@ -111,7 +129,15 @@ export default class Link extends Component<EmberNodeArgs> {
         />
       </Pill>
       {{#if (and this.selected this.interactive)}}
-        <Pill
+        {{#if this.link}}
+          <LinkEditor
+            @controller={{@controller}}
+            @link={{this.link}}
+            @linkParser={{this.linkParser}}
+            {{velcro.loop}}
+          />
+        {{/if}}
+        {{!-- <Pill
           @size="small"
           class="say-link-tooltip"
           id="link-tooltip"
@@ -136,7 +162,7 @@ export default class Link extends Component<EmberNodeArgs> {
             {{on "click" this.remove}}
             title={{t "ember-rdfa-editor.link.edit.uncouple"}}
           />
-        </Pill>
+        </Pill> --}}
       {{/if}}
     </Velcro>
   </template>
