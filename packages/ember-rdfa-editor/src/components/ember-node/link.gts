@@ -22,10 +22,6 @@ export default class Link extends Component<EmberNodeArgs> {
     return this.args.node.attrs['href'] as string;
   }
 
-  set href(value: string) {
-    this.args.updateAttribute('href', value);
-  }
-
   get link() {
     const pos = this.args.getPos();
     if (!pos) {
@@ -64,39 +60,11 @@ export default class Link extends Component<EmberNodeArgs> {
     return getClassnamesFromNode(this.node);
   }
 
-  @action
-  setHref(event: InputEvent) {
-    const text = (event.target as HTMLInputElement).value;
-    const href = linkToHref(text);
-    this.href = href || text;
-  }
-
-  @action
-  selectHref(event: FocusEvent) {
-    (event.target as HTMLInputElement).select();
-  }
 
   @action
   onClick(event: PointerEvent) {
     if (event.ctrlKey || event.metaKey) {
       window.open(this.href);
-    }
-  }
-
-  @action
-  remove() {
-    const pos = this.args.getPos();
-    if (pos !== undefined) {
-      this.controller.withTransaction(
-        (tr) => {
-          return tr.replaceWith(
-            pos,
-            pos + this.node.nodeSize,
-            this.node.content,
-          );
-        },
-        { view: this.controller.mainEditorView },
-      );
     }
   }
 
@@ -137,32 +105,6 @@ export default class Link extends Component<EmberNodeArgs> {
             {{velcro.loop}}
           />
         {{/if}}
-        {{!-- <Pill
-          @size="small"
-          class="say-link-tooltip"
-          id="link-tooltip"
-          {{velcro.loop}}
-        >
-          <AuLinkExternal
-            href={{this.href}}
-            @skin="button-naked"
-            @icon={{LinkExternalIcon}}
-            title={{t "ember-rdfa-editor.link.open"}}
-          />
-          <AuInput
-            value={{this.href}}
-            placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
-            {{on "change" this.setHref}}
-            {{on "focus" this.selectHref}}
-            {{leaveOnEnterKey @controller @getPos}}
-          />
-          <AuButton
-            @icon={{LinkBrokenIcon}}
-            @skin="naked"
-            {{on "click" this.remove}}
-            title={{t "ember-rdfa-editor.link.edit.uncouple"}}
-          />
-        </Pill> --}}
       {{/if}}
     </Velcro>
   </template>
