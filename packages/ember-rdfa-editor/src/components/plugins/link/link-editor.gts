@@ -102,11 +102,13 @@ export default class LinkEditor extends Component<Args> {
   <template>
     {{#if this.link}}
       <AuCard
+        class="say-link-editor"
         @flex={{true}}
         @expandable={{false}}
-        @shadow={{true}}
         @size="small"
+        @shadow={{true}}
         @disableAuContent={{true}}
+        ...attributes
         as |c|
       >
         {{#if @showTitle}}
@@ -116,7 +118,7 @@ export default class LinkEditor extends Component<Args> {
               }}</AuHeading>
           </c.header>
         {{/if}}
-        <c.content class="au-c-content--small">
+        <c.content class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
           <AuInput
             value={{this.linkText}}
             @width="block"
@@ -137,7 +139,7 @@ export default class LinkEditor extends Component<Args> {
             {{#unless this.linkParserResult.isSuccessful}}
               {{#let this.linkParserResult.errors as |errors|}}
                 {{#each errors as |error|}}
-                  <AuAlert @size="small" @skin="error" @icon="cross">
+                  <AuAlert class="au-u-margin-bottom-none" @size="small" @skin="error" @icon="cross">
                     {{error}}
                   </AuAlert>
                 {{/each}}
@@ -147,13 +149,14 @@ export default class LinkEditor extends Component<Args> {
         </c.content>
         <c.footer>
           <AuLinkExternal
+            class="say-link-editor__button"
             @icon={{LinkExternalIcon}}
             @skin="button-secondary"
             href={{this.href}}
           >{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
           <AuButton
+            class="say-link-editor__button say-link-editor__button--detach-link"
             @icon={{LinkBrokenIcon}}
-            @alert={{true}}
             @skin="secondary"
             {{on "click" this.remove}}
           >{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>

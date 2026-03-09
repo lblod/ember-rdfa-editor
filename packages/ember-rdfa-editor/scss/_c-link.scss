@@ -1,4 +1,5 @@
 @use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 
 .say-link-tooltip {
   z-index: 3;
@@ -25,6 +26,32 @@
 
   .au-c-input:focus {
     border-width: 0 0 !important;
+  }
+}
+
+.say-link-editor {
+  height: auto;
+  z-index: 1;
+  background: var(--au-gray-100);
+  border: 0.1rem solid var(--au-gray-300);
+  border-radius: 0.5rem;
+}
+
+.say-link-editor__button {
+  background-color: var(--au-white);
+  &--detach-link {
+    &,
+    &:visited {
+      color: var(--au-red-600);
+      border-color: var(--au-red-600);
+    }
+
+    &:hover,
+    &:focus-visible,
+    &:active {
+      color: var(--au-red-700);
+      border-color: var(--au-red-700);
+    }
   }
 }
 
