@@ -55,7 +55,7 @@ export default class LinkEditor extends Component<Args> {
   setHref(event: InputEvent) {
     const text = (event.target as HTMLInputElement).value;
     const result = this.parseLink(text);
-    
+
     if (this.link && this.controller) {
       const { pos } = this.link;
       this.controller.withTransaction(
@@ -139,7 +139,12 @@ export default class LinkEditor extends Component<Args> {
             {{#unless this.linkParserResult.isSuccessful}}
               {{#let this.linkParserResult.errors as |errors|}}
                 {{#each errors as |error|}}
-                  <AuAlert class="au-u-margin-bottom-none" @size="small" @skin="error" @icon="cross">
+                  <AuAlert
+                    class="au-u-margin-bottom-none"
+                    @size="small"
+                    @skin="error"
+                    @icon="cross"
+                  >
                     {{error}}
                   </AuAlert>
                 {{/each}}

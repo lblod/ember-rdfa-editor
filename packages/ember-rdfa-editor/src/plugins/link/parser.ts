@@ -1,7 +1,5 @@
 import { find as linkifyFind, test as linkifyTest } from 'linkifyjs';
-import parsePhoneNumber, {
-  type CountryCode,
-} from 'libphonenumber-js';
+import parsePhoneNumber, { type CountryCode } from 'libphonenumber-js';
 
 export type LinkParserResult =
   | {
