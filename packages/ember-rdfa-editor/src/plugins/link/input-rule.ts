@@ -8,17 +8,44 @@ type LinkInputRuleOptions = {
   linkParser?: LinkParser;
 };
 
+const DEFAULT_REGEX = new RegExp(
+  String.raw`
+  (^|\s)
+  (
+    (?: ${/* parse email */ ''}
+      (?:mailto:)? ${/* optional mailto: protocol */ ''}
+      [A-Za-z0-9._%+-]+ ${/* local-part */ ''}
+      @
+      [A-Za-z0-9.-]+ ${/* domain */ ''}
+      \.
+      [A-Za-z]{2,} ${/* extension */ ''}
+    )
+    |
+    (?: ${/* parse weblinks */ ''}
+      (?:https?:\/\/)? ${/* optional http(s): protocol */ ''}
+      (?:www\.)? ${/* optional www */ ''}
+      [A-Za-z0-9.-]+ ${/* domain */ ''}
+      \.
+      [A-Za-z]{2,} ${/* extension */ ''}
+    )
+  )
+  \s$ ${/* single space after url/email */ ''}
+  `
+    .replace(/^\s+|\s+$/gm, '') // remove white space before and at the end of lines (trimming)
+    .replace(/\n/g, ''), // remove newlines
+);
+
 export const link_input_rule = ({
   nodeType,
-  regex = /(^|\s)((mailto:)?[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\s$/,
+  regex = DEFAULT_REGEX,
   linkParser = defaultLinkParser(),
 }: LinkInputRuleOptions) => {
   return new InputRule(regex, (state, match, start) => {
-    const textBeforeEmail = match[1];
-    const email = match[2];
-    const emailStart = start + textBeforeEmail.length;
-    const emailEnd = emailStart + email.length;
-    const linkParserResult = linkParser(email);
+    const textBeforeLink = match[1];
+    const link = match[2];
+    const linkStart = start + textBeforeLink.length;
+    const linkEnd = linkStart + link.length;
+    const linkParserResult = linkParser(link);
     if (!linkParserResult.isSuccessful) {
       return null;
     }
@@ -26,12 +53,12 @@ export const link_input_rule = ({
       {
         href: linkParserResult.value,
       },
-      state.schema.text(email)
+      state.schema.text(link),
     );
     const tr = state.tr;
 
     // replace only the email text
-    tr.replaceWith(emailStart, emailEnd, node);
+    tr.replaceWith(linkStart, linkEnd, node);
 
     return tr;
   });
