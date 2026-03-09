@@ -79,6 +79,7 @@ import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/tabl
 
 import { hash } from '@ember/helper';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 
 export default class extends Component {
   @tracked rdfaEditor?: SayController;
@@ -153,6 +154,7 @@ export default class extends Component {
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
         ordered_list_input_rule(this.schema.nodes.ordered_list),
+        link_input_rule({ nodeType: this.schema.nodes.link }),
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
