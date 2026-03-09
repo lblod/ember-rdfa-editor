@@ -56,14 +56,12 @@ export default class LinkEditor extends Component<Args> {
     const text = (event.target as HTMLInputElement).value;
     const result = this.parseLink(text);
 
-    if (this.link && this.controller) {
-      const { pos } = this.link;
-      this.controller.withTransaction(
-        (tr) => tr.setNodeAttribute(pos, 'href', result.value ?? text),
-        // After reload the default (activeEditorView) is just the link text, so use the main view
-        { view: this.controller.mainEditorView },
-      );
-    }
+    const { pos } = this.link;
+    this.controller.withTransaction(
+      (tr) => tr.setNodeAttribute(pos, 'href', result.value ?? text),
+      // After reload the default (activeEditorView) is just the link text, so use the main view
+      { view: this.controller.mainEditorView },
+    );
   }
 
   get linkText() {
@@ -73,13 +71,11 @@ export default class LinkEditor extends Component<Args> {
   @action
   setLinkText(event: InputEvent) {
     const text = (event.target as HTMLInputElement).value;
-    if (this.link && this.controller) {
-      const { pos, node } = this.link;
-      this.controller.withTransaction(
-        (tr) => tr.insertText(text, pos + 1, pos + node.nodeSize - 1),
-        { view: this.controller.mainEditorView },
-      );
-    }
+    const { pos, node } = this.link;
+    this.controller.withTransaction(
+      (tr) => tr.insertText(text, pos + 1, pos + node.nodeSize - 1),
+      { view: this.controller.mainEditorView },
+    );
   }
 
   @action
@@ -88,85 +84,81 @@ export default class LinkEditor extends Component<Args> {
   }
   @action
   remove() {
-    if (this.controller && this.link) {
-      const { pos, node } = this.link;
-      this.controller.withTransaction(
-        (tr) => {
-          return tr.replaceWith(pos, pos + node.nodeSize, node.content);
-        },
-        { view: this.controller.mainEditorView },
-      );
-    }
+    const { pos, node } = this.link;
+    this.controller.withTransaction(
+      (tr) => {
+        return tr.replaceWith(pos, pos + node.nodeSize, node.content);
+      },
+      { view: this.controller.mainEditorView },
+    );
   }
 
   <template>
-    {{#if this.link}}
-      <AuCard
-        class="say-link-editor"
-        @flex={{true}}
-        @expandable={{false}}
-        @size="small"
-        @shadow={{true}}
-        @disableAuContent={{true}}
-        ...attributes
-        as |c|
-      >
-        {{#if @showTitle}}
-          <c.header>
-            <AuHeading @level="3" @skin="5">{{t
-                "ember-rdfa-editor.link.edit.title"
-              }}</AuHeading>
-          </c.header>
+    <AuCard
+      class="say-link-editor"
+      @flex={{true}}
+      @expandable={{false}}
+      @size="small"
+      @shadow={{true}}
+      @disableAuContent={{true}}
+      ...attributes
+      as |c|
+    >
+      {{#if @showTitle}}
+        <c.header>
+          <AuHeading @level="3" @skin="5">{{t
+              "ember-rdfa-editor.link.edit.title"
+            }}</AuHeading>
+        </c.header>
+      {{/if}}
+      <c.content class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
+        <AuInput
+          value={{this.linkText}}
+          @width="block"
+          @icon={{MessageIcon}}
+          {{on "change" this.setLinkText}}
+          {{on "focus" this.selectInputElement}}
+          placeholder={{t "ember-rdfa-editor.link.placeholder.text"}}
+        />
+        <AuInput
+          value={{this.href}}
+          @width="block"
+          @icon={{LinkIcon}}
+          {{on "change" this.setHref}}
+          {{on "focus" this.selectInputElement}}
+          placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
+        />
+        {{#if this.linkParserResult}}
+          {{#unless this.linkParserResult.isSuccessful}}
+            {{#let this.linkParserResult.errors as |errors|}}
+              {{#each errors as |error|}}
+                <AuAlert
+                  class="au-u-margin-bottom-none"
+                  @size="small"
+                  @skin="error"
+                  @icon="cross"
+                >
+                  {{error}}
+                </AuAlert>
+              {{/each}}
+            {{/let}}
+          {{/unless}}
         {{/if}}
-        <c.content class="au-u-flex au-u-flex--column au-u-flex--spaced-tiny">
-          <AuInput
-            value={{this.linkText}}
-            @width="block"
-            @icon={{MessageIcon}}
-            {{on "change" this.setLinkText}}
-            {{on "focus" this.selectInputElement}}
-            placeholder={{t "ember-rdfa-editor.link.placeholder.text"}}
-          />
-          <AuInput
-            value={{this.href}}
-            @width="block"
-            @icon={{LinkIcon}}
-            {{on "change" this.setHref}}
-            {{on "focus" this.selectInputElement}}
-            placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
-          />
-          {{#if this.linkParserResult}}
-            {{#unless this.linkParserResult.isSuccessful}}
-              {{#let this.linkParserResult.errors as |errors|}}
-                {{#each errors as |error|}}
-                  <AuAlert
-                    class="au-u-margin-bottom-none"
-                    @size="small"
-                    @skin="error"
-                    @icon="cross"
-                  >
-                    {{error}}
-                  </AuAlert>
-                {{/each}}
-              {{/let}}
-            {{/unless}}
-          {{/if}}
-        </c.content>
-        <c.footer>
-          <AuLinkExternal
-            class="say-link-editor__button"
-            @icon={{LinkExternalIcon}}
-            @skin="button-secondary"
-            href={{this.href}}
-          >{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
-          <AuButton
-            class="say-link-editor__button say-link-editor__button--detach-link"
-            @icon={{LinkBrokenIcon}}
-            @skin="secondary"
-            {{on "click" this.remove}}
-          >{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>
-        </c.footer>
-      </AuCard>
-    {{/if}}
+      </c.content>
+      <c.footer>
+        <AuLinkExternal
+          class="say-link-editor__button"
+          @icon={{LinkExternalIcon}}
+          @skin="button-secondary"
+          href={{this.href}}
+        >{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
+        <AuButton
+          class="say-link-editor__button say-link-editor__button--detach-link"
+          @icon={{LinkBrokenIcon}}
+          @skin="secondary"
+          {{on "click" this.remove}}
+        >{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>
+      </c.footer>
+    </AuCard>
   </template>
 }
