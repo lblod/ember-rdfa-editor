@@ -1,6 +1,7 @@
 import { InputRule } from 'prosemirror-inputrules';
 import { defaultLinkParser, type LinkParser } from './parser.ts';
 import type { NodeType } from 'prosemirror-model';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 type LinkInputRuleOptions = {
   nodeType: NodeType;
@@ -40,11 +41,21 @@ export const link_input_rule = ({
   regex = DEFAULT_REGEX,
   linkParser = defaultLinkParser(),
 }: LinkInputRuleOptions) => {
-  return new InputRule(regex, (state, match, start) => {
+  return new InputRule(regex, (state, match, start, end) => {
+    // Ensure both the start and end of the input-rule match are within the same parent node
+    if (state.doc.resolve(start).parent !== state.doc.resolve(end).parent) {
+      return null;
+    }
+
+    if (!rangeContainsOnlyText(state.doc, start, end)) {
+      return null;
+    }
+
     const textBeforeLink = match[1];
     const link = match[2];
     const linkStart = start + textBeforeLink.length;
     const linkEnd = linkStart + link.length;
+
     const linkParserResult = linkParser(link);
     if (!linkParserResult.isSuccessful) {
       return null;
@@ -62,4 +73,15 @@ export const link_input_rule = ({
 
     return tr;
   });
+};
+
+const rangeContainsOnlyText = (doc: PNode, from: number, to: number) => {
+  let onlyText = true;
+  doc.nodesBetween(from, to, (node) => {
+    if (node.isInline && !node.isText) {
+      onlyText = false;
+      return false;
+    }
+  });
+  return onlyText;
 };
