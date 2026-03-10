@@ -30,12 +30,21 @@ const DEFAULT_REGEX = new RegExp(
       [A-Za-z]{2,} ${/* extension */ ''}
     )
   )
-  \s$ ${/* single space after url/email */ ''}
+  (\s)$ ${/* single space after url/email */ ''}
   `
     .replace(/^\s+|\s+$/gm, '') // remove white space before and at the end of lines (trimming)
     .replace(/\n/g, ''), // remove newlines
 );
 
+/**
+ * Input rule which is able to detect plain text links and convert them to a link object.
+ * It may be configured with a `nodeType`, a custom `regex` and a custom `linkParser`.
+ * 
+ * If using a custom `regex`, it should meet the following conditions:
+ * - The first group should capture the text typed before the (possible) link
+ * - The second group should capture the text representing the (possible) link
+ * - The third group should capture the text typed after the (possible) link
+ */
 export const link_input_rule = ({
   nodeType,
   regex = DEFAULT_REGEX,
@@ -53,8 +62,8 @@ export const link_input_rule = ({
 
     const textBeforeLink = match[1];
     const link = match[2];
+    const textAfterLink = match[3];
     const linkStart = start + textBeforeLink.length;
-    const linkEnd = linkStart + link.length;
 
     const linkParserResult = linkParser(link);
     if (!linkParserResult.isSuccessful) {
@@ -69,9 +78,9 @@ export const link_input_rule = ({
     const tr = state.tr;
 
     // replace only the email text
-    tr.replaceWith(linkStart, linkEnd, node);
+    tr.replaceWith(linkStart, end, node);
 
-    tr.insertText(' ', linkStart + node.nodeSize);
+    tr.insertText(textAfterLink, linkStart + node.nodeSize);
 
     return tr;
   });
