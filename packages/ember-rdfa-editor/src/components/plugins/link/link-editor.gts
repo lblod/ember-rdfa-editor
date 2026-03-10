@@ -145,17 +145,18 @@ export default class LinkEditor extends Component<Args> {
           {{/unless}}
         {{/if}}
       </c.content>
-      <c.footer>
+      <c.footer class="au-u-flex au-u-flex--spaced-small au-u-margin-left-tiny au-u-margin-right-tiny">
         <AuLinkExternal
           class="say-link-editor__button"
           @icon={{LinkExternalIcon}}
-          @skin="button-secondary"
+          @skin="bold"
           href={{this.href}}
         >{{t "ember-rdfa-editor.link.open"}}</AuLinkExternal>
         <AuButton
-          class="say-link-editor__button say-link-editor__button--detach-link"
+          class="au-u-padding-none"
           @icon={{LinkBrokenIcon}}
-          @skin="secondary"
+          @skin="link-bold"
+          @alert={{true}}
           {{on "click" this.remove}}
         >{{t "ember-rdfa-editor.link.edit.uncouple"}}</AuButton>
       </c.footer>
