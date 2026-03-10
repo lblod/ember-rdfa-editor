@@ -71,6 +71,8 @@ export const link_input_rule = ({
     // replace only the email text
     tr.replaceWith(linkStart, linkEnd, node);
 
+    tr.insertText(' ', linkStart + node.nodeSize);
+
     return tr;
   });
 };
