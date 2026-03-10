@@ -145,7 +145,9 @@ export default class LinkEditor extends Component<Args> {
           {{/unless}}
         {{/if}}
       </c.content>
-      <c.footer class="au-u-flex au-u-flex--spaced-small au-u-margin-left-tiny au-u-margin-right-tiny">
+      <c.footer
+        class="au-u-flex au-u-flex--spaced-small au-u-margin-left-tiny au-u-margin-right-tiny"
+      >
         <AuLinkExternal
           class="say-link-editor__button"
           @icon={{LinkExternalIcon}}
