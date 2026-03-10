@@ -21,9 +21,9 @@
     "tapp": "pnpm --filter test-app",
     "release": "tsx scripts/release/run.mts",
     "dev-release": "tsx scripts/dev-release/run.mts",
-    "documentation": "pnpm run documentation:generate && pnpm run documentation:serve",
-    "documentation:generate": "pnpm say documentation:generate",
-    "documentation:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
+    "doc": "pnpm run doc:generate && pnpm run doc:serve",
+    "doc:generate": "pnpm say doc:generate",
+    "doc:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -62,6 +62,7 @@
     "prettier-plugin-ember-template-tag": "catalog:",
     "remark-parse": "catalog:",
     "remark-stringify": "catalog:",
+    "static-server": "^2.2.1",
     "tsx": "catalog:",
     "unified": "catalog:"
   }
