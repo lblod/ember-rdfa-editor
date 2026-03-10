@@ -39,7 +39,7 @@ const DEFAULT_REGEX = new RegExp(
 /**
  * Input rule which is able to detect plain text links and convert them to a link object.
  * It may be configured with a `nodeType`, a custom `regex` and a custom `linkParser`.
- * 
+ *
  * If using a custom `regex`, it should meet the following conditions:
  * - The first group should capture the text typed before the (possible) link
  * - The second group should capture the text representing the (possible) link
