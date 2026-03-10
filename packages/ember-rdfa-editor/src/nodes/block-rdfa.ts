@@ -57,15 +57,16 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           if (typeof element === 'string') {
             return false;
           }
-          const attrs = getRdfaAttrs(element, { rdfaAware });
+          let attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
+            attrs = { ...attrs, label: element.dataset['label'] ?? attrs['label'] };
             const migration = modelMigrations.find((migration) =>
               migration(attrs as unknown as RdfaAttrs),
             )?.(attrs as unknown as RdfaAttrs);
             if (migration && migration.getAttrs) {
               return migration.getAttrs(element);
             }
-            return { ...attrs, label: element.dataset['label'] };
+            return attrs;
           }
           return false;
         },

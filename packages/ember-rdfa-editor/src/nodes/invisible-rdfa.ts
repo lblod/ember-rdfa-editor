@@ -1,8 +1,9 @@
 import { tagName } from '#root/utils/_private/dom-helpers.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
-import { type RdfaAttrs } from '../core/rdfa-types.ts';
+import { type ModelMigrationGenerator, type RdfaAttrs } from '../core/rdfa-types.ts';
 import {
   getRdfaAttrs,
+  getRdfaContentElement,
   rdfaAttrSpec,
   renderInvisibleRdfa,
   renderRdfaAttrs,
@@ -12,10 +13,16 @@ import { PNode } from '#root/prosemirror-aliases.ts';
 
 type Options = {
   rdfaAware?: boolean;
+  /**
+   * Migrations to apply to nodes parsed as block-rdfa, to modify the data model.
+   * @returns false to use the default parsing or an object to define overrides
+   **/
+  modelMigrations?: ModelMigrationGenerator[];
 };
 
 export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
   rdfaAware = false,
+  modelMigrations = [],
 } = {}) => {
   return {
     inline: true,
@@ -36,15 +43,36 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
             return false;
           }
           if (!node.hasChildNodes()) {
-            const attrs = getRdfaAttrs(node, { rdfaAware });
+            let attrs = getRdfaAttrs(node, { rdfaAware });
             if (attrs) {
-              return {
+              attrs = {
                 ...attrs,
                 __tag: tagName(node),
               };
+              const migration = modelMigrations.find((migration) =>
+                migration(attrs as unknown as RdfaAttrs),
+              )?.(attrs as unknown as RdfaAttrs);
+              if (migration && migration.getAttrs) {
+                return migration.getAttrs(node);
+              }
+              return attrs;
             }
           }
           return false;
+        },
+        contentElement: (element) => {
+          if (rdfaAware && modelMigrations.length > 0) {
+            const attrs = getRdfaAttrs(element, { rdfaAware });
+            if (attrs) {
+              const migration = modelMigrations.find((migration) =>
+                migration(attrs as unknown as RdfaAttrs),
+              )?.(attrs as unknown as RdfaAttrs);
+              if (migration && migration.contentElement) {
+                return migration.contentElement(element);
+              }
+            }
+          }
+          return getRdfaContentElement(element);
         },
       },
     ],
