@@ -2,11 +2,9 @@ import { Node as PNode } from 'prosemirror-model';
 import {
   isRdfaAttrs,
   type ModelMigrationGenerator,
-  type RdfaAttrs,
 } from '#root/core/rdfa-types.ts';
 import {
   getRdfaAttrs,
-  getRdfaContentElement,
   rdfaAttrSpec,
   renderRdfaAware,
 } from '#root/core/schema.ts';
@@ -17,6 +15,10 @@ import { getRDFFragment } from '../utils/namespace.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
+import {
+  contentElementWithMigrations,
+  getAttrsWithMigrations,
+} from '#root/core/schema/_private/migrations.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -57,31 +59,22 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           if (typeof element === 'string') {
             return false;
           }
-          const attrs = getRdfaAttrs(element, { rdfaAware });
+          let attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
-            const migration = modelMigrations.find((migration) =>
-              migration(attrs as unknown as RdfaAttrs),
-            )?.(attrs as unknown as RdfaAttrs);
-            if (migration && migration.getAttrs) {
-              return migration.getAttrs(element);
-            }
-            return { ...attrs, label: element.dataset['label'] };
+            attrs = {
+              ...attrs,
+              label: element.dataset['label'] ?? attrs['label'],
+            };
+            return getAttrsWithMigrations(modelMigrations, attrs, element);
           }
           return false;
         },
         contentElement: (element) => {
-          if (rdfaAware && modelMigrations.length > 0) {
-            const attrs = getRdfaAttrs(element, { rdfaAware });
-            if (attrs) {
-              const migration = modelMigrations.find((migration) =>
-                migration(attrs as unknown as RdfaAttrs),
-              )?.(attrs as unknown as RdfaAttrs);
-              if (migration && migration.contentElement) {
-                return migration.contentElement(element);
-              }
-            }
-          }
-          return getRdfaContentElement(element);
+          return contentElementWithMigrations(
+            modelMigrations,
+            rdfaAware,
+            element,
+          );
         },
       },
     ],

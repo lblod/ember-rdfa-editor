@@ -1,6 +1,9 @@
 import { tagName } from '#root/utils/_private/dom-helpers.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
-import { type RdfaAttrs } from '../core/rdfa-types.ts';
+import {
+  type ModelMigrationGenerator,
+  type RdfaAttrs,
+} from '../core/rdfa-types.ts';
 import {
   getRdfaAttrs,
   rdfaAttrSpec,
@@ -9,13 +12,23 @@ import {
 } from '../core/schema.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import { PNode } from '#root/prosemirror-aliases.ts';
+import {
+  contentElementWithMigrations,
+  getAttrsWithMigrations,
+} from '#root/core/schema/_private/migrations.ts';
 
 type Options = {
   rdfaAware?: boolean;
+  /**
+   * Migrations to apply to nodes parsed as block-rdfa, to modify the data model.
+   * @returns false to use the default parsing or an object to define overrides
+   **/
+  modelMigrations?: ModelMigrationGenerator[];
 };
 
 export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
   rdfaAware = false,
+  modelMigrations = [],
 } = {}) => {
   return {
     inline: true,
@@ -31,20 +44,28 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
     parseDOM: [
       {
         tag: 'span, link',
-        getAttrs(node: string | HTMLElement) {
-          if (typeof node === 'string') {
+        getAttrs(element: string | HTMLElement) {
+          if (typeof element === 'string') {
             return false;
           }
-          if (!node.hasChildNodes()) {
-            const attrs = getRdfaAttrs(node, { rdfaAware });
+          if (!element.hasChildNodes()) {
+            let attrs = getRdfaAttrs(element, { rdfaAware });
             if (attrs) {
-              return {
+              attrs = {
                 ...attrs,
-                __tag: tagName(node),
+                __tag: tagName(element),
               };
+              return getAttrsWithMigrations(modelMigrations, attrs, element);
             }
           }
           return false;
+        },
+        contentElement: (element) => {
+          return contentElementWithMigrations(
+            modelMigrations,
+            rdfaAware,
+            element,
+          );
         },
       },
     ],
