@@ -11,13 +11,13 @@ import { on } from '@ember/modifier';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuLinkExternal from '@appuniversum/ember-appuniversum/components/au-link-external';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
-import { tracked } from 'tracked-built-ins';
 import { cached } from '@glimmer/tracking';
 import type { LinkParser } from '#root/plugins/link/parser.js';
 import { defaultLinkParser } from '#root/plugins/link/parser.ts';
 import type { PNode } from '#root/prosemirror-aliases.js';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import { MessageIcon } from '@appuniversum/ember-appuniversum/components/icons/message';
+
 type Args = {
   controller: SayController;
   linkParser: LinkParser;
@@ -26,7 +26,9 @@ type Args = {
 };
 
 export default class LinkEditor extends Component<Args> {
-  @tracked amountOfInputChanges = 0;
+  get isNewLink() {
+    return this.link.node.attrs['isNew'] as boolean;
+  }
 
   parseLink: LinkParser = (input?: string) => {
     return this.args.linkParser
@@ -58,7 +60,11 @@ export default class LinkEditor extends Component<Args> {
 
     const { pos } = this.link;
     this.controller.withTransaction(
-      (tr) => tr.setNodeAttribute(pos, 'href', result.value ?? text),
+      (tr) => {
+        tr.setNodeAttribute(pos, 'href', result.value ?? text);
+        tr.setNodeAttribute(pos, 'isNew', false);
+        return tr;
+      } ,
       // After reload the default (activeEditorView) is just the link text, so use the main view
       { view: this.controller.mainEditorView },
     );
@@ -128,7 +134,7 @@ export default class LinkEditor extends Component<Args> {
           {{on "focus" this.selectInputElement}}
           placeholder={{t "ember-rdfa-editor.link.placeholder.href"}}
         />
-        {{#if this.linkParserResult}}
+        {{#unless this.isNewLink}}
           {{#unless this.linkParserResult.isSuccessful}}
             {{#let this.linkParserResult.errors as |errors|}}
               {{#each errors as |error|}}
@@ -143,7 +149,7 @@ export default class LinkEditor extends Component<Args> {
               {{/each}}
             {{/let}}
           {{/unless}}
-        {{/if}}
+        {{/unless}}
       </c.content>
       <c.footer
         class="au-u-flex au-u-flex--spaced-small au-u-margin-left-tiny au-u-margin-right-tiny"

@@ -54,7 +54,7 @@ export default class LinkMenu extends Component<Args> {
             const linkParserResult = this.parseLink(text);
             return { href: linkParserResult.value ?? text };
           } else {
-            return null;
+            return { isNew: true };
           }
         }),
       );

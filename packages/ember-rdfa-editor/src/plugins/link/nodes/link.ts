@@ -49,6 +49,9 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
         linkParser: {
           default: linkParser,
         },
+        isNew: {
+          default: false,
+        }
       };
       return {
         ...rdfaAttrSpec({ rdfaAware }),
@@ -80,6 +83,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
       delete attrs['interactive'];
       delete attrs['placeholder'];
       delete attrs['linkParser'];
+      delete attrs['isNew'];
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,

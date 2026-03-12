@@ -22,6 +22,16 @@ import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/c
 export default class Link extends Component<EmberNodeArgs> {
   @service declare intl: IntlService;
 
+  get isNewLink() {
+    return this.link && (this.link.node.attrs['isNew'] as boolean);
+  }
+
+  selectionChangeHandler = (selected: boolean) => {
+    if (!selected && this.isNewLink) {
+      this.args.updateAttribute('isNew', false, true);
+    }
+  };
+
   get href() {
     return this.args.node.attrs['href'] as string;
   }
@@ -58,7 +68,7 @@ export default class Link extends Component<EmberNodeArgs> {
   }
 
   get linkIcon() {
-    if (this.linkParserResult.isSuccessful) {
+    if (this.linkParserResult.isSuccessful || this.isNewLink) {
       return;
     } else {
       return CircleXIcon;
@@ -82,7 +92,7 @@ export default class Link extends Component<EmberNodeArgs> {
   }
 
   get class() {
-    return `say-pill ${this.linkParserResult.isSuccessful ? '' : 'say-pill--error'}`;
+    return `say-pill ${this.linkParserResult.isSuccessful || this.isNewLink ? '' : 'say-pill--error'}`;
   }
 
   @action
@@ -113,6 +123,7 @@ export default class Link extends Component<EmberNodeArgs> {
           @node={{@node}}
           @view={{@view}}
           @getPos={{@getPos}}
+          @onSelected={{this.selectionChangeHandler}}
           @selected={{@selected}}
           @placeholder={{t "ember-rdfa-editor.link.placeholder.text"}}
           @contentDecorations={{@contentDecorations}}
