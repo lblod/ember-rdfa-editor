@@ -175,6 +175,7 @@ catalog:
   walk-sync: ^4.0.1
   webpack: ^5.101.3
   yup: ^1.7.1
+  libphonenumber-js: ^1.12.38
 
 overrides:
   chalk@^2.0.0: ^4.1.2

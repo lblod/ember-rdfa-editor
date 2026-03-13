@@ -94,6 +94,10 @@ table.ProseMirror-selectednode,
 .say-table-tooltip {
   display: flex;
   flex-direction: column;
+  box-shadow:
+    0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
 
   .color-selector__grid {
     padding: 0 12px;

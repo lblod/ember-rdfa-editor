@@ -50,7 +50,12 @@ export default class SampleToolbarResponsive extends Component<Signature> {
           <Redo @controller={{@controller}} />
         </Tb.Group>
         <Tb.Group>
-          <Dropdown @icon={{FormatTextIcon}} @direction="horizontal" as |Menu|>
+          <Dropdown
+            @icon={{FormatTextIcon}}
+            @controller={{@controller}}
+            @direction="horizontal"
+            as |Menu|
+          >
             <Bold
               @controller={{@controller}}
               @onActivate={{Menu.closeDropdown}}
@@ -102,7 +107,12 @@ export default class SampleToolbarResponsive extends Component<Signature> {
           <IndentationMenu @controller={{@controller}} />
         </Tb.Group>
         <Tb.Group>
-          <Dropdown @icon={{PlusIcon}} @direction="horizontal" as |Menu|>
+          <Dropdown
+            @icon={{PlusIcon}}
+            @controller={{@controller}}
+            @direction="horizontal"
+            as |Menu|
+          >
             <LinkMenu
               @controller={{@controller}}
               @onActivate={{Menu.closeDropdown}}
@@ -116,7 +126,12 @@ export default class SampleToolbarResponsive extends Component<Signature> {
       </:main>
       <:side as |Tb|>
         <Tb.Group>
-          <Dropdown @icon={{ThreeDotsIcon}} @direction="horizontal" as |Menu|>
+          <Dropdown
+            @icon={{ThreeDotsIcon}}
+            @controller={{@controller}}
+            @direction="horizontal"
+            as |Menu|
+          >
             <HtmlEditorMenu
               @controller={{@controller}}
               @onActivate={{Menu.closeDropdown}}
