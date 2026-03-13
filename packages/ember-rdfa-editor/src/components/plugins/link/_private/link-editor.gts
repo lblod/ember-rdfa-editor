@@ -64,7 +64,7 @@ export default class LinkEditor extends Component<Args> {
         tr.setNodeAttribute(pos, 'href', result.value ?? text);
         tr.setNodeAttribute(pos, 'isNew', false);
         return tr;
-      } ,
+      },
       // After reload the default (activeEditorView) is just the link text, so use the main view
       { view: this.controller.mainEditorView },
     );

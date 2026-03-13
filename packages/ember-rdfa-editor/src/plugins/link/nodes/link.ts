@@ -51,7 +51,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
         },
         isNew: {
           default: false,
-        }
+        },
       };
       return {
         ...rdfaAttrSpec({ rdfaAware }),
