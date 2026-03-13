@@ -217,7 +217,7 @@
     "prepack": "pnpm build",
     "start": "rollup --config --watch",
     "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
-    "documentation:generate": "pnpm typedoc"
+    "doc:generate": "pnpm typedoc"
   },
   "dependencies": {
     "@codemirror/commands": "catalog:",
