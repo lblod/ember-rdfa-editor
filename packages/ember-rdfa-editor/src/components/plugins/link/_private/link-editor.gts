@@ -17,6 +17,7 @@ import { defaultLinkParser } from '#root/plugins/link/parser.ts';
 import type { PNode } from '#root/prosemirror-aliases.js';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import { MessageIcon } from '@appuniversum/ember-appuniversum/components/icons/message';
+import { modifier } from 'ember-modifier';
 
 type Args = {
   controller: SayController;
@@ -99,8 +100,17 @@ export default class LinkEditor extends Component<Args> {
     );
   }
 
+  disableDragging = modifier((element: HTMLElement) => {
+    const preventDefault = (event: InputEvent) => event.preventDefault();
+    element.addEventListener('dragstart', preventDefault);
+    return () => {
+      element.removeEventListener('dragstart', preventDefault);
+    };
+  });
+
   <template>
     <AuCard
+      {{this.disableDragging}}
       class="say-link-editor"
       @flex={{true}}
       @expandable={{false}}
