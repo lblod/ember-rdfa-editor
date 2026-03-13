@@ -5,7 +5,6 @@ import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import { Velcro } from 'ember-velcro';
 import { hash } from '@ember/helper';
 import EmbeddedEditor from './embedded-editor.gts';
-import { and } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
 import Pill from '#root/components/pill.gts';
@@ -14,19 +13,21 @@ import {
   defaultLinkParser,
   type LinkParser,
 } from '#root/plugins/link/parser.ts';
-import { cached } from '@glimmer/tracking';
+import { cached, tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 
 export default class Link extends Component<EmberNodeArgs> {
   @service declare intl: IntlService;
+  @tracked hideTooltip = false;
 
   get isNewLink() {
     return this.link && (this.link.node.attrs['isNew'] as boolean);
   }
 
   selectionChangeHandler = (selected: boolean) => {
+    this.hideTooltip = false;
     if (!selected && this.isNewLink) {
       this.args.updateAttribute('isNew', false, true);
     }
@@ -102,6 +103,18 @@ export default class Link extends Component<EmberNodeArgs> {
     }
   }
 
+  get shouldShowTooltip() {
+    return this.interactive && this.link && this.selected && !this.hideTooltip;
+  }
+
+  onKeyUp = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' || event.key === 'Enter') {
+      this.hideTooltip = true;
+    } else {
+      this.hideTooltip = false;
+    }
+  };
+
   <template>
     <Velcro
       @placement="bottom-start"
@@ -110,6 +123,7 @@ export default class Link extends Component<EmberNodeArgs> {
       as |velcro|
     >
       <Pill
+        {{on "keyup" this.onKeyUp}}
         class={{this.class}}
         @skin="link"
         @icon={{this.linkIcon}}
@@ -132,15 +146,15 @@ export default class Link extends Component<EmberNodeArgs> {
           {{leaveOnEnterKey @controller @getPos}}
         />
       </Pill>
-      {{#if (and this.selected this.interactive)}}
-        {{#if this.link}}
-          <LinkEditor
-            @controller={{@controller}}
-            @link={{this.link}}
-            @linkParser={{this.linkParser}}
-            {{velcro.loop}}
-          />
-        {{/if}}
+      {{#if this.shouldShowTooltip}}
+        <LinkEditor
+          {{on "keyup" this.onKeyUp}}
+          @controller={{@controller}}
+          {{! @glint-expect-error }}
+          @link={{this.link}}
+          @linkParser={{this.linkParser}}
+          {{velcro.loop}}
+        />
       {{/if}}
     </Velcro>
   </template>
