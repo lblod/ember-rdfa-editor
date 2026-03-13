@@ -413,6 +413,7 @@
       "./components/plugins/image/insert-menu.js": "./dist/_app_/components/plugins/image/insert-menu.js",
       "./components/plugins/image/node.js": "./dist/_app_/components/plugins/image/node.js",
       "./components/plugins/indentation/indentation-menu.js": "./dist/_app_/components/plugins/indentation/indentation-menu.js",
+      "./components/plugins/link/_private/link-editor.js": "./dist/_app_/components/plugins/link/_private/link-editor.js",
       "./components/plugins/link/link-editor.js": "./dist/_app_/components/plugins/link/link-editor.js",
       "./components/plugins/link/link-menu.js": "./dist/_app_/components/plugins/link/link-menu.js",
       "./components/plugins/link/link-sidebar-widget.js": "./dist/_app_/components/plugins/link/link-sidebar-widget.js",

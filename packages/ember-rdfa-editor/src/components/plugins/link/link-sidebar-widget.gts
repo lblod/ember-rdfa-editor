@@ -3,7 +3,7 @@ import { NodeSelection } from 'prosemirror-state';
 import type SayController from '#root/core/say-controller.ts';
 import type { LinkParser } from '#root/plugins/link/parser.js';
 import { defaultLinkParser } from '#root/plugins/link/parser.ts';
-import LinkEditor from './link-editor.gts';
+import LinkEditor from './_private/link-editor.gts';
 
 type Args = {
   controller?: SayController;

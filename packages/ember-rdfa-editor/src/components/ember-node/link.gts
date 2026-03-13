@@ -8,7 +8,7 @@ import EmbeddedEditor from './embedded-editor.gts';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
 import Pill from '#root/components/pill.gts';
-import LinkEditor from '../plugins/link/link-editor.gts';
+import LinkEditor from '../plugins/link/_private/link-editor.gts';
 import {
   defaultLinkParser,
   type LinkParser,

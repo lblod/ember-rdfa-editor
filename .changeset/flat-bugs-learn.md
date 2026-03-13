@@ -1,5 +1,5 @@
 ---
-'@lblod/ember-rdfa-editor': major
+'@lblod/ember-rdfa-editor': minor
 ---
 
-`link` plugin: rename `link-editor` component to `link-sidebar-widget`
+`link` plugin: deprecate `link-editor` component in favour of `link-sidebar-widget`
