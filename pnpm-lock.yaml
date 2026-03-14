@@ -875,7 +875,7 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2(prettier@3.8.0)
       prosemirror-history:
-        specifier: ./vendored-deps/prosemirror-history-1.5.0.tgz
+        specifier: file:./vendored-deps/prosemirror-history-1.5.0.tgz
         version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-test-builder:
         specifier: 'catalog:'
