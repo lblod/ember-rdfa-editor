@@ -1,10 +1,5 @@
 import { Node as PNode } from 'prosemirror-model';
-import {
-  getRdfaAttrs,
-  getRdfaContentElement,
-  rdfaAttrSpec,
-  renderRdfaAware,
-} from '../core/schema.ts';
+import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema.ts';
 import {
   type EmberNodeConfig,
   createEmberNodeSpec,
@@ -13,10 +8,11 @@ import {
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa.gts';
 import type { ComponentLike } from '@glint/template';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import type {
-  ModelMigrationGenerator,
-  RdfaAttrs,
-} from '#root/core/rdfa-types.ts';
+import type { ModelMigrationGenerator } from '#root/core/rdfa-types.ts';
+import {
+  contentElementWithMigrations,
+  getAttrsWithMigrations,
+} from '#root/core/schema/_private/migrations.ts';
 
 type Options = {
   rdfaAware?: boolean;
@@ -70,29 +66,16 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
           }
           const attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
-            const migration = modelMigrations.find((migration) =>
-              migration(attrs as unknown as RdfaAttrs),
-            )?.(attrs as unknown as RdfaAttrs);
-            if (migration && migration.getAttrs) {
-              return migration.getAttrs(element);
-            }
-            return attrs;
+            return getAttrsWithMigrations(modelMigrations, attrs, element);
           }
           return false;
         },
         contentElement: (element) => {
-          if (rdfaAware && modelMigrations.length > 0) {
-            const attrs = getRdfaAttrs(element, { rdfaAware });
-            if (attrs) {
-              const migration = modelMigrations.find((migration) =>
-                migration(attrs as unknown as RdfaAttrs),
-              )?.(attrs as unknown as RdfaAttrs);
-              if (migration && migration.contentElement) {
-                return migration.contentElement(element);
-              }
-            }
-          }
-          return getRdfaContentElement(element);
+          return contentElementWithMigrations(
+            modelMigrations,
+            rdfaAware,
+            element,
+          );
         },
       },
     ],
