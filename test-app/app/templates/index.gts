@@ -75,10 +75,11 @@ import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
-import LinkEditor from '@lblod/ember-rdfa-editor/components/plugins/link/link-editor';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
 import { hash } from '@ember/helper';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 
 export default class extends Component {
   @tracked rdfaEditor?: SayController;
@@ -153,6 +154,7 @@ export default class extends Component {
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
         ordered_list_input_rule(this.schema.nodes.ordered_list),
+        link_input_rule({ nodeType: this.schema.nodes.link }),
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
@@ -213,7 +215,7 @@ export default class extends Component {
           </:default>
           <:sidebarRight as |container|>
             <Sidebar>
-              <LinkEditor @controller={{container.controller}} />
+              <LinkSidebarWidget @controller={{container.controller}} />
             </Sidebar>
           </:sidebarRight>
         </EditorContainer>

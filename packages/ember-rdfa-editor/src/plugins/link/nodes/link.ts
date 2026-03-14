@@ -11,11 +11,13 @@ import {
   type EmberNodeConfig,
 } from '../../../utils/ember-node.ts';
 import type { ComponentLike } from '@glint/template';
-import Link from '#root/components/ember-node/link.ts';
+import Link from '#root/components/ember-node/link.gts';
+import { defaultLinkParser, type LinkParser } from '../parser.ts';
 
 type LinkOptions = {
   interactive?: boolean;
   rdfaAware?: boolean;
+  linkParser?: LinkParser;
 };
 
 // TODO this spec doesn't play well with RDFa editing tools. It has been modified so that any
@@ -24,6 +26,7 @@ type LinkOptions = {
 const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
   interactive = false,
   rdfaAware = false,
+  linkParser = defaultLinkParser(),
 } = {}) => {
   return {
     name: 'link',
@@ -42,6 +45,12 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
         },
         interactive: {
           default: interactive,
+        },
+        linkParser: {
+          default: linkParser,
+        },
+        isNew: {
+          default: false,
         },
       };
       return {
@@ -73,6 +82,8 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
       const { ...attrs }: Record<string, unknown> = node.attrs;
       delete attrs['interactive'];
       delete attrs['placeholder'];
+      delete attrs['linkParser'];
+      delete attrs['isNew'];
       if (rdfaAware) {
         return renderRdfaAware({
           renderable: node,

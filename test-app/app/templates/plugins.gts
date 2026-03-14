@@ -82,6 +82,7 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
@@ -191,6 +192,7 @@ export default class extends Component {
       rules: [
         bullet_list_input_rule(this.schema.nodes.bullet_list),
         ordered_list_input_rule(this.schema.nodes.ordered_list),
+        link_input_rule({ nodeType: this.schema.nodes.link }),
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
