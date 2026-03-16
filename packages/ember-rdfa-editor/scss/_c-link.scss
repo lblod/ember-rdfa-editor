@@ -1,35 +1,15 @@
 @use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 
-.say-link-tooltip {
-  z-index: 3;
-  background-color: var(--au-white);
-  gap: 0;
-  align-items: stretch;
-  padding: 0;
-  width: 28rem;
-
-  a,
-  button {
-    padding: 0;
-    flex: 1;
-    border: 0;
-    justify-content: center;
-  }
-
-  .au-c-input {
-    border-width: 0 0.1rem;
-    border-radius: 0%;
-    padding: 0 0.3rem;
-    flex: 7;
-  }
-
-  .au-c-input:focus {
-    border-width: 0 0 !important;
-  }
+.say-link-editor {
+  height: auto;
+  z-index: 1;
+  background: var(--au-gray-100);
+  border: 0.1rem solid var(--au-gray-300);
+  border-radius: 0.5rem;
 }
 
 .say-pill {
-  gap: 0;
   vertical-align: bottom;
   min-height: 2.55rem;
   margin-bottom: -0.1rem;
@@ -47,6 +27,17 @@
     cursor: text;
     color: var(--au-blue-700);
   }
+
+  &--error {
+    color: var(--au-red-700);
+    background-color: var(--au-red-200);
+    border-color: var(--au-red-300);
+    text-decoration-color: var(--au-red-300);
+
+    [contenteditable] {
+      color: var(--au-red-700);
+    }
+  }
 }
 
 .ember-node.ProseMirror-selectednode {
@@ -57,6 +48,15 @@
 
     ::selection {
       background-color: var(--au-blue-300);
+    }
+
+    &--error {
+      background-color: var(--au-red-200);
+      outline: 2px solid var(--au-red-500);
+
+      ::selection {
+        background-color: var(--au-red-300);
+      }
     }
   }
 }

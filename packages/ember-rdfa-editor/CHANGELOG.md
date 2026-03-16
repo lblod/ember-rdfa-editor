@@ -1,5 +1,21 @@
 # @lblod/ember-rdfa-editor
 
+## 13.3.0
+
+### Minor Changes
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: introduce new UI for link tooltip
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: deprecate `link-editor` component in favour of `link-sidebar-widget`
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: add configurable input rule which is able to detect and convert plain text links
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: add support for configurable validation and parsing
+
+### Patch Changes
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`1f58369`](https://github.com/lblod/ember-rdfa-editor/commit/1f583698d4883825e38334adec8a75342eab7eda) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: remove feature which fills-in href with link text when href is empty
+
 ## 13.2.1
 
 ### Patch Changes
