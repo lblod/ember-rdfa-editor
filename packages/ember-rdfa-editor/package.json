@@ -216,7 +216,8 @@
     "lint:types": "ember-tsc --noEmit",
     "prepack": "pnpm build",
     "start": "rollup --config --watch",
-    "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
+    "doc:generate": "pnpm typedoc"
   },
   "dependencies": {
     "@codemirror/commands": "catalog:",
@@ -274,6 +275,7 @@
     "relative-to-absolute-iri": "catalog:",
     "stream-browserify": "catalog:",
     "tracked-toolbox": "catalog:",
+    "typedoc": "^0.28.17",
     "uuid": "catalog:",
     "validator": "catalog:",
     "yup": "catalog:"
@@ -451,5 +453,10 @@
       "./modifiers/leave-on-enter-key.js": "./dist/_app_/modifiers/leave-on-enter-key.js",
       "./modifiers/leave-with-arrow-keys.js": "./dist/_app_/modifiers/leave-with-arrow-keys.js"
     }
+  },
+  "typedocOptions": {
+    "tsconfig": "tsconfig.typedoc.json",
+    "out": "docs",
+    "readme": "./README.md"
   }
 }
