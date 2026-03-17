@@ -210,6 +210,9 @@ catalogs:
     '@types/uuid':
       specifier: ^9.0.8
       version: 9.0.8
+    '@types/validator':
+      specifier: ^13.15.10
+      version: 13.15.10
     '@typescript-eslint/eslint-plugin':
       specifier: ^8.44.1
       version: 8.44.1
@@ -501,6 +504,9 @@ catalogs:
     uuid:
       specifier: ^9.0.1
       version: 9.0.1
+    validator:
+      specifier: ^13.15.26
+      version: 13.15.26
     vite:
       specifier: ^6.4.1
       version: 6.4.1
@@ -748,7 +754,7 @@ importers:
         specifier: 'catalog:'
         version: 9.0.1
       validator:
-        specifier: ^13.15.26
+        specifier: 'catalog:'
         version: 13.15.26
       yup:
         specifier: 'catalog:'
@@ -815,7 +821,7 @@ importers:
         specifier: 'catalog:'
         version: 9.0.8
       '@types/validator':
-        specifier: ^13.15.10
+        specifier: 'catalog:'
         version: 13.15.10
       autoprefixer:
         specifier: 'catalog:'
