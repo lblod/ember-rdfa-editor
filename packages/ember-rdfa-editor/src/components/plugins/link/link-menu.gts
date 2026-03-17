@@ -1,13 +1,21 @@
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { wrapSelection } from '#root/commands/wrap-selection.ts';
-import { linkToHref } from '#root/utils/_private/string-utils.ts';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import type SayController from '#root/core/say-controller.ts';
+import ToolbarButton from '#root/components/toolbar/button.gts';
+import t from 'ember-intl/helpers/t';
+import { on } from '@ember/modifier';
+import { not } from 'ember-truth-helpers';
+import {
+  defaultLinkParser,
+  type LinkParser,
+} from '#root/plugins/link/parser.ts';
 
 type Args = {
   controller: SayController;
   onActivate?: () => void;
+  linkParser?: LinkParser;
 };
 export default class LinkMenu extends Component<Args> {
   LinkIcon = LinkIcon;
@@ -15,6 +23,12 @@ export default class LinkMenu extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
+
+  parseLink: LinkParser = (input?: string) => {
+    return this.args.linkParser
+      ? this.args.linkParser(input)
+      : defaultLinkParser()(input);
+  };
 
   get schema() {
     return this.controller.schema;
@@ -37,10 +51,10 @@ export default class LinkMenu extends Component<Args> {
               nodeRange.$from.pos,
               nodeRange.$to.pos,
             );
-            const href = linkToHref(text);
-            return { href };
+            const linkParserResult = this.parseLink(text);
+            return { href: linkParserResult.value ?? text };
           } else {
-            return null;
+            return { isNew: true };
           }
         }),
       );
@@ -48,4 +62,15 @@ export default class LinkMenu extends Component<Args> {
       this.args.onActivate?.();
     }
   }
+
+  <template>
+    {{#if @controller}}
+      <ToolbarButton
+        @title={{t "ember-rdfa-editor.link.insert"}}
+        @icon={{this.LinkIcon}}
+        {{on "click" this.insert}}
+        @disabled={{not this.canInsert}}
+      />
+    {{/if}}
+  </template>
 }

@@ -34,8 +34,6 @@
       }
     },
     "patchedDependencies": {
-      "ember-source@6.1.0": "patches/ember-source@6.1.0.patch",
-      "@embroider/addon-dev@7.1.2": "patches/@embroider__addon-dev.patch",
       "ember-headless-form": "patches/ember-headless-form.patch"
     },
     "allowUnusedPatches": true,

@@ -1,5 +1,49 @@
 # @lblod/ember-rdfa-editor
 
+## 13.3.0
+
+### Minor Changes
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: introduce new UI for link tooltip
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: deprecate `link-editor` component in favour of `link-sidebar-widget`
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: add configurable input rule which is able to detect and convert plain text links
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`b61f76e`](https://github.com/lblod/ember-rdfa-editor/commit/b61f76eb3cc8b7499c91a1e403935ab13cc348e8) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: add support for configurable validation and parsing
+
+### Patch Changes
+
+- [#1355](https://github.com/lblod/ember-rdfa-editor/pull/1355) [`1f58369`](https://github.com/lblod/ember-rdfa-editor/commit/1f583698d4883825e38334adec8a75342eab7eda) Thanks [@elpoelma](https://github.com/elpoelma)! - `link` plugin: remove feature which fills-in href with link text when href is empty
+
+## 13.2.1
+
+### Patch Changes
+
+- [`3e89ffc`](https://github.com/lblod/ember-rdfa-editor/commit/3e89ffc1a1c7304ba253c5d1813601a72c55c6a8) Thanks [@abeforgit](https://github.com/abeforgit)! - Remove obsolete package patches
+
+## 13.2.0
+
+### Minor Changes
+
+- [#1206](https://github.com/lblod/ember-rdfa-editor/pull/1206) [`ad91b50`](https://github.com/lblod/ember-rdfa-editor/commit/ad91b5044b4f713f1a44e37db15bacd3aaa3e370) Thanks [@elpoelma](https://github.com/elpoelma)! - Add option to configure editor as non-editable
+
+### Patch Changes
+
+- [#1200](https://github.com/lblod/ember-rdfa-editor/pull/1200) [`d01e281`](https://github.com/lblod/ember-rdfa-editor/commit/d01e281162012c7456f23e5bc4f3226b3195447a) Thanks [@elpoelma](https://github.com/elpoelma)! - Define `equals` as a prototype method on RDF term instances instead of as arrow functions.
+
+  **Why is this necessary?**
+  Defining `equals` as a prototype method ensures that is not part of the RDF term objects themselves. This makes it easier/less error-prone to compare objects containing these terms. (e.g. the object-comparison library used by prosemirror-tools does not support function properties)
+
+  **Possible drawbacks of this approach**
+  This approach does have the drawback that spreading an RDF term results in losing the `equals` method.
+
+- [#1342](https://github.com/lblod/ember-rdfa-editor/pull/1342) [`9ad3a91`](https://github.com/lblod/ember-rdfa-editor/commit/9ad3a91a1dab48942487c3bc6d3f5f945eb8e949) Thanks [@elpoelma](https://github.com/elpoelma)! - Update to glint v2
+
+- [#1353](https://github.com/lblod/ember-rdfa-editor/pull/1353) [`88d9ce3`](https://github.com/lblod/ember-rdfa-editor/commit/88d9ce31a0bd1448330baeb60757a54b8820b54c) Thanks [@piemonkey](https://github.com/piemonkey)! - Add test for running the readme quickstart code to ensure it keeps working
+
+- [#1356](https://github.com/lblod/ember-rdfa-editor/pull/1356) [`cdcee3a`](https://github.com/lblod/ember-rdfa-editor/commit/cdcee3a1292031c4828622e416599618cb605afe) Thanks [@piemonkey](https://github.com/piemonkey)! - Add methods to controller to manage "clean" state independent of history length
+
 ## 13.1.1
 
 ### Patch Changes

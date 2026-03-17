@@ -11,6 +11,7 @@ docs/
 
 # npm/pnpm/yarn pack output
 *.tgz
+!vendored-deps/*.tgz
 
 # deps & caches
 node_modules/

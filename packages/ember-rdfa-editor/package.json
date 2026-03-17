@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor",
-  "version": "13.1.1",
+  "version": "13.3.0",
   "description": "Ember addon wrapping an RDFa editor with a public API",
   "keywords": [
     "ember-addon"
@@ -255,13 +255,13 @@
     "ember-velcro": "catalog:",
     "iter-tools": "catalog:",
     "js-beautify": "catalog:",
+    "libphonenumber-js": "catalog:",
     "linkifyjs": "catalog:",
     "mdn-polyfills": "catalog:",
     "mongoose": "catalog:",
     "process": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-dropcursor": "catalog:",
-    "prosemirror-history": "catalog:",
     "prosemirror-inputrules": "catalog:",
     "prosemirror-keymap": "catalog:",
     "prosemirror-model": "catalog:",
@@ -280,6 +280,7 @@
     "yup": "catalog:"
   },
   "devDependencies": {
+    "prosemirror-history": "./vendored-deps/prosemirror-history-1.5.0.tgz",
     "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
@@ -414,8 +415,10 @@
       "./components/plugins/image/insert-menu.js": "./dist/_app_/components/plugins/image/insert-menu.js",
       "./components/plugins/image/node.js": "./dist/_app_/components/plugins/image/node.js",
       "./components/plugins/indentation/indentation-menu.js": "./dist/_app_/components/plugins/indentation/indentation-menu.js",
+      "./components/plugins/link/_private/link-editor.js": "./dist/_app_/components/plugins/link/_private/link-editor.js",
       "./components/plugins/link/link-editor.js": "./dist/_app_/components/plugins/link/link-editor.js",
       "./components/plugins/link/link-menu.js": "./dist/_app_/components/plugins/link/link-menu.js",
+      "./components/plugins/link/link-sidebar-widget.js": "./dist/_app_/components/plugins/link/link-sidebar-widget.js",
       "./components/plugins/list/indentation-controls.js": "./dist/_app_/components/plugins/list/indentation-controls.js",
       "./components/plugins/list/ordered.js": "./dist/_app_/components/plugins/list/ordered.js",
       "./components/plugins/list/unordered.js": "./dist/_app_/components/plugins/list/unordered.js",
