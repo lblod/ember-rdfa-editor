@@ -98,6 +98,7 @@ export default class Link extends Component<EmberNodeArgs> {
 
   @action
   onClick(event: PointerEvent) {
+    this.hideTooltip = false;
     if (event.ctrlKey || event.metaKey) {
       window.open(this.href);
     }
