@@ -30,14 +30,13 @@ export const defaultLinkParser = ({
     }
 
     let href: string | undefined;
-
     if (linkifyTest(link)) {
       href = linkifyFind(link)[0].href;
     }
 
     if (!href) {
       const phoneNumber = parsePhoneNumber(link, defaultCountryCode);
-      if (phoneNumber) {
+      if (phoneNumber && phoneNumber.isValid()) {
         const phoneNumberUri = phoneNumber.getURI();
         const value = link.startsWith('sms:')
           ? // libphonenumber-js transforms sms: automatically to tel:, so revert this transform if necessary
