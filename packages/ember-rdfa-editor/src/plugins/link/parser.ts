@@ -30,7 +30,6 @@ const INVALID_LINK_RESULT: LinkParserResult = {
   errors: ['De ingegeven URL/link is niet geldig'],
 };
 
-
 export const defaultLinkParser = ({
   defaultCountryCode = 'BE',
   supportedProtocols = ['http:', 'https:', 'mailto:', 'tel:', 'sms:'],
@@ -70,7 +69,10 @@ export const defaultLinkParser = ({
   };
 };
 
-const detectLink = (input: string, defaultCountryCode: CountryCode): string | undefined => {
+const detectLink = (
+  input: string,
+  defaultCountryCode: CountryCode,
+): string | undefined => {
   if (linkifyTest(input)) {
     const matches = linkifyFind(input);
     return matches[0].href;
@@ -79,7 +81,9 @@ const detectLink = (input: string, defaultCountryCode: CountryCode): string | un
   const phoneNumber = parsePhoneNumber(input, defaultCountryCode);
   if (phoneNumber) {
     const phoneUri = phoneNumber.getURI();
-    return input.startsWith('sms:') ? phoneUri.replace('tel:', 'sms:') : phoneUri;
+    return input.startsWith('sms:')
+      ? phoneUri.replace('tel:', 'sms:')
+      : phoneUri;
   }
 
   return;
