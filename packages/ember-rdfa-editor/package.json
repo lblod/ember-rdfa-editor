@@ -277,6 +277,7 @@
     "tracked-toolbox": "catalog:",
     "typedoc": "^0.28.17",
     "uuid": "catalog:",
+    "validator": "catalog:",
     "yup": "catalog:"
   },
   "devDependencies": {
@@ -300,6 +301,7 @@
     "@types/debug": "catalog:",
     "@types/js-beautify": "catalog:",
     "@types/uuid": "catalog:",
+    "@types/validator": "catalog:",
     "autoprefixer": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "concurrently": "catalog:",
