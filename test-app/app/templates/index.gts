@@ -206,7 +206,6 @@ export default class extends Component {
             <Editor
               @plugins={{this.plugins}}
               @schema={{this.schema}}
-              {{! @glint-expect-error }}
               @nodeViews={{this.nodeViews}}
               @rdfaEditorInit={{this.rdfaEditorInit}}
             />
