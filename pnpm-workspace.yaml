@@ -64,6 +64,7 @@ catalog:
   "@types/git-url-parse": ^9.0.3
   "@types/htmlbars-inline-precompile": ^3.0.4
   "@types/js-beautify": ^1.14.3
+  "@types/n3": ^1.26.1
   "@types/node": ^20.19.30
   "@types/prosemirror-dev-tools": ^3.0.6
   "@types/qunit": ^2.19.13
@@ -126,6 +127,7 @@ catalog:
   mdast-util-to-string: ^4.0.0
   mdn-polyfills: ^5.20.0
   mongoose: ^8.21.0
+  n3: ^2.0.3  
   octokit: ^4.1.4
   postcss: ^8.5.6
   prettier: ^3.8.0
