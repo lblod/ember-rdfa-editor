@@ -47,9 +47,13 @@ export function isLiteralAttrs(attrs: RdfaAttrs): attrs is RdfaLiteralAttrs {
 export type ModelMigration = {
   /** A modified contentElement function to allow for nested structures to be modified **/
   contentElement?: (element: HTMLElement) => HTMLElement;
-  /** A modified getAttrs that returns attrs matching the new model **/
-  getAttrs?: (element: HTMLElement) => RdfaAttrs;
+  /**
+   * A modified getAttrs that returns attrs matching the new model. False or null are handled in
+   * the same way as normal prosemirror TagParseRule getAttrs functions.
+   **/
+  getAttrs?: (element: HTMLElement) => RdfaAttrs | false | null;
 };
+/** A function that returns either the desired migration or false if there is nothing to do **/
 export type ModelMigrationGenerator = (
   attrs: RdfaAttrs,
 ) => false | ModelMigration;
