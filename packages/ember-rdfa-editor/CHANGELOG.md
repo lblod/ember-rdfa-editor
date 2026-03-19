@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.4.0
+
+### Minor Changes
+
+- [#1360](https://github.com/lblod/ember-rdfa-editor/pull/1360) [`e54b794`](https://github.com/lblod/ember-rdfa-editor/commit/e54b794d01471bef6338bccb252b669b7d520db4) Thanks [@piemonkey](https://github.com/piemonkey)! - Add model migrations to invisible_rdfa nodes
+
 ## 13.3.1
 
 ### Patch Changes
