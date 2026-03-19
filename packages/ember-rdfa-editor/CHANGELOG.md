@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 13.3.1
+
+### Patch Changes
+
+- [#1363](https://github.com/lblod/ember-rdfa-editor/pull/1363) [`9f599d3`](https://github.com/lblod/ember-rdfa-editor/commit/9f599d38db748760308bdd70f4921ccae02dded6) Thanks [@elpoelma](https://github.com/elpoelma)! - link plugin: make phonenumber parsing of `defaultLinkParser` more strict
+
+- [#1363](https://github.com/lblod/ember-rdfa-editor/pull/1363) [`ed9f7d3`](https://github.com/lblod/ember-rdfa-editor/commit/ed9f7d3c171199d0ea8a4ad410abab74d64118a7) Thanks [@elpoelma](https://github.com/elpoelma)! - ,link plugin: improve `defaultLinkParser` by validating the href producer by linkifyjs
+
+- [#1358](https://github.com/lblod/ember-rdfa-editor/pull/1358) [`0a16e80`](https://github.com/lblod/ember-rdfa-editor/commit/0a16e8031ebefd422e26ed7a2cc6f78109378a0c) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Add typedoc config to generate documentation for the editor
+
+- [#1361](https://github.com/lblod/ember-rdfa-editor/pull/1361) [`c44127f`](https://github.com/lblod/ember-rdfa-editor/commit/c44127ff9ad84516b2731cf8610bf5bfe3daf0b0) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix types of say-view to use the less specific editor-view as an argument
+
 ## 13.3.0
 
 ### Minor Changes
