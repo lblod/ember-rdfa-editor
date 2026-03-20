@@ -183,6 +183,9 @@ catalogs:
     '@types/js-beautify':
       specifier: ^1.14.3
       version: 1.14.3
+    '@types/n3':
+      specifier: ^1.26.1
+      version: 1.26.1
     '@types/node':
       specifier: ^20.19.30
       version: 20.19.30
@@ -366,6 +369,9 @@ catalogs:
     mongoose:
       specifier: ^8.21.0
       version: 8.21.0
+    n3:
+      specifier: ^2.0.3
+      version: 2.0.3
     octokit:
       specifier: ^4.1.4
       version: 4.1.4
@@ -688,7 +694,7 @@ importers:
         specifier: 'catalog:'
         version: 8.21.0
       n3:
-        specifier: ^2.0.3
+        specifier: 'catalog:'
         version: 2.0.3
       prosemirror-commands:
         specifier: 'catalog:'
@@ -803,7 +809,7 @@ importers:
         specifier: 'catalog:'
         version: 1.14.3
       '@types/n3':
-        specifier: ^1.26.1
+        specifier: 'catalog:'
         version: 1.26.1
       '@types/uuid':
         specifier: 'catalog:'
