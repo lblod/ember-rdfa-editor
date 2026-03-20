@@ -42,7 +42,6 @@ catalog:
   "@glint/template": ^1.7.3
   "@glint/tsserver-plugin": 2.1.0
   "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
-  "@graphy/memory.dataset.fast": 4.3.3
   "@lblod/marawa": 0.8.0-beta.6
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
@@ -81,7 +80,6 @@ catalog:
   codemirror: ^6.0.2
   common-tags: ^1.8.2
   concurrently: ^9.2.1
-  crypto-browserify: ^3.12.1
   debug: ^4.4.3
   decorator-transforms: ^2.3.1
   dompurify: 3.2.4
@@ -132,7 +130,6 @@ catalog:
   postcss: ^8.5.6
   prettier: ^3.8.0
   prettier-plugin-ember-template-tag: ^2.1.2
-  process: 0.11.10
   prosemirror-commands: ^1.7.1
   prosemirror-dev-tools: ^4.2.0
   prosemirror-dropcursor: ^1.8.2
@@ -163,7 +160,6 @@ catalog:
   rollup-plugin-sass: ^1.15.3
   sass: ^1.93.2
   sinon: ^19.0.5
-  stream-browserify: ^3.0.0
   stylelint: ^16.24.0
   stylelint-config-standard: ^36.0.1
   stylelint-prettier: ^5.0.3
