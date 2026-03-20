@@ -22,9 +22,7 @@ const addon = new Addon({
   destDir: 'dist',
 });
 
-const BUNDLED_DEPS = [
-  'prosemirror-history',
-];
+const BUNDLED_DEPS = ['prosemirror-history'];
 export default [
   {
     input: './_index.scss',
