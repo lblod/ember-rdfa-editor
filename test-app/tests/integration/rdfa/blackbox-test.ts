@@ -36,8 +36,6 @@ module('Integration | RDFa blackbox test ', function () {
       const isEqual = initialDataset.equals(resultingDataset);
       const initialTurtle = (await toNT(initialDataset)).trim();
       const resultingTurtle = (await toNT(resultingDataset)).trim();
-      console.log('Initial: ', initialDataset);
-      console.log('Resulting: ', resultingDataset);
 
       const message = `
         Before:

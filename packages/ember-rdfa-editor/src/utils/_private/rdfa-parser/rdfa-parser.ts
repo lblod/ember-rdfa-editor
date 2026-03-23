@@ -1019,7 +1019,7 @@ export class RdfaParser<N> {
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
       contentDatatype,
-      contentLanguage: contentLanguage?.toLowerCase(),
+      contentLanguage,
     });
   };
 

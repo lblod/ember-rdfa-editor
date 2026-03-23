@@ -185,12 +185,12 @@ export function languageOrDataType(
   if (language?.length) {
     if (datatype && datatype.value.length) {
       if (datatype.equals(sayDataFactory.namedNode(LANG_STRING))) {
-        return language.toLowerCase();
+        return language;
       } else {
         return datatype;
       }
     } else {
-      return language.toLowerCase();
+      return language;
     }
   } else if (datatype) {
     return datatype;
