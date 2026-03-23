@@ -108,7 +108,7 @@ export default class Link extends Component<EmberNodeArgs> {
     return this.interactive && this.link && this.selected && !this.hideTooltip;
   }
 
-  onKeyUp = (event: KeyboardEvent) => {
+  onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' || event.key === 'Enter') {
       this.hideTooltip = true;
     } else {
@@ -124,7 +124,7 @@ export default class Link extends Component<EmberNodeArgs> {
       as |velcro|
     >
       <Pill
-        {{on "keyup" this.onKeyUp}}
+        {{on "keydown" this.onKeyDown}}
         class={{this.class}}
         @skin="link"
         @icon={{this.linkIcon}}
@@ -149,7 +149,7 @@ export default class Link extends Component<EmberNodeArgs> {
       </Pill>
       {{#if this.shouldShowTooltip}}
         <LinkEditor
-          {{on "keyup" this.onKeyUp}}
+          {{on "keydown" this.onKeyDown}}
           @controller={{@controller}}
           {{! @glint-expect-error }}
           @link={{this.link}}
