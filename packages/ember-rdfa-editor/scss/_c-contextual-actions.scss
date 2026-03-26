@@ -1,0 +1,57 @@
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+
+.say-floating-plus-button {
+  cursor: pointer;
+}
+
+.say-floating-plus {
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
+
+  .color-selector__grid {
+    padding: 0 12px;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: au-settings.$au-unit-small;
+    margin-bottom: au-settings.$au-unit-small;
+
+    button {
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+    }
+  }
+}
+
+.say-floating-plus--actions {
+  display: flex;
+  flex-direction: row;
+
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    padding: au-settings.$au-unit-tiny;
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-300);
+    }
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
