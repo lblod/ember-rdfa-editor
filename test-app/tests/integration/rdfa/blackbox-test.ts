@@ -36,15 +36,16 @@ module('Integration | RDFa blackbox test ', function () {
       const isEqual = initialDataset.equals(resultingDataset);
       const initialTurtle = (await toNT(initialDataset)).trim();
       const resultingTurtle = (await toNT(resultingDataset)).trim();
+
       const message = `
         Before:
         ${initialTurtle || '<empty>'}
         After:
         ${resultingTurtle || '<empty>'}
         In 'before' but not in 'after':
-        ${await toNT(initialDataset.minus(resultingDataset))}
+        ${await toNT(initialDataset.difference(resultingDataset))}
         In 'after' but not in 'before':
-        ${await toNT(resultingDataset.minus(initialDataset))}
+        ${await toNT(resultingDataset.difference(initialDataset))}
       `;
       assert.true(isEqual, message);
     });

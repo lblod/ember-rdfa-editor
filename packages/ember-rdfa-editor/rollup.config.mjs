@@ -21,59 +21,8 @@ const addon = new Addon({
   srcDir: 'src',
   destDir: 'dist',
 });
-// an arbitrary string that is not a real module name
-const EMPTY_MODULE_ID = '$empty$';
-// these are the imports we will replace
-const BROWSERIFY_ALIASES = {
-  module: EMPTY_MODULE_ID,
-  process: 'process',
-  crypto: 'crypto-browserify',
-  stream: 'stream-browserify',
-  vm: EMPTY_MODULE_ID,
-};
-// an empty shim, for imports we need to replace but which
-// don't actually matter for the runtime
-const EMPTY_MODULE = 'export default {}';
 
-// rollup plugins are actually fairly simple to understand
-// ref: https://rollupjs.org/plugin-development/#resolveid
-const browserify = function () {
-  return {
-    name: 'browserify',
-    // resolveId is just a hook that gets called with the string of every import
-    // as the "source" argument. the other two args are for advanced stuff, we just
-    // need to pass them along
-    // It can return a variety of things, but its basically a string or null, the
-    // string being the new name of the import, and null if your plugin doesn't care
-    resolveId(source, importer, options) {
-      if (source in BROWSERIFY_ALIASES) {
-        if (BROWSERIFY_ALIASES[source] === EMPTY_MODULE_ID) {
-          return EMPTY_MODULE_ID;
-        }
-        // this.resolve basically lets all the other plugins have a go
-        // it skips the plugin that calls it by default so you don't see your
-        // own resolve calls see https://rollupjs.org/plugin-development/#this-resolve
-        // here we just map the imports to the browserified ones and let the node
-        // plugin do the rest
-        return this.resolve(BROWSERIFY_ALIASES[source], importer, options);
-      }
-      if (source === EMPTY_MODULE_ID) return EMPTY_MODULE_ID;
-    },
-    // load turns a certain id into source code! yes just literally returns
-    // a string of javascript!
-    // https://rollupjs.org/plugin-development/#load
-    load(id) {
-      if (id === EMPTY_MODULE_ID) return EMPTY_MODULE;
-    },
-  };
-};
-const BUNDLED_DEPS = [
-  '@graphy/memory.dataset.fast',
-  'crypto-browserify',
-  'stream-browserify',
-  'prosemirror-history',
-  'process',
-];
+const BUNDLED_DEPS = ['prosemirror-history'];
 export default [
   {
     input: './_index.scss',
@@ -142,7 +91,6 @@ export default [
         'services/**/*.js',
       ]),
       commonjs(),
-      browserify(),
 
       nodeGlobals(),
       nodeResolvePlugin,

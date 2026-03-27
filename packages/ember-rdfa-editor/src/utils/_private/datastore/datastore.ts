@@ -20,10 +20,10 @@ import {
   type PredicateSpec,
   type SubjectSpec,
 } from '#root/utils/_private/datastore/term-spec.ts';
-import { GraphyDataset } from './graphy-dataset.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
 import type { RdfaResourceNodeMap, RdfaContentNodeMap } from './node-map.ts';
 import { rdfaContentNodeMap, rdfaResourceNodeMap } from './node-map.ts';
+import { N3StoreWrapper } from './n3-store-wrapper.ts';
 
 interface TermNodesResponse<N> {
   nodes: Set<N>;
@@ -54,7 +54,7 @@ export type WhichTerm = 'subject' | 'predicate' | 'object';
  * representing the transformed knowledge in some convenient format.
  */
 export default interface Datastore<N> {
-  get dataset(): GraphyDataset;
+  get dataset(): N3StoreWrapper;
 
   get size(): number;
 
@@ -93,9 +93,9 @@ export default interface Datastore<N> {
    */
   transformDataset(
     action: (
-      dataset: GraphyDataset,
+      dataset: N3StoreWrapper,
       termconverter: TermConverter,
-    ) => GraphyDataset,
+    ) => N3StoreWrapper,
   ): this;
 
   /** Transformer method.
@@ -171,7 +171,7 @@ export default interface Datastore<N> {
 
 interface DatastoreConfig<N> {
   documentRoot: N;
-  dataset: GraphyDataset;
+  dataset: N3StoreWrapper;
   subjectToNodes: Map<string, N[]>;
   nodeToSubject: Map<N, ModelQuad<N>>;
 
@@ -192,7 +192,7 @@ interface GenericDatastoreConfig<N> extends DatastoreConfig<N> {
 
 export class EditorStore<N> implements Datastore<N> {
   protected _documentRoot: N;
-  protected _dataset: GraphyDataset;
+  protected _dataset: N3StoreWrapper;
   protected _subjectToNodes: Map<string, N[]>;
   protected _nodeToSubject: Map<N, ModelQuad<N>>;
   protected _prefixMapping: Map<string, string>;
@@ -252,7 +252,7 @@ export class EditorStore<N> implements Datastore<N> {
     const contentNodeMapping = rdfaContentNodeMap<N>();
     return new EditorStore({
       documentRoot,
-      dataset: new GraphyDataset(),
+      dataset: new N3StoreWrapper(),
       subjectToNodes,
       nodeToObjects,
       prefixMapping,
@@ -303,7 +303,7 @@ export class EditorStore<N> implements Datastore<N> {
     });
   }
 
-  get dataset(): GraphyDataset {
+  get dataset(): N3StoreWrapper {
     return this._dataset;
   }
 
@@ -498,9 +498,9 @@ export class EditorStore<N> implements Datastore<N> {
 
   transformDataset(
     action: (
-      dataset: GraphyDataset,
+      dataset: N3StoreWrapper,
       termconverter: TermConverter,
-    ) => GraphyDataset,
+    ) => N3StoreWrapper,
   ): this {
     return this.fromDataset(
       this._documentRoot,
@@ -508,7 +508,7 @@ export class EditorStore<N> implements Datastore<N> {
     );
   }
 
-  protected fromDataset(documentRoot: N, dataset: GraphyDataset): this {
+  protected fromDataset(documentRoot: N, dataset: N3StoreWrapper): this {
     const Clazz = this.constructor as new (
       config: GenericDatastoreConfig<N>,
     ) => this;
