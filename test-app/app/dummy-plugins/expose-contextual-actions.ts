@@ -1,7 +1,6 @@
 import { EditorState } from '@lblod/ember-rdfa-editor';
-import { type GetContextualActions } from '@lblod/ember-rdfa-editor/plugins/contextual-actions/index';
 
-export function getContextualActions(state: EditorState) {
+export function getContextualActions(_state: EditorState) {
   return [
     {
       id: 'dummy-action-1',

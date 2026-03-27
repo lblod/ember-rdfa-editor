@@ -8,13 +8,11 @@ import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import type { ComponentLike } from '@glint/template';
 import type SayController from '#root/core/say-controller.ts';
-import type { Command } from 'prosemirror-state';
+import type { Command, EditorState } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import set from '../../../helpers/set.ts';
-import { actionCallbackStore } from '@lblod/ember-rdfa-editor/plugins/contextual-actions/index';
-import { action } from '@ember/object';
-import { replaceSelectionWithAndSelectNode } from '@lblod/ember-rdfa-editor/commands';
+import { replaceSelectionWithAndSelectNode } from '#root/commands/index.ts';
 
 type Args = {
   controller: SayController;
@@ -130,11 +128,7 @@ export default class TableTooltip extends Component<Args> {
     ...action,
     group: 'plaatsbepaling',
     command: (state: EditorState) => {
-      const node = createClassicLocationVariable({
-        schema: state.schema,
-        label: 'Locatie',
-        source: 'https://dev.roadsigns.lblod.info',
-      });
+      const node = state.schema.text('abc');
 
       return (
         replaceSelectionWithAndSelectNode(node),

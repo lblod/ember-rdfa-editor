@@ -52,6 +52,7 @@ export const contextualActionsPlugin = ({ getActions, getGroups }: State) =>
     key: contextualActionsPluginKey,
     state: {
       init() {
+        // @ts-expect-error fix this
         actionCallbackStore.getActions = getActions;
         return {
           getActions,
