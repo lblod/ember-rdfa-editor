@@ -1,26 +1,22 @@
 import Component from '@glimmer/component';
 import ContextualActionsMenu from '../../_private/common/contextual-actions-menu.gts';
 import FloatingPlus from '../../_private/common/floating-plus.gts';
-import { action as eAction } from '@ember/object';
+import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
-import type { ComponentLike } from '@glint/template';
 import type SayController from '#root/core/say-controller.ts';
 import type { Command, EditorState } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import set from '../../../helpers/set.ts';
-import { replaceSelectionWithAndSelectNode } from '#root/commands/index.ts';
+import { fn } from '@ember/helper';
+import { NodeSelection } from 'prosemirror-state';
 
 type Args = {
   controller: SayController;
 };
-
-type Action =
-  | { title: string; icon?: ComponentLike; label?: string; command: Command }
-  | { component: ComponentLike };
 
 export type ContextualAction = {
   id: string;
@@ -81,7 +77,7 @@ export default class TableTooltip extends Component<Args> {
     return true;
   }
 
-  canExecuteAction = (action: Action) => {
+  canExecuteAction = (action: ContextualAction) => {
     if ('command' in action) {
       return this.controller.checkCommand(action.command);
     }
@@ -89,14 +85,14 @@ export default class TableTooltip extends Component<Args> {
     return false;
   };
 
-  @eAction
-  executeAction(action: Action) {
+  @action
+  executeAction(action: ContextualAction) {
     if ('command' in action) {
       this.controller.focus();
       this.controller.doCommand(action.command);
     }
 
-    return;
+    this.showActions = false;
   }
 
   get floatingPlusIsVisible() {
@@ -124,20 +120,38 @@ export default class TableTooltip extends Component<Args> {
       id: 'dummy-action-5',
       label: 'Op … vanaf … tot … geldt',
     },
-  ].map((action) => ({
-    ...action,
-    group: 'plaatsbepaling',
-    command: (state: EditorState) => {
-      const node = state.schema.text('abc');
+  ].map((action) => {
+    const node = this.controller.schema.nodes.block_rdfa.create(
+      {
+        rdfaNodeType: 'literal',
+        label: `Plaatsbepaling`,
+      },
+      [
+        this.controller.schema.nodes.paragraph.create(null, [
+          this.controller.schema.text(action.label),
+        ]),
+      ],
+    );
 
-      return (
-        replaceSelectionWithAndSelectNode(node),
-        {
-          view: this.controller.mainEditorView,
+    return {
+      ...action,
+      group: 'plaatsbepaling',
+      command: (state: EditorState, dispatch) => {
+        if (dispatch) {
+          const tr = state.tr;
+          tr.replaceSelectionWith(node);
+          if (tr.selection.$anchor.nodeBefore) {
+            const resolvedPos = tr.doc.resolve(
+              tr.selection.anchor - tr.selection.$anchor.nodeBefore?.nodeSize,
+            );
+            tr.setSelection(new NodeSelection(resolvedPos));
+          }
+          dispatch(tr);
         }
-      );
-    },
-  }));
+        return true;
+      },
+    };
+  });
 
   <template>
     {{! @glint-nocheck: not typesafe yet }}
@@ -171,14 +185,15 @@ export default class TableTooltip extends Component<Args> {
           @position="bottom"
           class="say-floating-plus"
         >
-          {{#each this.actions as |action|}}
+          {{#each this.actions as |actionItem|}}
             <div class="say-floating-plus--actions">
               <button
+                {{on "click" (fn this.executeAction actionItem)}}
                 class="say-floating-plus-button au-u-text-left"
                 type="button"
                 title="Test"
               >
-                <span>{{action.label}}</span>
+                <span>{{actionItem.label}}</span>
               </button>
             </div>
           {{/each}}

@@ -145,6 +145,10 @@
       "types": "./declarations/plugins/text-style/index.d.ts",
       "default": "./dist/plugins/text-style/index.js"
     },
+    "./plugins/contextual-actions": {
+      "types": "./declarations/plugins/contextual-actions/index.d.ts",
+      "default": "./dist/plugins/contextual-actions/index.js"
+    },
     "./plugins/_private/editable-node": {
       "types": "./declarations/plugins/_private/editable-node/index.d.ts",
       "default": "./dist/plugins/_private/editable-node/index.js"
