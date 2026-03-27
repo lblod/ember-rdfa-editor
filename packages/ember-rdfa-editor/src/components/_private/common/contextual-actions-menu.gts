@@ -81,7 +81,6 @@ export default class SelectionTooltip extends Component<Args> {
           strategy="fixed"
           useTransform=true
         }}
-        class="say-editor-selection-tooltip"
         ...attributes
       >
         {{yield}}

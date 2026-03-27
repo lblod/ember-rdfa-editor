@@ -43,7 +43,6 @@ export type ContextualActionGroup = {
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
 
-  @tracked _justClicked = false;
   @tracked showActions = false;
 
   setUpListeners = modifier(() => {
@@ -99,26 +98,47 @@ export default class TableTooltip extends Component<Args> {
     return !this.showActions;
   }
 
-  @tracked actions = [
+  @tracked groups = [
+    {
+      id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Plaatsbepaling',
+    },
+    {
+      id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Invoegen',
+    },
+  ];
+
+  @tracked actions: ContextualAction[] = [
     {
       id: 'dummy-action-1',
       label: 'Op het kruispunt van de … met de … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
       id: 'dummy-action-2',
       label: 'Op alle wegen die uitkomen op … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
       id: 'dummy-action-3',
       label: 'Op de … ter hoogte van … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
       id: 'dummy-action-4',
       label: 'Op het kruispunt van de … met de … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
       id: 'dummy-action-5',
       label: 'Op … vanaf … tot … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Datum invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
   ].map((action) => {
     const node = this.controller.schema.nodes.block_rdfa.create(
@@ -135,7 +155,6 @@ export default class TableTooltip extends Component<Args> {
 
     return {
       ...action,
-      group: 'plaatsbepaling',
       command: (state: EditorState, dispatch) => {
         if (dispatch) {
           const tr = state.tr;
@@ -152,6 +171,20 @@ export default class TableTooltip extends Component<Args> {
       },
     };
   });
+
+  get groupedActions() {
+    const visibleGroups = this.groups.filter(
+      (group: ContextualActionGroup) =>
+        !group.isVisible || group.isVisible(this.controller.mainEditorState),
+    );
+
+    return visibleGroups
+      .map((group) => ({
+        ...group,
+        actions: this.actions.filter((action) => action.group === group.id),
+      }))
+      .filter((group) => group.actions.length > 0);
+  }
 
   <template>
     {{! @glint-nocheck: not typesafe yet }}
@@ -183,19 +216,28 @@ export default class TableTooltip extends Component<Args> {
           @controller={{this.controller}}
           @visible={{this.visible}}
           @position="bottom"
-          class="say-floating-plus"
+          class="say-contextual-actions-menu"
         >
-          {{#each this.actions as |actionItem|}}
-            <div class="say-floating-plus--actions">
-              <button
-                {{on "click" (fn this.executeAction actionItem)}}
-                class="say-floating-plus-button au-u-text-left"
-                type="button"
-                title="Test"
-              >
-                <span>{{actionItem.label}}</span>
-              </button>
+          {{#each this.groupedActions as |group|}}
+            <div
+              class="say-contextual-actions-menu-group-header au-u-muted au-u-padding-left-tiny au-u-padding-right-tiny"
+            >
+              {{group.label}}
             </div>
+            {{#each group.actions as |actionItem|}}
+              <div class="say-floating-plus--actions">
+                <button
+                  {{on "click" (fn this.executeAction actionItem)}}
+                  class="say-contextual-actions-menu-entry au-u-text-left"
+                  type="button"
+                  title="Test"
+                >
+                  <span>{{actionItem.label}}</span>
+                </button>
+              </div>
+            {{/each}}
+          {{else}}
+            <p>No actions found</p>
           {{/each}}
         </ContextualActionsMenu>
       </div>
