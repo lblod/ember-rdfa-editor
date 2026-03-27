@@ -1,6 +1,7 @@
-import { type Command, NodeSelection, PNode } from '@lblod/ember-rdfa-editor';
+import { type Command, NodeSelection } from 'prosemirror-state';
+import { Node } from 'prosemirror-model';
 
-export const replaceSelectionWithAndSelectNode = (node: PNode): Command => {
+export const replaceSelectionWithAndSelectNode = (node: Node): Command => {
   return (state, dispatch) => {
     if (!node.type.spec.selectable) {
       return false;
