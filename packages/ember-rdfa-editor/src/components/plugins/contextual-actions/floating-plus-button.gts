@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import SelectionTooltip from '../../_private/common/selection-tooltip.gts';
 import ContextualActionsMenu from '../../_private/common/contextual-actions-menu.gts';
 import FloatingPlus from '../../_private/common/floating-plus.gts';
 import { action as eAction } from '@ember/object';
@@ -11,10 +10,11 @@ import type { ComponentLike } from '@glint/template';
 import type SayController from '#root/core/say-controller.ts';
 import type { Command } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
-import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
-import { fn } from '@ember/helper';
 import set from '../../../helpers/set.ts';
+import { actionCallbackStore } from '@lblod/ember-rdfa-editor/plugins/contextual-actions/index';
+import { action } from '@ember/object';
+import { replaceSelectionWithAndSelectNode } from '@lblod/ember-rdfa-editor/commands';
 
 type Args = {
   controller: SayController;
@@ -45,39 +45,6 @@ export type ContextualActionGroup = {
 
   priority?: number;
 };
-
-const dummyActions: ContextualAction[] = [
-  {
-    id: 'dummy-action-1',
-    label: 'Op het kruispunt van de … met de … geldt',
-    group: 'plaatsbepaling',
-    command: () => false,
-  },
-  {
-    id: 'dummy-action-2',
-    label: 'Op alle wegen die uitkomen op … geldt',
-    group: 'plaatsbepaling',
-    command: () => false,
-  },
-  {
-    id: 'dummy-action-3',
-    label: 'Op de … ter hoogte van … geldt',
-    group: 'plaatsbepaling',
-    command: () => false,
-  },
-  {
-    id: 'dummy-action-4',
-    label: 'Op het kruispunt van de … met de … geldt',
-    group: 'plaatsbepaling',
-    command: () => false,
-  },
-  {
-    id: 'dummy-action-5',
-    label: 'Op … vanaf … tot … geldt',
-    group: 'plaatsbepaling',
-    command: () => false,
-  },
-];
 
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
@@ -138,6 +105,46 @@ export default class TableTooltip extends Component<Args> {
     return !this.showActions;
   }
 
+  @tracked actions = [
+    {
+      id: 'dummy-action-1',
+      label: 'Op het kruispunt van de … met de … geldt',
+    },
+    {
+      id: 'dummy-action-2',
+      label: 'Op alle wegen die uitkomen op … geldt',
+    },
+    {
+      id: 'dummy-action-3',
+      label: 'Op de … ter hoogte van … geldt',
+    },
+    {
+      id: 'dummy-action-4',
+      label: 'Op het kruispunt van de … met de … geldt',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Op … vanaf … tot … geldt',
+    },
+  ].map((action) => ({
+    ...action,
+    group: 'plaatsbepaling',
+    command: (state: EditorState) => {
+      const node = createClassicLocationVariable({
+        schema: state.schema,
+        label: 'Locatie',
+        source: 'https://dev.roadsigns.lblod.info',
+      });
+
+      return (
+        replaceSelectionWithAndSelectNode(node),
+        {
+          view: this.controller.mainEditorView,
+        }
+      );
+    },
+  }));
+
   <template>
     {{! @glint-nocheck: not typesafe yet }}
     <div>
@@ -170,7 +177,7 @@ export default class TableTooltip extends Component<Args> {
           @position="bottom"
           class="say-floating-plus"
         >
-          {{#each dummyActions as |action|}}
+          {{#each this.actions as |action|}}
             <div class="say-floating-plus--actions">
               <button
                 class="say-floating-plus-button au-u-text-left"
