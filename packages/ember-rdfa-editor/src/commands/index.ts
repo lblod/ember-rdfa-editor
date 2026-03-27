@@ -15,4 +15,5 @@ export { addProperty } from './rdfa-commands/add-property.ts';
 export { removeProperty } from './rdfa-commands/remove-property.ts';
 export { selectNodeBackward } from './select-node-backward.ts';
 export { selectNodeForward } from './select-node-forward.ts';
+export { replaceSelectionWithAndSelectNode } from './replace-selection-and-select-node.ts';
 export * from './wrap-including-parents.ts';

@@ -1,0 +1,117 @@
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+
+.say-floating-plus-button {
+  cursor: pointer;
+}
+
+.say-floating-plus {
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
+
+  .color-selector__grid {
+    padding: 0 12px;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: au-settings.$au-unit-small;
+    margin-bottom: au-settings.$au-unit-small;
+
+    button {
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+    }
+  }
+}
+
+.say-floating-plus--actions {
+  display: flex;
+  flex-direction: row;
+
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    padding: au-settings.$au-unit-tiny;
+    width: 100%;
+    // TODO fix
+    font-family: "flanders-sans";
+    font-size: var(--au-global-font-size);
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-200);
+    }
+
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
+
+.say-contextual-actions-menu {
+  display: flex;
+  flex-direction: column;
+  // box-shadow:
+  //   rgba(25, 25, 25, 0.05) 0px 20px 24px 0px, 
+  //   rgba(25, 25, 25, 0.027) 0px 5px 8px 0px, 
+  //   rgba(42, 28, 0, 0.07) 0px 0px 0px 1px;
+  box-shadow:
+    0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
+  border: 0.1rem solid var(--au-gray-300);
+
+  background: var(--au-white);
+  border-radius: 0.5rem;
+  
+  padding: au-settings.$au-unit-tiny;
+  z-index: 10;
+}
+
+.say-contextual-actions-menu-entry {
+  display: flex;
+  flex-direction: row;
+
+  cursor: pointer;
+
+    border-radius: 0.5rem;
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-100);
+    }
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
+
+.say-contextual-actions-menu-group-header {
+  text-transform: uppercase;
+  padding-left: au-settings.$au-unit-tiny;
+  padding-right: au-settings.$au-unit-tiny;
+  &:not(:first-child) {
+    padding-top: au-settings.$au-unit-tiny;
+  }
+}

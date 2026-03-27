@@ -145,6 +145,10 @@
       "types": "./declarations/plugins/text-style/index.d.ts",
       "default": "./dist/plugins/text-style/index.js"
     },
+    "./plugins/contextual-actions": {
+      "types": "./declarations/plugins/contextual-actions/index.d.ts",
+      "default": "./dist/plugins/contextual-actions/index.js"
+    },
     "./plugins/_private/editable-node": {
       "types": "./declarations/plugins/_private/editable-node/index.d.ts",
       "default": "./dist/plugins/_private/editable-node/index.js"
@@ -366,6 +370,8 @@
     "app-js": {
       "./components/_private/attribute-editor/index.js": "./dist/_app_/components/_private/attribute-editor/index.js",
       "./components/_private/common/configurable-rdfa-display.js": "./dist/_app_/components/_private/common/configurable-rdfa-display.js",
+      "./components/_private/common/contextual-actions-menu.js": "./dist/_app_/components/_private/common/contextual-actions-menu.js",
+      "./components/_private/common/floating-plus.js": "./dist/_app_/components/_private/common/floating-plus.js",
       "./components/_private/common/object-term-schemas.js": "./dist/_app_/components/_private/common/object-term-schemas.js",
       "./components/_private/common/property-details.js": "./dist/_app_/components/_private/common/property-details.js",
       "./components/_private/common/selection-tooltip.js": "./dist/_app_/components/_private/common/selection-tooltip.js",
@@ -408,6 +414,7 @@
       "./components/index.js": "./dist/_app_/components/index.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
+      "./components/plugins/contextual-actions/floating-plus-button.js": "./dist/_app_/components/plugins/contextual-actions/floating-plus-button.js",
       "./components/plugins/formatting/formatting-toggle.js": "./dist/_app_/components/plugins/formatting/formatting-toggle.js",
       "./components/plugins/heading/heading-menu.js": "./dist/_app_/components/plugins/heading/heading-menu.js",
       "./components/plugins/history/redo.js": "./dist/_app_/components/plugins/history/redo.js",
@@ -448,6 +455,7 @@
       "./components/toolbar/spacer.js": "./dist/_app_/components/toolbar/spacer.js",
       "./components/utils/au-pill-dropdown.js": "./dist/_app_/components/utils/au-pill-dropdown.js",
       "./components/utils/color-selector.js": "./dist/_app_/components/utils/color-selector.js",
+      "./helpers/set.js": "./dist/_app_/helpers/set.js",
       "./modifiers/_private/code-mirror.js": "./dist/_app_/modifiers/_private/code-mirror.js",
       "./modifiers/_private/floating-ui.js": "./dist/_app_/modifiers/_private/floating-ui.js",
       "./modifiers/leave-on-enter-key.js": "./dist/_app_/modifiers/leave-on-enter-key.js",

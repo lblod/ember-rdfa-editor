@@ -13,6 +13,7 @@ import type SayController from '#root/core/say-controller.ts';
 type Args = {
   controller: SayController;
   visible: boolean;
+  position: 'left' | 'bottom';
 };
 export default class SelectionTooltip extends Component<Args> {
   floatingUI = floatingUI;
@@ -23,6 +24,10 @@ export default class SelectionTooltip extends Component<Args> {
 
   get visible() {
     return this.args.visible;
+  }
+
+  get position() {
+    return this.args.position ?? 'bottom';
   }
 
   get referenceElement() {
@@ -65,4 +70,21 @@ export default class SelectionTooltip extends Component<Args> {
       hide({ strategy: 'escaped' }),
     ];
   }
+  <template>
+    {{! @glint-nocheck: not typesafe yet }}
+    {{#if this.visible}}
+      <div
+        {{this.floatingUI
+          referenceElement=this.referenceElement
+          placement="bottom-start"
+          middleware=this.tooltipMiddleWare
+          strategy="fixed"
+          useTransform=true
+        }}
+        ...attributes
+      >
+        {{yield}}
+      </div>
+    {{/if}}
+  </template>
 }
