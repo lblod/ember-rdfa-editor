@@ -14,12 +14,12 @@ import { on } from '@ember/modifier';
 import set from '../../../helpers/set.ts';
 import { fn } from '@ember/helper';
 import { NodeSelection } from 'prosemirror-state';
-import { Await } from '@warp-drive/ember';
+import { trackedFunction } from 'reactiveweb/function';
 
 type Args = {
   controller: SayController;
-  getActions?: ((state: EditorState) => Promise<ContextualAction>)[];
-  getGroups?: ((state: EditorState) => Promise<ContextualActionGroup>)[];
+  getActions?: ((state: EditorState) => Promise<ContextualAction[]>)[];
+  getGroups?: ((state: EditorState) => Promise<ContextualActionGroup[]>)[];
 };
 
 export type ContextualAction = {
@@ -29,8 +29,8 @@ export type ContextualAction = {
   command: Command;
   description?: string;
 
-  isVisible?: (state: EditorState) => boolean;
-  isEnabled?: (state: EditorState) => boolean;
+  isVisible?: (state?: EditorState) => boolean;
+  isEnabled?: (state?: EditorState) => boolean;
 
   priority?: number;
 };
@@ -39,12 +39,14 @@ export type ContextualActionGroup = {
   id: string;
   label: string;
 
-  isVisible?: (state: EditorState) => boolean;
+  isVisible?: (state?: EditorState) => boolean;
 
   priority?: number;
 };
 
-export default class TableTooltip extends Component<Args> {
+const log = (value) => console.log(value);
+
+export default class FloatingPlusButton extends Component<Args> {
   @service declare intl: IntlService;
 
   @tracked showActions = false;
@@ -102,106 +104,73 @@ export default class TableTooltip extends Component<Args> {
     return !this.showActions;
   }
 
-  @tracked groups = [
-    {
-      id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-      label: 'Plaatsbepaling',
-    },
-    {
-      id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-      label: 'Invoegen',
-    },
-  ];
+  @tracked groupedActions?: (ContextualActionGroup & {
+    actions: ContextualAction[];
+  })[] = [];
 
-  @tracked actions: ContextualAction[] = [
-    {
-      id: 'dummy-action-1',
-      label: 'Op het kruispunt van de … met de … geldt',
-      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-    {
-      id: 'dummy-action-2',
-      label: 'Op alle wegen die uitkomen op … geldt',
-      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-    {
-      id: 'dummy-action-3',
-      label: 'Op de … ter hoogte van … geldt',
-      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-    {
-      id: 'dummy-action-4',
-      label: 'Op het kruispunt van de … met de … geldt',
-      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-    {
-      id: 'dummy-action-5',
-      label: 'Op … vanaf … tot … geldt',
-      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-    {
-      id: 'dummy-action-5',
-      label: 'Datum invoegen',
-      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-    },
-  ].map((action) => {
-    const node = this.controller.schema.nodes['block_rdfa'].create(
-      {
-        rdfaNodeType: 'literal',
-        label: `Plaatsbepaling`,
-      },
-      [
-        this.controller.schema.nodes['paragraph'].create(null, [
-          this.controller.schema.text(action.label),
-        ]),
-      ],
-    );
-
-    return {
-      ...action,
-      command: (state: EditorState, dispatch) => {
-        if (dispatch) {
-          const tr = state.tr;
-          tr.replaceSelectionWith(node);
-          if (tr.selection.$anchor.nodeBefore) {
-            const resolvedPos = tr.doc.resolve(
-              tr.selection.anchor - tr.selection.$anchor.nodeBefore?.nodeSize,
-            );
-            tr.setSelection(new NodeSelection(resolvedPos));
-          }
-          dispatch(tr);
-        }
-        return true;
-      },
-    };
-  });
-
-  get getGroups() {
-    return this.args.getGroups ?? [];
+  constructor() {
+    // eslint-disable-next-line prefer-rest-params
+    super(...arguments);
+    void this.setGroupedActions();
   }
 
-  get getActions() {
-    return this.args.getActions ?? [];
-  }
-
-  getGroupedActions = async () => {
+  async setGroupedActions() {
+    const getGroups = this.args.getGroups ?? [];
+    const getActions = this.args.getActions ?? [];
+    const editorState = this.controller.mainEditorState;
     // TODO update intermediate resolves in the UI
     const [groups, actions] = await Promise.all([
-      Promise.all(this.getGroups.map((cb) => cb(this.controller.mainEditorState))),
-      Promise.all(this.getActions.map((cb) => cb(this.controller.mainEditorState))),
+      (await Promise.all(getGroups.map((cb) => cb(editorState)))).flatMap(
+        (x) => x,
+      ),
+      (await Promise.all(getActions.map((cb) => cb(editorState)))).flatMap(
+        (x) => x,
+      ),
     ]);
+
     const visibleGroups = groups.filter(
       (group: ContextualActionGroup) =>
-        !group.isVisible || group.isVisible(this.controller.mainEditorState),
+        !group.isVisible || group.isVisible(editorState),
     );
 
-    return visibleGroups
+    await Promise.resolve();
+    this.groupedActions = visibleGroups
       .map((group) => ({
         ...group,
         actions: actions.filter((action) => action.group === group.id),
       }))
       .filter((group) => group.actions.length > 0);
-  };
+  }
+
+  // getGroupedActions = trackedFunction(this, async () => {
+  //   // todo fix constant retriggering
+  //   debugger;
+  //   const getgroups = this.args.getgroups ?? [];
+  //   const getactions = this.args.getactions ?? [];
+  //   const editorstate = this.controller.maineditorstate;
+  //   // todo update intermediate resolves in the ui
+  //   const [groups, actions] = await promise.all([
+  //     (await promise.all(getgroups.map((cb) => cb(editorstate)))).flatmap(
+  //       (x) => x,
+  //     ),
+  //     (await promise.all(getactions.map((cb) => cb(editorstate)))).flatmap(
+  //       (x) => x,
+  //     ),
+  //   ]);
+
+  //   const visiblegroups = groups.filter(
+  //     (group: contextualactiongroup) =>
+  //       !group.isvisible || group.isvisible(editorstate),
+  //   );
+
+  //   await promise.resolve();
+  //   return visiblegroups
+  //     .map((group) => ({
+  //       ...group,
+  //       actions: actions.filter((action) => action.group === group.id),
+  //     }))
+  //     .filter((group) => group.actions.length > 0);
+  // });
 
   <template>
     {{! @glint-nocheck: not typesafe yet }}
@@ -235,36 +204,29 @@ export default class TableTooltip extends Component<Args> {
           @position="bottom"
           class="say-contextual-actions-menu"
         >
-          <Await @promise={{this.getActions}}>
-            <:pending>
-              <AuLoader />
-            </:pending>
-            <:error>
-            </:error>
-            <:succes>
-              {{#each this.groupedActions as |group|}}
-                <div
-                  class="say-contextual-actions-menu-group-header au-u-muted au-u-padding-left-tiny au-u-padding-right-tiny"
-                >
-                  {{group.label}}
+          {{#if this.groupedActions}}
+            {{#each this.groupedActions as |group|}}
+              <div
+                class="say-contextual-actions-menu-group-header au-u-muted au-u-padding-left-tiny au-u-padding-right-tiny"
+              >
+                {{group.label}}
+              </div>
+              {{#each group.actions as |actionItem|}}
+                <div class="say-floating-plus--actions">
+                  <button
+                    {{on "click" (fn this.executeAction actionItem)}}
+                    class="say-contextual-actions-menu-entry au-u-text-left"
+                    type="button"
+                    title="Test"
+                  >
+                    <span>{{actionItem.label}}</span>
+                  </button>
                 </div>
-                {{#each group.actions as |actionItem|}}
-                  <div class="say-floating-plus--actions">
-                    <button
-                      {{on "click" (fn this.executeAction actionItem)}}
-                      class="say-contextual-actions-menu-entry au-u-text-left"
-                      type="button"
-                      title="Test"
-                    >
-                      <span>{{actionItem.label}}</span>
-                    </button>
-                  </div>
-                {{/each}}
-              {{else}}
-                <p>No actions found</p>
               {{/each}}
-            </:succes>
-          </Await>
+            {{else}}
+              <p>No actions found</p>
+            {{/each}}
+          {{/if}}
         </ContextualActionsMenu>
       </div>
     {{/if}}

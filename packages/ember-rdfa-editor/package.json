@@ -241,7 +241,6 @@
     "@say-editor/prosemirror-invisibles": "catalog:",
     "@say-editor/prosemirror-tables": "catalog:",
     "@types/react": "catalog:",
-    "@warp-drive/ember": "catalog:",
     "codemirror": "catalog:",
     "common-tags": "catalog:",
     "crypto-browserify": "catalog:",

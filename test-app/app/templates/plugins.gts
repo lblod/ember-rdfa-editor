@@ -85,7 +85,10 @@ import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 import FloatingPlusButton from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/floating-plus-button';
 import { contextualActionsPlugin } from '@lblod/ember-rdfa-editor/plugins/contextual-actions/index';
-import { getContextualActions } from 'test-app/dummy-plugins/expose-contextual-actions';
+import {
+  getContextualActions,
+  getContextualGroups,
+} from 'test-app/dummy-plugins/expose-contextual-actions';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
@@ -199,14 +202,6 @@ export default class extends Component {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
-    contextualActionsPlugin({
-      getActions: [
-        async (_state: EditorState) => {
-          return [];
-        },
-        getContextualActions,
-      ],
-    }),
   ];
 
   @action
@@ -222,6 +217,9 @@ export default class extends Component {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
+
+  contextualActionGetters = [getContextualActions];
+  contextualGroupGetters = [getContextualGroups];
 
   <template>
     <DummyContainer {{this.loadConfig}}>
@@ -245,7 +243,11 @@ export default class extends Component {
             />
 
             {{#if this.rdfaEditor}}
-              <FloatingPlusButton @controller={{this.rdfaEditor}} />
+              <FloatingPlusButton
+                @controller={{this.rdfaEditor}}
+                @getActions={{this.contextualActionGetters}}
+                @getGroups={{this.contextualGroupGetters}}
+              />
             {{/if}}
           </:default>
           <:sidebarRight as |container|>
