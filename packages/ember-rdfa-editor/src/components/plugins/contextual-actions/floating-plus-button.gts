@@ -9,13 +9,17 @@ import type IntlService from 'ember-intl/services/intl';
 import type SayController from '#root/core/say-controller.ts';
 import type { Command, EditorState } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
+import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import { on } from '@ember/modifier';
 import set from '../../../helpers/set.ts';
 import { fn } from '@ember/helper';
 import { NodeSelection } from 'prosemirror-state';
+import { Await } from '@warp-drive/ember';
 
 type Args = {
   controller: SayController;
+  getActions?: ((state: EditorState) => Promise<ContextualAction>)[];
+  getGroups?: ((state: EditorState) => Promise<ContextualActionGroup>)[];
 };
 
 export type ContextualAction = {
@@ -141,13 +145,13 @@ export default class TableTooltip extends Component<Args> {
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
   ].map((action) => {
-    const node = this.controller.schema.nodes.block_rdfa.create(
+    const node = this.controller.schema.nodes['block_rdfa'].create(
       {
         rdfaNodeType: 'literal',
         label: `Plaatsbepaling`,
       },
       [
-        this.controller.schema.nodes.paragraph.create(null, [
+        this.controller.schema.nodes['paragraph'].create(null, [
           this.controller.schema.text(action.label),
         ]),
       ],
@@ -172,8 +176,21 @@ export default class TableTooltip extends Component<Args> {
     };
   });
 
-  get groupedActions() {
-    const visibleGroups = this.groups.filter(
+  get getGroups() {
+    return this.args.getGroups ?? [];
+  }
+
+  get getActions() {
+    return this.args.getActions ?? [];
+  }
+
+  getGroupedActions = async () => {
+    // TODO update intermediate resolves in the UI
+    const [groups, actions] = await Promise.all([
+      Promise.all(this.getGroups.map((cb) => cb(this.controller.mainEditorState))),
+      Promise.all(this.getActions.map((cb) => cb(this.controller.mainEditorState))),
+    ]);
+    const visibleGroups = groups.filter(
       (group: ContextualActionGroup) =>
         !group.isVisible || group.isVisible(this.controller.mainEditorState),
     );
@@ -181,10 +198,10 @@ export default class TableTooltip extends Component<Args> {
     return visibleGroups
       .map((group) => ({
         ...group,
-        actions: this.actions.filter((action) => action.group === group.id),
+        actions: actions.filter((action) => action.group === group.id),
       }))
       .filter((group) => group.actions.length > 0);
-  }
+  };
 
   <template>
     {{! @glint-nocheck: not typesafe yet }}
@@ -218,27 +235,36 @@ export default class TableTooltip extends Component<Args> {
           @position="bottom"
           class="say-contextual-actions-menu"
         >
-          {{#each this.groupedActions as |group|}}
-            <div
-              class="say-contextual-actions-menu-group-header au-u-muted au-u-padding-left-tiny au-u-padding-right-tiny"
-            >
-              {{group.label}}
-            </div>
-            {{#each group.actions as |actionItem|}}
-              <div class="say-floating-plus--actions">
-                <button
-                  {{on "click" (fn this.executeAction actionItem)}}
-                  class="say-contextual-actions-menu-entry au-u-text-left"
-                  type="button"
-                  title="Test"
+          <Await @promise={{this.getActions}}>
+            <:pending>
+              <AuLoader />
+            </:pending>
+            <:error>
+            </:error>
+            <:succes>
+              {{#each this.groupedActions as |group|}}
+                <div
+                  class="say-contextual-actions-menu-group-header au-u-muted au-u-padding-left-tiny au-u-padding-right-tiny"
                 >
-                  <span>{{actionItem.label}}</span>
-                </button>
-              </div>
-            {{/each}}
-          {{else}}
-            <p>No actions found</p>
-          {{/each}}
+                  {{group.label}}
+                </div>
+                {{#each group.actions as |actionItem|}}
+                  <div class="say-floating-plus--actions">
+                    <button
+                      {{on "click" (fn this.executeAction actionItem)}}
+                      class="say-contextual-actions-menu-entry au-u-text-left"
+                      type="button"
+                      title="Test"
+                    >
+                      <span>{{actionItem.label}}</span>
+                    </button>
+                  </div>
+                {{/each}}
+              {{else}}
+                <p>No actions found</p>
+              {{/each}}
+            </:succes>
+          </Await>
         </ContextualActionsMenu>
       </div>
     {{/if}}
