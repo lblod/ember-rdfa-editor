@@ -33,7 +33,7 @@ import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import type { NodeSerializer } from '#root/core/say-serializer.ts';
+import type { NodeSerializer, SayNodeToDOM } from '#root/core/say-serializer.ts';
 import type SayView from '#root/core/say-view.js';
 import { NodeSelection } from 'prosemirror-state';
 
@@ -379,8 +379,7 @@ export type EmberNodeConfig = {
   };
   /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
   parseDOM?: readonly TagParseRule[];
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} */
-  toDOM?: (node: PNode) => DOMOutputSpec;
+  toDOM?: SayNodeToDOM;
   /**
    * Allows creating a serialized version based on the node itself
    * @see {@link SayNodeSpec}
