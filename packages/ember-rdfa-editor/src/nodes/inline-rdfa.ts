@@ -1,4 +1,3 @@
-import { Node as PNode } from 'prosemirror-model';
 import { getRdfaAttrs, rdfaAttrSpec, renderRdfaAware } from '../core/schema.ts';
 import {
   type EmberNodeConfig,
@@ -6,7 +5,6 @@ import {
   createEmberNodeView,
 } from '../utils/ember-node.ts';
 import InlineRdfaComponent from '../components/ember-node/inline-rdfa.gts';
-import type { ComponentLike } from '@glint/template';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import type { ModelMigrationGenerator } from '#root/core/rdfa-types.ts';
 import {
@@ -30,7 +28,7 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
   return {
     name: 'inline-rdfa',
     inline: true,
-    component: InlineRdfaComponent as unknown as ComponentLike,
+    component: InlineRdfaComponent,
     group: 'inline',
     content: 'inline*',
     atom: true,
@@ -39,14 +37,17 @@ const emberNodeConfig: (options?: Options) => EmberNodeConfig = ({
     editable: rdfaAware,
     isolating: rdfaAware,
     classNames: ['say-inline-rdfa'],
-    toDOM(node: PNode) {
+    toDOM(node, state) {
       if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: node,
-          tag: 'span',
-          attrs: { class: getClassnamesFromNode(node) },
-          content: 0,
-        });
+        return renderRdfaAware(
+          {
+            renderable: node,
+            tag: 'span',
+            attrs: { class: getClassnamesFromNode(node) },
+            content: 0,
+          },
+          state,
+        );
       } else {
         return [
           'span',
