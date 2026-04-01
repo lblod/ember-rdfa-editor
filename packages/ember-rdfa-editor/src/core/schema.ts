@@ -25,8 +25,15 @@ import {
 } from './schema/_private/render-rdfa-attrs.ts';
 import { IllegalArgumentError } from '../utils/_private/errors.ts';
 import type { NamedNode } from '@rdfjs/types';
-import { rdfaNodeTypes, type RdfaAttrs } from '#root/core/rdfa-types.ts';
-import { findNodeByRdfaId, updateSubject } from '#root/plugins/rdfa-info/utils.ts';
+import {
+  rdfaNodeTypes,
+  type RdfaAttrs,
+  type RdfaNodeType,
+} from '#root/core/rdfa-types.ts';
+import {
+  findNodeByRdfaId,
+  updateSubject,
+} from '#root/plugins/rdfa-info/utils.ts';
 import type { EditorState } from 'prosemirror-state';
 
 // const logger = createLogger('core/schema');
@@ -124,9 +131,7 @@ function getClassicRdfaAttrs(node: Element): Record<string, string> | false {
 }
 
 function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
-  let rdfaNodeType = node.dataset['rdfaNodeType'] as
-    | RdfaAttrs['rdfaNodeType']
-    | undefined;
+  let rdfaNodeType = node.dataset['rdfaNodeType'] as RdfaNodeType | undefined;
   if (!rdfaNodeType && node.dataset['literalNode'] === 'true') {
     rdfaNodeType = 'literal';
   }
@@ -134,6 +139,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     return false;
   }
   const __rdfaId = node.dataset['sayId'] ?? uuidv4();
+  const pointed = node.dataset['pointed'];
   let backlinks: IncomingTriple[] = [];
   if (node.dataset['incomingProps']) {
     backlinks = JSON.parse(
@@ -155,6 +161,20 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     if (datatype) {
       transformedDatatype = sayDataFactory.namedNode(datatype);
     }
+    if (backlinks.length === 0) {
+      // No RDFa backlink, but this pointer might have a 'data backlink' waiting for something to be
+      // pointed to
+      const pointerBl = node.dataset['pointerBacklink'];
+      const pointerPred = node.dataset['pointerPredicate'];
+      if (pointerBl && pointerPred) {
+        backlinks = [
+          {
+            subject: sayDataFactory.resourceNode(pointerBl),
+            predicate: pointerPred,
+          },
+        ];
+      }
+    }
 
     return {
       rdfaNodeType: 'literal',
@@ -164,6 +184,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       __rdfaId,
       backlinks,
       externalTriples,
+      pointed,
     };
   } else {
     const subject = node.dataset['subject'];
@@ -179,6 +200,17 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
         jsonToTerm,
       ) as OutgoingTriple[];
     }
+    if (node.dataset['pointerProperties']) {
+      // This resource has some pointer node properties that will only be represented in the RDFa if
+      // the pointer actually points somewhere
+      properties = [
+        ...properties,
+        ...(JSON.parse(
+          node.dataset['pointerProperties'],
+          jsonToTerm,
+        ) as OutgoingTriple[]),
+      ];
+    }
 
     return {
       rdfaNodeType: 'resource',
@@ -187,6 +219,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       backlinks,
       externalTriples,
       properties,
+      pointed,
     };
   }
 }
@@ -292,11 +325,10 @@ export const sharedRdfaNodeSpec = {
 
 type NodeOrMark = PNode | Mark;
 
-export function renderInvisibleRdfa({
-  renderable,
-  rdfaContainerTag,
-  rdfaContainerAttrs,
-}: RdfaRenderInvisibleArgs, state?: EditorState): DOMOutputSpec {
+export function renderInvisibleRdfa(
+  { renderable, rdfaContainerTag, rdfaContainerAttrs }: RdfaRenderInvisibleArgs,
+  state?: EditorState,
+): DOMOutputSpec {
   const propElements = [];
   const properties = renderable.attrs['properties'] as OutgoingTriple[];
   for (const { predicate, object } of properties) {
@@ -395,7 +427,10 @@ export function renderInvisibleRdfa({
   if (renderable.attrs['pointed'] && state) {
     // When serializing, follow the references back to the original pointer node
     while (pointedAttrs?.['pointed']) {
-      pointedAttrs = findNodeByRdfaId(state.doc, pointedAttrs['pointed'] as string)?.value.attrs;
+      pointedAttrs = findNodeByRdfaId(
+        state.doc,
+        pointedAttrs['pointed'] as string,
+      )?.value.attrs;
     }
   }
   const backlinks = renderable.attrs['backlinks'] as IncomingTriple[];
@@ -406,10 +441,17 @@ export function renderInvisibleRdfa({
     }
     if (pointedAttrs) {
       // pointedAttrs is only non-null when serializing and we have a 'pointed' value
-      const pointerBacklink = (pointedAttrs['backlinks'] as RdfaAttrs['backlinks'])[0];
+      const pointerBacklink = (
+        pointedAttrs['backlinks'] as RdfaAttrs['backlinks']
+      )[0];
       if (pointerBacklink) {
         // Add RDFa for the completed relationship
-        propElements.push(incomingTripleSpan(pointerBacklink.subject.value, pointerBacklink.predicate));
+        propElements.push(
+          incomingTripleSpan(
+            pointerBacklink.subject.value,
+            pointerBacklink.predicate,
+          ),
+        );
       }
     }
   } else if (renderable.attrs['rdfaNodeType'] === 'literal') {
@@ -457,12 +499,21 @@ export function renderRdfaAttrs(
     const contentTriple = rdfaAttrs.properties.find(
       (prop) => prop.object.termType === 'ContentLiteral',
     ) as ContentTriple | undefined;
-    const baseAttrs = {
+    let baseAttrs: Record<string, string | null> = {
       about: rdfaAttrs.subject,
       resource: null,
       'data-say-id': rdfaAttrs.__rdfaId,
       'data-pointed': rdfaAttrs.pointed ?? null,
     };
+    const pointerProps = rdfaAttrs['properties'].filter(
+      (prop) => prop.object.termType === 'LiteralNode',
+    );
+    if (pointerProps.length > 0) {
+      baseAttrs = {
+        ...baseAttrs,
+        'data-pointer-properties': JSON.stringify(pointerProps),
+      };
+    }
 
     return contentTriple
       ? {
@@ -477,7 +528,12 @@ export function renderRdfaAttrs(
   } else {
     const backlinks = rdfaAttrs.backlinks;
     if (backlinks.length > 1) {
-      console.error('More than one backlink found for node ', rdfaAttrs.__rdfaId, 'only the first will be used', backlinks)
+      console.error(
+        'More than one backlink found for node ',
+        rdfaAttrs.__rdfaId,
+        'only the first will be used',
+        backlinks,
+      );
     }
     const backlink = backlinks[0];
     const datatypeAndLanguage: Record<string, string> = {};
@@ -525,7 +581,10 @@ export type RdfaRenderInvisibleArgs = {
   rdfaContainerTag: string;
   rdfaContainerAttrs?: Record<string, unknown>;
 };
-export type RdfaRenderArgs =  Omit<RdfaRenderInvisibleArgs, 'rdfaContainerTag'> & {
+export type RdfaRenderArgs = Omit<
+  RdfaRenderInvisibleArgs,
+  'rdfaContainerTag'
+> & {
   tag: string;
   attrs?: Record<string, unknown>;
   rdfaContainerTag?: string;
@@ -540,16 +599,19 @@ function determineChildTag(renderable: Mark | PNode) {
     return renderable.inlineContent || renderable.isInline ? 'span' : 'div';
   }
 }
-export function renderRdfaAware({
-  renderable,
-  tag,
-  attrs = {},
-  rdfaContainerTag = determineChildTag(renderable),
-  rdfaContainerAttrs,
-  contentContainerTag = determineChildTag(renderable),
-  contentContainerAttrs = {},
-  ...rest
-}: RdfaRenderArgs, state?: EditorState): DOMOutputSpec {
+export function renderRdfaAware(
+  {
+    renderable,
+    tag,
+    attrs = {},
+    rdfaContainerTag = determineChildTag(renderable),
+    rdfaContainerAttrs,
+    contentContainerTag = determineChildTag(renderable),
+    contentContainerAttrs = {},
+    ...rest
+  }: RdfaRenderArgs,
+  state?: EditorState,
+): DOMOutputSpec {
   const clone = { ...attrs };
 
   //TODO: this should not be needed
@@ -563,7 +625,10 @@ export function renderRdfaAware({
   return [
     tag,
     { ...clone, ...renderRdfaAttrs(renderable.attrs as RdfaAttrs) },
-    renderInvisibleRdfa({ renderable, rdfaContainerTag, rdfaContainerAttrs }, state),
+    renderInvisibleRdfa(
+      { renderable, rdfaContainerTag, rdfaContainerAttrs },
+      state,
+    ),
     [
       contentContainerTag,
       { 'data-content-container': true, ...contentContainerAttrs },

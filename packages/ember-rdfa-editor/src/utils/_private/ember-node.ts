@@ -33,7 +33,10 @@ import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import type { NodeSerializer, SayNodeToDOM } from '#root/core/say-serializer.ts';
+import type {
+  NodeSerializer,
+  SayNodeToDOM,
+} from '#root/core/say-serializer.ts';
 import type SayView from '#root/core/say-view.js';
 import { NodeSelection } from 'prosemirror-state';
 
