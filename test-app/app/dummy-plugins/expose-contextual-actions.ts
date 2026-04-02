@@ -1,7 +1,7 @@
 import { EditorState, NodeSelection } from '@lblod/ember-rdfa-editor';
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export async function getContextualActions(state: EditorState) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return [
     {
       id: 'dummy-action-1',
@@ -66,8 +66,7 @@ export async function getContextualActions(state: EditorState) {
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
-export async function getContextualGroups() {
+export function getContextualGroups() {
   return [
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',

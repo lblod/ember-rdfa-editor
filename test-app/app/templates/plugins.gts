@@ -84,7 +84,6 @@ import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 import FloatingPlusButton from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/floating-plus-button';
-import { contextualActionsPlugin } from '@lblod/ember-rdfa-editor/plugins/contextual-actions/index';
 import {
   getContextualActions,
   getContextualGroups,
