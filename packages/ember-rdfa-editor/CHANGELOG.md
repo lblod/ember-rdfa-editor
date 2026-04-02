@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.5.0
+
+### Minor Changes
+
+- [#1364](https://github.com/lblod/ember-rdfa-editor/pull/1364) [`44eda3f`](https://github.com/lblod/ember-rdfa-editor/commit/44eda3fbc7fd80689f16927038037ef4c08c04f0) Thanks [@elpoelma](https://github.com/elpoelma)! - Replace graphy.js with n3.js
+
 ## 13.4.1
 
 ### Patch Changes
