@@ -3,7 +3,8 @@
 
   "compilerOptions": {
     "baseUrl": "./",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noUncheckedIndexedAccess": false
   },
   "typedocOptions": {
     "entryPoints": [
