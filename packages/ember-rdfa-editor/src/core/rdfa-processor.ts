@@ -68,6 +68,10 @@ export type IncomingTriple = {
   subject: ResourceNodeTerm;
   predicate: string;
 };
+export type IncomingLiteralTriple = IncomingTriple & {
+  language?: string;
+  datatype?: string;
+};
 
 export type FullTriple = {
   subject: SayNamedNode;
@@ -193,12 +197,26 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     }
   }
   // each content node
-  for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate } = object;
+  for (const [node, content] of datastore.getContentNodeMap().entries()) {
+    const { subject, predicate, object } = content;
+    const { language, datatype } = object;
 
-    const incomingProp: IncomingTriple = {
+    let langOrDatatype: { language: string } | { datatype?: string };
+    if (
+      datatype.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
+    ) {
+      langOrDatatype = { language };
+    } else {
+      // Parser interprets everything as xsd:string, but we don't need to add an explicit datatype
+      // for this
+      langOrDatatype = !datatype.equals(SayLiteral.XSD_STRING)
+        ? { datatype: datatype.value }
+        : {};
+    }
+    const incomingProp: IncomingLiteralTriple = {
       subject,
       predicate: predicate.value,
+      ...langOrDatatype,
     };
     const extraBacklinks: IncomingTriple[] = [];
     if (isElement(node)) {

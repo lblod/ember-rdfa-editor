@@ -5,6 +5,7 @@ import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
 import type {
   ContentTriple,
   FullTriple,
+  IncomingLiteralTriple,
   IncomingTriple,
   OutgoingTriple,
 } from './rdfa-processor.ts';
@@ -14,6 +15,7 @@ import { getSubjectsFromBacklinksOfRelationship } from '#root/utils/rdfa-utils.t
 import {
   languageOrDataType,
   sayDataFactory,
+  SayNamedNode,
   type SayTerm,
   type WithoutEquals,
 } from './say-data-factory/index.ts';
@@ -140,7 +142,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   }
   const __rdfaId = node.dataset['sayId'] ?? uuidv4();
   const pointed = node.dataset['pointed'];
-  let backlinks: IncomingTriple[] = [];
+  let backlinks: IncomingLiteralTriple[] = [];
   if (node.dataset['incomingProps']) {
     backlinks = JSON.parse(
       node.dataset['incomingProps'],
@@ -157,7 +159,8 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
   }
   if (rdfaNodeType === 'literal') {
     const datatype = node.getAttribute('datatype');
-    let transformedDatatype = null;
+    let transformedDatatype: SayNamedNode | null = null;
+    let language = node.getAttribute('lang') ?? null;
     if (datatype) {
       transformedDatatype = sayDataFactory.namedNode(datatype);
     }
@@ -174,13 +177,20 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
           },
         ];
       }
+    } else {
+      if (!transformedDatatype && backlinks[0]?.datatype) {
+        transformedDatatype = sayDataFactory.namedNode(backlinks[0]?.datatype);
+      }
+      if (!language && backlinks[0]?.language) {
+        language = backlinks[0].language;
+      }
     }
 
     return {
       rdfaNodeType: 'literal',
       content: node.getAttribute('content'),
       datatype: transformedDatatype,
-      language: node.getAttribute('lang') ?? null,
+      language,
       __rdfaId,
       backlinks,
       externalTriples,
@@ -203,13 +213,21 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     if (node.dataset['pointerProperties']) {
       // This resource has some pointer node properties that will only be represented in the RDFa if
       // the pointer actually points somewhere
-      properties = [
-        ...properties,
-        ...(JSON.parse(
+      const pointerProps = (
+        JSON.parse(
           node.dataset['pointerProperties'],
           jsonToTerm,
-        ) as OutgoingTriple[]),
-      ];
+        ) as OutgoingTriple[]
+      ).filter((pointerProp) => {
+        const matchingPred = properties.filter(
+          (prop) => prop.predicate === pointerProp.predicate,
+        );
+        return (
+          !matchingPred ||
+          matchingPred.every((mp) => !pointerProp.object.equals(mp.object))
+        );
+      });
+      properties = [...properties, ...pointerProps];
     }
 
     return {
@@ -329,7 +347,7 @@ export function renderInvisibleRdfa(
   { renderable, rdfaContainerTag, rdfaContainerAttrs }: RdfaRenderInvisibleArgs,
   state?: EditorState,
 ): DOMOutputSpec {
-  const propElements = [];
+  const propElements: DOMOutputSpec[] = [];
   const properties = renderable.attrs['properties'] as OutgoingTriple[];
   for (const { predicate, object } of properties) {
     switch (object.termType) {
@@ -394,7 +412,7 @@ export function renderInvisibleRdfa(
   }
   const externalTriples = renderable.attrs['externalTriples'] as FullTriple[];
   if (externalTriples.length) {
-    const externalElements = [];
+    const externalElements: DOMOutputSpec[] = [];
     for (const fullTriple of externalTriples) {
       switch (fullTriple.object.termType) {
         case 'NamedNode':

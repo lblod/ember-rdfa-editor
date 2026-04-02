@@ -2,23 +2,23 @@
  * test cases imported from https://www.w3.org/2006/07/SWD/RDFa/testsuite/
  */
 const TEST_CASES = {
-  //   '000002': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  // 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-  // <html xmlns="http://www.w3.org/1999/xhtml"
-  //   xmlns:cc="http://web.resource.org/cc/"
-  //   xmlns:dc11="http://purl.org/dc/elements/1.1/"
-  //   xmlns:ex="http://example.org/"
-  //   xmlns:foaf="http://xmlns.com/foaf/0.1/"
-  //   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  //   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-  //   xmlns:svg="http://www.w3.org/2000/svg"
-  //   xmlns:xh11="http://www.w3.org/1999/xhtml"
-  //   xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
-  // <body>
-  //   This photo was taken by <span class="author" about="photo1.jpg" property="dc11:creator">Mark Birbeck</span>.
-  // </body>
-  // </html>
-  // `,
+  '000002': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:cc="http://web.resource.org/cc/"
+    xmlns:dc11="http://purl.org/dc/elements/1.1/"
+    xmlns:ex="http://example.org/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:xh11="http://www.w3.org/1999/xhtml"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <body>
+    This photo was taken by <span class="author" about="photo1.jpg" property="dc11:creator">Mark Birbeck</span>.
+  </body>
+  </html>
+  `,
   //   '000003': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   // 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
   // <html xmlns="http://www.w3.org/1999/xhtml"

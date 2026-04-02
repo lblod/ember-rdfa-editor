@@ -1,10 +1,11 @@
+import type { DOMOutputSpec } from 'prosemirror-model';
 import type { SayLiteral } from '../../say-data-factory/index.ts';
 
 export function namedNodeSpan(
   subject: string,
   predicate: string,
   resource: string,
-) {
+): DOMOutputSpec {
   return [
     'span',
     {
@@ -19,7 +20,7 @@ export function fullLiteralSpan(
   predicate: string,
   object: SayLiteral,
   literalNodeId?: string,
-) {
+): DOMOutputSpec {
   let result: [string, Record<string, string>, string];
   if (object.language?.length) {
     result = [
@@ -60,9 +61,15 @@ export function fullLiteralSpan(
   }
   return result;
 }
-export function literalSpan(predicate: string, object: SayLiteral) {
+export function literalSpan(
+  predicate: string,
+  object: SayLiteral,
+): DOMOutputSpec {
   return fullLiteralSpan(null, predicate, object);
 }
-export function incomingTripleSpan(subject: string, predicate: string) {
+export function incomingTripleSpan(
+  subject: string,
+  predicate: string,
+): DOMOutputSpec {
   return ['span', { rev: predicate, resource: subject }];
 }
