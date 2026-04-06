@@ -28,7 +28,6 @@ type Args = {
   onActionSelected?: (action: ContextualAction) => void;
   onClose?: () => void;
   isLoading?: boolean;
-  enableSearch?: boolean;
 };
 
 export default class ContextualActionsMenu extends Component<Args> {
