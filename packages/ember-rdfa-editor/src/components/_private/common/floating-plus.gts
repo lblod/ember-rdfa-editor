@@ -82,7 +82,6 @@ export default class FloatingPlus extends Component<Args> {
           strategy="fixed"
           useTransform=true
         }}
-        class="say-editor-selection-tooltip"
         ...attributes
       >
         {{yield}}

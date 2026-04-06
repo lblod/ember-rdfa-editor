@@ -89,7 +89,7 @@ export async function getContextualActions(state: EditorState) {
       ...action,
       command: (
         state: EditorState,
-        dispatch: (transaction: Transaction) => void,
+        dispatch?: (transaction: Transaction) => void,
       ) => {
         if (dispatch) {
           const tr = state.tr;

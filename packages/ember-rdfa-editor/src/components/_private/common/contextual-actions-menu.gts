@@ -157,58 +157,56 @@ export default class ContextualActionsMenu extends Component<Args> {
             }}</AuLoader>
         </div>
       {{/if}}
-      {{#if this.groupedActions}}
-        {{#if @enableSearch}}
-          <div
-            class="au-u-padding-top-tiny au-u-padding-left-tiny au-u-padding-right-tiny"
-          >
-            <AuInput
-              {{on "input" this.setSearchQuery}}
-              value={{this.searchQuery}}
-              {{autoFocus}}
-              placeholder={{t
-                "ember-rdfa-editor.contextual-actions.type-to-search"
-              }}
-              @width="block"
-              @icon="search"
-            />
-          </div>
-        {{/if}}
-        <div class="say-contextual-actions-menu-entries-container">
-          {{#each this.groupedActions as |group|}}
-            <div class="say-contextual-actions-menu-group-wrapper">
-              <div class="say-contextual-actions-menu-group-sticky-sentinel" />
-              <div
-                class="say-contextual-actions-menu-group-header au-u-muted"
-                {{this.observeSticky}}
-              >
-                {{group.label}}
-              </div>
-              {{#each group.actions as |actionItem|}}
-                <div class="say-floating-plus-content">
-                  <button
-                    {{on "click" (fn this.selectAction actionItem)}}
-                    class="say-contextual-actions-menu-entry au-u-text-left"
-                    type="button"
-                    title="Test"
-                  >
-                    <span>{{actionItem.label}}</span>
-                  </button>
-                </div>
-              {{/each}}
-            </div>
-          {{else}}
-            <AuAlert
-              @size="small"
-              @icon="circle-info"
-              @skin="info"
-              class="au-u-margin-bottom-none"
-            >{{t
-                "ember-rdfa-editor.contextual-actions.no-actions-found"
-              }}</AuAlert>
-          {{/each}}
+      {{#if @enableSearch}}
+        <div
+          class="au-u-padding-top-tiny au-u-padding-left-tiny au-u-padding-right-tiny"
+        >
+          <AuInput
+            {{on "input" this.setSearchQuery}}
+            value={{this.searchQuery}}
+            {{autoFocus}}
+            placeholder={{t
+              "ember-rdfa-editor.contextual-actions.type-to-search"
+            }}
+            @width="block"
+            @icon="search"
+          />
         </div>
       {{/if}}
+      <div class="say-contextual-actions-menu-entries-container">
+        {{#each this.groupedActions as |group|}}
+          <div class="say-contextual-actions-menu-group-wrapper">
+            <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+            <div
+              class="say-contextual-actions-menu-group-header au-u-muted"
+              {{this.observeSticky}}
+            >
+              {{group.label}}
+            </div>
+            <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
+              {{#each group.actions as |actionItem|}}
+                <button
+                  {{on "click" (fn this.selectAction actionItem)}}
+                  class="say-contextual-actions-menu-entry au-u-text-left"
+                  type="button"
+                  title="Test"
+                >
+                  <span>{{actionItem.label}}</span>
+                </button>
+              {{/each}}
+            </div>
+          </div>
+        {{else}}
+          <AuAlert
+            @size="small"
+            @icon="circle-info"
+            @skin="info"
+            class="au-u-margin-bottom-none au-u-margin-top-tiny"
+          >{{t
+              "ember-rdfa-editor.contextual-actions.no-actions-found"
+            }}</AuAlert>
+        {{/each}}
+      </div>
     </div>
   </template>
 }
