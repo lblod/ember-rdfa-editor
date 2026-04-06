@@ -87,6 +87,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   get tooltipMiddleWare(): Middleware[] {
     return [
       offset(10),
+      flip(),
       size({
         apply({ availableWidth, availableHeight, elements }) {
           // Change styles, e.g.
@@ -96,7 +97,6 @@ export default class ContextualActionsMenu extends Component<Args> {
           });
         },
       }),
-      flip({ fallbackStrategy: 'initialPlacement' }),
       shift(),
       hide({ strategy: 'referenceHidden' }),
       hide({ strategy: 'escaped' }),

@@ -115,12 +115,15 @@ export default class ContextualActionsContainer extends Component<Args> {
       >
         <div class="say-floating-plus-content">
           {{#if this.loadAndShowActions.isRunning}}
-            <AuLoader
+            {{!-- <AuLoader
               @inline={{true}}
               @hideMessage={{true}}
               class="au-u-padding-bottom-tiny au-u-padding-top-tiny"
             >
-              {{t "ember-rdfa-editor.utils.loading"}}</AuLoader>
+              {{t "ember-rdfa-editor.utils.loading"}}</AuLoader> --}}
+            <div class="au-u-padding-tiny au-u-1-1">
+              <span class="say-floating-plus-button-loader" />
+            </div>
           {{else}}
             <button
               class="say-floating-plus-button au-u-flex au-u-flex--center"
@@ -137,7 +140,6 @@ export default class ContextualActionsContainer extends Component<Args> {
     {{#if this.showActions}}
       <div {{this.setUpListeners}}>
         <ContextualActionsMenu
-          @enableSearch={{true}}
           @controller={{this.controller}}
           @position="bottom"
           @actions={{this.actions}}

@@ -1,4 +1,8 @@
-import { EditorState, NodeSelection } from '@lblod/ember-rdfa-editor';
+import {
+  EditorState,
+  NodeSelection,
+  Transaction,
+} from '@lblod/ember-rdfa-editor';
 
 export async function getContextualActions(state: EditorState) {
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -43,25 +47,51 @@ export async function getContextualActions(state: EditorState) {
       label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
+    {
+      id: 'dummy-action-1',
+      label: 'Pelikaanstraat',
+      group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-2',
+      label: 'Tarbotstraat',
+      group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-3',
+      label: 'Tolhuiskaai',
+      group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-4',
+      label: 'Veldstraat',
+      group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Op … vanaf … tot … geldt',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Datum invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Datum invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
   ].map((action) => {
-    const node = state.schema.nodes['block_rdfa'].create(
-      {
-        rdfaNodeType: 'literal',
-        label: `Plaatsbepaling`,
-      },
-      [
-        state.schema.nodes['paragraph'].create(null, [
-          state.schema.text(action.label),
-        ]),
-      ],
-    );
-
     return {
       ...action,
-      command: (state: EditorState, dispatch) => {
+      command: (
+        state: EditorState,
+        dispatch: (transaction: Transaction) => void,
+      ) => {
         if (dispatch) {
           const tr = state.tr;
-          tr.replaceSelectionWith(node);
+          tr.replaceSelectionWith(state.schema.text(action.label));
           if (tr.selection.$anchor.nodeBefore) {
             const resolvedPos = tr.doc.resolve(
               tr.selection.anchor - tr.selection.$anchor.nodeBefore?.nodeSize,
@@ -85,6 +115,10 @@ export function getContextualGroups() {
     {
       id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Invoegen',
+    },
+    {
+      id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Straten in Gent',
     },
   ];
 }

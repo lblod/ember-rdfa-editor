@@ -61,8 +61,6 @@
   border: 0.1rem solid var(--au-gray-200);
   min-width: 20em;
   max-width: 20em;
-  max-height: 10em;
-  min-height: 10em;
   // overflow: scroll;
 
   animation: popup 0.1s ease forwards;
@@ -150,3 +148,24 @@
     transform: translateY(0);
   }
 }
+
+// TODO add loader sizes in appuniversum
+.say-floating-plus-button-loader {
+    height: 100%;
+    width: 100%;
+    border: 0.2rem solid var(--au-gray-600);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+} 
