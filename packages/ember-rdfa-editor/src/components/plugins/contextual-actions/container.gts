@@ -23,7 +23,7 @@ type Args = {
   ) => ContextualAction[] | Promise<ContextualAction[]>)[];
   getGroups?: ((
     state: EditorState,
-  ) => ContextualAction[] | Promise<ContextualActionGroup[]>)[];
+  ) => ContextualActionGroup[] | Promise<ContextualActionGroup[]>)[];
 };
 
 export default class ContextualActionsContainer extends Component<Args> {

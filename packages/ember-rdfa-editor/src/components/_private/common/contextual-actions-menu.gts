@@ -26,7 +26,6 @@ import { modifier } from 'ember-modifier';
 
 type Args = {
   controller: SayController;
-  visible: boolean;
   actions?: ContextualAction[];
   groups?: ContextualActionGroup[];
   onActionSelected?: (action: ContextualAction) => void;
