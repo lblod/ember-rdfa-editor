@@ -42,12 +42,14 @@ export async function getContextualActions() {
       id: 'dummy-action-5',
       label: 'Locatie invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      description: 'Voeg een locatie in',
     },
     {
       id: 'dummy-action-5',
       label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: 'MAR12',
+      description: 'Voeg een marcode in',
     },
     {
       id: 'dummy-action-1',
@@ -78,11 +80,13 @@ export async function getContextualActions() {
       id: 'dummy-action-2',
       label: 'Markt 17, 9230 Wetteren',
       group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      priority: 2,
     },
     {
       id: 'dummy-action-3',
       label: 'Perceel 44A, 9000 Aalst',
       group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      priority: 9,
     },
   ].map((action) => {
     return {
@@ -113,10 +117,6 @@ export async function getContextualActions() {
 export function getContextualGroups() {
   return [
     {
-      id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-      label: 'Plaats suggesties',
-    },
-    {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
     },
@@ -127,6 +127,12 @@ export function getContextualGroups() {
     {
       id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Straten in Gent',
+      priority: 9,
+    },
+    {
+      id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Plaats suggesties',
+      priority: 10,
     },
   ];
 }

@@ -20,6 +20,7 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
+import { not } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
@@ -30,16 +31,32 @@ type Args = {
   isLoading?: boolean;
 };
 
+function sortByPriority(
+  itemA: { priority?: number },
+  itemB: { priority?: number },
+) {
+  if (!itemB.priority) {
+    return -1;
+  }
+  if (!itemA.priority) {
+    return 1;
+  }
+
+  return itemB.priority - itemA.priority;
+}
+
 export default class ContextualActionsMenu extends Component<Args> {
   get groupedActions() {
     return this.args.groups
       ?.map((group) => ({
         ...group,
         actions:
-          this.args.actions?.filter((action) => action.group === group.id) ??
-          [],
+          this.args.actions
+            ?.filter((action) => action.group === group.id)
+            .toSorted(sortByPriority) ?? [],
       }))
-      .filter((group) => group.actions.length > 0);
+      .filter((group) => group.actions.length > 0)
+      .toSorted(sortByPriority);
   }
 
   get controller() {
@@ -83,7 +100,6 @@ export default class ContextualActionsMenu extends Component<Args> {
       flip(),
       size({
         apply({ availableWidth, availableHeight, elements }) {
-          // Change styles, e.g.
           Object.assign(elements.floating.style, {
             maxWidth: `${Math.max(0, availableWidth)}px`,
             maxHeight: `${Math.max(0, availableHeight)}px`,
@@ -126,6 +142,15 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onActionSelected?.(action);
   };
 
+  canExecuteAction = (action: ContextualAction) => {
+    if ('command' in action) {
+      const retVal = this.controller.checkCommand(action.command);
+      return retVal;
+    }
+
+    return false;
+  };
+
   <template>
     <div
       {{floatingUI
@@ -158,10 +183,11 @@ export default class ContextualActionsMenu extends Component<Args> {
             <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
               {{#each group.actions as |actionItem|}}
                 <button
+                  disabled={{not this.canExecuteAction actionItem}}
                   {{on "click" (fn this.selectAction actionItem)}}
                   class="say-contextual-actions-menu-entry au-u-text-left"
                   type="button"
-                  title="Test"
+                  title={{actionItem.description}}
                 >
                   <span>{{actionItem.label}}</span>
                 </button>

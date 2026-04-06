@@ -88,14 +88,6 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   }
 
-  canExecuteAction = (action: ContextualAction) => {
-    if ('command' in action) {
-      return this.controller.checkCommand(action.command);
-    }
-
-    return false;
-  };
-
   @action
   selectAction(action: ContextualAction) {
     this.executeAction(action);
