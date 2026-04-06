@@ -36,6 +36,7 @@ export async function getContextualActions(state: EditorState) {
       id: 'dummy-action-5',
       label: 'Datum invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      insert: '11/02/2027',
     },
     {
       id: 'dummy-action-5',
@@ -46,6 +47,7 @@ export async function getContextualActions(state: EditorState) {
       id: 'dummy-action-5',
       label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      insert: 'MAR12',
     },
     {
       id: 'dummy-action-1',
@@ -73,14 +75,14 @@ export async function getContextualActions(state: EditorState) {
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-5',
-      label: 'Datum invoegen',
-      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      id: 'dummy-action-2',
+      label: 'Markt 17, 9230 Wetteren',
+      group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-5',
-      label: 'Datum invoegen',
-      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      id: 'dummy-action-3',
+      label: 'Perceel 44A, 9000 Aalst',
+      group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
   ].map((action) => {
     return {
@@ -91,7 +93,9 @@ export async function getContextualActions(state: EditorState) {
       ) => {
         if (dispatch) {
           const tr = state.tr;
-          tr.replaceSelectionWith(state.schema.text(action.label));
+          tr.replaceSelectionWith(
+            state.schema.text(action.insert ?? action.label),
+          );
           if (tr.selection.$anchor.nodeBefore) {
             const resolvedPos = tr.doc.resolve(
               tr.selection.anchor - tr.selection.$anchor.nodeBefore?.nodeSize,
@@ -108,6 +112,10 @@ export async function getContextualActions(state: EditorState) {
 
 export function getContextualGroups() {
   return [
+    {
+      id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Plaats suggesties',
+    },
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
