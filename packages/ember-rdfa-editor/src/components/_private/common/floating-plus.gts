@@ -15,9 +15,8 @@ type Args = {
   visible: boolean;
   position: 'left' | 'bottom';
 };
-export default class FloatingPlus extends Component<Args> {
-  floatingUI = floatingUI;
 
+export default class FloatingPlus extends Component<Args> {
   get controller() {
     return this.args.controller;
   }
@@ -62,6 +61,7 @@ export default class FloatingPlus extends Component<Args> {
     };
     return virtualElement;
   }
+
   get tooltipMiddleWare(): Middleware[] {
     return [
       offset(-10),
@@ -71,11 +71,12 @@ export default class FloatingPlus extends Component<Args> {
       hide({ strategy: 'escaped' }),
     ];
   }
+
   <template>
     {{! @glint-nocheck: not typesafe yet }}
     {{#if this.visible}}
       <div
-        {{this.floatingUI
+        {{floatingUI
           referenceElement=this.referenceElement
           placement=this.position
           middleware=this.tooltipMiddleWare

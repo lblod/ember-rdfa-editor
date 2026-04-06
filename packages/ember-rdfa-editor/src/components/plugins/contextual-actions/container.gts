@@ -35,7 +35,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @tracked showActions = false;
 
   setUpListeners = modifier(() => {
-    const handleMouseDown = () => {
+    const handleMousedown = () => {
       if (this.showActions) {
         this.showActions = false;
       }
@@ -46,10 +46,10 @@ export default class ContextualActionsContainer extends Component<Args> {
       }
     };
     const viewDom = this.controller.mainEditorView.dom;
-    viewDom.addEventListener('mousedown', handleMouseDown);
+    viewDom.addEventListener('mousedown', handleMousedown);
     document.addEventListener('keydown', handleKeydown);
     return () => {
-      viewDom.removeEventListener('mousedown', handleMouseDown);
+      viewDom.removeEventListener('mousedown', handleMousedown);
       document.removeEventListener('keydown', handleKeydown);
     };
   });

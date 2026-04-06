@@ -19,9 +19,6 @@ import { fn } from '@ember/helper';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
-import autoFocus from '#root/modifiers/auto-focus.ts';
-import { tracked } from '@glimmer/tracking';
 import { modifier } from 'ember-modifier';
 
 type Args = {
@@ -35,8 +32,6 @@ type Args = {
 };
 
 export default class ContextualActionsMenu extends Component<Args> {
-  @tracked searchQuery: string | null = null;
-
   get groupedActions() {
     return this.args.groups
       ?.map((group) => ({
@@ -102,11 +97,6 @@ export default class ContextualActionsMenu extends Component<Args> {
     ];
   }
 
-  setSearchQuery = (event: InputEvent) => {
-    const searchQuery = (event.target as HTMLInputElement)?.value;
-    this.searchQuery = searchQuery;
-  };
-
   // This can be removed once the `:sticky` selector becomes supported
   observeSticky = modifier((element: HTMLElement) => {
     const sentinel = element.previousElementSibling as HTMLElement;
@@ -154,22 +144,6 @@ export default class ContextualActionsMenu extends Component<Args> {
           <AuLoader>{{t
               "ember-rdfa-editor.contextual-actions.loading-actions"
             }}</AuLoader>
-        </div>
-      {{/if}}
-      {{#if @enableSearch}}
-        <div
-          class="au-u-padding-top-tiny au-u-padding-left-tiny au-u-padding-right-tiny"
-        >
-          <AuInput
-            {{on "input" this.setSearchQuery}}
-            value={{this.searchQuery}}
-            {{autoFocus}}
-            placeholder={{t
-              "ember-rdfa-editor.contextual-actions.type-to-search"
-            }}
-            @width="block"
-            @icon="search"
-          />
         </div>
       {{/if}}
       <div class="say-contextual-actions-menu-entries-container">
