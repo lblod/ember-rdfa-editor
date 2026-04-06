@@ -414,7 +414,7 @@
       "./components/index.js": "./dist/_app_/components/index.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
-      "./components/plugins/contextual-actions/floating-plus-button.js": "./dist/_app_/components/plugins/contextual-actions/floating-plus-button.js",
+      "./components/plugins/contextual-actions/container.js": "./dist/_app_/components/plugins/contextual-actions/container.js",
       "./components/plugins/formatting/formatting-toggle.js": "./dist/_app_/components/plugins/formatting/formatting-toggle.js",
       "./components/plugins/heading/heading-menu.js": "./dist/_app_/components/plugins/heading/heading-menu.js",
       "./components/plugins/history/redo.js": "./dist/_app_/components/plugins/history/redo.js",

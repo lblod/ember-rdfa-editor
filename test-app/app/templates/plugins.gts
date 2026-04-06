@@ -83,7 +83,7 @@ import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
-import FloatingPlusButton from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/floating-plus-button';
+import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container';
 import {
   getContextualActions,
   getContextualGroups,
@@ -242,7 +242,7 @@ export default class extends Component {
             />
 
             {{#if this.rdfaEditor}}
-              <FloatingPlusButton
+              <ContextualActionsContainer
                 @controller={{this.rdfaEditor}}
                 @getActions={{this.contextualActionGetters}}
                 @getGroups={{this.contextualGroupGetters}}

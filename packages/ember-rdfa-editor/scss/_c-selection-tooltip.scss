@@ -6,4 +6,5 @@ $say-selection-tooltip-background: var(--au-gray-100) !default;
   background: $say-selection-tooltip-background;
   border: 0.1rem solid var(--au-gray-300);
   border-radius: 0.5rem;
+  overflow: hidden;
 }

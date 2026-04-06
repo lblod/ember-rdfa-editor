@@ -15,7 +15,7 @@ type Args = {
   visible: boolean;
   position: 'left' | 'bottom';
 };
-export default class SelectionTooltip extends Component<Args> {
+export default class FloatingPlus extends Component<Args> {
   floatingUI = floatingUI;
 
   get controller() {
