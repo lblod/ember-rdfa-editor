@@ -119,3 +119,7 @@ ember-rdfa-editor:
           label: Annuleren
   property-editor:
     external-node: Externe node
+  contextual-actions:
+    no-actions-found: Geen acties gevonden
+    type-to-search: Typ om te zoeken…
+    loading-actions: Acties aan het laden…

@@ -458,6 +458,7 @@
       "./helpers/set.js": "./dist/_app_/helpers/set.js",
       "./modifiers/_private/code-mirror.js": "./dist/_app_/modifiers/_private/code-mirror.js",
       "./modifiers/_private/floating-ui.js": "./dist/_app_/modifiers/_private/floating-ui.js",
+      "./modifiers/auto-focus.js": "./dist/_app_/modifiers/auto-focus.js",
       "./modifiers/leave-on-enter-key.js": "./dist/_app_/modifiers/leave-on-enter-key.js",
       "./modifiers/leave-with-arrow-keys.js": "./dist/_app_/modifiers/leave-with-arrow-keys.js"
     }

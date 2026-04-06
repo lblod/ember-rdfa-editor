@@ -90,7 +90,6 @@ export default class FloatingPlusButton extends Component<Args> {
         <ContextualActionsMenu
           @controller={{this.controller}}
           @position="bottom"
-          class="say-contextual-actions-menu"
           @getActions={{@getActions}}
           @getGroups={{@getGroups}}
           @onActionSelected={{set this "showActions" false}}

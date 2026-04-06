@@ -1,7 +1,7 @@
 import { EditorState, NodeSelection } from '@lblod/ember-rdfa-editor';
 
 export async function getContextualActions(state: EditorState) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 500));
   return [
     {
       id: 'dummy-action-1',
@@ -31,6 +31,16 @@ export async function getContextualActions(state: EditorState) {
     {
       id: 'dummy-action-5',
       label: 'Datum invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Locatie invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
+      id: 'dummy-action-5',
+      label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
   ].map((action) => {
