@@ -120,7 +120,7 @@ ember-rdfa-editor:
           label: Cancel
   property-editor:
     external-node: External node
-  contextual-actions: 
+  contextual-actions:
     no-actions-found: No actions found
     type-to-search: Type to search…
     loading-actions: Loading actions…

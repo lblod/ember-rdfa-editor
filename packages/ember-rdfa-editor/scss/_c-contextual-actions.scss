@@ -88,7 +88,6 @@
       background-color: var(--au-gray-200);
     }
 
-
     &:disabled {
       color: var(--au-gray-500);
       cursor: not-allowed;
@@ -157,21 +156,21 @@
 // TODO: Remove this temporary loader. We need a possibility to change the
 // size of the appuniversum loader, so it fits in the floating button
 .say-floating-plus-button-loader {
-    height: 100%;
-    width: 100%;
-    border: 0.2rem solid var(--au-gray-600);
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
+  height: 100%;
+  width: 100%;
+  border: 0.2rem solid var(--au-gray-600);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
 
 @keyframes rotation {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
-} 
+}

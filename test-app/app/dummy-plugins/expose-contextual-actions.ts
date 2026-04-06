@@ -4,7 +4,7 @@ import {
   Transaction,
 } from '@lblod/ember-rdfa-editor';
 
-export async function getContextualActions(state: EditorState) {
+export async function getContextualActions() {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return [
     {
