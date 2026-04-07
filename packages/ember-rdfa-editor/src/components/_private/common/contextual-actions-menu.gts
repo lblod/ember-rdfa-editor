@@ -199,7 +199,7 @@ export default class ContextualActionsMenu extends Component<Args> {
             @size="small"
             @icon="circle-info"
             @skin="info"
-            class="au-u-margin-bottom-none au-u-margin-top-tiny"
+            class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
           >{{t
               "ember-rdfa-editor.contextual-actions.no-actions-found"
             }}</AuAlert>
