@@ -37,14 +37,12 @@ import {
   Schema,
 } from 'prosemirror-model';
 import type { EditorState } from 'prosemirror-state';
-// Used for jsdocs
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { MarkSpec, NodeSpec } from 'prosemirror-model';
 
 export type NodeSerializer = (node: PNode, state: EditorState) => DOMOutputSpec;
 /**
- * Equivalent to @see {@link NodeSpec.toDOM} except a SaySerializer can pass an EditorState
- * argument, which means this function can know if this is being written to DOM or exported
+ * Equivalent to {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} except a
+ * SaySerializer can pass an EditorState argument, which means this function can know if this is
+ * being written to DOM or exported
  */
 export type SayNodeToDOM = (node: PNode, state?: EditorState) => DOMOutputSpec;
 export type MarkSerializer = (
@@ -53,8 +51,9 @@ export type MarkSerializer = (
   state: EditorState,
 ) => DOMOutputSpec;
 /**
- * Equivalent to @see {@link MarkSpec.toDOM} except a SaySerializer can pass an EditorState
- * argument, which means this function can know if this is being written to DOM or exported
+ * Equivalent to {@link https://prosemirror.net/docs/ref/#model.MarkSpec.toDOM} except a
+ * SaySerializer can pass an EditorState argument, which means this function can know if this is
+ * being written to DOM or exported
  */
 export type SayMarkToDOM = (
   mark: Mark,
