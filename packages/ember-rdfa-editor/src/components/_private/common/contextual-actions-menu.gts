@@ -144,8 +144,7 @@ export default class ContextualActionsMenu extends Component<Args> {
 
   canExecuteAction = (action: ContextualAction) => {
     if ('command' in action) {
-      const retVal = this.controller.checkCommand(action.command);
-      return retVal;
+      return this.controller.checkCommand(action.command);
     }
 
     return false;
