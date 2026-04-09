@@ -141,7 +141,7 @@ function emberComponent(
  *     </div>
  *     ```
  */
-class EmberNodeView implements NodeView {
+export class EmberNodeView implements NodeView {
   node: PNode;
   dom: Element;
   contentDOM?: HTMLElement;
@@ -344,7 +344,7 @@ interface NonAtomConfig {
   atom: false;
   /**
    * ProseMissor content expression
-   * @see {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
+   * See {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
    */
   content: string;
 }
@@ -359,7 +359,7 @@ export type EmberNodeConfig = {
   /** ProseMirror 'group' property for the created node */
   group: string;
   draggable?: boolean;
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
+  /** See {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
   /**
    * @deprecated
@@ -379,12 +379,12 @@ export type EmberNodeConfig = {
       parse?: (element: HTMLElement) => unknown;
     };
   };
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
+  /** See {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
   parseDOM?: readonly TagParseRule[];
   toDOM?: SayNodeToDOM;
   /**
    * Allows creating a serialized version based on the node itself
-   * @see {@link SayNodeSpec}
+   * See {@link SayNodeSpec}
    */
   serialize?: NodeSerializer;
   /**
@@ -509,7 +509,7 @@ export type SayNodeViewConstructor = (
 ) => NodeView;
 /**
  * Creates a constructor for EmberNodeViews according to the passed config
- * @see {@link EmberNodeView}
+ * See {@link EmberNodeView}
  */
 export function createEmberNodeView(config: EmberNodeConfig) {
   return function (controller: SayController): SayNodeViewConstructor {
