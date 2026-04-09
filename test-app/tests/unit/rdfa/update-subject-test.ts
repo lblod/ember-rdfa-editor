@@ -380,6 +380,7 @@ module('rdfa | updateSubject', (hooks) => {
           {
             rdfaNodeType: 'literal',
             __rdfaId: '5',
+            isPointer: false,
             properties: [],
             backlinks: [
               {
@@ -494,6 +495,7 @@ module('rdfa | updateSubject', (hooks) => {
             {
               rdfaNodeType: 'literal',
               __rdfaId: '5',
+              isPointer: false,
               properties: [],
               backlinks: [
                 {
@@ -640,6 +642,7 @@ module('rdfa | updateSubject', (hooks) => {
             {
               rdfaNodeType: 'literal',
               __rdfaId: '5',
+              isPointer: false,
               properties: [],
               backlinks: [
                 {
@@ -802,6 +805,7 @@ module('rdfa | updateSubject', (hooks) => {
             {
               rdfaNodeType: 'literal',
               __rdfaId: '5',
+              isPointer: false,
               properties: [],
               backlinks: [
                 {
@@ -891,6 +895,7 @@ module('rdfa | updateSubject', (hooks) => {
           {
             rdfaNodeType: 'literal',
             __rdfaId: '3',
+            isPointer: false,
             properties: [],
             backlinks: [
               {
@@ -983,6 +988,7 @@ module('rdfa | updateSubject', (hooks) => {
           {
             rdfaNodeType: 'literal',
             __rdfaId: '3',
+            isPointer: false,
             properties: [],
             backlinks: [
               {

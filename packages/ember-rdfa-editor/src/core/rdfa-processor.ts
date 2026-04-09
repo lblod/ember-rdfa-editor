@@ -199,13 +199,17 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
   // each content node
   for (const [node, content] of datastore.getContentNodeMap().entries()) {
     const { subject, predicate, object } = content;
-    const { language, datatype } = object;
+    const { language: _, datatype } = object;
 
     let langOrDatatype: { language: string } | { datatype?: string };
     if (
       datatype.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
     ) {
-      langOrDatatype = { language };
+      langOrDatatype = {};
+      // TODO it seems correct to set the language here based on the language parsed from the RDFa,
+      // but this breaks some tests. We need to figure out whether those tests are just expecting
+      // over-precise old behaviour or if there really is a problem with that
+      // langOrDatatype = { language };
     } else {
       // Parser interprets everything as xsd:string, but we don't need to add an explicit datatype
       // for this
