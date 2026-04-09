@@ -57,6 +57,14 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
             // Wrap with inline literal
             this.wrapWithInlineLiteralNode();
             break;
+          case 'p':
+            // Wrap with block pointer
+            this.wrapWithLiteralNode(true);
+            break;
+          case 'P':
+            // Wrap with inline pointer
+            this.wrapWithInlineLiteralNode(true);
+            break;
         }
       }
     };
@@ -89,16 +97,16 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   get canWrapWithInlineLiteral() {
     return this.controller?.checkCommand(wrapInlineLiteral());
   }
-  wrapWithLiteralNode = () => {
-    this.controller?.doCommand(wrapLiteral());
+  wrapWithLiteralNode = (isPointer?: boolean) => {
+    this.controller?.doCommand(wrapLiteral(isPointer));
   };
 
   wrapWithBlockResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapResource(details));
     this.closeModal();
   };
-  wrapWithInlineLiteralNode = () => {
-    this.controller?.doCommand(wrapInlineLiteral());
+  wrapWithInlineLiteralNode = (isPointer?: boolean) => {
+    this.controller?.doCommand(wrapInlineLiteral(isPointer));
   };
   wrapWithInlineResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapInlineResource(details));
@@ -122,9 +130,19 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
             @icon={{PlusIcon}}
             @skin="naked"
             @disabled={{not this.canWrapWithLiteral}}
-            {{on "click" this.wrapWithLiteralNode}}
+            {{on "click" (fn this.wrapWithLiteralNode false)}}
           >
             Wrap With Block Literal
+          </AuButton>
+        </Group>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            @disabled={{not this.canWrapWithLiteral}}
+            {{on "click" (fn this.wrapWithLiteralNode true)}}
+          >
+            Wrap With Block Pointer
           </AuButton>
         </Group>
 
@@ -142,9 +160,19 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
             @icon={{PlusIcon}}
             @skin="naked"
             @disabled={{not this.canWrapWithInlineLiteral}}
-            {{on "click" this.wrapWithInlineLiteralNode}}
+            {{on "click" (fn this.wrapWithInlineLiteralNode false)}}
           >
             Wrap With Inline Literal
+          </AuButton>
+        </Group>
+        <Group>
+          <AuButton
+            @icon={{PlusIcon}}
+            @skin="naked"
+            @disabled={{not this.canWrapWithInlineLiteral}}
+            {{on "click" (fn this.wrapWithInlineLiteralNode true)}}
+          >
+            Wrap With Inline Pointer
           </AuButton>
         </Group>
       </AuToolbar>

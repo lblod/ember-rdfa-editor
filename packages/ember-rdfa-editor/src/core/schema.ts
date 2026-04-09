@@ -93,6 +93,7 @@ const rdfaAwareAttrSpec = {
       }),
   },
   content: { default: null },
+  isPointer: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },
 };
@@ -195,6 +196,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       backlinks,
       externalTriples,
       pointed,
+      isPointer: node.dataset['isPointer'] === 'true',
     };
   } else {
     const subject = node.dataset['subject'];
@@ -326,22 +328,6 @@ export function getRdfaAttrs(
     return getClassicRdfaAttrs(node);
   }
 }
-export const rdfaDomAttrs = {
-  'data-incoming-props': { default: [] },
-  'data-outgoing-props': { default: [] },
-  'data-external-triples': { default: [] },
-  'data-subject': { default: null },
-  __rdfaId: { default: undefined },
-  'data-rdfa-node-type': { default: undefined },
-};
-
-export const sharedRdfaNodeSpec = {
-  isolating: true,
-  selectable: true,
-  editable: true,
-};
-
-type NodeOrMark = PNode | Mark;
 
 export function renderInvisibleRdfa(
   { renderable, rdfaContainerTag, rdfaContainerAttrs }: RdfaRenderInvisibleArgs,
@@ -565,6 +551,7 @@ export function renderRdfaAttrs(
       content: rdfaAttrs.content ?? null,
       'data-say-id': rdfaAttrs.__rdfaId,
       'data-literal-node': 'true',
+      'data-is-pointer': rdfaAttrs.isPointer ? 'true' : 'false',
       ...datatypeAndLanguage,
     };
 
@@ -572,8 +559,14 @@ export function renderRdfaAttrs(
       return baseAttrs;
     }
 
-    if (datatypeAndLanguage['datatype'] || datatypeAndLanguage['lang']) {
-      // This pointer node points to it's own content as a literal
+    if (
+      datatypeAndLanguage['datatype'] ||
+      datatypeAndLanguage['lang'] ||
+      !rdfaAttrs.isPointer
+    ) {
+      // This pointer node points to it's own content as a literal.
+      // While a literal node need not have a datatype or language, if it does, it has to point at
+      // it's contents.
       return {
         about: backlink.subject.value,
         property: backlink.predicate,
@@ -583,6 +576,7 @@ export function renderRdfaAttrs(
       return {
         'data-pointer-backlink': backlink.subject.value,
         'data-pointer-predicate': backlink.predicate,
+        'data-is-pointer': 'true',
         ...baseAttrs,
       };
     }
@@ -595,7 +589,7 @@ export interface RenderContentArgs {
   content: DOMOutputSpec;
 }
 export type RdfaRenderInvisibleArgs = {
-  renderable: NodeOrMark;
+  renderable: PNode | Mark;
   rdfaContainerTag: string;
   rdfaContainerAttrs?: Record<string, unknown>;
 };

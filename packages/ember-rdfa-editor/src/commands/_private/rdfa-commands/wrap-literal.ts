@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { wrapIncludingParents } from '#root/commands/index.ts';
 import { findRdfaIdsInSelection } from '#root/utils/rdfa-utils.ts';
 
-export function wrapLiteral(): Command {
+export function wrapLiteral(isPointer?: boolean): Command {
   return (state, dispatch) => {
     const childRdfaIds = findRdfaIdsInSelection(state.selection);
     if (childRdfaIds.size !== 0) {
@@ -20,6 +20,7 @@ export function wrapLiteral(): Command {
         {
           __rdfaId: objectId,
           rdfaNodeType: 'literal',
+          isPointer: isPointer ? 'true' : 'false',
         },
       )(state, dispatch);
 
