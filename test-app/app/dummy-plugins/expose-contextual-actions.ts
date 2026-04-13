@@ -1,89 +1,75 @@
 import {
   EditorState,
-  NodeSelection,
+  TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function getContextualActions() {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return [
     {
-      id: 'dummy-action-1',
       label: 'Op het kruispunt van de … met de … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-2',
       label: 'Op alle wegen die uitkomen op … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-3',
       label: 'Op de … ter hoogte van … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-4',
       label: 'Op het kruispunt van de … met de … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-5',
       label: 'Op … vanaf … tot … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-5',
       label: 'Datum invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: '11/02/2027',
     },
     {
-      id: 'dummy-action-5',
       label: 'Locatie invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       description: 'Voeg een locatie in',
     },
     {
-      id: 'dummy-action-5',
       label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: 'MAR12',
       description: 'Voeg een marcode in',
     },
     {
-      id: 'dummy-action-1',
       label: 'Pelikaanstraat',
       group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-2',
       label: 'Tarbotstraat',
       group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-3',
       label: 'Tolhuiskaai',
       group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-4',
       label: 'Veldstraat',
       group: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-5',
       label: 'Op … vanaf … tot … geldt',
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
-      id: 'dummy-action-2',
       label: 'Markt 17, 9230 Wetteren',
       group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       priority: 2,
     },
     {
-      id: 'dummy-action-3',
       label: 'Perceel 44A, 9000 Aalst',
       group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       priority: 9,
@@ -91,6 +77,7 @@ export async function getContextualActions() {
   ].map((action) => {
     return {
       ...action,
+      id: uuidv4(),
       command: (
         state: EditorState,
         dispatch?: (transaction: Transaction) => void,
@@ -100,12 +87,9 @@ export async function getContextualActions() {
           tr.replaceSelectionWith(
             state.schema.text(action.insert ?? action.label),
           );
-          if (tr.selection.$anchor.nodeBefore) {
-            const resolvedPos = tr.doc.resolve(
-              tr.selection.anchor - tr.selection.$anchor.nodeBefore?.nodeSize,
-            );
-            tr.setSelection(new NodeSelection(resolvedPos));
-          }
+          tr.setSelection(
+            new TextSelection(tr.selection.$from, tr.selection.$from),
+          );
           dispatch(tr);
         }
         return true;
