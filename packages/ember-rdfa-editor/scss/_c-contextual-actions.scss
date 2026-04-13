@@ -83,7 +83,8 @@
     font-family: "flanders-sans";
     font-size: var(--au-global-font-size);
 
-    &:hover {
+    &:hover,
+    &.focused-menu-entry {
       color: var(--au-gray-900);
       background-color: var(--au-gray-200);
     }

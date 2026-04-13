@@ -88,11 +88,15 @@ import {
   getContextualActions,
   getContextualGroups,
 } from 'test-app/dummy-plugins/expose-contextual-actions';
+import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
+import { service } from '@ember/service';
+import type IntlService from 'ember-intl/services/intl';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
 
 export default class extends Component {
+  @service declare intl: IntlService;
   @tracked sidebarExpanded: boolean = DEFAULT_SIDEBAR_EXPANDED;
 
   loadConfig = modifier(() => {
@@ -201,6 +205,7 @@ export default class extends Component {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
+    slashCommandsPlugin({ intl: this.intl }),
   ];
 
   @action

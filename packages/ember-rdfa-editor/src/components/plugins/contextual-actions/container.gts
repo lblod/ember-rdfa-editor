@@ -14,7 +14,9 @@ import {
   type ContextualActionGroup,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
-import { task } from 'ember-concurrency';
+import { didCancel, task } from 'ember-concurrency';
+import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
+import { not } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
@@ -34,15 +36,45 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked showActions = false;
 
+  @tracked selectedActionIndex = 0;
+
   setUpListeners = modifier(() => {
     const handleMousedown = () => {
       if (this.showActions) {
         this.showActions = false;
+        if (this.slashCommandsPluginState) {
+          // TODO dispatch a transaction for this!
+          this.slashCommandsPluginState.shouldOpenContextActions = false;
+        }
+        console.log('false in mousedown');
       }
     };
     const handleKeydown = (event: KeyboardEvent) => {
-      if (this.showActions && event.key === 'Escape') {
+      if (event.key === 'ArrowDown' || event.key === 'Down') {
+        event.preventDefault();
+        // TODO move this logic to the contextualmenu component
+        this.selectedActionIndex += 1;
+      }
+      if (event.key === 'ArrowUp' || event.key === 'Up') {
+        event.preventDefault();
+        if (this.selectedActionIndex > 0) {
+          this.selectedActionIndex -= 1;
+        }
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'Left') {
+        // event.preventDefault();
+      }
+      if (event.key === 'ArrowRight' || event.key === 'Right') {
+        // event.preventDefault();
+      }
+      if (event.key === 'Escape') {
         this.showActions = false;
+        if (this.slashCommandsPluginState) {
+          // TODO this is probably very bad practice because plugins should be immutable?
+          // Might be better to move this to the plugin logic
+          this.slashCommandsPluginState.shouldOpenContextActions = false;
+        }
+        console.log('false in keydown');
       }
     };
     const viewDom = this.controller.mainEditorView.dom;
@@ -58,11 +90,14 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.args.controller;
   }
 
-  get visible() {
-    return !this.showActions;
-  }
-
   loadAndShowActions = task(async () => {
+    await this.loadActions.perform();
+    this.showActions = true;
+  });
+
+  loadActions = task({ restartable: true }, async () => {
+    this.actions = [];
+    this.groups = [];
     const getGroups = this.args.getGroups ?? [];
     const getActions = this.args.getActions ?? [];
     const editorState = this.controller.mainEditorState;
@@ -77,11 +112,15 @@ export default class ContextualActionsContainer extends Component<Args> {
     ]);
     this.groups = groups;
     this.actions = actions;
-    this.showActions = true;
   });
 
   @action
   executeAction(action: ContextualAction) {
+    if (this.slashCommandsPluginState?.latestState) {
+      this.controller.mainEditorView.updateState(
+        this.slashCommandsPluginState.latestState,
+      );
+    }
     if ('command' in action) {
       this.controller.focus();
       this.controller.doCommand(action.command);
@@ -94,12 +133,44 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.showActions = false;
   }
 
+  trackSlashCommandsPluginState = modifier(() => {
+    const shouldOpen =
+      this.slashCommandsPluginState?.shouldOpenContextActions ?? false;
+    if (shouldOpen) {
+      console.log(
+        `shouldloadplugins: ${this.slashCommandsPluginState?.shouldOpenContextActions}`,
+      );
+      console.log('modifier loaded the actions');
+      this.loadActions.perform().catch((err) => {
+        if (!didCancel(err)) return console.error(err);
+      });
+      this.showActions = true;
+    } else {
+      this.loadActions.cancelAll().catch((err) => console.error(err));
+      this.showActions = false;
+    }
+    return () => {
+      console.log('component was destroyed')
+    }
+  });
+
+  get slashCommandsPluginState() {
+    return getSlashCommandsPluginState(this.controller.mainEditorState);
+  }
+
+  get showContextMenu() {
+    return (
+      this.showActions ||
+      this.slashCommandsPluginState?.shouldOpenContextActions
+    );
+  }
+
   <template>
     {{! @glint-nocheck: not typesafe yet }}
-    <div>
+    <div {{this.trackSlashCommandsPluginState}}>
       <FloatingPlus
         @controller={{this.controller}}
-        @visible={{this.visible}}
+        @visible={{not this.showContextMenu}}
         @position="left"
         class="say-floating-plus"
       >
@@ -119,18 +190,19 @@ export default class ContextualActionsContainer extends Component<Args> {
           {{/if}}
         </div>
       </FloatingPlus>
+      {{#if this.showContextMenu}}
+        <div {{this.setUpListeners}}>
+          <ContextualActionsMenu
+            @controller={{this.controller}}
+            @position="bottom"
+            @actions={{this.actions}}
+            @groups={{this.groups}}
+            @onActionSelected={{this.selectAction}}
+            @isLoading={{this.loadActions.isRunning}}
+            @selectedActionIndex={{this.selectedActionIndex}}
+          />
+        </div>
+      {{/if}}
     </div>
-    {{#if this.showActions}}
-      <div {{this.setUpListeners}}>
-        <ContextualActionsMenu
-          @controller={{this.controller}}
-          @position="bottom"
-          @actions={{this.actions}}
-          @groups={{this.groups}}
-          @onActionSelected={{this.selectAction}}
-          @isLoading={{this.loadAndShowActions.isRunning}}
-        />
-      </div>
-    {{/if}}
   </template>
 }

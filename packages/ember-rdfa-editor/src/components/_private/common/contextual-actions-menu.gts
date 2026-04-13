@@ -29,6 +29,7 @@ type Args = {
   onActionSelected?: (action: ContextualAction) => void;
   onClose?: () => void;
   isLoading?: boolean;
+  selectedActionIndex?: number;
 };
 
 function sortByPriority(
@@ -150,6 +151,22 @@ export default class ContextualActionsMenu extends Component<Args> {
     return false;
   };
 
+  actionIsFocused = (action: ContextualAction) => {
+    if (!this.groupedActions) return false;
+
+    let actionIndex = 0;
+    for (const group of this.groupedActions) {
+      for (const actionB of group.actions) {
+        if (action.id === actionB.id) {
+          return actionIndex === this.args.selectedActionIndex;
+        }
+        actionIndex += 1;
+      }
+    }
+
+    return true;
+  };
+
   <template>
     <div
       {{floatingUI
@@ -168,42 +185,47 @@ export default class ContextualActionsMenu extends Component<Args> {
               "ember-rdfa-editor.contextual-actions.loading-actions"
             }}</AuLoader>
         </div>
+      {{else}}
+        <div class="say-contextual-actions-menu-entries-container">
+          {{#each this.groupedActions as |group|}}
+            <div class="say-contextual-actions-menu-group-wrapper">
+              <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+              <div
+                class="say-contextual-actions-menu-group-header au-u-muted"
+                {{this.observeSticky}}
+              >
+                {{group.label}}
+              </div>
+              <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
+                {{#each group.actions as |actionItem|}}
+                  <button
+                    disabled={{not this.canExecuteAction actionItem}}
+                    {{on "click" (fn this.selectAction actionItem)}}
+                    class="say-contextual-actions-menu-entry au-u-text-left
+                      {{if
+                        (this.actionIsFocused actionItem)
+                        'focused-menu-entry'
+                      }}"
+                    type="button"
+                    title={{actionItem.description}}
+                  >
+                    <span>{{actionItem.label}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          {{else}}
+            <AuAlert
+              @size="small"
+              @icon="circle-info"
+              @skin="info"
+              class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+            >{{t
+                "ember-rdfa-editor.contextual-actions.no-actions-found"
+              }}</AuAlert>
+          {{/each}}
+        </div>
       {{/if}}
-      <div class="say-contextual-actions-menu-entries-container">
-        {{#each this.groupedActions as |group|}}
-          <div class="say-contextual-actions-menu-group-wrapper">
-            <div class="say-contextual-actions-menu-group-sticky-sentinel" />
-            <div
-              class="say-contextual-actions-menu-group-header au-u-muted"
-              {{this.observeSticky}}
-            >
-              {{group.label}}
-            </div>
-            <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
-              {{#each group.actions as |actionItem|}}
-                <button
-                  disabled={{not this.canExecuteAction actionItem}}
-                  {{on "click" (fn this.selectAction actionItem)}}
-                  class="say-contextual-actions-menu-entry au-u-text-left"
-                  type="button"
-                  title={{actionItem.description}}
-                >
-                  <span>{{actionItem.label}}</span>
-                </button>
-              {{/each}}
-            </div>
-          </div>
-        {{else}}
-          <AuAlert
-            @size="small"
-            @icon="circle-info"
-            @skin="info"
-            class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
-          >{{t
-              "ember-rdfa-editor.contextual-actions.no-actions-found"
-            }}</AuAlert>
-        {{/each}}
-      </div>
     </div>
   </template>
 }
