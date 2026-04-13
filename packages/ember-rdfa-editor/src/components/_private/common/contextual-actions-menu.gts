@@ -118,14 +118,6 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onActionSelected?.(action);
   };
 
-  canExecuteAction = (action: ContextualAction) => {
-    if ('command' in action) {
-      return this.controller.checkCommand(action.command);
-    }
-
-    return false;
-  };
-
   <template>
     <div
       {{floatingUI
@@ -158,7 +150,6 @@ export default class ContextualActionsMenu extends Component<Args> {
             <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
               {{#each group.actions as |actionItem|}}
                 <button
-                  disabled={{not this.canExecuteAction actionItem}}
                   {{on "click" (fn this.selectAction actionItem)}}
                   class="say-contextual-actions-menu-entry au-u-text-left"
                   type="button"
