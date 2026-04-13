@@ -1,5 +1,4 @@
 import {
-  type VirtualElement,
   flip,
   hide,
   offset,
@@ -9,6 +8,7 @@ import {
 import Component from '@glimmer/component';
 import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 import type SayController from '#root/core/say-controller.ts';
+import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 
 type Args = {
   controller: SayController;
@@ -30,36 +30,13 @@ export default class FloatingPlus extends Component<Args> {
   }
 
   get referenceElement() {
-    const { selection } = this.controller.mainEditorState;
-    const virtualElement: VirtualElement = {
-      getBoundingClientRect: () => {
-        const coordsFrom = this.controller.mainEditorView.coordsAtPos(
-          selection.from,
-          -1,
-        );
-        const coordsTo = this.controller.mainEditorView.coordsAtPos(
-          selection.to,
-          -1,
-        );
-        const left =
-          this.controller.mainEditorView.dom.getBoundingClientRect().left;
-        const right = (coordsFrom.right + coordsTo.right) / 2;
-        const bottom = coordsTo.bottom;
-        const top = coordsFrom.top;
-        return {
-          left,
-          right,
-          bottom,
-          top,
-          x: left,
-          y: top,
-          width: 0,
-          height: bottom - top,
-        };
-      },
-      contextElement: this.controller.mainEditorView.dom,
-    };
-    return virtualElement;
+    const editorState = this.controller.mainEditorState;
+    const editorView = this.controller.mainEditorView;
+    return getReferenceElementFromSelection({
+      editorState,
+      editorView,
+      getLeft: () => editorView.dom.getBoundingClientRect().left,
+    });
   }
 
   get tooltipMiddleWare(): Middleware[] {

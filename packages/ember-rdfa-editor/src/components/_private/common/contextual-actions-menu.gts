@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import {
-  type VirtualElement,
   flip,
   hide,
   offset,
@@ -21,6 +20,7 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { not } from 'ember-truth-helpers';
+import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 
 type Args = {
   controller: SayController;
@@ -64,36 +64,12 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   get referenceElement() {
-    const { selection } = this.controller.mainEditorState;
-    const virtualElement: VirtualElement = {
-      getBoundingClientRect: () => {
-        const coordsFrom = this.controller.mainEditorView.coordsAtPos(
-          selection.from,
-          -1,
-        );
-        const coordsTo = this.controller.mainEditorView.coordsAtPos(
-          selection.to,
-          -1,
-        );
-        const left = (coordsFrom.left + coordsTo.left) / 2;
-        const right = (coordsFrom.right + coordsTo.right) / 2;
-        const bottom = coordsTo.bottom;
-        const top = coordsFrom.top;
-        return {
-          left,
-          right,
-          bottom,
-          top,
-          x: left,
-          y: top,
-          width: 0,
-          height: bottom - top,
-        };
-      },
-      contextElement: this.controller.mainEditorView.dom,
-    };
-    return virtualElement;
+    return getReferenceElementFromSelection({
+      editorState: this.controller.mainEditorState,
+      editorView: this.controller.mainEditorView,
+    });
   }
+
   get tooltipMiddleWare(): Middleware[] {
     return [
       offset(10),
