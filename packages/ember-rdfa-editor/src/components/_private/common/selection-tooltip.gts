@@ -10,14 +10,18 @@ import Component from '@glimmer/component';
 import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 import type SayController from '#root/core/say-controller.ts';
 
-type Args = {
-  controller: SayController;
-  visible: boolean;
-  position: 'left' | 'bottom';
+type Signature = {
+  Args: {
+    controller: SayController;
+    visible: boolean;
+    position: 'left' | 'bottom';
+  };
+  Blocks: {
+    default: [];
+  };
 };
-export default class SelectionTooltip extends Component<Args> {
-  floatingUI = floatingUI;
 
+export default class SelectionTooltip extends Component<Signature> {
   get controller() {
     return this.args.controller;
   }
@@ -71,10 +75,9 @@ export default class SelectionTooltip extends Component<Args> {
     ];
   }
   <template>
-    {{! @glint-nocheck: not typesafe yet }}
     {{#if this.visible}}
       <div
-        {{this.floatingUI
+        {{floatingUI
           referenceElement=this.referenceElement
           placement=this.position
           middleware=this.tooltipMiddleWare

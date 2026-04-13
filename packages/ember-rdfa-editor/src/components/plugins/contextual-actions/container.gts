@@ -95,13 +95,10 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   <template>
-    {{! @glint-nocheck: not typesafe yet }}
     <div>
       <FloatingPlus
         @controller={{this.controller}}
         @visible={{this.visible}}
-        @position="left"
-        class="say-floating-plus"
       >
         <div class="say-floating-plus-content">
           {{#if this.loadAndShowActions.isRunning}}
@@ -124,7 +121,6 @@ export default class ContextualActionsContainer extends Component<Args> {
       <div {{this.setUpListeners}}>
         <ContextualActionsMenu
           @controller={{this.controller}}
-          @position="bottom"
           @actions={{this.actions}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}

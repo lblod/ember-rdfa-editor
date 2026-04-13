@@ -1,32 +1,26 @@
-import {
-  flip,
-  hide,
-  offset,
-  shift,
-  type Middleware,
-} from '@floating-ui/dom';
+import { flip, hide, offset, shift, type Middleware } from '@floating-ui/dom';
 import Component from '@glimmer/component';
 import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 
-type Args = {
-  controller: SayController;
-  visible: boolean;
-  position: 'left' | 'bottom';
+type Signature = {
+  Args: {
+    controller: SayController;
+    visible: boolean;
+  };
+  Blocks: {
+    default: [];
+  };
 };
 
-export default class FloatingPlus extends Component<Args> {
+export default class FloatingPlus extends Component<Signature> {
   get controller() {
     return this.args.controller;
   }
 
   get visible() {
     return this.args.visible;
-  }
-
-  get position() {
-    return this.args.position ?? 'bottom';
   }
 
   get referenceElement() {
@@ -50,17 +44,16 @@ export default class FloatingPlus extends Component<Args> {
   }
 
   <template>
-    {{! @glint-nocheck: not typesafe yet }}
     {{#if this.visible}}
       <div
         {{floatingUI
           referenceElement=this.referenceElement
-          placement=this.position
+          placement="left"
           middleware=this.tooltipMiddleWare
           strategy="fixed"
           useTransform=true
         }}
-        ...attributes
+        class="say-floating-plus"
       >
         {{yield}}
       </div>
