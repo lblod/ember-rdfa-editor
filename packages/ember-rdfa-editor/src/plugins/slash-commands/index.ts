@@ -1,6 +1,7 @@
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
 import type IntlService from 'ember-intl/services/intl';
+import type { GetContextualActionGroups } from '../contextual-actions';
 
 type PluginState = {
   shouldOpenContextActions: boolean;
@@ -11,7 +12,12 @@ export const slashCommandsPluginKey = new PluginKey<PluginState>(
   'SLASH_COMMANDS',
 );
 
-function shouldShowPlaceholder(state: EditorState) {
+function shouldShowPlaceholder(
+  state: EditorState,
+  getGroups: GetContextualActionGroups,
+) {
+  const groups = getGroups.flatMap((getGroups) => getGroups(state));
+  if (groups.length === 0) return false;
   const { selection } = state;
   // Should be a single cursor
   if (!selection.empty) return false;
@@ -42,9 +48,10 @@ function shouldShowPlaceholder(state: EditorState) {
 
 interface SlashCommandsPluginArgs {
   intl: IntlService;
+  getGroups: GetContextualActionGroups;
 }
 
-function keepOpenContextActions(state: EditorState, transaction: Transaction) {
+function keepOpenContextActions(state: EditorState) {
   const { parent, parentOffset } = state.selection.$from;
   const textBetween = parent.textBetween(
     parentOffset - 1,
@@ -74,7 +81,7 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
         }
         if (!tr.getMeta('SLASH_TYPED')) return { ...pluginState };
         console.log('slash typed');
-        if (shouldShowPlaceholder(oldState)) {
+        if (shouldShowPlaceholder(oldState, options.getGroups)) {
           return { latestState: oldState, shouldOpenContextActions: true };
         }
         return { ...pluginState, shouldOpenContextActions: false };
@@ -90,7 +97,7 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
       },
       decorations(state: EditorState) {
         const { doc, selection } = state;
-        if (!shouldShowPlaceholder(state)) {
+        if (!shouldShowPlaceholder(state, options.getGroups)) {
           return null;
         }
         return DecorationSet.create(doc, [

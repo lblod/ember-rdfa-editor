@@ -11,7 +11,8 @@ import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
   type ContextualAction,
-  type ContextualActionGroup,
+  type GetContextualActionGroups,
+  type GetContextualActions,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
 import { didCancel, task } from 'ember-concurrency';
@@ -19,10 +20,8 @@ import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.
 
 type Args = {
   controller: SayController;
-  getActions?: ((
-    state: EditorState,
-  ) => ContextualAction[] | Promise<ContextualAction[]>)[];
-  getGroups?: ((state: EditorState) => ContextualActionGroup[])[];
+  getActions?: GetContextualActions;
+  getGroups?: GetContextualActionGroups;
 };
 
 export default class ContextualActionsContainer extends Component<Args> {

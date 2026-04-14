@@ -188,6 +188,10 @@ export default class extends Component {
       sample_block: sampleBlockView(proseController),
     };
   };
+
+  contextualActionGetters = [getContextualActions];
+  contextualGroupGetters = [getContextualGroups];
+
   @tracked plugins: PluginConfig = [
     firefoxCursorFix(),
     chromeHacksPlugin(),
@@ -205,7 +209,10 @@ export default class extends Component {
       ],
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
-    slashCommandsPlugin({ intl: this.intl }),
+    slashCommandsPlugin({
+      intl: this.intl,
+      getGroups: this.contextualGroupGetters,
+    }),
   ];
 
   @action
@@ -221,9 +228,6 @@ export default class extends Component {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
-
-  contextualActionGetters = [getContextualActions];
-  contextualGroupGetters = [getContextualGroups];
 
   <template>
     <DummyContainer {{this.loadConfig}}>
