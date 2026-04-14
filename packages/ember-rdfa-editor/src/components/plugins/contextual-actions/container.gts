@@ -16,27 +16,26 @@ import {
 import { action } from '@ember/object';
 import { didCancel, task } from 'ember-concurrency';
 import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
-import { not } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
   getActions?: ((
     state: EditorState,
   ) => ContextualAction[] | Promise<ContextualAction[]>)[];
-  getGroups?: ((
-    state: EditorState,
-  ) => ContextualActionGroup[] | Promise<ContextualActionGroup[]>)[];
+  getGroups?: ((state: EditorState) => ContextualActionGroup[])[];
 };
 
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
-  @tracked groups: ContextualActionGroup[] = [];
   @tracked actions: ContextualAction[] = [];
 
   @tracked showActions = false;
 
-  @tracked selectedActionIndex = 0;
+  get groups() {
+    const state = this.controller.mainEditorState;
+    return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
+  }
 
   setUpListeners = modifier(() => {
     const handleMousedown = () => {
@@ -52,14 +51,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowDown' || event.key === 'Down') {
         event.preventDefault();
-        // TODO move this logic to the contextualmenu component
-        this.selectedActionIndex += 1;
       }
       if (event.key === 'ArrowUp' || event.key === 'Up') {
         event.preventDefault();
-        if (this.selectedActionIndex > 0) {
-          this.selectedActionIndex -= 1;
-        }
       }
       if (event.key === 'ArrowLeft' || event.key === 'Left') {
         // event.preventDefault();
@@ -95,22 +89,19 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.showActions = true;
   });
 
+  get visible() {
+    return this.groups.length > 0 && !this.showActions;
+  }
+
   loadActions = task({ restartable: true }, async () => {
     this.actions = [];
-    this.groups = [];
-    const getGroups = this.args.getGroups ?? [];
     const getActions = this.args.getActions ?? [];
     const editorState = this.controller.mainEditorState;
 
-    const [groups, actions] = await Promise.all([
-      (await Promise.all(getGroups.map((cb) => cb(editorState)))).flatMap(
-        (x) => x,
-      ),
-      (await Promise.all(getActions.map((cb) => cb(editorState)))).flatMap(
-        (x) => x,
-      ),
-    ]);
-    this.groups = groups;
+    const actions = (
+      await Promise.all(getActions.map((cb) => cb(editorState)))
+    ).flatMap((x) => x);
+
     this.actions = actions;
   });
 
@@ -150,8 +141,8 @@ export default class ContextualActionsContainer extends Component<Args> {
       this.showActions = false;
     }
     return () => {
-      console.log('component was destroyed')
-    }
+      console.log('component was destroyed');
+    };
   });
 
   get slashCommandsPluginState() {
@@ -166,14 +157,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   <template>
-    {{! @glint-nocheck: not typesafe yet }}
     <div {{this.trackSlashCommandsPluginState}}>
-      <FloatingPlus
-        @controller={{this.controller}}
-        @visible={{not this.showContextMenu}}
-        @position="left"
-        class="say-floating-plus"
-      >
+      <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
         <div class="say-floating-plus-content">
           {{#if this.loadAndShowActions.isRunning}}
             <div class="au-u-padding-tiny au-u-1-1">
@@ -194,12 +179,10 @@ export default class ContextualActionsContainer extends Component<Args> {
         <div {{this.setUpListeners}}>
           <ContextualActionsMenu
             @controller={{this.controller}}
-            @position="bottom"
             @actions={{this.actions}}
             @groups={{this.groups}}
             @onActionSelected={{this.selectAction}}
             @isLoading={{this.loadActions.isRunning}}
-            @selectedActionIndex={{this.selectedActionIndex}}
           />
         </div>
       {{/if}}

@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import {
-  type VirtualElement,
   flip,
   hide,
   offset,
@@ -21,6 +20,7 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { not } from 'ember-truth-helpers';
+import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 
 type Args = {
   controller: SayController;
@@ -29,19 +29,14 @@ type Args = {
   onActionSelected?: (action: ContextualAction) => void;
   onClose?: () => void;
   isLoading?: boolean;
-  selectedActionIndex?: number;
 };
 
 function sortByPriority(
   itemA: { priority?: number },
   itemB: { priority?: number },
 ) {
-  if (!itemB.priority) {
-    return -1;
-  }
-  if (!itemA.priority) {
-    return 1;
-  }
+  if (!itemB.priority) return -1;
+  if (!itemA.priority) return 1;
 
   return itemB.priority - itemA.priority;
 }
@@ -65,36 +60,12 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   get referenceElement() {
-    const { selection } = this.controller.mainEditorState;
-    const virtualElement: VirtualElement = {
-      getBoundingClientRect: () => {
-        const coordsFrom = this.controller.mainEditorView.coordsAtPos(
-          selection.from,
-          -1,
-        );
-        const coordsTo = this.controller.mainEditorView.coordsAtPos(
-          selection.to,
-          -1,
-        );
-        const left = (coordsFrom.left + coordsTo.left) / 2;
-        const right = (coordsFrom.right + coordsTo.right) / 2;
-        const bottom = coordsTo.bottom;
-        const top = coordsFrom.top;
-        return {
-          left,
-          right,
-          bottom,
-          top,
-          x: left,
-          y: top,
-          width: 0,
-          height: bottom - top,
-        };
-      },
-      contextElement: this.controller.mainEditorView.dom,
-    };
-    return virtualElement;
+    return getReferenceElementFromSelection({
+      editorState: this.controller.mainEditorState,
+      editorView: this.controller.mainEditorView,
+    });
   }
+
   get tooltipMiddleWare(): Middleware[] {
     return [
       offset(10),
@@ -143,30 +114,6 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onActionSelected?.(action);
   };
 
-  canExecuteAction = (action: ContextualAction) => {
-    if ('command' in action) {
-      return this.controller.checkCommand(action.command);
-    }
-
-    return false;
-  };
-
-  actionIsFocused = (action: ContextualAction) => {
-    if (!this.groupedActions) return false;
-
-    let actionIndex = 0;
-    for (const group of this.groupedActions) {
-      for (const actionB of group.actions) {
-        if (action.id === actionB.id) {
-          return actionIndex === this.args.selectedActionIndex;
-        }
-        actionIndex += 1;
-      }
-    }
-
-    return true;
-  };
-
   <template>
     <div
       {{floatingUI
@@ -177,7 +124,6 @@ export default class ContextualActionsMenu extends Component<Args> {
         useTransform=false
       }}
       class="say-contextual-actions-menu"
-      ...attributes
     >
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
@@ -199,13 +145,8 @@ export default class ContextualActionsMenu extends Component<Args> {
               <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
                 {{#each group.actions as |actionItem|}}
                   <button
-                    disabled={{not this.canExecuteAction actionItem}}
                     {{on "click" (fn this.selectAction actionItem)}}
-                    class="say-contextual-actions-menu-entry au-u-text-left
-                      {{if
-                        (this.actionIsFocused actionItem)
-                        'focused-menu-entry'
-                      }}"
+                    class="say-contextual-actions-menu-entry au-u-text-left"
                     type="button"
                     title={{actionItem.description}}
                   >
