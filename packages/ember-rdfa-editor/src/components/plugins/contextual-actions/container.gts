@@ -21,18 +21,20 @@ type Args = {
   getActions?: ((
     state: EditorState,
   ) => ContextualAction[] | Promise<ContextualAction[]>)[];
-  getGroups?: ((
-    state: EditorState,
-  ) => ContextualActionGroup[] | Promise<ContextualActionGroup[]>)[];
+  getGroups?: ((state: EditorState) => ContextualActionGroup[])[];
 };
 
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
-  @tracked groups: ContextualActionGroup[] = [];
   @tracked actions: ContextualAction[] = [];
 
   @tracked showActions = false;
+
+  get groups() {
+    const state = this.controller.mainEditorState;
+    return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
+  }
 
   setUpListeners = modifier(() => {
     const handleMousedown = () => {
@@ -59,23 +61,17 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get visible() {
-    return !this.showActions;
+    return this.groups.length > 0 && !this.showActions;
   }
 
   loadAndShowActions = task(async () => {
-    const getGroups = this.args.getGroups ?? [];
     const getActions = this.args.getActions ?? [];
     const editorState = this.controller.mainEditorState;
 
-    const [groups, actions] = await Promise.all([
-      (await Promise.all(getGroups.map((cb) => cb(editorState)))).flatMap(
-        (x) => x,
-      ),
-      (await Promise.all(getActions.map((cb) => cb(editorState)))).flatMap(
-        (x) => x,
-      ),
-    ]);
-    this.groups = groups;
+    const actions = (
+      await Promise.all(getActions.map((cb) => cb(editorState)))
+    ).flatMap((x) => x);
+
     this.actions = actions;
     this.showActions = true;
   });
@@ -96,10 +92,7 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   <template>
     <div>
-      <FloatingPlus
-        @controller={{this.controller}}
-        @visible={{this.visible}}
-      >
+      <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
         <div class="say-floating-plus-content">
           {{#if this.loadAndShowActions.isRunning}}
             <div class="au-u-padding-tiny au-u-1-1">
