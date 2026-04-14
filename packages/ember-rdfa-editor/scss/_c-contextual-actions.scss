@@ -67,7 +67,8 @@
 .say-contextual-actions-menu-entries-container {
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 
   padding-bottom: au-settings.$au-unit-tiny;
 
