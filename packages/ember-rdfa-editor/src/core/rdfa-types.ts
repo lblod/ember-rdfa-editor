@@ -21,10 +21,10 @@ export interface RdfaAwareAttrs {
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
   /**
-   * This 'literal' is actually a pointer. A separate 'pointer' type will likely be created as a
-   * breaking change in a later version
+   * This 'literal' actually doesn't assign importance to it's content. This logic will likely be
+   * flipped in a breaking release as 'literal's should be a special case of RdfaNodes.
    */
-  isPointer: boolean;
+  hasNonLiteralContents: boolean;
   content: string | null;
   datatype?: SayNamedNode | null;
   language?: string | null;

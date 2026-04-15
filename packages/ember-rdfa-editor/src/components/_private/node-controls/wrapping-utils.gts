@@ -97,16 +97,16 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   get canWrapWithInlineLiteral() {
     return this.controller?.checkCommand(wrapInlineLiteral());
   }
-  wrapWithLiteralNode = (isPointer?: boolean) => {
-    this.controller?.doCommand(wrapLiteral(isPointer));
+  wrapWithLiteralNode = (hasNonLiteralContents?: boolean) => {
+    this.controller?.doCommand(wrapLiteral(hasNonLiteralContents));
   };
 
   wrapWithBlockResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapResource(details));
     this.closeModal();
   };
-  wrapWithInlineLiteralNode = (isPointer?: boolean) => {
-    this.controller?.doCommand(wrapInlineLiteral(isPointer));
+  wrapWithInlineLiteralNode = (hasNonLiteralContents?: boolean) => {
+    this.controller?.doCommand(wrapInlineLiteral(hasNonLiteralContents));
   };
   wrapWithInlineResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapInlineResource(details));
@@ -142,7 +142,7 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
             @disabled={{not this.canWrapWithLiteral}}
             {{on "click" (fn this.wrapWithLiteralNode true)}}
           >
-            Wrap With Block Pointer
+            Wrap With Block Rdfa Node
           </AuButton>
         </Group>
 
@@ -172,7 +172,7 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
             @disabled={{not this.canWrapWithInlineLiteral}}
             {{on "click" (fn this.wrapWithInlineLiteralNode true)}}
           >
-            Wrap With Inline Pointer
+            Wrap With Inline Rdfa Node
           </AuButton>
         </Group>
       </AuToolbar>

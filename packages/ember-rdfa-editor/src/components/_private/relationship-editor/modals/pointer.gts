@@ -199,7 +199,7 @@ export default class RelationshipEditorPointerModal extends Component<Relationsh
   get sourceIsLiteral() {
     return (
       this.args.sourceAttrs.rdfaNodeType === 'literal' &&
-      !this.args.sourceAttrs.isPointer
+      !this.args.sourceAttrs.hasNonLiteralContents
     );
   }
 

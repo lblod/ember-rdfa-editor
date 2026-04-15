@@ -35,7 +35,7 @@ module('ProseMirror | view', function () {
     `;
 
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true" data-literal-node="true" data-is-pointer="false">
+    <div lang="en-US" data-say-document="true" data-literal-node="true" data-has-non-literal-contents="false">
       <div class="say-hidden" data-rdfa-container="true" style="display: none;"></div>
       <div data-content-container="true">
         <p class="say-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -90,7 +90,7 @@ module('ProseMirror | view', function () {
     </div>
     `;
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true" data-literal-node="true" data-is-pointer="false">
+    <div lang="en-US" data-say-document="true" data-literal-node="true" data-has-non-literal-contents="false">
       <div class="say-hidden" data-rdfa-container="true" style="display: none;"></div>
       <div data-content-container="true">
         <p class="say-paragraph">Lorem ips<strong>um dolor s</strong>
@@ -143,7 +143,7 @@ module('ProseMirror | view', function () {
     </div>
     `;
     const expectedHtml = oneLineTrim`
-    <div lang="en-US" data-say-document="true" data-literal-node="true" data-is-pointer="false">
+    <div lang="en-US" data-say-document="true" data-literal-node="true" data-has-non-literal-contents="false">
       <div class="say-hidden" data-rdfa-container="true" style="display: none;"></div>
       <div data-content-container="true">
         <p class="say-paragraph">   </p>
