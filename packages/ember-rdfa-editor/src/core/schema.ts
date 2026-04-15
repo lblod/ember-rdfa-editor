@@ -93,7 +93,7 @@ const rdfaAwareAttrSpec = {
       }),
   },
   content: { default: null },
-  isPointer: { default: null, validate: 'boolean' },
+  isPointer: { default: null, validate: 'boolean|undefined|null' },
   pointed: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },

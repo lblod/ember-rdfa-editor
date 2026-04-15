@@ -63,27 +63,31 @@ export const documentConfig: (
   },
   objects: ({ searchString = '' } = {}) => {
     const resources = getSubjects(controller.mainEditorState);
+    const options = resources.map(
+      (resource) =>
+        ({
+          term: sayDataFactory.resourceNode(resource),
+        }) as ObjectOption,
+    );
+
     const rdfaIdMapping = rdfaInfoPluginKey.getState(
       controller.mainEditorState,
     )?.rdfaIdMapping;
-    const literals: string[] = [];
     if (rdfaIdMapping) {
       rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
         if (resolvedNode.value.attrs['rdfaNodeType'] === 'literal') {
-          literals.push(rdfaId);
+          options.push({
+            term: sayDataFactory.literalNode(rdfaId),
+            label: 'Literal',
+            description: resolvedNode.value.textContent,
+          });
         }
       });
     }
-    const resourceOptions: ObjectOption[] = resources.map((resource) => ({
-      term: sayDataFactory.resourceNode(resource),
-    }));
-    const literalOptions: ObjectOption[] = literals.map((rdfaId) => ({
-      label: 'literal node',
-      description: `node id: ${rdfaId}`,
-      term: sayDataFactory.literalNode(rdfaId),
-    }));
-    return [...resourceOptions, ...literalOptions].filter(({ term }) =>
-      term.value.toLowerCase().includes(searchString.toLowerCase()),
+
+    const search = searchString.toLowerCase();
+    return options.filter(({ term }) =>
+      term.value.toLowerCase().includes(search),
     );
   },
   pointerSources: ({ selectedSource, searchString = '' } = {}) => {

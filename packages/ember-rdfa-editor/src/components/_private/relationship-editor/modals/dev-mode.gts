@@ -466,7 +466,9 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                     <p><strong>{{this.optionRepr option}}</strong></p>
                   </div>
                   {{#if option.description}}
-                    <p>{{option.description}}</p>
+                    <p
+                      class="say-relationship-editor__literal-preview"
+                    >{{option.description}}</p>
                   {{/if}}
                 </PowerSelectWithCreate>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
