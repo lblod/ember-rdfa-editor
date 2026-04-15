@@ -75,11 +75,14 @@ export const documentConfig: (
     )?.rdfaIdMapping;
     if (rdfaIdMapping) {
       rdfaIdMapping.forEach((resolvedNode, rdfaId) => {
-        if (resolvedNode.value.attrs['rdfaNodeType'] === 'literal') {
+        const attrs = resolvedNode.value.attrs;
+        if (attrs['rdfaNodeType'] === 'literal') {
           options.push({
             term: sayDataFactory.literalNode(rdfaId),
-            label: 'Literal',
-            description: resolvedNode.value.textContent,
+            label: attrs['hasNonLiteralContents'] ? 'RdfaNode' : 'Literal',
+            description: attrs['hasNonLiteralContents']
+              ? undefined
+              : resolvedNode.value.textContent,
           });
         }
       });
