@@ -477,7 +477,11 @@ module('rdfa | parsing', function () {
     const initialState = doc(
       {},
       block_rdfa(
-        { rdfaNodeType: 'literal', __rdfaId: 'test-id', isPointer: false },
+        {
+          rdfaNodeType: 'literal',
+          __rdfaId: 'test-id',
+          hasNonLiteralContents: false,
+        },
         paragraph('value'),
       ),
     );
@@ -497,7 +501,7 @@ module('rdfa | parsing', function () {
           rdfaNodeType: 'literal',
           __rdfaId: 'test-id',
           content: 'alternative-value',
-          isPointer: false,
+          hasNonLiteralContents: false,
         },
         paragraph('value'),
       ),
@@ -570,7 +574,7 @@ module('rdfa | parsing', function () {
           {
             rdfaNodeType: 'literal',
             __rdfaId: '67c9959e-c15b-4a16-be65-e90c2256eed0',
-            isPointer: false,
+            hasNonLiteralContents: false,
             datatype: df.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'),
             language: '',
             backlinks: [
@@ -599,7 +603,7 @@ module('rdfa | parsing', function () {
         {
           rdfaNodeType: 'literal',
           __rdfaId: 'test-id',
-          isPointer: false,
+          hasNonLiteralContents: false,
           externalTriples: [
             {
               subject: df.namedNode('http://test/1'),
@@ -627,7 +631,7 @@ module('rdfa | parsing', function () {
         {
           rdfaNodeType: 'literal',
           __rdfaId: 'test-id',
-          isPointer: false,
+          hasNonLiteralContents: false,
           backlinks: [
             {
               subject: df.resourceNode('http://test/1'),
@@ -663,7 +667,7 @@ module('rdfa | parsing', function () {
         {
           rdfaNodeType: 'literal',
           __rdfaId: 'test-id',
-          isPointer: false,
+          hasNonLiteralContents: false,
           backlinks: [
             {
               subject: df.resourceNode('http://test/1'),
@@ -677,7 +681,7 @@ module('rdfa | parsing', function () {
         {
           rdfaNodeType: 'literal',
           __rdfaId: 'test-id',
-          isPointer: false,
+          hasNonLiteralContents: false,
           backlinks: [
             {
               subject: df.resourceNode('http://test/2'),
@@ -732,7 +736,7 @@ module('rdfa | parsing', function () {
         {
           rdfaNodeType: 'literal',
           __rdfaId: 'id2',
-          isPointer: false,
+          hasNonLiteralContents: false,
           backlinks: [
             {
               subject: df.resourceNode('http://test/1'),
@@ -820,7 +824,7 @@ module('rdfa | parsing', function () {
           {
             rdfaNodeType: 'literal',
             __rdfaId: 'literal-1',
-            isPointer: false,
+            hasNonLiteralContents: false,
             backlinks: [
               {
                 predicate: 'http://data.europa.eu/eli/ontology#title',

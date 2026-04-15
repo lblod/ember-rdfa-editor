@@ -96,8 +96,8 @@ export const documentConfig: (
     )?.rdfaIdMapping;
     let sourceOptions: ObjectOption[] = [];
     if (selectedSource?.termType === 'LiteralNode') {
-      // This could either be a 'literal' or a 'pointer', but we disable the select for literals, so
-      // assume it's a 'pointer' and show all possible sources
+      // This could either be a 'literal' or a 'non-literal', but we disable the select for literals, so
+      // assume it's a 'non-literal' and show all possible sources
       const resources = getSubjects(controller.mainEditorState);
       sourceOptions = resources
         .filter((resource) => selectedSource?.value !== resource)
@@ -110,8 +110,8 @@ export const documentConfig: (
           if (selectedSource?.value !== rdfaId) {
             sourceOptions.push({
               term: sayDataFactory.literalNode(rdfaId),
-              label: attrs['isPointer'] ? 'pointer' : 'literal',
-              description: attrs['isPointer']
+              label: attrs['hasNonLiteralContents'] ? 'non-literal' : 'literal',
+              description: attrs['hasNonLiteralContents']
                 ? undefined
                 : resolvedNode.value.textContent,
             });
@@ -119,10 +119,13 @@ export const documentConfig: (
         }
       });
     } else {
-      // This is a resource, so show only 'pointer' nodes
+      // This is a resource, so show only Rdfa nodes without literal contents
       rdfaIdMapping?.forEach((resolvedNode, rdfaId) => {
         const attrs = resolvedNode.value.attrs;
-        if (attrs['rdfaNodeType'] === 'literal' && attrs['isPointer']) {
+        if (
+          attrs['rdfaNodeType'] === 'literal' &&
+          attrs['hasNonLiteralContents']
+        ) {
           sourceOptions.push({ term: sayDataFactory.literalNode(rdfaId) });
         }
       });
@@ -142,7 +145,7 @@ export const documentConfig: (
       const attrs = resolvedNode.value.attrs;
       if (
         attrs['rdfaNodeType'] === 'literal' &&
-        attrs['isPointer'] &&
+        attrs['hasNonLiteralContents'] &&
         selectedSource?.value !== rdfaId
       ) {
         pointers.push([rdfaId, resolvedNode.value]);
@@ -155,7 +158,7 @@ export const documentConfig: (
       })
       .map(([rdfaid, _node]) => ({
         term: sayDataFactory.literalNode(rdfaid),
-        label: 'pointer',
+        label: 'non-literal',
       }));
   },
 });

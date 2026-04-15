@@ -97,16 +97,16 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   get canWrapWithInlineLiteral() {
     return this.controller?.checkCommand(wrapInlineLiteral());
   }
-  wrapWithLiteralNode = (isPointer?: boolean) => {
-    this.controller?.doCommand(wrapLiteral(isPointer));
+  wrapWithLiteralNode = (hasNonLiteralContents?: boolean) => {
+    this.controller?.doCommand(wrapLiteral(hasNonLiteralContents));
   };
 
   wrapWithBlockResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapResource(details));
     this.closeModal();
   };
-  wrapWithInlineLiteralNode = (isPointer?: boolean) => {
-    this.controller?.doCommand(wrapInlineLiteral(isPointer));
+  wrapWithInlineLiteralNode = (hasNonLiteralContents?: boolean) => {
+    this.controller?.doCommand(wrapInlineLiteral(hasNonLiteralContents));
   };
   wrapWithInlineResource = (details: Parameters<typeof wrapResource>[0]) => {
     this.controller?.doCommand(wrapInlineResource(details));

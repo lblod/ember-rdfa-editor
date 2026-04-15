@@ -93,7 +93,7 @@ const rdfaAwareAttrSpec = {
       }),
   },
   content: { default: null },
-  isPointer: { default: null, validate: 'boolean|undefined|null' },
+  hasNonLiteralContents: { default: null, validate: 'boolean|undefined|null' },
   pointsToNode: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },
@@ -197,7 +197,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       backlinks,
       externalTriples,
       pointsToNode,
-      isPointer: node.dataset['isPointer'] === 'true',
+      hasNonLiteralContents: node.dataset['hasNonLiteralContents'] === 'true',
     };
   } else {
     const subject = node.dataset['subject'];
@@ -553,7 +553,9 @@ export function renderRdfaAttrs(
       content: rdfaAttrs.content ?? null,
       'data-say-id': rdfaAttrs.__rdfaId,
       'data-literal-node': 'true',
-      'data-is-pointer': rdfaAttrs.isPointer ? 'true' : 'false',
+      'data-has-non-literal-contents': rdfaAttrs.hasNonLiteralContents
+        ? 'true'
+        : 'false',
       'data-points-to-node': rdfaAttrs.pointsToNode ?? null,
       ...datatypeAndLanguage,
     };
@@ -579,7 +581,7 @@ export function renderRdfaAttrs(
     if (
       datatypeAndLanguage['datatype'] ||
       datatypeAndLanguage['lang'] ||
-      !rdfaAttrs.isPointer
+      !rdfaAttrs.hasNonLiteralContents
     ) {
       // This pointer node is pointed to by it's own content.
       // While a literal node need not have a datatype or language, if it does, it's content acts as
@@ -596,7 +598,7 @@ export function renderRdfaAttrs(
         // serialize to data attributes
         'data-pointer-backlink': backlink.subject.value,
         'data-pointer-predicate': backlink.predicate,
-        'data-is-pointer': 'true',
+        'data-has-non-literal-contents': 'true',
         ...baseAttrs,
       };
     }
