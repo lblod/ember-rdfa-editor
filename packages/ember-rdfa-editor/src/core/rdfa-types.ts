@@ -15,8 +15,8 @@ export interface RdfaAwareAttrs {
   rdfaNodeType: RdfaNodeType;
   backlinks: IncomingTriple[];
   externalTriples?: FullTriple[];
-  /** This node is being pointed to by a pointer node */
-  pointed?: string;
+  /** This node points to an RDFa node and gets its RDFa backlinks from there */
+  pointsToNode?: string;
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';

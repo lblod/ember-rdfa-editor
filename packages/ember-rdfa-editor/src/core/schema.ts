@@ -94,7 +94,7 @@ const rdfaAwareAttrSpec = {
   },
   content: { default: null },
   isPointer: { default: null, validate: 'boolean|undefined|null' },
-  pointed: { default: null },
+  pointsToNode: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },
 };
@@ -143,7 +143,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
     return false;
   }
   const __rdfaId = node.dataset['sayId'] ?? uuidv4();
-  const pointed = node.dataset['pointed'];
+  const pointsToNode = node.dataset['pointsToNode'];
   let backlinks: IncomingLiteralTriple[] = [];
   if (node.dataset['incomingProps']) {
     backlinks = JSON.parse(
@@ -167,8 +167,8 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       transformedDatatype = sayDataFactory.namedNode(datatype);
     }
     if (backlinks.length === 0) {
-      // No RDFa backlink, but this pointer might have a 'data backlink' waiting for something to be
-      // pointed to
+      // No RDFa backlink, but this node might have a 'data backlink' waiting for a pointer to point
+      // to it
       const pointerBl = node.dataset['pointerBacklink'];
       const pointerPred = node.dataset['pointerPredicate'];
       if (pointerBl && pointerPred) {
@@ -196,7 +196,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       __rdfaId,
       backlinks,
       externalTriples,
-      pointed,
+      pointsToNode,
       isPointer: node.dataset['isPointer'] === 'true',
     };
   } else {
@@ -240,7 +240,7 @@ function getRdfaAwareAttrs(node: HTMLElement): RdfaAttrs | false {
       backlinks,
       externalTriples,
       properties,
-      pointed,
+      pointsToNode,
     };
   }
 }
@@ -428,13 +428,13 @@ export function renderInvisibleRdfa(
       ...externalElements,
     ]);
   }
-  let pointedAttrs: Attrs | undefined = renderable.attrs;
-  if (renderable.attrs['pointed'] && state) {
-    // When serializing, follow the references back to the original pointer node
-    while (pointedAttrs?.['pointed']) {
-      pointedAttrs = findNodeByRdfaId(
+  let pointsToAttrs: Attrs | undefined = renderable.attrs;
+  if (renderable.attrs['pointsToNode'] && state) {
+    // When serializing, follow the references back to the furthest RDFa node
+    while (pointsToAttrs?.['pointsToNode']) {
+      pointsToAttrs = findNodeByRdfaId(
         state.doc,
-        pointedAttrs['pointed'] as string,
+        pointsToAttrs['pointsToNode'] as string,
       )?.value.attrs;
     }
   }
@@ -444,10 +444,10 @@ export function renderInvisibleRdfa(
     for (const { predicate, subject } of backlinks) {
       propElements.push(incomingTripleSpan(subject.value, predicate));
     }
-    if (pointedAttrs) {
-      // pointedAttrs is only non-null when serializing and we have a 'pointed' value
+    if (pointsToAttrs) {
+      // pointsToAttrs is only non-null when serializing and we have a 'pointsToNode' value
       const pointerBacklink = (
-        pointedAttrs['backlinks'] as RdfaAttrs['backlinks']
+        pointsToAttrs['backlinks'] as RdfaAttrs['backlinks']
       )[0];
       if (pointerBacklink) {
         // Add RDFa for the completed relationship
@@ -509,7 +509,7 @@ export function renderRdfaAttrs(
       about: rdfaAttrs.subject,
       resource: null,
       'data-say-id': rdfaAttrs.__rdfaId,
-      'data-pointed': rdfaAttrs.pointed ?? null,
+      'data-points-to-node': rdfaAttrs.pointsToNode ?? null,
     };
     const pointerProps = rdfaAttrs['properties'].filter(
       (prop) => prop.object.termType === 'LiteralNode',
@@ -554,23 +554,24 @@ export function renderRdfaAttrs(
       'data-say-id': rdfaAttrs.__rdfaId,
       'data-literal-node': 'true',
       'data-is-pointer': rdfaAttrs.isPointer ? 'true' : 'false',
-      'data-pointed': rdfaAttrs.pointed ?? null,
+      'data-points-to-node': rdfaAttrs.pointsToNode ?? null,
       ...datatypeAndLanguage,
     };
 
     // Handle potentially complete chain of pointers
-    let pointedAttrs: Attrs | undefined = rdfaAttrs;
-    if (rdfaAttrs['pointed'] && state) {
-      // When serializing, follow the references back to the original pointer node
-      while (pointedAttrs?.['pointed']) {
-        pointedAttrs = findNodeByRdfaId(
+    let pointsToAttrs: Attrs | undefined = rdfaAttrs;
+    if (rdfaAttrs['pointsToNode'] && state) {
+      // When serializing, follow the pointers back to the furthest RDFa node
+      while (pointsToAttrs?.['pointsToNode']) {
+        pointsToAttrs = findNodeByRdfaId(
           state.doc,
-          pointedAttrs['pointed'] as string,
+          pointsToAttrs['pointsToNode'] as string,
         )?.value.attrs;
       }
     }
     const pointerBacklink =
-      pointedAttrs && (pointedAttrs['backlinks'] as RdfaAttrs['backlinks'])[0];
+      pointsToAttrs &&
+      (pointsToAttrs['backlinks'] as RdfaAttrs['backlinks'])[0];
     if (!backlink && !pointerBacklink) {
       return baseAttrs;
     }
@@ -580,9 +581,9 @@ export function renderRdfaAttrs(
       datatypeAndLanguage['lang'] ||
       !rdfaAttrs.isPointer
     ) {
-      // This pointer node points to it's own content as a literal.
-      // While a literal node need not have a datatype or language, if it does, it has to point at
-      // it's contents.
+      // This pointer node is pointed to by it's own content.
+      // While a literal node need not have a datatype or language, if it does, it's content acts as
+      // a pointer, pointing to this RDFa node.
       const bl = backlink || pointerBacklink;
       return {
         about: bl.subject.value,
@@ -591,7 +592,8 @@ export function renderRdfaAttrs(
       };
     } else {
       return {
-        // Only store direct pointers as data attributes
+        // This RDFa node has backlinks but this node doesn't know if a pointer points to it, so
+        // serialize to data attributes
         'data-pointer-backlink': backlink.subject.value,
         'data-pointer-predicate': backlink.predicate,
         'data-is-pointer': 'true',

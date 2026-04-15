@@ -52,13 +52,13 @@ export default class LinkPointerButton extends Component<LinkPointerButtonSig> {
           sub = findNodeByRdfaId(state.doc, targetTerm.value);
         }
         if (sub) {
-          return tr.setNodeAttribute(sub.pos, 'pointed', targetTerm.value);
+          return tr.setNodeAttribute(sub.pos, 'pointsToNode', targetTerm.value);
         }
         return tr;
       });
     } else if (body.pointerDirection === 'backlink') {
       this.args.controller.withTransaction((tr) => {
-        return tr.setNodeAttribute(node.pos, 'pointed', targetTerm.value);
+        return tr.setNodeAttribute(node.pos, 'pointsToNode', targetTerm.value);
       });
     }
 
