@@ -12,10 +12,12 @@ import { addBacklinkToNode } from '#root/utils/rdfa-utils.ts';
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { addProperty } from '#root/commands/rdfa-commands/add-property.ts';
-import type { OptionGeneratorConfig, SubmissionBody } from './types.ts';
+import type {
+  OptionGeneratorConfig,
+  RelationshipSubmissionBody,
+} from './types.ts';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
 import RelationshipEditorClassicModal from './modals/classic.gts';
-import { and } from 'ember-truth-helpers';
 
 type CreateRelationshipButtonSig = {
   Element: AuButtonSignature['Element'];
@@ -33,19 +35,18 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     return this.args.controller;
   }
 
-  get node() {
-    return this.args.node;
-  }
-
   openModal = () => {
     this.modalOpen = true;
   };
+  closeModal = () => {
+    this.modalOpen = false;
+  };
 
-  onFormSubmit = (body: SubmissionBody) => {
-    if (!this.node) {
+  onFormSubmit = (body: RelationshipSubmissionBody) => {
+    if (!this.args.node) {
       return;
     }
-    const node = this.node;
+    const node = this.args.node;
     const { predicate, target } = body;
     if (predicate.direction === 'property') {
       const property = {
@@ -54,7 +55,7 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
       };
       this.controller.doCommand(
         addProperty({
-          resource: this.node.value.attrs['subject'] as string,
+          resource: node.value.attrs['subject'] as string,
           // @ts-expect-error fix type of property
           property,
         }),
@@ -79,10 +80,6 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     this.modalOpen = false;
   };
 
-  closeModal = () => {
-    this.modalOpen = false;
-  };
-
   get selectedNode() {
     const node = this.args.node;
     if (!node || !isRdfaAttrs(node.value.attrs)) {
@@ -99,12 +96,6 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     return !this.selectedNode;
   }
 
-  get ModalComponent() {
-    return this.args.devMode
-      ? RelationshipEditorDevModeModal
-      : RelationshipEditorClassicModal;
-  }
-
   <template>
     <AuButton
       @icon={{AddIcon}}
@@ -116,25 +107,24 @@ export default class CreateRelationshipButton extends Component<CreateRelationsh
     >
       {{t "ember-rdfa-editor.linking-ui-poc.button.label"}}
     </AuButton>
-    {{#if (and this.modalOpen this.selectedNode)}}
-      {{#if @devMode}}
-        <RelationshipEditorDevModeModal
-          {{! @glint-expect-error }}
-          @source={{this.selectedNode}}
-          @onSubmit={{this.onFormSubmit}}
-          @onCancel={{this.closeModal}}
-          @optionGeneratorConfig={{@optionGeneratorConfig}}
-        />
-      {{else}}
-        <RelationshipEditorClassicModal
-          {{! @glint-expect-error }}
-          @source={{this.selectedNode}}
-          @onSubmit={{this.onFormSubmit}}
-          @onCancel={{this.closeModal}}
-          @optionGeneratorConfig={{@optionGeneratorConfig}}
-        />
+    {{#if this.modalOpen}}
+      {{#if this.selectedNode}}
+        {{#if @devMode}}
+          <RelationshipEditorDevModeModal
+            @source={{this.selectedNode}}
+            @onSubmit={{this.onFormSubmit}}
+            @onCancel={{this.closeModal}}
+            @optionGeneratorConfig={{@optionGeneratorConfig}}
+          />
+        {{else}}
+          <RelationshipEditorClassicModal
+            @source={{this.selectedNode}}
+            @onSubmit={{this.onFormSubmit}}
+            @onCancel={{this.closeModal}}
+            @optionGeneratorConfig={{@optionGeneratorConfig}}
+          />
+        {{/if}}
       {{/if}}
-
     {{/if}}
   </template>
 }

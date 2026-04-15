@@ -9,6 +9,7 @@ import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
 import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/plugin.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import SetUtils from '#root/utils/_private/set-utils.ts';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 
 export const documentConfig: (
   controller: SayController,
@@ -77,11 +78,81 @@ export const documentConfig: (
       term: sayDataFactory.resourceNode(resource),
     }));
     const literalOptions: ObjectOption[] = literals.map((rdfaId) => ({
+      label: 'literal node',
+      description: `node id: ${rdfaId}`,
       term: sayDataFactory.literalNode(rdfaId),
     }));
     return [...resourceOptions, ...literalOptions].filter(({ term }) =>
       term.value.toLowerCase().includes(searchString.toLowerCase()),
     );
+  },
+  pointerSources: ({ selectedSource, searchString = '' } = {}) => {
+    const rdfaIdMapping = rdfaInfoPluginKey.getState(
+      controller.mainEditorState,
+    )?.rdfaIdMapping;
+    let sourceOptions: ObjectOption[] = [];
+    if (selectedSource?.termType === 'LiteralNode') {
+      // This could either be a 'literal' or a 'pointer', but we disable the select for literals, so
+      // assume it's a 'pointer' and show all possible sources
+      const resources = getSubjects(controller.mainEditorState);
+      sourceOptions = resources
+        .filter((resource) => selectedSource?.value !== resource)
+        .map((resource) => ({
+          term: sayDataFactory.resourceNode(resource),
+        }));
+      rdfaIdMapping?.forEach((resolvedNode, rdfaId) => {
+        const attrs = resolvedNode.value.attrs;
+        if (attrs['rdfaNodeType'] !== 'resource') {
+          if (selectedSource?.value !== rdfaId) {
+            sourceOptions.push({
+              term: sayDataFactory.literalNode(rdfaId),
+              label: attrs['isPointer'] ? 'pointer' : 'literal',
+              description: attrs['isPointer']
+                ? undefined
+                : resolvedNode.value.textContent,
+            });
+          }
+        }
+      });
+    } else {
+      // This is a resource, so show only 'pointer' nodes
+      rdfaIdMapping?.forEach((resolvedNode, rdfaId) => {
+        const attrs = resolvedNode.value.attrs;
+        if (attrs['rdfaNodeType'] === 'literal' && attrs['isPointer']) {
+          sourceOptions.push({ term: sayDataFactory.literalNode(rdfaId) });
+        }
+      });
+    }
+
+    const search = searchString.toLowerCase();
+    return sourceOptions.filter(({ term }) =>
+      term.value.toLowerCase().includes(search),
+    );
+  },
+  pointerTargets: ({ selectedSource, searchString = '' } = {}) => {
+    const rdfaIdMapping = rdfaInfoPluginKey.getState(
+      controller.mainEditorState,
+    )?.rdfaIdMapping;
+    const pointers: [string, PNode][] = [];
+    rdfaIdMapping?.forEach((resolvedNode, rdfaId) => {
+      const attrs = resolvedNode.value.attrs;
+      if (
+        attrs['rdfaNodeType'] === 'literal' &&
+        attrs['isPointer'] &&
+        selectedSource?.value !== rdfaId
+      ) {
+        pointers.push([rdfaId, resolvedNode.value]);
+      }
+    });
+    const search = searchString.toLowerCase();
+    return pointers
+      .filter(([rdfaid]) => {
+        return rdfaid.includes(search);
+      })
+      .map(([rdfaid, _node]) => ({
+        term: sayDataFactory.literalNode(rdfaid),
+        label: 'pointer',
+      }));
   },
 });
 
@@ -179,6 +250,18 @@ export const combineConfigs = (
   objects: async (args) => {
     const results = await Promise.all(
       configs.map((config) => config.objects?.(args) ?? []),
+    );
+    return results.flat();
+  },
+  pointerSources: async (args) => {
+    const results = await Promise.all(
+      configs.map((config) => config.pointerSources?.(args) ?? []),
+    );
+    return results.flat();
+  },
+  pointerTargets: async (args) => {
+    const results = await Promise.all(
+      configs.map((config) => config.pointerTargets?.(args) ?? []),
     );
     return results.flat();
   },

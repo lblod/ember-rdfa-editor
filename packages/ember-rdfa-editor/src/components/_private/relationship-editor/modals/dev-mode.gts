@@ -34,6 +34,7 @@ import type {
   ObjectOption,
   OptionGeneratorConfig,
   PredicateOption,
+  RelationshipSubmissionBody,
   SubjectOption,
   SubmissionBody,
   TermOption,
@@ -69,7 +70,7 @@ type RelationshipEditorDevModalSig = {
   };
 };
 
-export type FormData = Partial<SubmissionBody> & {
+export type FormData = Partial<RelationshipSubmissionBody> & {
   direction?: Direction;
 };
 
