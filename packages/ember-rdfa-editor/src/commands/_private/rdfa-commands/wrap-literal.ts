@@ -20,7 +20,7 @@ export function wrapLiteral(isPointer?: boolean): Command {
         {
           __rdfaId: objectId,
           rdfaNodeType: 'literal',
-          isPointer: isPointer ? 'true' : 'false',
+          isPointer: !!isPointer,
         },
       )(state, dispatch);
 

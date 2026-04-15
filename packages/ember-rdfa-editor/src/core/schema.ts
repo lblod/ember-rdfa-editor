@@ -93,7 +93,8 @@ const rdfaAwareAttrSpec = {
       }),
   },
   content: { default: null },
-  isPointer: { default: null },
+  isPointer: { default: null, validate: 'boolean' },
+  pointed: { default: null },
   datatype: { default: null },
   language: { default: null, editable: true },
 };
@@ -498,6 +499,7 @@ export function renderInvisibleRdfa(
 
 export function renderRdfaAttrs(
   rdfaAttrs: RdfaAttrs,
+  state?: EditorState,
 ): Record<string, string | null> {
   if (rdfaAttrs.rdfaNodeType === 'resource') {
     const contentTriple = rdfaAttrs.properties.find(
@@ -552,10 +554,24 @@ export function renderRdfaAttrs(
       'data-say-id': rdfaAttrs.__rdfaId,
       'data-literal-node': 'true',
       'data-is-pointer': rdfaAttrs.isPointer ? 'true' : 'false',
+      'data-pointed': rdfaAttrs.pointed ?? null,
       ...datatypeAndLanguage,
     };
 
-    if (!backlink) {
+    // Handle potentially complete chain of pointers
+    let pointedAttrs: Attrs | undefined = rdfaAttrs;
+    if (rdfaAttrs['pointed'] && state) {
+      // When serializing, follow the references back to the original pointer node
+      while (pointedAttrs?.['pointed']) {
+        pointedAttrs = findNodeByRdfaId(
+          state.doc,
+          pointedAttrs['pointed'] as string,
+        )?.value.attrs;
+      }
+    }
+    const pointerBacklink =
+      pointedAttrs && (pointedAttrs['backlinks'] as RdfaAttrs['backlinks'])[0];
+    if (!backlink && !pointerBacklink) {
       return baseAttrs;
     }
 
@@ -567,13 +583,15 @@ export function renderRdfaAttrs(
       // This pointer node points to it's own content as a literal.
       // While a literal node need not have a datatype or language, if it does, it has to point at
       // it's contents.
+      const bl = backlink || pointerBacklink;
       return {
-        about: backlink.subject.value,
-        property: backlink.predicate,
+        about: bl.subject.value,
+        property: bl.predicate,
         ...baseAttrs,
       };
     } else {
       return {
+        // Only store direct pointers as data attributes
         'data-pointer-backlink': backlink.subject.value,
         'data-pointer-predicate': backlink.predicate,
         'data-is-pointer': 'true',
@@ -636,7 +654,7 @@ export function renderRdfaAware(
 
   return [
     tag,
-    { ...clone, ...renderRdfaAttrs(renderable.attrs as RdfaAttrs) },
+    { ...clone, ...renderRdfaAttrs(renderable.attrs as RdfaAttrs, state) },
     renderInvisibleRdfa(
       { renderable, rdfaContainerTag, rdfaContainerAttrs },
       state,

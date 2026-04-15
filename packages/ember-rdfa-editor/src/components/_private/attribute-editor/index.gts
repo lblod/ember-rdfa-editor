@@ -125,7 +125,9 @@ export default class AttributeEditor extends Component<Signature> {
   };
 
   formatValue = (value: unknown) => {
-    return JSON.stringify(value, null, 2);
+    return value === undefined || value === null
+      ? '<No value>'
+      : JSON.stringify(value, null, 2);
   };
 
   editorComponent = (attr: string) => {
@@ -224,11 +226,9 @@ export default class AttributeEditor extends Component<Signature> {
                       </form.Field>
                     {{else}}
                       <p><strong>{{key}}</strong></p>
-                      <pre class="say-attribute-editor__formatted-content">{{if
-                          value
-                          (this.formatValue value)
-                          "<No value>"
-                        }}</pre>
+                      <pre
+                        class="say-attribute-editor__formatted-content"
+                      >{{this.formatValue value}}</pre>
                     {{/if}}
                   </div>
                 </Item>
