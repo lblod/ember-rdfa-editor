@@ -30,7 +30,7 @@ const DEFAULT_REGEX = new RegExp(
       [A-Za-z]{2,} ${/* extension */ ''}
     )
   )
-  (\s)$ ${/* single space after url/email */ ''}
+  ( |\n)$ ${/* single space after url/email */ ''}
   `
     .replace(/^\s+|\s+$/gm, '') // remove white space before and at the end of lines (trimming)
     .replace(/\n/g, ''), // remove newlines
@@ -80,7 +80,13 @@ export const link_input_rule = ({
     // replace only the email text
     tr.replaceWith(linkStart, end, node);
 
-    tr.insertText(textAfterLink, linkStart + node.nodeSize);
+    /**
+     * Only run this when textAfterLink is not \n. The \n is 'fake' and represents an 'Enter' keypress.
+     */
+    if (textAfterLink !== '\n') {
+      // 
+      tr.insertText(textAfterLink, linkStart + node.nodeSize);
+    }
 
     return tr;
   });
