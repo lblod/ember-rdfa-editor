@@ -124,6 +124,7 @@ export default class ContextualActionsMenu extends Component<Args> {
         useTransform=false
       }}
       class="say-contextual-actions-menu"
+      ...attributes
     >
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">

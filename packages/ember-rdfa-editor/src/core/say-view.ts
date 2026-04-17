@@ -93,8 +93,29 @@ export default class SayView extends EditorView {
     return div.innerHTML;
   }
 
+  stateListeners = new Set<
+    (oldState: EditorState, newState: EditorState) => void
+  >();
+
+  addStateListener(
+    listener: (oldState: EditorState, newState: EditorState) => void,
+  ) {
+    this.stateListeners.add(listener);
+  }
+
+  removeStateListener(
+    listener: (oldState: EditorState, newState: EditorState) => void,
+  ) {
+    this.stateListeners.delete(listener);
+  }
+
   updateState(state: EditorState): void {
+    const oldState = this.state;
     super.updateState(state);
+    for (const stateListener of this.stateListeners) {
+      stateListener(oldState, state);
+    }
+
     const { selection } = state;
     this.dom.classList.toggle(
       'say-selection-all',

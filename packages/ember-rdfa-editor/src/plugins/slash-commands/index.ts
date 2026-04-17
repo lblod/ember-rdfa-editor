@@ -1,4 +1,4 @@
-import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
 import type IntlService from 'ember-intl/services/intl';
 import type { GetContextualActionGroups } from '../contextual-actions';
@@ -8,8 +8,18 @@ type PluginState = {
   latestState: EditorState | null;
 };
 
+export function slashCommandsStateChanged(
+  oldState?: PluginState,
+  newState?: PluginState,
+) {
+  return (
+    oldState?.latestState !== newState?.latestState ||
+    oldState?.shouldOpenContextActions !== newState?.shouldOpenContextActions
+  );
+}
+
 export const slashCommandsPluginKey = new PluginKey<PluginState>(
-  'SLASH_COMMANDS',
+  'SLASH_COMMANDS_PLUGIN',
 );
 
 function shouldShowPlaceholder(
@@ -51,7 +61,10 @@ interface SlashCommandsPluginArgs {
   getGroups: GetContextualActionGroups;
 }
 
-function keepOpenContextActions(state: EditorState) {
+function keepOpenContextActions(state: EditorState, tr: Transaction) {
+  if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'close_context_menu') {
+    return false;
+  }
   const { parent, parentOffset } = state.selection.$from;
   const textBetween = parent.textBetween(
     parentOffset - 1,
@@ -75,22 +88,33 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
       },
       apply(tr, pluginState, oldState, newState) {
         if (pluginState.shouldOpenContextActions) {
-          if (!keepOpenContextActions(newState, tr)) {
-            return { ...pluginState, shouldOpenContextActions: false };
-          }
+          return {
+            ...pluginState,
+            shouldOpenContextActions: keepOpenContextActions(newState, tr),
+          };
         }
-        if (!tr.getMeta('SLASH_TYPED')) return { ...pluginState };
-        console.log('slash typed');
+        if (tr.getMeta('SLASH_COMMANDS_PLUGIN') !== 'slash_typed') {
+          return pluginState;
+        }
+
+        /**
+         * If the placeholder was shown in the last state and slash was typed
+         * open context actions
+         */
         if (shouldShowPlaceholder(oldState, options.getGroups)) {
           return { latestState: oldState, shouldOpenContextActions: true };
         }
+
         return { ...pluginState, shouldOpenContextActions: false };
       },
     },
     props: {
       handleTextInput(view, _from, _to, text) {
         if (text === '/') {
-          const tr = view.state.tr.setMeta('SLASH_TYPED', true);
+          const tr = view.state.tr.setMeta(
+            'SLASH_COMMANDS_PLUGIN',
+            'slash_typed',
+          );
           view.dispatch(tr);
         }
         return false;
