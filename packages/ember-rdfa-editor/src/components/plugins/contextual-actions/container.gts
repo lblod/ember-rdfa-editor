@@ -77,44 +77,12 @@ export default class ContextualActionsContainer extends Component<Args> {
     );
   }
 
-  setUpListeners = modifier(() => {
-    const handleMousedown = () => {
-      if (this.showActions) {
-        this.closeContextMenu();
-      }
-    };
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown' || event.key === 'Down') {
-        event.preventDefault();
-      }
-      if (event.key === 'ArrowUp' || event.key === 'Up') {
-        event.preventDefault();
-      }
-      if (event.key === 'ArrowLeft' || event.key === 'Left') {
-        // event.preventDefault();
-      }
-      if (event.key === 'ArrowRight' || event.key === 'Right') {
-        // event.preventDefault();
-      }
-      if (event.key === 'Escape') {
-        this.closeContextMenu();
-      }
-    };
-    const viewDom = this.controller.mainEditorView.dom;
-    viewDom.addEventListener('mousedown', handleMousedown);
-    document.addEventListener('keydown', handleKeydown);
-    return () => {
-      viewDom.removeEventListener('mousedown', handleMousedown);
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  });
-
-  closeContextMenu() {
+  closeContextMenu = () => {
     this.showActions = false;
     const tr = this.controller.mainEditorState.tr;
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
     this.controller.mainEditorView.dispatch(tr);
-  }
+  };
 
   get controller() {
     return this.args.controller;
@@ -194,11 +162,11 @@ export default class ContextualActionsContainer extends Component<Args> {
       </FloatingPlus>
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
-          {{this.setUpListeners}}
           @controller={{this.controller}}
           @actions={{or this.actions.value this.actions.value undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
+          @onClose={{this.closeContextMenu}}
           @isLoading={{this.actions.isLoading}}
         />
       {{/if}}
