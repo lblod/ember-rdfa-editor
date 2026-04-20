@@ -330,6 +330,16 @@ export function getRdfaAttrs(
   }
 }
 
+function followPointerChain(doc: PNode, startAttrs: Attrs | undefined) {
+  const seen = new Set<string>();
+  let attrs = startAttrs;
+  while (attrs?.['pointsToNode'] && !seen.has(attrs?.['__rdfaId'] as string)) {
+    seen.add(attrs?.['__rdfaId'] as string);
+    attrs = findNodeByRdfaId(doc, attrs['pointsToNode'] as string)?.value.attrs;
+  }
+  return attrs;
+}
+
 export function renderInvisibleRdfa(
   { renderable, rdfaContainerTag, rdfaContainerAttrs }: RdfaRenderInvisibleArgs,
   state?: EditorState,
@@ -431,12 +441,7 @@ export function renderInvisibleRdfa(
   let pointsToAttrs: Attrs | undefined = renderable.attrs;
   if (renderable.attrs['pointsToNode'] && state) {
     // When serializing, follow the references back to the furthest RDFa node
-    while (pointsToAttrs?.['pointsToNode']) {
-      pointsToAttrs = findNodeByRdfaId(
-        state.doc,
-        pointsToAttrs['pointsToNode'] as string,
-      )?.value.attrs;
-    }
+    pointsToAttrs = followPointerChain(state.doc, pointsToAttrs);
   }
   const backlinks = renderable.attrs['backlinks'] as IncomingTriple[];
   if (renderable.attrs['rdfaNodeType'] === 'resource') {
@@ -564,12 +569,7 @@ export function renderRdfaAttrs(
     let pointsToAttrs: Attrs | undefined = rdfaAttrs;
     if (rdfaAttrs['pointsToNode'] && state) {
       // When serializing, follow the pointers back to the furthest RDFa node
-      while (pointsToAttrs?.['pointsToNode']) {
-        pointsToAttrs = findNodeByRdfaId(
-          state.doc,
-          pointsToAttrs['pointsToNode'] as string,
-        )?.value.attrs;
-      }
+      pointsToAttrs = followPointerChain(state.doc, pointsToAttrs);
     }
     const pointerBacklink =
       pointsToAttrs &&
