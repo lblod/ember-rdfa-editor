@@ -87,6 +87,7 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
         return { shouldOpenContextActions: false, latestState: null };
       },
       apply(tr, pluginState, oldState, newState) {
+        // TODO fix issue where if you put 2 / and naviate with the arrows it keeps the menu open
         if (pluginState.shouldOpenContextActions) {
           return {
             ...pluginState,
@@ -130,7 +131,7 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
             el.textContent = options.intl.t(
               'ember-rdfa-editor.contextual-actions.type-/-for-actions',
             );
-            el.style.color = '#ccc';
+            el.style.color = 'rgb(161, 158, 153)';
             el.style.caretColor = '#000';
             return el;
           }),

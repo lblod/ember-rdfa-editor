@@ -70,6 +70,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   });
 
   get groups() {
+    if (!this.localEditorState) return [];
+
     return (
       this.args.getGroups?.flatMap((getGroup) =>
         getGroup(this.localEditorState ?? undefined),
