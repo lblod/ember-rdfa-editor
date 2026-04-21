@@ -19,8 +19,8 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
-import { not } from 'ember-truth-helpers';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
+import { cached, tracked } from '@glimmer/tracking';
 
 type Args = {
   controller: SayController;
@@ -42,6 +42,101 @@ function sortByPriority(
 }
 
 export default class ContextualActionsMenu extends Component<Args> {
+  @tracked selectedActionIndex: number = 0;
+  actionToElement = new Map<ContextualAction, Element>();
+
+  scrollActionIntoView = (actionIndex: number) => {
+    const selectedAction = this.getActionByIndex(actionIndex);
+    if (selectedAction !== null && selectedAction !== undefined) {
+      const selectedActionElement = this.actionToElement.get(selectedAction);
+      selectedActionElement?.scrollIntoView({ block: 'center' });
+    }
+  };
+
+  setUpListeners = modifier(() => {
+    const handleMousedown = () => {
+      this.args.onClose?.();
+    };
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown' || event.key === 'Down') {
+        if (
+          this.actionAmount &&
+          this.selectedActionIndex < this.actionAmount - 1
+        ) {
+          this.selectedActionIndex += 1;
+          this.scrollActionIntoView(this.selectedActionIndex);
+        }
+        event.preventDefault();
+      }
+      if (event.key === 'ArrowUp' || event.key === 'Up') {
+        if (this.selectedActionIndex > 0) {
+          this.selectedActionIndex -= 1;
+          this.scrollActionIntoView(this.selectedActionIndex);
+        }
+        event.preventDefault();
+      }
+      if (event.key === 'Escape') {
+        this.args.onClose?.();
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (this.selectedActionIndex !== null) {
+          const selectedAction = this.getActionByIndex(
+            this.selectedActionIndex,
+          );
+          if (selectedAction !== null && selectedAction !== undefined) {
+            this.args.onActionSelected?.(selectedAction);
+          }
+        }
+      }
+    };
+
+    const viewDom = this.controller.mainEditorView.dom;
+    viewDom.addEventListener('mousedown', handleMousedown);
+    // Hacky but needed because otherwise the editor handles
+    // the event first by inserting an enter
+    document.addEventListener('keydown', handleKeydown, { capture: true });
+    return () => {
+      viewDom.removeEventListener('mousedown', handleMousedown);
+      document.removeEventListener('keydown', handleKeydown, { capture: true });
+    };
+  });
+
+  getActionByIndex(index: number) {
+    if (!this.groupedActions || this.selectedActionIndex === null) return null;
+
+    let searchIndex = 0;
+    for (const group of this.groupedActions) {
+      for (const actionIter of group.actions) {
+        if (searchIndex === index) {
+          return actionIter;
+        } else {
+          searchIndex += 1;
+        }
+      }
+    }
+  }
+
+  getIndexByAction(action: ContextualAction) {
+    // Better to return null here but this should never happen
+    if (!this.groupedActions || this.selectedActionIndex === null) return 0;
+
+    let searchIndex = 0;
+    for (const group of this.groupedActions) {
+      for (const actionIter of group.actions) {
+        if (action.id === actionIter.id) {
+          return searchIndex;
+        } else {
+          searchIndex += 1;
+        }
+      }
+    }
+
+    return searchIndex;
+  }
+
+  @cached
   get groupedActions() {
     return this.args.groups
       ?.map((group) => ({
@@ -53,6 +148,13 @@ export default class ContextualActionsMenu extends Component<Args> {
       }))
       .filter((group) => group.actions.length > 0)
       .toSorted(sortByPriority);
+  }
+
+  get actionAmount() {
+    return this.groupedActions?.reduce(
+      (accumulator, current) => accumulator + current.actions.length,
+      0,
+    );
   }
 
   get controller() {
@@ -114,6 +216,22 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onActionSelected?.(action);
   };
 
+  isSelectedAction = (action: ContextualAction) => {
+    return this.getIndexByAction(action) === this.selectedActionIndex;
+  };
+
+  updateSelectedActionIndex = (action: ContextualAction, event: MouseEvent) => {
+    if (event.movementX === 0 && event.movementY === 0) return;
+    this.selectedActionIndex = this.getIndexByAction(action);
+  };
+
+  addActionElementToMap = modifier((element, [action]: [ContextualAction]) => {
+    this.actionToElement.set(action, element);
+    return () => {
+      this.actionToElement.delete(action);
+    };
+  });
+
   <template>
     <div
       {{floatingUI
@@ -124,6 +242,8 @@ export default class ContextualActionsMenu extends Component<Args> {
         useTransform=false
       }}
       class="say-contextual-actions-menu"
+      ...attributes
+      {{this.setUpListeners}}
     >
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
@@ -131,41 +251,51 @@ export default class ContextualActionsMenu extends Component<Args> {
               "ember-rdfa-editor.contextual-actions.loading-actions"
             }}</AuLoader>
         </div>
+      {{else}}
+        <div class="say-contextual-actions-menu-entries-container">
+          {{#each this.groupedActions as |group|}}
+            <div class="say-contextual-actions-menu-group-wrapper">
+              <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+              <div
+                class="say-contextual-actions-menu-group-header au-u-muted"
+                {{this.observeSticky}}
+              >
+                {{group.label}}
+              </div>
+              <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
+                {{#each group.actions as |actionItem|}}
+                  <button
+                    {{this.addActionElementToMap actionItem}}
+                    {{on "click" (fn this.selectAction actionItem)}}
+                    {{on
+                      "mousemove"
+                      (fn this.updateSelectedActionIndex actionItem)
+                    }}
+                    class="say-contextual-actions-menu-entry au-u-text-left
+                      {{if
+                        (this.isSelectedAction actionItem)
+                        'focused-menu-entry'
+                      }}"
+                    type="button"
+                    title={{actionItem.description}}
+                  >
+                    <span>{{actionItem.label}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          {{else}}
+            <AuAlert
+              @size="small"
+              @icon="circle-info"
+              @skin="info"
+              class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+            >{{t
+                "ember-rdfa-editor.contextual-actions.no-actions-found"
+              }}</AuAlert>
+          {{/each}}
+        </div>
       {{/if}}
-      <div class="say-contextual-actions-menu-entries-container">
-        {{#each this.groupedActions as |group|}}
-          <div class="say-contextual-actions-menu-group-wrapper">
-            <div class="say-contextual-actions-menu-group-sticky-sentinel" />
-            <div
-              class="say-contextual-actions-menu-group-header au-u-muted"
-              {{this.observeSticky}}
-            >
-              {{group.label}}
-            </div>
-            <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
-              {{#each group.actions as |actionItem|}}
-                <button
-                  {{on "click" (fn this.selectAction actionItem)}}
-                  class="say-contextual-actions-menu-entry au-u-text-left"
-                  type="button"
-                  title={{actionItem.description}}
-                >
-                  <span>{{actionItem.label}}</span>
-                </button>
-              {{/each}}
-            </div>
-          </div>
-        {{else}}
-          <AuAlert
-            @size="small"
-            @icon="circle-info"
-            @skin="info"
-            class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
-          >{{t
-              "ember-rdfa-editor.contextual-actions.no-actions-found"
-            }}</AuAlert>
-        {{/each}}
-      </div>
     </div>
   </template>
 }
