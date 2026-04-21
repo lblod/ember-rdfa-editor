@@ -92,31 +92,14 @@ export default class ContextualActionsMenu extends Component<Args> {
       }
     };
 
-    const handleEnter = (event: KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        if (this.selectedActionIndex !== null) {
-          const selectedAction = this.getActionByIndex(
-            this.selectedActionIndex,
-          );
-          if (selectedAction !== null && selectedAction !== undefined) {
-            this.args.onActionSelected?.(selectedAction);
-            // this.args.onClose?.();
-          }
-        }
-      }
-    };
-
     const viewDom = this.controller.mainEditorView.dom;
     viewDom.addEventListener('mousedown', handleMousedown);
     // Hacky but needed because otherwise the editor handles
     // the event first by inserting an enter
-    viewDom.addEventListener('keydown', handleEnter, { capture: true });
-    document.addEventListener('keydown', handleKeydown);
+    document.addEventListener('keydown', handleKeydown, { capture: true });
     return () => {
       viewDom.removeEventListener('mousedown', handleMousedown);
-      viewDom.removeEventListener('keydown', handleEnter, { capture: true });
-      document.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('keydown', handleKeydown, { capture: true });
     };
   });
 
