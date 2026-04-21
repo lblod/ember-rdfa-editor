@@ -18,8 +18,8 @@ export type ContextualActionGroup = {
 };
 
 export type GetContextualActionGroups = ((
-  state?: EditorState,
+  state: EditorState,
 ) => ContextualActionGroup[])[];
 export type GetContextualActions = ((
-  state?: EditorState,
+  state: EditorState,
 ) => ContextualAction[] | Promise<ContextualAction[]>)[];

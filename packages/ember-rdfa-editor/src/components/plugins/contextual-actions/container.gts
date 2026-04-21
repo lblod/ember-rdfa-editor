@@ -70,13 +70,10 @@ export default class ContextualActionsContainer extends Component<Args> {
   });
 
   get groups() {
-    if (!this.localEditorState) return [];
+    const state = this.localEditorState;
+    if (!state) return [];
 
-    return (
-      this.args.getGroups?.flatMap((getGroup) =>
-        getGroup(this.localEditorState ?? undefined),
-      ) ?? []
-    );
+    return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
   }
 
   closeContextMenu = () => {
@@ -95,14 +92,11 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   actions = trackedFunction(this, async () => {
-    if (!this.showContextMenu) return [];
+    const state = this.localEditorState;
+    if (!this.showContextMenu || !state) return [];
     const getActions = this.args.getActions ?? [];
 
-    return (
-      await Promise.all(
-        getActions.map((cb) => cb(this.localEditorState ?? undefined)),
-      )
-    ).flatMap((x) => x);
+    return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
   });
 
   @action
