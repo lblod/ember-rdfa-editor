@@ -207,6 +207,10 @@ export default class RelationshipEditorPointerModal extends Component<Relationsh
     return this.args.title ?? 'Add pointer';
   }
 
+  directionText(direction: Direction) {
+    return direction === 'backlink' ? 'Towards subject' : 'Towards object';
+  }
+
   <template>
     <AuModal
       @modalOpen={{true}}
@@ -247,7 +251,7 @@ export default class RelationshipEditorPointerModal extends Component<Relationsh
                   class="au-u-1-1"
                   as |option|
                 >
-                  {{option}}
+                  {{this.directionText option}}
                 </PowerSelect>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
                   <AuAlert
