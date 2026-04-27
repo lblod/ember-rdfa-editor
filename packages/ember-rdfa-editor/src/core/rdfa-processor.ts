@@ -68,6 +68,10 @@ export type IncomingTriple = {
   subject: ResourceNodeTerm;
   predicate: string;
 };
+export type IncomingLiteralTriple = IncomingTriple & {
+  language?: string;
+  datatype?: string;
+};
 
 export type FullTriple = {
   subject: SayNamedNode;
@@ -193,12 +197,30 @@ export function preprocessRDFa(dom: Node, pathFromRoot?: Node[]) {
     }
   }
   // each content node
-  for (const [node, object] of datastore.getContentNodeMap().entries()) {
-    const { subject, predicate } = object;
+  for (const [node, content] of datastore.getContentNodeMap().entries()) {
+    const { subject, predicate, object } = content;
+    const { language: _, datatype } = object;
 
-    const incomingProp: IncomingTriple = {
+    let langOrDatatype: { language: string } | { datatype?: string };
+    if (
+      datatype.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
+    ) {
+      langOrDatatype = {};
+      // TODO it seems correct to set the language here based on the language parsed from the RDFa,
+      // but this breaks some tests. We need to figure out whether those tests are just expecting
+      // over-precise old behaviour or if there really is a problem with that
+      // langOrDatatype = { language };
+    } else {
+      // Parser interprets everything as xsd:string, but we don't need to add an explicit datatype
+      // for this
+      langOrDatatype = !datatype.equals(SayLiteral.XSD_STRING)
+        ? { datatype: datatype.value }
+        : {};
+    }
+    const incomingProp: IncomingLiteralTriple = {
       subject,
       predicate: predicate.value,
+      ...langOrDatatype,
     };
     const extraBacklinks: IncomingTriple[] = [];
     if (isElement(node)) {

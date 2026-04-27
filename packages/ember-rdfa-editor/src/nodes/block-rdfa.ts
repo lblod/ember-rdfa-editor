@@ -78,17 +78,20 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         },
       },
     ],
-    toDOM(node: PNode) {
+    toDOM(node, state) {
       if (rdfaAware) {
-        return renderRdfaAware({
-          renderable: node,
-          tag: 'div',
-          attrs: {
-            class: `say-editable ${getClassnamesFromNode(node)}`,
-            'data-label': node.attrs['label'] as string,
+        return renderRdfaAware(
+          {
+            renderable: node,
+            tag: 'div',
+            attrs: {
+              class: `say-editable ${getClassnamesFromNode(node)}`,
+              'data-label': node.attrs['label'] as string,
+            },
+            content: 0,
           },
-          content: 0,
-        });
+          state,
+        );
       } else {
         const { label, ...attrs } = node.attrs;
         return [
@@ -102,7 +105,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         ];
       }
     },
-  };
+  } satisfies SayNodeSpec;
 };
 
 export class BlockRDFaView implements NodeView {

@@ -16,7 +16,7 @@
     "test:ember": "pnpm --filter '*' test:ember",
     "test:quickstart": "cd quickstart && npm run setup && npm run ci && npm run teardown",
     "test:quickstart:setup": "cd quickstart && npm run setup",
-    "prettier": "prettier --write .",
+    "format": "pnpm --filter '*' format",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "tapp": "pnpm --filter test-app",
     "release": "tsx scripts/release/run.mts",

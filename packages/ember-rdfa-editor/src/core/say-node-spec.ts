@@ -1,7 +1,7 @@
 import type { ComponentLike } from '@glint/template';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import type { NodeSpec } from 'prosemirror-model';
-import type { NodeSerializer } from './say-serializer.ts';
+import type { NodeSerializer, SayNodeToDOM } from './say-serializer.ts';
 import type { NodeSpecOnChanged } from '#root/plugins/on-changed/plugin.ts';
 
 export interface SayAttributeSpec {
@@ -25,6 +25,7 @@ export default interface SayNodeSpec extends NodeSpec {
    *
    */
   serialize?: NodeSerializer;
+  toDOM?: SayNodeToDOM;
   attrs?: {
     [name: string]: SayAttributeSpec;
   };

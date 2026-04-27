@@ -11,7 +11,6 @@ import {
   renderRdfaAttrs,
 } from '../core/schema.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import { PNode } from '#root/prosemirror-aliases.ts';
 import {
   contentElementWithMigrations,
   getAttrsWithMigrations,
@@ -69,7 +68,7 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
         },
       },
     ],
-    toDOM(node: PNode) {
+    toDOM(node, state) {
       const { __tag, ...attrs } = node.attrs;
       if (rdfaAware) {
         return [
@@ -78,13 +77,16 @@ export const invisibleRdfaWithConfig: (options?: Options) => SayNodeSpec = ({
             ...renderRdfaAttrs(attrs as RdfaAttrs),
             class: getClassnamesFromNode(node),
           },
-          renderInvisibleRdfa(node, 'span'),
+          renderInvisibleRdfa(
+            { renderable: node, rdfaContainerTag: 'span' },
+            state,
+          ),
         ];
       } else {
         return [__tag, attrs];
       }
     },
-  };
+  } satisfies SayNodeSpec;
 };
 
 /**

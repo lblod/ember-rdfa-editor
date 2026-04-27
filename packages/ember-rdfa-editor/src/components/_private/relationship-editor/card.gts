@@ -10,7 +10,7 @@ import type SayController from '#root/core/say-controller.ts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
   Direction,
-  SubmissionBody,
+  RelationshipSubmissionBody,
 } from '#root/components/_private/relationship-editor/types.ts';
 import { tracked } from 'tracked-built-ins';
 import {
@@ -94,6 +94,7 @@ export default class RelationshipEditorCard extends Component<Args> {
               this.startCreationMode('property');
             }
             break;
+          // TODO add a shortcut for pointers, but without clashing with properties :S
         }
       }
     };
@@ -168,7 +169,7 @@ export default class RelationshipEditorCard extends Component<Args> {
     };
   };
 
-  onFormSubmit = (body: SubmissionBody) => {
+  onFormSubmit = (body: RelationshipSubmissionBody) => {
     if (this.status?.mode === 'update') {
       this.removePropertyOrBacklink(this.status.propertyOrBacklink);
     }

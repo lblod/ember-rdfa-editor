@@ -1,5 +1,5 @@
 import type { MarkSpec } from 'prosemirror-model';
-import type { MarkSerializer } from './say-serializer.ts';
+import type { MarkSerializer, SayMarkToDOM } from './say-serializer.ts';
 
 /**
  * Custom `MarkSpec` interface which extends it with a `serialize` method. This method is called by the custom `SaySerializer`.
@@ -16,4 +16,5 @@ export default interface SayMarkSpec extends MarkSpec {
    *
    */
   serialize?: MarkSerializer;
+  toDOM?: SayMarkToDOM;
 }

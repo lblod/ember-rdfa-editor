@@ -9,14 +9,22 @@ import { type SayNamedNode } from './say-data-factory/index.ts';
 // These types moved here to avoid circular dependencies
 
 export const rdfaNodeTypes = ['resource', 'literal'] as const;
+export type RdfaNodeType = (typeof rdfaNodeTypes)[number];
 export interface RdfaAwareAttrs {
   __rdfaId: string;
-  rdfaNodeType: (typeof rdfaNodeTypes)[number];
+  rdfaNodeType: RdfaNodeType;
   backlinks: IncomingTriple[];
   externalTriples?: FullTriple[];
+  /** This node points to an RDFa node and gets its RDFa backlinks from there */
+  pointsToNode?: string;
 }
 export interface RdfaLiteralAttrs extends RdfaAwareAttrs {
   rdfaNodeType: 'literal';
+  /**
+   * This 'literal' actually doesn't assign importance to it's content. This logic will likely be
+   * flipped in a breaking release as 'literal's should be a special case of RdfaNodes.
+   */
+  hasNonLiteralContents: boolean;
   content: string | null;
   datatype?: SayNamedNode | null;
   language?: string | null;
@@ -33,7 +41,7 @@ export function isRdfaAttrs(attrs: Attrs): attrs is RdfaAttrs {
   return (
     '__rdfaId' in attrs &&
     'backlinks' in attrs &&
-    rdfaNodeTypes.includes(attrs['rdfaNodeType'] as 'resource' | 'literal')
+    rdfaNodeTypes.includes(attrs['rdfaNodeType'] as RdfaNodeType)
   );
 }
 

@@ -96,6 +96,7 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/namespace';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
+import LinkPointerButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/link-pointer-button';
 import {
   combineConfigs,
   documentConfig,
@@ -353,11 +354,29 @@ export default class extends Component {
       return result;
     },
   );
+  pointerSourcesOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerSources?.(args)) ?? [];
+      return result;
+    },
+  );
+  pointerTargetsOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerTargets?.(args)) ?? [];
+      return result;
+    },
+  );
 
   optionGeneratorConfigTaskified: OptionGeneratorConfig = {
     subjects: this.subjectOptionGeneratorTask.perform.bind(this),
     predicates: this.predicateOptionGeneratorTask.perform.bind(this),
     objects: this.objectOptionGeneratorTask.perform.bind(this),
+    pointerSources: this.pointerSourcesOptionGeneratorTask.perform.bind(this),
+    pointerTargets: this.pointerTargetsOptionGeneratorTask.perform.bind(this),
   };
 
   <template>
@@ -402,6 +421,13 @@ export default class extends Component {
                     @node={{this.activeNode}}
                     @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                     @devMode={{this.devMode}}
+                  />
+                </Item>
+                <Item>
+                  <LinkPointerButton
+                    @controller={{container.controller}}
+                    @node={{this.activeNode}}
+                    @optionGeneratorConfig={{this.optionGeneratorConfigTaskified}}
                   />
                 </Item>
               </Sb.Collapsible>
