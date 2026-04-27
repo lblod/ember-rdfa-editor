@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 13.6.0
+
+### Minor Changes
+
+- [#1367](https://github.com/lblod/ember-rdfa-editor/pull/1367) [`a352eab`](https://github.com/lblod/ember-rdfa-editor/commit/a352eab7491bed14a21399ec5e54a4f413ba0e4a) Thanks [@piemonkey](https://github.com/piemonkey)! - Support a 'pointed' attr enabling literal nodes to act as pointers
+
+- [#1367](https://github.com/lblod/ember-rdfa-editor/pull/1367) [`ad44a97`](https://github.com/lblod/ember-rdfa-editor/commit/ad44a9796cfc76a3e39dcccd893be49a670d8394) Thanks [@piemonkey](https://github.com/piemonkey)! - Add pointer support to RDFa devtools
+
+- [#1367](https://github.com/lblod/ember-rdfa-editor/pull/1367) [`0454ae3`](https://github.com/lblod/ember-rdfa-editor/commit/0454ae3b926289783eb455b034b35eac92299d1b) Thanks [@piemonkey](https://github.com/piemonkey)! - Update SayNodeSpec toDOM signature to be passed a state argument when serializing
+
 ## 13.5.0
 
 ### Minor Changes
