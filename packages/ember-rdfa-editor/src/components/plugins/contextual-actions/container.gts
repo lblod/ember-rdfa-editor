@@ -28,8 +28,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
   @tracked actions: ContextualAction[] = [];
-
   @tracked showActions = false;
+  @tracked loadActionsError: string | null = null;
 
   get groups() {
     const state = this.controller.mainEditorState;
@@ -68,11 +68,22 @@ export default class ContextualActionsContainer extends Component<Args> {
     const getActions = this.args.getActions ?? [];
     const editorState = this.controller.mainEditorState;
 
-    const actions = (
-      await Promise.all(getActions.map((cb) => cb(editorState)))
-    ).flatMap((x) => x);
+    try {
+      this.actions = (
+        await Promise.all(getActions.map((cb) => cb(editorState)))
+      ).flatMap((x) => x);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.loadActionsError = error.message;
+      } else if (typeof error === 'string') {
+        this.loadActionsError = error;
+      } else {
+        this.loadActionsError = this.intl.t(
+          'ember-rdfa-editor.utils.something-went-wrong',
+        );
+      }
+    }
 
-    this.actions = actions;
     this.showActions = true;
   });
 
@@ -118,6 +129,7 @@ export default class ContextualActionsContainer extends Component<Args> {
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @isLoading={{this.loadAndShowActions.isRunning}}
+          @errorMessage={{this.loadActionsError}}
         />
       </div>
     {{/if}}

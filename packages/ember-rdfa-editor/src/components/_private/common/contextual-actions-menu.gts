@@ -29,6 +29,7 @@ type Args = {
   onActionSelected?: (action: ContextualAction) => void;
   onClose?: () => void;
   isLoading?: boolean;
+  errorMessage?: string;
 };
 
 function sortByPriority(
@@ -133,38 +134,47 @@ export default class ContextualActionsMenu extends Component<Args> {
         </div>
       {{/if}}
       <div class="say-contextual-actions-menu-entries-container">
-        {{#each this.groupedActions as |group|}}
-          <div class="say-contextual-actions-menu-group-wrapper">
-            <div class="say-contextual-actions-menu-group-sticky-sentinel" />
-            <div
-              class="say-contextual-actions-menu-group-header au-u-muted"
-              {{this.observeSticky}}
-            >
-              {{group.label}}
-            </div>
-            <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
-              {{#each group.actions as |actionItem|}}
-                <button
-                  {{on "click" (fn this.selectAction actionItem)}}
-                  class="say-contextual-actions-menu-entry au-u-text-left"
-                  type="button"
-                  title={{actionItem.description}}
-                >
-                  <span>{{actionItem.label}}</span>
-                </button>
-              {{/each}}
-            </div>
-          </div>
-        {{else}}
+        {{#if @errorMessage}}
           <AuAlert
             @size="small"
-            @icon="circle-info"
-            @skin="info"
+            @icon="alert-triangle"
+            @skin="error"
             class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
-          >{{t
-              "ember-rdfa-editor.contextual-actions.no-actions-found"
-            }}</AuAlert>
-        {{/each}}
+          >{{@errorMessage}}</AuAlert>
+        {{else}}
+          {{#each this.groupedActions as |group|}}
+            <div class="say-contextual-actions-menu-group-wrapper">
+              <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+              <div
+                class="say-contextual-actions-menu-group-header au-u-muted"
+                {{this.observeSticky}}
+              >
+                {{group.label}}
+              </div>
+              <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
+                {{#each group.actions as |actionItem|}}
+                  <button
+                    {{on "click" (fn this.selectAction actionItem)}}
+                    class="say-contextual-actions-menu-entry au-u-text-left"
+                    type="button"
+                    title={{actionItem.description}}
+                  >
+                    <span>{{actionItem.label}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          {{else}}
+            <AuAlert
+              @size="small"
+              @icon="circle-info"
+              @skin="info"
+              class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+            >{{t
+                "ember-rdfa-editor.contextual-actions.no-actions-found"
+              }}</AuAlert>
+          {{/each}}
+        {{/if}}
       </div>
     </div>
   </template>
