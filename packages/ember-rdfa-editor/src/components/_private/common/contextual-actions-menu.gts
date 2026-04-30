@@ -19,7 +19,6 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
-import { not } from 'ember-truth-helpers';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 
 type Args = {

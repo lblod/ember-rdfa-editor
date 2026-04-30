@@ -129,7 +129,11 @@ export default class ContextualActionsContainer extends Component<Args> {
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @isLoading={{this.loadAndShowActions.isRunning}}
-          @errorMessage={{this.loadActionsError}}
+          @errorMessage={{if
+            this.loadActionsError
+            this.loadActionsError
+            undefined
+          }}
         />
       </div>
     {{/if}}
