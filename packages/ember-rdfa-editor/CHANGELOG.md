@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 13.7.0
+
+### Minor Changes
+
+- [`99150fc`](https://github.com/lblod/ember-rdfa-editor/commit/99150fcbb95a721a76b76d41fc4d05c6889d23aa) Thanks [@abeforgit](https://github.com/abeforgit)! - This is a rerelease of [13.6.1](https://github.com/lblod/ember-rdfa-editor/releases/tag/%40lblod%2Fember-rdfa-editor%4013.6.1)
+
+- [`99150fc`](https://github.com/lblod/ember-rdfa-editor/commit/99150fcbb95a721a76b76d41fc4d05c6889d23aa) Thanks [@abeforgit](https://github.com/abeforgit)! - Add context actions
+
+- [`99150fc`](https://github.com/lblod/ember-rdfa-editor/commit/99150fcbb95a721a76b76d41fc4d05c6889d23aa) Thanks [@abeforgit](https://github.com/abeforgit)! - Add slash commands
+
 ## 13.6.1
 
 ### Patch Changes
