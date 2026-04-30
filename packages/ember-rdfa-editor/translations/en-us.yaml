@@ -91,6 +91,7 @@ ember-rdfa-editor:
     back: Back
     more-options: More options
     loading: Loading
+    something-went-wrong: Something went wrong
   html-editor:
     toolbar-button:
       label: Edit HTML

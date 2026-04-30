@@ -29,6 +29,7 @@ type Args = {
   onActionSelected?: (action: ContextualAction) => void;
   onClose?: () => void;
   isLoading?: boolean;
+  errorMessage?: string;
 };
 
 function sortByPriority(
@@ -275,6 +276,13 @@ export default class ContextualActionsMenu extends Component<Args> {
               "ember-rdfa-editor.contextual-actions.loading-actions"
             }}</AuLoader>
         </div>
+      {{else if @errorMessage}}
+        <AuAlert
+          @size="small"
+          @icon="alert-triangle"
+          @skin="error"
+          class="au-u-margin-bottom-tiny au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+        >{{@errorMessage}}</AuAlert>
       {{else}}
         <div class="say-contextual-actions-menu-entries-container">
           {{#each this.groupedActions as |group|}}

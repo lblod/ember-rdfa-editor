@@ -35,6 +35,7 @@ export default class ContextualActionsContainer extends Component<Args> {
    * Set to true when the button is clicked
    */
   @tracked showActions = false;
+  @tracked loadActionsError: string | null = null;
 
   /**
    * We use this instead of this.controller.mainEditorState
@@ -93,10 +94,24 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   actions = trackedFunction(this, async () => {
     const state = this.localEditorState;
-    if (!this.showContextMenu || !state) return [];
+    if (!this.showContextMenu || !state || this.loadActionsError) return [];
     const getActions = this.args.getActions ?? [];
 
-    return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
+    try {
+      return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.loadActionsError = error.message;
+      } else if (typeof error === 'string') {
+        this.loadActionsError = error;
+      } else {
+        this.loadActionsError = this.intl.t(
+          'ember-rdfa-editor.utils.something-went-wrong',
+        );
+      }
+    }
+
+    this.showActions = true;
   });
 
   @action
@@ -159,11 +174,16 @@ export default class ContextualActionsContainer extends Component<Args> {
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
           @controller={{this.controller}}
-          @actions={{or this.actions.value this.actions.value undefined}}
+          @actions={{if this.actions.value this.actions.value undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
           @isLoading={{this.actions.isLoading}}
+          @errorMessage={{if
+            this.loadActionsError
+            this.loadActionsError
+            undefined
+          }}
         />
       {{/if}}
     </div>

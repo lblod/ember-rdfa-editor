@@ -90,6 +90,7 @@ ember-rdfa-editor:
     back: Terug
     more-options: Meer opties
     loading: Aan het laden
+    something-went-wrong: Er ging iets fout
   html-editor:
     toolbar-button:
       label: HTML bewerken
