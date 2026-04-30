@@ -83,6 +83,11 @@ import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
+import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container';
+import {
+  getContextualActions,
+  getContextualGroups,
+} from 'test-app/dummy-plugins/expose-contextual-actions';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
@@ -212,6 +217,9 @@ export default class extends Component {
     console.warn('Live toggling plugins is currently not supported');
   }
 
+  contextualActionGetters = [getContextualActions];
+  contextualGroupGetters = [getContextualGroups];
+
   <template>
     <DummyContainer {{this.loadConfig}}>
       <:header>
@@ -232,6 +240,14 @@ export default class extends Component {
               @nodeViews={{this.nodeViews}}
               @rdfaEditorInit={{this.rdfaEditorInit}}
             />
+
+            {{#if this.rdfaEditor}}
+              <ContextualActionsContainer
+                @controller={{this.rdfaEditor}}
+                @getActions={{this.contextualActionGetters}}
+                @getGroups={{this.contextualGroupGetters}}
+              />
+            {{/if}}
           </:default>
           <:sidebarRight as |container|>
             <Sidebar

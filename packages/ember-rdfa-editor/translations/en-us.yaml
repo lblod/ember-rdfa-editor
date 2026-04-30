@@ -91,6 +91,7 @@ ember-rdfa-editor:
     back: Back
     more-options: More options
     loading: Loading
+    something-went-wrong: Something went wrong
   html-editor:
     toolbar-button:
       label: Edit HTML
@@ -123,3 +124,7 @@ ember-rdfa-editor:
           label: Cancel
   property-editor:
     external-node: External node
+  contextual-actions:
+    no-actions-found: No actions found
+    type-to-search: Type to search…
+    loading-actions: Loading actions…

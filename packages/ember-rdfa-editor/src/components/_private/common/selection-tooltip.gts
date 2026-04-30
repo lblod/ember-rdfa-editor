@@ -10,19 +10,28 @@ import Component from '@glimmer/component';
 import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 import type SayController from '#root/core/say-controller.ts';
 
-type Args = {
-  controller: SayController;
-  visible: boolean;
+type Signature = {
+  Args: {
+    controller: SayController;
+    visible: boolean;
+    position: 'left' | 'bottom';
+  };
+  Blocks: {
+    default: [];
+  };
 };
-export default class SelectionTooltip extends Component<Args> {
-  floatingUI = floatingUI;
 
+export default class SelectionTooltip extends Component<Signature> {
   get controller() {
     return this.args.controller;
   }
 
   get visible() {
     return this.args.visible;
+  }
+
+  get position() {
+    return this.args.position ?? 'bottom';
   }
 
   get referenceElement() {
@@ -65,4 +74,21 @@ export default class SelectionTooltip extends Component<Args> {
       hide({ strategy: 'escaped' }),
     ];
   }
+  <template>
+    {{#if this.visible}}
+      <div
+        {{floatingUI
+          referenceElement=this.referenceElement
+          placement=this.position
+          middleware=this.tooltipMiddleWare
+          strategy="fixed"
+          useTransform=true
+        }}
+        class="say-editor-selection-tooltip"
+        ...attributes
+      >
+        {{yield}}
+      </div>
+    {{/if}}
+  </template>
 }

@@ -1,0 +1,177 @@
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+@use "./c-floating";
+@use "@appuniversum/ember-appuniversum/styles/settings/s-root";
+
+.say-floating-plus {
+  @extend .say-floating-element;
+  display: flex;
+  width: 3.3rem;
+  height: 3.3rem;
+}
+
+.say-floating-plus-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+
+  button {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    padding: au-settings.$au-unit-tiny;
+    width: 100%;
+    height: 100%;
+
+    &:hover {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-200);
+    }
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
+
+.say-contextual-actions-menu {
+  @extend .say-floating-element;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 0.1rem solid var(--au-gray-200);
+  min-width: 20em;
+  max-width: 20em;
+
+  animation: popup 0.1s ease forwards;
+
+  background: var(--au-white);
+
+  .au-c-input {
+    min-height: 3.6rem;
+  }
+
+  .au-c-input:focus {
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+.say-contextual-actions-menu-entries-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  padding-bottom: au-settings.$au-unit-tiny;
+
+  button {
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    padding: au-settings.$au-unit-tiny;
+    width: 100%;
+    height: 100%;
+    // TODO: why do we need to hardcode here?
+    font-family: "flanders-sans";
+    font-size: var(--au-global-font-size);
+
+    &:hover {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-200);
+    }
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
+
+.say-contextual-actions-menu-group-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+  text-transform: uppercase;
+
+  padding-bottom: 0.3rem;
+  padding-left: au-settings.$au-unit-small;
+  padding-right: au-settings.$au-unit-small;
+  padding-top: au-settings.$au-unit-tiny;
+
+  &.is-stuck {
+    box-shadow: 0 2px 3px 0px rgba(0, 0, 0, 0.04);
+    // border-bottom: 1px solid var(--au-gray-200);
+    transition: box-shadow 0.15s ease;
+  }
+}
+
+.say-contextual-actions-menu-entry {
+  display: flex;
+  flex-direction: row;
+
+  cursor: pointer;
+  border-radius: 0.5rem;
+
+  button {
+    outline: none;
+    border: 0;
+    color: var(--au-gray-900);
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      color: var(--au-gray-900);
+      background-color: var(--au-gray-100);
+    }
+
+    &:disabled {
+      color: var(--au-gray-500);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}
+
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// TODO: Remove this temporary loader. We need a possibility to change the
+// size of the appuniversum loader, so it fits in the floating button
+.say-floating-plus-button-loader {
+  height: 100%;
+  width: 100%;
+  border: 0.2rem solid var(--au-gray-600);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

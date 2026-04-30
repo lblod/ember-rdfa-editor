@@ -90,6 +90,7 @@ ember-rdfa-editor:
     back: Terug
     more-options: Meer opties
     loading: Aan het laden
+    something-went-wrong: Er ging iets fout
   html-editor:
     toolbar-button:
       label: HTML bewerken
@@ -122,3 +123,7 @@ ember-rdfa-editor:
           label: Annuleren
   property-editor:
     external-node: Externe node
+  contextual-actions:
+    no-actions-found: Geen acties gevonden
+    type-to-search: Typ om te zoeken…
+    loading-actions: Acties aan het laden…
