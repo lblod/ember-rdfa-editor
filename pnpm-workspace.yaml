@@ -128,7 +128,7 @@ catalog:
   mongoose: ^8.21.0
   n3: ^2.0.3  
   octokit: ^4.1.4
-  postcss: ^8.5.6
+  postcss: ^8.5.10
   prettier: ^3.8.0
   prettier-plugin-ember-template-tag: ^2.1.2
   prosemirror-commands: ^1.7.1
