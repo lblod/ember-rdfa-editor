@@ -502,8 +502,8 @@ catalogs:
       specifier: ^13.15.26
       version: 13.15.26
     vite:
-      specifier: ^6.4.1
-      version: 6.4.1
+      specifier: ^6.4.2
+      version: 6.4.2
     walk-sync:
       specifier: ^4.0.1
       version: 4.0.1
@@ -976,7 +976,7 @@ importers:
         version: 4.0.0(@embroider/compat@4.1.12(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3))(@embroider/core@4.4.2(@glint/template@1.7.3))
       '@embroider/vite':
         specifier: 'catalog:'
-        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.52.2)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
+        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.52.2)(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.36.0
@@ -1006,13 +1006,13 @@ importers:
         version: link:../packages/ember-rdfa-editor
       '@modyfi/vite-plugin-yaml':
         specifier: 'catalog:'
-        version: 1.1.1(rollup@4.52.2)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
+        version: 1.1.1(rollup@4.52.2)(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.50.0
       '@prosopo/vite-plugin-watch-workspace':
         specifier: 'catalog:'
-        version: 2.6.31(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
+        version: 2.6.31(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
       '@rdfjs/to-ntriples':
         specifier: 'catalog:'
         version: 3.0.1
@@ -1228,7 +1228,7 @@ importers:
         version: 9.0.1
       vite:
         specifier: 'catalog:'
-        version: 6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+        version: 6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
 packages:
 
@@ -3317,6 +3317,7 @@ packages:
 
   '@tsconfig/ember@3.0.12':
     resolution: {integrity: sha512-ypFTXqIzQAB5HpYPi4TwDElDcUheWrKsEaYXgjiCAvsH6zxcQ4zUeuJqmfT+FoUlHTPZ3Xyel81OxrcjI+rilw==}
+    deprecated: Please use @ember/app-tsconfig or @ember/library-tsconfig instead. These live at https://github.com/ember-cli/tsconfigs
 
   '@types/aws-lambda@8.10.152':
     resolution: {integrity: sha512-soT/c2gYBnT5ygwiHPmd9a1bftj462NWVk2tKCc1PYHSIacB2UwbTS2zYG4jzag1mRDuzg/OjtxQjQ2NKRB6Rw==}
@@ -3724,6 +3725,7 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -6884,7 +6886,6 @@ packages:
     resolution: {integrity: sha512-t0etAxTUk1w5MYdNOkZBZ8rvYYN5iL+2dHCCx/DpkFm/bW28M6y5nUS83D4XdZiHy35Fpaw6LBb+F88fHZnVCw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@2.4.0:
     resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
@@ -9366,10 +9367,12 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache@2.4.0:
@@ -9399,8 +9402,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite@6.4.1:
-    resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
+  vite@6.4.2:
+    resolution: {integrity: sha512-2N/55r4JDJ4gdrCvGgINMy+HH3iRpNIz8K6SFwVsA+JbQScLiC+clmAxBgwiSPgcG9U15QmvqCGWzMbqda5zGQ==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -11181,7 +11184,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@embroider/vite@1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.52.2)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
+  '@embroider/vite@1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.52.2)(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.6
       '@embroider/core': 4.4.2(@glint/template@1.7.3)
@@ -11200,7 +11203,7 @@ snapshots:
       send: 0.18.0
       source-map-url: 0.4.1
       terser: 5.44.0
-      vite: 6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - '@glint/template'
       - bufferutil
@@ -11918,12 +11921,12 @@ snapshots:
 
   '@marijn/find-cluster-break@1.0.2': {}
 
-  '@modyfi/vite-plugin-yaml@1.1.1(rollup@4.52.2)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
+  '@modyfi/vite-plugin-yaml@1.1.1(rollup@4.52.2)(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.52.2)
       js-yaml: 4.1.0
       tosource: 2.0.0-alpha.3
-      vite: 6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - rollup
 
@@ -12177,12 +12180,12 @@ snapshots:
       '@pnpm/error': 1000.0.5
       find-up: 5.0.0
 
-  '@prosopo/vite-plugin-watch-workspace@2.6.31(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
+  '@prosopo/vite-plugin-watch-workspace@2.6.31(vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       debug: 4.3.7
       esbuild: 0.25.9
       fast-glob: 3.3.2
-      vite: 6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -20009,7 +20012,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2):
+  vite@6.4.2(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2):
     dependencies:
       esbuild: 0.25.10
       fdir: 6.5.0(picomatch@4.0.3)
