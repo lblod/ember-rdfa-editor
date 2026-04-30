@@ -60,9 +60,12 @@ export type OptionGeneratorConfig = {
   subjects?: SubjectOptionGenerator;
   predicates?: PredicateOptionGenerator;
   objects?: ObjectOptionGenerator;
+  // TODO should this just be resource or literal node term?
+  pointerSources?: ObjectOptionGenerator;
+  pointerTargets?: TargetOptionGenerator<LiteralNodeTerm>;
 };
 
-export type SubmissionBody =
+export type RelationshipSubmissionBody =
   | {
       target: SubjectOption;
       predicate: PredicateOption<'backlink'>;
@@ -71,3 +74,8 @@ export type SubmissionBody =
       target: ObjectOption;
       predicate: PredicateOption<'property'>;
     };
+export type PointerSubmissionBody = {
+  target: ObjectOption;
+  pointerDirection: 'property' | 'backlink';
+};
+export type SubmissionBody = RelationshipSubmissionBody | PointerSubmissionBody;

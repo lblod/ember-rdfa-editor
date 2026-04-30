@@ -15,7 +15,6 @@
 import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
 import type {
   AttributeSpec,
-  DOMOutputSpec,
   TagParseRule,
   Node as PNode,
   Attrs,
@@ -33,7 +32,10 @@ import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
-import type { NodeSerializer } from '#root/core/say-serializer.ts';
+import type {
+  NodeSerializer,
+  SayNodeToDOM,
+} from '#root/core/say-serializer.ts';
 import type SayView from '#root/core/say-view.js';
 import { NodeSelection } from 'prosemirror-state';
 
@@ -139,7 +141,7 @@ function emberComponent(
  *     </div>
  *     ```
  */
-class EmberNodeView implements NodeView {
+export class EmberNodeView implements NodeView {
   node: PNode;
   dom: Element;
   contentDOM?: HTMLElement;
@@ -342,7 +344,7 @@ interface NonAtomConfig {
   atom: false;
   /**
    * ProseMissor content expression
-   * @see {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
+   * See {@link https://prosemirror.net/docs/guide/#schema.content_expressions|ProseMirror schema guide}
    */
   content: string;
 }
@@ -357,7 +359,7 @@ export type EmberNodeConfig = {
   /** ProseMirror 'group' property for the created node */
   group: string;
   draggable?: boolean;
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
+  /** See {@link https://prosemirror.net/docs/ref/#model.NodeSpec.defining} */
   defining?: boolean;
   /**
    * @deprecated
@@ -377,13 +379,12 @@ export type EmberNodeConfig = {
       parse?: (element: HTMLElement) => unknown;
     };
   };
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
+  /** See {@link https://prosemirror.net/docs/ref/#model.NodeSpec.parseDOM} */
   parseDOM?: readonly TagParseRule[];
-  /** @see {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} */
-  toDOM?: (node: PNode) => DOMOutputSpec;
+  toDOM?: SayNodeToDOM;
   /**
    * Allows creating a serialized version based on the node itself
-   * @see {@link SayNodeSpec}
+   * See {@link SayNodeSpec}
    */
   serialize?: NodeSerializer;
   /**
@@ -508,7 +509,7 @@ export type SayNodeViewConstructor = (
 ) => NodeView;
 /**
  * Creates a constructor for EmberNodeViews according to the passed config
- * @see {@link EmberNodeView}
+ * See {@link EmberNodeView}
  */
 export function createEmberNodeView(config: EmberNodeConfig) {
   return function (controller: SayController): SayNodeViewConstructor {

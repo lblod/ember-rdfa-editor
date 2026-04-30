@@ -39,19 +39,34 @@ import {
 import type { EditorState } from 'prosemirror-state';
 
 export type NodeSerializer = (node: PNode, state: EditorState) => DOMOutputSpec;
+/**
+ * Equivalent to {@link https://prosemirror.net/docs/ref/#model.NodeSpec.toDOM} except a
+ * SaySerializer can pass an EditorState argument, which means this function can know if this is
+ * being written to DOM or exported
+ */
+export type SayNodeToDOM = (node: PNode, state?: EditorState) => DOMOutputSpec;
 export type MarkSerializer = (
   mark: Mark,
   inline: boolean,
   state: EditorState,
 ) => DOMOutputSpec;
-
-type NodeToDOM = NonNullable<SayNodeSpec['toDOM']>;
-type MarkToDOM = NonNullable<SayMarkSpec['toDOM']>;
+/**
+ * Equivalent to {@link https://prosemirror.net/docs/ref/#model.MarkSpec.toDOM} except a
+ * SaySerializer can pass an EditorState argument, which means this function can know if this is
+ * being written to DOM or exported
+ */
+export type SayMarkToDOM = (
+  mark: Mark,
+  inline: boolean,
+  state?: EditorState,
+) => DOMOutputSpec;
 
 type StateGenerator = () => EditorState;
 /**
  * ProseMirror DOMSerializer which serializes nodes and marks based on their `serialize` or `toDOM` method.
  * If the node/mark has a `serialize` method, the current editor state is passed to that method.
+ * If the node/mark has no `serialize` but does have a `toDOM` method, this is called with the current editor state as its final argument.
+ * This allows easy re-use of `toDOM` logic, with the presence of the `state` argument signalling whether this is called by a `SaySerializer` or `DOMSerializer`.
  * When a node has both `serialize` and `toDOM` methods defined, the `serialize` method always takes precendence over the `toDOM` method when using the `SaySerializer`.
  * Note, for the `SaySerializer` to work, an instance of `SayEditor` is required.
  * If such an instance is not passed to the `fromSchema` static function, a default ProseMirror `DOMSerializer` is created.
@@ -59,18 +74,18 @@ type StateGenerator = () => EditorState;
 
 export default class SaySerializer extends DOMSerializer {
   declare nodes: {
-    [node: string]: NodeToDOM;
+    [node: string]: SayNodeToDOM;
   };
   declare marks: {
-    [mark: string]: MarkToDOM;
+    [mark: string]: SayMarkToDOM;
   };
   stateGenerator: StateGenerator;
 
   constructor(
     nodes: {
-      [node: string]: NodeToDOM;
+      [node: string]: SayNodeToDOM;
     },
-    marks: { [mark: string]: MarkToDOM },
+    marks: { [mark: string]: SayMarkToDOM },
     stateGenerator: StateGenerator,
   );
   /**
@@ -79,18 +94,18 @@ export default class SaySerializer extends DOMSerializer {
   constructor(
     /// The node serialization functions.
     nodes: {
-      [node: string]: NodeToDOM;
+      [node: string]: SayNodeToDOM;
     },
     /// The mark serialization functions.
-    marks: { [mark: string]: MarkToDOM },
+    marks: { [mark: string]: SayMarkToDOM },
     editor: SayEditor,
   );
   constructor(
     nodes: {
-      [node: string]: NodeToDOM;
+      [node: string]: SayNodeToDOM;
     },
     /// The mark serialization functions.
-    marks: { [mark: string]: MarkToDOM },
+    marks: { [mark: string]: SayMarkToDOM },
     stateGeneratorOrEditor: SayEditor | StateGenerator,
   ) {
     super(nodes, marks);
@@ -168,7 +183,7 @@ export default class SaySerializer extends DOMSerializer {
   }
 
   static nodesFromSchema(schema: Schema): {
-    [node: string]: NodeToDOM;
+    [node: string]: SayNodeToDOM;
   };
   /**
    * @deprecated passing an instance of {SayEditor} to this function is deprecated, use a {StateGenerator} instead
@@ -177,13 +192,13 @@ export default class SaySerializer extends DOMSerializer {
     schema: Schema,
     editor: SayEditor,
   ): {
-    [node: string]: NodeToDOM;
+    [node: string]: SayNodeToDOM;
   };
   static nodesFromSchema(
     schema: Schema,
     stateGenerator: StateGenerator,
   ): {
-    [node: string]: NodeToDOM;
+    [node: string]: SayNodeToDOM;
   };
   static nodesFromSchema(
     schema: Schema,
@@ -204,7 +219,7 @@ export default class SaySerializer extends DOMSerializer {
 
   /// Gather the serializers in a schema's mark specs into an object.
   static marksFromSchema(schema: Schema): {
-    [mark: string]: MarkToDOM;
+    [mark: string]: SayMarkToDOM;
   };
   /**
    * @deprecated passing an instance of {SayEditor} to this function is deprecated, use a {StateGenerator} instead
@@ -213,13 +228,13 @@ export default class SaySerializer extends DOMSerializer {
     schema: Schema,
     editor: SayEditor,
   ): {
-    [mark: string]: MarkToDOM;
+    [mark: string]: SayMarkToDOM;
   };
   static marksFromSchema(
     schema: Schema,
     stateGenerator: StateGenerator,
   ): {
-    [mark: string]: MarkToDOM;
+    [mark: string]: SayMarkToDOM;
   };
 
   static marksFromSchema(
@@ -241,20 +256,20 @@ function gatherToDOM(
   obj: { [node: string]: NodeType },
   stateGenerator: StateGenerator,
 ): {
-  [node: string]: NodeToDOM;
+  [node: string]: SayNodeToDOM;
 };
 function gatherToDOM(
   obj: { [node: string]: MarkType },
   stateGenerator: StateGenerator,
 ): {
-  [node: string]: MarkToDOM;
+  [node: string]: SayMarkToDOM;
 };
 function gatherToDOM(
   obj: { [node: string]: NodeType | MarkType },
   stateGenerator: StateGenerator,
 ) {
   const result: {
-    [node: string]: NodeToDOM | MarkToDOM;
+    [node: string]: SayNodeToDOM | SayMarkToDOM;
   } = {};
   for (const name in obj) {
     const type = obj[name];
@@ -264,7 +279,7 @@ function gatherToDOM(
       if (serialize) {
         result[name] = (node: PNode) => serialize(node, stateGenerator());
       } else if (toDOM) {
-        result[name] = toDOM;
+        result[name] = (node: PNode) => toDOM(node, stateGenerator());
       }
     } else {
       const spec = obj[name].spec as SayMarkSpec;
@@ -273,7 +288,8 @@ function gatherToDOM(
         result[name] = (mark: Mark, inline: boolean) =>
           serialize(mark, inline, stateGenerator());
       } else if (toDOM) {
-        result[name] = toDOM;
+        result[name] = (mark: Mark, inline: boolean) =>
+          toDOM(mark, inline, stateGenerator());
       }
     }
   }
