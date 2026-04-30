@@ -20,6 +20,7 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
+import { cached, tracked } from '@glimmer/tracking';
 
 type Args = {
   controller: SayController;
@@ -42,6 +43,120 @@ function sortByPriority(
 }
 
 export default class ContextualActionsMenu extends Component<Args> {
+  @tracked selectedActionIndex: number = 0;
+  actionToElement = new Map<ContextualAction, Element>();
+
+  scrollActionIntoView = (actionIndex: number) => {
+    const selectedAction = this.getActionByIndex(actionIndex);
+    if (selectedAction !== null && selectedAction !== undefined) {
+      const selectedActionElement = this.actionToElement.get(selectedAction);
+      selectedActionElement?.scrollIntoView({ block: 'center' });
+    }
+  };
+
+  setUpListeners = modifier(() => {
+    const handleMousedown = () => {
+      this.args.onClose?.();
+    };
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (!this.args.isLoading && !this.actionAmount) return;
+
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'Down':
+          if (
+            this.actionAmount &&
+            this.selectedActionIndex < this.actionAmount - 1
+          ) {
+            this.selectedActionIndex += 1;
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
+        case 'ArrowUp':
+        case 'Up':
+          if (this.selectedActionIndex > 0) {
+            this.selectedActionIndex -= 1;
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
+        case 'Escape':
+          this.args.onClose?.();
+          break;
+        case 'Enter': {
+          event.preventDefault();
+          if (this.selectedActionIndex === null) break;
+          const selectedAction = this.getActionByIndex(
+            this.selectedActionIndex,
+          );
+          if (selectedAction !== null && selectedAction !== undefined) {
+            this.args.onActionSelected?.(selectedAction);
+          }
+          break;
+        }
+        case 'Tab':
+          if (this.actionAmount) {
+            if (event.shiftKey) {
+              this.selectedActionIndex =
+                (this.selectedActionIndex - 1 + this.actionAmount) %
+                this.actionAmount;
+            } else {
+              this.selectedActionIndex =
+                (this.selectedActionIndex + 1) % this.actionAmount;
+            }
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
+      }
+    };
+
+    const viewDom = this.controller.mainEditorView.dom;
+    viewDom.addEventListener('mousedown', handleMousedown);
+    // Hacky but needed because otherwise the editor handles
+    // the event first by inserting an enter
+    document.addEventListener('keydown', handleKeydown, { capture: true });
+    return () => {
+      viewDom.removeEventListener('mousedown', handleMousedown);
+      document.removeEventListener('keydown', handleKeydown, { capture: true });
+    };
+  });
+
+  getActionByIndex(index: number) {
+    if (!this.groupedActions || this.selectedActionIndex === null) return null;
+
+    let searchIndex = 0;
+    for (const group of this.groupedActions) {
+      for (const actionIter of group.actions) {
+        if (searchIndex === index) {
+          return actionIter;
+        } else {
+          searchIndex += 1;
+        }
+      }
+    }
+  }
+
+  getIndexByAction(action: ContextualAction) {
+    // Better to return null here but this should never happen
+    if (!this.groupedActions || this.selectedActionIndex === null) return 0;
+
+    let searchIndex = 0;
+    for (const group of this.groupedActions) {
+      for (const actionIter of group.actions) {
+        if (action.id === actionIter.id) {
+          return searchIndex;
+        } else {
+          searchIndex += 1;
+        }
+      }
+    }
+
+    return searchIndex;
+  }
+
+  @cached
   get groupedActions() {
     return this.args.groups
       ?.map((group) => ({
@@ -53,6 +168,13 @@ export default class ContextualActionsMenu extends Component<Args> {
       }))
       .filter((group) => group.actions.length > 0)
       .toSorted(sortByPriority);
+  }
+
+  get actionAmount() {
+    return this.groupedActions?.reduce(
+      (accumulator, current) => accumulator + current.actions.length,
+      0,
+    );
   }
 
   get controller() {
@@ -71,9 +193,8 @@ export default class ContextualActionsMenu extends Component<Args> {
       offset(10),
       flip(),
       size({
-        apply({ availableWidth, availableHeight, elements }) {
+        apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            maxWidth: `${Math.max(0, availableWidth)}px`,
             maxHeight: `${Math.max(0, availableHeight)}px`,
           });
         },
@@ -114,16 +235,42 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onActionSelected?.(action);
   };
 
+  isSelectedAction = (action: ContextualAction) => {
+    return this.getIndexByAction(action) === this.selectedActionIndex;
+  };
+
+  updateSelectedActionIndex = (action: ContextualAction, event: MouseEvent) => {
+    if (event.movementX === 0 && event.movementY === 0) return;
+    this.selectedActionIndex = this.getIndexByAction(action);
+  };
+
+  addActionElementToMap = modifier((element, [action]: [ContextualAction]) => {
+    this.actionToElement.set(action, element);
+    return () => {
+      this.actionToElement.delete(action);
+    };
+  });
+
+  get menuPlacement() {
+    const parent = this.controller.mainEditorState.selection.$from.parent;
+    if (!parent) return 'bottom-start';
+    return parent.attrs['alignment'] === 'right'
+      ? 'bottom-end'
+      : 'bottom-start';
+  }
+
   <template>
     <div
       {{floatingUI
         referenceElement=this.referenceElement
-        placement="bottom-start"
+        placement=this.menuPlacement
         middleware=this.tooltipMiddleWare
         strategy="fixed"
         useTransform=false
       }}
       class="say-contextual-actions-menu"
+      ...attributes
+      {{this.setUpListeners}}
     >
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
@@ -131,16 +278,15 @@ export default class ContextualActionsMenu extends Component<Args> {
               "ember-rdfa-editor.contextual-actions.loading-actions"
             }}</AuLoader>
         </div>
-      {{/if}}
-      <div class="say-contextual-actions-menu-entries-container">
-        {{#if @errorMessage}}
-          <AuAlert
-            @size="small"
-            @icon="alert-triangle"
-            @skin="error"
-            class="au-u-margin-bottom-none au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
-          >{{@errorMessage}}</AuAlert>
-        {{else}}
+      {{else if @errorMessage}}
+        <AuAlert
+          @size="small"
+          @icon="alert-triangle"
+          @skin="error"
+          class="au-u-margin-bottom-tiny au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+        >{{@errorMessage}}</AuAlert>
+      {{else}}
+        <div class="say-contextual-actions-menu-entries-container">
           {{#each this.groupedActions as |group|}}
             <div class="say-contextual-actions-menu-group-wrapper">
               <div class="say-contextual-actions-menu-group-sticky-sentinel" />
@@ -153,8 +299,17 @@ export default class ContextualActionsMenu extends Component<Args> {
               <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
                 {{#each group.actions as |actionItem|}}
                   <button
+                    {{this.addActionElementToMap actionItem}}
                     {{on "click" (fn this.selectAction actionItem)}}
-                    class="say-contextual-actions-menu-entry au-u-text-left"
+                    {{on
+                      "mousemove"
+                      (fn this.updateSelectedActionIndex actionItem)
+                    }}
+                    class="say-contextual-actions-menu-entry au-u-text-left
+                      {{if
+                        (this.isSelectedAction actionItem)
+                        'focused-menu-entry'
+                      }}"
                     type="button"
                     title={{actionItem.description}}
                   >
@@ -173,8 +328,8 @@ export default class ContextualActionsMenu extends Component<Args> {
                 "ember-rdfa-editor.contextual-actions.no-actions-found"
               }}</AuAlert>
           {{/each}}
-        {{/if}}
-      </div>
+        </div>
+      {{/if}}
     </div>
   </template>
 }

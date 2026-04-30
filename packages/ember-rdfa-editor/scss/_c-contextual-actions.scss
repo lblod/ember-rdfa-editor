@@ -84,7 +84,8 @@
     font-family: "flanders-sans";
     font-size: var(--au-global-font-size);
 
-    &:hover {
+    &:hover,
+    &.focused-menu-entry {
       color: var(--au-gray-900);
       background-color: var(--au-gray-200);
     }
@@ -119,28 +120,12 @@
 .say-contextual-actions-menu-entry {
   display: flex;
   flex-direction: row;
-
   cursor: pointer;
   border-radius: 0.5rem;
-
-  button {
-    outline: none;
-    border: 0;
-    color: var(--au-gray-900);
-    width: 100%;
-
-    &:hover,
-    &:focus {
-      color: var(--au-gray-900);
-      background-color: var(--au-gray-100);
-    }
-
-    &:disabled {
-      color: var(--au-gray-500);
-      cursor: not-allowed;
-      background-color: transparent;
-    }
-  }
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @keyframes popup {

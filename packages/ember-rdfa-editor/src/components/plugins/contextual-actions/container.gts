@@ -11,67 +11,94 @@ import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
   type ContextualAction,
-  type ContextualActionGroup,
+  type GetContextualActionGroups,
+  type GetContextualActions,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
-import { task } from 'ember-concurrency';
+import {
+  getSlashCommandsPluginState,
+  slashCommandsStateChanged,
+} from '#root/plugins/slash-commands/index.ts';
+import { trackedFunction } from 'reactiveweb/function';
 
 type Args = {
   controller: SayController;
-  getActions?: ((
-    state: EditorState,
-  ) => ContextualAction[] | Promise<ContextualAction[]>)[];
-  getGroups?: ((state: EditorState) => ContextualActionGroup[])[];
+  getActions?: GetContextualActions;
+  getGroups?: GetContextualActionGroups;
 };
 
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
-  @tracked actions: ContextualAction[] = [];
-  @tracked showActions = false;
   @tracked loadActionsError: string | null = null;
 
+  /**
+   * We use this instead of this.controller.mainEditorState
+   * because we want to control the tracking behavior ourselves.
+   * Otherwise the invisibles plugin interferes with the contextual
+   * actions menu because it changes the editor state onBlur
+   * which we want to ignore
+   */
+  @tracked localEditorState: EditorState | null = null;
+
+  editorStateListener = (oldState: EditorState, newState: EditorState) => {
+    const docChanged = !oldState.doc.eq(newState.doc);
+    const selectionChanged = !oldState.selection.eq(newState.selection);
+    const oldPluginState = getSlashCommandsPluginState(oldState);
+    const newPluginState = getSlashCommandsPluginState(newState);
+    const pluginStateChanged = slashCommandsStateChanged(
+      oldPluginState,
+      newPluginState,
+    );
+
+    if (docChanged || selectionChanged || pluginStateChanged) {
+      this.localEditorState = newState;
+    }
+  };
+
+  registerStateListener = modifier(() => {
+    this.controller.mainEditorView.addStateListener(this.editorStateListener);
+    return () => {
+      this.controller.mainEditorView.removeStateListener(
+        this.editorStateListener,
+      );
+    };
+  });
+
   get groups() {
-    const state = this.controller.mainEditorState;
+    const state = this.localEditorState;
+    if (!state) return [];
+
     return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
   }
 
-  setUpListeners = modifier(() => {
-    const handleMousedown = () => {
-      if (this.showActions) {
-        this.showActions = false;
-      }
-    };
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (this.showActions && event.key === 'Escape') {
-        this.showActions = false;
-      }
-    };
-    const viewDom = this.controller.mainEditorView.dom;
-    viewDom.addEventListener('mousedown', handleMousedown);
-    document.addEventListener('keydown', handleKeydown);
-    return () => {
-      viewDom.removeEventListener('mousedown', handleMousedown);
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  });
+  closeContextMenu = () => {
+    const tr = this.controller.mainEditorState.tr;
+    tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
+    this.controller.mainEditorView.dispatch(tr);
+  };
+
+  openContextMenu = () => {
+    const tr = this.controller.mainEditorState.tr;
+    tr.setMeta('SLASH_COMMANDS_PLUGIN', 'open_context_menu');
+    this.controller.mainEditorView.dispatch(tr);
+  };
 
   get controller() {
     return this.args.controller;
   }
 
   get visible() {
-    return this.groups.length > 0 && !this.showActions;
+    return this.groups.length > 0 && !this.showContextMenu;
   }
 
-  loadAndShowActions = task(async () => {
+  actions = trackedFunction(this, async () => {
+    const state = this.localEditorState;
+    if (!this.showContextMenu || !state || this.loadActionsError) return [];
     const getActions = this.args.getActions ?? [];
-    const editorState = this.controller.mainEditorState;
 
     try {
-      this.actions = (
-        await Promise.all(getActions.map((cb) => cb(editorState)))
-      ).flatMap((x) => x);
+      return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
     } catch (error) {
       if (error instanceof Error) {
         this.loadActionsError = error.message;
@@ -83,12 +110,18 @@ export default class ContextualActionsContainer extends Component<Args> {
         );
       }
     }
-
-    this.showActions = true;
   });
 
   @action
   executeAction(action: ContextualAction) {
+    if (
+      this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
+      this.slashCommandsPluginState?.latestState
+    ) {
+      this.controller.mainEditorView.updateState(
+        this.slashCommandsPluginState.latestState,
+      );
+    }
     if ('command' in action) {
       this.controller.focus();
       this.controller.doCommand(action.command);
@@ -98,14 +131,23 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   selectAction(action: ContextualAction) {
     this.executeAction(action);
-    this.showActions = false;
+    this.closeContextMenu();
+  }
+
+  get slashCommandsPluginState() {
+    if (!this.localEditorState) return null;
+    return getSlashCommandsPluginState(this.localEditorState);
+  }
+
+  get showContextMenu() {
+    return this.slashCommandsPluginState?.shouldOpenContextActions;
   }
 
   <template>
-    <div>
+    <div {{this.registerStateListener}}>
       <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
         <div class="say-floating-plus-content">
-          {{#if this.loadAndShowActions.isRunning}}
+          {{#if this.actions.isLoading}}
             <div class="au-u-padding-tiny au-u-1-1">
               <span class="say-floating-plus-button-loader" />
             </div>
@@ -113,29 +155,28 @@ export default class ContextualActionsContainer extends Component<Args> {
             <button
               type="button"
               title="Show contextual actions"
-              {{on "click" this.loadAndShowActions.perform}}
+              {{on "click" this.openContextMenu}}
             >
               <AuIcon @icon="plus" @size="large" />
             </button>
           {{/if}}
         </div>
       </FloatingPlus>
-    </div>
-    {{#if this.showActions}}
-      <div {{this.setUpListeners}}>
+      {{#if this.showContextMenu}}
         <ContextualActionsMenu
           @controller={{this.controller}}
-          @actions={{this.actions}}
+          @actions={{if this.actions.value this.actions.value undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
-          @isLoading={{this.loadAndShowActions.isRunning}}
+          @onClose={{this.closeContextMenu}}
+          @isLoading={{this.actions.isLoading}}
           @errorMessage={{if
             this.loadActionsError
             this.loadActionsError
             undefined
           }}
         />
-      </div>
-    {{/if}}
+      {{/if}}
+    </div>
   </template>
 }

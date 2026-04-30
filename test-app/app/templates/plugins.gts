@@ -1,5 +1,5 @@
 import { action } from '@ember/object';
-import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
+import { inputRules } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
@@ -88,11 +88,15 @@ import {
   getContextualActions,
   getContextualGroups,
 } from 'test-app/dummy-plugins/expose-contextual-actions';
+import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
+import { service } from '@ember/service';
+import type IntlService from 'ember-intl/services/intl';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
 
 export default class extends Component {
+  @service declare intl: IntlService;
   @tracked sidebarExpanded: boolean = DEFAULT_SIDEBAR_EXPANDED;
 
   loadConfig = modifier(() => {
@@ -184,24 +188,37 @@ export default class extends Component {
       sample_block: sampleBlockView(proseController),
     };
   };
-  @tracked plugins: PluginConfig = [
-    firefoxCursorFix(),
-    chromeHacksPlugin(),
-    ...tablePlugins,
-    tableKeymap,
-    linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
-      shouldShowInvisibles: false,
-    }),
-    inputRules({
-      rules: [
-        bullet_list_input_rule(this.schema.nodes.bullet_list),
-        ordered_list_input_rule(this.schema.nodes.ordered_list),
-        link_input_rule({ nodeType: this.schema.nodes.link }),
-      ],
-    }),
-    emberApplication({ application: unwrap(getOwner(this)) }),
-  ];
+
+  contextualActionGetters = [getContextualActions];
+  contextualGroupGetters = [getContextualGroups];
+
+  get plugins() {
+    return [
+      firefoxCursorFix(),
+      chromeHacksPlugin(),
+      ...tablePlugins,
+      tableKeymap,
+      linkPasteHandler(this.schema.nodes.link),
+      createInvisiblesPlugin(
+        [hardBreak, paragraphInvisible, headingInvisible],
+        {
+          shouldShowInvisibles: false,
+        },
+      ),
+      inputRules({
+        rules: [
+          bullet_list_input_rule(this.schema.nodes.bullet_list),
+          ordered_list_input_rule(this.schema.nodes.ordered_list),
+          link_input_rule({ nodeType: this.schema.nodes.link }),
+        ],
+      }),
+      emberApplication({ application: unwrap(getOwner(this)) }),
+      slashCommandsPlugin({
+        intl: this.intl,
+        getGroups: this.contextualGroupGetters,
+      }),
+    ];
+  }
 
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
@@ -216,9 +233,6 @@ export default class extends Component {
   togglePlugin() {
     console.warn('Live toggling plugins is currently not supported');
   }
-
-  contextualActionGetters = [getContextualActions];
-  contextualGroupGetters = [getContextualGroups];
 
   <template>
     <DummyContainer {{this.loadConfig}}>
