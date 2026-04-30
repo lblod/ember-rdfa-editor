@@ -190,9 +190,8 @@ export default class ContextualActionsMenu extends Component<Args> {
       offset(10),
       flip(),
       size({
-        apply({ availableWidth, availableHeight, elements }) {
+        apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            maxWidth: `${Math.max(0, availableWidth)}px`,
             maxHeight: `${Math.max(0, availableHeight)}px`,
           });
         },

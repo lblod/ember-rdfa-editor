@@ -29,6 +29,13 @@ export async function getContextualActions() {
       group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     },
     {
+      label:
+        'Dit is een hele lange actie, die doet het menu waarschijnlijk overflowen, wat moet er dan gebeuren?',
+      description:
+        'Dit is een hele lange actie, die doet het menu waarschijnlijk overflowen, wat moet er dan gebeuren?',
+      group: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    },
+    {
       label: 'Datum invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: '11/02/2027',
