@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.6.1
+
+### Patch Changes
+
+- [#1369](https://github.com/lblod/ember-rdfa-editor/pull/1369) [`289fc22`](https://github.com/lblod/ember-rdfa-editor/commit/289fc2228120423e0ac1efde478462ecef590182) Thanks [@kobemertens](https://github.com/kobemertens)! - add slash commands
+
+- [#1366](https://github.com/lblod/ember-rdfa-editor/pull/1366) [`2e51207`](https://github.com/lblod/ember-rdfa-editor/commit/2e5120754c64f92128835c2faf11770affe95cab) Thanks [@kobemertens](https://github.com/kobemertens)! - Add first implementation of the context actions
+
 ## 13.6.0
 
 ### Minor Changes
