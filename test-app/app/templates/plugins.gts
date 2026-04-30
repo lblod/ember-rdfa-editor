@@ -1,5 +1,5 @@
 import { action } from '@ember/object';
-import { inputRules, type PluginConfig } from '@lblod/ember-rdfa-editor';
+import { inputRules } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
@@ -192,28 +192,33 @@ export default class extends Component {
   contextualActionGetters = [getContextualActions];
   contextualGroupGetters = [getContextualGroups];
 
-  @tracked plugins: PluginConfig = [
-    firefoxCursorFix(),
-    chromeHacksPlugin(),
-    ...tablePlugins,
-    tableKeymap,
-    linkPasteHandler(this.schema.nodes.link),
-    createInvisiblesPlugin([hardBreak, paragraphInvisible, headingInvisible], {
-      shouldShowInvisibles: false,
-    }),
-    inputRules({
-      rules: [
-        bullet_list_input_rule(this.schema.nodes.bullet_list),
-        ordered_list_input_rule(this.schema.nodes.ordered_list),
-        link_input_rule({ nodeType: this.schema.nodes.link }),
-      ],
-    }),
-    emberApplication({ application: unwrap(getOwner(this)) }),
-    slashCommandsPlugin({
-      intl: this.intl,
-      getGroups: this.contextualGroupGetters,
-    }),
-  ];
+  get plugins() {
+    return [
+      firefoxCursorFix(),
+      chromeHacksPlugin(),
+      ...tablePlugins,
+      tableKeymap,
+      linkPasteHandler(this.schema.nodes.link),
+      createInvisiblesPlugin(
+        [hardBreak, paragraphInvisible, headingInvisible],
+        {
+          shouldShowInvisibles: false,
+        },
+      ),
+      inputRules({
+        rules: [
+          bullet_list_input_rule(this.schema.nodes.bullet_list),
+          ordered_list_input_rule(this.schema.nodes.ordered_list),
+          link_input_rule({ nodeType: this.schema.nodes.link }),
+        ],
+      }),
+      emberApplication({ application: unwrap(getOwner(this)) }),
+      slashCommandsPlugin({
+        intl: this.intl,
+        getGroups: this.contextualGroupGetters,
+      }),
+    ];
+  }
 
   @action
   rdfaEditorInit(rdfaEditor: SayController) {
