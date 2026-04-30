@@ -10,7 +10,6 @@ import PowerSelect, {
 } from 'ember-power-select/components/power-select';
 import PowerSelectWithCreate from 'ember-power-select-with-create/components/power-select-with-create';
 import { tracked, TrackedObject } from 'tracked-built-ins';
-import { not } from 'ember-truth-helpers';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
@@ -21,44 +20,25 @@ import { validateYup } from 'ember-headless-form-yup';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { get } from '@ember/helper';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
-import type {
-  ContentLiteralTerm,
-  LiteralNodeTerm,
-  ResourceNodeTerm,
-  SayLiteral,
-  SayTerm,
-} from '#root/core/say-data-factory/index.ts';
-import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
+import type { SayTerm } from '#root/core/say-data-factory/index.ts';
 import type {
   Direction,
   ObjectOption,
   OptionGeneratorConfig,
-  PredicateOption,
-  RelationshipSubmissionBody,
+  PointerSubmissionBody,
   SubjectOption,
   SubmissionBody,
   TermOption,
 } from '../types.ts';
-import { LANG_STRING } from '#root/utils/_private/constants.ts';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { modifier } from 'ember-modifier';
-
-function truthy(obj: unknown) {
-  return !!obj;
-}
-
-const OBJECT_TERM_TYPES = [
-  'NamedNode',
-  'LiteralNode',
-  'ResourceNode',
-  'Literal',
-] as const;
+import type { RdfaAttrs } from '#root/core/rdfa-types.js';
 
 type RelationshipEditorDevModalSig = {
   Element: AuModalSignature['Element'];
   Args: {
     title?: string;
-    source: LiteralNodeTerm | ResourceNodeTerm<string>;
+    sourceAttrs: RdfaAttrs;
     supportedDirections?:
       | ['property']
       | ['backlink']
@@ -70,13 +50,10 @@ type RelationshipEditorDevModalSig = {
   };
 };
 
-export type FormData = Partial<RelationshipSubmissionBody> & {
-  direction?: Direction;
-};
+export type FormData = Partial<PointerSubmissionBody>;
 
 const formSchema = yup.object({
-  direction: yup.string().oneOf(['property', 'backlink']),
-  predicate: yup.object(),
+  pointerDirection: yup.string().oneOf(['property', 'backlink']),
   target: yup.object(),
 });
 
@@ -87,7 +64,7 @@ const onFormKeyDown = (formElement: HTMLFormElement, event: KeyboardEvent) => {
   return true;
 };
 
-export default class RelationshipEditorDevModeModal extends Component<RelationshipEditorDevModalSig> {
+export default class RelationshipEditorPointerModal extends Component<RelationshipEditorDevModalSig> {
   formElement?: HTMLFormElement;
   setupFormElement = modifier((element: HTMLFormElement) => {
     this.formElement = element;
@@ -113,29 +90,31 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
 
   get initialData(): FormData {
     const defaultDirection = this.sourceIsLiteral ? 'backlink' : 'property';
-    if (this.args.initialData) {
+    if (this.args.initialData && 'pointerDirection' in this.args.initialData) {
       return {
-        direction:
-          this.args.initialData.direction ??
-          this.args.initialData.predicate?.direction ??
-          defaultDirection,
+        pointerDirection:
+          this.args.initialData.pointerDirection ?? defaultDirection,
         ...this.args.initialData,
       };
     } else {
       return {
-        direction: defaultDirection,
+        pointerDirection: defaultDirection,
       };
     }
   }
   data: FormData = new TrackedObject(this.initialData);
 
+  get source() {
+    if (this.args.sourceAttrs.rdfaNodeType === 'resource') {
+      return sayDataFactory.resourceNode(this.args.sourceAttrs.subject);
+    } else {
+      return sayDataFactory.literalNode(this.args.sourceAttrs.__rdfaId);
+    }
+  }
+
   resetForm?: () => void;
   assignResetForm = (resetFn: () => void) => {
     this.resetForm = resetFn;
-  };
-
-  onSubmit = (data: SubmissionBody) => {
-    this.args.onSubmit(data);
   };
 
   onCancel = () => {
@@ -144,45 +123,9 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   };
 
   setDirection = (validationFn: () => void, value: Direction) => {
-    this.data.direction = value;
+    this.data.pointerDirection = value;
     validationFn();
-    this.data.predicate = undefined;
     this.data.target = undefined;
-  };
-
-  isValidPredicate = (term: string) => {
-    if (!term) {
-      return false;
-    }
-    const isUri = isFullUri(term) || isPrefixedUri(term);
-    return isUri;
-  };
-
-  setPredicate = (
-    validationFn: () => void,
-    predicateOption?: PredicateOption | string,
-  ) => {
-    if (!this.data.direction) {
-      return;
-    }
-    if (typeof predicateOption === 'string') {
-      const isUri =
-        isFullUri(predicateOption) || isPrefixedUri(predicateOption);
-      if (isUri) {
-        this.data.predicate = {
-          direction: this.data.direction,
-          term: sayDataFactory.namedNode(predicateOption),
-        };
-      }
-    } else {
-      // @ts-expect-error fix PredicateOption types
-      this.data.predicate = predicateOption && {
-        ...predicateOption,
-        direction: this.data.direction,
-      };
-    }
-    this.data.target = undefined;
-    validationFn();
   };
 
   isValidTarget = (term: string) => {
@@ -191,8 +134,8 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     }
     const isUri = isFullUri(term) || isPrefixedUri(term);
     return (
-      this.data.direction === 'property' ||
-      (this.data.direction === 'backlink' && isUri)
+      this.data.pointerDirection === 'property' ||
+      (this.data.pointerDirection === 'backlink' && isUri)
     );
   };
 
@@ -203,8 +146,8 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     if (typeof targetOption === 'string') {
       const isUri = isFullUri(targetOption) || isPrefixedUri(targetOption);
       if (
-        this.data.direction === 'property' ||
-        (this.data.direction === 'backlink' && isUri)
+        this.data.pointerDirection === 'property' ||
+        (this.data.pointerDirection === 'backlink' && isUri)
       ) {
         const term = isUri
           ? sayDataFactory.namedNode(targetOption)
@@ -228,93 +171,14 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
     return true;
   };
 
-  get showTargetTermTypeSelector() {
-    return this.data.direction === 'property' && this.data.target;
-  }
-
-  get showDatatypeAndLanguageOptions() {
-    return (
-      this.data.target &&
-      (this.data.target.term.termType === 'Literal' ||
-        this.data.target.term.termType === 'ContentLiteral')
-    );
-  }
-
-  setTermType = (termType: (typeof OBJECT_TERM_TYPES)[number]) => {
-    if (!this.data.target) {
-      return;
-    }
-    const targetTerm = this.data.target.term;
-    this.data.target = {
-      ...this.data.target,
-      term: sayDataFactory.fromTerm({
-        ...targetTerm,
-        termType,
-      }) as ObjectOption['term'],
-    };
-  };
-
-  setDatatype = (event: Event) => {
-    const datatype = (event.target as HTMLInputElement).value;
-    if (!this.data.target) {
-      return;
-    }
-    const targetTerm = this.data.target.term;
-    if (
-      targetTerm.termType !== 'Literal' &&
-      targetTerm.termType !== 'ContentLiteral'
-    ) {
-      return;
-    }
-    this.data.target = {
-      ...this.data.target,
-      term: sayDataFactory.fromTerm({
-        ...targetTerm,
-        datatype: sayDataFactory.namedNode(datatype),
-      }) as ContentLiteralTerm | SayLiteral,
-    };
-  };
-
-  setLanguage = (event: Event) => {
-    const language = (event.target as HTMLInputElement).value;
-    if (!this.data.target) {
-      return;
-    }
-    const targetTerm = this.data.target.term;
-    if (
-      targetTerm.termType !== 'Literal' &&
-      targetTerm.termType !== 'ContentLiteral'
-    ) {
-      return;
-    }
-    this.data.target = {
-      ...this.data.target,
-      term: sayDataFactory.fromTerm({
-        ...targetTerm,
-        language,
-        datatype: sayDataFactory.namedNode(LANG_STRING),
-      }) as ContentLiteralTerm | SayLiteral,
-    };
-  };
-
-  searchPredicates = async (searchString: string) => {
-    const options = await this.args.optionGeneratorConfig?.predicates?.({
-      searchString,
-      selectedSource: this.args.source,
-      direction: this.data.direction,
-    });
-    return options ?? [];
-  };
-
   searchTargets = async (searchString: string) => {
     const generatorFunction =
-      this.data.predicate?.direction === 'property'
-        ? this.args.optionGeneratorConfig?.objects
-        : this.args.optionGeneratorConfig?.subjects;
+      this.data.pointerDirection === 'property'
+        ? this.args.optionGeneratorConfig?.pointerSources
+        : this.args.optionGeneratorConfig?.pointerTargets;
     const options = await generatorFunction?.({
       searchString,
-      selectedPredicate: this.data.predicate?.term,
-      selectedSource: this.args.source,
+      selectedSource: this.source,
     });
     return options ?? [];
   };
@@ -328,15 +192,23 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
   };
 
   get targetLabel() {
-    return this.data.direction === 'property' ? 'Object' : 'Subject';
+    // TODO rename
+    return this.data.pointerDirection === 'property' ? 'Object' : 'Subject';
   }
 
   get sourceIsLiteral() {
-    return this.args.source.termType === 'LiteralNode';
+    return (
+      this.args.sourceAttrs.rdfaNodeType === 'literal' &&
+      !this.args.sourceAttrs.hasNonLiteralContents
+    );
   }
 
   get title() {
-    return this.args.title ?? 'Add relationship';
+    return this.args.title ?? 'Add pointer';
+  }
+
+  directionText(direction: Direction) {
+    return direction === 'backlink' ? 'Towards subject' : 'Towards object';
   }
 
   <template>
@@ -353,7 +225,7 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
             id={{formId}}
             @data={{this.data}}
             @dataMode="mutable"
-            @onSubmit={{this.onSubmit}}
+            @onSubmit={{@onSubmit}}
             @validate={{validateYup formSchema}}
             class="au-o-flow--small"
             as |form|
@@ -363,9 +235,9 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
               <AuLabel>
                 Source
               </AuLabel>
-              <p>{{@source.value}}</p>
+              <p>{{this.source.value}}</p>
             </AuFormRow>
-            <form.Field @name="direction" as |field|>
+            <form.Field @name="pointerDirection" as |field|>
               <AuFormRow>
                 <AuLabel for={{field.id}}>
                   Direction
@@ -379,52 +251,8 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   class="au-u-1-1"
                   as |option|
                 >
-                  {{option}}
+                  {{this.directionText option}}
                 </PowerSelect>
-                <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
-                  <AuAlert
-                    class="au-u-margin-none"
-                    @skin="warning"
-                    @size="small"
-                    @icon="alert-triangle"
-                  >
-                    {{#let (get errors 0) as |error|}}
-                      {{error.message}}
-                    {{/let}}
-                  </AuAlert>
-                </field.Errors>
-              </AuFormRow>
-            </form.Field>
-            <form.Field @name="predicate" as |field|>
-              <AuFormRow>
-                <AuLabel for={{field.id}}>
-                  Predicate
-                </AuLabel>
-                <PowerSelectWithCreate
-                  id={{field.id}}
-                  {{this.initialFocus}}
-                  @selected={{field.value}}
-                  @onKeydown={{this.onPowerSelectKeyDown}}
-                  @onChange={{fn this.setPredicate field.triggerValidation}}
-                  @onCreate={{fn this.setPredicate field.triggerValidation}}
-                  @showCreateWhen={{this.isValidPredicate}}
-                  @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
-                  @allowClear={{true}}
-                  @options={{this.searchPredicates ""}}
-                  @search={{this.searchPredicates}}
-                  @searchEnabled={{true}}
-                  class="au-u-1-1"
-                  as |option|
-                >
-                  <div
-                    class="au-u-flex au-u-flex--spaced-tiny au-u-flex--vertical-center"
-                  >
-                    <p><strong>{{this.optionRepr option}}</strong></p>
-                  </div>
-                  {{#if option.description}}
-                    <p>{{option.description}}</p>
-                  {{/if}}
-                </PowerSelectWithCreate>
                 <field.Errors class="au-u-1-1 au-u-margin-top-tiny" as |errors|>
                   <AuAlert
                     class="au-u-margin-none"
@@ -453,7 +281,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   @showCreateWhen={{this.isValidTarget}}
                   @buildSuggestion={{this.buildPowerSelectWithCreateSuggestion}}
                   @allowClear={{true}}
-                  @disabled={{not this.data.predicate}}
                   @options={{this.searchTargets ""}}
                   @search={{this.searchTargets}}
                   @searchEnabled={{true}}
@@ -484,53 +311,6 @@ export default class RelationshipEditorDevModeModal extends Component<Relationsh
                   </AuAlert>
                 </field.Errors>
               </AuFormRow>
-              {{#if this.showTargetTermTypeSelector}}
-                <AuFormRow>
-                  <WithUniqueId as |id|>
-                    <AuLabel for={{id}}>Term type</AuLabel>
-                    <PowerSelect
-                      id={{id}}
-                      @selected={{this.data.target.term.termType}}
-                      @onChange={{this.setTermType}}
-                      @options={{OBJECT_TERM_TYPES}}
-                      class="au-u-1-1"
-                      as |option|
-                    >
-                      {{option}}
-                    </PowerSelect>
-                  </WithUniqueId>
-                </AuFormRow>
-              {{/if}}
-              {{#if this.showDatatypeAndLanguageOptions}}
-                <div class="au-u-flex au-u-flex--row au-u-flex--spaced-tiny">
-                  <WithUniqueId as |id|>
-                    <div class="au-u-1-5 au-u-flex au-u-flex--column">
-                      <AuLabel for={{id}}>Language</AuLabel>
-                      <AuInput
-                        id={{id}}
-                        {{on "input" this.setLanguage}}
-                        {{! @glint-expect-error }}
-                        value={{this.data.target.term.language}}
-                      />
-                    </div>
-                  </WithUniqueId>
-                  <WithUniqueId as |id|>
-                    <div class="au-u-4-5 au-u-flex au-u-flex--column">
-                      <AuLabel for={{id}}>Datatype</AuLabel>
-                      <AuInput
-                        id={{id}}
-                        {{! @glint-expect-error }}
-                        @disabled={{truthy this.data.target.term.language}}
-                        {{on "input" this.setDatatype}}
-                        {{! @glint-expect-error }}
-                        value={{this.data.target.term.datatype.value}}
-                      />
-                    </div>
-                  </WithUniqueId>
-
-                </div>
-                <AuFormRow />
-              {{/if}}
             </form.Field>
 
             <AuButtonGroup class="au-u-margin-top">

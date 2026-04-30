@@ -173,9 +173,12 @@ export const listItemWithConfig: (options?: Config) => SayNodeSpec = ({
         class: getClassnamesFromNode(node),
       };
       if (enableHierarchicalList) {
-        attributes['data-list-marker'] = renderListMarker(
-          node.attrs['listPath'] as ListPathEntry[],
-        );
+        const listPath = node.attrs['listPath'] as ListPathEntry[];
+        if (listPath.length) {
+          attributes['data-list-marker'] = renderListMarker(
+            node.attrs['listPath'] as ListPathEntry[],
+          );
+        }
       }
       return ['li', attributes, 0];
     },

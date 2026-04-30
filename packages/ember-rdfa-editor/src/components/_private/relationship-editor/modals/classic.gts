@@ -30,8 +30,8 @@ import type {
   ObjectOption,
   OptionGeneratorConfig,
   PredicateOption,
+  RelationshipSubmissionBody,
   SubjectOption,
-  SubmissionBody,
 } from '../types.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { modifier } from 'ember-modifier';
@@ -40,13 +40,13 @@ type RelationshipEditorModalSig = {
   Element: AuModalSignature['Element'];
   Args: {
     source: SayTerm;
-    onSubmit: (body: SubmissionBody) => unknown;
+    onSubmit: (body: RelationshipSubmissionBody) => unknown;
     onCancel: () => unknown;
     optionGeneratorConfig?: OptionGeneratorConfig;
   };
 };
 
-type FormData = Partial<SubmissionBody>;
+type FormData = Partial<RelationshipSubmissionBody>;
 
 const formSchema = yup.object({
   predicate: yup
@@ -75,7 +75,7 @@ export default class RelationshipEditorClassicModal extends Component<Relationsh
     this.resetForm = resetFn;
   };
 
-  onSubmit = (data: SubmissionBody) => {
+  onSubmit = (data: RelationshipSubmissionBody) => {
     this.args.onSubmit(data);
   };
 

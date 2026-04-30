@@ -18,7 +18,6 @@ import { Util } from './util.ts';
 import { CustomError } from '#root/utils/_private/errors.ts';
 import { isElement, isTextNode } from '#root/utils/_private/dom-helpers.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
-import { GraphyDataset } from '#root/utils/_private/datastore/graphy-dataset.ts';
 import { unwrap } from '#root/utils/_private/option.ts';
 import type {
   RdfaResourceNodeMap,
@@ -31,6 +30,7 @@ import {
 import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
+import { N3StoreWrapper } from '../datastore/n3-store-wrapper.ts';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -96,7 +96,7 @@ export interface SubAndPred {
 }
 
 export interface RdfaParseResponse<N> {
-  dataset: GraphyDataset;
+  dataset: N3StoreWrapper;
 
   subjectToNodesMapping: Map<string, N[]>;
   nodeToSubjectMapping: Map<N, ModelQuad<N>>;
@@ -159,7 +159,7 @@ export class RdfaParser<N> {
     this.htmlParseListener = options.htmlParseListener;
     this.rdfaPatterns = {};
     this.pendingRdfaPatternCopies = {};
-    this.resultSet = new GraphyDataset();
+    this.resultSet = new N3StoreWrapper();
     this.globallySeenPrefixes = new Map<string, string>();
 
     this.nodeToSubjectMapping = new Map();
@@ -221,7 +221,7 @@ export class RdfaParser<N> {
     }
     parser.onEnd();
     return {
-      dataset: new GraphyDataset(parser.resultSet),
+      dataset: new N3StoreWrapper(parser.resultSet),
       nodeToSubjectMapping: parser.nodeToSubjectMapping,
       subjectToNodesMapping: parser.subjectToNodesMapping,
       nodeToPredicatesMapping: parser.nodeToPredicatesMapping,
@@ -1019,7 +1019,7 @@ export class RdfaParser<N> {
         ? this.util.getResourceOrBaseIri(contentPredicate, activeTag)
         : undefined,
       contentDatatype,
-      contentLanguage: contentLanguage?.toLowerCase(),
+      contentLanguage,
     });
   };
 

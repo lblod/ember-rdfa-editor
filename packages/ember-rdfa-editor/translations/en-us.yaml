@@ -100,6 +100,9 @@ ember-rdfa-editor:
   text-styles: Text styles
   notifications:
     paste-size-limit-reached: Paste size limit reached, try again with a smaller image or use a tool to resize it
+  relationship-editor:
+    pointer-linking:
+      button: Link pointer
   linking-ui-poc:
     button:
       label: Insert relationship

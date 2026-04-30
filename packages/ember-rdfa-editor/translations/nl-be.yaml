@@ -99,6 +99,9 @@ ember-rdfa-editor:
   text-styles: Tekststijlen
   notifications:
     paste-size-limit-reached: Limiet voor plakgrootte bereikt, probeer het opnieuw met een kleinere afbeelding of gebruik een hulpprogramma om de grootte aan te passen
+  relationship-editor:
+    pointer-linking:
+      button: Link pointer
   linking-ui-poc:
     button:
       label: Voeg relatie toe
