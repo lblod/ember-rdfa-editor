@@ -58,37 +58,54 @@ export default class ContextualActionsMenu extends Component<Args> {
       this.args.onClose?.();
     };
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown' || event.key === 'Down') {
-        if (
-          this.actionAmount &&
-          this.selectedActionIndex < this.actionAmount - 1
-        ) {
-          this.selectedActionIndex += 1;
-          this.scrollActionIntoView(this.selectedActionIndex);
-        }
-        event.preventDefault();
-      }
-      if (event.key === 'ArrowUp' || event.key === 'Up') {
-        if (this.selectedActionIndex > 0) {
-          this.selectedActionIndex -= 1;
-          this.scrollActionIntoView(this.selectedActionIndex);
-        }
-        event.preventDefault();
-      }
-      if (event.key === 'Escape') {
-        this.args.onClose?.();
-      }
-
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        if (this.selectedActionIndex !== null) {
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'Down':
+          if (
+            this.actionAmount &&
+            this.selectedActionIndex < this.actionAmount - 1
+          ) {
+            this.selectedActionIndex += 1;
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
+        case 'ArrowUp':
+        case 'Up':
+          if (this.selectedActionIndex > 0) {
+            this.selectedActionIndex -= 1;
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
+        case 'Escape':
+          this.args.onClose?.();
+          break;
+        case 'Enter': {
+          event.preventDefault();
+          if (this.selectedActionIndex === null) break;
           const selectedAction = this.getActionByIndex(
             this.selectedActionIndex,
           );
           if (selectedAction !== null && selectedAction !== undefined) {
             this.args.onActionSelected?.(selectedAction);
           }
+          break;
         }
+        case 'Tab':
+          if (this.actionAmount) {
+            if (event.shiftKey) {
+              this.selectedActionIndex =
+                (this.selectedActionIndex - 1 + this.actionAmount) %
+                this.actionAmount;
+            } else {
+              this.selectedActionIndex =
+                (this.selectedActionIndex + 1) % this.actionAmount;
+            }
+            this.scrollActionIntoView(this.selectedActionIndex);
+          }
+          event.preventDefault();
+          break;
       }
     };
 
