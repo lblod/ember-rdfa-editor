@@ -2,10 +2,12 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
 import type IntlService from 'ember-intl/services/intl';
 import type { GetContextualActionGroups } from '../contextual-actions';
+import { ReplaceStep } from 'prosemirror-transform';
 
 type PluginState = {
   shouldOpenContextActions: boolean;
   latestState: EditorState | null;
+  slashPos: number | null;
 };
 
 export function slashCommandsStateChanged(
@@ -61,20 +63,28 @@ interface SlashCommandsPluginArgs {
   getGroups: GetContextualActionGroups;
 }
 
-function keepOpenContextActions(state: EditorState, tr: Transaction) {
+function keepOpenContextActions(
+  state: EditorState,
+  tr: Transaction,
+  slashPos: number | null,
+) {
   if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'close_context_menu') {
     return false;
   }
-  const { parent, parentOffset } = state.selection.$from;
+  if (slashPos === null) return false;
+
+  const { pos } = state.selection.$from;
+  if (pos !== slashPos) return false;
+
+  const $slash = state.doc.resolve(slashPos);
+  const { parent, parentOffset } = $slash;
   const textBetween = parent.textBetween(
     parentOffset - 1,
     parentOffset,
     '\0',
     '\0',
   );
-  if (textBetween !== '/') {
-    return false;
-  }
+  if (textBetween !== '/') return false;
 
   return true;
 }
@@ -85,22 +95,43 @@ function activeIsRightAligned(state: EditorState) {
   return parent.attrs['alignment'] === 'right';
 }
 
+function transactionIsSlashTyped(tr: Transaction) {
+  if (tr.steps.length !== 1) return false;
+  const [step] = tr.steps;
+  if (!(step instanceof ReplaceStep)) return false;
+  const slice = step.slice;
+  return (
+    slice.content.childCount === 1 &&
+    slice.content.firstChild?.isText &&
+    slice.content.firstChild.text === '/'
+  );
+}
+
 export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
   return new Plugin<PluginState>({
     key: slashCommandsPluginKey,
     state: {
       init() {
-        return { shouldOpenContextActions: false, latestState: null };
+        return {
+          shouldOpenContextActions: false,
+          latestState: null,
+          slashPos: null,
+        };
       },
       apply(tr, pluginState, oldState, newState) {
         // TODO fix issue where if you put 2 / and naviate with the arrows it keeps the menu open
         if (pluginState.shouldOpenContextActions) {
           return {
             ...pluginState,
-            shouldOpenContextActions: keepOpenContextActions(newState, tr),
+            shouldOpenContextActions: keepOpenContextActions(
+              newState,
+              tr,
+              pluginState.slashPos,
+            ),
           };
         }
-        if (tr.getMeta('SLASH_COMMANDS_PLUGIN') !== 'slash_typed') {
+
+        if (!transactionIsSlashTyped(tr)) {
           return pluginState;
         }
 
@@ -109,23 +140,17 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
          * open context actions
          */
         if (shouldShowPlaceholder(oldState, options.getGroups)) {
-          return { latestState: oldState, shouldOpenContextActions: true };
+          return {
+            latestState: oldState,
+            shouldOpenContextActions: true,
+            slashPos: newState.selection.$from.pos,
+          };
         }
 
         return { ...pluginState, shouldOpenContextActions: false };
       },
     },
     props: {
-      handleTextInput(view, _from, _to, text) {
-        if (text === '/') {
-          const tr = view.state.tr.setMeta(
-            'SLASH_COMMANDS_PLUGIN',
-            'slash_typed',
-          );
-          view.dispatch(tr);
-        }
-        return false;
-      },
       decorations(state: EditorState) {
         const { doc, selection } = state;
         if (!shouldShowPlaceholder(state, options.getGroups)) {
