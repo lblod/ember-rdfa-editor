@@ -79,6 +79,12 @@ function keepOpenContextActions(state: EditorState, tr: Transaction) {
   return true;
 }
 
+function activeIsRightAligned(state: EditorState) {
+  const parent = state.selection.$from.parent;
+  if (!parent) return false;
+  return parent.attrs['alignment'] === 'right';
+}
+
 export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
   return new Plugin<PluginState>({
     key: slashCommandsPluginKey,
@@ -126,15 +132,19 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
           return null;
         }
         return DecorationSet.create(doc, [
-          Decoration.widget(selection.from, () => {
-            const el = document.createElement('span');
-            el.textContent = options.intl.t(
-              'ember-rdfa-editor.contextual-actions.type-/-for-actions',
-            );
-            el.style.color = 'rgb(161, 158, 153)';
-            el.style.caretColor = '#000';
-            return el;
-          }),
+          Decoration.widget(
+            selection.from,
+            () => {
+              const el = document.createElement('span');
+              el.textContent = options.intl.t(
+                'ember-rdfa-editor.contextual-actions.type-/-for-actions',
+              );
+              el.style.color = 'rgb(161, 158, 153)';
+              el.style.caretColor = '#000';
+              return el;
+            },
+            { side: activeIsRightAligned(state) ? -1 : 1 },
+          ),
         ]);
       },
     },

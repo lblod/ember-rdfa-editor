@@ -232,11 +232,19 @@ export default class ContextualActionsMenu extends Component<Args> {
     };
   });
 
+  get menuPlacement() {
+    const parent = this.controller.mainEditorState.selection.$from.parent;
+    if (!parent) return 'bottom-start';
+    return parent.attrs['alignment'] === 'right'
+      ? 'bottom-end'
+      : 'bottom-start';
+  }
+
   <template>
     <div
       {{floatingUI
         referenceElement=this.referenceElement
-        placement="bottom-start"
+        placement=this.menuPlacement
         middleware=this.tooltipMiddleWare
         strategy="fixed"
         useTransform=false
