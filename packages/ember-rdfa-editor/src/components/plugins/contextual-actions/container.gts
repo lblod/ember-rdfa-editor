@@ -20,7 +20,6 @@ import {
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
 import { trackedFunction } from 'reactiveweb/function';
-import { or } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
@@ -31,10 +30,6 @@ type Args = {
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
-  /**
-   * Set to true when the button is clicked
-   */
-  @tracked showActions = false;
   @tracked loadActionsError: string | null = null;
 
   /**
@@ -78,9 +73,14 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   closeContextMenu = () => {
-    this.showActions = false;
     const tr = this.controller.mainEditorState.tr;
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
+    this.controller.mainEditorView.dispatch(tr);
+  };
+
+  openContextMenu = () => {
+    const tr = this.controller.mainEditorState.tr;
+    tr.setMeta('SLASH_COMMANDS_PLUGIN', 'open_context_menu');
     this.controller.mainEditorView.dispatch(tr);
   };
 
@@ -110,8 +110,6 @@ export default class ContextualActionsContainer extends Component<Args> {
         );
       }
     }
-
-    this.showActions = true;
   });
 
   @action
@@ -133,7 +131,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   selectAction(action: ContextualAction) {
     this.executeAction(action);
-    this.showActions = false;
+    this.closeContextMenu();
   }
 
   get slashCommandsPluginState() {
@@ -142,15 +140,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
-    return (
-      this.showActions ||
-      this.slashCommandsPluginState?.shouldOpenContextActions
-    );
+    return this.slashCommandsPluginState?.shouldOpenContextActions;
   }
-
-  setShowActions = () => {
-    this.showActions = true;
-  };
 
   <template>
     <div {{this.registerStateListener}}>
@@ -164,7 +155,7 @@ export default class ContextualActionsContainer extends Component<Args> {
             <button
               type="button"
               title="Show contextual actions"
-              {{on "click" this.setShowActions}}
+              {{on "click" this.openContextMenu}}
             >
               <AuIcon @icon="plus" @size="large" />
             </button>

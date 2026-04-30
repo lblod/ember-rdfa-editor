@@ -59,6 +59,8 @@ export default class ContextualActionsMenu extends Component<Args> {
       this.args.onClose?.();
     };
     const handleKeydown = (event: KeyboardEvent) => {
+      if (!this.args.isLoading && !this.actionAmount) return;
+
       switch (event.key) {
         case 'ArrowDown':
         case 'Down':
