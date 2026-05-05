@@ -87,7 +87,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'open_context_menu');
     this.controller.mainEditorView.dispatch(tr);
 
-    // Opening the menu cannot rely on the slash commands plugin 
+    // Opening the menu cannot rely on the slash commands plugin
     // to be present, thats why we keep the openness state locally as well
     this.plusButtonClicked = true;
   };
@@ -123,7 +123,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   executeAction(action: ContextualAction) {
     if (
-      !this.plusButtonClicked && 
+      !this.plusButtonClicked &&
       this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
       this.slashCommandsPluginState?.latestState
     ) {
@@ -149,7 +149,10 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
-    return this.slashCommandsPluginState?.shouldOpenContextActions || this.plusButtonClicked;
+    return (
+      this.slashCommandsPluginState?.shouldOpenContextActions ||
+      this.plusButtonClicked
+    );
   }
 
   <template>
