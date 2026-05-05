@@ -19,7 +19,9 @@ export type ContextualActionGroup = {
 
 export type GetContextualActionGroups = ((
   state: EditorState,
+  searchQuery?: string,
 ) => ContextualActionGroup[])[];
 export type GetContextualActions = ((
   state: EditorState,
+  searchQuery?: string,
 ) => ContextualAction[] | Promise<ContextualAction[]>)[];

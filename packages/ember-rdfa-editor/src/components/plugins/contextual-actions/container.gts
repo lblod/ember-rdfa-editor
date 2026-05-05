@@ -31,6 +31,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
   @tracked loadActionsError: string | null = null;
+  @tracked searchQuery: string = '';
 
   /**
    * We use this instead of this.controller.mainEditorState
@@ -70,7 +71,11 @@ export default class ContextualActionsContainer extends Component<Args> {
     const state = this.localEditorState;
     if (!state) return [];
 
-    return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
+    return (
+      this.args.getGroups?.flatMap((getGroup) =>
+        getGroup(state, this.searchQuery),
+      ) ?? []
+    );
   }
 
   closeContextMenu = () => {
@@ -87,7 +92,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'open_context_menu');
     this.controller.mainEditorView.dispatch(tr);
 
-    // Opening the menu cannot rely on the slash commands plugin 
+    // Opening the menu cannot rely on the slash commands plugin
     // to be present, thats why we keep the openness state locally as well
     this.plusButtonClicked = true;
   };
@@ -106,7 +111,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     const getActions = this.args.getActions ?? [];
 
     try {
-      return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
+      return (
+        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
+      ).flat();
     } catch (error) {
       if (error instanceof Error) {
         this.loadActionsError = error.message;
@@ -148,8 +155,13 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
-    return this.slashCommandsPluginState?.shouldOpenContextActions || this.plusButtonClicked;
+    return (
+      this.slashCommandsPluginState?.shouldOpenContextActions ||
+      this.plusButtonClicked
+    );
   }
+
+  setSearchQuery = (query: string) => (this.searchQuery = query);
 
   <template>
     <div {{this.registerStateListener}}>
@@ -172,11 +184,14 @@ export default class ContextualActionsContainer extends Component<Args> {
       </FloatingPlus>
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
+          @enableSearch={{true}}
           @controller={{this.controller}}
           @actions={{if this.actions.value this.actions.value undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
+          @onSearch={{this.setSearchQuery}}
+          @searchQuery={{this.searchQuery}}
           @isLoading={{this.actions.isLoading}}
           @errorMessage={{if
             this.loadActionsError

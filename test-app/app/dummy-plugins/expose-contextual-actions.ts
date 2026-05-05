@@ -5,7 +5,11 @@ import {
 } from '@lblod/ember-rdfa-editor';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function getContextualActions() {
+export async function getContextualActions(
+  _state: EditorState,
+  searchQuery: string,
+) {
+  if (searchQuery) return [];
   await new Promise((resolve) => setTimeout(resolve, 500));
   return [
     {
