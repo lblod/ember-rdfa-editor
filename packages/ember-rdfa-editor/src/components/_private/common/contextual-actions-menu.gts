@@ -267,6 +267,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   setSearchQuery = (event: InputEvent) => {
+    this.selectedActionIndex = 0;
     this.args.onSearch?.((event.target as HTMLInputElement).value);
   };
 
