@@ -39,8 +39,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
 
-  // TODO: fix problem where it automatically rerenders after a second
-  @use debouncedQuery = debounce(1000, () => this.searchQuery, '');
+  // TODO: fix problem where it automatically rerenders after the debounce period (if it is more than the initial load)
+  @use debouncedQuery = debounce(50, () => this.searchQuery, '');
 
   /**
    * We use this instead of this.controller.mainEditorState
