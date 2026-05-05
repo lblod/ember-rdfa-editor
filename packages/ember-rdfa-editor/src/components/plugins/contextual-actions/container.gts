@@ -123,6 +123,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   executeAction(action: ContextualAction) {
     if (
+      !this.plusButtonClicked && 
       this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
       this.slashCommandsPluginState?.latestState
     ) {
