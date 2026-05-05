@@ -83,6 +83,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
     this.controller.mainEditorView.dispatch(tr);
     this.plusButtonClicked = false;
+    this.searchQuery = '';
   };
 
   openContextMenu = () => {
