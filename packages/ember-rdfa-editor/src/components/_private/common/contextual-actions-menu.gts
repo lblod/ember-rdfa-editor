@@ -288,7 +288,7 @@ export default class ContextualActionsMenu extends Component<Args> {
       {{this.setUpListeners}}
     >
       {{#if @enableSearch}}
-        <div class="au-u-padding-small au-u-padding-bottom-tiny">
+        <div class="say-contextual-actions-menu-search-bar">
           <AuInput
             {{this.focus}}
             @icon="search"

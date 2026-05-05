@@ -6,7 +6,7 @@ import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import type SayController from '#root/core/say-controller.ts';
-import type { EditorState } from 'prosemirror-state';
+import { NodeSelection, type EditorState } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
@@ -22,6 +22,7 @@ import {
 import { trackedFunction } from 'reactiveweb/function';
 import { use } from 'ember-resources';
 import { debounce } from 'reactiveweb/debounce';
+import { localCopy } from 'tracked-toolbox';
 
 type Args = {
   controller: SayController;
@@ -34,6 +35,10 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
+
+  // Local copy because we want to control openness of context menu (by setting this to null to close)
+  @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
+
   // TODO: fix problem where it automatically rerenders after a second
   @use debouncedQuery = debounce(1000, () => this.searchQuery, '');
 
@@ -62,6 +67,13 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   };
 
+  get selectedEditorNode() {
+    const selection = this.controller.mainEditorState.selection;
+    if (selection instanceof NodeSelection) {
+      return selection.node;
+    }
+  }
+
   registerStateListener = modifier(() => {
     this.controller.mainEditorView.addStateListener(this.editorStateListener);
     return () => {
@@ -88,6 +100,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.controller.mainEditorView.dispatch(tr);
     this.plusButtonClicked = false;
     this.searchQuery = '';
+    this.selectedEditorNodeLocal = null;
   };
 
   openContextMenu = () => {
@@ -165,7 +178,8 @@ export default class ContextualActionsContainer extends Component<Args> {
   get showContextMenu() {
     return (
       this.slashCommandsPluginState?.shouldOpenContextActions ||
-      this.plusButtonClicked
+      this.plusButtonClicked ||
+      this.selectedEditorNodeLocal
     );
   }
 
