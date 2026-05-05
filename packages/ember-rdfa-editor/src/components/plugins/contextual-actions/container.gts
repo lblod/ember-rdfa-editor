@@ -34,7 +34,8 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
-  @use debouncedQuery = debounce(500, () => this.searchQuery);
+  // TODO: fix problem where it automatically rerenders after a second
+  @use debouncedQuery = debounce(1000, () => this.searchQuery, '');
 
   /**
    * We use this instead of this.controller.mainEditorState
@@ -116,7 +117,9 @@ export default class ContextualActionsContainer extends Component<Args> {
 
     try {
       return (
-        await Promise.all(getActions.map((cb) => cb(state, this.debouncedQuery)))
+        await Promise.all(
+          getActions.map((cb) => cb(state, this.debouncedQuery)),
+        )
       ).flat();
     } catch (error) {
       if (error instanceof Error) {
@@ -130,7 +133,6 @@ export default class ContextualActionsContainer extends Component<Args> {
       }
     }
   });
-
 
   @action
   executeAction(action: ContextualAction) {
@@ -167,7 +169,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     );
   }
 
-  setSearchQuery = (query: string) => (this.searchQuery = query);
+  setSearchQuery = (query: string) => {
+    this.searchQuery = query;
+  };
 
   <template>
     <div {{this.registerStateListener}}>
