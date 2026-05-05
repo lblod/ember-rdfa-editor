@@ -149,11 +149,10 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @action
   executeAction(action: ContextualAction) {
-    if (
+    const menuWasOpenedBySlash =
       !this.plusButtonClicked &&
-      this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
-      this.slashCommandsPluginState?.latestState
-    ) {
+      this.slashCommandsPluginState?.shouldOpenContextActions;
+    if (menuWasOpenedBySlash && this.slashCommandsPluginState?.latestState) {
       this.controller.mainEditorView.updateState(
         this.slashCommandsPluginState.latestState,
       );
@@ -191,19 +190,13 @@ export default class ContextualActionsContainer extends Component<Args> {
     <div {{this.registerStateListener}}>
       <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
         <div class="say-floating-plus-content">
-          {{#if this.actions.isLoading}}
-            <div class="au-u-padding-tiny au-u-1-1">
-              <span class="say-floating-plus-button-loader" />
-            </div>
-          {{else}}
-            <button
-              type="button"
-              title="Show contextual actions"
-              {{on "click" this.openContextMenu}}
-            >
-              <AuIcon @icon="plus" @size="large" />
-            </button>
-          {{/if}}
+          <button
+            type="button"
+            title="Show contextual actions"
+            {{on "click" this.openContextMenu}}
+          >
+            <AuIcon @icon="plus" @size="large" />
+          </button>
         </div>
       </FloatingPlus>
       {{#if this.showContextMenu}}
