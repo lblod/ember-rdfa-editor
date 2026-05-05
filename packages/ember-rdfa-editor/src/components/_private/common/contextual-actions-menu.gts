@@ -22,8 +22,7 @@ import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
-// @ts-expect-error ember-focus-trap does not have ts support
-import { focusTrap } from 'ember-focus-trap';
+import { runTask } from 'ember-lifeline';
 
 type Args = {
   controller: SayController;
@@ -271,6 +270,10 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onSearch?.((event.target as HTMLInputElement).value);
   };
 
+  focus = modifier((element: HTMLElement) => {
+    runTask(this, () => element.focus());
+  });
+
   <template>
     <div
       {{floatingUI
@@ -284,17 +287,20 @@ export default class ContextualActionsMenu extends Component<Args> {
       ...attributes
       {{this.setUpListeners}}
     >
-      <div {{focusTrap}} class="au-u-padding-small au-u-padding-bottom-tiny">
-        <AuInput
-          @icon="search"
-          @width="block"
-          {{on "input" this.setSearchQuery}}
-          value={{@searchQuery}}
-          placeholder={{t
-            "ember-rdfa-editor.contextual-actions.type-to-search"
-          }}
-        />
-      </div>
+      {{#if @enableSearch}}
+        <div class="au-u-padding-small au-u-padding-bottom-tiny">
+          <AuInput
+            {{this.focus}}
+            @icon="search"
+            @width="block"
+            {{on "input" this.setSearchQuery}}
+            value={{@searchQuery}}
+            placeholder={{t
+              "ember-rdfa-editor.contextual-actions.type-to-search"
+            }}
+          />
+        </div>
+      {{/if}}
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
           <AuLoader>{{t

@@ -7,10 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function getContextualActions(
   _state: EditorState,
-  searchQuery: string,
+  searchQuery?: string,
 ) {
-  if (searchQuery) return [];
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 300));
   return [
     {
       label: 'Op het kruispunt van de … met de … geldt',
@@ -85,28 +84,34 @@ export async function getContextualActions(
       group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       priority: 9,
     },
-  ].map((action) => {
-    return {
-      ...action,
-      id: uuidv4(),
-      command: (
-        state: EditorState,
-        dispatch?: (transaction: Transaction) => void,
-      ) => {
-        if (dispatch) {
-          const tr = state.tr;
-          tr.replaceSelectionWith(
-            state.schema.text(action.insert ?? action.label),
-          );
-          tr.setSelection(
-            new TextSelection(tr.selection.$from, tr.selection.$from),
-          );
-          dispatch(tr);
-        }
-        return true;
-      },
-    };
-  });
+  ]
+    .filter(({ label }) =>
+      searchQuery
+        ? label.toLowerCase().includes(searchQuery.toLowerCase())
+        : true,
+    )
+    .map((action) => {
+      return {
+        ...action,
+        id: uuidv4(),
+        command: (
+          state: EditorState,
+          dispatch?: (transaction: Transaction) => void,
+        ) => {
+          if (dispatch) {
+            const tr = state.tr;
+            tr.replaceSelectionWith(
+              state.schema.text(action.insert ?? action.label),
+            );
+            tr.setSelection(
+              new TextSelection(tr.selection.$from, tr.selection.$from),
+            );
+            dispatch(tr);
+          }
+          return true;
+        },
+      };
+    });
 }
 
 export function getContextualGroups() {

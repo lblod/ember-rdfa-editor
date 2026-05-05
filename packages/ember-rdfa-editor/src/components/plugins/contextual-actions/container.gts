@@ -20,6 +20,8 @@ import {
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
 import { trackedFunction } from 'reactiveweb/function';
+import { use } from 'ember-resources';
+import { debounce } from 'reactiveweb/debounce';
 
 type Args = {
   controller: SayController;
@@ -32,6 +34,7 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
+  @use debouncedQuery = debounce(500, () => this.searchQuery);
 
   /**
    * We use this instead of this.controller.mainEditorState
@@ -113,7 +116,7 @@ export default class ContextualActionsContainer extends Component<Args> {
 
     try {
       return (
-        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
+        await Promise.all(getActions.map((cb) => cb(state, this.debouncedQuery)))
       ).flat();
     } catch (error) {
       if (error instanceof Error) {
@@ -128,10 +131,11 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   });
 
+
   @action
   executeAction(action: ContextualAction) {
     if (
-      !this.plusButtonClicked && 
+      !this.plusButtonClicked &&
       this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
       this.slashCommandsPluginState?.latestState
     ) {
