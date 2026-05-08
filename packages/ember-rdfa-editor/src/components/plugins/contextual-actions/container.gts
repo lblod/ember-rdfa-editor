@@ -104,6 +104,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.plusButtonClicked = false;
     this.searchQuery = '';
     this.selectedEditorNodeLocal = null;
+    this.controller.mainEditorView.focus();
   };
 
   openContextMenu = () => {
