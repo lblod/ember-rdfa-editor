@@ -19,16 +19,22 @@ import {
   getSlashCommandsPluginState,
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
-import { trackedFunction } from 'reactiveweb/function';
-import { use } from 'ember-resources';
-import { debounce } from 'reactiveweb/debounce';
 import { localCopy } from 'tracked-toolbox';
+import { restartableTask, timeout } from 'ember-concurrency';
+
+// We don't use a trackedfunction because it causes the menu to reload
+// after the first load (after the debounce time)
+// See https://discord.com/channels/480462759797063690/1501197288603910266
+// eslint-disable-next-line ember/no-at-ember-render-modifiers
+import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 
 type Args = {
   controller: SayController;
   getActions?: GetContextualActions;
   getGroups?: GetContextualActionGroups;
 };
+
+const SEARCH_TIMEOUT_MS = 500;
 
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
@@ -39,9 +45,6 @@ export default class ContextualActionsContainer extends Component<Args> {
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
 
-  // TODO: fix problem where it automatically rerenders after the debounce period (if it is more than the initial load)
-  @use debouncedQuery = debounce(50, () => this.searchQuery, '');
-
   /**
    * We use this instead of this.controller.mainEditorState
    * because we want to control the tracking behavior ourselves.
@@ -51,6 +54,8 @@ export default class ContextualActionsContainer extends Component<Args> {
    */
   @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
+
+  @tracked actions: ContextualAction[] = [];
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -127,16 +132,15 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
-  actions = trackedFunction(this, async () => {
+  getActionsTask = restartableTask(async () => {
+    await timeout(SEARCH_TIMEOUT_MS);
     const state = this.localEditorState;
     if (!this.showContextMenu || !state || this.loadActionsError) return [];
     const getActions = this.args.getActions ?? [];
 
     try {
-      return (
-        await Promise.all(
-          getActions.map((cb) => cb(state, this.debouncedQuery)),
-        )
+      this.actions = (
+        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
       ).flat();
     } catch (error) {
       if (error instanceof Error) {
@@ -188,6 +192,7 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
+    void this.getActionsTask.perform();
   };
 
   <template>
@@ -205,15 +210,16 @@ export default class ContextualActionsContainer extends Component<Args> {
       </FloatingPlus>
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
+          {{didInsert this.getActionsTask.perform}}
           @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if this.actions.value this.actions.value undefined}}
+          @actions={{if this.actions this.actions undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}
           @searchQuery={{this.searchQuery}}
-          @isLoading={{this.actions.isLoading}}
+          @isLoading={{this.getActionsTask.isRunning}}
           @errorMessage={{if
             this.loadActionsError
             this.loadActionsError
