@@ -67,9 +67,12 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   };
 
+  /**
+   * Returns the node to display the menu for
+   */
   get selectedEditorNode() {
     const selection = this.controller.mainEditorState.selection;
-    if (selection instanceof NodeSelection) {
+    if (selection instanceof NodeSelection && this.groups) {
       return selection.node;
     }
   }

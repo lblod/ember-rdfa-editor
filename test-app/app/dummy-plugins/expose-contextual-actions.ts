@@ -1,5 +1,6 @@
 import {
   EditorState,
+  NodeSelection,
   TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
@@ -114,8 +115,8 @@ export async function getContextualActions(
     });
 }
 
-export function getContextualGroups() {
-  return [
+export function getContextualGroups(state: EditorState) {
+  const groups = [
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
@@ -135,4 +136,10 @@ export function getContextualGroups() {
       priority: 10,
     },
   ];
+  if (
+    state.selection instanceof NodeSelection &&
+    state.selection.node.attrs['placeholderText']
+  )
+    return groups.slice(0, 1);
+  return groups;
 }
