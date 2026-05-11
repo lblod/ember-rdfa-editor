@@ -100,6 +100,12 @@
       cursor: not-allowed;
       background-color: transparent;
     }
+
+    div#button-content {
+      gap: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
   }
 }
 

@@ -18,6 +18,7 @@ import { fn } from '@ember/helper';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
+import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
@@ -343,7 +344,12 @@ export default class ContextualActionsMenu extends Component<Args> {
                     type="button"
                     title={{actionItem.description}}
                   >
-                    <span>{{actionItem.label}}</span>
+                    <div id="button-content">
+                      {{#if actionItem.icon}}
+                        <AuIcon @size="large" @icon={{actionItem.icon}} />
+                      {{/if}}
+                      <span>{{actionItem.label}}</span>
+                    </div>
                   </button>
                 {{/each}}
               </div>

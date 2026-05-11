@@ -43,11 +43,13 @@ export async function getContextualActions(
       label: 'Datum invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: '11/02/2027',
+      icon: 'calendar',
     },
     {
       label: 'Locatie invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       description: 'Voeg een locatie in',
+      icon: 'location',
     },
     {
       label: 'Marcode invoegen',

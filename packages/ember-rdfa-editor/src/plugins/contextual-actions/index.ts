@@ -3,6 +3,7 @@ import { EditorState, type Command } from 'prosemirror-state';
 export type ContextualAction = {
   id: string;
   label: string;
+  icon?: string;
   group: string;
   command: Command;
   description?: string;
