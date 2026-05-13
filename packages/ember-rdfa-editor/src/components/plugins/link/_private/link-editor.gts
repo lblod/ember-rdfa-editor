@@ -116,7 +116,6 @@ export default class LinkEditor extends Component<Args> {
       @expandable={{false}}
       @size="small"
       @shadow={{true}}
-      @disableAuContent={{true}}
       ...attributes
       as |c|
     >

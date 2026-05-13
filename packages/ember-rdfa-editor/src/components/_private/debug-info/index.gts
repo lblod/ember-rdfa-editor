@@ -35,7 +35,6 @@ export default class DebugInfo extends Component<Signature> {
       @manualControl={{true}}
       @openSection={{this.toggleSection}}
       @isExpanded={{this.expanded}}
-      @disableAuContent={{true}}
       as |c|
     >
       <c.header>
