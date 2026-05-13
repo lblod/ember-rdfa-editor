@@ -342,7 +342,7 @@
     "webpack": "catalog:"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.11.0",
+    "@appuniversum/ember-appuniversum": "catalog:",
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
     "@glimmer/component": "^1.1.2 || ^2.0.0",
     "@glimmer/tracking": "^1.1.2",
