@@ -28,6 +28,9 @@ function shouldShowPlaceholder(
   state: EditorState,
   getGroups: GetContextualActionGroups,
 ) {
+  const pluginState = getSlashCommandsPluginState(state);
+  if (pluginState?.shouldOpenContextActions) return false;
+
   const groups = getGroups.flatMap((getGroups) => getGroups(state));
   if (groups.length === 0) return false;
   const { selection } = state;
@@ -119,7 +122,9 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
         };
       },
       apply(tr, pluginState, oldState, newState) {
-        // TODO fix issue where if you put 2 / and naviate with the arrows it keeps the menu open
+        if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'open_context_menu') {
+          return { ...pluginState, shouldOpenContextActions: true };
+        }
         if (pluginState.shouldOpenContextActions) {
           return {
             ...pluginState,
