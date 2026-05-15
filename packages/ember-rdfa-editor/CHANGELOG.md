@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.7.1
+
+### Patch Changes
+
+- [#1372](https://github.com/lblod/ember-rdfa-editor/pull/1372) [`e844abc`](https://github.com/lblod/ember-rdfa-editor/commit/e844abc67c65a776170ec875aa4449277f4de0d6) Thanks [@kobemertens](https://github.com/kobemertens)! - Fix floating plus not opening context actions
+
 ## 13.7.0
 
 ### Minor Changes
