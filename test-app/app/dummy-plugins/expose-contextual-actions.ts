@@ -52,6 +52,12 @@ export async function getContextualActions(
       icon: 'location',
     },
     {
+      label: 'Gebied invoegen',
+      group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      description: 'Voeg een gebied in',
+      icon: 'area',
+    },
+    {
       label: 'Marcode invoegen',
       group: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       insert: 'MAR12',

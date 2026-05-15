@@ -184,9 +184,10 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   get showContextMenu() {
     return (
-      this.slashCommandsPluginState?.shouldOpenContextActions ||
-      this.plusButtonClicked ||
-      this.selectedEditorNodeLocal
+      this.groups.length > 0 &&
+      (this.slashCommandsPluginState?.shouldOpenContextActions ||
+        this.plusButtonClicked ||
+        this.selectedEditorNodeLocal)
     );
   }
 
