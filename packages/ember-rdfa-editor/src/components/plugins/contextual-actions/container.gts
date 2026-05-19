@@ -40,6 +40,7 @@ export default class ContextualActionsContainer extends Component<Args> {
    * which we want to ignore
    */
   @tracked localEditorState: EditorState | null = null;
+  @tracked plusButtonClicked = false;
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -76,12 +77,19 @@ export default class ContextualActionsContainer extends Component<Args> {
     const tr = this.controller.mainEditorState.tr;
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
     this.controller.mainEditorView.dispatch(tr);
+    this.plusButtonClicked = false;
   };
 
   openContextMenu = () => {
+    // Send a transaction to signal the slash commands plugin (if present) that
+    // the menu is open. This hides the placeholder text
     const tr = this.controller.mainEditorState.tr;
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'open_context_menu');
     this.controller.mainEditorView.dispatch(tr);
+
+    // Opening the menu cannot rely on the slash commands plugin
+    // to be present, thats why we keep the openness state locally as well
+    this.plusButtonClicked = true;
   };
 
   get controller() {
@@ -115,6 +123,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   executeAction(action: ContextualAction) {
     if (
+      !this.plusButtonClicked &&
       this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
       this.slashCommandsPluginState?.latestState
     ) {
@@ -140,7 +149,10 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
-    return this.slashCommandsPluginState?.shouldOpenContextActions;
+    return (
+      this.slashCommandsPluginState?.shouldOpenContextActions ||
+      this.plusButtonClicked
+    );
   }
 
   <template>
