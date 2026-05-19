@@ -4,7 +4,7 @@ import type IntlService from 'ember-intl/services/intl';
 import type { GetContextualActionGroups } from '../contextual-actions';
 import { ReplaceStep } from 'prosemirror-transform';
 
-interface PluginState {
+export interface PluginState {
   menuOpen: boolean;
   latestEditorState: EditorState | null;
   slashPos: number | null;
