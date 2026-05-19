@@ -4,19 +4,93 @@ import type IntlService from 'ember-intl/services/intl';
 import type { GetContextualActionGroups } from '../contextual-actions';
 import { ReplaceStep } from 'prosemirror-transform';
 
-type PluginState = {
-  shouldOpenContextActions: boolean;
-  latestState: EditorState | null;
+interface PluginState {
+  menuOpen: boolean;
+  latestEditorState: EditorState | null;
   slashPos: number | null;
-};
+  transition: (
+    tr: Transaction,
+    oldState: EditorState,
+    newState: EditorState,
+    groups: GetContextualActionGroups,
+  ) => PluginState;
+}
+
+class IdleState implements PluginState {
+  menuOpen = false;
+  slashPos = null;
+  latestEditorState: EditorState | null;
+
+  constructor(latestState?: EditorState | null) {
+    this.latestEditorState = latestState ?? null;
+  }
+
+  transition(
+    tr: Transaction,
+    oldState: EditorState,
+    newState: EditorState,
+    getGroups: GetContextualActionGroups,
+  ): PluginState {
+    if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'open_context_menu') {
+      return new MenuOpenState(newState);
+    }
+
+    /**
+     * If the placeholder was shown in the last state and slash was typed
+     * open context actions
+     */
+    if (
+      shouldShowPlaceholder(oldState, getGroups) &&
+      transactionIsSlashTyped(tr)
+    ) {
+      return new SearchingState(oldState, newState.selection.$from.pos);
+    }
+    return new IdleState(newState);
+  }
+}
+
+class SearchingState implements PluginState {
+  menuOpen = true;
+  slashPos: number;
+  latestEditorState: EditorState;
+
+  constructor(latestState: EditorState, slashPos: number) {
+    this.slashPos = slashPos;
+    this.latestEditorState = latestState;
+  }
+
+  transition(tr: Transaction, _oldState: EditorState, newState: EditorState) {
+    if (keepOpenContextActions(newState, tr, this.slashPos)) {
+      return new SearchingState(this.latestEditorState, this.slashPos);
+    }
+
+    return new IdleState(newState);
+  }
+}
+
+class MenuOpenState implements PluginState {
+  menuOpen = true;
+  slashPos = null;
+  latestEditorState: EditorState;
+
+  constructor(latestState: EditorState) {
+    this.latestEditorState = latestState;
+  }
+
+  transition(_tr: Transaction, _oldState: EditorState, newState: EditorState) {
+    return new IdleState(newState);
+  }
+}
 
 export function slashCommandsStateChanged(
   oldState?: PluginState,
   newState?: PluginState,
 ) {
   return (
-    oldState?.latestState !== newState?.latestState ||
-    oldState?.shouldOpenContextActions !== newState?.shouldOpenContextActions
+    oldState?.menuOpen !== newState?.menuOpen ||
+    oldState?.slashPos !== newState?.slashPos ||
+    oldState?.latestEditorState !== newState?.latestEditorState ||
+    oldState?.constructor.name !== newState?.constructor.name
   );
 }
 
@@ -29,7 +103,7 @@ function shouldShowPlaceholder(
   getGroups: GetContextualActionGroups,
 ) {
   const pluginState = getSlashCommandsPluginState(state);
-  if (pluginState?.shouldOpenContextActions) return false;
+  if (pluginState?.menuOpen) return false;
 
   const groups = getGroups.flatMap((getGroups) => getGroups(state));
   if (groups.length === 0) return false;
@@ -115,44 +189,15 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
     key: slashCommandsPluginKey,
     state: {
       init() {
-        return {
-          shouldOpenContextActions: false,
-          latestState: null,
-          slashPos: null,
-        };
+        return new IdleState();
       },
       apply(tr, pluginState, oldState, newState) {
-        if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'open_context_menu') {
-          return { ...pluginState, shouldOpenContextActions: true };
-        }
-        if (pluginState.shouldOpenContextActions) {
-          return {
-            ...pluginState,
-            shouldOpenContextActions: keepOpenContextActions(
-              newState,
-              tr,
-              pluginState.slashPos,
-            ),
-          };
-        }
-
-        if (!transactionIsSlashTyped(tr)) {
-          return pluginState;
-        }
-
-        /**
-         * If the placeholder was shown in the last state and slash was typed
-         * open context actions
-         */
-        if (shouldShowPlaceholder(oldState, options.getGroups)) {
-          return {
-            latestState: oldState,
-            shouldOpenContextActions: true,
-            slashPos: newState.selection.$from.pos,
-          };
-        }
-
-        return { ...pluginState, shouldOpenContextActions: false };
+        return pluginState.transition(
+          tr,
+          oldState,
+          newState,
+          options.getGroups,
+        );
       },
     },
     props: {

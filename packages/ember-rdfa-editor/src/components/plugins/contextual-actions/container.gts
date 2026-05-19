@@ -155,11 +155,13 @@ export default class ContextualActionsContainer extends Component<Args> {
   @action
   executeAction(action: ContextualAction) {
     const menuWasOpenedBySlash =
-      !this.plusButtonClicked &&
-      this.slashCommandsPluginState?.shouldOpenContextActions;
-    if (menuWasOpenedBySlash && this.slashCommandsPluginState?.latestState) {
+      !this.plusButtonClicked && this.slashCommandsPluginState?.menuOpen;
+    if (
+      menuWasOpenedBySlash &&
+      this.slashCommandsPluginState?.latestEditorState
+    ) {
       this.controller.mainEditorView.updateState(
-        this.slashCommandsPluginState.latestState,
+        this.slashCommandsPluginState.latestEditorState,
       );
     }
     if ('command' in action) {
@@ -182,7 +184,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   get showContextMenu() {
     return (
       this.groups.length > 0 &&
-      (this.slashCommandsPluginState?.shouldOpenContextActions ||
+      (this.slashCommandsPluginState?.menuOpen ||
         this.plusButtonClicked ||
         this.selectedEditorNodeLocal)
     );
