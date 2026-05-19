@@ -9,7 +9,12 @@ interface Signature {
 }
 
 const Card: TOC<Signature> = <template>
-  <AuCard @flex={{true}} as |c|>
+  <AuCard
+    {{! @glint-ignore: backwards compat with AU v3, remove if not supported anymore}}
+    @disableAuContent={{true}}
+    @flex={{true}}
+    as |c|
+  >
     <c.header contenteditable="false">
       <AuHeading @level="2" @skin="4">
         Title
