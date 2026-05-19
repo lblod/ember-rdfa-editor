@@ -55,7 +55,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
 
-  @tracked actions: ContextualAction[] = [];
+  @tracked contextualActions: ContextualAction[] = [];
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -139,7 +139,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     const getActions = this.args.getActions ?? [];
 
     try {
-      this.actions = (
+      this.contextualActions = (
         await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
       ).flat();
     } catch (error) {
@@ -214,7 +214,7 @@ export default class ContextualActionsContainer extends Component<Args> {
           {{didInsert this.getActionsTask.perform}}
           @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if this.actions this.actions undefined}}
+          @actions={{if this.contextualActions this.contextualActions undefined}}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
