@@ -22,12 +22,6 @@ import {
 import { localCopy } from 'tracked-toolbox';
 import { restartableTask, timeout } from 'ember-concurrency';
 
-// We don't use a trackedfunction because it causes the menu to reload
-// after the first load (after the debounce time)
-// See https://discord.com/channels/480462759797063690/1501197288603910266
-// eslint-disable-next-line ember/no-at-ember-render-modifiers
-import didInsert from '@ember/render-modifiers/modifiers/did-insert';
-
 type Args = {
   controller: SayController;
   getActions?: GetContextualActions;
@@ -132,6 +126,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
+  // We don't use a trackedfunction because it causes the menu to reload
+  // after the first load (after the debounce time)
+  // See https://discord.com/channels/480462759797063690/1501197288603910266
   getActionsTask = restartableTask(async () => {
     await timeout(SEARCH_TIMEOUT_MS);
     const state = this.localEditorState;
@@ -196,6 +193,10 @@ export default class ContextualActionsContainer extends Component<Args> {
     void this.getActionsTask.perform();
   };
 
+  startGetActionsTask = modifier(() => {
+    void this.getActionsTask.perform();
+  });
+
   <template>
     <div {{this.registerStateListener}}>
       <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
@@ -211,10 +212,14 @@ export default class ContextualActionsContainer extends Component<Args> {
       </FloatingPlus>
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
-          {{didInsert this.getActionsTask.perform}}
+          {{this.startGetActionsTask}}
           @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if this.contextualActions this.contextualActions undefined}}
+          @actions={{if
+            this.contextualActions
+            this.contextualActions
+            undefined
+          }}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
