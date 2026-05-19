@@ -23,6 +23,7 @@ import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
+import { runTask } from 'ember-lifeline';
 
 type Args = {
   controller: SayController;
@@ -272,7 +273,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   };
 
   focus = modifier((element: HTMLElement) => {
-    element.focus({ preventScroll: true });
+    runTask(this, () => element.focus());
   });
 
   <template>
