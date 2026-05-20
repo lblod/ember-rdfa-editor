@@ -272,6 +272,7 @@
     "prosemirror-transform": "catalog:",
     "prosemirror-view": "catalog:",
     "rdf-data-factory": "catalog:",
+    "rdfa-streaming-parser": "catalog:",
     "reactiveweb": "catalog:",
     "relative-to-absolute-iri": "catalog:",
     "tracked-toolbox": "catalog:",

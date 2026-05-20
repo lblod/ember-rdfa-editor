@@ -21,6 +21,7 @@ import {
 } from '#root/core/schema/_private/migrations.ts';
 
 import { getDataStore } from '#root/core/memoized-datastore.ts';
+import { SayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 const FALLBACK_LABEL = 'Data-object';
 
 type Config = {
@@ -31,6 +32,7 @@ type Config = {
    **/
   modelMigrations?: ModelMigrationGenerator[];
 };
+const df = new SayDataFactory();
 
 export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   rdfaAware = false,
@@ -60,20 +62,32 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           if (typeof element === 'string') {
             return false;
           }
-          console.time('datastore');
+          // console.time('datastore');
           const ds = getDataStore(element);
-          console.timeEnd('datastore');
-          console.log('triples found:', ds?.dataset.size);
+          // console.timeEnd('datastore');
+          // console.log('triples found:', ds?.size);
 
-          let attrs = getRdfaAttrs(element, { rdfaAware });
-          if (attrs) {
-            attrs = {
-              ...attrs,
-              label: element.dataset['label'] ?? attrs['label'],
-            };
-            return getAttrsWithMigrations(modelMigrations, attrs, element);
+          const id = element.dataset['sayId']!;
+          console.log('checking for id', id);
+          const relevantTriples = ds?.filter(
+            (q) => q.object.value.split('>>')[0] === id,
+          );
+          const trips = [...relevantTriples];
+          if (trips.length) {
+            console.log('relevantTriples', trips, element);
+            let attrs = getRdfaAttrs(element, { rdfaAware });
+            if (attrs) {
+              attrs = {
+                ...attrs,
+                label:
+                  trips[0].predicate.value ??
+                  element.dataset['label'] ??
+                  attrs['label'],
+              };
+              return getAttrsWithMigrations(modelMigrations, attrs, element);
+            }
+            return false;
           }
-          return false;
         },
         contentElement: (element) => {
           return contentElementWithMigrations(
