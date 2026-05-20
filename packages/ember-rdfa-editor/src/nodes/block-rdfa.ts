@@ -20,6 +20,7 @@ import {
   getAttrsWithMigrations,
 } from '#root/core/schema/_private/migrations.ts';
 
+import { getDataStore } from '#root/core/memoized-datastore.ts';
 const FALLBACK_LABEL = 'Data-object';
 
 type Config = {
@@ -59,6 +60,11 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           if (typeof element === 'string') {
             return false;
           }
+          console.time('datastore');
+          const ds = getDataStore(element);
+          console.timeEnd('datastore');
+          console.log('triples found:', ds?.dataset.size);
+
           let attrs = getRdfaAttrs(element, { rdfaAware });
           if (attrs) {
             attrs = {
