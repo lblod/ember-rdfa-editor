@@ -15039,7 +15039,7 @@ snapshots:
   ember-resources@7.0.7(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.3):
     dependencies:
       '@embroider/addon-shim': 1.10.2
-      '@embroider/macros': 1.20.2(@glint/template@1.7.3)
+      '@embroider/macros': 1.19.6(@glint/template@1.7.3)
       '@glint/template': 1.7.3
     optionalDependencies:
       '@glimmer/component': 1.1.2(@babel/core@7.28.6)
