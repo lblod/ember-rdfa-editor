@@ -31,6 +31,8 @@ export default class NodeControlsCard extends Component<Signature> {
       @manualControl={{true}}
       @openSection={{this.toggleSection}}
       @isExpanded={{this.expanded}}
+      {{! @glint-ignore: backwards compat with AU v3, remove if not supported anymore}}
+      @disableAuContent={{true}}
       as |c|
     >
       <c.header>
