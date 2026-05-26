@@ -282,6 +282,7 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
       @manualControl={{true}}
       @openSection={{this.toggleSection}}
       @isExpanded={{this.expanded}}
+      {{! @glint-ignore: backwards compat with AU v3, remove if not supported anymore}}
       @disableAuContent={{true}}
       as |c|
     >
