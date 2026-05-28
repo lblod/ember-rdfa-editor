@@ -71,7 +71,7 @@ export default class ContextualActionsContainer extends Component<Args> {
    */
   get selectedEditorNode() {
     const selection = this.controller.mainEditorState.selection;
-    if (selection instanceof NodeSelection && this.groups) {
+    if (selection instanceof NodeSelection) {
       return selection.node;
     }
   }
@@ -182,11 +182,12 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
+    const { menuOpen } = this.slashCommandsPluginState ?? {};
+    const { plusButtonClicked, selectedEditorNodeLocal } = this;
+    const hasGroups = this.groups.length > 0;
+
     return (
-      this.groups.length > 0 &&
-      (this.slashCommandsPluginState?.menuOpen ||
-        this.plusButtonClicked ||
-        this.selectedEditorNodeLocal)
+      hasGroups && (menuOpen || plusButtonClicked || selectedEditorNodeLocal)
     );
   }
 
