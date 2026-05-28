@@ -182,7 +182,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
-    const { menuOpen } = this.slashCommandsPluginState ?? {};
+    const menuOpen = this.slashCommandsPluginState?.menuOpen ?? false;
     const { plusButtonClicked, selectedEditorNodeLocal } = this;
     const hasGroups = this.groups.length > 0;
 
