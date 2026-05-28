@@ -135,8 +135,11 @@
   border-radius: 0.5rem;
   display: block;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  div span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 @keyframes popup {
