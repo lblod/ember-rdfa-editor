@@ -6,7 +6,7 @@ import { modifier } from 'ember-modifier';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import type SayController from '#root/core/say-controller.ts';
-import type { EditorState } from 'prosemirror-state';
+import { NodeSelection, type EditorState } from 'prosemirror-state';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
@@ -19,7 +19,8 @@ import {
   getSlashCommandsPluginState,
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
-import { trackedFunction } from 'reactiveweb/function';
+import { localCopy } from 'tracked-toolbox';
+import { restartableTask, timeout } from 'ember-concurrency';
 
 type Args = {
   controller: SayController;
@@ -27,10 +28,16 @@ type Args = {
   getGroups?: GetContextualActionGroups;
 };
 
+const SEARCH_TIMEOUT_MS = 500;
+
 export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
   @tracked loadActionsError: string | null = null;
+  @tracked searchQuery: string = '';
+
+  // Local copy because we want to control openness of context menu (by setting this to null to close)
+  @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
 
   /**
    * We use this instead of this.controller.mainEditorState
@@ -41,6 +48,8 @@ export default class ContextualActionsContainer extends Component<Args> {
    */
   @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
+
+  @tracked contextualActions: ContextualAction[] = [];
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -57,6 +66,16 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   };
 
+  /**
+   * Returns the node to display the menu for
+   */
+  get selectedEditorNode() {
+    const selection = this.controller.mainEditorState.selection;
+    if (selection instanceof NodeSelection) {
+      return selection.node;
+    }
+  }
+
   registerStateListener = modifier(() => {
     this.controller.mainEditorView.addStateListener(this.editorStateListener);
     return () => {
@@ -70,7 +89,11 @@ export default class ContextualActionsContainer extends Component<Args> {
     const state = this.localEditorState;
     if (!state) return [];
 
-    return this.args.getGroups?.flatMap((getGroup) => getGroup(state)) ?? [];
+    return (
+      this.args.getGroups?.flatMap((getGroup) =>
+        getGroup(state, this.searchQuery),
+      ) ?? []
+    );
   }
 
   closeContextMenu = () => {
@@ -78,6 +101,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
     this.controller.mainEditorView.dispatch(tr);
     this.plusButtonClicked = false;
+    this.searchQuery = '';
+    this.selectedEditorNodeLocal = null;
+    this.controller.mainEditorView.focus();
   };
 
   openContextMenu = () => {
@@ -100,13 +126,19 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
-  actions = trackedFunction(this, async () => {
+  // We don't use a trackedfunction because it causes the menu to reload
+  // after the first load (after the debounce time)
+  // See https://discord.com/channels/480462759797063690/1501197288603910266
+  getActionsTask = restartableTask(async () => {
+    await timeout(SEARCH_TIMEOUT_MS);
     const state = this.localEditorState;
     if (!this.showContextMenu || !state || this.loadActionsError) return [];
     const getActions = this.args.getActions ?? [];
 
     try {
-      return (await Promise.all(getActions.map((cb) => cb(state)))).flat();
+      this.contextualActions = (
+        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
+      ).flat();
     } catch (error) {
       if (error instanceof Error) {
         this.loadActionsError = error.message;
@@ -122,13 +154,14 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @action
   executeAction(action: ContextualAction) {
+    const menuWasOpenedBySlash =
+      !this.plusButtonClicked && this.slashCommandsPluginState?.menuOpen;
     if (
-      !this.plusButtonClicked &&
-      this.slashCommandsPluginState?.shouldOpenContextActions && // Menu was opened by a slash
-      this.slashCommandsPluginState?.latestState
+      menuWasOpenedBySlash &&
+      this.slashCommandsPluginState?.latestEditorState
     ) {
       this.controller.mainEditorView.updateState(
-        this.slashCommandsPluginState.latestState,
+        this.slashCommandsPluginState.latestEditorState,
       );
     }
     if ('command' in action) {
@@ -149,39 +182,53 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   get showContextMenu() {
+    const menuOpen = this.slashCommandsPluginState?.menuOpen ?? false;
+    const { plusButtonClicked, selectedEditorNodeLocal } = this;
+    const hasGroups = this.groups.length > 0;
+
     return (
-      this.slashCommandsPluginState?.shouldOpenContextActions ||
-      this.plusButtonClicked
+      hasGroups && (menuOpen || plusButtonClicked || selectedEditorNodeLocal)
     );
   }
+
+  setSearchQuery = (query: string) => {
+    this.searchQuery = query;
+    void this.getActionsTask.perform();
+  };
+
+  startGetActionsTask = modifier(() => {
+    void this.getActionsTask.perform();
+  });
 
   <template>
     <div {{this.registerStateListener}}>
       <FloatingPlus @controller={{this.controller}} @visible={{this.visible}}>
         <div class="say-floating-plus-content">
-          {{#if this.actions.isLoading}}
-            <div class="au-u-padding-tiny au-u-1-1">
-              <span class="say-floating-plus-button-loader" />
-            </div>
-          {{else}}
-            <button
-              type="button"
-              title="Show contextual actions"
-              {{on "click" this.openContextMenu}}
-            >
-              <AuIcon @icon="plus" @size="large" />
-            </button>
-          {{/if}}
+          <button
+            type="button"
+            title="Show contextual actions"
+            {{on "click" this.openContextMenu}}
+          >
+            <AuIcon @icon="plus" @size="large" />
+          </button>
         </div>
       </FloatingPlus>
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
+          {{this.startGetActionsTask}}
+          @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if this.actions.value this.actions.value undefined}}
+          @actions={{if
+            this.contextualActions
+            this.contextualActions
+            undefined
+          }}
           @groups={{this.groups}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
-          @isLoading={{this.actions.isLoading}}
+          @onSearch={{this.setSearchQuery}}
+          @searchQuery={{this.searchQuery}}
+          @isLoading={{this.getActionsTask.isRunning}}
           @errorMessage={{if
             this.loadActionsError
             this.loadActionsError

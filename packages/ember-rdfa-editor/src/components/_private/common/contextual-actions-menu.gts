@@ -17,19 +17,26 @@ import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
+import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
+import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import t from 'ember-intl/helpers/t';
 import { modifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
+import { runTask } from 'ember-lifeline';
 
 type Args = {
   controller: SayController;
   actions?: ContextualAction[];
   groups?: ContextualActionGroup[];
-  onActionSelected?: (action: ContextualAction) => void;
-  onClose?: () => void;
   isLoading?: boolean;
   errorMessage?: string;
+  enableSearch?: boolean;
+  searchQuery?: string;
+
+  onActionSelected?: (action: ContextualAction) => void;
+  onClose?: () => void;
+  onSearch?: (searchQuery: string) => void;
 };
 
 function sortByPriority(
@@ -44,6 +51,7 @@ function sortByPriority(
 
 export default class ContextualActionsMenu extends Component<Args> {
   @tracked selectedActionIndex: number = 0;
+
   actionToElement = new Map<ContextualAction, Element>();
 
   scrollActionIntoView = (actionIndex: number) => {
@@ -259,6 +267,15 @@ export default class ContextualActionsMenu extends Component<Args> {
       : 'bottom-start';
   }
 
+  setSearchQuery = (event: InputEvent) => {
+    this.selectedActionIndex = 0;
+    this.args.onSearch?.((event.target as HTMLInputElement).value);
+  };
+
+  focus = modifier((element: HTMLElement) => {
+    runTask(this, () => element.focus());
+  });
+
   <template>
     <div
       {{floatingUI
@@ -272,6 +289,20 @@ export default class ContextualActionsMenu extends Component<Args> {
       ...attributes
       {{this.setUpListeners}}
     >
+      {{#if @enableSearch}}
+        <div class="say-contextual-actions-menu-search-bar">
+          <AuInput
+            {{this.focus}}
+            @icon="search"
+            @width="block"
+            {{on "input" this.setSearchQuery}}
+            value={{@searchQuery}}
+            placeholder={{t
+              "ember-rdfa-editor.contextual-actions.type-to-search"
+            }}
+          />
+        </div>
+      {{/if}}
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
           <AuLoader>{{t
@@ -313,7 +344,12 @@ export default class ContextualActionsMenu extends Component<Args> {
                     type="button"
                     title={{actionItem.description}}
                   >
-                    <span>{{actionItem.label}}</span>
+                    <div id="button-content">
+                      {{#if actionItem.icon}}
+                        <AuIcon @size="large" @icon={{actionItem.icon}} />
+                      {{/if}}
+                      <span>{{actionItem.label}}</span>
+                    </div>
                   </button>
                 {{/each}}
               </div>
