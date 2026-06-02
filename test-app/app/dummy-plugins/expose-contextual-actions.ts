@@ -4,6 +4,7 @@ import {
   TextSelection,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
+import type { ContextualActionGroup } from '@lblod/ember-rdfa-editor/plugins/contextual-actions';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function getContextualActions(
@@ -124,7 +125,7 @@ export async function getContextualActions(
 }
 
 export function getContextualGroups(state: EditorState) {
-  const groups = [
+  const groups: ContextualActionGroup[] = [
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
