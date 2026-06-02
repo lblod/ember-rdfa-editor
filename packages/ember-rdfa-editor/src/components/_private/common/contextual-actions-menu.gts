@@ -338,6 +338,7 @@ export default class ContextualActionsMenu extends Component<Args> {
                   (eq group.sticky 'top')
                   'sticky-top'
                 }}"
+              {{! @glint-expect-error type of the modifier helper is incorrect}}
               {{(if
                 (eq group.sticky "bottom")
                 (modifier this.observeSticky "bottom")
