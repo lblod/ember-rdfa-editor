@@ -15,6 +15,7 @@ export type ContextualActionGroup = {
   id: string;
   label: string;
 
+  sticky?: 'bottom';
   priority?: number;
 };
 

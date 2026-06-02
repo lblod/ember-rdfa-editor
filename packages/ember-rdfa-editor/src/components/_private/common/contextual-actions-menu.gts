@@ -20,10 +20,11 @@ import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import t from 'ember-intl/helpers/t';
-import { modifier } from 'ember-modifier';
+import { modifier as eModifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
+import { eq } from 'ember-truth-helpers';
 
 type Args = {
   controller: SayController;
@@ -62,7 +63,7 @@ export default class ContextualActionsMenu extends Component<Args> {
     }
   };
 
-  setUpListeners = modifier(() => {
+  setUpListeners = eModifier(() => {
     const handleMousedown = () => {
       this.args.onClose?.();
     };
@@ -214,30 +215,42 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   // This can be removed once the `:sticky` selector becomes supported
-  observeSticky = modifier((element: HTMLElement) => {
-    const sentinel = element.previousElementSibling as HTMLElement;
-    const container = element.closest(
-      '.say-contextual-actions-menu-entries-container',
-    );
+  observeSticky = eModifier(
+    (element: HTMLElement, [position]: ['top' | 'bottom']) => {
+      const container = element.closest(
+        '.say-contextual-actions-menu-entries-container',
+      );
 
-    if (!sentinel || !container) return;
+      if (!container) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          element.classList.remove('is-stuck');
-        } else {
-          element.classList.add('is-stuck');
-        }
-      },
-      {
-        root: container,
-        threshold: [1],
-      },
-    );
+      const sentinel =
+        position === 'top'
+          ? element.previousElementSibling
+          : element.nextElementSibling;
 
-    observer.observe(sentinel);
-  });
+      if (!sentinel) return;
+
+      const stuckClass = position === 'top' ? 'is-stuck' : 'is-stuck-bottom';
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          element.classList.toggle(stuckClass, !entry.isIntersecting);
+        },
+        {
+          root: container,
+          threshold: [1],
+          // Rootmargin is needed because otherwise the shadow effect is not
+          // being applied to stuck groups when the menu is placed
+          // above the text
+          rootMargin: '0px 0px 1px 0px',
+        },
+      );
+
+      observer.observe(sentinel);
+
+      return () => observer.disconnect();
+    },
+  );
 
   selectAction = (action: ContextualAction) => {
     this.args.onActionSelected?.(action);
@@ -252,7 +265,7 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.selectedActionIndex = this.getIndexByAction(action);
   };
 
-  addActionElementToMap = modifier((element, [action]: [ContextualAction]) => {
+  addActionElementToMap = eModifier((element, [action]: [ContextualAction]) => {
     this.actionToElement.set(action, element);
     return () => {
       this.actionToElement.delete(action);
@@ -272,7 +285,7 @@ export default class ContextualActionsMenu extends Component<Args> {
     this.args.onSearch?.((event.target as HTMLInputElement).value);
   };
 
-  focus = modifier((element: HTMLElement) => {
+  focus = eModifier((element: HTMLElement) => {
     runTask(this, () => element.focus());
   });
 
@@ -319,11 +332,21 @@ export default class ContextualActionsMenu extends Component<Args> {
       {{else}}
         <div class="say-contextual-actions-menu-entries-container">
           {{#each this.groupedActions as |group|}}
-            <div class="say-contextual-actions-menu-group-wrapper">
+            <div
+              class="say-contextual-actions-menu-group-wrapper
+                {{if (eq group.sticky 'bottom') 'sticky-bottom'}}{{if
+                  (eq group.sticky 'top')
+                  'sticky-top'
+                }}"
+              {{(if
+                (eq group.sticky "bottom")
+                (modifier this.observeSticky "bottom")
+              )}}
+            >
               <div class="say-contextual-actions-menu-group-sticky-sentinel" />
               <div
                 class="say-contextual-actions-menu-group-header au-u-muted"
-                {{this.observeSticky}}
+                {{this.observeSticky "top"}}
               >
                 {{group.label}}
               </div>
@@ -354,6 +377,7 @@ export default class ContextualActionsMenu extends Component<Args> {
                 {{/each}}
               </div>
             </div>
+            <div class="say-contextual-actions-menu-group-sticky-sentinel" />
           {{else}}
             <AuAlert
               @size="small"

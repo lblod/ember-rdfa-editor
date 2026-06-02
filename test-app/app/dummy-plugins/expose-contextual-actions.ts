@@ -132,6 +132,7 @@ export function getContextualGroups(state: EditorState) {
     {
       id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Invoegen',
+      sticky: 'bottom',
     },
     {
       id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
