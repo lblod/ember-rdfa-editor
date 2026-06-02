@@ -42,7 +42,9 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
     group: 'block',
     defining: true,
     editable: rdfaAware,
-    isolating: rdfaAware,
+    // Should be false to ensure newlines leave the node and become a new paragraph instead of
+    // remaining a heading
+    isolating: false,
     selectable: rdfaAware,
     classNames: ['say-heading'],
     parseDOM: [
