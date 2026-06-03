@@ -1,9 +1,8 @@
 import Component from '@glimmer/component';
 import {
-  flip,
+  autoPlacement,
   hide,
   offset,
-  shift,
   size,
   type Middleware,
 } from '@floating-ui/dom';
@@ -199,7 +198,11 @@ export default class ContextualActionsMenu extends Component<Args> {
   get tooltipMiddleWare(): Middleware[] {
     return [
       offset(10),
-      flip(),
+      autoPlacement({
+        allowedPlacements: this.textIsRightAligned
+          ? ['bottom-end', 'top-end']
+          : ['bottom-start', 'top-start'],
+      }),
       size({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
@@ -207,7 +210,6 @@ export default class ContextualActionsMenu extends Component<Args> {
           });
         },
       }),
-      shift(),
       hide({ strategy: 'referenceHidden' }),
       hide({ strategy: 'escaped' }),
     ];
@@ -259,12 +261,13 @@ export default class ContextualActionsMenu extends Component<Args> {
     };
   });
 
-  get menuPlacement() {
+  get textIsRightAligned() {
     const parent = this.controller.mainEditorState.selection.$from.parent;
-    if (!parent) return 'bottom-start';
-    return parent.attrs['alignment'] === 'right'
-      ? 'bottom-end'
-      : 'bottom-start';
+    return parent.attrs['alignment'] === 'right';
+  }
+
+  get menuPlacement() {
+    return this.textIsRightAligned ? 'bottom-end' : 'bottom-start';
   }
 
   setSearchQuery = (event: InputEvent) => {
