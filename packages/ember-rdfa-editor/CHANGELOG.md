@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.8.0
+
+### Minor Changes
+
+- [#1375](https://github.com/lblod/ember-rdfa-editor/pull/1375) [`4bb47ef`](https://github.com/lblod/ember-rdfa-editor/commit/4bb47ef6a20fd48546d9e9dfba6086dc244a159d) Thanks [@kobemertens](https://github.com/kobemertens)! - Update ember-appuniversum to v4.2.1
+
+- [#1374](https://github.com/lblod/ember-rdfa-editor/pull/1374) [`51fdb58`](https://github.com/lblod/ember-rdfa-editor/commit/51fdb589c87748c05aa35478a60d77c2a16b09a6) Thanks [@kobemertens](https://github.com/kobemertens)! - Open the context menu on Node selection if any plugin returns groups
+
 ## 13.7.1
 
 ### Patch Changes

@@ -3,6 +3,7 @@ import { EditorState, type Command } from 'prosemirror-state';
 export type ContextualAction = {
   id: string;
   label: string;
+  icon?: string;
   group: string;
   command: Command;
   description?: string;
@@ -19,7 +20,9 @@ export type ContextualActionGroup = {
 
 export type GetContextualActionGroups = ((
   state: EditorState,
+  searchQuery?: string,
 ) => ContextualActionGroup[])[];
 export type GetContextualActions = ((
   state: EditorState,
+  searchQuery?: string,
 ) => ContextualAction[] | Promise<ContextualAction[]>)[];

@@ -116,6 +116,7 @@ export default class LinkEditor extends Component<Args> {
       @expandable={{false}}
       @size="small"
       @shadow={{true}}
+      {{! @glint-ignore: backwards compat with AU v3, remove if not supported anymore}}
       @disableAuContent={{true}}
       ...attributes
       as |c|

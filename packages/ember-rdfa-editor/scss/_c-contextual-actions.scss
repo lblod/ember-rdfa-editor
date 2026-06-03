@@ -39,11 +39,17 @@
   }
 }
 
+.say-contextual-actions-menu-search-bar {
+  padding: 0.9rem;
+  padding-bottom: 0.6rem;
+}
+
 .say-contextual-actions-menu {
   @extend .say-floating-element;
 
   display: flex;
   flex-direction: column;
+  position: fixed;
 
   border: 0.1rem solid var(--au-gray-200);
   min-width: 20em;
@@ -95,6 +101,12 @@
       cursor: not-allowed;
       background-color: transparent;
     }
+
+    div#button-content {
+      gap: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
   }
 }
 
@@ -124,8 +136,11 @@
   border-radius: 0.5rem;
   display: block;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  div span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 @keyframes popup {
@@ -136,27 +151,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-// TODO: Remove this temporary loader. We need a possibility to change the
-// size of the appuniversum loader, so it fits in the floating button
-.say-floating-plus-button-loader {
-  height: 100%;
-  width: 100%;
-  border: 0.2rem solid var(--au-gray-600);
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
