@@ -143,7 +143,7 @@ function buildGetActions(
       });
   };
 }
-export function getContextualGroups(state: EditorState) {
+export function getContextualGroups(state: EditorState, searchQuery?: string) {
   const groups: ContextualActionGroup[] = [
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
@@ -157,18 +157,20 @@ export function getContextualGroups(state: EditorState) {
       getActions: buildGetActions(insertActions),
     },
     {
-      id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
-      label: 'Straten in Gent',
-      priority: 9,
-      getActions: buildGetActions(locationActions, 300),
-    },
-    {
       id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaats suggesties',
       priority: 10,
       getActions: buildGetActions(streetSuggestionActions),
     },
   ];
+  if (searchQuery) {
+    groups.push({
+      id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+      label: 'Straten in Gent',
+      priority: 9,
+      getActions: buildGetActions(locationActions, 300),
+    });
+  }
   if (
     state.selection instanceof NodeSelection &&
     state.selection.node.attrs['placeholderText']

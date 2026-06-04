@@ -117,13 +117,12 @@ export default class ContextualActionsMenu extends Component<Args> {
           break;
         }
         case 'Delete':
-        case 'Backspace': {
-          if (this.args.searchQuery?.length === 0) {
+        case 'Backspace':
+          if (!this.args.searchQuery) {
             event.preventDefault();
             this.args.onClose?.();
           }
           break;
-        }
         case 'Tab':
           if (this.actionAmount) {
             if (event.shiftKey) {
