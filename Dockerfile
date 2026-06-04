@@ -3,8 +3,7 @@ FROM node:24-slim AS builder
 LABEL maintainer="info@redpencil.io"
 
 RUN corepack enable
-# installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-RUN npm i -g corepack@0.31
+RUN npm i -g corepack@0.35
 WORKDIR /app
 COPY . .
 RUN npm config set ignore-scripts true

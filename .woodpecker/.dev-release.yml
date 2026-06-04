@@ -9,8 +9,7 @@ steps:
     commands:
       - npm config set ignore-scripts true
       - cat .npmrc
-      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-      - npm i -g corepack@0.31
+      - npm i -g corepack@0.35
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - pnpm i --frozen-lockfile

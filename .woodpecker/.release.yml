@@ -3,15 +3,13 @@ steps:
     image: node:24-slim
     commands:
       - corepack enable
-      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-      - npm i -g corepack@0.31
+      - npm i -g corepack@0.35
       - pnpm i --frozen-lockfile
   release-next:
     image: node:24-slim
     commands:
       - npm config set ignore-scripts true
-      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-      - npm i -g corepack@0.31
+      - npm i -g corepack@0.35
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - pnpm i --frozen-lockfile
@@ -27,8 +25,7 @@ steps:
     image: node:24-slim
     commands:
       - npm config set ignore-scripts true
-      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-      - npm i -g corepack@0.31
+      - npm i -g corepack@0.35
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - pnpm i --frozen-lockfile
