@@ -1,13 +1,13 @@
 steps:
   install:
-    image: node:22-slim
+    image: node:24-slim
     commands:
       - corepack enable
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
       - npm i -g corepack@0.31
       - pnpm i --frozen-lockfile
   release-next:
-    image: node:22-slim
+    image: node:24-slim
     commands:
       - npm config set ignore-scripts true
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
@@ -24,7 +24,7 @@ steps:
       ref:
         include: refs/tags/@lblod/ember-rdfa-editor@*-next.*
   release:
-    image: node:22-slim
+    image: node:24-slim
     commands:
       - npm config set ignore-scripts true
       # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612

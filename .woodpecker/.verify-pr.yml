@@ -1,6 +1,6 @@
 steps:
   install:
-    image: node:22-slim
+    image: node:24-slim
     commands:
       - npm config set ignore-scripts true
       # pinning to 10.0.0 because of https://github.com/nodejs/corepack/issues/612
@@ -13,13 +13,13 @@ steps:
       # resync injected addon build
       - pnpm i -f
   lint:
-    image: node:22-slim
+    image: node:24-slim
     depends_on: [install]
     commands:
       - npm i -g corepack@0.31
       - pnpm lint
   test:
-    image: danlynn/ember-cli:6.1.0
+    image: danlynn/ember-cli:6.5.0
     depends_on: [install]
     commands:
       - npm i -g corepack@0.31

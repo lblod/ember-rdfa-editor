@@ -2,7 +2,7 @@
 
 ## NPM and node
 
-This project requires [node](https://nodejs.org/en/download/) (currently tested on v22) and
+This project requires [node](https://nodejs.org/en/download/) (currently tested on v24) and
 [pnpm](https://pnpm.io/installation).
 
 ## Installation

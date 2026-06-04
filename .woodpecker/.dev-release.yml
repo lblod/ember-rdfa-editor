@@ -1,11 +1,11 @@
 steps:
   version:
-    image: node:22-slim
+    image: node:24-slim
     directory: packages/ember-rdfa-editor
     commands:
       - npm version --no-git-tag-version ${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}
   publish:
-    image: node:22-slim
+    image: node:24-slim
     commands:
       - npm config set ignore-scripts true
       - cat .npmrc
