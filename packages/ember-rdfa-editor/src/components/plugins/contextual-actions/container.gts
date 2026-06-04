@@ -12,7 +12,6 @@ import { on } from '@ember/modifier';
 import {
   type ContextualAction,
   type GetContextualActionGroups,
-  type GetContextualActions,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
 import { runTask } from 'ember-lifeline';
@@ -25,7 +24,6 @@ import { restartableTask, timeout } from 'ember-concurrency';
 
 type Args = {
   controller: SayController;
-  getActions?: GetContextualActions;
   getGroups?: GetContextualActionGroups;
 };
 
@@ -131,10 +129,12 @@ export default class ContextualActionsContainer extends Component<Args> {
   // after the first load (after the debounce time)
   // See https://discord.com/channels/480462759797063690/1501197288603910266
   getActionsTask = restartableTask(async () => {
-    await timeout(SEARCH_TIMEOUT_MS);
+    if (this.searchQuery) {
+      await timeout(SEARCH_TIMEOUT_MS);
+    }
     const state = this.localEditorState;
     if (!this.showContextMenu || !state || this.loadActionsError) return [];
-    const getActions = this.args.getActions ?? [];
+    const getActions = this.groups?.flatMap((group) => group.getActions) ?? [];
 
     try {
       this.contextualActions = (

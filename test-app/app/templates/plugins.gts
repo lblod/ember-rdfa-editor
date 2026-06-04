@@ -84,10 +84,7 @@ import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container';
-import {
-  getContextualActions,
-  getContextualGroups,
-} from 'test-app/dummy-plugins/expose-contextual-actions';
+import { getContextualGroups } from 'test-app/dummy-plugins/expose-contextual-actions';
 import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
@@ -189,7 +186,6 @@ export default class extends Component {
     };
   };
 
-  contextualActionGetters = [getContextualActions];
   contextualGroupGetters = [getContextualGroups];
 
   get plugins() {
@@ -258,7 +254,6 @@ export default class extends Component {
             {{#if this.rdfaEditor}}
               <ContextualActionsContainer
                 @controller={{this.rdfaEditor}}
-                @getActions={{this.contextualActionGetters}}
                 @getGroups={{this.contextualGroupGetters}}
               />
             {{/if}}

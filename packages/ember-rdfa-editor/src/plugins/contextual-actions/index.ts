@@ -17,6 +17,8 @@ export type ContextualActionGroup = {
 
   sticky?: 'bottom';
   priority?: number;
+
+  getActions: GetContextualActions;
 };
 
 export type GetContextualActionGroups = ((
