@@ -49,6 +49,19 @@ function sortByPriority(
   return itemB.priority - itemA.priority;
 }
 
+function sortGroups(
+  itemA: { sticky?: 'bottom'; priority?: number },
+  itemB: { sticky?: 'bottom'; priority?: number },
+) {
+  if (itemA.sticky === itemB.sticky) {
+    return sortByPriority(itemA, itemB);
+  } else if (itemA.sticky) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
 export default class ContextualActionsMenu extends Component<Args> {
   @tracked selectedActionIndex: number = 0;
 
@@ -175,7 +188,7 @@ export default class ContextualActionsMenu extends Component<Args> {
             .toSorted(sortByPriority) ?? [],
       }))
       .filter((group) => group.actions.length > 0)
-      .toSorted(sortByPriority);
+      .toSorted(sortGroups);
   }
 
   get actionAmount() {
