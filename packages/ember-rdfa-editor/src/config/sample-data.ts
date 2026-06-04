@@ -481,9 +481,10 @@ world
 `,
   DecisionTemplate: `
   <div
-    resource="http://data.lblod.info/id/besluiten/--ref-uuid4-c10209c0-dfba-46fb-80c7-1c6aedf656e9"
+    about="http://data.lblod.info/id/besluiten/--ref-uuid4-c10209c0-dfba-46fb-80c7-1c6aedf656e9"
     typeof="besluit:Besluit ext:BesluitNieuweStijl"
     data-label="Besluit"
+    property="ext:content"
   >
     <div style="display: none" data-rdfa-container="true">
       <span
@@ -492,6 +493,13 @@ world
       />
     </div>
     <div data-content-container="true">
+      <div
+	property="eli:title"
+	datatype="xsd:string"
+	data-label="Openbare titel besluit"
+      >
+	<h4><span>Geef <div property="ext:foo">titel</div> besluit op</span></h4>
+      </div>
       <div
 	property="eli:title"
 	datatype="xsd:string"

@@ -19,9 +19,8 @@ import {
   contentElementWithMigrations,
   getAttrsWithMigrations,
 } from '#root/core/schema/_private/migrations.ts';
+import { KnowledgeBase } from '#root/core/rdfa/knowledgebase.ts';
 
-import { getDataStore } from '#root/core/memoized-datastore.ts';
-import { SayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 const FALLBACK_LABEL = 'Data-object';
 
 type Config = {
@@ -32,7 +31,6 @@ type Config = {
    **/
   modelMigrations?: ModelMigrationGenerator[];
 };
-const df = new SayDataFactory();
 
 export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
   rdfaAware = false,
@@ -62,10 +60,9 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           if (typeof element === 'string') {
             return false;
           }
-          // console.time('datastore');
-          const ds = getDataStore(element);
-          // console.timeEnd('datastore');
-          // console.log('triples found:', ds?.size);
+          const kb = KnowledgeBase.fromHtmlNode(element);
+
+          const ds = kb.dataset;
 
           const id = element.dataset['sayId']!;
           console.log('checking for id', id);
@@ -88,6 +85,7 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
             }
             return false;
           }
+          return false;
         },
         contentElement: (element) => {
           return contentElementWithMigrations(

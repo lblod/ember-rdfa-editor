@@ -4,12 +4,13 @@ import type { RdfaParseConfig } from '#root/utils/_private/rdfa-parser/rdfa-pars
 
 import { RdfaParser } from 'rdfa-streaming-parser';
 
-export function parse(config: RdfaParseConfig<Node>) {
+export function parseRdfa(config: RdfaParseConfig<Node>) {
   const resultSet = new N3StoreWrapper();
   const { pathFromDomRoot = [], root, baseIRI, parseRoot = true } = config;
   const parser = new RdfaParser({ baseIRI, profile: 'html' });
 
   //@ts-expect-error types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
   parser.on('data', (data) => resultSet.add(data));
 
   for (const domNode of pathFromDomRoot) {

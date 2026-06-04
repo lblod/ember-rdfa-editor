@@ -36,6 +36,7 @@ import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import { ProseParser } from '#root/prosemirror-aliases.ts';
 import { onChangedPlugin } from '#root/plugins/on-changed/plugin.ts';
+import { getPreprocessedCopy } from './rdfa/preprocess-html.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -137,8 +138,9 @@ export default class SayEditor {
 
     this.parser = ProseParser.fromSchema(this.schema);
 
+    const preprocessed = getPreprocessedCopy(target);
     const state = EditorState.create({
-      doc: this.parser.parse(target),
+      doc: this.parser.parse(preprocessed),
       plugins: pluginConf,
     });
     this.serializer = SaySerializer.fromSchema(
@@ -164,12 +166,13 @@ export default class SayEditor {
         const htmlCleaner = new HTMLInputParser();
         const cleanedHTMLNode = htmlCleaner.prepareHTML(html, true);
 
-        preprocessRDFa(
-          cleanedHTMLNode,
-          editorView ? getPathFromRoot(editorView.dom, false) : [],
-        );
+        const preprocessed = getPreprocessedCopy(cleanedHTMLNode) as Element;
+        for (const child of preprocessed.children) {
+          child.dataset['sayProcessed'] = 'true';
+        }
 
-        return cleanedHTMLNode.innerHTML;
+        console.log('PASTE', preprocessed);
+        return preprocessed.innerHTML;
       },
       clipboardSerializer: this.serializer,
     });
