@@ -160,7 +160,7 @@ export function getContextualGroups(state: EditorState, searchQuery?: string) {
       id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaats suggesties',
       priority: 10,
-      getActions: buildGetActions(streetSuggestionActions),
+      getActions: buildGetActions(streetSuggestionActions, 400),
     },
   ];
   if (searchQuery) {

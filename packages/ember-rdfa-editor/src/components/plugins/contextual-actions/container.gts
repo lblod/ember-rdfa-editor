@@ -27,6 +27,12 @@ type Args = {
   getGroups?: GetContextualActionGroups;
 };
 
+type GroupWithStatus = {
+  isLoading: boolean;
+  errorMessage: string | null;
+  actions: ContextualAction[];
+};
+
 const SEARCH_TIMEOUT_MS = 500;
 
 export default class ContextualActionsContainer extends Component<Args> {
@@ -34,6 +40,12 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
+
+  /**
+   * We use 2 separate properties to avoid getting the "used value in the same computation" error
+   */
+  @tracked groupsWithStatus: GroupWithStatus[] = [];
+  groupsWithStatusUntracked: GroupWithStatus[] = [];
 
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
@@ -47,8 +59,6 @@ export default class ContextualActionsContainer extends Component<Args> {
    */
   @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
-
-  @tracked contextualActions: ContextualAction[] = [];
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -64,6 +74,10 @@ export default class ContextualActionsContainer extends Component<Args> {
       this.localEditorState = newState;
     }
   };
+
+  get contextualActions(): ContextualAction[] {
+    return this.groupsWithStatus.flatMap((g) => g.actions);
+  }
 
   /**
    * Returns the node to display the menu for
@@ -125,6 +139,18 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
+  updateGroupWithStatusAt(
+    groupWithStatus: Partial<GroupWithStatus>,
+    index: number,
+  ) {
+    const newGroupsWithStatus = [...this.groupsWithStatusUntracked];
+    newGroupsWithStatus[index] = {
+      ...this.groupsWithStatusUntracked[index],
+      ...groupWithStatus,
+    };
+    this.groupsWithStatusUntracked = newGroupsWithStatus;
+  }
+
   // We don't use a trackedfunction because it causes the menu to reload
   // after the first load (after the debounce time)
   // See https://discord.com/channels/480462759797063690/1501197288603910266
@@ -133,24 +159,44 @@ export default class ContextualActionsContainer extends Component<Args> {
       await timeout(SEARCH_TIMEOUT_MS);
     }
     const state = this.localEditorState;
-    if (!this.showContextMenu || !state || this.loadActionsError) return [];
-    const getActions = this.groups?.flatMap((group) => group.getActions) ?? [];
+    if (!this.showContextMenu || !state) return [];
 
-    try {
-      this.contextualActions = (
-        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
-      ).flat();
-    } catch (error) {
-      if (error instanceof Error) {
-        this.loadActionsError = error.message;
-      } else if (typeof error === 'string') {
-        this.loadActionsError = error;
-      } else {
-        this.loadActionsError = this.intl.t(
-          'ember-rdfa-editor.utils.something-went-wrong',
-        );
-      }
-    }
+    const groups = this.groups;
+
+    // Reset the groupsWithStatus "map"
+    this.groupsWithStatusUntracked = groups.map(() => ({
+      isLoading: true,
+      errorMessage: null,
+      actions: [],
+    }));
+
+    await Promise.all(
+      groups.map(async (group, index) => {
+        try {
+          const results = await group.getActions(state, this.searchQuery);
+          this.updateGroupWithStatusAt(
+            {
+              errorMessage: null,
+              actions: results.flat(),
+            },
+            index,
+          );
+          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : typeof error === 'string'
+                ? error
+                : this.intl.t('ember-rdfa-editor.utils.something-went-wrong');
+          this.updateGroupWithStatusAt({ errorMessage: message }, index);
+          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
+        } finally {
+          this.updateGroupWithStatusAt({ isLoading: false }, index);
+          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
+        }
+      }),
+    );
   });
 
   @action
@@ -229,7 +275,7 @@ export default class ContextualActionsContainer extends Component<Args> {
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}
           @searchQuery={{this.searchQuery}}
-          @isLoading={{this.getActionsTask.isRunning}}
+          @isLoading={{false}}
           @errorMessage={{if
             this.loadActionsError
             this.loadActionsError
