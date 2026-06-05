@@ -1,13 +1,21 @@
-import type { Dataset, Quad } from '@rdfjs/types';
-import { PreprocessedNode } from './preprocess-html.ts';
+import { N3StoreWrapper } from '#root/utils/_private/datastore/n3-store-wrapper.ts';
 import {
-  isTextNode,
   isElement,
+  isTextNode,
   tagName,
 } from '#root/utils/_private/dom-helpers.ts';
+import type { Quad_Subject } from '@rdfjs/types';
+import { PreprocessedNode } from './preprocess-html.ts';
 import { parseRdfa } from './rdfa-parser.ts';
 
-export class KnowledgeBase {
+const SAY_ID_DIVIDER = '>>';
+
+interface SayIdSubjectInfo {
+  subject: Quad_Subject;
+  connectingQuads: KnowledgeBase;
+}
+
+export class KnowledgeBase extends N3StoreWrapper {
   static kbCache: WeakMap<Node, KnowledgeBase> = new WeakMap();
 
   static fromHtmlNode(node: Node): KnowledgeBase {
@@ -43,17 +51,50 @@ export class KnowledgeBase {
     this.kbCache.delete(preNode.htmlNode);
   }
 
-  private constructor(private _dataset: Dataset<Quad, Quad>) {}
+  private constructor(_dataset?: N3StoreWrapper) {
+    super(_dataset);
+  }
+  public quadsPointingToId(id: string): KnowledgeBase {
+    return new KnowledgeBase(
+      this.filter((quad) => quad.object.value.split(SAY_ID_DIVIDER)[0] === id),
+    );
+  }
 
-  public get dataset(): Dataset<Quad, Quad> {
-    return this._dataset;
+  public subjectsForSayId(id: string) {
+    const quads = this.quadsPointingToId(id);
+    const subjectSet = new Map<string, SayIdSubjectInfo>();
+
+    for (const quad of [...quads]) {
+      const subjectString = quad.subject.value;
+      const seenInfo = subjectSet.get(subjectString);
+      if (seenInfo) {
+        seenInfo.connectingQuads.add(quad);
+      } else {
+        subjectSet.set(subjectString, {
+          subject: quad.subject,
+          connectingQuads: new KnowledgeBase(new N3StoreWrapper([quad])),
+        });
+      }
+    }
+    return [...subjectSet.values()];
+  }
+
+  public quadsForSayId(
+    id: string,
+  ): (SayIdSubjectInfo & { otherQuads: KnowledgeBase })[] {
+    const subjectInfo = this.subjectsForSayId(id);
+
+    return subjectInfo.map((info) => ({
+      ...info,
+      otherQuads: new KnowledgeBase(this.match(info.subject)),
+    }));
   }
 }
 
 function textToParentId(node: Node): string {
   if (isTextNode(node)) {
     const id = node.parentElement?.dataset['sayId'];
-    return id ? `${id}>>` : '';
+    return id ? `${id}${SAY_ID_DIVIDER}` : '';
   } else if (isElement(node)) {
     return node.dataset['sayId'] ?? '';
   }

@@ -20,6 +20,7 @@ import {
   getAttrsWithMigrations,
 } from '#root/core/schema/_private/migrations.ts';
 import { KnowledgeBase } from '#root/core/rdfa/knowledgebase.ts';
+import { serializeNodeId } from '#root/core/rdfa/serialize-rdfa-node.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -62,17 +63,14 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           }
           const kb = KnowledgeBase.fromHtmlNode(element);
 
-          const ds = kb.dataset;
-
           const id = element.dataset['sayId']!;
           console.log('checking for id', id);
-          const relevantTriples = ds?.filter(
-            (q) => q.object.value.split('>>')[0] === id,
-          );
+          const relevantTriples = kb.quadsPointingToId(id);
           const trips = [...relevantTriples];
           if (trips.length) {
             console.log('relevantTriples', trips, element);
             let attrs = getRdfaAttrs(element, { rdfaAware });
+            console.log('WOULD SERIALIZE AS', serializeNodeId(id, kb));
             if (attrs) {
               attrs = {
                 ...attrs,
