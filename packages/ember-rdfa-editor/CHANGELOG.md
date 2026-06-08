@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.10.2
+
+### Patch Changes
+
+- [`800a140`](https://github.com/lblod/ember-rdfa-editor/commit/800a14048cee91fce896871c28a0fe22103fbf55) Thanks [@abeforgit](https://github.com/abeforgit)! - Fix: repair backspace behavior in search field
+
 ## 13.10.1
 
 ### Patch Changes
