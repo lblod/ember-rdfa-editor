@@ -80,7 +80,7 @@ const prompt = readline.createInterface({
 
 const gitDiffResult = await execa({
   reject: false,
-})`git diff HEAD --quiet`;
+})`git diff HEAD --quiet && test -n "(git status --porcelain)"`;
 
 if (gitDiffResult.failed) {
   console.error(
