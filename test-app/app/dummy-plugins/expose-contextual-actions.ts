@@ -110,14 +110,16 @@ function buildGetActions(
     insert?: string;
   }[],
   loadingTimeMs = 0,
+  ignoreSearch = false,
 ) {
   return async function (_state: EditorState, searchQuery?: string) {
     await new Promise((resolve) => setTimeout(resolve, loadingTimeMs));
     return actionLabels
-      .filter(({ label }) =>
-        searchQuery
-          ? label.toLowerCase().includes(searchQuery.toLowerCase())
-          : true,
+      .filter(
+        ({ label }) =>
+          ignoreSearch ||
+          !searchQuery ||
+          label.toLowerCase().includes(searchQuery.toLowerCase()),
       )
       .map((action) => {
         return {
@@ -148,19 +150,19 @@ export function getContextualGroups(state: EditorState, searchQuery?: string) {
     {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
-      getActions: buildGetActions(plaatsbepalingActions),
+      getActions: buildGetActions(plaatsbepalingActions, 2000),
     },
     {
       id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Invoegen',
       sticky: 'bottom',
-      getActions: buildGetActions(insertActions),
+      getActions: buildGetActions(insertActions, 0, true),
     },
     {
       id: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaats suggesties',
       priority: 10,
-      getActions: buildGetActions(streetSuggestionActions, 400),
+      getActions: buildGetActions(streetSuggestionActions),
     },
   ];
   if (searchQuery) {
@@ -168,7 +170,7 @@ export function getContextualGroups(state: EditorState, searchQuery?: string) {
       id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Straten in Gent',
       priority: 9,
-      getActions: buildGetActions(locationActions, 300),
+      getActions: buildGetActions(locationActions, 1000),
     });
   }
   if (
