@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.9.1
+
+### Patch Changes
+
+- [`86d1077`](https://github.com/lblod/ember-rdfa-editor/commit/86d1077795def5e339bc81f49cd8089dbf5ce4ea) Thanks [@piemonkey](https://github.com/piemonkey)! - Re-release 13.9.0 without extra unwanted test-app code
+
 ## 13.9.0
 
 ### Minor Changes
