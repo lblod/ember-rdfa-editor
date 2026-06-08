@@ -51,8 +51,6 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
-
-  // @tracked groupsWithStatus: TrackedArray<GroupWithStatus> = new TrackedArray();
   @tracked loadGroupTaskInstances: {
     group: ContextualActionGroup;
     taskInstance: TaskInstance<ContextualAction[]>;
@@ -176,7 +174,6 @@ export default class ContextualActionsContainer extends Component<Args> {
   // after the first load (after the debounce time)
   // See https://discord.com/channels/480462759797063690/1501197288603910266
   getActionsTask = restartableTask(async () => {
-    console.log('started the task');
     const state = this.localEditorState;
     if (!this.showContextMenu || !state) return [];
 
@@ -190,23 +187,14 @@ export default class ContextualActionsContainer extends Component<Args> {
   });
 
   get groupsWithStatus(): GroupWithStatus[] {
-    return this.loadGroupTaskInstances.map(({ group, taskInstance }) => {
-      if (taskInstance === undefined)
-        return {
-          ...group,
-          actions: [],
-          isLoading: false,
-          errorMessage: null,
-        };
-      return {
-        ...group,
-        actions: taskInstance.isError ? [] : taskInstance.value,
-        isLoading: taskInstance.isRunning,
-        errorMessage: taskInstance.isError
-          ? this.getErrorMessage(taskInstance.error)
-          : null,
-      };
-    });
+    return this.loadGroupTaskInstances.map(({ group, taskInstance }) => ({
+      ...group,
+      actions: taskInstance.isError ? [] : taskInstance.value,
+      isLoading: taskInstance.isRunning,
+      errorMessage: taskInstance.isError
+        ? this.getErrorMessage(taskInstance.error)
+        : null,
+    }));
   }
 
   @action
@@ -279,12 +267,6 @@ export default class ContextualActionsContainer extends Component<Args> {
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}
           @searchQuery={{this.searchQuery}}
-          @isLoading={{false}}
-          @errorMessage={{if
-            this.loadActionsError
-            this.loadActionsError
-            undefined
-          }}
         />
       {{/if}}
     </div>
