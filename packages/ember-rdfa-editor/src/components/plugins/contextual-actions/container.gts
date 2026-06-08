@@ -29,6 +29,12 @@ import {
   type TaskInstance,
 } from 'ember-concurrency';
 
+type GroupWithStatus = ContextualActionGroup & {
+  isLoading: boolean;
+  errorMessage: string | null;
+  actions: ContextualAction[] | null;
+};
+
 type Args = {
   controller: SayController;
   getGroups?: GetContextualActionGroups;
@@ -47,7 +53,10 @@ export default class ContextualActionsContainer extends Component<Args> {
   @tracked searchQuery: string = '';
 
   // @tracked groupsWithStatus: TrackedArray<GroupWithStatus> = new TrackedArray();
-  @tracked loadGroupTaskInstances: TaskInstance<ContextualAction[]>[] = [];
+  @tracked loadGroupTaskInstances: {
+    group: ContextualActionGroup;
+    taskInstance: TaskInstance<ContextualAction[]>;
+  }[] = [];
 
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
@@ -149,7 +158,11 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   loadGroupTask = task(
     async (state: EditorState, group: ContextualActionGroup) => {
-      if (this.searchQuery) {
+      if (
+        this.searchQuery &&
+        group.searchDebounceMs &&
+        group.searchDebounceMs > 0
+      ) {
         await timeout(group.searchDebounceMs ?? 0);
       }
 
@@ -165,25 +178,30 @@ export default class ContextualActionsContainer extends Component<Args> {
     const state = this.localEditorState;
     if (!this.showContextMenu || !state) return [];
 
-    this.loadGroupTaskInstances = this.groups.map((group) =>
-      this.loadGroupTask.perform(state, group),
-    );
+    this.loadGroupTaskInstances = this.groups.map((group) => ({
+      group,
+      taskInstance: this.loadGroupTask.perform(state, group),
+    }));
 
     // Child tasks get cancelled automagically on restart
     await all(this.loadGroupTaskInstances);
   });
 
-  get groupsWithStatus() {
-    return this.groups.map((group, index) => {
-      const taskInstance = this.loadGroupTaskInstances[index];
+  get groupsWithStatus(): GroupWithStatus[] {
+    return this.loadGroupTaskInstances.map(({ group, taskInstance }) => {
       if (taskInstance === undefined)
-        return { ...group, actions: [], isLoading: false, errorMessage: null };
+        return {
+          ...group,
+          actions: [],
+          isLoading: false,
+          errorMessage: null,
+        };
       return {
         ...group,
         actions: taskInstance.isError ? [] : taskInstance.value,
         isLoading: taskInstance.isRunning,
         errorMessage: taskInstance.isError
-          ? this.getErrorMessage(this.getErrorMessage(taskInstance.error))
+          ? this.getErrorMessage(taskInstance.error)
           : null,
       };
     });

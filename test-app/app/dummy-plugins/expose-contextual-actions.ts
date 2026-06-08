@@ -113,7 +113,9 @@ function buildGetActions(
   ignoreSearch = false,
 ) {
   return async function (_state: EditorState, searchQuery?: string) {
-    await new Promise((resolve) => setTimeout(resolve, loadingTimeMs));
+    if (loadingTimeMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, loadingTimeMs));
+    }
     return actionLabels
       .filter(
         ({ label }) =>
