@@ -181,3 +181,18 @@ overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
   prosemirror-view: 'catalog:'
+
+peerDependencyRules:
+  allowedVersions:
+    react: "18"
+    react-dom: "18"
+    "@ember/render-modifiers>ember-source": "6"
+
+patchedDependencies:
+  ember-headless-form: "patches/ember-headless-form.patch"
+allowUnusedPatches: true
+
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  esbuild: true

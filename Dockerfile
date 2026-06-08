@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 RUN npm config set ignore-scripts true
 RUN corepack enable
-RUN corepack use pnpm@10.5.2
+RUN corepack use pnpm@11.4.0
 RUN pnpm build
 RUN pnpm build:test-app
 
