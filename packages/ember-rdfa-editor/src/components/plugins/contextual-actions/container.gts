@@ -160,10 +160,12 @@ export default class ContextualActionsContainer extends Component<Args> {
     async (state: EditorState, group: ContextualActionGroup) => {
       if (
         this.searchQuery &&
+        // We need to check if the searchDebounce is greater than zero
+        // If we wouldn't and just await the zero second timout, it causes screen flicker
         group.searchDebounceMs &&
         group.searchDebounceMs > 0
       ) {
-        await timeout(group.searchDebounceMs ?? 0);
+        await timeout(group.searchDebounceMs);
       }
 
       return await group.getActions(state, this.searchQuery);
