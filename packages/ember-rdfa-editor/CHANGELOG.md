@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.10.1
+
+### Patch Changes
+
+- [`8a1a14d`](https://github.com/lblod/ember-rdfa-editor/commit/8a1a14d3fe32def8b33abc27f99e8c73b21f9fd9) Thanks [@abeforgit](https://github.com/abeforgit)! - Add backspace and delete handlers to contextmenu
+
+- [`8a1a14d`](https://github.com/lblod/ember-rdfa-editor/commit/8a1a14d3fe32def8b33abc27f99e8c73b21f9fd9) Thanks [@abeforgit](https://github.com/abeforgit)! - Improve focus behavior after context menu closes
+
 ## 13.10.0
 
 ### Minor Changes
