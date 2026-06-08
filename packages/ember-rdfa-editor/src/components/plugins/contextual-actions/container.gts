@@ -15,6 +15,7 @@ import {
   type GetContextualActions,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
+import { runTask } from 'ember-lifeline';
 import {
   getSlashCommandsPluginState,
   slashCommandsStateChanged,
@@ -103,7 +104,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.plusButtonClicked = false;
     this.searchQuery = '';
     this.selectedEditorNodeLocal = null;
-    this.controller.mainEditorView.focus();
+    runTask(this, () => this.controller.mainEditorView.focus());
   };
 
   openContextMenu = () => {
