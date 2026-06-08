@@ -364,10 +364,7 @@ export default class ContextualActionsMenu extends Component<Args> {
           {{#each this.groupedActions as |group|}}
             <div
               class="say-contextual-actions-menu-group-wrapper
-                {{if (eq group.sticky 'bottom') 'sticky-bottom'}}{{if
-                  (eq group.sticky 'top')
-                  'sticky-top'
-                }}"
+                {{if (eq group.sticky 'bottom') 'sticky-bottom'}}"
               {{! @glint-expect-error type of the modifier helper is incorrect}}
               {{(if
                 (eq group.sticky "bottom")
@@ -375,6 +372,9 @@ export default class ContextualActionsMenu extends Component<Args> {
               )}}
             >
               <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+              {{#unless group.label}}
+                <div class="say-contextual-actions-menu-separator"></div>
+              {{/unless}}
               <div
                 class="say-contextual-actions-menu-group-header au-u-muted"
                 {{this.observeSticky "top"}}

@@ -13,8 +13,7 @@ export type ContextualAction = {
 
 export type ContextualActionGroup = {
   id: string;
-  label: string;
-
+  label?: string;
   sticky?: 'bottom';
   priority?: number;
 

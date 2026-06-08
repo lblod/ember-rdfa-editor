@@ -71,6 +71,7 @@
 }
 
 .say-contextual-actions-menu-group-wrapper {
+  padding-bottom: au-settings.$au-unit-tiny;
   background-color: white;
   z-index: 1;
   &:nth-last-child(2) {
@@ -84,10 +85,6 @@
     box-shadow: 0 -2px 3px 0px rgba(0, 0, 0, 0.04);
     // border-bottom: 1px solid var(--au-gray-200);
     transition: box-shadow 0.15s ease;
-  }
-  &.sticky-top {
-    position: sticky;
-    top: 0;
   }
 }
 
@@ -141,7 +138,6 @@
   padding-bottom: 0.3rem;
   padding-left: au-settings.$au-unit-small;
   padding-right: au-settings.$au-unit-small;
-  padding-top: au-settings.$au-unit-tiny;
 
   &.is-stuck {
     box-shadow: 0 2px 3px 0px rgba(0, 0, 0, 0.04);
@@ -150,10 +146,9 @@
   }
 }
 
-// .say-contextual-actions-menu-separator {
-//   height: 1px;
-//   background-color: black;
-// }
+.say-contextual-actions-menu-separator {
+  border-bottom: solid 1px var(--au-gray-200);
+}
 
 .say-contextual-actions-menu-entry {
   display: flex;
