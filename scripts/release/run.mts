@@ -80,11 +80,21 @@ const prompt = readline.createInterface({
 
 const gitDiffResult = await execa({
   reject: false,
-})`git diff HEAD --quiet && test -z "$(git status --porcelain)"`;
+})`git diff HEAD --quiet`;
+
 
 if (gitDiffResult.failed) {
   console.error(
     '\nYou have outstanding changes in your working directory. Please commit or stash them first before proceeding.',
+  );
+  process.exit(1);
+}
+
+const gitStatusResult = await execa({ reject: false })`git status --porcelain`;
+
+if (gitStatusResult.failed || gitStatusResult.stdout.length !== 0) {
+  console.error(
+    '\ngit status --porcelain did not return empty. You likely have untracked files in your worktree. Commit or stash them first before proceeding.',
   );
   process.exit(1);
 }
