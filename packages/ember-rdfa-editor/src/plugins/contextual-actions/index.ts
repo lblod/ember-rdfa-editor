@@ -18,6 +18,8 @@ export type ContextualActionGroup = {
   sticky?: 'bottom';
   priority?: number;
 
+  loadingMessage?: string;
+  searchDebounceMs?: number;
   getActions: GetContextualActions;
 };
 

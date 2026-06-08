@@ -384,9 +384,15 @@ export default class ContextualActionsMenu extends Component<Args> {
               <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
                 {{#if group.isLoading}}
                   <div class="au-u-flex au-u-flex--center au-u-padding">
-                    <AuLoader>{{t
-                        "ember-rdfa-editor.contextual-actions.loading-actions"
-                      }}</AuLoader>
+                    <AuLoader>
+                      {{#if group.loadingMessage}}
+                        {{group.loadingMessage}}
+                      {{else}}
+                        {{t
+                          "ember-rdfa-editor.contextual-actions.loading-actions"
+                        }}
+                      {{/if}}
+                    </AuLoader>
                   </div>
                 {{else if group.errorMessage}}
                   <AuAlert

@@ -20,7 +20,7 @@ import {
   getSlashCommandsPluginState,
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
-import { localCopy, dedupeTracked } from 'tracked-toolbox';
+import { localCopy } from 'tracked-toolbox';
 import {
   all,
   restartableTask,
@@ -28,14 +28,11 @@ import {
   timeout,
   type TaskInstance,
 } from 'ember-concurrency';
-import { TrackedArray } from 'tracked-built-ins';
 
 type Args = {
   controller: SayController;
   getGroups?: GetContextualActionGroups;
 };
-
-const SEARCH_TIMEOUT_MS = 500;
 
 export default class ContextualActionsContainer extends Component<Args> {
   /*
@@ -62,7 +59,7 @@ export default class ContextualActionsContainer extends Component<Args> {
    * actions menu because it changes the editor state onBlur
    * which we want to ignore
    */
-  @dedupeTracked localEditorState: EditorState | null = null;
+  @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
@@ -151,8 +148,13 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   loadGroupTask = task(
-    async (state: EditorState, group: ContextualActionGroup) =>
-      await group.getActions(state, this.searchQuery),
+    async (state: EditorState, group: ContextualActionGroup) => {
+      if (this.searchQuery) {
+        await timeout(group.searchDebounceMs ?? 0);
+      }
+
+      return await group.getActions(state, this.searchQuery);
+    },
   );
 
   // We don't use a trackedfunction because it causes the menu to reload
@@ -162,10 +164,6 @@ export default class ContextualActionsContainer extends Component<Args> {
     console.log('started the task');
     const state = this.localEditorState;
     if (!this.showContextMenu || !state) return [];
-
-    // if (this.searchQuery) {
-    //   await timeout(SEARCH_TIMEOUT_MS);
-    // }
 
     this.loadGroupTaskInstances = this.groups.map((group) =>
       this.loadGroupTask.perform(state, group),

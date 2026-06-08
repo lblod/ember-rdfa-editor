@@ -151,6 +151,7 @@ export function getContextualGroups(state: EditorState, searchQuery?: string) {
       id: 'plaatsbepaling-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Plaatsbepaling',
       getActions: buildGetActions(plaatsbepalingActions, 2000),
+      searchDebounceMs: 200,
     },
     {
       id: 'insert-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
@@ -169,6 +170,8 @@ export function getContextualGroups(state: EditorState, searchQuery?: string) {
     groups.push({
       id: 'locations-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
       label: 'Straten in Gent',
+      loadingMessage: 'Straten aan het ophalen',
+      searchDebounceMs: 500,
       priority: 9,
       getActions: buildGetActions(locationActions, 1000),
     });
