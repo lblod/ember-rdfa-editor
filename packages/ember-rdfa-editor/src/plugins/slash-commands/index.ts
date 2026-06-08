@@ -32,7 +32,7 @@ class IdleState implements PluginState {
     getGroups: GetContextualActionGroups,
   ): PluginState {
     if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'open_context_menu') {
-      return new MenuOpenState(newState);
+      return new MenuExternallyOpenedState(newState);
     }
 
     /**
@@ -68,7 +68,11 @@ class SearchingState implements PluginState {
   }
 }
 
-class MenuOpenState implements PluginState {
+/*
+ * This is needed because we need to be able to hide the placeholder
+ * when the menu is opened externally
+ */
+class MenuExternallyOpenedState implements PluginState {
   menuOpen = true;
   slashPos = null;
   latestEditorState: EditorState;
