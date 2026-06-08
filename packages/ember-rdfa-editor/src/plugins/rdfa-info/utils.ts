@@ -21,7 +21,7 @@ import type {
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-property.ts';
 import { isRdfaAttrs, type RdfaAttrs } from '#root/core/rdfa-types.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
 
 export function getNodeByRdfaId(state: EditorState, rdfaId: string) {

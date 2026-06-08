@@ -11,7 +11,7 @@ import { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
 import { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
 import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '#root/utils/option.ts';
 import { SayQuad } from './quad.ts';
 
 // type CreateNodeArgs =

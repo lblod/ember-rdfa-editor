@@ -5,7 +5,7 @@ import {
   rdfaAttrSpec,
   renderRdfaAware,
 } from '#root/core/schema.ts';
-import { optionMapOr } from '#root/utils/_private/option.ts';
+import { optionMapOr } from '#root/utils/option.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import NumberEditor from '#root/components/_private/utils/number-editor.gts';
 import type { ComponentLike } from '@glint/template';

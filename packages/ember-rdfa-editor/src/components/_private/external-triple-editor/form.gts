@@ -20,7 +20,7 @@ import {
 } from '#root/core/say-data-factory/index.ts';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
-import { type Option } from '#root/utils/_private/option.ts';
+import { type Option } from '#root/utils/option.ts';
 import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';

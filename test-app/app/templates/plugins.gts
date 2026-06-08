@@ -68,7 +68,7 @@ import {
 } from '../dummy-nodes';
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import { modifier } from 'ember-modifier';
 import {
   sample_block,

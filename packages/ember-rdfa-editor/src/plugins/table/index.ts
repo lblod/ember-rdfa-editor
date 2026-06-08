@@ -1,4 +1,4 @@
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { keymap } from 'prosemirror-keymap';
 import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
 import { TableView } from './table-view.ts';

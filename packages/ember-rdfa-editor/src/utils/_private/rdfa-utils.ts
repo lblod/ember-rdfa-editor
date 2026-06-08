@@ -24,7 +24,7 @@ import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import TransformUtils from './transform-utils.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import { type ResolvedPNode } from './types.ts';
-import { isSome } from './option.ts';
+import { isSome } from '../option.ts';
 
 export {
   addPropertyToNode,

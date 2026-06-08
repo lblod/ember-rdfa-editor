@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Mark, type Attrs, type DOMOutputSpec } from 'prosemirror-model';
 import { PNode } from '#root/prosemirror-aliases.ts';
-import { isSome, unwrap, type Option } from '../utils/_private/option.ts';
+import { isSome, unwrap, type Option } from '../utils/option.ts';
 import type {
   ContentTriple,
   FullTriple,

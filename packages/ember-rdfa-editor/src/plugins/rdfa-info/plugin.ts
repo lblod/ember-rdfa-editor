@@ -1,7 +1,7 @@
 import { EditorState, PluginKey } from 'prosemirror-state';
 import { PNode, ProsePlugin } from '#root/prosemirror-aliases.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
-import { isSome, unwrap } from '#root/utils/_private/option.ts';
+import { isSome, unwrap } from '#root/utils/option.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import { IMPORTED_RESOURCES_ATTR } from '#root/plugins/imported-resources/index.ts';
 import { getBacklinks } from './utils.ts';

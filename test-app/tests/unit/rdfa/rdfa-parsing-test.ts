@@ -67,7 +67,7 @@ import type {
   IncomingLiteralTriple,
 } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { isSome, unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import {
   SayDataFactory,
   sayDataFactory,
