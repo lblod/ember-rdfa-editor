@@ -1,15 +1,5 @@
 # @lblod/ember-rdfa-editor
 
-## 13.9.0
-
-### Minor Changes
-
-- [#1376](https://github.com/lblod/ember-rdfa-editor/pull/1376) [`d691cd9`](https://github.com/lblod/ember-rdfa-editor/commit/d691cd96115a1ae230bf3f7868b517d471dbc46c) Thanks [@kobemertens](https://github.com/kobemertens)! - Improve context actions menu placement
-
-### Patch Changes
-
-- [#1378](https://github.com/lblod/ember-rdfa-editor/pull/1378) [`3b00538`](https://github.com/lblod/ember-rdfa-editor/commit/3b00538642fb8029cdcd3eba10368dd46b75ea5c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix RDFa aware headings to behave as expected when hitting 'enter' to go onto a newline
-
 ## 13.8.0
 
 ### Minor Changes
