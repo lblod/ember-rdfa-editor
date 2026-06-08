@@ -11,6 +11,7 @@ import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
   type ContextualAction,
+  type ContextualActionGroup,
   type GetContextualActionGroups,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
@@ -19,33 +20,37 @@ import {
   getSlashCommandsPluginState,
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
-import { localCopy } from 'tracked-toolbox';
-import { restartableTask, timeout } from 'ember-concurrency';
+import { localCopy, dedupeTracked } from 'tracked-toolbox';
+import {
+  all,
+  restartableTask,
+  task,
+  timeout,
+  type TaskInstance,
+} from 'ember-concurrency';
+import { TrackedArray } from 'tracked-built-ins';
 
 type Args = {
   controller: SayController;
   getGroups?: GetContextualActionGroups;
 };
 
-type GroupWithStatus = {
-  isLoading: boolean;
-  errorMessage: string | null;
-  actions: ContextualAction[];
-};
-
 const SEARCH_TIMEOUT_MS = 500;
 
 export default class ContextualActionsContainer extends Component<Args> {
+  /*
+   * DO NOT USE this.controller.mainEditorState in this component
+   * unless you know what you are doing. Use this.localEditorState instead.
+   * Otherwise the tracking will cause unnecessary reloading of data
+   */
+
   @service declare intl: IntlService;
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
 
-  /**
-   * We use 2 separate properties to avoid getting the "used value in the same computation" error
-   */
-  @tracked groupsWithStatus: GroupWithStatus[] = [];
-  groupsWithStatusUntracked: GroupWithStatus[] = [];
+  // @tracked groupsWithStatus: TrackedArray<GroupWithStatus> = new TrackedArray();
+  @tracked loadGroupTaskInstances: TaskInstance<ContextualAction[]>[] = [];
 
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
@@ -57,7 +62,7 @@ export default class ContextualActionsContainer extends Component<Args> {
    * actions menu because it changes the editor state onBlur
    * which we want to ignore
    */
-  @tracked localEditorState: EditorState | null = null;
+  @dedupeTracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
@@ -75,15 +80,12 @@ export default class ContextualActionsContainer extends Component<Args> {
     }
   };
 
-  get contextualActions(): ContextualAction[] {
-    return this.groupsWithStatus.flatMap((g) => g.actions);
-  }
-
   /**
    * Returns the node to display the menu for
    */
   get selectedEditorNode() {
-    const selection = this.controller.mainEditorState.selection;
+    if (!this.localEditorState) return null;
+    const { selection } = this.localEditorState;
     if (selection instanceof NodeSelection) {
       return selection.node;
     }
@@ -116,6 +118,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.plusButtonClicked = false;
     this.searchQuery = '';
     this.selectedEditorNodeLocal = null;
+    void this.getActionsTask.cancelAll();
     runTask(this, () => this.controller.mainEditorView.focus());
   };
 
@@ -139,65 +142,54 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
-  updateGroupWithStatusAt(
-    groupWithStatus: Partial<GroupWithStatus>,
-    index: number,
-  ) {
-    const newGroupsWithStatus = [...this.groupsWithStatusUntracked];
-    newGroupsWithStatus[index] = {
-      ...this.groupsWithStatusUntracked[index],
-      ...groupWithStatus,
-    };
-    this.groupsWithStatusUntracked = newGroupsWithStatus;
+  getErrorMessage(error: unknown) {
+    return error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : this.intl.t('ember-rdfa-editor.utils.something-went-wrong');
   }
+
+  loadGroupTask = task(
+    async (state: EditorState, group: ContextualActionGroup) =>
+      await group.getActions(state, this.searchQuery),
+  );
 
   // We don't use a trackedfunction because it causes the menu to reload
   // after the first load (after the debounce time)
   // See https://discord.com/channels/480462759797063690/1501197288603910266
   getActionsTask = restartableTask(async () => {
-    if (this.searchQuery) {
-      await timeout(SEARCH_TIMEOUT_MS);
-    }
+    console.log('started the task');
     const state = this.localEditorState;
     if (!this.showContextMenu || !state) return [];
 
-    const groups = this.groups;
+    // if (this.searchQuery) {
+    //   await timeout(SEARCH_TIMEOUT_MS);
+    // }
 
-    // Reset the groupsWithStatus "map"
-    this.groupsWithStatusUntracked = groups.map(() => ({
-      isLoading: true,
-      errorMessage: null,
-      actions: [],
-    }));
-
-    await Promise.all(
-      groups.map(async (group, index) => {
-        try {
-          const results = await group.getActions(state, this.searchQuery);
-          this.updateGroupWithStatusAt(
-            {
-              errorMessage: null,
-              actions: results.flat(),
-            },
-            index,
-          );
-          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
-        } catch (error) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : typeof error === 'string'
-                ? error
-                : this.intl.t('ember-rdfa-editor.utils.something-went-wrong');
-          this.updateGroupWithStatusAt({ errorMessage: message }, index);
-          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
-        } finally {
-          this.updateGroupWithStatusAt({ isLoading: false }, index);
-          this.groupsWithStatus = [...this.groupsWithStatusUntracked];
-        }
-      }),
+    this.loadGroupTaskInstances = this.groups.map((group) =>
+      this.loadGroupTask.perform(state, group),
     );
+
+    // Child tasks get cancelled automagically on restart
+    await all(this.loadGroupTaskInstances);
   });
+
+  get groupsWithStatus() {
+    return this.groups.map((group, index) => {
+      const taskInstance = this.loadGroupTaskInstances[index];
+      if (taskInstance === undefined)
+        return { ...group, actions: [], isLoading: false, errorMessage: null };
+      return {
+        ...group,
+        actions: taskInstance.isError ? [] : taskInstance.value,
+        isLoading: taskInstance.isRunning,
+        errorMessage: taskInstance.isError
+          ? this.getErrorMessage(this.getErrorMessage(taskInstance.error))
+          : null,
+      };
+    });
+  }
 
   @action
   executeAction(action: ContextualAction) {
@@ -240,7 +232,6 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
-    void this.getActionsTask.perform();
   };
 
   startGetActionsTask = modifier(() => {
@@ -265,12 +256,7 @@ export default class ContextualActionsContainer extends Component<Args> {
           {{this.startGetActionsTask}}
           @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if
-            this.contextualActions
-            this.contextualActions
-            undefined
-          }}
-          @groups={{this.groups}}
+          @groups={{this.groupsWithStatus}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}

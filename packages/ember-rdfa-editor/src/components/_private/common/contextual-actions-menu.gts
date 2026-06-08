@@ -25,10 +25,15 @@ import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 import { eq } from 'ember-truth-helpers';
 
+type GroupWithStatus = ContextualActionGroup & {
+  isLoading: boolean;
+  errorMessage: string | null;
+  actions: ContextualAction[] | null;
+};
+
 type Args = {
   controller: SayController;
-  actions?: ContextualAction[];
-  groups?: ContextualActionGroup[];
+  groups?: GroupWithStatus[];
   isLoading?: boolean;
   errorMessage?: string;
   enableSearch?: boolean;
@@ -80,8 +85,6 @@ export default class ContextualActionsMenu extends Component<Args> {
       this.args.onClose?.();
     };
     const handleKeydown = (event: KeyboardEvent) => {
-      if (!this.args.isLoading) return;
-
       switch (event.key) {
         case 'ArrowDown':
         case 'Down':
@@ -184,18 +187,22 @@ export default class ContextualActionsMenu extends Component<Args> {
     return searchIndex;
   }
 
+  get sortedGroups() {
+    // TODO fix on merge, need to sort by prio and stickyness
+    return this.args.groups?.toSorted(sortByPriority);
+  }
+
   @cached
   get groupedActions() {
-    return this.args.groups
+    return this.sortedGroups
       ?.map((group) => ({
         ...group,
         actions:
-          this.args.actions
+          group.actions
             ?.filter((action) => action.group === group.id)
             .toSorted(sortByPriority) ?? [],
       }))
-      .filter((group) => group.actions.length > 0)
-      .toSorted(sortGroups);
+      .filter((group) => group.isLoading || group.actions.length > 0);
   }
 
   get actionAmount() {
@@ -350,7 +357,7 @@ export default class ContextualActionsMenu extends Component<Args> {
           @size="small"
           @icon="alert-triangle"
           @skin="error"
-          class="au-u-margin-bottom-tiny au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+          class="au-u-margin-tiny"
         >{{@errorMessage}}</AuAlert>
       {{else}}
         <div class="say-contextual-actions-menu-entries-container">
@@ -375,30 +382,45 @@ export default class ContextualActionsMenu extends Component<Args> {
                 {{group.label}}
               </div>
               <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
-                {{#each group.actions as |actionItem|}}
-                  <button
-                    {{this.addActionElementToMap actionItem}}
-                    {{on "click" (fn this.selectAction actionItem)}}
-                    {{on
-                      "mousemove"
-                      (fn this.updateSelectedActionIndex actionItem)
-                    }}
-                    class="say-contextual-actions-menu-entry au-u-text-left
-                      {{if
-                        (this.isSelectedAction actionItem)
-                        'focused-menu-entry'
-                      }}"
-                    type="button"
-                    title={{actionItem.description}}
-                  >
-                    <div id="button-content">
-                      {{#if actionItem.icon}}
-                        <AuIcon @size="large" @icon={{actionItem.icon}} />
-                      {{/if}}
-                      <span>{{actionItem.label}}</span>
-                    </div>
-                  </button>
-                {{/each}}
+                {{#if group.isLoading}}
+                  <div class="au-u-flex au-u-flex--center au-u-padding">
+                    <AuLoader>{{t
+                        "ember-rdfa-editor.contextual-actions.loading-actions"
+                      }}</AuLoader>
+                  </div>
+                {{else if group.errorMessage}}
+                  <AuAlert
+                    @size="small"
+                    @icon="alert-triangle"
+                    @skin="error"
+                    class="au-u-margin-tiny"
+                  >{{group.errorMessage}}</AuAlert>
+                {{else}}
+                  {{#each group.actions as |actionItem|}}
+                    <button
+                      {{this.addActionElementToMap actionItem}}
+                      {{on "click" (fn this.selectAction actionItem)}}
+                      {{on
+                        "mousemove"
+                        (fn this.updateSelectedActionIndex actionItem)
+                      }}
+                      class="say-contextual-actions-menu-entry au-u-text-left
+                        {{if
+                          (this.isSelectedAction actionItem)
+                          'focused-menu-entry'
+                        }}"
+                      type="button"
+                      title={{actionItem.description}}
+                    >
+                      <div id="button-content">
+                        {{#if actionItem.icon}}
+                          <AuIcon @size="large" @icon={{actionItem.icon}} />
+                        {{/if}}
+                        <span>{{actionItem.label}}</span>
+                      </div>
+                    </button>
+                  {{/each}}
+                {{/if}}
               </div>
             </div>
             <div class="say-contextual-actions-menu-group-sticky-sentinel" />
