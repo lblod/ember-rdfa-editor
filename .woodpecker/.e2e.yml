@@ -3,8 +3,7 @@ steps:
     # this image must be the same as in `scripts/e2e.sh`
     image: mcr.microsoft.com/playwright:v1.50.0-jammy
     commands:
-      # installing the latest corepack manually because of https://github.com/nodejs/corepack/issues/612
-      - npm i -g corepack@0.31
+      - npm i -g corepack@0.35
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm i -f

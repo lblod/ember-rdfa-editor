@@ -1,5 +1,55 @@
 # @lblod/ember-rdfa-editor
 
+## 13.10.2
+
+### Patch Changes
+
+- [`800a140`](https://github.com/lblod/ember-rdfa-editor/commit/800a14048cee91fce896871c28a0fe22103fbf55) Thanks [@abeforgit](https://github.com/abeforgit)! - Fix: repair backspace behavior in search field
+
+## 13.10.1
+
+### Patch Changes
+
+- [`8a1a14d`](https://github.com/lblod/ember-rdfa-editor/commit/8a1a14d3fe32def8b33abc27f99e8c73b21f9fd9) Thanks [@abeforgit](https://github.com/abeforgit)! - Add backspace and delete handlers to contextmenu
+
+- [`8a1a14d`](https://github.com/lblod/ember-rdfa-editor/commit/8a1a14d3fe32def8b33abc27f99e8c73b21f9fd9) Thanks [@abeforgit](https://github.com/abeforgit)! - Improve focus behavior after context menu closes
+
+## 13.10.0
+
+### Minor Changes
+
+- [#1377](https://github.com/lblod/ember-rdfa-editor/pull/1377) [`4a5790c`](https://github.com/lblod/ember-rdfa-editor/commit/4a5790c6a8c067e443b73843a67f97f6d9d0e013) Thanks [@kobemertens](https://github.com/kobemertens)! - Improve context actions menu placement
+
+- [#1377](https://github.com/lblod/ember-rdfa-editor/pull/1377) [`d95e0e4`](https://github.com/lblod/ember-rdfa-editor/commit/d95e0e4470d3f6963b697813d36cb5b3839193ac) Thanks [@kobemertens](https://github.com/kobemertens)! - Add `sticky` property to `ContextualActionGroups`
+
+### Patch Changes
+
+- [`0785010`](https://github.com/lblod/ember-rdfa-editor/commit/0785010c39ca841279de707b871e7a77c813c1e3) Thanks [@abeforgit](https://github.com/abeforgit)! - Release script: correctly check for empty string
+
+- [#1380](https://github.com/lblod/ember-rdfa-editor/pull/1380) [`778c814`](https://github.com/lblod/ember-rdfa-editor/commit/778c814129d49e09bc76a8c97d55eb1a049a0308) Thanks [@piemonkey](https://github.com/piemonkey)! - Update node version used for build process to v24
+
+- [#1380](https://github.com/lblod/ember-rdfa-editor/pull/1380) [`d6f360c`](https://github.com/lblod/ember-rdfa-editor/commit/d6f360c9b6c862a0c9c35e1240881eea63c404eb) Thanks [@piemonkey](https://github.com/piemonkey)! - Move to pnpm 11.4
+
+- [#1379](https://github.com/lblod/ember-rdfa-editor/pull/1379) [`0fdbdaa`](https://github.com/lblod/ember-rdfa-editor/commit/0fdbdaab856d0b850078fbac05a021dfa5d75b0d) Thanks [@piemonkey](https://github.com/piemonkey)! - Include untracked files in release check
+
+- [`a7fe3f5`](https://github.com/lblod/ember-rdfa-editor/commit/a7fe3f52c6a3667463b559f6c81232b8ba93e5be) Thanks [@abeforgit](https://github.com/abeforgit)! - Fix release script again
+
+## 13.9.1
+
+### Patch Changes
+
+- [`86d1077`](https://github.com/lblod/ember-rdfa-editor/commit/86d1077795def5e339bc81f49cd8089dbf5ce4ea) Thanks [@piemonkey](https://github.com/piemonkey)! - Re-release 13.9.0 without extra unwanted test-app code
+
+## 13.9.0
+
+### Minor Changes
+
+- [#1376](https://github.com/lblod/ember-rdfa-editor/pull/1376) [`d691cd9`](https://github.com/lblod/ember-rdfa-editor/commit/d691cd96115a1ae230bf3f7868b517d471dbc46c) Thanks [@kobemertens](https://github.com/kobemertens)! - Improve context actions menu placement
+
+### Patch Changes
+
+- [#1378](https://github.com/lblod/ember-rdfa-editor/pull/1378) [`3b00538`](https://github.com/lblod/ember-rdfa-editor/commit/3b00538642fb8029cdcd3eba10368dd46b75ea5c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix RDFa aware headings to behave as expected when hitting 'enter' to go onto a newline
+
 ## 13.8.0
 
 ### Minor Changes
