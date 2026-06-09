@@ -19,10 +19,8 @@
 
 
 ### Checks PR readiness
-- [ ] UI: works on smaller screen sizes
 - [ ] UI: feedback for any loading/error states
-- [ ] Check cancel/go-back flows
-- [ ] Check database state correct when deleting/updating (especially regarding relationships)
+- [ ] Tested on Firefox and Chrome-based browsers
 - [ ] changelog
 - [ ] npm lint
-- [ ] no new deprecations
+- [ ] no new deprecation warnings
