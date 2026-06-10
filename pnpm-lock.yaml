@@ -139,8 +139,8 @@ catalogs:
       specifier: ^3.0.1
       version: 3.0.1
     '@rdfjs/types':
-      specifier: ^1.1.2
-      version: 1.1.2
+      specifier: ^2.0.1
+      version: 2.0.1
     '@rollup/plugin-babel':
       specifier: ^6.0.4
       version: 6.0.4
@@ -621,7 +621,7 @@ importers:
         version: 0.8.0-beta.6
       '@rdfjs/types':
         specifier: 'catalog:'
-        version: 1.1.2
+        version: 2.0.1
       '@say-editor/prosemirror-invisibles':
         specifier: 'catalog:'
         version: 0.1.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)
@@ -1025,7 +1025,7 @@ importers:
         version: 3.0.1
       '@rdfjs/types':
         specifier: 'catalog:'
-        version: 1.1.2
+        version: 2.0.1
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.28.6)(rollup@4.52.2)
@@ -3056,6 +3056,9 @@ packages:
 
   '@rdfjs/types@1.1.2':
     resolution: {integrity: sha512-wqpOJK1QCbmsGNtyzYnojPU8gRDPid2JO0Q0kMtb4j65xhCK880cnKAfEOwC+dX85VJcCByQx5zOwyyfCjDJsg==}
+
+  '@rdfjs/types@2.0.1':
+    resolution: {integrity: sha512-uyAzpugX7KekAXAHq26m3JlUIZJOC0uSBhpnefGV5i15bevDyyejoB7I+9MKeUrzXD8OOUI3+4FeV1wwQr5ihA==}
 
   '@rollup/plugin-babel@6.0.4':
     resolution: {integrity: sha512-YF7Y52kFdFT/xVSuVdjkV5ZdX/3YtmX0QulG+x0taQOtJdHYzVU61aSSkAgVJ7NOv6qPkIYiJSgSWWN/DM5sGw==}
@@ -12191,6 +12194,10 @@ snapshots:
   '@rdfjs/to-ntriples@3.0.1': {}
 
   '@rdfjs/types@1.1.2':
+    dependencies:
+      '@types/node': 24.5.2
+
+  '@rdfjs/types@2.0.1':
     dependencies:
       '@types/node': 24.5.2
 

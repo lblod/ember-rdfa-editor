@@ -116,6 +116,8 @@ export class SayDataFactory<
     return new ContentLiteralTerm(languageOrDataType);
   }
 
+  // @ts-expect-error the return type here doesn't actually match the parent class as it includes
+  // more possibilities
   public fromTerm<T extends WithoutEquals<SayTerm>>(original: T): SayTerm {
     switch (original.termType) {
       case 'NamedNode':
