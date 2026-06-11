@@ -1,4 +1,4 @@
-import { type Term } from '@rdfjs/types';
+import type { Term } from '@rdfjs/types';
 import { optionMapOr } from '#root/utils/option.ts';
 
 export type BindingObject<Obj extends Record<string, unknown>> = {

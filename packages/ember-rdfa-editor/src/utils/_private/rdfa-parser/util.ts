@@ -45,6 +45,9 @@ export class ModelDataFactory<N> extends DataFactory<ModelQuad<N>> {
     return blankNode;
   }
 
+  // @ts-expect-error The types for `Literal` disagree on whether `null` is included, depending on
+  // whether they come via rdf-data-factory or not. We can't just change the property for our class
+  // because that just moves the problem elsewhere
   literal(
     value: string,
     languageOrDataType?: string | ModelNamedNode<N>,

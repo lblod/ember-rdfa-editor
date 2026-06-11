@@ -138,9 +138,6 @@ catalogs:
     '@rdfjs/to-ntriples':
       specifier: ^3.0.1
       version: 3.0.1
-    '@rdfjs/types':
-      specifier: ^2.0.1
-      version: 2.0.1
     '@rollup/plugin-babel':
       specifier: ^6.0.4
       version: 6.0.4
@@ -424,8 +421,8 @@ catalogs:
       specifier: ^3.5.0
       version: 3.5.0
     rdf-data-factory:
-      specifier: ^1.1.3
-      version: 1.1.3
+      specifier: ^2.0.2
+      version: 2.0.2
     react:
       specifier: ^19.2.4
       version: 19.2.7
@@ -518,6 +515,7 @@ overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
   prosemirror-view: ^1.41.5
+  '@rdfjs/types': ^2.0.1
 
 patchedDependencies:
   ember-headless-form: 3ffd83a43b842fdb4a0b3056a043c8a1a03cf60563de70328abd79a49a1707dd
@@ -620,7 +618,7 @@ importers:
         specifier: 'catalog:'
         version: 0.8.0-beta.6
       '@rdfjs/types':
-        specifier: 'catalog:'
+        specifier: ^2.0.1
         version: 2.0.1
       '@say-editor/prosemirror-invisibles':
         specifier: 'catalog:'
@@ -732,7 +730,7 @@ importers:
         version: 1.41.5
       rdf-data-factory:
         specifier: 'catalog:'
-        version: 1.1.3
+        version: 2.0.2
       reactiveweb:
         specifier: 'catalog:'
         version: 1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.3)
@@ -1024,7 +1022,7 @@ importers:
         specifier: 'catalog:'
         version: 3.0.1
       '@rdfjs/types':
-        specifier: 'catalog:'
+        specifier: ^2.0.1
         version: 2.0.1
       '@rollup/plugin-babel':
         specifier: 'catalog:'
@@ -1193,7 +1191,7 @@ importers:
         version: 3.5.0
       rdf-data-factory:
         specifier: 'catalog:'
-        version: 1.1.3
+        version: 2.0.2
       react:
         specifier: 'catalog:'
         version: 19.2.7
@@ -3053,9 +3051,6 @@ packages:
 
   '@rdfjs/to-ntriples@3.0.1':
     resolution: {integrity: sha512-gjoPAvh4j7AbGMjcDn/8R4cW+d/FPtbfbMM0uQXkyfBFtNUW2iVgrqsgJ65roLc54Y9A2TTFaeeTGSvY9a0HCQ==}
-
-  '@rdfjs/types@1.1.2':
-    resolution: {integrity: sha512-wqpOJK1QCbmsGNtyzYnojPU8gRDPid2JO0Q0kMtb4j65xhCK880cnKAfEOwC+dX85VJcCByQx5zOwyyfCjDJsg==}
 
   '@rdfjs/types@2.0.1':
     resolution: {integrity: sha512-uyAzpugX7KekAXAHq26m3JlUIZJOC0uSBhpnefGV5i15bevDyyejoB7I+9MKeUrzXD8OOUI3+4FeV1wwQr5ihA==}
@@ -8129,8 +8124,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  rdf-data-factory@1.1.3:
-    resolution: {integrity: sha512-ny6CI7m2bq4lfQQmDYvcb2l1F9KtGwz9chipX4oWu2aAtVoXjb7k3d8J1EsgAsEbMXnBipB/iuRen5H2fwRWWQ==}
+  rdf-data-factory@2.0.2:
+    resolution: {integrity: sha512-WzPoYHwQYWvIP9k+7IBLY1b4nIDitzAK4mA37WumAF/Cjvu/KOtYJH9IPZnUTWNSd5K2+pq4vrcE9WZC4sRHhg==}
 
   react-base16-styling@0.10.0:
     resolution: {integrity: sha512-H1k2eFB6M45OaiRru3PBXkuCcn2qNmx+gzLb4a9IPMR7tMH8oBRXU5jGbPDYG1Hz+82d88ED0vjR8BmqU3pQdg==}
@@ -12185,17 +12180,13 @@ snapshots:
 
   '@rdfjs/data-model@1.3.4':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@rdfjs/dataset@1.1.1':
     dependencies:
       '@rdfjs/data-model': 1.3.4
 
   '@rdfjs/to-ntriples@3.0.1': {}
-
-  '@rdfjs/types@1.1.2':
-    dependencies:
-      '@types/node': 24.5.2
 
   '@rdfjs/types@2.0.1':
     dependencies:
@@ -12534,7 +12525,7 @@ snapshots:
 
   '@types/n3@1.26.1':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/node': 24.5.2
 
   '@types/node@12.20.55': {}
@@ -18433,9 +18424,9 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  rdf-data-factory@1.1.3:
+  rdf-data-factory@2.0.2:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   react-base16-styling@0.10.0:
     dependencies:
