@@ -241,6 +241,7 @@
     "@types/react": "catalog:",
     "codemirror": "catalog:",
     "common-tags": "catalog:",
+    "date-fns": "^2.30.0",
     "debug": "catalog:",
     "decorator-transforms": "catalog:",
     "dompurify": "catalog:",

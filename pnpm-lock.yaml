@@ -631,6 +631,9 @@ importers:
       common-tags:
         specifier: 'catalog:'
         version: 1.8.2
+      date-fns:
+        specifier: ^2.30.0
+        version: 2.30.0
       debug:
         specifier: 'catalog:'
         version: 4.4.3
@@ -4883,6 +4886,10 @@ packages:
 
   dataloader@1.4.0:
     resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+
+  date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
 
   date-fns@3.6.0:
     resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
@@ -14169,6 +14176,10 @@ snapshots:
       is-data-view: 1.0.2
 
   dataloader@1.4.0: {}
+
+  date-fns@2.30.0:
+    dependencies:
+      '@babel/runtime': 7.28.6
 
   date-fns@3.6.0: {}
 

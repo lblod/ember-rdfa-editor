@@ -28,7 +28,8 @@ export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
 
 // ### Lifted from @lblod/marawa as it was the only part we were still using
 export function isFullUri(uri: string) {
-  return uri.includes('://');}
+  return uri.includes('://');
+}
 /**
  * Returns whether a given URI is prefixed
  *
@@ -37,13 +38,11 @@ export function isFullUri(uri: string) {
  * @return {boolean} Whether the given URI is prefixed
  */
 export function isPrefixedUri(uri: string): boolean {
-  if(isFullUri(uri)){
+  if (isFullUri(uri)) {
     return false;
-  }
-  else if(!uri.includes(':')){
+  } else if (!uri.includes(':')) {
     return false;
-  }
-  else {
+  } else {
     //e.g. 'bar:foo' will be split to  'bar:'
     const potentialPrefix = uri.split(':')[0] + ':';
     //see https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Definition (defintion of sheme)
