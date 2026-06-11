@@ -1,5 +1,4 @@
-import { getRdfaId, getSubject, rdfaInfoPluginKey } from './plugin.ts';
-import { EditorState, Selection } from 'prosemirror-state';
+import { EditorState, PluginKey, Selection } from 'prosemirror-state';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { Mapping } from 'prosemirror-transform';
 import type {
@@ -23,6 +22,19 @@ import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-pro
 import { isRdfaAttrs, type RdfaAttrs } from '#root/core/rdfa-types.ts';
 import { unwrap } from '#root/utils/option.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
+import type { RdfaInfo } from './plugin';
+
+export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
+
+export function getRdfaId(node: PNode): string | undefined {
+  return node.attrs['__rdfaId'] as string | undefined;
+}
+
+export function getSubject(node: PNode): string | undefined {
+  return (node.attrs['subject'] ??
+    node.attrs['about'] ??
+    node.attrs['resource']) as string | undefined;
+}
 
 export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);
