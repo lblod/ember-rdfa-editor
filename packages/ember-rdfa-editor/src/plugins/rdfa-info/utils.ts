@@ -26,6 +26,33 @@ import type { RdfaInfo } from './plugin';
 
 export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
 
+// ### Lifted from @lblod/marawa as it was the only part we were still using
+export function isFullUri(uri: string) {
+  return uri.includes('://');}
+/**
+ * Returns whether a given URI is prefixed
+ *
+ * @param {string} uri A URI
+ *
+ * @return {boolean} Whether the given URI is prefixed
+ */
+export function isPrefixedUri(uri: string): boolean {
+  if(isFullUri(uri)){
+    return false;
+  }
+  else if(!uri.includes(':')){
+    return false;
+  }
+  else {
+    //e.g. 'bar:foo' will be split to  'bar:'
+    const potentialPrefix = uri.split(':')[0] + ':';
+    //see https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Definition (defintion of sheme)
+    //see https://en.wikipedia.org/wiki/CURIE
+    return /^\[?[a-z][a-z|\d|.|+|-]*:$/i.test(potentialPrefix);
+  }
+}
+// ###
+
 export function getRdfaId(node: PNode): string | undefined {
   return node.attrs['__rdfaId'] as string | undefined;
 }

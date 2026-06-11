@@ -120,9 +120,6 @@ catalogs:
     '@glint/tsserver-plugin':
       specifier: 2.1.0
       version: 2.1.0
-    '@lblod/marawa':
-      specifier: 0.8.0-beta.6
-      version: 0.8.0-beta.6
     '@manypkg/get-packages':
       specifier: ^2.2.2
       version: 2.2.2
@@ -138,6 +135,9 @@ catalogs:
     '@rdfjs/to-ntriples':
       specifier: ^3.0.1
       version: 3.0.1
+    '@rdfjs/types':
+      specifier: ^2.0.1
+      version: 2.0.1
     '@rollup/plugin-babel':
       specifier: ^6.0.4
       version: 6.0.4
@@ -515,7 +515,6 @@ overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
   prosemirror-view: ^1.41.5
-  '@rdfjs/types': ^2.0.1
 
 patchedDependencies:
   ember-headless-form: 3ffd83a43b842fdb4a0b3056a043c8a1a03cf60563de70328abd79a49a1707dd
@@ -614,11 +613,8 @@ importers:
       '@glint/tsserver-plugin':
         specifier: 'catalog:'
         version: 2.1.0
-      '@lblod/marawa':
-        specifier: 'catalog:'
-        version: 0.8.0-beta.6
       '@rdfjs/types':
-        specifier: ^2.0.1
+        specifier: 'catalog:'
         version: 2.0.1
       '@say-editor/prosemirror-invisibles':
         specifier: 'catalog:'
@@ -1022,7 +1018,7 @@ importers:
         specifier: 'catalog:'
         version: 3.0.1
       '@rdfjs/types':
-        specifier: ^2.0.1
+        specifier: 'catalog:'
         version: 2.0.1
       '@rollup/plugin-babel':
         specifier: 'catalog:'
@@ -2740,9 +2736,6 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@lblod/marawa@0.8.0-beta.6':
-    resolution: {integrity: sha512-BW3yCpeQlk9EPnQAEQnM9uViA8RC5DkuoiaPJzbuhMcLvKHfI4cjc6dTg9i8qAijbL/xObmQ/Aexko2Xcj9ktw==}
-
   '@lezer/common@1.2.3':
     resolution: {integrity: sha512-w7ojc8ejBqr2REPsWxJjrMFsA/ysDCFICn8zEOR9mrqzOu2amhITYuLD8ag6XZf0CFXDrhKqw7+tW8cX66NaDA==}
 
@@ -3040,14 +3033,6 @@ packages:
     engines: {node: ^24, npm: ^11}
     peerDependencies:
       vite: ^6.0.0
-
-  '@rdfjs/data-model@1.3.4':
-    resolution: {integrity: sha512-iKzNcKvJotgbFDdti7GTQDCYmL7GsGldkYStiP0K8EYtN7deJu5t7U11rKTz+nR7RtesUggT+lriZ7BakFv8QQ==}
-    hasBin: true
-
-  '@rdfjs/dataset@1.1.1':
-    resolution: {integrity: sha512-BNwCSvG0cz0srsG5esq6CQKJc1m8g/M0DZpLuiEp0MMpfwguXX7VeS8TCg4UUG3DV/DqEvhy83ZKSEjdsYseeA==}
-    hasBin: true
 
   '@rdfjs/to-ntriples@3.0.1':
     resolution: {integrity: sha512-gjoPAvh4j7AbGMjcDn/8R4cW+d/FPtbfbMM0uQXkyfBFtNUW2iVgrqsgJ65roLc54Y9A2TTFaeeTGSvY9a0HCQ==}
@@ -11828,11 +11813,6 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@lblod/marawa@0.8.0-beta.6':
-    dependencies:
-      '@rdfjs/data-model': 1.3.4
-      '@rdfjs/dataset': 1.1.1
-
   '@lezer/common@1.2.3': {}
 
   '@lezer/css@1.3.0':
@@ -12177,14 +12157,6 @@ snapshots:
       vite: 6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
-
-  '@rdfjs/data-model@1.3.4':
-    dependencies:
-      '@rdfjs/types': 2.0.1
-
-  '@rdfjs/dataset@1.1.1':
-    dependencies:
-      '@rdfjs/data-model': 1.3.4
 
   '@rdfjs/to-ntriples@3.0.1': {}
 

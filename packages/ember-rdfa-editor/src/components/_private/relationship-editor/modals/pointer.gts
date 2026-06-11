@@ -30,7 +30,7 @@ import type {
   SubmissionBody,
   TermOption,
 } from '../types.ts';
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import { modifier } from 'ember-modifier';
 import type { RdfaAttrs } from '#root/core/rdfa-types.js';
 

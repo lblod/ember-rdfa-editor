@@ -1,4 +1,4 @@
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import { Decoration } from 'prosemirror-view';
 import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';

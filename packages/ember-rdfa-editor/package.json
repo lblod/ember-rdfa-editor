@@ -235,7 +235,6 @@
     "@embroider/addon-shim": "catalog:",
     "@floating-ui/dom": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
-    "@lblod/marawa": "catalog:",
     "@rdfjs/types": "catalog:",
     "@say-editor/prosemirror-invisibles": "catalog:",
     "@say-editor/prosemirror-tables": "catalog:",
