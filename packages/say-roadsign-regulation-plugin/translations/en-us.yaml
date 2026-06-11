@@ -1,0 +1,66 @@
+common:
+  loading: Loading...
+  insert: Insert
+  search:
+    loading: Loading…
+    no-results: No results found
+    error-title: Error while loading results
+    error-intro: "An error occurred while loading results"
+    error-outro: In case this problem keeps occurring, please contact
+  sort:
+    sort: Sort
+    asc: Sort ascending
+    desc: Sort descending
+  not-applicable: "N/A"
+  preview-list:
+    preview-button:
+      title: Show preview
+    select-button:
+      label: Select
+      title: Insert
+    no-content: Does not contain any content
+
+pagination:
+  next: Next page
+  previous: Previous page
+  of: of
+  results: Results
+
+editor-plugins:
+  roadsign-regulation:
+    expanded-measure:
+      insert-measure: "Insert measure:"
+      as-last-article: As last article
+      as-first-article: As first article
+      after-article-x: After article {articleNumber}
+      insert-position: "Insertion position:"
+      select-zonality:
+        label: "Select zonal validity:"
+        zonal: Zonal
+        non-zonal: Non zonal
+      varying-signalisation:
+        label: Varying signalisation
+        varying: Varying
+        non-varying: Non varying
+    card:
+      insert-measure: Insert traffic measure
+    modal:
+      title: Insert traffic measure
+      filter:
+        type: Filter on type
+        code: Filter on code
+        text: Filter on text
+        zonal-validity: Filter op zonal validity
+      combine-with-code: Combine with code
+    pagination:
+      publications: Publications
+    table:
+      header:
+        code: Code
+        image: Image
+        preview: Preview
+        category: Category
+      content:
+        image:
+          alt: traffic sign {code}
+        no-data-message: No measures could be found.

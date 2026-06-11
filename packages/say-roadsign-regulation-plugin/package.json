@@ -1,0 +1,184 @@
+{
+  "name": "@lblod/say-roadsign-regulation-plugin",
+  "version": "0.1.0",
+  "description": "Say Editor plugin as part of the LBLOD project",
+  "keywords": [
+    "ember-addon"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
+  },
+  "license": "MIT",
+  "author": "redpencil.io",
+  "exports": {
+    ".": {
+      "types": "./declarations/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./addon-main.js": "./addon-main.cjs",
+    "./components": {
+      "types": "./declarations/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    },
+    "./translations/*": "./translations/*",
+    "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
+    "./*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "imports": {
+    "#root": null,
+    "#root/index.ts": null,
+    "#root/*.ts": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*.ts"
+    },
+    "#root/*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "declarations/*"
+      ]
+    }
+  },
+  "files": [
+    "addon-main.cjs",
+    "declarations",
+    "dist",
+    "translations",
+    "say-roadsign-regulation-plugin.scss"
+  ],
+  "scripts": {
+    "build": "rollup --config",
+    "format": "prettier . --cache --write",
+    "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
+    "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto && pnpm run format",
+    "lint:format": "prettier . --cache --check",
+    "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
+    "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "lint:types": "ember-tsc --noEmit",
+    "prepack": "pnpm build",
+    "start": "rollup --config --watch",
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
+    "doc:generate": "pnpm typedoc"
+  },
+  "dependencies": {
+    "@ember/optional-features": "catalog:",
+    "@embroider/addon-shim": "catalog:",
+    "@glint/tsserver-plugin": "catalog:",
+    "decorator-transforms": "catalog:",
+    "ember-cli-babel": "catalog:",
+    "ember-cli-htmlbars": "catalog:",
+    "ember-modifier": "catalog:",
+    "ember-template-imports": "catalog:",
+    "ember-truth-helpers": "catalog:",
+    "reactiveweb": "catalog:",
+    "typedoc": "^0.28.17",
+    "uuid": "catalog:",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@appuniversum/ember-appuniversum": "~4.2.2",
+    "@babel/core": "catalog:",
+    "@babel/eslint-parser": "catalog:",
+    "@babel/plugin-transform-typescript": "catalog:",
+    "@babel/runtime": "catalog:",
+    "@embroider/addon-dev": "catalog:",
+    "@embroider/macros": "catalog:",
+    "@eslint/js": "catalog:",
+    "@glimmer/component": "catalog:",
+    "@glimmer/tracking": "catalog:",
+    "@glint/ember-tsc": "catalog:",
+    "@glint/template": "catalog:",
+    "@lblod/ember-rdfa-editor": "workspace:*",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-commonjs": "catalog:",
+    "@rollup/plugin-inject": "catalog:",
+    "@rollup/plugin-json": "catalog:",
+    "@rollup/plugin-node-resolve": "catalog:",
+    "@tsconfig/ember": "catalog:",
+    "@types/uuid": "catalog:",
+    "autoprefixer": "catalog:",
+    "babel-plugin-ember-template-compilation": "catalog:",
+    "concurrently": "catalog:",
+    "ember-auto-import": "^2.12.0",
+    "ember-basic-dropdown": "catalog:",
+    "ember-concurrency": "catalog:",
+    "ember-intl": "catalog:",
+    "ember-modifier": "catalog:",
+    "ember-power-select": "catalog:",
+    "ember-power-select-with-create": "catalog:",
+    "ember-source": "catalog:",
+    "ember-template-lint": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-ember": "catalog:",
+    "eslint-plugin-import": "catalog:",
+    "eslint-plugin-n": "catalog:",
+    "execa": "catalog:",
+    "globals": "catalog:",
+    "postcss": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-ember-template-tag": "catalog:",
+    "rollup": "catalog:",
+    "rollup-plugin-copy": "catalog:",
+    "rollup-plugin-node-globals": "catalog:",
+    "rollup-plugin-sass": "catalog:",
+    "sass": "catalog:",
+    "tracked-built-ins": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "walk-sync": "catalog:",
+    "webpack": "catalog:"
+  },
+  "peerDependencies": {
+    "@appuniversum/ember-appuniversum": "^3.11.0 || ^4.2.1",
+    "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
+    "@glimmer/component": "^1.1.2 || ^2.0.0",
+    "@glimmer/tracking": "^1.1.2",
+    "@glint/template": ">= 1.0.0",
+    "@lblod/ember-rdfa-editor": "^13.8.0",
+    "ember-basic-dropdown": "^8.0.0",
+    "ember-concurrency": "^4.0.2 || ^5.0.0",
+    "ember-intl": "^6.4.0 || ^7.0.0",
+    "ember-power-select": "^7.0.0 || ^8.0.0",
+    "ember-power-select-with-create": "^2.0.0 || ^3.0.0",
+    "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
+    "tracked-built-ins": "^3.3.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@glint/template": {
+      "optional": true
+    }
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./components/expanded-measure.js": "./dist/_app_/components/expanded-measure.js",
+      "./components/measure-preview.js": "./dist/_app_/components/measure-preview.js",
+      "./components/pagination-view.js": "./dist/_app_/components/pagination-view.js",
+      "./components/roadsign-regulation-card.js": "./dist/_app_/components/roadsign-regulation-card.js",
+      "./components/roadsigns-modal.js": "./dist/_app_/components/roadsigns-modal.js",
+      "./components/roadsigns-table.js": "./dist/_app_/components/roadsigns-table.js",
+      "./helpers/removeZFromLabel.js": "./dist/_app_/helpers/removeZFromLabel.js"
+    }
+  },
+  "typedocOptions": {
+    "tsconfig": "tsconfig.typedoc.json",
+    "out": "docs",
+    "readme": "./README.md"
+  }
+}
