@@ -6,7 +6,6 @@ import sass from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import nodeGlobals from 'rollup-plugin-node-globals';
 import postcss from 'postcss';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
@@ -48,7 +47,10 @@ export default [
     preserveSymlinks: false,
     onwarn: (message, defaultHandler) => {
       // fail build if circular dependencies are found
-      if (message.code === 'CIRCULAR_DEPENDENCY') {
+      if (
+        message.code === 'CIRCULAR_DEPENDENCY' &&
+        !(message.ids && message.ids.every((id) => id.includes('node_modules')))
+      ) {
         console.error(message);
         process.exit(-1);
       } else {
@@ -88,7 +90,6 @@ export default [
       ]),
       commonjs(),
 
-      nodeGlobals(),
       nodeResolvePlugin,
 
       // This babel config should *not* apply presets or compile away ES modules.

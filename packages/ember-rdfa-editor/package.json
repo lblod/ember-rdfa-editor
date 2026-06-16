@@ -332,7 +332,6 @@
     "prosemirror-test-builder": "catalog:",
     "rollup": "catalog:",
     "rollup-plugin-copy": "catalog:",
-    "rollup-plugin-node-globals": "catalog:",
     "rollup-plugin-sass": "catalog:",
     "sass": "catalog:",
     "tracked-built-ins": "catalog:",

@@ -453,9 +453,6 @@ catalogs:
     rollup-plugin-copy:
       specifier: ^3.5.0
       version: 3.5.0
-    rollup-plugin-node-globals:
-      specifier: ^1.4.0
-      version: 1.4.0
     rollup-plugin-sass:
       specifier: ^1.15.3
       version: 1.15.3
@@ -896,9 +893,6 @@ importers:
       rollup-plugin-copy:
         specifier: 'catalog:'
         version: 3.5.0
-      rollup-plugin-node-globals:
-        specifier: 'catalog:'
-        version: 1.4.0
       rollup-plugin-sass:
         specifier: 'catalog:'
         version: 1.15.3(rollup@4.52.2)
@@ -1095,9 +1089,6 @@ importers:
       rollup-plugin-copy:
         specifier: 'catalog:'
         version: 3.5.0
-      rollup-plugin-node-globals:
-        specifier: 'catalog:'
-        version: 1.4.0
       rollup-plugin-sass:
         specifier: 'catalog:'
         version: 1.15.3(rollup@4.52.2)
@@ -4485,11 +4476,6 @@ packages:
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  acorn@5.7.4:
-    resolution: {integrity: sha512-1D++VG7BhrtvQpNbBzovKNc1FLGGEE/oGe7b9xJm/RFHMBeUaUGpluV9RLjZa47YFdPcDAenEYuq9pQPcMdLJg==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
@@ -5107,9 +5093,6 @@ packages:
   bson@6.10.4:
     resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
     engines: {node: '>=16.20.1'}
-
-  buffer-es6@4.9.3:
-    resolution: {integrity: sha512-Ibt+oXxhmeYJSsCkODPqNpPmyegefiD8rfutH1NYGhMZQhSp95Rz7haemgnJ6dxa6LT+JLLbtgOMORRluwKktw==}
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -6646,12 +6629,6 @@ packages:
   estraverse@5.3.0:
     resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
     engines: {node: '>=4.0'}
-
-  estree-walker@0.5.2:
-    resolution: {integrity: sha512-XpCnW/AE10ws/kDAs37cngSkvgIR8aN3G0MS85m7dUpuK2EREo9VJ00uvw6Dg/hXEpfsE1I1TvJOJr+Z+TL+ig==}
-
-  estree-walker@0.6.1:
-    resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
 
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
@@ -8274,9 +8251,6 @@ packages:
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
 
-  magic-string@0.22.5:
-    resolution: {integrity: sha512-oreip9rJZkzvA8Qzk9HFs8fZGF/u7H/gtrE8EN6RjKJ9kh2HlC+yQ2QezifqTZfGyiuAV0dRv5a+y/8gBb1m9w==}
-
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
 
@@ -9260,9 +9234,6 @@ packages:
     resolution: {integrity: sha512-Azwzvl90HaF0aCz1JrDdXQykFakSSNPaPoiZ9fm5qJIMHioDZEi7OAdRwSm6rSoPtY3Qutnm3L7ogmg3dc+wbQ==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  process-es6@0.11.6:
-    resolution: {integrity: sha512-GYBRQtL4v3wgigq10Pv58jmTbFXlIiTbSfgnNqZLY0ldUPqy1rRxDI5fCjoCpnM6TqmHQI8ydzTBXW86OYc0gA==}
-
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
@@ -9723,15 +9694,9 @@ packages:
     resolution: {integrity: sha512-wI8D5dvYovRMx/YYKtUNt3Yxaw4ORC9xo6Gt9t22kveWz1enG9QrhVlagzwrxSC455xD1dHMKhIJkbsQ7d48BA==}
     engines: {node: '>=8.3'}
 
-  rollup-plugin-node-globals@1.4.0:
-    resolution: {integrity: sha512-xRkB+W/m1KLIzPUmG0ofvR+CPNcvuCuNdjVBVS7ALKSxr3EDhnzNceGkGi1m8MToSli13AzKFYH4ie9w3I5L3g==}
-
   rollup-plugin-sass@1.15.3:
     resolution: {integrity: sha512-HPRjdUR/Ymu/v/H9qaPytqBAAYVN/5Agmu9RH+PMpTS22lcAvz3FWzqjs1cUaWh5ln1VvtwIcNykBOQkWkpUig==}
     engines: {node: '>=10'}
-
-  rollup-pluginutils@2.8.2:
-    resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
 
   rollup@4.52.2:
     resolution: {integrity: sha512-I25/2QgoROE1vYV+NQ1En9T9UFB9Cmfm2CJ83zZOlaDpvz29wGQSZXWKw7MiNXau7wYgB/T9fVIdIuEQ+KbiiA==}
@@ -10853,9 +10818,6 @@ packages:
         optional: true
       yaml:
         optional: true
-
-  vlq@0.2.3:
-    resolution: {integrity: sha512-DRibZL6DsNhIgYQ+wNdWDL2SL3bKPlVrRiBqV5yuMm++op8W4kGFtaQfCs4KEJn0wBZcHVHJ3eoywX8983k1ow==}
 
   volar-service-html@0.0.64:
     resolution: {integrity: sha512-5xknMYKmZBFzp2399RlsnGce25PfNu9ViXa1s63Q8NP6xeXcF3lInFsV+1o2DWBoXZdnXcuRvWOA+K+JIZLEcA==}
@@ -15161,8 +15123,6 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  acorn@5.7.4: {}
-
   acorn@8.15.0: {}
 
   agent-base@7.1.4: {}
@@ -16084,8 +16044,6 @@ snapshots:
       node-int64: 0.4.0
 
   bson@6.10.4: {}
-
-  buffer-es6@4.9.3: {}
 
   buffer-from@1.1.2: {}
 
@@ -18272,10 +18230,6 @@ snapshots:
 
   estraverse@5.3.0: {}
 
-  estree-walker@0.5.2: {}
-
-  estree-walker@0.6.1: {}
-
   estree-walker@2.0.2: {}
 
   esutils@2.0.3: {}
@@ -20394,10 +20348,6 @@ snapshots:
 
   lunr@2.3.9: {}
 
-  magic-string@0.22.5:
-    dependencies:
-      vlq: 0.2.3
-
   magic-string@0.25.9:
     dependencies:
       sourcemap-codec: 1.4.8
@@ -21449,8 +21399,6 @@ snapshots:
 
   proc-log@5.0.0: {}
 
-  process-es6@0.11.6: {}
-
   process-nextick-args@2.0.1: {}
 
   process@0.11.10: {}
@@ -22043,15 +21991,6 @@ snapshots:
       globby: 10.0.1
       is-plain-object: 3.0.1
 
-  rollup-plugin-node-globals@1.4.0:
-    dependencies:
-      acorn: 5.7.4
-      buffer-es6: 4.9.3
-      estree-walker: 0.5.2
-      magic-string: 0.22.5
-      process-es6: 0.11.6
-      rollup-pluginutils: 2.8.2
-
   rollup-plugin-sass@1.15.3(rollup@4.52.2):
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.52.2)
@@ -22059,10 +21998,6 @@ snapshots:
       sass: 1.93.2
     transitivePeerDependencies:
       - rollup
-
-  rollup-pluginutils@2.8.2:
-    dependencies:
-      estree-walker: 0.6.1
 
   rollup@4.52.2:
     dependencies:
@@ -23441,8 +23376,6 @@ snapshots:
       terser: 5.44.0
       tsx: 4.20.6
       yaml: 2.8.2
-
-  vlq@0.2.3: {}
 
   volar-service-html@0.0.64(@volar/language-service@2.4.23):
     dependencies:

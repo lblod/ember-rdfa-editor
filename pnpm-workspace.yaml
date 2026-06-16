@@ -156,7 +156,6 @@ catalog:
   rimraf: ^5.0.10
   rollup: ^4.52.2
   rollup-plugin-copy: ^3.5.0
-  rollup-plugin-node-globals: ^1.4.0
   rollup-plugin-sass: ^1.15.3
   sass: ^1.93.2
   sinon: ^19.0.5
