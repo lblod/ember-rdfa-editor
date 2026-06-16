@@ -188,8 +188,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   get sortedGroups() {
-    // TODO fix on merge, need to sort by prio and stickyness
-    return this.args.groups?.toSorted(sortByPriority);
+    return this.args.groups?.toSorted(sortGroups);
   }
 
   @cached
