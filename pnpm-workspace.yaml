@@ -195,3 +195,6 @@ allowBuilds:
   core-js: true
   esbuild: true
   unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - '@lblod/ember-rdfa-editor-lblod-plugins@37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f'
