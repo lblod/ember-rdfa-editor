@@ -1,7 +1,8 @@
 import { conciseToRdfjs } from '#root/utils/_private/concise-term-string.ts';
 import type { Quad } from '@rdfjs/types';
-import type { KnowledgeBase } from './knowledgebase';
+import type { KnowledgeBase } from './knowledge-base';
 import { NotImplementedError } from '#root/utils/_private/errors.ts';
+import { isSayId } from './preprocess-html.ts';
 
 interface SerializationResult {
   topLevelAttributes: Record<string, string>;
@@ -32,7 +33,9 @@ export function serializeNodeId(
   topLevelAttributes['typeof'] = [...typeQuads]
     .map((q) => q.object.value)
     .join(' ');
-  remainingQuads = remainingQuads.difference(typeQuads);
+  remainingQuads = remainingQuads
+    .difference(typeQuads)
+    .filter((q) => !isSayId(q.object.value));
   const extraTripleElementAttributes = [...remainingQuads].map((q) =>
     quadToElementAttributes(q),
   );

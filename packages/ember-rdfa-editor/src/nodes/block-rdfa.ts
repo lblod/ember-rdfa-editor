@@ -19,8 +19,10 @@ import {
   contentElementWithMigrations,
   getAttrsWithMigrations,
 } from '#root/core/schema/_private/migrations.ts';
-import { KnowledgeBase } from '#root/core/rdfa/knowledgebase.ts';
+import { KnowledgeBase } from '#root/core/rdfa/knowledge-base.ts';
 import { serializeNodeId } from '#root/core/rdfa/serialize-rdfa-node.ts';
+import { knownledgeBaseKey } from '#root/plugins/knowledgebase/knowledgebase-plugin.ts';
+import { AssertionError } from '#root/utils/_private/errors.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -41,6 +43,10 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     content: 'block+',
     group: 'block',
     attrs: {
+      sayId: {
+        default: undefined,
+        editable: true,
+      },
       ...rdfaAttrSpec({ rdfaAware }),
       label: {
         default: undefined,
@@ -69,19 +75,11 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
           const trips = [...relevantTriples];
           if (trips.length) {
             console.log('relevantTriples', trips, element);
-            let attrs = getRdfaAttrs(element, { rdfaAware });
-            console.log('WOULD SERIALIZE AS', serializeNodeId(id, kb));
-            if (attrs) {
-              attrs = {
-                ...attrs,
-                label:
-                  trips[0].predicate.value ??
-                  element.dataset['label'] ??
-                  attrs['label'],
-              };
-              return getAttrsWithMigrations(modelMigrations, attrs, element);
-            }
-            return false;
+            const attrs = {
+              sayId: id,
+              label: trips[0].predicate.value ?? element.dataset['label'],
+            };
+            return attrs;
           }
           return false;
         },
@@ -95,6 +93,19 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node, state) {
+      if (state) {
+        const kb = knownledgeBaseKey.getState(state)?.knowledgeBase;
+        if (kb) {
+          console.log(
+            'WOULD SERIALIZE AS',
+
+            serializeNodeId(node.attrs['sayId'] as string, kb),
+          );
+        } else {
+          throw new AssertionError('couldnt get kb state');
+        }
+      }
+
       if (rdfaAware) {
         return renderRdfaAware(
           {

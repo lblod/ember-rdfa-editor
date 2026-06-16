@@ -33,10 +33,13 @@ import { rdfaInfoPlugin } from '../plugins/rdfa-info/index.ts';
 import { gapCursor } from '../plugins/gap-cursor/index.ts';
 import { removePropertiesOfDeletedNodes } from '#root/plugins/remove-properties-of-deleted-nodes/index.ts';
 import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import { ProseParser } from '#root/prosemirror-aliases.ts';
 import { onChangedPlugin } from '#root/plugins/on-changed/plugin.ts';
-import { getPreprocessedCopy } from './rdfa/preprocess-html.ts';
+import {
+  getPreprocessedCopy,
+  preProcessInPlace,
+} from './rdfa/preprocess-html.ts';
+import { knowledgeBasePlugin } from '#root/plugins/knowledgebase/knowledgebase-plugin.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -96,6 +99,7 @@ export default class SayEditor {
     const pluginArr = plugins instanceof Array ? plugins : plugins.plugins;
     let pluginConf;
 
+    const preprocessed = getPreprocessedCopy(target);
     if ('override' in plugins && plugins.override) {
       pluginConf = pluginArr;
     } else {
@@ -109,6 +113,11 @@ export default class SayEditor {
 
       pluginConf = [
         datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
+        knowledgeBasePlugin({
+          pathFromRoot: this.pathFromRoot,
+          baseIRI,
+          rootNode: preprocessed,
+        }),
         ...filteredPluginArr,
         dropCursor(),
         gapCursor(),
@@ -138,7 +147,6 @@ export default class SayEditor {
 
     this.parser = ProseParser.fromSchema(this.schema);
 
-    const preprocessed = getPreprocessedCopy(target);
     const state = EditorState.create({
       doc: this.parser.parse(preprocessed),
       plugins: pluginConf,
@@ -162,16 +170,11 @@ export default class SayEditor {
         },
       },
       domParser: this.parser,
-      transformPastedHTML: (html, editorView) => {
+      transformPastedHTML: (html, _editorView) => {
         const htmlCleaner = new HTMLInputParser();
         const cleanedHTMLNode = htmlCleaner.prepareHTML(html, true);
 
-        const preprocessed = getPreprocessedCopy(cleanedHTMLNode) as Element;
-        for (const child of preprocessed.children) {
-          child.dataset['sayProcessed'] = 'true';
-        }
-
-        console.log('PASTE', preprocessed);
+        const preprocessed = preProcessInPlace(cleanedHTMLNode) as Element;
         return preprocessed.innerHTML;
       },
       clipboardSerializer: this.serializer,

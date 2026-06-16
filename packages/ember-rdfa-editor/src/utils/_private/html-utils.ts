@@ -1,10 +1,10 @@
 import { PNode, ProseParser } from '#root/prosemirror-aliases.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import type { Attrs, Schema } from 'prosemirror-model';
 import HTMLInputParser from './html-input-parser.ts';
 import { getPathFromRoot, tagName } from './dom-helpers.ts';
 import { EditorView } from 'prosemirror-view';
 import type { HEADING_ELEMENTS } from './constants.ts';
+import { KnowledgeBase } from '#root/core/rdfa/knowledge-base.ts';
 
 export function htmlToDoc(
   html: string,
@@ -20,10 +20,7 @@ export function htmlToDoc(
   const cleanedHTML = htmlCleaner.prepareHTML(html, false, options.doNotClean);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(
-    parsed,
-    options.editorView && getPathFromRoot(options.editorView.dom, false),
-  );
+  const knowledgeBase = KnowledgeBase.fromHtmlNode(parsed);
   const topNodeMatch = matchTopNode(parsed, { schema: options.schema });
   let doc: PNode;
   if (topNodeMatch) {
@@ -35,6 +32,7 @@ export function htmlToDoc(
   } else {
     doc = parser.parse(parsed, { preserveWhitespace: true });
   }
+  doc.type.schema.cached['knowledgeBase'] = knowledgeBase;
   return doc;
 }
 
@@ -51,7 +49,9 @@ export function htmlToFragment(
   const cleanedHTML = htmlCleaner.prepareHTML(html, false, options.doNotClean);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(parsed, getPathFromRoot(editorView.dom, false));
+  const pathFromRoot = getPathFromRoot(editorView.dom, false);
+  const knowledgeBase = KnowledgeBase.fromHtmlNode(parsed, pathFromRoot);
+  parser.schema.cached['knowledgeBase'] = knowledgeBase;
   return parser.parseSlice(parsed, { preserveWhitespace: true });
 }
 

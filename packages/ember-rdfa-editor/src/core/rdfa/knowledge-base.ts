@@ -5,7 +5,7 @@ import {
   tagName,
 } from '#root/utils/_private/dom-helpers.ts';
 import type { Quad_Subject } from '@rdfjs/types';
-import { PreprocessedNode } from './preprocess-html.ts';
+import { type PreprocessedNode, preProcessInPlace } from './preprocess-html.ts';
 import { parseRdfa } from './rdfa-parser.ts';
 
 const SAY_ID_DIVIDER = '>>';
@@ -18,13 +18,23 @@ interface SayIdSubjectInfo {
 export class KnowledgeBase extends N3StoreWrapper {
   static kbCache: WeakMap<Node, KnowledgeBase> = new WeakMap();
 
-  static fromHtmlNode(node: Node): KnowledgeBase {
-    // console.log('ROOT', node.getRootNode());
-    const preNode = new PreprocessedNode(node.getRootNode());
-    return this.fromPreprocessedNode(preNode);
+  static fromHtmlNode(
+    node: Node,
+    pathFromRoot?: Node[],
+    baseIRI?: string,
+  ): KnowledgeBase {
+    return this.fromPreprocessedNode(
+      preProcessInPlace(node),
+      pathFromRoot,
+      baseIRI,
+    );
   }
-  static fromPreprocessedNode(preNode: PreprocessedNode): KnowledgeBase {
-    const node = preNode.htmlNode;
+  static fromPreprocessedNode(
+    preNode: PreprocessedNode,
+    pathFromRoot?: Node[],
+    baseIRI?: string,
+  ): KnowledgeBase {
+    const node = preNode;
     const cached = this.kbCache.get(node);
     if (cached) {
       return cached;
@@ -33,7 +43,8 @@ export class KnowledgeBase extends N3StoreWrapper {
         parseRoot: true,
         root: node,
         tag: tagName,
-        baseIRI: preNode.htmlNode.baseURI,
+        baseIRI: baseIRI ?? preNode.baseURI,
+        pathFromDomRoot: pathFromRoot,
         attributes: attrsToRecord,
         isText: isTextNode,
         children(node: Node): Iterable<Node> {
@@ -48,11 +59,14 @@ export class KnowledgeBase extends N3StoreWrapper {
   }
 
   static bustCache(preNode: PreprocessedNode) {
-    this.kbCache.delete(preNode.htmlNode);
+    this.kbCache.delete(preNode);
   }
+
+  public readonly timestamp: Date;
 
   private constructor(_dataset?: N3StoreWrapper) {
     super(_dataset);
+    this.timestamp = new Date();
   }
   public quadsPointingToId(id: string): KnowledgeBase {
     return new KnowledgeBase(
@@ -89,8 +103,16 @@ export class KnowledgeBase extends N3StoreWrapper {
       otherQuads: new KnowledgeBase(this.match(info.subject)),
     }));
   }
+  public isNewer(other: KnowledgeBase) {
+    return this.timestamp.valueOf() > other.timestamp.valueOf();
+  }
 }
-
+export function newestKb(a: KnowledgeBase, b: KnowledgeBase): KnowledgeBase {
+  if (a.isNewer(b)) {
+    return a;
+  }
+  return b;
+}
 function textToParentId(node: Node): string {
   if (isTextNode(node)) {
     const id = node.parentElement?.dataset['sayId'];

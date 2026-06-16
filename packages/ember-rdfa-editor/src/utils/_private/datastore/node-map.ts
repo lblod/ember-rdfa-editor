@@ -1,7 +1,7 @@
 import type { Quad_Subject, Quad_Predicate, NamedNode } from '@rdfjs/types';
 import { TwoWayMap } from '../map-utils.ts';
 import type { Literal } from 'rdf-data-factory';
-import type { ResourceNodeTerm } from '#root/core/say-data-factory/index.js';
+import type { ResourceNodeTerm } from '#root/core/say-data-factory/index.ts';
 
 export interface SubAndContentPred {
   subject: Quad_Subject;

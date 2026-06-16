@@ -1,45 +1,58 @@
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
-import { IllegalArgumentError } from '#root/utils/_private/errors.ts';
 import { v4 as uuidv4 } from 'uuid';
+type SayId = `[say]-${string}`;
 
+function makeSayId(): SayId {
+  return `[say]-${uuidv4()}`;
+}
+export function isSayId(str: unknown): str is SayId {
+  if (typeof str === 'string') {
+    return str.startsWith('[say]');
+  }
+  return false;
+}
 function shouldBeSkipped(node: Node) {
   return (
     isElement(node) &&
-    (node.dataset['contentContainer'] ||
-      node.dataset['rdfaContainer'] ||
-      node.dataset['sayId'])
+    (node.dataset['contentContainer'] || node.dataset['rdfaContainer'])
   );
 }
-export function getPreprocessedCopy(node: Node): Node {
-  const clone = node.cloneNode(true);
-
-  if (isElement(clone)) {
-    clone.dataset['sayProcessed'] = 'true';
+export function preProcessInPlace(node: Node): PreprocessedNode {
+  if (isPreprocessed(node)) {
+    return node;
   }
-  const tw = document.createNodeIterator(clone, NodeFilter.SHOW_ELEMENT);
-  let curNode: HTMLElement | null;
-  do {
-    curNode = tw.nextNode() as HTMLElement;
-    if (curNode && !shouldBeSkipped(curNode)) {
-      const id = uuidv4();
-      curNode.dataset['sayId'] = id;
-    }
-  } while (curNode);
-  return clone;
+
+  if (isElement(node)) {
+    const tw = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT);
+    let curNode: HTMLElement | null;
+    do {
+      curNode = tw.nextNode() as HTMLElement;
+      if (curNode && !shouldBeSkipped(curNode)) {
+        if (!curNode.dataset['sayId']) {
+          const id = makeSayId();
+          curNode.dataset['sayId'] = id;
+        }
+        curNode.dataset['sayProcessed'] = 'true';
+      }
+    } while (curNode);
+  }
+  return node as PreprocessedNode;
+}
+export function getPreprocessedCopy(node: Node): PreprocessedNode {
+  const clone = node.cloneNode(true);
+  return preProcessInPlace(clone);
 }
 /**
  * Class to encapsulate the idea of a preprocessed node in types, so
  * other functions can statically express they require a preprocessed node
  */
-export class PreprocessedNode {
-  private node: Node;
-  constructor(node: Node) {
-    // if (isElement(node) && node.dataset['sayProcessed'] !== 'true') {
-    //   throw new IllegalArgumentError('Node must be preprocessed');
-    // }
-    this.node = node;
-  }
-  get htmlNode(): Node {
-    return this.node;
-  }
+export type PreprocessedNode = HTMLElement & {
+  dataset: HTMLElement['dataset'] & { sayId: SayId; sayProcessed: 'true' };
+};
+export function isPreprocessed(node: Node): node is PreprocessedNode {
+  return (
+    isElement(node) &&
+    isSayId(node.dataset['sayId']) &&
+    node.dataset['sayProcessed'] === 'true'
+  );
 }

@@ -36,7 +36,7 @@ import type {
   NodeSerializer,
   SayNodeToDOM,
 } from '#root/core/say-serializer.ts';
-import type SayView from '#root/core/say-view.js';
+import type SayView from '#root/core/say-view.ts';
 import { NodeSelection } from 'prosemirror-state';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {

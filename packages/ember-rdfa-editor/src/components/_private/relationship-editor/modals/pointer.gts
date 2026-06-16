@@ -32,7 +32,7 @@ import type {
 } from '../types.ts';
 import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
 import { modifier } from 'ember-modifier';
-import type { RdfaAttrs } from '#root/core/rdfa-types.js';
+import type { RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 type RelationshipEditorDevModalSig = {
   Element: AuModalSignature['Element'];

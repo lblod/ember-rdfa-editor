@@ -55,8 +55,8 @@ import ContentPredicateForm, {
   type SubmissionBody as ContentPredicateFormSubmissionBody,
 } from './content-predicate-form.gts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
-import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.js';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.js';
+import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.ts';
+import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { htmlSafe } from '@ember/template';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
 
