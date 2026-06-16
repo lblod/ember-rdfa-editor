@@ -93,17 +93,12 @@ export default [
 
       nodeResolvePlugin,
 
-      // Follow the V2 Addon rules about dependencies. Your code can import from
-      // `dependencies` and `peerDependencies` as well as standard Ember-provided
-      // package names.
-
       // basically what this does is mark all our deps as external. So the v2
       // addon is a bundle which still needs to be bundled by your app to get all
       // the deps.
-      // Now, for graphy, we actually want to fully bundle that along with our
-      // source. So we have to bypass the embroider resolving for it (and its
-      // browserified dependencies) so that they get
-      // picked up by the combo of the node and commonjs plugins
+      // Now, for some deps, we actually want to fully bundle that along with our
+      // source. So we have to bypass the embroider resolving for them so that
+      // they get picked up by the combo of the node and commonjs plugins
       (function () {
         const result = addon.dependencies();
         const resolveId = result.resolveId;

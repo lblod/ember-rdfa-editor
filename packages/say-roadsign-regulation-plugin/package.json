@@ -92,6 +92,7 @@
     "@babel/plugin-transform-typescript": "catalog:",
     "@babel/runtime": "catalog:",
     "@embroider/addon-dev": "catalog:",
+    "@embroider/core": "catalog:",
     "@embroider/macros": "catalog:",
     "@eslint/js": "catalog:",
     "@glimmer/component": "catalog:",

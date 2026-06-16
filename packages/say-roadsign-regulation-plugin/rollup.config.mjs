@@ -21,6 +21,10 @@ const addon = new Addon({
   destDir: 'dist',
 });
 
+const BUNDLED_DEPS = [
+  // For some reason we need to bundle this even though we don't directly depend on it...
+  'prosemirror-history',
+];
 export default [
   {
     input: './_index.scss',
@@ -92,6 +96,24 @@ export default [
 
       nodeResolvePlugin,
 
+      // basically what this does is mark all our deps as external. So the v2
+      // addon is a bundle which still needs to be bundled by your app to get all
+      // the deps.
+      // Now, for some deps, we actually want to fully bundle that along with our
+      // source. So we have to bypass the embroider resolving for them so that
+      // they get picked up by the combo of the node and commonjs plugins
+      (function () {
+        const result = addon.dependencies();
+        const resolveId = result.resolveId;
+        async function myResolveId(source, importer, options) {
+          if (BUNDLED_DEPS.includes(source)) {
+            return this.resolve(source, importer, options);
+          }
+          const result = await resolveId(source, importer, options);
+          return result;
+        }
+        return { ...result, resolveId: myResolveId };
+      })(),
       // This babel config should *not* apply presets or compile away ES modules.
       // It exists only to provide development niceties for you, like automatic
       // template colocation.
