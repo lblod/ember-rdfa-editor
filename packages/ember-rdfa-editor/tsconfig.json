@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/ember/tsconfig.json",
+  "extends": "@ember/library-tsconfig",
   "include": ["src/**/*", "unpublished-development-types/**/*"],
   "compilerOptions": {
     "allowJs": true,
@@ -48,6 +48,9 @@
     */
     "allowImportingTsExtensions": true,
 
-    "types": ["ember-source/types"]
+    "types": [
+      "ember-source/types",
+      "@glint/ember-tsc/types"
+    ]
   }
 }

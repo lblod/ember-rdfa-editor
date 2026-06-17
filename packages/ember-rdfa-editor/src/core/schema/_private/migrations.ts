@@ -27,8 +27,8 @@ export function contentElementWithMigrations(
     const attrs = getRdfaAttrs(element, { rdfaAware });
     if (attrs) {
       const migration = modelMigrations.find((migration) =>
-        migration(attrs as unknown as RdfaAttrs),
-      )?.(attrs as unknown as RdfaAttrs);
+        migration(attrs),
+      )?.(attrs);
       if (migration && migration.contentElement) {
         return migration.contentElement(element);
       }

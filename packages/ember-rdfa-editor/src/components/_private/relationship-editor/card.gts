@@ -51,9 +51,7 @@ import type { FormData } from './modals/dev-mode.gts';
 import { modifier } from 'ember-modifier';
 import RelationshipEditorDevModeModal from './modals/dev-mode.gts';
 import type { OptionGeneratorConfig } from './types.ts';
-import ContentPredicateForm, {
-  type SubmissionBody as ContentPredicateFormSubmissionBody,
-} from './content-predicate-form.gts';
+import ContentPredicateForm from './content-predicate-form.gts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.ts';
 import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
@@ -70,6 +68,13 @@ type Args = {
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;
   optionGeneratorConfig?: OptionGeneratorConfig;
+};
+
+// TODO: repeating this type instead of importing, cause it seems typescript-eslint can't handle yup's infer types or something
+type ContentPredicateFormSubmissionBody = {
+  contentPredicate?: string | undefined;
+  datatype?: string | undefined;
+  language?: string | undefined;
 };
 export default class RelationshipEditorCard extends Component<Args> {
   @tracked _statusMessage: StatusMessageForNode | null = null;

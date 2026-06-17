@@ -124,7 +124,7 @@ export class N3StoreWrapper implements QuadDataSet {
 
   reduce<A>(
     iteratee: (accumulator: A, quad: RDF.Quad, dataset: this) => A,
-    initialValue?: A | undefined,
+    initialValue?: A  ,
   ): A {
     return this._store.reduce<A>(
       (acc, quad) => iteratee(acc, quad, this),

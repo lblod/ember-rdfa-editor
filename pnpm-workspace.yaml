@@ -38,7 +38,7 @@ catalog:
   "@glimmer/runtime": ^0.94.11
   "@glimmer/tracking": ^1.1.2
   "@glimmer/validator": ^0.94.8
-  "@glint/ember-tsc": ^1.0.8
+  "@glint/ember-tsc": ^1.1.0
   "@glint/template": ^1.7.3
   "@glint/tsserver-plugin": 2.1.0
   "@glint/typescript-plugin": 1.4.1-unstable.9b657e4

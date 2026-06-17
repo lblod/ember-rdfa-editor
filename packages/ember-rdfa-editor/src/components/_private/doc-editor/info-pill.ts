@@ -9,6 +9,8 @@ type Args = {
 };
 
 export default class DocumentInfoPill extends Component<Args> {
+  //will go away when we move to gts
+  //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   AttributeEditor = AttributeEditor;
   @tracked
   modalOpen = false;

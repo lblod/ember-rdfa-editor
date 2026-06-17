@@ -289,6 +289,7 @@
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
     "@babel/runtime": "catalog:",
+    "@ember/library-tsconfig": "^2.0.0",
     "@embroider/addon-dev": "catalog:",
     "@embroider/macros": "catalog:",
     "@eslint/js": "catalog:",
