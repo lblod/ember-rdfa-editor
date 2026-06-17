@@ -10,6 +10,7 @@ steps:
     commands:
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
+      - pnpm --filter @lblod/ember-rdfa-editor build
       - pnpm --filter @lblod/say-roadsign-regulation-plugin build
       - pnpm publish packages/say-roadsign-regulation-plugin --access public --tag next --no-git-checks
     environment:
@@ -23,6 +24,7 @@ steps:
     commands:
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
+      - pnpm --filter @lblod/ember-rdfa-editor build
       - pnpm --filter @lblod/say-roadsign-regulation-plugin build
       - pnpm publish packages/say-roadsign-regulation-plugin --access public --tag latest --no-git-checks
     environment:
