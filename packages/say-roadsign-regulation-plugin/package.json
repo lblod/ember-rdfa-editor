@@ -22,6 +22,7 @@
       "default": "./dist/components/index.js"
     },
     "./translations/*": "./translations/*",
+    "./_index.scss": "./_index.scss",
     "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
     "./*": {
       "types": "./declarations/*.d.ts",
@@ -52,6 +53,7 @@
     "declarations",
     "dist",
     "translations",
+    "_index.scss",
     "say-roadsign-regulation-plugin.scss"
   ],
   "scripts": {
