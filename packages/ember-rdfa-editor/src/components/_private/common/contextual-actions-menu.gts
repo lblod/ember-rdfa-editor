@@ -233,7 +233,7 @@ export default class ContextualActionsMenu extends Component<Args> {
       size({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            height: `${Math.max(0, availableHeight)}px`,
+            maxHeight: `${Math.min(window.innerHeight / 2, availableHeight)}px`,
           });
         },
       }),
@@ -245,9 +245,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   // This can be removed once the `:sticky` selector becomes supported
   observeSticky = eModifier(
     (element: HTMLElement, [position]: ['top' | 'bottom']) => {
-      const container =
-        element.closest('.say-contextual-actions-menu-entries-container') ??
-        element.closest('.say-contextual-actions-menu');
+      const container = element.closest('.say-contextual-actions-menu');
 
       if (!container) return;
 
