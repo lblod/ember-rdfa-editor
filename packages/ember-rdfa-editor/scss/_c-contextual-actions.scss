@@ -40,12 +40,25 @@
 }
 
 .say-contextual-actions-menu-search-bar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
+  &.is-stuck {
+    box-shadow: 0 2px 3px 0px rgba(0, 0, 0, 0.04);
+    // border-bottom: 1px solid var(--au-gray-200);
+    transition: box-shadow 0.15s ease;
+  }
   padding: 0.9rem;
-  padding-bottom: 0.6rem;
 }
 
 .say-contextual-actions-menu {
   @extend .say-floating-element;
+
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  max-height: 50vh;
 
   display: flex;
   flex-direction: column;
@@ -91,10 +104,6 @@
 .say-contextual-actions-menu-entries-container {
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
-  overflow-x: hidden;
-
-  max-height: 50vh;
 
   button {
     cursor: pointer;
@@ -129,20 +138,16 @@
 }
 
 .say-contextual-actions-menu-group-header {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 1;
   text-transform: uppercase;
 
   padding-bottom: 0.3rem;
   padding-left: au-settings.$au-unit-small;
   padding-right: au-settings.$au-unit-small;
-
-  &.is-stuck {
-    box-shadow: 0 2px 3px 0px rgba(0, 0, 0, 0.04);
-    // border-bottom: 1px solid var(--au-gray-200);
-    transition: box-shadow 0.15s ease;
+  // The :empty pseudo-selector does not seem to work here
+  // maybe due to whitespace being present?
+  // :-moz-only-whitespace does not work in chrome
+  &.empty {
+    padding-bottom: au-settings.$au-unit-tiny;
   }
 }
 

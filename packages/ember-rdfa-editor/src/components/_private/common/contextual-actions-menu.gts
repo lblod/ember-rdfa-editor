@@ -245,9 +245,9 @@ export default class ContextualActionsMenu extends Component<Args> {
   // This can be removed once the `:sticky` selector becomes supported
   observeSticky = eModifier(
     (element: HTMLElement, [position]: ['top' | 'bottom']) => {
-      const container = element.closest(
-        '.say-contextual-actions-menu-entries-container',
-      );
+      const container =
+        element.closest('.say-contextual-actions-menu-entries-container') ??
+        element.closest('.say-contextual-actions-menu');
 
       if (!container) return;
 
@@ -332,7 +332,11 @@ export default class ContextualActionsMenu extends Component<Args> {
       {{this.setUpListeners}}
     >
       {{#if @enableSearch}}
-        <div class="say-contextual-actions-menu-search-bar">
+        <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+        <div
+          class="say-contextual-actions-menu-search-bar"
+          {{this.observeSticky "top"}}
+        >
           <AuInput
             {{this.focus}}
             @icon="search"
@@ -375,8 +379,8 @@ export default class ContextualActionsMenu extends Component<Args> {
                 <div class="say-contextual-actions-menu-separator"></div>
               {{/unless}}
               <div
-                class="say-contextual-actions-menu-group-header au-u-muted"
-                {{this.observeSticky "top"}}
+                class="say-contextual-actions-menu-group-header au-u-muted
+                  {{unless group.label 'empty'}}"
               >
                 {{group.label}}
               </div>
