@@ -58,7 +58,11 @@
   overflow-y: scroll;
   overflow-x: hidden;
 
-  max-height: 50vh;
+  // Because the scroll is set on the whole menu, the overscroll behavior on
+  // firefox makes the search bar and sticky groups move, this is not desired
+  // Might be better to put `overflow: scroll` only on the container that has the
+  // non-sticky groups.
+  overscroll-behavior: none;
 
   display: flex;
   flex-direction: column;
