@@ -23,7 +23,7 @@ import { modifier as eModifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
-import { eq } from 'ember-truth-helpers';
+import { eq, and } from 'ember-truth-helpers';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -69,6 +69,7 @@ function sortGroups(
 
 export default class ContextualActionsMenu extends Component<Args> {
   @tracked selectedActionIndex: number = 0;
+  @tracked menuHeightPx: number = 0;
 
   actionToElement = new Map<ContextualAction, Element>();
 
@@ -316,6 +317,23 @@ export default class ContextualActionsMenu extends Component<Args> {
     runTask(this, () => element.focus());
   });
 
+  trackElementHeight = eModifier((element: HTMLElement) => {
+    const observer = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const size = entry.contentBoxSize[0];
+        if (!size) return null;
+        this.menuHeightPx = size.blockSize;
+      });
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  });
+
+  get shouldAllowStickyGroups() {
+    return this.menuHeightPx > 250;
+  }
+
   <template>
     <div
       {{floatingUI
@@ -328,6 +346,7 @@ export default class ContextualActionsMenu extends Component<Args> {
       class="say-contextual-actions-menu"
       ...attributes
       {{this.setUpListeners}}
+      {{this.trackElementHeight}}
     >
       {{#if @enableSearch}}
         <div class="say-contextual-actions-menu-group-sticky-sentinel" />
@@ -365,7 +384,10 @@ export default class ContextualActionsMenu extends Component<Args> {
           {{#each this.groupedActions as |group|}}
             <div
               class="say-contextual-actions-menu-group-wrapper
-                {{if (eq group.sticky 'bottom') 'sticky-bottom'}}"
+                {{if
+                  (and (eq group.sticky 'bottom') this.shouldAllowStickyGroups)
+                  'sticky-bottom'
+                }}"
               {{! @glint-expect-error type of the modifier helper is incorrect}}
               {{(if
                 (eq group.sticky "bottom")
