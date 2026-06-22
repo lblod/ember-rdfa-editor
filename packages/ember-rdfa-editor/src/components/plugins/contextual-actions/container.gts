@@ -11,8 +11,8 @@ import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import { on } from '@ember/modifier';
 import {
   type ContextualAction,
+  type ContextualActionGroup,
   type GetContextualActionGroups,
-  type GetContextualActions,
 } from '#root/plugins/contextual-actions/index.ts';
 import { action } from '@ember/object';
 import { runTask } from 'ember-lifeline';
@@ -21,21 +21,40 @@ import {
   slashCommandsStateChanged,
 } from '#root/plugins/slash-commands/index.ts';
 import { localCopy } from 'tracked-toolbox';
-import { restartableTask, timeout } from 'ember-concurrency';
+import {
+  all,
+  restartableTask,
+  task,
+  timeout,
+  type TaskInstance,
+} from 'ember-concurrency';
+
+type GroupWithStatus = ContextualActionGroup & {
+  isLoading: boolean;
+  errorMessage: string | null;
+  actions: ContextualAction[] | null;
+};
 
 type Args = {
   controller: SayController;
-  getActions?: GetContextualActions;
   getGroups?: GetContextualActionGroups;
 };
 
-const SEARCH_TIMEOUT_MS = 500;
-
 export default class ContextualActionsContainer extends Component<Args> {
+  /*
+   * DO NOT USE this.controller.mainEditorState in this component
+   * unless you know what you are doing. Use this.localEditorState instead.
+   * Otherwise the tracking will cause unnecessary reloading of data
+   */
+
   @service declare intl: IntlService;
 
   @tracked loadActionsError: string | null = null;
   @tracked searchQuery: string = '';
+  @tracked loadGroupTaskInstances: {
+    group: ContextualActionGroup;
+    taskInstance: TaskInstance<ContextualAction[]>;
+  }[] = [];
 
   // Local copy because we want to control openness of context menu (by setting this to null to close)
   @localCopy('selectedEditorNode', null) selectedEditorNodeLocal = null;
@@ -49,8 +68,6 @@ export default class ContextualActionsContainer extends Component<Args> {
    */
   @tracked localEditorState: EditorState | null = null;
   @tracked plusButtonClicked = false;
-
-  @tracked contextualActions: ContextualAction[] = [];
 
   editorStateListener = (oldState: EditorState, newState: EditorState) => {
     const docChanged = !oldState.doc.eq(newState.doc);
@@ -71,7 +88,8 @@ export default class ContextualActionsContainer extends Component<Args> {
    * Returns the node to display the menu for
    */
   get selectedEditorNode() {
-    const selection = this.controller.mainEditorState.selection;
+    if (!this.localEditorState) return null;
+    const { selection } = this.localEditorState;
     if (selection instanceof NodeSelection) {
       return selection.node;
     }
@@ -104,6 +122,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     this.plusButtonClicked = false;
     this.searchQuery = '';
     this.selectedEditorNodeLocal = null;
+    void this.getActionsTask.cancelAll();
     runTask(this, () => this.controller.mainEditorView.focus());
   };
 
@@ -127,31 +146,56 @@ export default class ContextualActionsContainer extends Component<Args> {
     return this.groups.length > 0 && !this.showContextMenu;
   }
 
+  getErrorMessage(error: unknown) {
+    return error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : this.intl.t('ember-rdfa-editor.utils.something-went-wrong');
+  }
+
+  loadGroupTask = task(
+    async (state: EditorState, group: ContextualActionGroup) => {
+      if (
+        this.searchQuery &&
+        // We need to check if the searchDebounce is greater than zero
+        // If we wouldn't and just await the zero second timout, it causes screen flicker
+        group.searchDebounceMs &&
+        group.searchDebounceMs > 0
+      ) {
+        await timeout(group.searchDebounceMs);
+      }
+
+      return await group.getActions(state, this.searchQuery);
+    },
+  );
+
   // We don't use a trackedfunction because it causes the menu to reload
   // after the first load (after the debounce time)
   // See https://discord.com/channels/480462759797063690/1501197288603910266
   getActionsTask = restartableTask(async () => {
-    await timeout(SEARCH_TIMEOUT_MS);
     const state = this.localEditorState;
-    if (!this.showContextMenu || !state || this.loadActionsError) return [];
-    const getActions = this.args.getActions ?? [];
+    if (!this.showContextMenu || !state) return [];
 
-    try {
-      this.contextualActions = (
-        await Promise.all(getActions.map((cb) => cb(state, this.searchQuery)))
-      ).flat();
-    } catch (error) {
-      if (error instanceof Error) {
-        this.loadActionsError = error.message;
-      } else if (typeof error === 'string') {
-        this.loadActionsError = error;
-      } else {
-        this.loadActionsError = this.intl.t(
-          'ember-rdfa-editor.utils.something-went-wrong',
-        );
-      }
-    }
+    this.loadGroupTaskInstances = this.groups.map((group) => ({
+      group,
+      taskInstance: this.loadGroupTask.perform(state, group),
+    }));
+
+    // Child tasks get cancelled automagically on restart
+    await all(this.loadGroupTaskInstances);
   });
+
+  get groupsWithStatus(): GroupWithStatus[] {
+    return this.loadGroupTaskInstances.map(({ group, taskInstance }) => ({
+      ...group,
+      actions: taskInstance.isError ? [] : taskInstance.value,
+      isLoading: taskInstance.isRunning,
+      errorMessage: taskInstance.isError
+        ? this.getErrorMessage(taskInstance.error)
+        : null,
+    }));
+  }
 
   @action
   executeAction(action: ContextualAction) {
@@ -194,7 +238,6 @@ export default class ContextualActionsContainer extends Component<Args> {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
-    void this.getActionsTask.perform();
   };
 
   startGetActionsTask = modifier(() => {
@@ -219,22 +262,11 @@ export default class ContextualActionsContainer extends Component<Args> {
           {{this.startGetActionsTask}}
           @enableSearch={{true}}
           @controller={{this.controller}}
-          @actions={{if
-            this.contextualActions
-            this.contextualActions
-            undefined
-          }}
-          @groups={{this.groups}}
+          @groups={{this.groupsWithStatus}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}
           @searchQuery={{this.searchQuery}}
-          @isLoading={{this.getActionsTask.isRunning}}
-          @errorMessage={{if
-            this.loadActionsError
-            this.loadActionsError
-            undefined
-          }}
         />
       {{/if}}
     </div>

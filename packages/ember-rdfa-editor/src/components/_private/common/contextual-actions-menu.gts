@@ -23,12 +23,17 @@ import { modifier as eModifier } from 'ember-modifier';
 import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
-import { eq } from 'ember-truth-helpers';
+import { eq, and } from 'ember-truth-helpers';
+
+type GroupWithStatus = ContextualActionGroup & {
+  isLoading: boolean;
+  errorMessage: string | null;
+  actions: ContextualAction[] | null;
+};
 
 type Args = {
   controller: SayController;
-  actions?: ContextualAction[];
-  groups?: ContextualActionGroup[];
+  groups?: GroupWithStatus[];
   isLoading?: boolean;
   errorMessage?: string;
   enableSearch?: boolean;
@@ -64,6 +69,7 @@ function sortGroups(
 
 export default class ContextualActionsMenu extends Component<Args> {
   @tracked selectedActionIndex: number = 0;
+  @tracked menuHeightPx: number = 0;
 
   actionToElement = new Map<ContextualAction, Element>();
 
@@ -80,8 +86,6 @@ export default class ContextualActionsMenu extends Component<Args> {
       this.args.onClose?.();
     };
     const handleKeydown = (event: KeyboardEvent) => {
-      if (!this.args.isLoading && !this.actionAmount) return;
-
       switch (event.key) {
         case 'ArrowDown':
         case 'Down':
@@ -117,13 +121,12 @@ export default class ContextualActionsMenu extends Component<Args> {
           break;
         }
         case 'Delete':
-        case 'Backspace': {
-          if (this.args.searchQuery?.length === 0) {
+        case 'Backspace':
+          if (!this.args.searchQuery) {
             event.preventDefault();
             this.args.onClose?.();
           }
           break;
-        }
         case 'Tab':
           if (this.actionAmount) {
             if (event.shiftKey) {
@@ -185,18 +188,21 @@ export default class ContextualActionsMenu extends Component<Args> {
     return searchIndex;
   }
 
+  get sortedGroups() {
+    return this.args.groups?.toSorted(sortGroups);
+  }
+
   @cached
   get groupedActions() {
-    return this.args.groups
+    return this.sortedGroups
       ?.map((group) => ({
         ...group,
         actions:
-          this.args.actions
+          group.actions
             ?.filter((action) => action.group === group.id)
             .toSorted(sortByPriority) ?? [],
       }))
-      .filter((group) => group.actions.length > 0)
-      .toSorted(sortGroups);
+      .filter((group) => group.isLoading || group.actions.length > 0);
   }
 
   get actionAmount() {
@@ -228,7 +234,7 @@ export default class ContextualActionsMenu extends Component<Args> {
       size({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            maxHeight: `${Math.max(0, availableHeight)}px`,
+            maxHeight: `${Math.min(window.innerHeight / 2, availableHeight)}px`,
           });
         },
       }),
@@ -240,9 +246,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   // This can be removed once the `:sticky` selector becomes supported
   observeSticky = eModifier(
     (element: HTMLElement, [position]: ['top' | 'bottom']) => {
-      const container = element.closest(
-        '.say-contextual-actions-menu-entries-container',
-      );
+      const container = element.closest('.say-contextual-actions-menu');
 
       if (!container) return;
 
@@ -313,6 +317,23 @@ export default class ContextualActionsMenu extends Component<Args> {
     runTask(this, () => element.focus());
   });
 
+  trackElementHeight = eModifier((element: HTMLElement) => {
+    const observer = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const size = entry.contentBoxSize[0];
+        if (!size) return null;
+        this.menuHeightPx = size.blockSize;
+      });
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  });
+
+  get shouldAllowStickyGroups() {
+    return this.menuHeightPx > 250;
+  }
+
   <template>
     <div
       {{floatingUI
@@ -325,9 +346,14 @@ export default class ContextualActionsMenu extends Component<Args> {
       class="say-contextual-actions-menu"
       ...attributes
       {{this.setUpListeners}}
+      {{this.trackElementHeight}}
     >
       {{#if @enableSearch}}
-        <div class="say-contextual-actions-menu-search-bar">
+        <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+        <div
+          class="say-contextual-actions-menu-search-bar"
+          {{this.observeSticky "top"}}
+        >
           <AuInput
             {{this.focus}}
             @icon="search"
@@ -351,16 +377,16 @@ export default class ContextualActionsMenu extends Component<Args> {
           @size="small"
           @icon="alert-triangle"
           @skin="error"
-          class="au-u-margin-bottom-tiny au-u-margin-top-tiny au-u-margin-left-tiny au-u-margin-right-tiny"
+          class="au-u-margin-tiny"
         >{{@errorMessage}}</AuAlert>
       {{else}}
         <div class="say-contextual-actions-menu-entries-container">
           {{#each this.groupedActions as |group|}}
             <div
               class="say-contextual-actions-menu-group-wrapper
-                {{if (eq group.sticky 'bottom') 'sticky-bottom'}}{{if
-                  (eq group.sticky 'top')
-                  'sticky-top'
+                {{if
+                  (and (eq group.sticky 'bottom') this.shouldAllowStickyGroups)
+                  'sticky-bottom'
                 }}"
               {{! @glint-expect-error type of the modifier helper is incorrect}}
               {{(if
@@ -369,37 +395,61 @@ export default class ContextualActionsMenu extends Component<Args> {
               )}}
             >
               <div class="say-contextual-actions-menu-group-sticky-sentinel" />
+              {{#unless group.label}}
+                <div class="say-contextual-actions-menu-separator"></div>
+              {{/unless}}
               <div
-                class="say-contextual-actions-menu-group-header au-u-muted"
-                {{this.observeSticky "top"}}
+                class="say-contextual-actions-menu-group-header au-u-muted
+                  {{unless group.label 'empty'}}"
               >
                 {{group.label}}
               </div>
               <div class="au-u-padding-left-tiny au-u-padding-right-tiny">
-                {{#each group.actions as |actionItem|}}
-                  <button
-                    {{this.addActionElementToMap actionItem}}
-                    {{on "click" (fn this.selectAction actionItem)}}
-                    {{on
-                      "mousemove"
-                      (fn this.updateSelectedActionIndex actionItem)
-                    }}
-                    class="say-contextual-actions-menu-entry au-u-text-left
-                      {{if
-                        (this.isSelectedAction actionItem)
-                        'focused-menu-entry'
-                      }}"
-                    type="button"
-                    title={{actionItem.description}}
-                  >
-                    <div id="button-content">
-                      {{#if actionItem.icon}}
-                        <AuIcon @size="large" @icon={{actionItem.icon}} />
+                {{#if group.isLoading}}
+                  <div class="au-u-flex au-u-flex--center au-u-padding">
+                    <AuLoader>
+                      {{#if group.loadingMessage}}
+                        {{group.loadingMessage}}
+                      {{else}}
+                        {{t
+                          "ember-rdfa-editor.contextual-actions.loading-actions"
+                        }}
                       {{/if}}
-                      <span>{{actionItem.label}}</span>
-                    </div>
-                  </button>
-                {{/each}}
+                    </AuLoader>
+                  </div>
+                {{else if group.errorMessage}}
+                  <AuAlert
+                    @size="small"
+                    @icon="alert-triangle"
+                    @skin="error"
+                    class="au-u-margin-tiny"
+                  >{{group.errorMessage}}</AuAlert>
+                {{else}}
+                  {{#each group.actions as |actionItem|}}
+                    <button
+                      {{this.addActionElementToMap actionItem}}
+                      {{on "click" (fn this.selectAction actionItem)}}
+                      {{on
+                        "mousemove"
+                        (fn this.updateSelectedActionIndex actionItem)
+                      }}
+                      class="say-contextual-actions-menu-entry au-u-text-left
+                        {{if
+                          (this.isSelectedAction actionItem)
+                          'focused-menu-entry'
+                        }}"
+                      type="button"
+                      title={{actionItem.description}}
+                    >
+                      <div id="button-content">
+                        {{#if actionItem.icon}}
+                          <AuIcon @size="large" @icon={{actionItem.icon}} />
+                        {{/if}}
+                        <span>{{actionItem.label}}</span>
+                      </div>
+                    </button>
+                  {{/each}}
+                {{/if}}
               </div>
             </div>
             <div class="say-contextual-actions-menu-group-sticky-sentinel" />

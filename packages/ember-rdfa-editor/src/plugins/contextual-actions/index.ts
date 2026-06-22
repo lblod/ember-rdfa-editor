@@ -13,17 +13,20 @@ export type ContextualAction = {
 
 export type ContextualActionGroup = {
   id: string;
-  label: string;
-
+  label?: string;
   sticky?: 'bottom';
   priority?: number;
+
+  loadingMessage?: string;
+  searchDebounceMs?: number;
+  getActions: GetContextualActions;
 };
 
 export type GetContextualActionGroups = ((
   state: EditorState,
   searchQuery?: string,
 ) => ContextualActionGroup[])[];
-export type GetContextualActions = ((
+export type GetContextualActions = (
   state: EditorState,
   searchQuery?: string,
-) => ContextualAction[] | Promise<ContextualAction[]>)[];
+) => ContextualAction[] | Promise<ContextualAction[]>;
