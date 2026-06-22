@@ -3,11 +3,7 @@ import {
   isRdfaAttrs,
   type ModelMigrationGenerator,
 } from '#root/core/rdfa-types.ts';
-import {
-  getRdfaAttrs,
-  rdfaAttrSpec,
-  renderRdfaAware,
-} from '#root/core/schema.ts';
+import { rdfaAttrSpec, renderRdfaAware } from '#root/core/schema.ts';
 import type SayNodeSpec from '../core/say-node-spec.ts';
 import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
 import { RDF, SKOS } from '../utils/_private/namespaces.ts';
@@ -15,14 +11,12 @@ import { getRDFFragment } from '../utils/namespace.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
-import {
-  contentElementWithMigrations,
-  getAttrsWithMigrations,
-} from '#root/core/schema/_private/migrations.ts';
+import { contentElementWithMigrations } from '#root/core/schema/_private/migrations.ts';
 import { KnowledgeBase } from '#root/core/rdfa/knowledge-base.ts';
-import { serializeNodeId } from '#root/core/rdfa/serialize-rdfa-node.ts';
+import { serializeNodeWithId } from '#root/core/rdfa/serialize-rdfa-node.ts';
 import { knownledgeBaseKey } from '#root/plugins/knowledgebase/knowledgebase-plugin.ts';
 import { AssertionError } from '#root/utils/_private/errors.ts';
+import { getPathFromRoot } from '#root/utils/_private/dom-helpers.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -64,10 +58,15 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         // Default priority is 50, so this means a more specific definition matches before this one
         priority: 40,
         getAttrs(element: string | HTMLElement) {
+          console.log('parsing element', element);
           if (typeof element === 'string') {
             return false;
           }
-          const kb = KnowledgeBase.fromHtmlNode(element);
+          const kb = KnowledgeBase.fromHtmlNode(
+            element.getRootNode(),
+            getPathFromRoot(element, false),
+          );
+          console.log('getting kb', kb.toArray());
 
           const id = element.dataset['sayId']!;
           console.log('checking for id', id);
@@ -96,11 +95,15 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
       if (state) {
         const kb = knownledgeBaseKey.getState(state)?.knowledgeBase;
         if (kb) {
-          console.log(
-            'WOULD SERIALIZE AS',
-
-            serializeNodeId(node.attrs['sayId'] as string, kb),
-          );
+          return serializeNodeWithId({
+            knowledgeBase: kb,
+            nodeId: node.attrs['sayId'] as string,
+            tag: 'div',
+            extraDataAttributes: { label: node.attrs['label'] as string },
+            extraHtmlAttributes: {
+              class: `say-editable ${getClassnamesFromNode(node)}`,
+            },
+          });
         } else {
           throw new AssertionError('couldnt get kb state');
         }

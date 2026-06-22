@@ -114,6 +114,7 @@ export function newestKb(a: KnowledgeBase, b: KnowledgeBase): KnowledgeBase {
   return b;
 }
 function textToParentId(node: Node): string {
+  console.log('asking for textcontent of node: ', node);
   if (isTextNode(node)) {
     const id = node.parentElement?.dataset['sayId'];
     return id ? `${id}${SAY_ID_DIVIDER}` : '';

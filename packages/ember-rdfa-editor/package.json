@@ -277,6 +277,7 @@
     "rdfa-streaming-parser": "catalog:",
     "reactiveweb": "catalog:",
     "relative-to-absolute-iri": "catalog:",
+    "string-ts": "^2.3.1",
     "tracked-toolbox": "catalog:",
     "typedoc": "^0.28.17",
     "uuid": "catalog:",

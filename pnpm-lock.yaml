@@ -745,6 +745,9 @@ importers:
       relative-to-absolute-iri:
         specifier: 'catalog:'
         version: 1.0.7
+      string-ts:
+        specifier: ^2.3.1
+        version: 2.3.1
       tracked-toolbox:
         specifier: 'catalog:'
         version: 2.2.0(@babel/core@7.28.6)
@@ -8773,6 +8776,9 @@ packages:
 
   string-template@0.2.1:
     resolution: {integrity: sha512-Yptehjogou2xm4UJbxJ4CxgZx12HBfeystp0y3x7s4Dj32ltVVG1Gg8YhKjHZkHicuKpZX/ffilA8505VbUbpw==}
+
+  string-ts@2.3.1:
+    resolution: {integrity: sha512-xSJq+BS52SaFFAVxuStmx6n5aYZU571uYUnUrPXkPFCfdHyZMMlbP2v2Wx5sNBnAVzq/2+0+mcBLBa3Xa5ubYw==}
 
   string-width@2.1.1:
     resolution: {integrity: sha512-nOqH59deCq9SRHlxq1Aw85Jnt4w6KvLKqWVik6oA9ZklXLNIOlqg4F2yrT1MVaTjAqvVwdfeZ7w7aCvJD7ugkw==}
@@ -19196,6 +19202,8 @@ snapshots:
       internal-slot: 1.1.0
 
   string-template@0.2.1: {}
+
+  string-ts@2.3.1: {}
 
   string-width@2.1.1:
     dependencies:

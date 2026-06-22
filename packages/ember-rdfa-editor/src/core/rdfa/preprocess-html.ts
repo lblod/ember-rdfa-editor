@@ -14,8 +14,25 @@ export function isSayId(str: unknown): str is SayId {
 function shouldBeSkipped(node: Node) {
   return (
     isElement(node) &&
-    (node.dataset['contentContainer'] || node.dataset['rdfaContainer'])
+    (node.dataset['contentContainer'] ||
+      node.dataset['rdfaContainer'] ||
+      node.dataset['sayPlaceholder'])
   );
+}
+/**
+ * For our parsing logic, we need to distinguish between cases where the RDFa parser gets the triple's object from html attributes and cases where it gets it from the textcontent.
+ * This is unambiguously defined in the spec.
+ *
+ * TODO: make sure we handle all cases
+ */
+export function elementHasRdfaContentInAttributes(element: HTMLElement) {
+  if (element.getAttribute('content')) {
+    return true;
+  }
+  if (element.getAttribute('about') && element.getAttribute('resource')) {
+    return true;
+  }
+  return false;
 }
 export function preProcessInPlace(node: Node): PreprocessedNode {
   if (isPreprocessed(node)) {
@@ -31,6 +48,12 @@ export function preProcessInPlace(node: Node): PreprocessedNode {
         if (!curNode.dataset['sayId']) {
           const id = makeSayId();
           curNode.dataset['sayId'] = id;
+        }
+        // this is the crux of the whole parsing trick
+        // If we know that the parser will use the node's textcontent for its object value, we instead force it to
+        // pick up the node's rdfaId as the value by setting it as the content attribute
+        if (!elementHasRdfaContentInAttributes(curNode)) {
+          curNode.setAttribute('content', curNode.dataset['sayId']);
         }
         curNode.dataset['sayProcessed'] = 'true';
       }
