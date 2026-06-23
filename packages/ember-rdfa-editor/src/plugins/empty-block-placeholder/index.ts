@@ -36,6 +36,7 @@ export function emptyBlockPlaceholder() {
           if (
             node.type.name === 'block_rdfa' &&
             isNodeEmpty(node) &&
+            node.attrs['placeholder'] &&
             !isSelectionInsideNode(selection, node, pos)
           ) {
             const placeholder =
@@ -53,7 +54,6 @@ export function emptyBlockPlaceholder() {
           return true;
         });
         const decorations = emptyRdfaBlocks
-          .filter(({ placeholder }) => placeholder !== undefined)
           .map(({ pos, placeholder }) =>
             Decoration.widget(pos + 2, () => {
               const el = document.createElement('span');
