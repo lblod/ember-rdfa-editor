@@ -5,7 +5,7 @@ import type { DOMOutputSpec } from 'prosemirror-model';
 import type { CamelCase, KebabCase } from 'string-ts';
 import { kebabCase } from 'string-ts';
 import type { KnowledgeBase } from './knowledge-base';
-import { isSayId } from './preprocess-html.ts';
+import { isSayId } from './say-id.ts';
 
 export interface SerializeConfig {
   nodeId: string;

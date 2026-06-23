@@ -1,22 +1,24 @@
-import { Node as PNode } from 'prosemirror-model';
+import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
 import {
   isRdfaAttrs,
   type ModelMigrationGenerator,
 } from '#root/core/rdfa-types.ts';
-import { rdfaAttrSpec, renderRdfaAware } from '#root/core/schema.ts';
-import type SayNodeSpec from '../core/say-node-spec.ts';
-import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
-import { RDF, SKOS } from '../utils/_private/namespaces.ts';
-import { getRDFFragment } from '../utils/namespace.ts';
-import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
-import type SayController from '#root/core/say-controller.ts';
-import { selectNodeByRdfaId } from '#root/commands/_private/rdfa-commands/select-node-by-rdfa-id.ts';
-import { contentElementWithMigrations } from '#root/core/schema/_private/migrations.ts';
-import { KnowledgeBase } from '#root/core/rdfa/knowledge-base.ts';
+import { getOutgoingProps } from '#root/core/rdfa/get-outgoing-props.ts';
+import { expectSayId } from '#root/core/rdfa/say-id.ts';
 import { serializeNodeWithId } from '#root/core/rdfa/serialize-rdfa-node.ts';
+import { triplesWithElementContentAsValue } from '#root/core/rdfa/triples-with-element-content-as-value.ts';
+import type SayController from '#root/core/say-controller.ts';
+import { contentElementWithMigrations } from '#root/core/schema/_private/migrations.ts';
 import { knownledgeBaseKey } from '#root/plugins/knowledgebase/knowledgebase-plugin.ts';
+import { conciseToRdfjs } from '#root/utils/_private/concise-term-string.ts';
 import { AssertionError } from '#root/utils/_private/errors.ts';
-import { getPathFromRoot } from '#root/utils/_private/dom-helpers.ts';
+import { Node as PNode } from 'prosemirror-model';
+import type { EditorState } from 'prosemirror-state';
+import type { NodeView, NodeViewConstructor } from 'prosemirror-view';
+import type SayNodeSpec from '../core/say-node-spec.ts';
+import { SKOS } from '../utils/_private/namespaces.ts';
+import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
+import { getRDFFragment } from '../utils/namespace.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -39,9 +41,8 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     attrs: {
       sayId: {
         default: undefined,
-        editable: true,
+        editable: false,
       },
-      ...rdfaAttrSpec({ rdfaAware }),
       label: {
         default: undefined,
         editable: true,
@@ -58,25 +59,14 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         // Default priority is 50, so this means a more specific definition matches before this one
         priority: 40,
         getAttrs(element: string | HTMLElement) {
-          console.log('parsing element', element);
           if (typeof element === 'string') {
             return false;
           }
-          const kb = KnowledgeBase.fromHtmlNode(
-            element.getRootNode(),
-            getPathFromRoot(element, false),
-          );
-          console.log('getting kb', kb.toArray());
-
-          const id = element.dataset['sayId']!;
-          console.log('checking for id', id);
-          const relevantTriples = kb.quadsPointingToId(id);
-          const trips = [...relevantTriples];
-          if (trips.length) {
-            console.log('relevantTriples', trips, element);
+          const trips = triplesWithElementContentAsValue(element);
+          if (!trips.isEmpty()) {
             const attrs = {
-              sayId: id,
-              label: trips[0].predicate.value ?? element.dataset['label'],
+              sayId: expectSayId(element),
+              label: [...trips][0].predicate.value ?? element.dataset['label'],
             };
             return attrs;
           }
@@ -92,47 +82,22 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
       },
     ],
     toDOM(node, state) {
-      if (state) {
-        const kb = knownledgeBaseKey.getState(state)?.knowledgeBase;
-        if (kb) {
-          return serializeNodeWithId({
-            knowledgeBase: kb,
-            nodeId: node.attrs['sayId'] as string,
-            tag: 'div',
-            extraDataAttributes: { label: node.attrs['label'] as string },
-            extraHtmlAttributes: {
-              class: `say-editable ${getClassnamesFromNode(node)}`,
-            },
-          });
-        } else {
-          throw new AssertionError('couldnt get kb state');
-        }
+      if (!state) {
+        throw new AssertionError('didnt get state');
       }
-
-      if (rdfaAware) {
-        return renderRdfaAware(
-          {
-            renderable: node,
-            tag: 'div',
-            attrs: {
-              class: `say-editable ${getClassnamesFromNode(node)}`,
-              'data-label': node.attrs['label'] as string,
-            },
-            content: 0,
+      const kb = knownledgeBaseKey.getState(state)?.knowledgeBase;
+      if (kb) {
+        return serializeNodeWithId({
+          knowledgeBase: kb,
+          nodeId: node.attrs['sayId'] as string,
+          tag: 'div',
+          extraDataAttributes: { label: node.attrs['label'] as string },
+          extraHtmlAttributes: {
+            class: `say-editable ${getClassnamesFromNode(node)}`,
           },
-          state,
-        );
+        });
       } else {
-        const { label, ...attrs } = node.attrs;
-        return [
-          'div',
-          {
-            ...attrs,
-            'data-label': label as string,
-            class: getClassnamesFromNode(node),
-          },
-          0,
-        ];
+        throw new AssertionError('couldnt get kb state');
       }
     },
   } satisfies SayNodeSpec;
@@ -167,7 +132,9 @@ export class BlockRDFaView implements NodeView {
     this.labelElement.textContent = getBlockRDFaLabel(
       this.node,
       FALLBACK_LABEL,
+      controller?.activeEditorState,
     ).toUpperCase();
+
     this.labelElement.setAttribute('class', 'say-block-rdfa--label');
     // Save a ref to an arrow function as we can't use class methods directly here
     this.onClickRef = () => this.onClick();
@@ -215,7 +182,7 @@ export class BlockRDFaView implements NodeView {
  * 3. Last part of the first encountered type/predicate URI
  * 4. The value of the `fallback` argument
  */
-function getBlockRDFaLabel(node: PNode, fallback: string) {
+function getBlockRDFaLabel(node: PNode, fallback: string, state?: EditorState) {
   const { attrs } = node;
   if (attrs['label']) {
     return attrs['label'] as string;
@@ -225,36 +192,34 @@ function getBlockRDFaLabel(node: PNode, fallback: string) {
     return 'Data-object';
   }
 
-  const { rdfaNodeType } = attrs;
-  if (rdfaNodeType === 'resource') {
-    const { properties } = attrs;
-    const prefLabelProps = properties.filter(
-      (prop) =>
-        prop.object.termType === 'Literal' &&
-        SKOS('prefLabel').matches(prop.predicate),
-    );
-    if (prefLabelProps.length) {
-      return prefLabelProps[0].object.value;
-    } else {
-      const typeProp = properties.find(
-        (prop) =>
-          prop.object.termType === 'NamedNode' &&
-          RDF('type').matches(prop.predicate),
+  if (state) {
+    const props = getOutgoingProps(state, node);
+    if (props) {
+      const prefLabelProps = props.otherQuads.match(
+        null,
+        SKOS('prefLabel').namedNode,
       );
-      if (typeProp) {
-        return getRDFFragment(typeProp.object.value);
+
+      if (prefLabelProps.size) {
+        return [...prefLabelProps][0].object.value;
+      } else {
+        const typeProp = props.otherQuads.match(null, conciseToRdfjs('a'));
+        if (typeProp.size) {
+          return getRDFFragment([...typeProp][0].object.value);
+        } else {
+          return fallback;
+        }
+      }
+    } else {
+      const { backlinks } = attrs;
+      if (backlinks.length) {
+        return getRDFFragment(backlinks[0].predicate);
       } else {
         return fallback;
       }
     }
-  } else {
-    const { backlinks } = attrs;
-    if (backlinks.length) {
-      return getRDFFragment(backlinks[0].predicate);
-    } else {
-      return fallback;
-    }
   }
+  return fallback;
 }
 
 /**

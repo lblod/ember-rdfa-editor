@@ -5,6 +5,8 @@ import { getPathFromRoot, tagName } from './dom-helpers.ts';
 import { EditorView } from 'prosemirror-view';
 import type { HEADING_ELEMENTS } from './constants.ts';
 import { KnowledgeBase } from '#root/core/rdfa/knowledge-base.ts';
+import { isSome } from './option.ts';
+import { AssertionError } from './errors.ts';
 
 export function htmlToDoc(
   html: string,

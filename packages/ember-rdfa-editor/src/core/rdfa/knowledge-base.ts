@@ -10,13 +10,16 @@ import { parseRdfa } from './rdfa-parser.ts';
 
 const SAY_ID_DIVIDER = '>>';
 
-interface SayIdSubjectInfo {
+export interface SayIdSubjectInfo {
   subject: Quad_Subject;
   connectingQuads: KnowledgeBase;
 }
+export type SayIdQuadInfo = SayIdSubjectInfo & { otherQuads: KnowledgeBase };
 
 export class KnowledgeBase extends N3StoreWrapper {
   static kbCache: WeakMap<Node, KnowledgeBase> = new WeakMap();
+
+  static empty = new KnowledgeBase();
 
   static fromHtmlNode(
     node: Node,
@@ -93,9 +96,7 @@ export class KnowledgeBase extends N3StoreWrapper {
     return [...subjectSet.values()];
   }
 
-  public quadsForSayId(
-    id: string,
-  ): (SayIdSubjectInfo & { otherQuads: KnowledgeBase })[] {
+  public quadsForSayId(id: string): SayIdQuadInfo[] {
     const subjectInfo = this.subjectsForSayId(id);
 
     return subjectInfo.map((info) => ({
@@ -105,6 +106,9 @@ export class KnowledgeBase extends N3StoreWrapper {
   }
   public isNewer(other: KnowledgeBase) {
     return this.timestamp.valueOf() > other.timestamp.valueOf();
+  }
+  public isEmpty() {
+    return this.size === 0;
   }
 }
 export function newestKb(a: KnowledgeBase, b: KnowledgeBase): KnowledgeBase {

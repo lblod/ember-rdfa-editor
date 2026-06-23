@@ -1,4 +1,5 @@
 import { filter, takeLastOr } from 'iter-tools';
+import { AssertionError } from './errors.ts';
 
 export default class ArrayUtils {
   static findCommonSlice<T>(array1: T[], array2: T[]): T[] {
@@ -89,4 +90,17 @@ export function pushOrExpand<T>(parent: T[], child: T | T[]): void {
   } else {
     parent.push(child);
   }
+}
+
+export function expectOneOrZero<T>(arr: T[]): T | null {
+  if (arr.length > 1) {
+    throw new AssertionError('Array contained more than one element');
+  }
+  return arr[0] ?? null;
+}
+export function expectOne<T>(arr: T[]): T {
+  if (arr.length !== 1) {
+    throw new AssertionError('Array did not contain exactly one element');
+  }
+  return arr[0];
 }

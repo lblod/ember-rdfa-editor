@@ -1,6 +1,6 @@
 import { KnowledgeBase, newestKb } from '#root/core/rdfa/knowledge-base.ts';
 import { ProsePlugin } from '#root/prosemirror-aliases.ts';
-import { PluginKey } from 'prosemirror-state';
+import { EditorState, PluginKey } from 'prosemirror-state';
 export const knownledgeBaseKey = new PluginKey<KnowledgeBasePluginState>(
   'knowledgebase',
 );
@@ -22,11 +22,16 @@ export function knowledgeBasePlugin({
     key: knownledgeBaseKey,
     state: {
       init(config) {
-        const cachedKb = config.schema?.cached['knowledgeBase'] as
-          | KnowledgeBase
-          | undefined;
-        if (cachedKb) {
-          return { knowledgeBase: newestKb(cachedKb, initialKb) };
+        if (config.schema) {
+          const cachedKb = config.schema.cached['knowledgeBase'] as
+            | KnowledgeBase
+            | undefined;
+
+          if (cachedKb) {
+            const newest = newestKb(cachedKb, initialKb);
+            config.schema.cached['knowledgeBase'] = newest;
+            return { knowledgeBase: newest };
+          }
         }
         return { knowledgeBase: initialKb };
       },
@@ -37,7 +42,9 @@ export function knowledgeBasePlugin({
           | undefined;
 
         if (fromSchemaCache) {
-          knowledgeBase = newestKb(fromSchemaCache, knowledgeBase);
+          const newest = newestKb(fromSchemaCache, knowledgeBase);
+          newState.schema.cached['knowledgeBase'] = newest;
+          knowledgeBase = newest;
         }
 
         return {
@@ -46,4 +53,7 @@ export function knowledgeBasePlugin({
       },
     },
   });
+}
+export function getKb(state: EditorState) {
+  return knownledgeBaseKey.getState(state);
 }

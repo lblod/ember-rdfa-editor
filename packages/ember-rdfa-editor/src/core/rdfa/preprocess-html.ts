@@ -1,16 +1,6 @@
 import { isElement } from '#root/utils/_private/dom-helpers.ts';
-import { v4 as uuidv4 } from 'uuid';
-type SayId = `[say]-${string}`;
+import { makeSayId, type SayId, isSayId } from './say-id.ts';
 
-function makeSayId(): SayId {
-  return `[say]-${uuidv4()}`;
-}
-export function isSayId(str: unknown): str is SayId {
-  if (typeof str === 'string') {
-    return str.startsWith('[say]');
-  }
-  return false;
-}
 function shouldBeSkipped(node: Node) {
   return (
     isElement(node) &&

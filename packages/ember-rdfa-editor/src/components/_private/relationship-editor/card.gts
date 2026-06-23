@@ -1,12 +1,9 @@
 import Component from '@glimmer/component';
 import { localCopy, trackedReset } from 'tracked-toolbox';
-import { isResourceNode } from '#root/utils/node-utils.ts';
-// import RdfaPropertyEditor from './property-editor/index.gts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import type SayController from '#root/core/say-controller.ts';
-// import BacklinkEditor from './backlink-editor/index.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import type {
   Direction,
@@ -45,6 +42,7 @@ import type {
 } from '../common/types.ts';
 import {
   languageOrDataType,
+  SayDataFactory,
   sayDataFactory,
 } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from './modals/dev-mode.gts';
@@ -54,9 +52,10 @@ import type { OptionGeneratorConfig } from './types.ts';
 import ContentPredicateForm from './content-predicate-form.gts';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.ts';
-import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
+import type { OutgoingTriple, PlainTriple } from '#root/core/rdfa-processor.ts';
 import { htmlSafe } from '@ember/template';
 import { CheckIcon } from '@appuniversum/ember-appuniversum/components/icons/check';
+import { getOutgoingProps } from '#root/core/rdfa/get-outgoing-props.ts';
 
 interface StatusMessageForNode extends StatusMessage {
   node: PNode;
@@ -110,11 +109,12 @@ export default class RelationshipEditorCard extends Component<Args> {
   });
 
   get node() {
+    console.log('this.args.node.value', this.args.node.value);
     return this.args.node.value;
   }
 
   get isRdfaAwareNode() {
-    return isRdfaAttrs(this.node.attrs);
+    return this.isResourceNode;
   }
 
   get nodeAttrs() {
@@ -322,8 +322,11 @@ export default class RelationshipEditorCard extends Component<Args> {
     }
   };
 
+  get state() {
+    return this.args.controller.mainEditorState;
+  }
   get isResourceNode() {
-    return isResourceNode(this.args.node.value);
+    return getOutgoingProps(this.state, this.node);
   }
 
   get type() {
@@ -361,12 +364,21 @@ export default class RelationshipEditorCard extends Component<Args> {
     }
   }
 
-  get properties() {
-    return this.nodeAttrs.rdfaNodeType === 'resource'
-      ? this.nodeAttrs.properties.filter(
-          (prop) => prop.object.termType !== 'ContentLiteral',
-        )
-      : undefined;
+  get properties(): PlainTriple[] {
+    const kb = getOutgoingProps(this.state, this.node)?.otherQuads;
+    console.log('got kb', kb);
+    if (!kb) {
+      return [];
+    }
+    const df = new SayDataFactory();
+
+    const props = [...kb].map((q) => ({
+      subject: df.namedNode(q.subject.value),
+      predicate: q.predicate.value,
+      object: q.object,
+    })) as unknown as PlainTriple[];
+    console.log('props', props);
+    return props;
   }
 
   get backlinks() {
