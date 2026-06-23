@@ -23,6 +23,7 @@
     "dev-release": "tsx scripts/dev-release/run.mts",
     "dev-release:say": "tsx scripts/dev-release/run.mts ember-rdfa-editor",
     "dev-release:rr": "tsx scripts/dev-release/run.mts say-roadsign-regulation-plugin",
+    "dev-release:ar": "tsx scripts/dev-release/run.mts say-ar-design-plugin",
     "doc": "pnpm run doc:generate && pnpm run doc:serve",
     "doc:generate": "pnpm say doc:generate",
     "doc:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
