@@ -400,8 +400,8 @@ catalogs:
       specifier: ^1.2.3
       version: 1.2.3
     prosemirror-model:
-      specifier: ^1.25.4
-      version: 1.25.4
+      specifier: ^1.25.9
+      version: 1.25.9
     prosemirror-schema-basic:
       specifier: ^1.2.4
       version: 1.2.4
@@ -597,7 +597,7 @@ importers:
         version: 6.39.11
       '@curvenote/prosemirror-utils':
         specifier: 'catalog:'
-        version: 1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)
+        version: 1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)
       '@ember/optional-features':
         specifier: 'catalog:'
         version: 2.3.0
@@ -624,7 +624,7 @@ importers:
         version: 1.1.2
       '@say-editor/prosemirror-invisibles':
         specifier: 'catalog:'
-        version: 0.1.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)
+        version: 0.1.1(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)
       '@say-editor/prosemirror-tables':
         specifier: 'catalog:'
         version: 0.3.0
@@ -714,7 +714,7 @@ importers:
         version: 1.2.3
       prosemirror-model:
         specifier: 'catalog:'
-        version: 1.25.4
+        version: 1.25.9
       prosemirror-schema-basic:
         specifier: 'catalog:'
         version: 1.2.4
@@ -956,7 +956,7 @@ importers:
         version: 2.29.8(@types/node@20.19.30)
       '@curvenote/prosemirror-utils':
         specifier: 'catalog:'
-        version: 1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)
+        version: 1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)
       '@ember/optional-features':
         specifier: 'catalog:'
         version: 2.3.0
@@ -8039,6 +8039,9 @@ packages:
   prosemirror-model@1.25.4:
     resolution: {integrity: sha512-PIM7E43PBxKce8OQeezAs9j4TP+5yDpZVbuurd1h5phUxEKIu+G2a+EUZzIC5nS1mJktDJWzbqS23n1tsAf5QA==}
 
+  prosemirror-model@1.25.9:
+    resolution: {integrity: sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA==}
+
   prosemirror-schema-basic@1.2.4:
     resolution: {integrity: sha512-ELxP4TlX3yr2v5rM7Sb70SqStq5NvI15c0j9j/gjsrO5vaw+fnnpovCLEGIcpeGfifkuqJwl4fon6b+KdrODYQ==}
 
@@ -10852,9 +10855,9 @@ snapshots:
     dependencies:
       postcss-selector-parser: 7.1.0
 
-  '@curvenote/prosemirror-utils@1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)':
+  '@curvenote/prosemirror-utils@1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)':
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
 
   '@dmsnell/diff-match-patch@1.1.0': {}
@@ -12329,16 +12332,16 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@say-editor/prosemirror-invisibles@0.1.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)':
+  '@say-editor/prosemirror-invisibles@0.1.1(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)':
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-view: 1.41.5
 
   '@say-editor/prosemirror-tables@0.3.0':
     dependencies:
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
@@ -18271,7 +18274,7 @@ snapshots:
 
   prosemirror-commands@1.7.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
@@ -18321,35 +18324,39 @@ snapshots:
     dependencies:
       orderedmap: 2.1.1
 
+  prosemirror-model@1.25.9:
+    dependencies:
+      orderedmap: 2.1.1
+
   prosemirror-schema-basic@1.2.4:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
 
   prosemirror-schema-list@1.5.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
   prosemirror-state@1.4.4:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
 
   prosemirror-test-builder@1.1.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.1
 
   prosemirror-transform@1.11.0:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
 
   prosemirror-view@1.41.5:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
