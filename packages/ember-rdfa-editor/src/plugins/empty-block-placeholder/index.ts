@@ -38,25 +38,35 @@ export function emptyBlockPlaceholder() {
             isNodeEmpty(node) &&
             !isSelectionInsideNode(selection, node, pos)
           ) {
+            const placeholder =
+              'placeholder' in node.attrs &&
+              typeof node.attrs['placeholder'] === 'string'
+                ? node.attrs['placeholder']
+                : undefined;
             emptyRdfaBlocks.push({
               node,
               pos,
-              placeholder: node.attrs.placeholder,
+              placeholder,
             });
             return false;
           }
           return true;
         });
-        const decorations = emptyRdfaBlocks.map(({ pos, placeholder }) =>
-          Decoration.widget(pos + 2, () => {
-            const el = document.createElement('span');
-            el.classList.add('mark-highlight-manual');
-            el.classList.add('say-placeholder');
-            el.textContent = placeholder ?? 'Voeg in';
-            el.style.pointerEvents = 'none';
-            return el;
-          }),
-        );
+        const decorations = emptyRdfaBlocks
+          .filter(({ placeholder }) => placeholder !== undefined)
+          .map(({ pos, placeholder }) =>
+            Decoration.widget(pos + 2, () => {
+              const el = document.createElement('span');
+              el.classList.add('mark-highlight-manual');
+              el.classList.add('say-placeholder');
+              // Unnecessary check but otherwise TS complains
+              if (placeholder) {
+                el.textContent = placeholder;
+              }
+              el.style.pointerEvents = 'none';
+              return el;
+            }),
+          );
         return DecorationSet.create(doc, decorations);
       },
     },
