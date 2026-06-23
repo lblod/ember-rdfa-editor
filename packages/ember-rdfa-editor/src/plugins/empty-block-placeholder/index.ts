@@ -53,20 +53,19 @@ export function emptyBlockPlaceholder() {
           }
           return true;
         });
-        const decorations = emptyRdfaBlocks
-          .map(({ pos, placeholder }) =>
-            Decoration.widget(pos + 2, () => {
-              const el = document.createElement('span');
-              el.classList.add('mark-highlight-manual');
-              el.classList.add('say-placeholder');
-              // Unnecessary check but otherwise TS complains
-              if (placeholder) {
-                el.textContent = placeholder;
-              }
-              el.style.pointerEvents = 'none';
-              return el;
-            }),
-          );
+        const decorations = emptyRdfaBlocks.map(({ pos, placeholder }) =>
+          Decoration.widget(pos + 2, () => {
+            const el = document.createElement('span');
+            el.classList.add('mark-highlight-manual');
+            el.classList.add('say-placeholder');
+            // Unnecessary check but otherwise TS complains
+            if (placeholder) {
+              el.textContent = placeholder;
+            }
+            el.style.pointerEvents = 'none';
+            return el;
+          }),
+        );
         return DecorationSet.create(doc, decorations);
       },
     },
