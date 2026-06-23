@@ -25,12 +25,18 @@ function shouldBeSkipped(node: Node) {
  *
  * TODO: make sure we handle all cases
  */
-export function elementHasRdfaContentInAttributes(element: HTMLElement) {
-  if (element.getAttribute('content')) {
-    return true;
-  }
-  if (element.getAttribute('about') && element.getAttribute('resource')) {
-    return true;
+export function childContentIsRdfaObjectValue(element: HTMLElement) {
+  if (element.getAttribute('property')) {
+    if (
+      !(
+        element.getAttribute('content') ||
+        element.getAttribute('resource') ||
+        element.getAttribute('href') ||
+        element.getAttribute('src')
+      )
+    ) {
+      return true;
+    }
   }
   return false;
 }
@@ -52,7 +58,7 @@ export function preProcessInPlace(node: Node): PreprocessedNode {
         // this is the crux of the whole parsing trick
         // If we know that the parser will use the node's textcontent for its object value, we instead force it to
         // pick up the node's rdfaId as the value by setting it as the content attribute
-        if (!elementHasRdfaContentInAttributes(curNode)) {
+        if (childContentIsRdfaObjectValue(curNode)) {
           curNode.setAttribute('content', curNode.dataset['sayId']);
         }
         curNode.dataset['sayProcessed'] = 'true';
