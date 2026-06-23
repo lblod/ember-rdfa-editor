@@ -1,0 +1,41 @@
+ar-importer:
+  sidebar-widget:
+    label: AR-ontwerp
+  modal:
+    title: AR-ontwerp invoegen
+  overview:
+    filters:
+      title: Filters
+      name:
+        label: AR-Ontwerp naam
+      signal-code:
+        label: Verkeerstekencode
+      address:
+        label: Adres
+      reset: Herstel alle filters
+    table:
+      headers:
+        name: Naam
+        date: Laatste wijziging
+        status: Gebruikstatus
+      actions:
+        select: Selecteer
+      statuses:
+        used: Gebruikt
+        unused: Nog niet gebruikt
+      no-data: Geen ontwerpen gevonden
+  controls:
+    insert: Voeg in
+    first: Voor het eerste artikel
+    last: Na het laatste artikel
+    after-article-x: Na artikel {articleNumber}
+    select-position: Kies invoegpositie
+  preview:
+    return-to-overview: Terug naar overzicht
+    only-existing-label: bestaand
+    only-existing: Dit maatregelontwerp bevat enkel reeds bestaande verkeerstekens.
+  message:
+    error-no-decision: Plaats de cursor in een besluit
+    error-processing-design: Fout bij verwerken van het signalisatieplan
+    warning-unused-signal-concept: De mobiliteitsmaatregel {measure} omvat het verkeersteken {signal}, maar dit ontwerp bevat dit verkeersteken niet
+    warning-un-included-signal-concept: Verkeersteken {signal} is niet opgenomen in de mobiliteitsmaatregel {measure}, maar wordt wel gebruikt in dit ontwerp

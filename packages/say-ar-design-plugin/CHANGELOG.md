@@ -1,0 +1,2 @@
+# @lblod/ember-rdfa-editor
+
