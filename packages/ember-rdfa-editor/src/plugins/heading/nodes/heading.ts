@@ -1,10 +1,5 @@
-import { Node as PNode } from 'prosemirror-model';
-import {
-  getRdfaAttrs,
-  getRdfaContentElement,
-  rdfaAttrSpec,
-  renderRdfaAware,
-} from '#root/core/schema.ts';
+import { Fragment, Node as PNode } from 'prosemirror-model';
+import { getRdfaAttrs, getRdfaContentElement } from '#root/core/schema.ts';
 import { optionMapOr } from '#root/utils/_private/option.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
 import NumberEditor from '#root/components/_private/utils/number-editor.gts';
@@ -13,14 +8,10 @@ import { DEFAULT_ALIGNMENT, getAlignment } from '../../alignment/index.ts';
 import { HEADING_ELEMENTS } from '#root/utils/_private/constants.ts';
 import { getHeadingLevel } from '#root/utils/_private/html-utils.ts';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
+import type { Schema } from 'prosemirror-model';
+import { ProseParser } from '#root/prosemirror-aliases.ts';
 
-type Config = {
-  rdfaAware?: boolean;
-};
-
-export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
-  rdfaAware = false,
-} = {}) => {
+export const headingWithConfig: () => SayNodeSpec = () => {
   return {
     get attrs() {
       const commonAttrs = {
@@ -36,25 +27,32 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
         },
         alignment: { default: DEFAULT_ALIGNMENT },
       };
-      return { ...commonAttrs, ...rdfaAttrSpec({ rdfaAware }) };
+      return commonAttrs;
     },
     content: 'inline*',
     group: 'block',
     defining: true,
-    editable: rdfaAware,
-    isolating: rdfaAware,
-    selectable: rdfaAware,
+    editable: false,
+    isolating: false,
+    selectable: false,
     classNames: ['say-heading'],
     parseDOM: [
       {
         tag: HEADING_ELEMENTS.join(','),
+        node: 'block_rdfa',
         getAttrs(node: string | HTMLElement) {
           if (!(node instanceof HTMLHeadingElement)) {
             return false;
           }
-          const level = getHeadingLevel(node);
-          const baseAttrs = {
-            level,
+          const rdfaAttrs = getRdfaAttrs(node, { rdfaAware: true });
+          if (!rdfaAttrs) {
+            return false;
+          }
+          return rdfaAttrs;
+        },
+        getContent: (node: HTMLHeadingElement, schema: Schema) => {
+          const headingAttrs = {
+            level: getHeadingLevel(node),
             indentationLevel: optionMapOr(
               0,
               parseInt,
@@ -62,9 +60,30 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
             ),
             alignment: getAlignment(node),
           };
-          return { ...baseAttrs, ...getRdfaAttrs(node, { rdfaAware }) };
+          const parser = ProseParser.fromSchema(schema);
+          const slice = parser.parseSlice(getRdfaContentElement(node));
+          return Fragment.from(
+            schema.nodes['heading'].create(headingAttrs, slice.content),
+          );
         },
-        contentElement: getRdfaContentElement,
+      },
+      {
+        tag: HEADING_ELEMENTS.join(','),
+        getAttrs(node: string | HTMLElement) {
+          if (!(node instanceof HTMLHeadingElement)) {
+            return false;
+          }
+          const attrs = {
+            level: getHeadingLevel(node),
+            indentationLevel: optionMapOr(
+              0,
+              parseInt,
+              node.dataset['indentationLevel'],
+            ),
+            alignment: getAlignment(node),
+          };
+          return attrs;
+        },
       },
     ],
     toDOM(node: PNode) {
@@ -77,27 +96,15 @@ export const headingWithConfig: (config?: Config) => SayNodeSpec = ({
         'data-indentation-level': indentationLevel as number,
         style,
       };
-      if (rdfaAware) {
-        return renderRdfaAware({
-          tag: `h${(level as number).toString()}`,
-          renderable: node,
-          attrs: {
-            ...baseAttrs,
-            class: `say-editable ${getClassnamesFromNode(node)}`,
-          },
-          content: 0,
-        });
-      } else {
-        return [
-          `h${(level as number).toString()}`,
-          {
-            ...baseAttrs,
-            ...node.attrs,
-            class: getClassnamesFromNode(node),
-          },
-          0,
-        ];
-      }
+      return [
+        `h${(level as number).toString()}`,
+        {
+          ...baseAttrs,
+          ...node.attrs,
+          class: getClassnamesFromNode(node),
+        },
+        0,
+      ];
     },
   };
 };
