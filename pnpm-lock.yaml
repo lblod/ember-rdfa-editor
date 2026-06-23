@@ -241,8 +241,8 @@ catalogs:
       specifier: ^2.3.1
       version: 2.3.1
     dompurify:
-      specifier: 3.2.4
-      version: 3.2.4
+      specifier: 3.4.0
+      version: 3.4.0
     ember-basic-dropdown:
       specifier: ^8.11.0
       version: 8.11.0
@@ -645,7 +645,7 @@ importers:
         version: 2.3.1(@babel/core@7.28.6)
       dompurify:
         specifier: 'catalog:'
-        version: 3.2.4
+        version: 3.4.0
       ember-cli-babel:
         specifier: 'catalog:'
         version: 8.2.0(@babel/core@7.28.6)
@@ -1088,7 +1088,7 @@ importers:
         version: 2.3.1(@babel/core@7.28.6)
       dompurify:
         specifier: 'catalog:'
-        version: 3.2.4
+        version: 3.4.0
       ember-auto-import:
         specifier: ^2.12.0
         version: 2.12.0(@glint/template@1.7.3)(webpack@5.101.3)
@@ -5057,8 +5057,8 @@ packages:
   dom-element-descriptors@0.5.1:
     resolution: {integrity: sha512-DLayMRQ+yJaziF4JJX1FMjwjdr7wdTr1y9XvZ+NfHELfOMcYDnCHneAYXAS4FT1gLILh4V0juMZohhH1N5FsoQ==}
 
-  dompurify@3.2.4:
-    resolution: {integrity: sha512-ysFSFEDVduQpyhzAob/kkuJjf5zWkZD8/A9ywSp1byueyuCfHamrCBa14/Oc2iiB0e51B+NpxSl5gmzn+Ms/mg==}
+  dompurify@3.4.0:
+    resolution: {integrity: sha512-nolgK9JcaUXMSmW+j1yaSvaEaoXYHwWyGJlkoCTghc97KgGDDSnpoU/PlEnw63Ah+TGKFOyY+X5LnxaWbCSfXg==}
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
@@ -14320,7 +14320,7 @@ snapshots:
 
   dom-element-descriptors@0.5.1: {}
 
-  dompurify@3.2.4:
+  dompurify@3.4.0:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
