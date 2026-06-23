@@ -44,6 +44,10 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
         default: undefined,
         editable: true,
       },
+      placeholder: {
+        default: undefined,
+        editable: true,
+      },
     },
     definingAsContext: true,
     editable: rdfaAware,
