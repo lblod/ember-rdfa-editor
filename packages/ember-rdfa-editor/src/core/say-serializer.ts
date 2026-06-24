@@ -209,8 +209,10 @@ export default class SaySerializer extends DOMSerializer {
         schema.nodes,
         toStateGenerator(editorOrStateGenerator),
       );
+      // We need to lie in this typing, as the type of DOMOutputSpec changed to not include strings, they solve by misstyping the return of this function so we kinda have to do the same
+      // https://code.haverbeke.berlin/prosemirror/prosemirror-model/src/commit/fd2dc5268d8dbb4b9087c136cff5f8cf4c789139/src/to_dom.ts#L142
       if (!result['text'])
-        result['text'] = (node: PNode) => node.text as string;
+        result['text'] = (node: PNode) => node.text as unknown as DOMOutputSpec;
       return result;
     } else {
       return super.nodesFromSchema(schema);
