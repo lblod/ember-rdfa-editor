@@ -144,12 +144,9 @@ export default [
       // Remove leftover build artifacts when starting a new build.
       addon.clean(),
 
-      // Copy Readme and License into published package
+      // Copy License into published package
       copy({
-        targets: [
-          { src: '../../README.md', dest: '.' },
-          { src: '../../LICENSE.md', dest: '.' },
-        ],
+        targets: [{ src: '../../LICENSE.md', dest: '.' }],
       }),
     ],
   },
