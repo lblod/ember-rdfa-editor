@@ -1,2 +1,2 @@
-# @lblod/ember-rdfa-editor
+# @lblod/say-ar-design-plugin
 
