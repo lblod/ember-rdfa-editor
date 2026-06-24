@@ -1,5 +1,11 @@
 # @lblod/say-roadsign-regulation-plugin
 
+## 1.0.1
+
+### Patch Changes
+
+- [`0e8e292`](https://github.com/lblod/ember-rdfa-editor/commit/0e8e2920e2e13b8494951d0af3a4904af11ea3ac) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix build script to ensure corepack is installed for release
+
 ## 1.0.0
 
 ### Major Changes

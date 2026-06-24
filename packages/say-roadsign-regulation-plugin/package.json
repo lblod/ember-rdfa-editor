@@ -1,6 +1,6 @@
 {
   "name": "@lblod/say-roadsign-regulation-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Say Editor plugin as part of the LBLOD project",
   "keywords": [
     "ember-addon"
