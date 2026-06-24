@@ -61,7 +61,7 @@
     "@glint/template": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
     "@lblod/ember-rdfa-editor": "workspace:*",
-    "@lblod/ember-rdfa-editor-lblod-plugins": "37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f",
+    "@lblod/ember-rdfa-editor-lblod-plugins": "37.3.0",
     "@lblod/say-roadsign-regulation-plugin": "workspace:*",
     "@modyfi/vite-plugin-yaml": "catalog:",
     "@playwright/test": "catalog:",

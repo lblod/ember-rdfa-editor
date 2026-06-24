@@ -1202,8 +1202,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/ember-rdfa-editor
       '@lblod/ember-rdfa-editor-lblod-plugins':
-        specifier: 37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f
-        version: 37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f(8d4e09256f992fec6d52153d7a916e90)
+        specifier: 37.3.0
+        version: 37.3.0(8d4e09256f992fec6d52153d7a916e90)
       '@lblod/say-roadsign-regulation-plugin':
         specifier: workspace:*
         version: link:../packages/say-roadsign-regulation-plugin
@@ -3151,8 +3151,8 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@lblod/ember-rdfa-editor-lblod-plugins@37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f':
-    resolution: {integrity: sha512-eFKFVh3+bB8mHr/l5LmTIlUvy9ar8dqEgnyr3GttNXB4zgBoGAg1OHtknLFH2DSAwdxEAWrC/PAIaAeWh2yuvw==}
+  '@lblod/ember-rdfa-editor-lblod-plugins@37.3.0':
+    resolution: {integrity: sha512-HEsFuUIDorIMhnY2aFUpEo+VQDHL+5hmZGQT65EVZv0Y02FwGcGEd6yc2B8LNfxKdaHuIqegUf1PJuCib8MFzA==}
     engines: {node: '>= 18'}
     peerDependencies:
       '@appuniversum/ember-appuniversum': ^3.12.0
@@ -13586,7 +13586,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@lblod/ember-rdfa-editor-lblod-plugins@37.2.1-dev.fe38cae7404ec728921e5296ab029df866b3690f(8d4e09256f992fec6d52153d7a916e90)':
+  '@lblod/ember-rdfa-editor-lblod-plugins@37.3.0(8d4e09256f992fec6d52153d7a916e90)':
     dependencies:
       '@appuniversum/ember-appuniversum': 3.15.1(@ember/test-helpers@5.4.1(@babel/core@7.28.6)(@glint/template@1.7.3))(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.3)(ember-basic-dropdown@8.11.0(@babel/core@7.28.6)(@ember/string@4.0.1)(@ember/test-helpers@5.4.1(@babel/core@7.28.6)(@glint/template@1.7.3))(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.3)(ember-source@6.7.0(@glimmer/component@1.1.2(@babel/core@7.28.6))(rsvp@4.8.5)))(ember-source@6.7.0(@glimmer/component@1.1.2(@babel/core@7.28.6))(rsvp@4.8.5))(tracked-built-ins@4.1.0(@babel/core@7.28.6))(webpack@5.101.3)
       '@babel/core': 7.28.6
