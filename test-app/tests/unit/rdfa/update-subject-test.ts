@@ -11,7 +11,7 @@ import {
   updateSubject,
   type UpdateSubjectArgs,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info/utils';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import type { FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
 const { doc, block_rdfa, paragraph } = builders(SAMPLE_SCHEMA);

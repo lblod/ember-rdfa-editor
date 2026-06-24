@@ -9,7 +9,7 @@ import {
 } from 'prosemirror-state';
 import { getHistoryStateId } from 'prosemirror-history';
 import { SayStore } from '#root/utils/_private/datastore/say-store.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { shallowEqual } from '#root/utils/_private/object-utils.ts';
 import { datastoreKey } from '#root/plugins/datastore/index.ts';
 import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';

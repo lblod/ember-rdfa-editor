@@ -22,6 +22,9 @@ export default class ApplicationRoute extends Route {
 
   private async loadTranslations(locale: 'nl-be' | 'en-us') {
     let translations;
+    let pluginTrans;
+    // TODO this is unscalable. We should move to the ember-intl vite plugin.
+    let more;
     switch (locale) {
       case 'nl-be':
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -29,6 +32,20 @@ export default class ApplicationRoute extends Route {
           await import(
             // @ts-expect-error we don't have types for these files
             '@lblod/ember-rdfa-editor/translations/nl-be.yaml'
+          )
+        ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        pluginTrans = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/ember-rdfa-editor-lblod-plugins/translations/nl-BE.yaml'
+          )
+        ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        more = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/say-roadsign-regulation-plugin/translations/nl-be.yaml'
           )
         ).default;
         break;
@@ -40,9 +57,27 @@ export default class ApplicationRoute extends Route {
             '@lblod/ember-rdfa-editor/translations/en-us.yaml'
           )
         ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        pluginTrans = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/ember-rdfa-editor-lblod-plugins/translations/en-US.yaml'
+          )
+        ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        more = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/say-roadsign-regulation-plugin/translations/en-us.yaml'
+          )
+        ).default;
         break;
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.intl.addTranslations(locale, translations);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    this.intl.addTranslations(locale, pluginTrans);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    this.intl.addTranslations(locale, more);
   }
 }

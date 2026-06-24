@@ -2,7 +2,7 @@ import { EditorState, type Extension } from '@codemirror/state';
 import { registerDestructor } from '@ember/destroyable';
 import type Owner from '@ember/owner';
 import ArrayUtils from '#root/utils/_private/array-utils.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { EditorView, basicSetup } from 'codemirror';
 import { type ArgsFor, type NamedArgs } from 'ember-modifier';
 import Modifier from 'ember-modifier';

@@ -11,7 +11,7 @@ import { LiteralNodeTerm } from './prosemirror-terms/literal-node.ts';
 import { ResourceNodeTerm } from './prosemirror-terms/resource-node.ts';
 import { ContentLiteralTerm } from './prosemirror-terms/content-literal.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '#root/utils/option.ts';
 import { SayQuad } from './quad.ts';
 
 // type CreateNodeArgs =
@@ -116,6 +116,8 @@ export class SayDataFactory<
     return new ContentLiteralTerm(languageOrDataType);
   }
 
+  // @ts-expect-error the return type here doesn't actually match the parent class as it includes
+  // more possibilities
   public fromTerm<T extends WithoutEquals<SayTerm>>(original: T): SayTerm {
     switch (original.termType) {
       case 'NamedNode':

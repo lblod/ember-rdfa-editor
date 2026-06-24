@@ -16,7 +16,7 @@ import {
 } from '#root/utils/_private/logging-utils.ts';
 import { DOMSerializer, MarkType } from 'prosemirror-model';
 import { isElement, tagName } from '#root/utils/_private/dom-helpers.ts';
-import { type Option, unwrap } from '#root/utils/_private/option.ts';
+import { type Option, unwrap } from '#root/utils/option.ts';
 import ArrayUtils from '#root/utils/_private/array-utils.ts';
 import type { Mark } from 'prosemirror-model';
 import { ProsePlugin, type PNode } from '#root/prosemirror-aliases.ts';

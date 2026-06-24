@@ -40,7 +40,7 @@ import type {
   TermOption,
 } from '../types.ts';
 import { LANG_STRING } from '#root/utils/_private/constants.ts';
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import { modifier } from 'ember-modifier';
 
 function truthy(obj: unknown) {
