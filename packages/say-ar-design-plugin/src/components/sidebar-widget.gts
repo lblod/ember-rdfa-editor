@@ -14,7 +14,7 @@ import type {
   ProcessDocumentHeadlessly,
 } from '../plugin/types.ts';
 
-type Sig = {
+export type ArDesignSidebarWidgetSig = {
   Args: {
     controller: SayController;
     designQuery: ArDesignQuery;
@@ -23,7 +23,7 @@ type Sig = {
   Element: HTMLLIElement;
 };
 
-export default class ArDesignSidebarWidget extends Component<Sig> {
+export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidgetSig> {
   @tracked modalOpen = false;
   @tracked articles: ArticlePosition[] = [];
   openModal = () => {
