@@ -1,12 +1,9 @@
 import type { Command } from 'prosemirror-state';
-import {
-  getPathFromRoot,
-  isTextNode,
-} from '#root/utils/_private/dom-helpers.ts';
+import { isTextNode } from '#root/utils/_private/dom-helpers.ts';
 import { DOMParser as ProseParser, Fragment, Mark } from 'prosemirror-model';
 import { normalToPreWrapWhiteSpace } from '#root/utils/_private/whitespace-collapsing.ts';
-import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import { PNode } from '#root/prosemirror-aliases.ts';
+import { preProcessInPlace } from '#root/core/rdfa/preprocess-html.ts';
 
 export function insertHtml(
   html: Node | string,
@@ -14,7 +11,6 @@ export function insertHtml(
   to: number,
   marks?: Mark[],
   preserveWhitespace = false,
-  shouldPreprocessRdfa = false,
 ): Command {
   return function (state, dispatch, view) {
     if (dispatch) {
@@ -28,12 +24,7 @@ export function insertHtml(
       if (!preserveWhitespace) {
         cleanUpNode(htmlNode);
       }
-      if (shouldPreprocessRdfa) {
-        preprocessRDFa(
-          'body' in htmlNode ? htmlNode.body : htmlNode,
-          view ? getPathFromRoot(view.dom, false) : [],
-        );
-      }
+      preProcessInPlace(htmlNode);
       let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {
         preserveWhitespace,
       }).content;

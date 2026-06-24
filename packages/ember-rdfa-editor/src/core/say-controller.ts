@@ -8,10 +8,7 @@ import {
   Transaction,
 } from 'prosemirror-state';
 import { getHistoryStateId } from 'prosemirror-history';
-import { SayStore } from '#root/utils/_private/datastore/say-store.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
 import { shallowEqual } from '#root/utils/_private/object-utils.ts';
-import { datastoreKey } from '#root/plugins/datastore/index.ts';
 import { selectionHasMarkEverywhere } from '#root/utils/_private/mark-utils.ts';
 import SayView, { type SetHtmlOptions } from '#root/core/say-view.ts';
 import type SayEditor from '#root/core/say-editor.ts';
@@ -27,11 +24,6 @@ export default class SayController {
 
   constructor(pm: SayEditor) {
     this.editor = pm;
-  }
-
-  get externalContextStore(): SayStore {
-    return unwrap(datastoreKey.getState(this.editor.mainView.state))
-      .contextStore;
   }
 
   get mainEditorView() {
@@ -183,10 +175,6 @@ export default class SayController {
     if (result) {
       view.dispatch(result);
     }
-  }
-
-  get datastore(): SayStore {
-    return unwrap(datastoreKey.getState(this.mainEditorState)).datastore();
   }
 
   get schema(): Schema {

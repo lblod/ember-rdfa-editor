@@ -1,7 +1,24 @@
 import { N3StoreWrapper } from '#root/utils/_private/datastore/n3-store-wrapper.ts';
 import { isElement, isTextNode } from '#root/utils/_private/dom-helpers.ts';
-import type { RdfaParseConfig } from '#root/utils/_private/rdfa-parser/rdfa-parser.ts';
 
+export interface RdfaParseConfig<N> {
+  root: N;
+
+  parseRoot?: boolean;
+
+  textContent(this: void, node: N): string;
+
+  isText(this: void, node: N): boolean;
+
+  children(this: void, node: N): Iterable<N>;
+
+  tag(this: void, node: N): string;
+
+  attributes(this: void, node: N): Record<string, string>;
+
+  baseIRI: string;
+  pathFromDomRoot?: Node[];
+}
 import { RdfaParser } from 'rdfa-streaming-parser';
 
 export function parseRdfa(config: RdfaParseConfig<Node>) {

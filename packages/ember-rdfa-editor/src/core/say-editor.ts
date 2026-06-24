@@ -1,11 +1,7 @@
 import { EditorState, Plugin } from 'prosemirror-state';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
-import {
-  getPathFromRoot,
-  isElement,
-  tagName,
-} from '#root/utils/_private/dom-helpers.ts';
+import { getPathFromRoot } from '#root/utils/_private/dom-helpers.ts';
 
 import { v4 as uuidv4 } from 'uuid';
 import { keymap } from 'prosemirror-keymap';
@@ -13,10 +9,7 @@ import { history } from 'prosemirror-history';
 import { baseKeymap, type KeymapOptions } from '#root/core/keymap.ts';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { createLogger, type Logger } from '../utils/_private/logging-utils.ts';
-import { ReferenceManager } from '#root/utils/_private/reference-manager.ts';
-import { datastore, isElementPNode } from '#root/plugins/datastore/index.ts';
 
-import type { DatastoreResolvedPNode } from '#root/plugins/datastore/datastore-node-types.ts';
 import { tracked } from 'tracked-built-ins';
 import recreateUuidsOnPaste, {
   recreateUuidsOnPasteKey,
@@ -112,7 +105,6 @@ export default class SayEditor {
       );
 
       pluginConf = [
-        datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
         knowledgeBasePlugin({
           pathFromRoot: this.pathFromRoot,
           baseIRI,
@@ -188,35 +180,5 @@ export default class SayEditor {
 
   get htmlContent(): string {
     return this.mainView.htmlContent;
-  }
-}
-
-export class ProseReferenceManager extends ReferenceManager<
-  DatastoreResolvedPNode,
-  DatastoreResolvedPNode
-> {
-  constructor() {
-    super(
-      (node: DatastoreResolvedPNode) => node,
-      (bundle: DatastoreResolvedPNode) => {
-        if (isElementPNode(bundle)) {
-          const { from, to, node } = bundle;
-          const name = node?.type.name || '';
-          const attrs = JSON.stringify(node?.attrs);
-          return `${from} - ${to} - ${name} - ${attrs}`;
-        } else {
-          const { from, to, domNode } = bundle;
-          let domNodeTag = '';
-          let domNodeAttrs = '';
-          if (domNode) {
-            domNodeTag = tagName(domNode);
-            domNodeAttrs = isElement(domNode)
-              ? JSON.stringify(domNode.attributes)
-              : '';
-          }
-          return `${from} - ${to} - ${domNodeTag} - ${domNodeAttrs}`;
-        }
-      },
-    );
   }
 }
