@@ -323,14 +323,18 @@ export default class RoadsignsModal extends Component<Signature> {
       temporal: boolean,
       position?: number,
     ) => {
-      if (!this.decisionLocation) {
+      const decisionContext = this.args.options.decisionContext;
+      const decisionUri =
+        decisionContext?.decisionUri ??
+        (this.decisionLocation?.node.attrs['subject'] as string);
+      if (!decisionUri) {
+        console.warn(
+          'No decision URI available, unable to insert roadsign regulation',
+        );
         return;
       }
       const abortController = new AbortController();
       try {
-        const decisionUri = this.decisionLocation.node.attrs[
-          'subject'
-        ] as string;
         const conceptTemplate = (
           await queryMobilityTemplates(this.endpoint, {
             measureConceptUri: concept.uri,
@@ -352,6 +356,11 @@ export default class RoadsignsModal extends Component<Signature> {
         );
         this.controller.withTransaction(
           () => {
+            const insertLocationArgs:
+              | { position?: number; insertFreely: false }
+              | { insertFreely: true } = decisionContext
+              ? { insertFreely: true }
+              : { insertFreely: false, position };
             return insertMeasure({
               measureConcept: concept,
               variables: variableInstances,
@@ -360,7 +369,7 @@ export default class RoadsignsModal extends Component<Signature> {
               decisionUri,
               zonality,
               temporal,
-              position,
+              ...insertLocationArgs,
             })(this.controller.mainEditorState).transaction;
           },
           { view: this.controller.mainEditorView },

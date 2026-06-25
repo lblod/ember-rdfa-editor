@@ -13,16 +13,7 @@ import { not } from 'ember-truth-helpers';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
 import { AddIcon } from '@appuniversum/ember-appuniversum/components/icons/add';
-
-const ACCEPTED_TYPES = [
-  'https://data.vlaanderen.be/id/concept/BesluitType/4d8f678a-6fa4-4d5f-a2a1-80974e43bf34',
-  'https://data.vlaanderen.be/id/concept/BesluitType/7d95fd2e-3cc9-4a4c-a58e-0fbc408c2f9b',
-  'https://data.vlaanderen.be/id/concept/BesluitType/3bba9f10-faff-49a6-acaa-85af7f2199a3',
-  'https://data.vlaanderen.be/id/concept/BesluitType/0d1278af-b69e-4152-a418-ec5cfd1c7d0b',
-  'https://data.vlaanderen.be/id/concept/BesluitType/e8afe7c5-9640-4db8-8f74-3f023bec3241',
-  'https://data.vlaanderen.be/id/concept/BesluitType/256bd04a-b74b-4f2a-8f5d-14dda4765af9',
-  'https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a',
-];
+import { ROADSIGN_REGULATION_DECISION_TYPES } from '../plugin/constants.ts';
 
 type Signature = {
   Args: {
@@ -52,7 +43,11 @@ export default class RoadsingRegulationCard extends Component<Signature> {
   get showCard() {
     const decisionContext = this.args.options.decisionContext;
     let decisionTypes = [];
-    if (decisionContext && decisionContext.decisionType) {
+    if (decisionContext) {
+      if (!decisionContext.decisionType) {
+        // No type for passed decision, so assume it's valid
+        return true;
+      }
       decisionTypes = [decisionContext.decisionType];
     } else {
       const decisionRange = getCurrentBesluitRange(this.controller);
@@ -70,7 +65,7 @@ export default class RoadsingRegulationCard extends Component<Signature> {
     }
 
     const decisionHasAcceptedType = decisionTypes.some((type) =>
-      ACCEPTED_TYPES.includes(type),
+      ROADSIGN_REGULATION_DECISION_TYPES.includes(type),
     );
     return decisionHasAcceptedType;
   }
