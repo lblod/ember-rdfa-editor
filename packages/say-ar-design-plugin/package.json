@@ -1,6 +1,6 @@
 {
-  "name": "@lblod/say-roadsign-regulation-plugin",
-  "version": "1.0.1",
+  "name": "@lblod/say-ar-design-plugin",
+  "version": "1.0.0",
   "description": "Say Editor plugin as part of the LBLOD project",
   "keywords": [
     "ember-addon"
@@ -23,7 +23,7 @@
     },
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
-    "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
+    "./say-ar-design-plugin.scss": "./say-ar-design-plugin.scss",
     "./*": {
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
@@ -54,7 +54,7 @@
     "dist",
     "translations",
     "_index.scss",
-    "say-roadsign-regulation-plugin.scss"
+    "say-ar-design-plugin.scss"
   ],
   "scripts": {
     "build": "rollup --config",
@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@ember/optional-features": "catalog:",
+    "@ember/render-modifiers": "^3.0.0",
     "@embroider/addon-shim": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
     "decorator-transforms": "catalog:",
@@ -93,6 +94,7 @@
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
     "@babel/runtime": "catalog:",
+    "@ember-data-types/model": "^5.8.2",
     "@embroider/addon-dev": "catalog:",
     "@embroider/core": "catalog:",
     "@embroider/macros": "catalog:",
@@ -102,6 +104,7 @@
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
     "@lblod/ember-rdfa-editor": "workspace:*",
+    "@lblod/say-roadsign-regulation-plugin": "workspace:*",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
     "@rollup/plugin-inject": "catalog:",
@@ -109,6 +112,9 @@
     "@rollup/plugin-node-resolve": "catalog:",
     "@tsconfig/ember": "catalog:",
     "@types/uuid": "catalog:",
+    "@warp-drive-types/core-types": "^5.8.2",
+    "@warp-drive/core": "^5.8.2",
+    "@warp-drive/legacy": "^5.8.2",
     "autoprefixer": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "concurrently": "catalog:",
@@ -148,6 +154,7 @@
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
     "@lblod/ember-rdfa-editor": "^13.11.1",
+    "@lblod/say-roadsign-regulation-plugin": "1.0.1",
     "ember-basic-dropdown": "^8.0.0",
     "ember-concurrency": "^4.0.2 || ^5.0.0",
     "ember-intl": "^6.4.0 || ^7.0.0",
@@ -169,13 +176,13 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./components/expanded-measure.js": "./dist/_app_/components/expanded-measure.js",
-      "./components/measure-preview.js": "./dist/_app_/components/measure-preview.js",
-      "./components/pagination-view.js": "./dist/_app_/components/pagination-view.js",
-      "./components/roadsign-regulation-card.js": "./dist/_app_/components/roadsign-regulation-card.js",
-      "./components/roadsigns-modal.js": "./dist/_app_/components/roadsigns-modal.js",
-      "./components/roadsigns-table.js": "./dist/_app_/components/roadsigns-table.js",
-      "./helpers/removeZFromLabel.js": "./dist/_app_/helpers/removeZFromLabel.js"
+      "./components/insert-controls.js": "./dist/_app_/components/insert-controls.js",
+      "./components/overview.js": "./dist/_app_/components/overview.js",
+      "./components/preview.js": "./dist/_app_/components/preview.js",
+      "./components/reactive-table.js": "./dist/_app_/components/reactive-table.js",
+      "./components/sidebar-widget.js": "./dist/_app_/components/sidebar-widget.js",
+      "./components/widget-contents.js": "./dist/_app_/components/widget-contents.js",
+      "./services/ar-importer.js": "./dist/_app_/services/ar-importer.js"
     }
   },
   "typedocOptions": {

@@ -1,0 +1,41 @@
+ar-importer:
+  sidebar-widget:
+    label: "'AR'-design"
+  modal:
+    title: "Insert 'AR'-design"
+  overview:
+    filters:
+      title: Filters
+      name:
+        label: Name
+      signal-code:
+        label: Traffic signal code
+      address:
+        label: Address
+      reset: Reset filters
+    table:
+      headers:
+        name: Name
+        date: Last modified
+        status: Usage status
+      actions:
+        select: Select
+      statuses:
+        used: Used
+        unused: Not yet used
+      no-data: No designs found
+  controls:
+    insert: Insert
+    first: Before the first article
+    last: After the last article
+    after-article-x: After article {articleNumber}
+    select-position: Choose insertion point
+  preview:
+    return-to-overview: Return to overview
+    only-existing-label: existing
+    only-existing: This design only includes existing Traffic Signals.
+  message:
+    error-no-decision: Please put the cursor inside a decision node
+    error-processing-design: Error when processing signage plan
+    warning-unused-signal-concept: Measure {measure} includes the signal {signal} but it is not used in this design
+    warning-un-included-signal-concept: Signal {signal} is not included in the measure {measure} but it is used in this design

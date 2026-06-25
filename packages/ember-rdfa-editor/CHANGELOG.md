@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.11.1
+
+### Patch Changes
+
+- [#1384](https://github.com/lblod/ember-rdfa-editor/pull/1384) [`5046006`](https://github.com/lblod/ember-rdfa-editor/commit/5046006320d7575da625ce5b7417e1794a193a96) Thanks [@piemonkey](https://github.com/piemonkey)! - Extract detailed-date lblod util from GN
+
+- [#1386](https://github.com/lblod/ember-rdfa-editor/pull/1386) [`27c1a3b`](https://github.com/lblod/ember-rdfa-editor/commit/27c1a3baa589db7044786f285f364d7014c486bf) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Bump prosemirror model to 12.5.9
+
 ## 13.11.0
 
 ### Minor Changes
