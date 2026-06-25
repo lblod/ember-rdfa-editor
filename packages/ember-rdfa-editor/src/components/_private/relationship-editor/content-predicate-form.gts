@@ -13,7 +13,7 @@ import { trackedReset } from 'tracked-toolbox';
 import type { InferType } from 'yup';
 import * as yup from 'yup';
 import type { OptionGeneratorConfig } from './types.ts';
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import PowerSelectWithCreate from 'ember-power-select-with-create/components/power-select-with-create';
 
 function truthy(obj: unknown) {

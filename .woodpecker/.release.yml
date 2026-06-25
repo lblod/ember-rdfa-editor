@@ -2,7 +2,7 @@ steps:
   install:
     image: node:24-slim
     commands:
-      - corepack enable
+      - npm config set ignore-scripts true
       - npm i -g corepack@0.35
       - pnpm i --frozen-lockfile
   release-next:
@@ -12,8 +12,7 @@ steps:
       - npm i -g corepack@0.35
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - pnpm i --frozen-lockfile
-      - pnpm build
+      - pnpm --filter @lblod/ember-rdfa-editor build
       - pnpm publish packages/ember-rdfa-editor --access public --tag next --no-git-checks
     environment:
       NPM_TOKEN:
@@ -28,8 +27,7 @@ steps:
       - npm i -g corepack@0.35
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - pnpm i --frozen-lockfile
-      - pnpm build
+      - pnpm --filter @lblod/ember-rdfa-editor build
       - pnpm publish packages/ember-rdfa-editor --access public --tag latest --no-git-checks
     environment:
       NPM_TOKEN:

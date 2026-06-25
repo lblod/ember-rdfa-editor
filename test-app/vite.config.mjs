@@ -7,6 +7,15 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['@lblod/ember-rdfa-editor'],
   },
+  server: {
+    warmup: {
+      clientFiles: [
+        // Start bundling some code before any requests are actually made, since we will need this
+        './app/routes/application.ts',
+        './app/templates/application.gts',
+      ],
+    },
+  },
   plugins: [
     yaml(),
     classicEmberSupport(),

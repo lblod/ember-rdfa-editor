@@ -12,6 +12,11 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
+  /* This very long timeout is to give vite enough time to build the app once the tests start, as
+   * the building process is only triggered by making a request to the dev server. There doesn't
+   * seem to be a way to get playwright to only wait for the first test. Retries don't help us here
+   * as one failure is enough to get a test marked as flaky, which counts as a failure. */
+  timeout: 120000,
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
   /* Run tests in files in parallel */
   fullyParallel: true,

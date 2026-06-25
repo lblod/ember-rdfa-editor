@@ -25,7 +25,7 @@
  * THE SOFTWARE.
  */
 
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { mapPositionFrom } from '#root/utils/rdfa-utils.ts';
 import { Fragment, NodeRange, NodeType, Slice } from 'prosemirror-model';
 import type { Command, Transaction } from 'prosemirror-state';

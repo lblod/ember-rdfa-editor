@@ -1,7 +1,7 @@
 import { PNode } from '#root/prosemirror-aliases.ts';
 import type { Attrs, MarkType, ResolvedPos } from 'prosemirror-model';
 import { SelectionRange, Selection } from 'prosemirror-state';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { shallowEqual } from '#root/utils/_private/object-utils.ts';
 
 /**

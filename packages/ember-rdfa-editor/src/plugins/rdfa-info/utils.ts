@@ -1,5 +1,4 @@
-import { getRdfaId, getSubject, rdfaInfoPluginKey } from './plugin.ts';
-import { EditorState, Selection } from 'prosemirror-state';
+import { EditorState, PluginKey, Selection } from 'prosemirror-state';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { Mapping } from 'prosemirror-transform';
 import type {
@@ -21,8 +20,47 @@ import type {
 import TransformUtils from '#root/utils/_private/transform-utils.ts';
 import type { RemovePropertyArgs } from '#root/commands/rdfa-commands/remove-property.ts';
 import { isRdfaAttrs, type RdfaAttrs } from '#root/core/rdfa-types.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
+import type { RdfaInfo } from './plugin';
+
+export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
+
+// ### Lifted from @lblod/marawa as it was the only part we were still using
+export function isFullUri(uri: string) {
+  return uri.includes('://');
+}
+/**
+ * Returns whether a given URI is prefixed
+ *
+ * @param {string} uri A URI
+ *
+ * @return {boolean} Whether the given URI is prefixed
+ */
+export function isPrefixedUri(uri: string): boolean {
+  if (isFullUri(uri)) {
+    return false;
+  } else if (!uri.includes(':')) {
+    return false;
+  } else {
+    //e.g. 'bar:foo' will be split to  'bar:'
+    const potentialPrefix = uri.split(':')[0] + ':';
+    //see https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Definition (defintion of sheme)
+    //see https://en.wikipedia.org/wiki/CURIE
+    return /^\[?[a-z][a-z|\d|.|+|-]*:$/i.test(potentialPrefix);
+  }
+}
+// ###
+
+export function getRdfaId(node: PNode): string | undefined {
+  return node.attrs['__rdfaId'] as string | undefined;
+}
+
+export function getSubject(node: PNode): string | undefined {
+  return (node.attrs['subject'] ??
+    node.attrs['about'] ??
+    node.attrs['resource']) as string | undefined;
+}
 
 export function getNodeByRdfaId(state: EditorState, rdfaId: string) {
   return rdfaInfoPluginKey.getState(state)?.rdfaIdMapping.get(rdfaId);

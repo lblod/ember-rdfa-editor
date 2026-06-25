@@ -25,7 +25,7 @@ import { validateYup } from 'ember-headless-form-yup';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { get } from '@ember/helper';
 import t from 'ember-intl/helpers/t';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import type {
   ObjectOption,
   OptionGeneratorConfig,

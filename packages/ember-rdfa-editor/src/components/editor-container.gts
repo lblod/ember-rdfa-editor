@@ -4,7 +4,7 @@ import { deprecate } from '@ember/debug';
 import { and, or } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '#root/utils/option.ts';
 import type SayController from '#root/core/say-controller.ts';
 
 type EditorOptions = {

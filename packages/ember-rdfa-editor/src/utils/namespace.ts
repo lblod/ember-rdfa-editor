@@ -5,14 +5,17 @@ import {
 import { isRdfaAttrs, type RdfaAttrs } from '../core/rdfa-types.ts';
 import type { Attrs } from 'prosemirror-model';
 import type { OutgoingTriple } from '../core/rdfa-processor.ts';
-import { unwrap, type Option } from './_private/option.ts';
+import { unwrap, type Option } from './option.ts';
 
-export class Resource {
-  full: string;
-  prefixed: string;
+export class Resource<
+  Full extends string = string,
+  Prefixed extends string = string,
+> {
+  full: Full;
+  prefixed: Prefixed;
   namedNode: SayNamedNode;
 
-  constructor(full: string, prefixed: string) {
+  constructor(full: Full, prefixed: Prefixed) {
     this.full = full;
     this.prefixed = prefixed;
     this.namedNode = sayDataFactory.namedNode(full);
@@ -27,9 +30,12 @@ export class Resource {
   }
 }
 
-export function namespace(uri: string, prefix: string) {
-  return (s: string): Resource => {
-    return new Resource(uri + s, `${prefix}:${s}`);
+export function namespace<
+  Uri extends string = string,
+  Prefix extends string = string,
+>(uri: Uri, prefix: Prefix) {
+  return <Suffix extends string = string>(s: Suffix) => {
+    return new Resource(`${uri}${s}`, `${prefix}:${s}`);
   };
 }
 
@@ -68,12 +74,16 @@ export function hasOutgoingNamedNodeTriple(
   });
 }
 
-export function getOutgoingTriple(rdfaAttrs: Attrs, predicate: Resource) {
-  return (isRdfaAttrs(rdfaAttrs) &&
-    rdfaAttrs.rdfaNodeType === 'resource' &&
-    rdfaAttrs.properties.find((prop) =>
-      predicate.matches(prop.predicate),
-    )) as Option<OutgoingTriple>;
+export function getOutgoingTriple(
+  rdfaAttrs: Attrs,
+  predicate: Resource,
+): Option<OutgoingTriple> {
+  return (
+    (isRdfaAttrs(rdfaAttrs) &&
+      rdfaAttrs.rdfaNodeType === 'resource' &&
+      rdfaAttrs.properties.find((prop) => predicate.matches(prop.predicate))) ||
+    null
+  );
 }
 
 export function getOutgoingTripleList(rdfaAttrs: Attrs, predicate: Resource) {
@@ -99,7 +109,7 @@ export function findChildWithRdfaAttribute(
   attr: string,
   value: Resource,
 ) {
-  return [...element.children].find((child) => {
+  return Array.from(element.children).find((child) => {
     const result = child.getAttribute(attr)?.split(' ');
     return result?.includes(value.full) || result?.includes(value.prefixed);
   });

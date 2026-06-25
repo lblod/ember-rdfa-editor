@@ -20,7 +20,7 @@ import {
   type PredicateSpec,
   type SubjectSpec,
 } from '#root/utils/_private/datastore/term-spec.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import type { RdfaResourceNodeMap, RdfaContentNodeMap } from './node-map.ts';
 import { rdfaContentNodeMap, rdfaResourceNodeMap } from './node-map.ts';
 import { N3StoreWrapper } from './n3-store-wrapper.ts';

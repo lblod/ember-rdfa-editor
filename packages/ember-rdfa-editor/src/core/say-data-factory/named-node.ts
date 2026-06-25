@@ -1,6 +1,6 @@
 import type * as RDF from '@rdfjs/types';
 import type { SayTerm } from './term.ts';
-import type { Option } from '#root/utils/_private/option.ts';
+import type { Option } from '#root/utils/option.ts';
 
 /**
  * A term that contains an IRI.

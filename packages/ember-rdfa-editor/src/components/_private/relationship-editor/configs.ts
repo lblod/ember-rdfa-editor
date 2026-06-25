@@ -6,7 +6,7 @@ import type {
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type SayController from '#root/core/say-controller.ts';
 import { getSubjects } from '#root/plugins/rdfa-info/utils.ts';
-import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/plugin.ts';
+import { rdfaInfoPluginKey } from '#root/plugins/rdfa-info/index.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import SetUtils from '#root/utils/_private/set-utils.ts';
 import type { PNode } from '#root/prosemirror-aliases.ts';
