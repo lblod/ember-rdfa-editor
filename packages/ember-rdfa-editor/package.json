@@ -73,6 +73,10 @@
       "types": "./declarations/plugins/ember-application/index.d.ts",
       "default": "./dist/plugins/ember-application/index.js"
     },
+    "./plugins/empty-block-placeholder": {
+      "types": "./declarations/plugins/empty-block-placeholder/index.d.ts",
+      "default": "./dist/plugins/empty-block-placeholder/index.js"
+    },
     "./plugins/firefox-cursor-fix": {
       "types": "./declarations/plugins/firefox-cursor-fix/index.d.ts",
       "default": "./dist/plugins/firefox-cursor-fix/index.js"

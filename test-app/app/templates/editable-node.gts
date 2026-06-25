@@ -120,6 +120,7 @@ import t from 'ember-intl/helpers/t';
 import { hash } from '@ember/helper';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
+import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,
@@ -290,6 +291,7 @@ export default class extends Component {
     }),
     emberApplication({ application: unwrap(getOwner(this)) }),
     editableNodePlugin(),
+    emptyBlockPlaceholder(),
   ];
 
   @tracked nodeViews = (controller: SayController) => {
