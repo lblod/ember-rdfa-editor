@@ -542,6 +542,73 @@ world
       </div>
     </div>
   </div>`,
+  ARDecision: `
+  <div
+    resource="http://data.lblod.info/id/besluiten/--ref-uuid4-c10209c0-dfba-46fb-80c7-1c6aedf656e9"
+    typeof="besluit:Besluit https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a ext:BesluitNieuweStijl"
+    data-label="Besluit"
+  >
+    <div style="display: none" data-rdfa-container="true">
+      <span
+        property="eli:language"
+        resource="http://publications.europa.eu/resource/authority/language/NLD"
+      />
+    </div>
+    <div data-content-container="true">
+      <div property="eli:title" datatype="xsd:string" data-label="Openbare titel besluit">
+        <h4><span class="mark-highlight-manual">Geef titel besluit op</span></h4>
+      </div>
+      <div property="eli:description" datatype="xsd:string" data-label="Korte openbare beschrijving">
+        <p><span class="mark-highlight-manual">Geef korte beschrijving op</span></p>
+      </div>
+      <br />
+      <div property="besluit:motivering" lang="nl" data-label="Motivering">
+        <p><span class="mark-highlight-manual">geef bestuursorgaan op</span>, </p>
+      <br>
+      <h5>Bevoegdheid</h5>
+      <ul class="bullet-list">
+        <li><span class="mark-highlight-manual">Rechtsgrond die bepaalt dat dit orgaan bevoegd is.</span></li>
+      </ul>
+      <br>
+      <h5>Juridische context</h5>
+      <ul class="bullet-list">
+        <li>decreet <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1029017" property="eli:cites" typeof="eli:LegalExpression">over het lokaal bestuur</a> van 22/12/2017</li>
+        <li>wet <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1009628" property="eli:cites" typeof="eli:LegalExpression">betreffende de politie over het wegverkeer (wegverkeerswet - Wet van 16 maart 1968)</a></li>
+        <li>wegcode - Koninklijk Besluit <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1036242" property="eli:cites" typeof="eli:LegalExpression">van 1 december 1975 houdende algemeen reglement op de politie van het wegverkeer en van het gebruik van de openbare weg.</a></li>
+        <li>code van de wegbeheerder - <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1035575" property="eli:cites" typeof="eli:LegalExpression">ministerieel besluit van 11 oktober 1976 houdende de minimumafmetingen en de bijzondere plaatsingsvoorwaarden van de verkeerstekens</a></li>
+      </ul>
+      <br>
+      <em>specifiek voor aanvullende reglementen op het wegverkeer (= politieverordeningen m.b.t. het wegverkeer voor wat betreft permanente of periodieke verkeerssituaties)</em>
+      <ul class="bullet-list">
+        <li>decreet <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1016816" property="eli:cites" typeof="eli:LegalExpression">betreffende de aanvullende reglementen op het wegverkeer en de plaatsing en bekostiging van de verkeerstekens </a>(16 mei 2008)</li>
+        <li>Besluit van de Vlaamse Regering <a class="annotation" href="https://codex.vlaanderen.be/doc/document/1017729" property="eli:cites" typeof="eli:LegalExpression">betreffende de aanvullende reglementen en de plaatsing en bekostiging van verkeerstekens</a>​ van 23 januari 2009</li>
+        <li><a href="https://codex.vlaanderen.be/doc/document/1035938" property="eli:cites" typeof="eli:LegalExpression">Omzendbrief MOB/2009/01 van 3 april 2009 gemeentelijke aanvullende reglementen op de politie over het wegverkeer</a></li>
+      </ul>
+      <h5>Feitelijke context en argumentatie</h5>
+      <ul class="bullet-list">
+        <li><span class="mark-highlight-manual">Voeg context en argumentatie in</span></li>
+      </ul>
+      </div>
+      <br />
+      <br />
+      <h5>Beslissing</h5>
+      <div property="prov:value" datatype="xsd:string" data-label="Artikels">
+        <div
+          property="eli:has_part"
+          resource="http://data.lblod.info/artikels/--ref-uuid4-68c56ef4-8843-4b7f-a72a-9d0038ff723f"
+          typeof="besluit:Artikel"
+          data-say-is-only-article="true"
+        >
+          <div>
+            Artikel <span property="eli:number" datatype="xsd:string">1</span>
+          </div>
+          <div property="prov:value" datatype="xsd:string">
+            <span class="mark-highlight-manual">Voer inhoud in</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`,
   TableSelection: `
     Before the table​<table class="say-table"><tbody><tr><td>c1​</td><td>c2​</td></tr></tbody></table>​After the table
   `,

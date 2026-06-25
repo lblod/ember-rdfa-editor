@@ -1,6 +1,6 @@
 import type { Command } from 'prosemirror-state';
 
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import { PNode } from '#root/prosemirror-aliases.ts';
 
 export function insertTable(rows: number, columns: number): Command {

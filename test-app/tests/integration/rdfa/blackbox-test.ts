@@ -13,7 +13,7 @@ import {
   SAMPLE_SCHEMA,
 } from 'test-app/tests/helpers/prosemirror';
 import { findNodesBySubject } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
-import { isSome } from '@lblod/ember-rdfa-editor/utils/_private/option';
+import { isSome } from '@lblod/ember-rdfa-editor/utils/option';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 
 module('Integration | RDFa blackbox test ', function () {

@@ -1,5 +1,19 @@
 # @lblod/ember-rdfa-editor
 
+## 13.11.0
+
+### Minor Changes
+
+- [#1383](https://github.com/lblod/ember-rdfa-editor/pull/1383) [`162a346`](https://github.com/lblod/ember-rdfa-editor/commit/162a346ada8d8aecbf1b33ea156c79e0086ab0ad) Thanks [@piemonkey](https://github.com/piemonkey)! - Consolidate some utils and helpers into editor repo instead of the plugins repo
+
+- [#1381](https://github.com/lblod/ember-rdfa-editor/pull/1381) [`7ff95ac`](https://github.com/lblod/ember-rdfa-editor/commit/7ff95accb6f38e93227bdf07b671da571be7d53d) Thanks [@kobemertens](https://github.com/kobemertens)! - Contextual actions: add per-group loading, per-group debounce time, allow groups without label
+
+- [#1383](https://github.com/lblod/ember-rdfa-editor/pull/1383) [`d70df2d`](https://github.com/lblod/ember-rdfa-editor/commit/d70df2ddfa5bcb5341bce28090b15204eeaee641) Thanks [@piemonkey](https://github.com/piemonkey)! - Add sparql-helpers utils, moved from plugins repo
+
+### Patch Changes
+
+- [#1383](https://github.com/lblod/ember-rdfa-editor/pull/1383) [`1ff8c2f`](https://github.com/lblod/ember-rdfa-editor/commit/1ff8c2f169278da532f51defded3a7d07d6f94f4) Thanks [@piemonkey](https://github.com/piemonkey)! - Drop dependency on @lblod/marawa
+
 ## 13.10.2
 
 ### Patch Changes

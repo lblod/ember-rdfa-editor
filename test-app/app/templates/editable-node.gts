@@ -81,7 +81,7 @@ import {
   isSome,
   optionMap,
   unwrap,
-} from '@lblod/ember-rdfa-editor/utils/_private/option';
+} from '@lblod/ember-rdfa-editor/utils/option';
 
 import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';

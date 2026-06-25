@@ -1,8 +1,8 @@
-import { isFullUri, isPrefixedUri } from '@lblod/marawa/rdfa-helpers';
+import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import { Decoration } from 'prosemirror-view';
 import { type CurieOptions, string } from 'yup';
 import { addMethod } from 'yup';
-import { isNone } from './utils/_private/option.ts';
+import { isNone } from './utils/option.ts';
 
 export { keydownHandler, keymap } from 'prosemirror-keymap';
 

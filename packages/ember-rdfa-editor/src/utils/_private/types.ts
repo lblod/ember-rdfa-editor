@@ -1,4 +1,6 @@
-import { PNode } from '#root/prosemirror-aliases.ts';
+import { type Fragment } from 'prosemirror-model';
+import { type PNode } from '#root/prosemirror-aliases.ts';
+import { htmlSafe } from '@ember/template';
 
 export type HtmlTag = keyof HTMLElementTagNameMap;
 
@@ -34,7 +36,7 @@ export function isTextOrElement(
   );
 }
 
-export type ValuesOf<T> = T[keyof T];
+export type ValueOf<T> = T[keyof T];
 
 export type ResolvedPNode = {
   value: PNode;
@@ -42,3 +44,9 @@ export type ResolvedPNode = {
 };
 
 export type Promisable<T> = T | PromiseLike<T>;
+
+export type SafeString = ReturnType<typeof htmlSafe>;
+
+export type AllOrNone<T> = T | { [K in keyof T]?: never };
+
+export type ContentSpec = Fragment | PNode | PNode[];
