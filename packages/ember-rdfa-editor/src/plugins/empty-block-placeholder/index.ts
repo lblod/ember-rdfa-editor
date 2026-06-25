@@ -29,7 +29,7 @@ export function emptyBlockPlaceholder() {
         const emptyRdfaBlocks: {
           node: PNode;
           pos: number;
-          placeholder?: string;
+          placeholder: string;
         }[] = [];
 
         state.doc.descendants((node, pos) => {
@@ -37,17 +37,13 @@ export function emptyBlockPlaceholder() {
             node.type.name === 'block_rdfa' &&
             isNodeEmpty(node) &&
             node.attrs['placeholder'] &&
+            typeof node.attrs['placeholder'] === 'string' &&
             !isSelectionInsideNode(selection, node, pos)
           ) {
-            const placeholder =
-              'placeholder' in node.attrs &&
-              typeof node.attrs['placeholder'] === 'string'
-                ? node.attrs['placeholder']
-                : undefined;
             emptyRdfaBlocks.push({
               node,
               pos,
-              placeholder,
+              placeholder: node.attrs['placeholder'],
             });
             return false;
           }
@@ -58,10 +54,7 @@ export function emptyBlockPlaceholder() {
             const el = document.createElement('span');
             el.classList.add('mark-highlight-manual');
             el.classList.add('say-placeholder');
-            // Unnecessary check but otherwise TS complains
-            if (placeholder) {
-              el.textContent = placeholder;
-            }
+            el.textContent = placeholder;
             el.style.pointerEvents = 'none';
             return el;
           }),
