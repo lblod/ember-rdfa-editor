@@ -397,8 +397,8 @@ catalogs:
       specifier: ^1.2.3
       version: 1.2.3
     prosemirror-model:
-      specifier: ^1.25.4
-      version: 1.25.4
+      specifier: ^1.25.9
+      version: 1.25.9
     prosemirror-schema-basic:
       specifier: ^1.2.4
       version: 1.2.4
@@ -591,7 +591,7 @@ importers:
         version: 6.39.11
       '@curvenote/prosemirror-utils':
         specifier: 'catalog:'
-        version: 1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)
+        version: 1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)
       '@ember/optional-features':
         specifier: 'catalog:'
         version: 2.3.0
@@ -615,7 +615,7 @@ importers:
         version: 2.0.1
       '@say-editor/prosemirror-invisibles':
         specifier: 'catalog:'
-        version: 0.1.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)
+        version: 0.1.1(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)
       '@say-editor/prosemirror-tables':
         specifier: 'catalog:'
         version: 0.3.0
@@ -708,7 +708,7 @@ importers:
         version: 1.2.3
       prosemirror-model:
         specifier: 'catalog:'
-        version: 1.25.4
+        version: 1.25.9
       prosemirror-schema-basic:
         specifier: 'catalog:'
         version: 1.2.4
@@ -1363,7 +1363,7 @@ importers:
         version: 2.29.8(@types/node@20.19.30)
       '@curvenote/prosemirror-utils':
         specifier: 'catalog:'
-        version: 1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)
+        version: 1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)
       '@ember/optional-features':
         specifier: 'catalog:'
         version: 2.3.0
@@ -1420,7 +1420,7 @@ importers:
         version: link:../packages/ember-rdfa-editor
       '@lblod/ember-rdfa-editor-lblod-plugins':
         specifier: 37.3.0
-        version: 37.3.0(5305f2d9362705451968314e50462dcd)
+        version: 37.3.0(8c696582b9022cf46fad9970a9a3e087)
       '@lblod/say-ar-design-plugin':
         specifier: workspace:*
         version: link:../packages/say-ar-design-plugin
@@ -9495,8 +9495,8 @@ packages:
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
 
-  prosemirror-model@1.25.4:
-    resolution: {integrity: sha512-PIM7E43PBxKce8OQeezAs9j4TP+5yDpZVbuurd1h5phUxEKIu+G2a+EUZzIC5nS1mJktDJWzbqS23n1tsAf5QA==}
+  prosemirror-model@1.25.9:
+    resolution: {integrity: sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA==}
 
   prosemirror-schema-basic@1.2.4:
     resolution: {integrity: sha512-ELxP4TlX3yr2v5rM7Sb70SqStq5NvI15c0j9j/gjsrO5vaw+fnnpovCLEGIcpeGfifkuqJwl4fon6b+KdrODYQ==}
@@ -12538,9 +12538,9 @@ snapshots:
     dependencies:
       postcss-selector-parser: 7.1.0
 
-  '@curvenote/prosemirror-utils@1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)':
+  '@curvenote/prosemirror-utils@1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)':
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
 
   '@digitalbazaar/http-client@4.3.0':
@@ -13747,14 +13747,14 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@lblod/ember-rdfa-editor-lblod-plugins@37.3.0(5305f2d9362705451968314e50462dcd)':
+  '@lblod/ember-rdfa-editor-lblod-plugins@37.3.0(8c696582b9022cf46fad9970a9a3e087)':
     dependencies:
       '@appuniversum/ember-appuniversum': 3.15.1(@ember/test-helpers@5.4.1(@babel/core@7.28.6)(@glint/template@1.7.4))(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.4)(ember-basic-dropdown@8.11.0(@babel/core@7.28.6)(@ember/string@4.0.1)(@ember/test-helpers@5.4.1(@babel/core@7.28.6)(@glint/template@1.7.4))(@glimmer/component@1.1.2(@babel/core@7.28.6))(@glint/template@1.7.4)(ember-source@6.7.0(@glimmer/component@1.1.2(@babel/core@7.28.6))(rsvp@4.8.5)))(ember-source@6.7.0(@glimmer/component@1.1.2(@babel/core@7.28.6))(rsvp@4.8.5))(tracked-built-ins@4.1.0(@babel/core@7.28.6))(webpack@5.101.3)
       '@babel/core': 7.28.6
       '@codemirror/lang-html': 6.4.11
       '@codemirror/state': 6.5.4
       '@codemirror/view': 6.39.11
-      '@curvenote/prosemirror-utils': 1.0.5(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)
+      '@curvenote/prosemirror-utils': 1.0.5(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)
       '@ember/string': 4.0.1
       '@embroider/macros': 1.20.4(@glint/template@1.7.4)
       '@lblod/ember-rdfa-editor': link:packages/ember-rdfa-editor
@@ -14463,16 +14463,16 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  '@say-editor/prosemirror-invisibles@0.1.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)':
+  '@say-editor/prosemirror-invisibles@0.1.1(prosemirror-model@1.25.9)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)':
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-view: 1.41.5
 
   '@say-editor/prosemirror-tables@0.3.0':
     dependencies:
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
@@ -21596,7 +21596,7 @@ snapshots:
 
   prosemirror-commands@1.7.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
@@ -21608,7 +21608,7 @@ snapshots:
       jotai: 2.20.0(@babel/core@7.28.6)(@babel/template@7.28.6)(@types/react@19.1.13)(react@19.2.7)
       jsondiffpatch: 0.7.6
       nanoid: 5.1.11
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       react: 19.2.7
       react-dock: 0.8.0(@types/react@19.1.13)(react@19.2.7)
@@ -21642,39 +21642,39 @@ snapshots:
       prosemirror-state: 1.4.4
       w3c-keyname: 2.2.8
 
-  prosemirror-model@1.25.4:
+  prosemirror-model@1.25.9:
     dependencies:
       orderedmap: 2.1.1
 
   prosemirror-schema-basic@1.2.4:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
 
   prosemirror-schema-list@1.5.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
   prosemirror-state@1.4.4:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-transform: 1.11.0
       prosemirror-view: 1.41.5
 
   prosemirror-test-builder@1.1.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.1
 
   prosemirror-transform@1.11.0:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
 
   prosemirror-view@1.41.5:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.9
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
