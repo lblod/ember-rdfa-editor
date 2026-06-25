@@ -1,0 +1,51 @@
+// From https://github.com/Informatievlaanderen/OSLOthema-lokaleBesluiten/blob/feature%2Fbestaande-signalisatie/codelijsten%2Fverkeersbordontwerpstatus.ttl
+export const TRAFFIC_SIGNAL_DESIGN_STATUSES = {
+  IN_VOORONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/13fc4b70-2d88-4d11-a512-b36bce2d0fbf',
+  VERWIJDERING_GEWEIGERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/1a902ca6-4611-46a8-be8a-13e997820ce0',
+  BESTAAND_GEWEIGERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/1b20f33b-c04a-4e3b-b608-9991c3142d65',
+  BESTAAND_IN_VOORONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/1c6b6dae-8ffc-4a1b-97a9-b6f2cd943cf8',
+  VERWIJDERING_UITGEVOERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/2826e311-ce64-417c-be93-29a2516e81e1',
+  ONTWERP_TER_GOEDKEURING:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/3447a138-87d6-4745-b081-2faf02aed3f1',
+  GOEDGEKEURD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/3e869c24-2777-4e95-87a3-f97cd2f7289a',
+  BESTAAND_AFGESLOTEN:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/3f4fc0f2-d039-491c-9cdf-a1db31860d05',
+  IN_ONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
+  GEWEIGERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/49e1818b-af6d-438c-9d90-886d8eb372fb',
+  BESTAAND_UITGEVOERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/4ed63f9b-f195-46f0-8d17-d3c682e771f6',
+  BESTAAND_TER_GOEDKEURING:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/56bf79cd-0b9d-4658-a394-5e56077729b0',
+  VERWIJDERING_TER_GOEDKEURING:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/5eb131f1-06f6-473d-b18a-9ab6b4470810',
+  AFGESLOTEN:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/64e54352-de4e-4a5b-9322-79c5f8010620',
+  BESTAAND_GOEDGEKEURD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/7bf5dad3-244a-4cc3-9a2b-b96ac656f4b6',
+  VERWIJDERING_IN_ONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/9b0b6915-1ad5-4eff-90f0-0486a3562493',
+  VERWIJDERING_IN_VOORONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/b42c1cf8-0cb4-4faa-a740-f073a3ed3a0c',
+  VERWIJDERING_AFGESLOTEN:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/c6bcbe00-54b8-45cd-a52a-29228db371dd',
+  VERWIJDERING_GOEDGEKEURD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/ca7a6ea2-3a07-4de3-87d5-0f9295fbf0bd',
+  BESTAAND_IN_ONTWERP:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/e3b880ac-8186-4c0f-9ab3-439cab4ec130',
+  UITGEVOERD:
+    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/fc1036e7-703b-4290-b732-49abb39d0588',
+};
+
+export const TRAFFIC_SIGNAL_EXISTING_STATUSES = [
+  TRAFFIC_SIGNAL_DESIGN_STATUSES.BESTAAND_UITGEVOERD,
+  TRAFFIC_SIGNAL_DESIGN_STATUSES.VERWIJDERING_UITGEVOERD,
+  TRAFFIC_SIGNAL_DESIGN_STATUSES.UITGEVOERD,
+];

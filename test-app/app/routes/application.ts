@@ -24,7 +24,8 @@ export default class ApplicationRoute extends Route {
     let translations;
     let pluginTrans;
     // TODO this is unscalable. We should move to the ember-intl vite plugin.
-    let more;
+    let rr;
+    let ar;
     switch (locale) {
       case 'nl-be':
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -42,10 +43,17 @@ export default class ApplicationRoute extends Route {
           )
         ).default;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        more = (
+        rr = (
           await import(
             // @ts-expect-error we don't have types for these files
             '@lblod/say-roadsign-regulation-plugin/translations/nl-be.yaml'
+          )
+        ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        ar = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/say-ar-design-plugin/translations/nl-be.yaml'
           )
         ).default;
         break;
@@ -65,10 +73,17 @@ export default class ApplicationRoute extends Route {
           )
         ).default;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        more = (
+        rr = (
           await import(
             // @ts-expect-error we don't have types for these files
             '@lblod/say-roadsign-regulation-plugin/translations/en-us.yaml'
+          )
+        ).default;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        ar = (
+          await import(
+            // @ts-expect-error we don't have types for these files
+            '@lblod/say-ar-design-plugin/translations/en-us.yaml'
           )
         ).default;
         break;
@@ -78,6 +93,8 @@ export default class ApplicationRoute extends Route {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.intl.addTranslations(locale, pluginTrans);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    this.intl.addTranslations(locale, more);
+    this.intl.addTranslations(locale, rr);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    this.intl.addTranslations(locale, ar);
   }
 }
