@@ -33,7 +33,7 @@ import type { EmberNodeArgs } from '#root/utils/ember-node.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { v4 as uuid } from 'uuid';
 import { redo, undo } from '#root/plugins/history/index.ts';
-import { isSome, unwrap } from '#root/utils/_private/option.ts';
+import { isSome, unwrap } from '#root/utils/option.ts';
 import { lastKeyPressedPluginKey } from '#root/plugins/last-key-pressed/index.ts';
 import {
   EditorState,

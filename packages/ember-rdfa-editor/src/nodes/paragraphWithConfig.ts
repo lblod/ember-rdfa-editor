@@ -1,5 +1,5 @@
 import { NON_BLOCK_NODES } from '#root/utils/_private/constants.ts';
-import { optionMapOr } from '../utils/_private/option.ts';
+import { optionMapOr } from '../utils/option.ts';
 import { DEFAULT_ALIGNMENT, getAlignment } from '../plugins/alignment/index.ts';
 import getClassnamesFromNode from '../utils/get-classnames-from-node.ts';
 import type { NodeSpec } from 'prosemirror-model';

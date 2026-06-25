@@ -18,7 +18,7 @@ import { Util } from './util.ts';
 import { CustomError } from '#root/utils/_private/errors.ts';
 import { isElement, isTextNode } from '#root/utils/_private/dom-helpers.ts';
 import MapUtils from '#root/utils/_private/map-utils.ts';
-import { unwrap } from '#root/utils/_private/option.ts';
+import { unwrap } from '#root/utils/option.ts';
 import type {
   RdfaResourceNodeMap,
   RdfaContentNodeMap,

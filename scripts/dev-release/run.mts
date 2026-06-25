@@ -1,8 +1,10 @@
+import { argv } from 'node:process';
 import { execa } from 'execa';
 import { getRemote } from '../release/utils.mts';
 
-const PACKAGE_NAME = '@lblod/ember-rdfa-editor';
-const PACKAGE_PATH = 'packages/ember-rdfa-editor';
+const PACKAGE_IDENTIFIER = (argv.length < 3) ? 'ember-rdfa-editor' : argv[2];
+const PACKAGE_NAME = `@lblod/${PACKAGE_IDENTIFIER}`;
+const PACKAGE_PATH = `packages/${PACKAGE_IDENTIFIER}`;
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 

@@ -1,23 +1,44 @@
 steps:
-  version:
-    image: node:24-slim
-    directory: packages/ember-rdfa-editor
-    commands:
-      - npm version --no-git-tag-version ${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}
-  publish:
+  install:
     image: node:24-slim
     commands:
       - npm config set ignore-scripts true
       - cat .npmrc
       - npm i -g corepack@0.35
+      - pnpm i --frozen-lockfile
+  publish-editor:
+    image: node:24-slim
+    commands:
+      - npm config set ignore-scripts true
+      - npm i -g corepack@0.35
+      - pnpm version --filter @lblod/ember-rdfa-editor --no-git-tag-version ${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
-      - pnpm i --frozen-lockfile
-      - pnpm build
+      - pnpm --filter @lblod/ember-rdfa-editor build
       - pnpm publish packages/ember-rdfa-editor --access public --tag dev --no-git-checks
     environment:
       NPM_TOKEN:
         from_secret: npm_access_token
+    when:
+      ref:
+        include: refs/tags/@lblod/ember-rdfa-editor@*
+  publish-roadsign-regulations:
+    image: node:24-slim
+    commands:
+      - npm config set ignore-scripts true
+      - npm i -g corepack@0.35
+      - pnpm version --filter @lblod/say-roadsign-regulation-plugin --no-git-tag-version ${CI_COMMIT_TAG##@lblod/say-roadsign-regulation-plugin@}
+      # pnpm doesn't handle this setting well, so we do it with npm
+      - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
+      - pnpm --filter @lblod/ember-rdfa-editor build
+      - pnpm --filter @lblod/say-roadsign-regulation-plugin build
+      - pnpm publish packages/say-roadsign-regulation-plugin --access public --tag dev --no-git-checks
+    environment:
+      NPM_TOKEN:
+        from_secret: npm_access_token
+    when:
+      ref:
+        include: refs/tags/@lblod/say-roadsign-regulation-plugin@*
 when:
   event: tag
-  ref: refs/tags/@lblod/ember-rdfa-editor@*-dev.*
+  ref: refs/tags/@lblod/*@*-dev.*

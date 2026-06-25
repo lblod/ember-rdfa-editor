@@ -1,0 +1,66 @@
+common:
+  loading: Aan het laden...
+  insert: Voeg in
+  search:
+    loading: Aan het laden…
+    no-results: Geen resultaten gevonden
+    error-title: Probleem bij het laden
+    error-intro: "Er is een fout opgetreden tijdens het laden van de resultaten:"
+    error-outro: Moest dit probleem aanhouden, neem contact op met
+  sort:
+    sort: Sorteren
+    asc: Oplopend sorteren
+    desc: Aflopend sorteren
+  not-applicable: "n.v.t."
+  preview-list:
+    preview-button:
+      title: Preview tonen
+    select-button:
+      label: Selecteer
+      title: Invoegen
+    no-content: Bevat geen inhoud
+
+pagination:
+  next: Volgende pagina
+  previous: Vorige pagina
+  of: van
+  results: Resultaten
+
+editor-plugins:
+  roadsign-regulation:
+    expanded-measure:
+      insert-measure: "Voeg maatregel in:"
+      as-last-article: Als laatste artikel
+      as-first-article: Als eerste artikel
+      after-article-x: Na artikel {articleNumber}
+      insert-position: "Invoegpositie:"
+      select-zonality:
+        label: "Selecteer zonale geldigheid:"
+        zonal: Zonaal
+        non-zonal: Niet zonaal
+      varying-signalisation:
+        label: Variabele signalisatie
+        varying: Variabel
+        non-varying: Niet variabel
+    card:
+      insert-measure: Voeg mobiliteitsmaatregel in
+    modal:
+      title: Mobiliteitsmaatregel toevoegen
+      filter:
+        type: Filter op type
+        code: Filter op code
+        text: Filter op tekst
+        zonal-validity: Filter op zonale geldigheid
+      combine-with-code: Combineer met code
+    pagination:
+      publications: Publicaties
+    table:
+      header:
+        code: Code
+        image: Afbeelding
+        preview: Preview
+        category: Categorie
+      content:
+        image:
+          alt: verkeersteken {code}
+        no-data-message: Er werden geen maatregelen gevonden.

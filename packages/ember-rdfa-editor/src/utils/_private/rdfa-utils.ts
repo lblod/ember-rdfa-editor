@@ -3,7 +3,6 @@ import type {
   LinkTriple,
   OutgoingTriple,
 } from '#root/core/rdfa-processor.ts';
-import { getSubject } from '#root/plugins/rdfa-info/plugin.ts';
 import type { PNode } from '#root/prosemirror-aliases.ts';
 import type { EditorState } from 'prosemirror-state';
 import type {
@@ -18,13 +17,14 @@ import {
   getBacklinks,
   getNodeByRdfaId,
   getNodesBySubject,
+  getSubject,
   isLinkToNode,
 } from '#root/plugins/rdfa-info/utils.ts';
 import { isRdfaAttrs } from '#root/core/rdfa-types.ts';
 import TransformUtils from './transform-utils.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import { type ResolvedPNode } from './types.ts';
-import { isSome } from './option.ts';
+import { isSome } from '../option.ts';
 
 export {
   addPropertyToNode,
@@ -43,13 +43,15 @@ export {
   getProperties,
   getRdfaAttribute,
   getRdfaChildren,
+  getRdfaId,
   getRdfaIds,
+  getSubject,
   isLinkToNode,
   mapPositionFrom,
   parsePrefixString,
   removePropertyFromNode,
 } from '#root/plugins/rdfa-info/utils.ts';
-export { getRdfaId, getSubject } from '#root/plugins/rdfa-info/plugin.ts';
+
 /**
  * Calculates a set of subject attributes present in the provided node and its children
  */

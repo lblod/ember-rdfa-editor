@@ -12,6 +12,7 @@ import BasicDropdownWormhole from 'ember-basic-dropdown/components/basic-dropdow
     <LinkTo class="navigation-link" @route="vendors">Vendor Environment</LinkTo>
     <LinkTo class="navigation-link" @route="editable-node">Editable Nodes POC</LinkTo>
     <LinkTo class="navigation-link" @route="space-invisible">Space Invisible</LinkTo>
+    <LinkTo class="navigation-link" @route="lblod-plugins">With LBLOD Plugins</LinkTo>
   </nav>
   {{outlet}}
   <BasicDropdownWormhole />

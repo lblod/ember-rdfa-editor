@@ -6,7 +6,6 @@ import sass from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import nodeGlobals from 'rollup-plugin-node-globals';
 import postcss from 'postcss';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
@@ -47,18 +46,18 @@ export default [
   },
   {
     preserveSymlinks: false,
-    // TODO: stream-browserify is a mess of circular deps, so I can't let the
-    // build fail here anymore. Need to find a better way
-    //
-    // onwarn: (message, defaultHandler) => {
-    //   // fail build if circular dependencies are found
-    //   if (message.code === 'CIRCULAR_DEPENDENCY') {
-    //     console.error(message);
-    //     process.exit(-1);
-    //   } else {
-    //     defaultHandler(message);
-    //   }
-    // },
+    onwarn: (message, defaultHandler) => {
+      // fail build if circular dependencies are found
+      if (
+        message.code === 'CIRCULAR_DEPENDENCY' &&
+        !(message.ids && message.ids.every((id) => id.includes('node_modules')))
+      ) {
+        console.error(message);
+        process.exit(-1);
+      } else {
+        defaultHandler(message);
+      }
+    },
     // This provides defaults that work well alongside `publicEntrypoints` below.
     // You can augment this if you need to.
     output: addon.output(),
@@ -92,21 +91,14 @@ export default [
       ]),
       commonjs(),
 
-      nodeGlobals(),
       nodeResolvePlugin,
-
-      // Follow the V2 Addon rules about dependencies. Your code can import from
-      // `dependencies` and `peerDependencies` as well as standard Ember-provided
-      // package names.
 
       // basically what this does is mark all our deps as external. So the v2
       // addon is a bundle which still needs to be bundled by your app to get all
       // the deps.
-      // Now, for graphy, we actually want to fully bundle that along with our
-      // source. So we have to bypass the embroider resolving for it (and its
-      // browserified dependencies) so that they get
-      // picked up by the combo of the node, commonjs, browserify, and nodeGlobals
-      // plugins
+      // Now, for some deps, we actually want to fully bundle that along with our
+      // source. So we have to bypass the embroider resolving for them so that
+      // they get picked up by the combo of the node and commonjs plugins
       (function () {
         const result = addon.dependencies();
         const resolveId = result.resolveId;
