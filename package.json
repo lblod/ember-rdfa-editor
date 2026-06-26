@@ -3,13 +3,14 @@
   "license": "MIT",
   "author": "redpencil.io",
   "scripts": {
-    "build": "pnpm --filter !test-app build",
-    "build:test-app": "pnpm --filter test-app build",
-    "lint": "pnpm --filter '*' lint",
+    "build": "turbo --filter=!test-app build",
+    "build:test-app": "turbo --filter test-app build",
+    "lint": "turbo lint",
     "lint:fix": "pnpm --filter '*' lint:fix",
     "lint:types": "pnpm --filter '*' lint:types",
     "prepack": "pnpm build",
-    "start": "pnpm build; concurrently 'pnpm:start:* {@}' --passthrough-arguments --restart-after 5000 --prefixColors auto",
+    "start": "turbo dev",
+    "tui": "turbo dev --ui tui",
     "start:editor": "pnpm --filter @lblod/ember-rdfa-editor start --no-watch.clearScreen",
     "start:roadsigns": "pnpm --filter @lblod/say-roadsign-regulation-plugin start --no-watch.clearScreen",
     "start:ar-designs": "pnpm --filter @lblod/say-ar-design-plugin start --no-watch.clearScreen",
@@ -48,6 +49,7 @@
     "remark-stringify": "catalog:",
     "static-server": "^2.2.1",
     "tsx": "catalog:",
+    "turbo": "^2.10.0",
     "unified": "catalog:"
   }
 }
