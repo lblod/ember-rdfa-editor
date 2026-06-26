@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      // this is not strictly necessary, because we run all the dev tasks together, which run the respective build commands on watch
+      // however, this ensures the first load of the test-app actually has the latest code as of the invocation of the command,
+      // hopefully reducing extra page reloads
+      // not sure it helps though
+      "dependsOn": ["^build"]
+    }
+  }
+}

@@ -9,6 +9,18 @@ const config: Config = {
         templateSingleQuote: false,
       },
     },
+    {
+      files: '*.jsonc',
+      options: {
+        trailingComma: 'none',
+      },
+    },
+    {
+      files: '*.html',
+      options: {
+        htmlWhitespaceSensitivity: 'strict',
+      },
+    },
   ],
 };
 export default config;
