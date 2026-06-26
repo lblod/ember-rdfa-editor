@@ -21,8 +21,19 @@
     }
   },
   "devDependencies": {
+    "@babel/eslint-parser": "catalog:",
+    "@eslint/js": "catalog:",
+    "@tsconfig/ember": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-ember": "catalog:",
+    "eslint-plugin-import": "catalog:",
+    "eslint-plugin-n": "catalog:",
+    "globals": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-ember-template-tag": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }
