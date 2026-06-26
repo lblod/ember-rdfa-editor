@@ -1,0 +1,7 @@
+{
+  "extends": "@lblod/say-editor-config/typescript/tsconfig.lib.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  }
+}

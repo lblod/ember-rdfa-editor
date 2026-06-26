@@ -1,0 +1,30 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "core logic for say-editor",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@lblod/say-editor-config": "workspace:*",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@lblod/say-editor-config",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "exports": {
+    "./*.json": {
+      "default": "./src/*.json"
+    },
+    "./*": {
+      "types": "./dist/*.d.mts",
+      "default": "./dist/*.mjs"
+    }
+  },
+  "devDependencies": {
+    "prettier": "catalog:",
+    "prettier-plugin-ember-template-tag": "catalog:",
+    "typescript": "catalog:"
+  }
+}
