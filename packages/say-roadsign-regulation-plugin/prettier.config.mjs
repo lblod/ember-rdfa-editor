@@ -1,1 +1,1 @@
-export { default } from '@lblod/say-editor-config/prettier/prettier-ember';
+export { default } from '@lblod/say-config/prettier/prettier-ember';

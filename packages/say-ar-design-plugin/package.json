@@ -105,7 +105,7 @@
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
     "@lblod/ember-rdfa-editor": "workspace:*",
-    "@lblod/say-editor-config": "workspace:*",
+    "@lblod/say-config": "workspace:*",
     "@lblod/say-roadsign-regulation-plugin": "workspace:*",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
