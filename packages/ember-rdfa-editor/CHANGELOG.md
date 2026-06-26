@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 13.12.0
+
+### Minor Changes
+
+- [#1385](https://github.com/lblod/ember-rdfa-editor/pull/1385) [`23418ad`](https://github.com/lblod/ember-rdfa-editor/commit/23418ad3fc35cdc01a720d637ca94524271d2b45) Thanks [@kobemertens](https://github.com/kobemertens)! - Placeholder plugin for empty rdfa blocks
+
+### Patch Changes
+
+- [#1387](https://github.com/lblod/ember-rdfa-editor/pull/1387) [`b28dd05`](https://github.com/lblod/ember-rdfa-editor/commit/b28dd054a98b82fe29226962db294036bc7779f1) Thanks [@piemonkey](https://github.com/piemonkey)! - Add ability to link a freely inserted article to a passed decision URI
+
+- [#1388](https://github.com/lblod/ember-rdfa-editor/pull/1388) [`f4be232`](https://github.com/lblod/ember-rdfa-editor/commit/f4be2322eeb2ce1956563d4ce9622f97f5b70fa5) Thanks [@kobemertens](https://github.com/kobemertens)! - fix type for renderRdfaAttrs
+
 ## 13.11.1
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @lblod/say-roadsign-regulation-plugin
 
+## 2.0.0
+
+### Minor Changes
+
+- [#1387](https://github.com/lblod/ember-rdfa-editor/pull/1387) [`88532a5`](https://github.com/lblod/ember-rdfa-editor/commit/88532a5c402b576723123d6553374d6845e9883c) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix support for passing an external decision URI when inserting roadsign regulations
+
+### Patch Changes
+
+- Updated dependencies [[`23418ad`](https://github.com/lblod/ember-rdfa-editor/commit/23418ad3fc35cdc01a720d637ca94524271d2b45), [`b28dd05`](https://github.com/lblod/ember-rdfa-editor/commit/b28dd054a98b82fe29226962db294036bc7779f1), [`f4be232`](https://github.com/lblod/ember-rdfa-editor/commit/f4be2322eeb2ce1956563d4ce9622f97f5b70fa5)]:
+  - @lblod/ember-rdfa-editor@13.12.0
+
 ## 1.0.1
 
 ### Patch Changes
