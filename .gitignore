@@ -6,6 +6,7 @@
 /declarations/
 /tmp/
 vendor/
+.turbo
 
 # dependencies
 /bower_components/

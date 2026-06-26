@@ -1,0 +1,30 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "tasks": {
+    "build": {
+
+      // this caret means: depend on all the build tasks of all internal packages you depend on
+      // please read https://turborepo.dev/docs/crafting-your-repository/configuring-tasks#depending-on-tasks-in-dependencies-with-
+      "dependsOn": ["^build"],
+
+      // this is a list of all the build artifacts for all the packages
+      // if this ever gets out of hand, look at https://turborepo.dev/docs/reference/package-configurations
+      // to manage it per-package
+      "outputs": [
+        "dist",
+        "declarations",
+        "vendor",
+        "README.md",
+        "LICENSE.md",
+        "tsconfig.tsbuildinfo"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    }
+  }
+}
