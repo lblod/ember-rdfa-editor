@@ -1,33 +1,8 @@
 {
-  "extends": "@tsconfig/ember/tsconfig.json",
+  "extends": "@lblod/say-editor-config/typescript/tsconfig.ember.json",
+
   "include": ["src/**/*", "unpublished-development-types/**/*"],
   "compilerOptions": {
-    "allowJs": true,
-    "declaration": true,
-    "declarationDir": "declarations",
-    /**
-      https://www.typescriptlang.org/tsconfig#noEmit
-
-      We want to emit declarations, so this option must be set to `false`.
-      @tsconfig/ember sets this to `true`, which is incompatible with our need to set `emitDeclarationOnly`.
-      @tsconfig/ember is more optimized for apps, which wouldn't emit anything, only type check.
-    */
-    "noEmit": false,
-    /**
-      https://www.typescriptlang.org/tsconfig#emitDeclarationOnly
-      We want to only emit declarations as we use Rollup to emit JavaScript.
-    */
-    "emitDeclarationOnly": true,
-
-    /**
-      https://www.typescriptlang.org/tsconfig#noEmitOnError
-      Do not block emit on TS errors.
-    */
-    "noEmitOnError": false,
-
-    "noUncheckedIndexedAccess": false,
-    "strictFunctionTypes": false,
-
     /**
       https://www.typescriptlang.org/tsconfig#rootDir
       "Default: The longest common path of all non-declaration input files."
@@ -40,13 +15,7 @@
     */
     "rootDir": "./src",
 
-    /**
-      https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions
-
-      We want our tooling to know how to resolve our custom files so the appropriate plugins
-      can do the proper transformations on those files.
-    */
-    "allowImportingTsExtensions": true,
+    "declarationDir": "declarations",
 
     "types": ["ember-source/types"]
   }

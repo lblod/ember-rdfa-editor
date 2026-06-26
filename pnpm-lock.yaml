@@ -574,6 +574,36 @@ importers:
 
   packages/config:
     devDependencies:
+      '@babel/eslint-parser':
+        specifier: 'catalog:'
+        version: 7.28.6(@babel/core@7.28.6)(eslint@9.36.0(jiti@2.6.1))
+      '@eslint/js':
+        specifier: 'catalog:'
+        version: 9.36.0
+      '@tsconfig/ember':
+        specifier: 'catalog:'
+        version: 3.0.12
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.30
+      eslint:
+        specifier: 'catalog:'
+        version: 9.36.0(jiti@2.6.1)
+      eslint-config-prettier:
+        specifier: 'catalog:'
+        version: 9.1.2(eslint@9.36.0(jiti@2.6.1))
+      eslint-plugin-ember:
+        specifier: 'catalog:'
+        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      eslint-plugin-import:
+        specifier: 'catalog:'
+        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
+      eslint-plugin-n:
+        specifier: 'catalog:'
+        version: 17.23.2(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      globals:
+        specifier: 'catalog:'
+        version: 15.15.0
       prettier:
         specifier: 'catalog:'
         version: 3.8.0
@@ -583,6 +613,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      typescript-eslint:
+        specifier: 'catalog:'
+        version: 7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
 
   packages/core:
     devDependencies:
@@ -809,6 +842,9 @@ importers:
       '@glint/template':
         specifier: 'catalog:'
         version: 1.7.4
+      '@lblod/say-editor-config':
+        specifier: workspace:*
+        version: link:../config
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.28.6)(@types/babel__core@7.20.5)(rollup@4.52.2)
@@ -883,10 +919,10 @@ importers:
         version: 9.1.2(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-ember:
         specifier: 'catalog:'
-        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
+        version: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-n:
         specifier: 'catalog:'
         version: 17.23.2(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
@@ -1032,6 +1068,9 @@ importers:
       '@lblod/ember-rdfa-editor':
         specifier: workspace:*
         version: link:../ember-rdfa-editor
+      '@lblod/say-editor-config':
+        specifier: workspace:*
+        version: link:../config
       '@lblod/say-roadsign-regulation-plugin':
         specifier: workspace:*
         version: link:../say-roadsign-regulation-plugin
@@ -1243,6 +1282,9 @@ importers:
       '@lblod/ember-rdfa-editor':
         specifier: workspace:*
         version: link:../ember-rdfa-editor
+      '@lblod/say-editor-config':
+        specifier: workspace:*
+        version: link:../config
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.28.6)(@types/babel__core@7.20.5)(rollup@4.52.2)

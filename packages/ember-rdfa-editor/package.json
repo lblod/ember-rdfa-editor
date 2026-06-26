@@ -299,6 +299,7 @@
     "@glimmer/tracking": "catalog:",
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
+    "@lblod/say-editor-config": "workspace:*",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
     "@rollup/plugin-inject": "catalog:",
