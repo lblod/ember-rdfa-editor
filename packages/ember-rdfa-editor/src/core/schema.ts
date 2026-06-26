@@ -624,7 +624,7 @@ export type RdfaRenderArgs = Omit<
   rdfaContainerTag?: string;
   contentContainerTag?: string;
   contentContainerAttrs?: Record<string, unknown>;
-} & ({ content: DOMOutputSpec | 0 } | { contentArray: unknown[] });
+} & ({ content: DOMOutputSpec | string | 0 } | { contentArray: unknown[] });
 
 function determineChildTag(renderable: Mark | PNode) {
   if (renderable instanceof Mark) {
