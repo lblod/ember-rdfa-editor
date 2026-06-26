@@ -572,6 +572,30 @@ importers:
         specifier: 'catalog:'
         version: 11.0.5
 
+  packages/config:
+    devDependencies:
+      prettier:
+        specifier: 'catalog:'
+        version: 3.8.0
+      prettier-plugin-ember-template-tag:
+        specifier: 'catalog:'
+        version: 2.1.2(prettier@3.8.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/core:
+    devDependencies:
+      '@lblod/say-editor-config':
+        specifier: workspace:*
+        version: link:../config
+      prettier:
+        specifier: 'catalog:'
+        version: 3.8.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   packages/ember-rdfa-editor:
     dependencies:
       '@codemirror/commands':
