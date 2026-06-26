@@ -5,7 +5,11 @@ import yaml from '@modyfi/vite-plugin-yaml';
 
 export default defineConfig({
   optimizeDeps: {
-    exclude: ['@lblod/ember-rdfa-editor'],
+    exclude: [
+      '@lblod/ember-rdfa-editor',
+      '@lblod/say-roadsign-regulation-plugin',
+      '@lblod/say-ar-design-plugin',
+    ],
   },
   server: {
     warmup: {

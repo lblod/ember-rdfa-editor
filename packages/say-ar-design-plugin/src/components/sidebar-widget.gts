@@ -8,6 +8,7 @@ import type { SayController } from '@lblod/ember-rdfa-editor';
 import ArWidgetContents from './widget-contents.gts';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
+import { ROADSIGN_REGULATION_DECISION_TYPES } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
 import type {
   ArDesignQuery,
   ArticlePosition,
@@ -19,6 +20,11 @@ export type ArDesignSidebarWidgetSig = {
     controller: SayController;
     designQuery: ArDesignQuery;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    /** Instead of finding a decision node in the document, pass the relevant URI and type */
+    decisionContext?: {
+      decisionUri: string;
+      decisionType?: string;
+    };
   };
   Element: HTMLLIElement;
 };
@@ -34,7 +40,13 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
     this.modalOpen = false;
   };
   get disableInsert() {
-    return !getCurrentBesluitRange(this.args.controller);
+    const decisionContext = this.args.decisionContext;
+    return decisionContext
+      ? !!decisionContext.decisionType &&
+          ROADSIGN_REGULATION_DECISION_TYPES.includes(
+            decisionContext.decisionType,
+          )
+      : !getCurrentBesluitRange(this.args.controller);
   }
 
   <template>
@@ -64,6 +76,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
           @articles={{this.articles}}
           @designQuery={{@designQuery}}
           @processDocumentHeadlessly={{@processDocumentHeadlessly}}
+          @decisionContext={{@decisionContext}}
         />
       </modal.Body>
     </AuModal>

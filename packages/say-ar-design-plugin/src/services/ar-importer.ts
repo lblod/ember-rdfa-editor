@@ -12,7 +12,9 @@ import {
   type Notification,
   notificationPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/notification';
-import insertMeasure from '@lblod/say-roadsign-regulation-plugin/plugin/actions/insert-measure';
+import insertMeasure, {
+  type InsertPositionArgs,
+} from '@lblod/say-roadsign-regulation-plugin/plugin/actions/insert-measure';
 import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
@@ -22,10 +24,7 @@ import type TrafficSignal from '../plugin/models/traffic-signal.ts';
 import type VariableInstance from '../plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
-import {
-  ArticleInsertPosition,
-  afterLastArticle,
-} from '../plugin/utils/article-insert-position.ts';
+import { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
 
 export type ImportResult<R> = {
   result: R;
@@ -104,24 +103,41 @@ export default class ArImporterService extends Service {
   }
 
   async generateInsertionMonads(
-    decisionUriOrController: string | SayController,
     design: ArDesign,
-    insertPos: ArticleInsertPosition,
-    isPreview?: boolean,
+    /**
+     * Where to insert the design. If false, insert 'freely' and fail if decision URI is not
+     * specified
+     */
+    insertPos: ArticleInsertPosition | false,
+    /** If controller is not passed, this is a preview */
+    controller?: SayController,
+    decisionUriOverride?: string,
   ): Promise<GenerateImportResult> {
-    let decisionUri: string;
-    if (typeof decisionUriOrController === 'string') {
-      decisionUri = decisionUriOrController;
-    } else {
-      const decisionRange = getCurrentBesluitRange(decisionUriOrController);
+    let decisionUri = decisionUriOverride;
+    let insertPositionArgs: InsertPositionArgs;
+    if (!decisionUri && controller) {
+      const decisionRange = getCurrentBesluitRange(controller);
       decisionUri = decisionRange?.node.attrs['subject'] as string;
-      if (!decisionRange || typeof decisionUri !== 'string') {
-        this._notifyError(
-          decisionUriOrController,
-          'ar-importer.message.error-no-decision',
-        );
+      if (!decisionRange || typeof decisionUri !== 'string' || !insertPos) {
+        this._notifyError(controller, 'ar-importer.message.error-no-decision');
         return { result: [], warnings: [] };
+      } else {
+        insertPositionArgs = {
+          insertFreely: false,
+          position: insertPos.insertMeasureIndex,
+          decisionUri,
+        };
       }
+    } else {
+      insertPositionArgs =
+        // decisionUri should be handled by the previous if, so just keep TS happy here
+        !insertPos || !decisionUri
+          ? { insertFreely: true, decisionUri }
+          : {
+              insertFreely: false,
+              position: insertPos.insertMeasureIndex,
+              decisionUri,
+            };
     }
     try {
       const warnings: string[] = [];
@@ -168,7 +184,7 @@ export default class ArImporterService extends Service {
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
         return [
-          ...(isPreview && onlyExistingSignals
+          ...(!controller && onlyExistingSignals
             ? [
                 (state: EditorState) => {
                   const commentText = state.schema.text(
@@ -205,8 +221,7 @@ export default class ArImporterService extends Service {
             temporal: false,
             variables: convertedVariableInstances,
             templateString: measureConcept.templateString,
-            decisionUri,
-            position: insertPos.insertMeasureIndex,
+            ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
           }),
@@ -232,16 +247,12 @@ export default class ArImporterService extends Service {
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
   ): Promise<ImportResult<string>> {
-    const decisionUri = 'http://data.lblod.info/id/besluiten/12345';
     const { result: monads, warnings } = await this.generateInsertionMonads(
-      decisionUri,
       design,
-      afterLastArticle,
-      true,
+      false,
     );
-    const document = processDocumentHeadlessly(
-      `<div property="prov:generated" resource="${decisionUri}" typeof="besluit:Besluit ext:BesluitNieuweStijl"><div property="prov:value" datatype="xsd:string"></div></div>`,
-      (state) => transactionCombinator<boolean>(state)(monads),
+    const document = processDocumentHeadlessly(`<div></div>`, (state) =>
+      transactionCombinator<boolean>(state)(monads),
     );
     return { result: document, warnings };
   }

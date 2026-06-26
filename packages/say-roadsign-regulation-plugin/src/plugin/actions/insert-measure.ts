@@ -23,7 +23,11 @@ import {
 } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
 import { type MobilityMeasureConcept } from '../schemas/mobility-measure-concept.ts';
 import { buildArticleStructure } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/build-article-structure';
-import { insertArticle } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/insert-article';
+import {
+  insertArticle,
+  type InsertArticleFreelyArgs,
+  type InsertArticleToDecisionArgs,
+} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/insert-article';
 import { type TrafficSignalConcept } from '../schemas/traffic-signal-concept.ts';
 import {
   ROAD_SIGN_CATEGORIES,
@@ -49,23 +53,32 @@ const RELATIE_OBJECT = namespace(
   'relatieobject',
 );
 
+export type InsertPositionArgs =
+  | {
+      insertFreely: true;
+      decisionUri?: string;
+    }
+  | {
+      insertFreely?: false;
+      position?: number;
+      decisionUri: string;
+    };
 type InsertMeasureArgs = {
   arDesignUri?: string;
   zonality: ZonalOrNot;
   temporal: boolean;
   variables: Record<string, VariableInstance & { __rdfaId: string }>;
   templateString: string;
-  decisionUri: string;
-  position?: number;
   articleUriGenerator?: () => string;
-} & (
-  | {
-      measureConcept: MobilityMeasureConcept;
-    }
-  | {
-      measureDesign: MobilityMeasureDesign;
-    }
-);
+} & InsertPositionArgs &
+  (
+    | {
+        measureConcept: MobilityMeasureConcept;
+      }
+    | {
+        measureDesign: MobilityMeasureDesign;
+      }
+  );
 
 export default function insertMeasure({
   arDesignUri,
@@ -74,8 +87,6 @@ export default function insertMeasure({
   variables,
   templateString,
   articleUriGenerator,
-  decisionUri,
-  position,
   ...args
 }: InsertMeasureArgs): TransactionMonad<boolean> {
   return function (state: EditorState) {
@@ -225,11 +236,20 @@ export default function insertMeasure({
       state.schema,
       articleUriGenerator,
     ).copy(Fragment.from(measureNode));
-    const initialTransaction = insertArticle({
-      node: articleNode,
-      decisionUri,
-      position,
-    })(state).transaction;
+    const insertArticleArgs = args.insertFreely
+      ? ({
+          node: articleNode,
+          decisionUri: args.decisionUri,
+          insertFreely: args.insertFreely,
+        } satisfies InsertArticleFreelyArgs)
+      : ({
+          node: articleNode,
+          decisionUri: args.decisionUri,
+          insertFreely: false,
+          position: args.position,
+        } satisfies InsertArticleToDecisionArgs);
+    const initialTransaction =
+      insertArticle(insertArticleArgs)(state).transaction;
     const resultingSelection = initialTransaction.selection;
     const { transaction, result } = transactionCombinator(
       state,

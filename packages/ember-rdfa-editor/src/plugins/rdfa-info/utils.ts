@@ -436,15 +436,11 @@ export function addPropertyToNode({
   return function (state: EditorState): TransactionMonadResult<boolean> {
     const tr = state.tr;
     const resourceNodes = getNodesBySubject(state, resource);
-    if (!resourceNodes?.length) {
-      return { initialState: state, transaction: tr, result: false };
-    }
-
-    const properties = getProperties(resourceNodes[0].value);
-    const updatedProperties = addProperty(properties ?? [], property);
 
     // Update the properties of each node that defines the given resource
     resourceNodes.forEach((node) => {
+      const properties = getProperties(node.value);
+      const updatedProperties = addProperty(properties ?? [], property);
       TransformUtils.setAttribute(
         tr,
         node.pos,

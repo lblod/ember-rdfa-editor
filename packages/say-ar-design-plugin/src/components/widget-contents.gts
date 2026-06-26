@@ -28,6 +28,10 @@ type Sig = {
     articles: ArticlePosition[];
     designQuery: ArDesignQuery;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    decisionContext?: {
+      decisionUri: string;
+      decisionType?: string;
+    };
   };
 };
 
@@ -103,9 +107,10 @@ export default class ArWidgetContents extends Component<Sig> {
       skipWarnings?: boolean,
     ) => {
       const monadsResult = await this.arImporter.generateInsertionMonads(
-        this.args.controller,
         design,
         insertPos,
+        this.args.controller,
+        this.args.decisionContext?.decisionUri,
       );
       if (skipWarnings || monadsResult.warnings.length === 0) {
         this.doInsert(monadsResult.result);
