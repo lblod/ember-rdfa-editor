@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.12.1
+
+### Patch Changes
+
+- [`a92bf7d`](https://github.com/lblod/ember-rdfa-editor/commit/a92bf7d492e37050b6dac819577b2c6114fbdb7c) Thanks [@abeforgit](https://github.com/abeforgit)! - Make block placeholders survive reloads
+
 ## 13.12.0
 
 ### Minor Changes
