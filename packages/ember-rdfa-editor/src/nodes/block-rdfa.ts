@@ -19,6 +19,7 @@ import {
   contentElementWithMigrations,
   getAttrsWithMigrations,
 } from '#root/core/schema/_private/migrations.ts';
+import { isSome } from '#root/utils/option.ts';
 
 const FALLBACK_LABEL = 'Data-object';
 
@@ -69,6 +70,14 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
               ...attrs,
               label: element.dataset['label'] ?? attrs['label'],
             };
+
+            const placeholder = element.dataset['placeholder'];
+            if (isSome(placeholder)) {
+              attrs = {
+                ...attrs,
+                placeholder,
+              };
+            }
             return getAttrsWithMigrations(modelMigrations, attrs, element);
           }
           return false;
@@ -84,25 +93,32 @@ export const blockRdfaWithConfig: (config?: Config) => SayNodeSpec = ({
     ],
     toDOM(node, state) {
       if (rdfaAware) {
+        let attrs: Record<string, string> = {
+          class: `say-editable ${getClassnamesFromNode(node)}`,
+          'data-label': node.attrs['label'] as string,
+        };
+        const placeholder = node.attrs['placeholder'] as string | undefined;
+        if (isSome(placeholder)) {
+          attrs = { ...attrs, 'data-placeholder': placeholder };
+        }
         return renderRdfaAware(
           {
             renderable: node,
             tag: 'div',
-            attrs: {
-              class: `say-editable ${getClassnamesFromNode(node)}`,
-              'data-label': node.attrs['label'] as string,
-            },
+            attrs,
             content: 0,
           },
+
           state,
         );
       } else {
-        const { label, ...attrs } = node.attrs;
+        const { label, placeholder, ...attrs } = node.attrs;
         return [
           'div',
           {
             ...attrs,
             'data-label': label as string,
+            'data-placeholder': placeholder as string | undefined,
             class: getClassnamesFromNode(node),
           },
           0,
