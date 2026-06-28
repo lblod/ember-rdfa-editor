@@ -1,7 +1,7 @@
 {
   "extends": "@lblod/say-config/typescript/tsconfig.ember.json",
 
-  "include": ["src/**/*", "unpublished-development-types/**/*"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     /**
       https://www.typescriptlang.org/tsconfig#rootDir
@@ -17,6 +17,6 @@
 
     "declarationDir": "declarations",
 
-    "types": ["ember-source/types"]
+    "types": ["ember-source/types", "global-type-overrides/types"]
   }
 }

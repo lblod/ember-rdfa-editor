@@ -16,6 +16,16 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./say-ar-design-plugin.scss": "./say-ar-design-plugin.scss",
+    "./*.gts": {
+      "@say-editor/development": "./src/*.gts",
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./*.ts": {
+      "@say-editor/development": "./src/*.ts",
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
     "./*": {
       "@say-editor/development": "./src/*",
       "types": "./declarations/*.d.ts",
@@ -121,6 +131,7 @@
     "eslint-plugin-import": "catalog:",
     "eslint-plugin-n": "catalog:",
     "execa": "catalog:",
+    "global-type-overrides": "workspace:*",
     "globals": "catalog:",
     "postcss": "catalog:",
     "prettier": "catalog:",

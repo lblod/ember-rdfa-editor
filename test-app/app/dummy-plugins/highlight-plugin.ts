@@ -6,7 +6,7 @@ import {
   ProsePlugin,
   Transaction,
 } from '@lblod/ember-rdfa-editor';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option.ts';
 
 function calculateDecorations(doc: PNode, testKey: string) {
   const decorations: Decoration[] = [];

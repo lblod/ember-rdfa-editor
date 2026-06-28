@@ -1,6 +1,6 @@
 import { on } from '@ember/modifier';
 import Component from '@glimmer/component';
-import AuNativeToggle from '@lblod/ember-rdfa-editor/components/au-native-toggle';
+import AuNativeToggle from '@lblod/ember-rdfa-editor/components/au-native-toggle.gts';
 
 type Signature = {
   Args: {

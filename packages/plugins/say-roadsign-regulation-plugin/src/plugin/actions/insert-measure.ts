@@ -1,3 +1,4 @@
+import removeZFromLabel from '#root/helpers/removeZFromLabel.ts';
 import {
   EditorState,
   Fragment,
@@ -5,9 +6,9 @@ import {
   Schema,
   Selection,
 } from '@lblod/ember-rdfa-editor';
-import { v4 as uuid } from 'uuid';
-import { addPropertyToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
 import { type FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory/index.ts';
+import { buildArticleStructure } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/build-article-structure';
 import {
   DCT,
   EXT,
@@ -15,20 +16,19 @@ import {
   ONDERDEEL,
   PROV,
   RDF,
-} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
-import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory';
-import {
-  transactionCombinator,
-  type TransactionMonad,
-} from '@lblod/ember-rdfa-editor/utils/transaction-utils';
-import { type MobilityMeasureConcept } from '../schemas/mobility-measure-concept.ts';
-import { buildArticleStructure } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/build-article-structure';
+} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants.ts';
 import {
   insertArticle,
   type InsertArticleFreelyArgs,
   type InsertArticleToDecisionArgs,
 } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/insert-article';
-import { type TrafficSignalConcept } from '../schemas/traffic-signal-concept.ts';
+import { namespace } from '@lblod/ember-rdfa-editor/utils/namespace';
+import { addPropertyToNode } from '@lblod/ember-rdfa-editor/utils/rdfa-utils';
+import {
+  transactionCombinator,
+  type TransactionMonad,
+} from '@lblod/ember-rdfa-editor/utils/transaction-utils';
+import { v4 as uuid } from 'uuid';
 import {
   ROAD_SIGN_CATEGORIES,
   TRAFFIC_SIGNAL_CONCEPT_TYPES,
@@ -37,15 +37,15 @@ import {
   ZONALITY_OPTIONS,
   type ZonalOrNot,
 } from '../constants.ts';
+import { constructMeasureFragment } from '../construct-measure-fragment.ts';
+import { type MobilityMeasureConcept } from '../schemas/mobility-measure-concept.ts';
+import { type MobilityMeasureDesign } from '../schemas/mobility-measure-design.ts';
+import { type TrafficSignalConcept } from '../schemas/traffic-signal-concept.ts';
 import {
   isTrafficSignal,
   type TrafficSignal,
 } from '../schemas/traffic-signal.ts';
-import { type MobilityMeasureDesign } from '../schemas/mobility-measure-design.ts';
 import { type VariableInstance } from '../schemas/variable-instance.ts';
-import removeZFromLabel from '#root/helpers/removeZFromLabel.ts';
-import { namespace } from '@lblod/ember-rdfa-editor/utils/namespace';
-import { constructMeasureFragment } from '../construct-measure-fragment.ts';
 
 // This is defined locally as it's an implementation quirk that we don't want to use generally
 const RELATIE_OBJECT = namespace(

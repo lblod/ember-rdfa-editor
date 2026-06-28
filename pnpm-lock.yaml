@@ -112,7 +112,7 @@ catalogs:
       specifier: ^0.94.8
       version: 0.94.8
     '@glint/ember-tsc':
-      specifier: ^1.0.8
+      specifier: ^1.1.0
       version: 1.1.0
     '@glint/template':
       specifier: ^1.7.3
@@ -865,16 +865,19 @@ importers:
         version: 9.1.2(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-ember:
         specifier: 'catalog:'
-        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
+        version: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-n:
         specifier: 'catalog:'
         version: 17.23.2(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
       execa:
         specifier: 'catalog:'
         version: 9.6.1
+      global-type-overrides:
+        specifier: workspace:*
+        version: link:../global-type-overrides
       globals:
         specifier: 'catalog:'
         version: 15.15.0
@@ -920,6 +923,18 @@ importers:
       webpack:
         specifier: 'catalog:'
         version: 5.101.3
+
+  packages/global-type-overrides:
+    devDependencies:
+      '@glint/ember-tsc':
+        specifier: 'catalog:'
+        version: 1.1.0(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      yup:
+        specifier: 'catalog:'
+        version: 1.7.1
 
   packages/plugins/say-ar-design-plugin:
     dependencies:
@@ -1091,16 +1106,19 @@ importers:
         version: 9.1.2(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-ember:
         specifier: 'catalog:'
-        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+        version: 12.7.5(@babel/core@7.28.6)(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
+        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-n:
         specifier: 'catalog:'
         version: 17.23.2(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
       execa:
         specifier: 'catalog:'
         version: 9.6.1
+      global-type-overrides:
+        specifier: workspace:*
+        version: link:../../global-type-overrides
       globals:
         specifier: 'catalog:'
         version: 15.15.0
@@ -1303,6 +1321,9 @@ importers:
       execa:
         specifier: 'catalog:'
         version: 9.6.1
+      global-type-overrides:
+        specifier: workspace:*
+        version: link:../../global-type-overrides
       globals:
         specifier: 'catalog:'
         version: 15.15.0
@@ -1655,6 +1676,9 @@ importers:
       eslint-plugin-qunit:
         specifier: 'catalog:'
         version: 8.2.5(eslint@9.36.0(jiti@2.6.1))
+      global-type-overrides:
+        specifier: workspace:*
+        version: link:../packages/global-type-overrides
       globals:
         specifier: 'catalog:'
         version: 15.15.0

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
-import { decentLocaleMatch } from '@lblod/ember-rdfa-editor/utils/intl-utils';
+import { decentLocaleMatch } from '@lblod/ember-rdfa-editor/utils/intl-utils.ts';
 import type IntlService from 'ember-intl/services/intl';
 
 export default class ApplicationRoute extends Route {

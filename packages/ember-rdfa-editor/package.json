@@ -22,8 +22,209 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./ember-rdfa-editor.scss": "./ember-rdfa-editor.scss",
+    "./commands": {
+      "types": "./declarations/commands/index.d.ts",
+      "default": "./dist/commands/index.js"
+    },
+    "./core/say-data-factory": {
+      "@say-editor/development": "./src/core/say-data-factory/index.ts",
+      "types": "./declarations/core/say-data-factory/index.d.ts",
+      "default": "./dist/core/say-data-factory/index.js"
+    },
+    "./core/say-data-factory/prosemirror-terms": {
+      "@say-editor/development": "./src/core/say-data-factory/prosemirror-terms/index.ts",
+      "types": "./declarations/core/say-data-factory/prosemirror-terms/index.d.ts",
+      "default": "./dist/core/say-data-factory/prosemirror-terms/index.js"
+    },
+    "./marks": {
+      "@say-editor/development": "./src/marks/index.ts",
+      "types": "./declarations/marks/index.d.ts",
+      "default": "./dist/marks/index.js"
+    },
+    "./nodes": {
+      "@say-editor/development": "./src/nodes/index.ts",
+      "types": "./declarations/nodes/index.d.ts",
+      "default": "./dist/nodes/index.js"
+    },
+    "./plugins/alignment": {
+      "@say-editor/development": "./src/plugins/alignment/index.ts",
+      "types": "./declarations/plugins/alignment/index.d.ts",
+      "default": "./dist/plugins/alignment/index.js"
+    },
+    "./plugins/blockquote": {
+      "@say-editor/development": "./src/plugins/blockquote/index.ts",
+      "types": "./declarations/plugins/blockquote/index.d.ts",
+      "default": "./dist/plugins/blockquote/index.js"
+    },
+    "./plugins/chrome-hacks-plugin": {
+      "@say-editor/development": "./src/plugins/chrome-hacks-plugin/index.ts",
+      "types": "./declarations/plugins/chrome-hacks-plugin/index.d.ts",
+      "default": "./dist/plugins/chrome-hacks-plugin/index.js"
+    },
+    "./plugins/code": {
+      "@say-editor/development": "./src/plugins/code/index.ts",
+      "types": "./declarations/plugins/code/index.d.ts",
+      "default": "./dist/plugins/code/index.js"
+    },
+    "./plugins/color": {
+      "@say-editor/development": "./src/plugins/color/index.ts",
+      "types": "./declarations/plugins/color/index.d.ts",
+      "default": "./dist/plugins/color/index.js"
+    },
+    "./plugins/datastore": {
+      "@say-editor/development": "./src/plugins/datastore/index.ts",
+      "types": "./declarations/plugins/datastore/index.d.ts",
+      "default": "./dist/plugins/datastore/index.js"
+    },
+    "./plugins/default-attribute-value-generation": {
+      "@say-editor/development": "./src/plugins/default-attribute-value-generation/index.ts",
+      "types": "./declarations/plugins/default-attribute-value-generation/index.d.ts",
+      "default": "./dist/plugins/default-attribute-value-generation/index.js"
+    },
+    "./plugins/editable-node": {
+      "@say-editor/development": "./src/plugins/editable-node/index.ts",
+      "types": "./declarations/plugins/editable-node/index.d.ts",
+      "default": "./dist/plugins/editable-node/index.js"
+    },
+    "./plugins/ember-application": {
+      "@say-editor/development": "./src/plugins/ember-application/index.ts",
+      "types": "./declarations/plugins/ember-application/index.d.ts",
+      "default": "./dist/plugins/ember-application/index.js"
+    },
+    "./plugins/empty-block-placeholder": {
+      "@say-editor/development": "./src/plugins/empty-block-placeholder/index.ts",
+      "types": "./declarations/plugins/empty-block-placeholder/index.d.ts",
+      "default": "./dist/plugins/empty-block-placeholder/index.js"
+    },
+    "./plugins/firefox-cursor-fix": {
+      "@say-editor/development": "./src/plugins/firefox-cursor-fix/index.ts",
+      "types": "./declarations/plugins/firefox-cursor-fix/index.d.ts",
+      "default": "./dist/plugins/firefox-cursor-fix/index.js"
+    },
+    "./plugins/gap-cursor": {
+      "@say-editor/development": "./src/plugins/gap-cursor/index.ts",
+      "types": "./declarations/plugins/gap-cursor/index.d.ts",
+      "default": "./dist/plugins/gap-cursor/index.js"
+    },
+    "./plugins/heading": {
+      "@say-editor/development": "./src/plugins/heading/index.ts",
+      "types": "./declarations/plugins/heading/index.d.ts",
+      "default": "./dist/plugins/heading/index.js"
+    },
+    "./plugins/highlight": {
+      "@say-editor/development": "./src/plugins/highlight/index.ts",
+      "types": "./declarations/plugins/highlight/index.d.ts",
+      "default": "./dist/plugins/highlight/index.js"
+    },
+    "./plugins/history": {
+      "@say-editor/development": "./src/plugins/history/index.ts",
+      "types": "./declarations/plugins/history/index.d.ts",
+      "default": "./dist/plugins/history/index.js"
+    },
+    "./plugins/image": {
+      "@say-editor/development": "./src/plugins/image/index.ts",
+      "types": "./declarations/plugins/image/index.d.ts",
+      "default": "./dist/plugins/image/index.js"
+    },
+    "./plugins/notification": {
+      "@say-editor/development": "./src/plugins/notification/index.ts",
+      "types": "./declarations/plugins/notification/index.d.ts",
+      "default": "./dist/plugins/notification/index.js"
+    },
+    "./plugins/imported-resources": {
+      "@say-editor/development": "./src/plugins/imported-resources/index.ts",
+      "types": "./declarations/plugins/imported-resources/index.d.ts",
+      "default": "./dist/plugins/imported-resources/index.js"
+    },
+    "./plugins/invisibles": {
+      "@say-editor/development": "./src/plugins/invisibles/index.ts",
+      "types": "./declarations/plugins/invisibles/index.d.ts",
+      "default": "./dist/plugins/invisibles/index.js"
+    },
+    "./plugins/last-key-pressed": {
+      "@say-editor/development": "./src/plugins/last-key-pressed/index.ts",
+      "types": "./declarations/plugins/last-key-pressed/index.d.ts",
+      "default": "./dist/plugins/last-key-pressed/index.js"
+    },
+    "./plugins/link": {
+      "@say-editor/development": "./src/plugins/link/index.ts",
+      "types": "./declarations/plugins/link/index.d.ts",
+      "default": "./dist/plugins/link/index.js"
+    },
+    "./plugins/list": {
+      "@say-editor/development": "./src/plugins/list/index.ts",
+      "types": "./declarations/plugins/list/index.d.ts",
+      "default": "./dist/plugins/list/index.js"
+    },
+    "./plugins/list/input_rules": {
+      "@say-editor/development": "./src/plugins/list/input_rules/index.ts",
+      "types": "./declarations/plugins/list/input_rules/index.d.ts",
+      "default": "./dist/plugins/list/input_rules/index.js"
+    },
+    "./plugins/placeholder": {
+      "@say-editor/development": "./src/plugins/placeholder/index.ts",
+      "types": "./declarations/plugins/placeholder/index.d.ts",
+      "default": "./dist/plugins/placeholder/index.js"
+    },
+    "./plugins/rdfa-info": {
+      "@say-editor/development": "./src/plugins/rdfa-info/index.ts",
+      "types": "./declarations/plugins/rdfa-info/index.d.ts",
+      "default": "./dist/plugins/rdfa-info/index.js"
+    },
+    "./plugins/remove-properties-of-deleted-nodes": {
+      "@say-editor/development": "./src/plugins/remove-properties-of-deleted-nodes/index.ts",
+      "types": "./declarations/plugins/remove-properties-of-deleted-nodes/index.d.ts",
+      "default": "./dist/plugins/remove-properties-of-deleted-nodes/index.js"
+    },
+    "./plugins/table": {
+      "@say-editor/development": "./src/plugins/table/index.ts",
+      "types": "./declarations/plugins/table/index.d.ts",
+      "default": "./dist/plugins/table/index.js"
+    },
+    "./plugins/text-style": {
+      "@say-editor/development": "./src/plugins/text-style/index.ts",
+      "types": "./declarations/plugins/text-style/index.d.ts",
+      "default": "./dist/plugins/text-style/index.js"
+    },
+    "./plugins/contextual-actions": {
+      "@say-editor/development": "./src/plugins/contextual-actions/index.ts",
+      "types": "./declarations/plugins/contextual-actions/index.d.ts",
+      "default": "./dist/plugins/contextual-actions/index.js"
+    },
+    "./plugins/_private/editable-node": {
+      "@say-editor/development": "./src/plugins/_private/editable-node/index.ts",
+      "types": "./declarations/plugins/_private/editable-node/index.d.ts",
+      "default": "./dist/plugins/_private/editable-node/index.js"
+    },
+    "./components": {
+      "@say-editor/development": "./src/components/index.ts",
+      "types": "./declarations/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    },
+    "./components/_private/rdfa-editor": {
+      "@say-editor/development": "./src/components/_private/rdfa-editor/index.ts",
+      "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
+      "default": "./dist/components/_private/rdfa-editor/index.js"
+    },
+    "./components/_private/attribute-editor": {
+      "@say-editor/development": "./src/components/_private/attribute-editor/index.ts",
+      "types": "./declarations/components/_private/attribute-editor/index.d.ts",
+      "default": "./dist/components/_private/attribute-editor/index.js"
+    },
+    "./components/_private/debug-info": {
+      "@say-editor/development": "./src/components/_private/debug-info/index.ts",
+      "types": "./declarations/components/_private/debug-info/index.d.ts",
+      "default": "./dist/components/_private/debug-info/index.js"
+    },
+    "./*.gts": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./*.ts": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
     "./*": {
-      "@say-editor/development": "./src/*",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }
@@ -169,6 +370,7 @@
     "eslint-plugin-import": "catalog:",
     "eslint-plugin-n": "catalog:",
     "execa": "catalog:",
+    "global-type-overrides": "workspace:*",
     "globals": "catalog:",
     "postcss": "catalog:",
     "prettier": "catalog:",

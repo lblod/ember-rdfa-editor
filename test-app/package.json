@@ -118,6 +118,7 @@
     "eslint-plugin-playwright": "catalog:",
     "eslint-plugin-prettier": "catalog:",
     "eslint-plugin-qunit": "catalog:",
+    "global-type-overrides": "workspace:*",
     "globals": "catalog:",
     "loader.js": "catalog:",
     "prettier": "catalog:",

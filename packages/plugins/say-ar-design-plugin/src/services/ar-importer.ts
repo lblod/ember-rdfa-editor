@@ -7,18 +7,18 @@ import {
   transactionCombinator,
   type TransactionCombinatorResult,
   type TransactionMonad,
-} from '@lblod/ember-rdfa-editor/utils/transaction-utils';
+} from '@lblod/ember-rdfa-editor/utils/transaction-utils.ts';
 import {
   type Notification,
   notificationPluginKey,
 } from '@lblod/ember-rdfa-editor/plugins/notification';
 import insertMeasure, {
   type InsertPositionArgs,
-} from '@lblod/say-roadsign-regulation-plugin/plugin/actions/insert-measure';
-import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
-import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
-import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
-import { TrafficSignalConceptSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/traffic-signal-concept';
+} from '@lblod/say-roadsign-regulation-plugin/plugin/actions/insert-measure.ts';
+import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/constants.ts';
+import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils.ts';
+import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance.ts';
+import { TrafficSignalConceptSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/traffic-signal-concept.ts';
 import type ArDesign from '../plugin/models/ar-design.ts';
 import type TrafficSignal from '../plugin/models/traffic-signal.ts';
 import type VariableInstance from '../plugin/models/variable-instance.ts';

@@ -17,6 +17,6 @@
 
     "declarationDir": "declarations",
 
-    "types": ["ember-source/types"]
+    "types": ["ember-source/types", "global-type-overrides/types"]
   }
 }
