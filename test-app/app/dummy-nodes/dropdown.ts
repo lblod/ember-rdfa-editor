@@ -3,7 +3,7 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+} from '@lblod/ember-rdfa-editor/utils/_private/ember-node.ts';
 import Dropdown from '../components/sample-ember-nodes/dropdown';
 
 const emberNodeConfig: EmberNodeConfig = {

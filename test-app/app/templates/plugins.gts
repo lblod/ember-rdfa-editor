@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import { inputRules, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   blockRdfaWithConfig,
@@ -15,11 +15,11 @@ import {
 import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
-import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
-import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code.ts';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color.ts';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
-import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight.ts';
 import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
 import {
   createInvisiblesPlugin,
@@ -54,7 +54,8 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index.ts';
+import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node.ts';
 import { Schema } from '@lblod/ember-rdfa-editor';
 import { tracked } from 'tracked-built-ins';
 import {
@@ -65,9 +66,9 @@ import {
   dropdown,
   dropdownView,
 } from '../dummy-nodes';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading.ts';
 import { getOwner } from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option.ts';
 import { modifier } from 'ember-modifier';
 import {
   sample_block,
@@ -75,16 +76,16 @@ import {
 } from 'test-app/dummy-nodes/sample-block';
 import Component from '@glimmer/component';
 import DummyContainer from 'test-app/components/dummy-container';
-import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container.gts';
 import { hash } from '@ember/helper';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
 import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
-import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
-import Editor from '@lblod/ember-rdfa-editor/components/editor';
-import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
-import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools.ts';
+import Editor from '@lblod/ember-rdfa-editor/components/editor.ts';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule.ts';
+import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container.gts';
 import { getContextualGroups } from 'test-app/dummy-plugins/expose-contextual-actions';
-import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
+import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index.ts';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 

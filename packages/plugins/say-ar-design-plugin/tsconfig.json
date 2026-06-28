@@ -3,6 +3,7 @@
 
   "include": ["src/**/*", "unpublished-development-types/**/*"],
   "compilerOptions": {
+    "customConditions": ["@say-editor/development"],
     /**
       https://www.typescriptlang.org/tsconfig#rootDir
       "Default: The longest common path of all non-declaration input files."
@@ -17,6 +18,6 @@
 
     "declarationDir": "declarations",
 
-    "types": ["ember-source/types"]
+    "types": ["ember-source/types", "global-type-overrides/types"]
   }
 }

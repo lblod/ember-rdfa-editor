@@ -17,7 +17,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index.ts';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -27,7 +27,7 @@ import {
   repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code.ts';
 import {
   tableKeymap,
   tableNodes,
@@ -43,7 +43,7 @@ import {
   orderedListWithConfig,
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
 import {
   link,
   linkPasteHandler,
@@ -55,8 +55,8 @@ import {
   heading as headingInvisible,
   paragraph as paragraphInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
-import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
-import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight.ts';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color.ts';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import {
@@ -70,25 +70,25 @@ import {
   editableNodePlugin,
   getActiveEditableNode,
 } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
-import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
-import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
-import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card';
-import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card';
-import ExternalTripleEditorCard from '@lblod/ember-rdfa-editor/components/_private/external-triple-editor/card';
-import RelationshipEditorCard from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/card';
+import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info/index.gts';
+import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor/index.gts';
+import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card.gts';
+import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card.gts';
+import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card.gts';
+import ExternalTripleEditorCard from '@lblod/ember-rdfa-editor/components/_private/external-triple-editor/card.gts';
+import RelationshipEditorCard from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/card.gts';
 import {
   inlineRdfaWithConfigView,
   inlineRdfaWithConfig,
-} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
-import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa.ts';
+import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa.ts';
 import {
   isSome,
   optionMap,
   unwrap,
-} from '@lblod/ember-rdfa-editor/utils/option';
-import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card';
-import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
+} from '@lblod/ember-rdfa-editor/utils/option.ts';
+import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-visualiser/visualiser-card.gts';
+import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor.ts';
 import {
   getNodeByRdfaId,
   type DisplayGenerator,
@@ -97,25 +97,25 @@ import {
 import {
   getOutgoingTriple,
   namespace,
-} from '@lblod/ember-rdfa-editor/utils/namespace';
-import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button';
-import LinkPointerButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/link-pointer-button';
+} from '@lblod/ember-rdfa-editor/utils/namespace.ts';
+import CreateRelationshipButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/create-button.gts';
+import LinkPointerButton from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/link-pointer-button.gts';
 import {
   combineConfigs,
   documentConfig,
   lovConfig,
-} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs.ts';
 import type {
   OptionGeneratorConfig,
   PredicateOptionGeneratorArgs,
   TargetOptionGeneratorArgs,
-} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
-import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
-import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
-import Editor from '@lblod/ember-rdfa-editor/components/editor';
-import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
-import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
-import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types.ts';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container.gts';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar.gts';
+import Editor from '@lblod/ember-rdfa-editor/components/editor.ts';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools.ts';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget.gts';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule.ts';
 
 import {
   number,
@@ -154,16 +154,16 @@ import {
   structureViewWithConfig,
 } from '@lblod/ember-rdfa-editor-lblod-plugins/plugins/structure-plugin/node';
 import type { StructurePluginOptions } from '@lblod/ember-rdfa-editor-lblod-plugins/plugins/structure-plugin/structure-types';
-import RoadsignRegulationCard from '@lblod/say-roadsign-regulation-plugin/components/roadsign-regulation-card';
-import { roadsign_regulation } from '@lblod/say-roadsign-regulation-plugin/plugin/nodes';
-import type { RoadsignRegulationPluginOptions } from '@lblod/say-roadsign-regulation-plugin/plugin/types';
-import ArDesignSidebarWidget from '@lblod/say-ar-design-plugin/components/sidebar-widget';
+import RoadsignRegulationCard from '@lblod/say-roadsign-regulation-plugin/components/roadsign-regulation-card.gts';
+import { roadsign_regulation } from '@lblod/say-roadsign-regulation-plugin/plugin/nodes.ts';
+import type { RoadsignRegulationPluginOptions } from '@lblod/say-roadsign-regulation-plugin/plugin/types.ts';
+import ArDesignSidebarWidget from '@lblod/say-ar-design-plugin/components/sidebar-widget.gts';
 
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import DummyContainer from 'test-app/components/dummy-container';
-import type { DesignInfo } from '@lblod/say-ar-design-plugin/plugin/types';
-import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder';
+import type { DesignInfo } from '@lblod/say-ar-design-plugin/plugin/types.ts';
+import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder.ts';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,

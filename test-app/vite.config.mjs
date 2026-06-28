@@ -5,7 +5,7 @@ import yaml from '@modyfi/vite-plugin-yaml';
 
 export default defineConfig({
   resolve: {
-    conditions: ['@say-editor/development'],
+    conditions: ['module', 'browser', 'development|production'],
   },
   optimizeDeps: {
     exclude: [
@@ -37,10 +37,7 @@ export default defineConfig({
       configureServer: (server) => {
         server.watcher.options = {
           ...server.watcher.options,
-          ignored: [
-            /node_modules\/(?!@lblod\/ember-rdfa-editor).*/,
-            '**/.git/**',
-          ],
+          ignored: ['**/.git/**'],
         };
       },
     },

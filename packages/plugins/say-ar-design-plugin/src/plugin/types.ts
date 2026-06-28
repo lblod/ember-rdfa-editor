@@ -1,5 +1,5 @@
 import type { EditorState, PNode } from '@lblod/ember-rdfa-editor';
-import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
+import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils/transaction-utils.ts';
 import type ArDesign from './models/ar-design.ts';
 import type { ArticleInsertPosition } from './utils/article-insert-position.ts';
 

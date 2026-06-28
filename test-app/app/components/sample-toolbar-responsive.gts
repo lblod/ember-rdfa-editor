@@ -1,31 +1,31 @@
 import Component from '@glimmer/component';
 import type { SayController } from '@lblod/ember-rdfa-editor';
-import FormatTextIcon from '@lblod/ember-rdfa-editor/components/icons/format-text';
+import FormatTextIcon from '@lblod/ember-rdfa-editor/components/icons/format-text.gts';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { ThreeDotsIcon } from '@appuniversum/ember-appuniversum/components/icons/three-dots';
 
-import ResponsiveToolbar from '@lblod/ember-rdfa-editor/components/responsive-toolbar';
-import Undo from '@lblod/ember-rdfa-editor/components/plugins/history/undo';
-import Redo from '@lblod/ember-rdfa-editor/components/plugins/history/redo';
-import Dropdown from '@lblod/ember-rdfa-editor/components/toolbar/dropdown';
-import Bold from '@lblod/ember-rdfa-editor/components/plugins/text-style/bold';
-import Italic from '@lblod/ember-rdfa-editor/components/plugins/text-style/italic';
-import Strikethrough from '@lblod/ember-rdfa-editor/components/plugins/text-style/strikethrough';
-import Underline from '@lblod/ember-rdfa-editor/components/plugins/text-style/underline';
-import Superscript from '@lblod/ember-rdfa-editor/components/plugins/text-style/superscript';
-import Subscript from '@lblod/ember-rdfa-editor/components/plugins/text-style/subscript';
-import HeadingMenu from '@lblod/ember-rdfa-editor/components/plugins/heading/heading-menu';
-import Color from '@lblod/ember-rdfa-editor/components/plugins/text-style/color';
-import Highlight from '@lblod/ember-rdfa-editor/components/plugins/text-style/highlight';
-import TableMenu from '@lblod/ember-rdfa-editor/components/plugins/table/table-menu';
-import ListOrdered from '@lblod/ember-rdfa-editor/components/plugins/list/ordered';
-import ListUnordered from '@lblod/ember-rdfa-editor/components/plugins/list/unordered';
-import AlignmentMenu from '@lblod/ember-rdfa-editor/components/plugins/alignment/alignment-menu';
-import IndentationMenu from '@lblod/ember-rdfa-editor/components/plugins/indentation/indentation-menu';
-import LinkMenu from '@lblod/ember-rdfa-editor/components/plugins/link/link-menu';
-import ImageInsertMenu from '@lblod/ember-rdfa-editor/components/plugins/image/insert-menu';
-import HtmlEditorMenu from '@lblod/ember-rdfa-editor/components/plugins/html-editor/menu';
-import FormattingToggle from '@lblod/ember-rdfa-editor/components/plugins/formatting/formatting-toggle';
+import ResponsiveToolbar from '@lblod/ember-rdfa-editor/components/responsive-toolbar.gts';
+import Undo from '@lblod/ember-rdfa-editor/components/plugins/history/undo.ts';
+import Redo from '@lblod/ember-rdfa-editor/components/plugins/history/redo.ts';
+import Dropdown from '@lblod/ember-rdfa-editor/components/toolbar/dropdown.gts';
+import Bold from '@lblod/ember-rdfa-editor/components/plugins/text-style/bold.gts';
+import Italic from '@lblod/ember-rdfa-editor/components/plugins/text-style/italic.gts';
+import Strikethrough from '@lblod/ember-rdfa-editor/components/plugins/text-style/strikethrough.gts';
+import Underline from '@lblod/ember-rdfa-editor/components/plugins/text-style/underline.gts';
+import Superscript from '@lblod/ember-rdfa-editor/components/plugins/text-style/superscript.gts';
+import Subscript from '@lblod/ember-rdfa-editor/components/plugins/text-style/subscript.gts';
+import HeadingMenu from '@lblod/ember-rdfa-editor/components/plugins/heading/heading-menu.ts';
+import Color from '@lblod/ember-rdfa-editor/components/plugins/text-style/color.ts';
+import Highlight from '@lblod/ember-rdfa-editor/components/plugins/text-style/highlight.ts';
+import TableMenu from '@lblod/ember-rdfa-editor/components/plugins/table/table-menu.ts';
+import ListOrdered from '@lblod/ember-rdfa-editor/components/plugins/list/ordered.ts';
+import ListUnordered from '@lblod/ember-rdfa-editor/components/plugins/list/unordered.ts';
+import AlignmentMenu from '@lblod/ember-rdfa-editor/components/plugins/alignment/alignment-menu.ts';
+import IndentationMenu from '@lblod/ember-rdfa-editor/components/plugins/indentation/indentation-menu.ts';
+import LinkMenu from '@lblod/ember-rdfa-editor/components/plugins/link/link-menu.gts';
+import ImageInsertMenu from '@lblod/ember-rdfa-editor/components/plugins/image/insert-menu.ts';
+import HtmlEditorMenu from '@lblod/ember-rdfa-editor/components/plugins/html-editor/menu.ts';
+import FormattingToggle from '@lblod/ember-rdfa-editor/components/plugins/formatting/formatting-toggle.ts';
 
 type Signature = {
   Args: {

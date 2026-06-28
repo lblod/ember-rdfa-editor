@@ -1,12 +1,12 @@
-//@eslint-ignore
 import { AnyObject, Flags, Maybe } from 'yup';
-import type Cypress from 'cypress';
-// this to make tsc happy
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-declare const cy: Cypress.cy & CyEventEmitter;
-interface CurieOptions {
-  allowEmpty?: boolean;
-}
+
+
+// pay attention to the placing of the import statements, inside or outside the module definition
+// with any top-level import or export statements, the declaration file acts as a module augmentation
+// without, it acts as a replacement for the module definition
+//
+// here, we want to augment, since we're adding a type to yup's already existing types
+
 declare module 'yup' {
   interface CurieOptions {
     allowEmpty?: boolean;
