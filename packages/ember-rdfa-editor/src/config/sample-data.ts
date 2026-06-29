@@ -498,7 +498,7 @@ world
 	datatype="xsd:string"
 	data-label="Openbare titel besluit"
       >
-	<h4><span>Geef <div property="ext:foo">titel</div> besluit op</span></h4>
+	<h4><span>Geef titel besluit op</span></h4>
       </div>
       <div
 	property="eli:title"

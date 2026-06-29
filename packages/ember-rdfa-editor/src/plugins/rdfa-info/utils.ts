@@ -193,7 +193,7 @@ export function findNodeByRdfaId(
   let result: ResolvedPNode | undefined;
   doc.descendants((node, pos) => {
     if (result) return false;
-    if (node.attrs['__rdfaId'] === rdfaId) {
+    if (node.attrs['__rdfaId'] === rdfaId || node.attrs['sayId'] === rdfaId) {
       result = {
         pos,
         value: node,

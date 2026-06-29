@@ -637,6 +637,9 @@ importers:
       codemirror:
         specifier: 'catalog:'
         version: 6.0.2
+      codemirror-lang-turtle:
+        specifier: ^0.0.2
+        version: 0.0.2
       common-tags:
         specifier: 'catalog:'
         version: 1.8.2
@@ -4470,6 +4473,9 @@ packages:
   clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
+
+  codemirror-lang-turtle@0.0.2:
+    resolution: {integrity: sha512-YN9JzdxfUv2DKNHLZa8L7sG5StOri8ZHbMzY/zJhrq6pYR0peJaeN+GyQZaXl6fYmmq8hurf/BOqTYPh7Uzgcw==}
 
   codemirror@6.0.2:
     resolution: {integrity: sha512-VhydHotNW5w1UGK0Qj96BwSk/Zqbp9WbnyK2W/eVMv4QyF41INRGpjUhFJY7/uDNuudSc33a/PKr4iDqRduvHw==}
@@ -13847,6 +13853,12 @@ snapshots:
   clone@1.0.4: {}
 
   clone@2.1.2: {}
+
+  codemirror-lang-turtle@0.0.2:
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
 
   codemirror@6.0.2:
     dependencies:
