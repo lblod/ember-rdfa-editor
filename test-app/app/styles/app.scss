@@ -1,14 +1,11 @@
 /* ==================================
    #DUMMY APP
    ================================== */
-
+@use "@appuniversum/ember-appuniversum/styles";
 @use "@lblod/ember-rdfa-editor";
 @use "@lblod/say-roadsign-regulation-plugin";
+@use "@lblod/say-ar-design-plugin";
 @use "c-dummy";
-// @import is deprecated but we use variables from AU in the ar-design styles, so it seems we need
-// to use import for them both here. We can't move everything to @use until AU has.
-@import "@appuniversum/ember-appuniversum/styles";
-@import "@lblod/say-ar-design-plugin";
 
 html,
 body {

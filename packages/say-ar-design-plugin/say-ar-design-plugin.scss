@@ -1,7 +1,5 @@
-// We use variables from here, so it seems we need to import it here too. @import is deprecated but
-// we can't move away from it until AU has
-@import "@appuniversum/ember-appuniversum/styles/settings/s-colors";
-@import "@appuniversum/ember-appuniversum/styles/settings/s-global";
+@use "@appuniversum/ember-appuniversum/styles/settings/s-root"; // AU css variables
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
 
 .ar-importer-overview {
   display: flex;
@@ -11,7 +9,7 @@
 
 .ar-importer-overview__sidebar {
   flex-basis: 30rem;
-  padding: $au-unit;
+  padding: au-settings.$au-unit;
   min-width: 0;
   flex-grow: 0;
   flex-shrink: 0;
@@ -23,8 +21,8 @@
 .ar-importer-overview__form {
   display: flex;
   flex-direction: column;
-  margin-top: $au-unit;
-  gap: $au-unit;
+  margin-top: au-settings.$au-unit;
+  gap: au-settings.$au-unit;
 }
 
 .ar-importer-overview__form__label {
