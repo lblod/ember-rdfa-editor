@@ -15,12 +15,7 @@ import {
 } from 'prosemirror-inputrules';
 import { TextSelection } from 'prosemirror-state';
 
-
-function sayInputRules({
-  rules,
-}: {
-  rules: readonly InputRule[];
-}) {
+function sayInputRules({ rules }: { rules: readonly InputRule[] }) {
   const originalPlugin = inputRules({ rules });
   return new ProsePlugin({
     ...originalPlugin.spec,
@@ -44,14 +39,14 @@ function sayInputRules({
           $cursor.pos,
           $cursor.pos,
           '\n',
-          () => {}
+          () => {},
         );
 
         // process 'Enter' as usual
         return false;
       },
-    }
-  })
+    },
+  });
 }
 
 export {

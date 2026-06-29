@@ -84,7 +84,7 @@ export const link_input_rule = ({
      * Only run this when textAfterLink is not \n. The \n is 'fake' and represents an 'Enter' keypress.
      */
     if (textAfterLink !== '\n') {
-      // 
+      //
       tr.insertText(textAfterLink, linkStart + node.nodeSize);
     }
 
