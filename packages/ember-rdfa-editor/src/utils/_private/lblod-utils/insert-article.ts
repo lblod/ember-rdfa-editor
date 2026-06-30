@@ -38,7 +38,7 @@ export function insertArticle(
     const tr = state.tr;
     let replacementTr: Transaction;
     let insertLocation: number | undefined;
-    if ('insertFreely' in args) {
+    if ('insertFreely' in args && args.insertFreely) {
       replacementTr = tr.replaceSelectionWith(node);
     } else {
       const { position } = args;
