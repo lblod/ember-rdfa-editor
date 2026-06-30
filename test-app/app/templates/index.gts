@@ -137,7 +137,8 @@ export default class extends Component {
   get linkOptions() {
     return {
       interactive: true,
-    };
+      target: '_blank',
+    } as const;
   }
 
   @tracked plugins: PluginConfig = [
