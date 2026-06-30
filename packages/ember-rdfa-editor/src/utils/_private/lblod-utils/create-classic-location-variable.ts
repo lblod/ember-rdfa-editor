@@ -42,7 +42,6 @@ export function createClassicLocationVariableAttrs({
   variable,
   variableInstance,
   __rdfaId,
-  label,
   source,
   backlinks = [],
 }: CreateClassicLocationVariableAttrsArgs) {
@@ -84,7 +83,7 @@ export function createClassicLocationVariableAttrs({
     __rdfaId,
     externalTriples,
     backlinks: [...backlinks, ...addedBacklinks],
-    label: label ?? 'Plaatsbeschrijving',
+    label: 'Plaatsbeschrijving',
     source,
     placeholder: 'Plaatsbeschrijving toevoegen',
   };
