@@ -35,6 +35,8 @@ export function constructMeasureFragment(
             currentParagraphContent = [];
           }
           fragment.push(node);
+        } else {
+          currentParagraphContent.push(node);
         }
       } else {
         currentParagraphContent.push(schema.text(part));
