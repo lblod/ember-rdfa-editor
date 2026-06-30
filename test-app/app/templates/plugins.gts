@@ -1,5 +1,5 @@
 import { action } from '@ember/object';
-import { inputRules } from '@lblod/ember-rdfa-editor';
+import { inputRules, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
@@ -55,7 +55,6 @@ import {
   superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style/index';
-import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { Schema } from '@lblod/ember-rdfa-editor';
 import { tracked } from 'tracked-built-ins';
 import {
@@ -175,7 +174,7 @@ export default class extends Component {
 
   @tracked nodeViews: (
     proseController: SayController,
-  ) => Record<string, SayNodeViewConstructor> = (proseController) => {
+  ) => Record<string, NodeViewConstructor> = (proseController) => {
     return {
       card: cardView(proseController),
       counter: counterView(proseController),

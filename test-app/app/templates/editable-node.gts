@@ -300,7 +300,6 @@ export default class extends Component {
       image: imageView(controller),
       inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(controller),
       block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
-        // in tests in a consuming app, so there must be something wrong with the test-app config
         new BlockRDFaView(args, controller),
     };
   };
