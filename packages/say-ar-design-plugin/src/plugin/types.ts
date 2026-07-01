@@ -25,7 +25,12 @@ export type Pagination = {
 };
 
 export type DesignInfo = {
+  /** the designs themselves */
   designs: ArDesign[];
+  /**
+   * for each design, a promise resolving to the number of documents this design is used in
+   * (indexed by id)
+   */
   inDocs: Record<string, Promise<number>>;
 };
 

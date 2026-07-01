@@ -24,6 +24,7 @@ import {
   type EditorView,
   type DecorationSource,
   type NodeView,
+  type NodeViewConstructor,
 } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
 // eslint-disable-next-line ember/no-classic-components
@@ -502,6 +503,7 @@ export function createEmberNodeSpec(config: EmberNodeConfig): SayNodeSpec {
   };
 }
 
+/** @deprecated just use import type { NodeViewConstructor } from '@lblod/ember-rdfa-editor' */
 export type SayNodeViewConstructor = (
   node: PNode,
   view: EditorView,
@@ -512,7 +514,7 @@ export type SayNodeViewConstructor = (
  * See {@link EmberNodeView}
  */
 export function createEmberNodeView(config: EmberNodeConfig) {
-  return function (controller: SayController): SayNodeViewConstructor {
+  return function (controller: SayController): NodeViewConstructor {
     return function (node, view: EditorView, getPos) {
       return new EmberNodeView(controller, config, node, view, getPos);
     };
