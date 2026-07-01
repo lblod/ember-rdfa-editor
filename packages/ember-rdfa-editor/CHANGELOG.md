@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 13.13.0
+
+### Minor Changes
+
+- [#1394](https://github.com/lblod/ember-rdfa-editor/pull/1394) [`d4dbd4d`](https://github.com/lblod/ember-rdfa-editor/commit/d4dbd4df5ae0fcb7d41a497a4df990d90c9b21ac) Thanks [@piemonkey](https://github.com/piemonkey)! - Deprecate SayNodeViewConstructor in favour of using Prosemirror's NodeViewConstructor directly (exported from `@lblod/ember-rdfa-editor`)
+
+### Patch Changes
+
+- [#1394](https://github.com/lblod/ember-rdfa-editor/pull/1394) [`dee24b7`](https://github.com/lblod/ember-rdfa-editor/commit/dee24b7fd50d86d251cd72462299d55016b3afb5) Thanks [@piemonkey](https://github.com/piemonkey)! - Fix mistake in lblod-utils insert-article which always used 'insert freely' mode
+
+- [#1391](https://github.com/lblod/ember-rdfa-editor/pull/1391) [`7f17c0a`](https://github.com/lblod/ember-rdfa-editor/commit/7f17c0a8a0a790a3ed7cfa3915d36075a217dba5) Thanks [@kobemertens](https://github.com/kobemertens)! - Always use "plaatsbeschrijving" as label for `classicLocationVariable`s
+
 ## 13.12.1
 
 ### Patch Changes

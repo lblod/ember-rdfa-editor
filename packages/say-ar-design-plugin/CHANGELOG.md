@@ -1,5 +1,17 @@
 # @lblod/say-ar-design-plugin
 
+## 3.0.0
+
+### Patch Changes
+
+- [#1394](https://github.com/lblod/ember-rdfa-editor/pull/1394) [`5f3be7a`](https://github.com/lblod/ember-rdfa-editor/commit/5f3be7aae569bf67ec1b0e30743faa2b95a65cfb) Thanks [@piemonkey](https://github.com/piemonkey)! - Add basic docs for ArDesignQuery function
+
+- [#1389](https://github.com/lblod/ember-rdfa-editor/pull/1389) [`545c0fb`](https://github.com/lblod/ember-rdfa-editor/commit/545c0fb13598469d012a7eb0ecdbf8e83d463bf4) Thanks [@elpoelma](https://github.com/elpoelma)! - Use scss `@use` API in favour of deprecated `@import` API
+
+- Updated dependencies [[`d4dbd4d`](https://github.com/lblod/ember-rdfa-editor/commit/d4dbd4df5ae0fcb7d41a497a4df990d90c9b21ac), [`94fc474`](https://github.com/lblod/ember-rdfa-editor/commit/94fc474c009ae8b1a4f4b24568d83bf6403abe9d), [`dee24b7`](https://github.com/lblod/ember-rdfa-editor/commit/dee24b7fd50d86d251cd72462299d55016b3afb5), [`7f17c0a`](https://github.com/lblod/ember-rdfa-editor/commit/7f17c0a8a0a790a3ed7cfa3915d36075a217dba5)]:
+  - @lblod/ember-rdfa-editor@13.13.0
+  - @lblod/say-roadsign-regulation-plugin@3.0.0
+
 ## 2.0.0
 
 ### Minor Changes

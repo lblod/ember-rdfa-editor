@@ -1,6 +1,6 @@
 {
   "name": "@lblod/say-ar-design-plugin",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Say Editor plugin as part of the LBLOD project",
   "keywords": [
     "ember-addon"
@@ -153,8 +153,8 @@
     "@glimmer/component": "^1.1.2 || ^2.0.0",
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
-    "@lblod/ember-rdfa-editor": "^13.12.1",
-    "@lblod/say-roadsign-regulation-plugin": "2.0.0",
+    "@lblod/ember-rdfa-editor": "^13.13.0",
+    "@lblod/say-roadsign-regulation-plugin": "3.0.0",
     "ember-basic-dropdown": "^8.0.0",
     "ember-concurrency": "^4.0.2 || ^5.0.0",
     "ember-intl": "^6.4.0 || ^7.0.0",

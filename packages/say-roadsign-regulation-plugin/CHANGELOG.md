@@ -1,5 +1,14 @@
 # @lblod/say-roadsign-regulation-plugin
 
+## 3.0.0
+
+### Patch Changes
+
+- [#1392](https://github.com/lblod/ember-rdfa-editor/pull/1392) [`94fc474`](https://github.com/lblod/ember-rdfa-editor/commit/94fc474c009ae8b1a4f4b24568d83bf6403abe9d) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Fix non block variables were not being added to the measure
+
+- Updated dependencies [[`d4dbd4d`](https://github.com/lblod/ember-rdfa-editor/commit/d4dbd4df5ae0fcb7d41a497a4df990d90c9b21ac), [`dee24b7`](https://github.com/lblod/ember-rdfa-editor/commit/dee24b7fd50d86d251cd72462299d55016b3afb5), [`7f17c0a`](https://github.com/lblod/ember-rdfa-editor/commit/7f17c0a8a0a790a3ed7cfa3915d36075a217dba5)]:
+  - @lblod/ember-rdfa-editor@13.13.0
+
 ## 2.0.0
 
 ### Minor Changes
