@@ -118,7 +118,7 @@ export {
   textblockTypeInputRule,
   undoInputRule,
   wrappingInputRule,
-} from 'prosemirror-inputrules';
+} from '#root/plugins/inputrules/index.ts';
 export { history } from 'prosemirror-history';
 export { dropCursor } from 'prosemirror-dropcursor';
 
