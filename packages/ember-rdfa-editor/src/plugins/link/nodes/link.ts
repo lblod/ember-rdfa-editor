@@ -18,6 +18,7 @@ type LinkOptions = {
   interactive?: boolean;
   rdfaAware?: boolean;
   linkParser?: LinkParser;
+  target?: '_self' | '_blank' | '_parent' | '_top' | 'unfencedTop';
 };
 
 // TODO this spec doesn't play well with RDFa editing tools. It has been modified so that any
@@ -27,6 +28,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
   interactive = false,
   rdfaAware = false,
   linkParser = defaultLinkParser(),
+  target,
 } = {}) => {
   return {
     name: 'link',
@@ -88,11 +90,15 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
         return renderRdfaAware({
           renderable: node,
           tag: 'a',
-          attrs: { ...attrs, class: getClassnamesFromNode(node) },
+          attrs: { ...attrs, target, class: getClassnamesFromNode(node) },
           content: 0,
         });
       } else {
-        return ['a', { ...attrs, class: getClassnamesFromNode(node) }, 0];
+        return [
+          'a',
+          { ...attrs, target, class: getClassnamesFromNode(node) },
+          0,
+        ];
       }
     },
   };
