@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 13.14.0
+
+### Minor Changes
+
+- [#1393](https://github.com/lblod/ember-rdfa-editor/pull/1393) [`e01e981`](https://github.com/lblod/ember-rdfa-editor/commit/e01e981829e5c440a77b29dd4e8ee1406dfe7e75) Thanks [@elpoelma](https://github.com/elpoelma)! - link-plugin: add support for customizing `target` attribute of outputted html
+
+- [#1390](https://github.com/lblod/ember-rdfa-editor/pull/1390) [`3bed90e`](https://github.com/lblod/ember-rdfa-editor/commit/3bed90e54bb235c9469e7bfa43c492737eb8af93) Thanks [@elpoelma](https://github.com/elpoelma)! - link plugin: add 'Enter' key as a trigger to the input rule
+
+- [#1390](https://github.com/lblod/ember-rdfa-editor/pull/1390) [`3bed90e`](https://github.com/lblod/ember-rdfa-editor/commit/3bed90e54bb235c9469e7bfa43c492737eb8af93) Thanks [@elpoelma](https://github.com/elpoelma)! - Add support for enter keys in inputrules. The 'Enter' key can be captured using \n in the regex of the inputrule
+
 ## 13.13.0
 
 ### Minor Changes
