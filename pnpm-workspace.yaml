@@ -179,7 +179,7 @@ catalog:
 overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
-  prosemirror-view: 'catalog:'
+  prosemirror-view: "catalog:"
 
 peerDependencyRules:
   allowedVersions:
@@ -192,10 +192,20 @@ patchedDependencies:
 allowUnusedPatches: true
 
 allowBuilds:
-  '@parcel/watcher': true
+  "@parcel/watcher": true
   core-js: true
   esbuild: true
   unrs-resolver: true
 
 minimumReleaseAgeExclude:
-  - '@lblod/ember-rdfa-editor-lblod-plugins'
+  - "@lblod/ember-rdfa-editor-lblod-plugins"
+autoInstallPeers: true
+strictPeerDependencies: true
+resolvePeersFromWorkspaceRoot: false
+dedupePeerDependents: true
+publicHoistPattern:
+  - ember-source
+  - "@lblod/ember-rdfa-editor"
+  - "@lblod/say-ar-design-plugin"
+
+resolutionMode: highest
