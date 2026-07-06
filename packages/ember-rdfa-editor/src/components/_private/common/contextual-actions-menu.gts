@@ -24,6 +24,8 @@ import { getReferenceElementFromSelection } from '#root/components/utils/floatin
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 import { eq, and } from 'ember-truth-helpers';
+import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
+import { TextSelection } from 'prosemirror-state';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -218,9 +220,15 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   get referenceElement() {
+    const state = this.controller.mainEditorState;
+    const slashPos = getSlashCommandsPluginState(state)?.slashPos;
+    const selection = slashPos
+      ? TextSelection.create(state.doc, slashPos)
+      : state.selection;
     return getReferenceElementFromSelection({
       editorState: this.controller.mainEditorState,
       editorView: this.controller.mainEditorView,
+      selection,
     });
   }
 

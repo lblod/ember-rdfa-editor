@@ -1,5 +1,5 @@
 import type { VirtualElement } from '@floating-ui/dom';
-import type { EditorState } from 'prosemirror-state';
+import type { EditorState, Selection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 
 type Coords = {
@@ -21,6 +21,7 @@ type GetReferenceElementArgs = {
   getRight?: GetPositionFromSelectionCoords;
   getBottom?: GetPositionFromSelectionCoords;
   getTop?: GetPositionFromSelectionCoords;
+  selection?: Selection
 };
 
 /**
@@ -35,12 +36,13 @@ export function getReferenceElementFromSelection({
   getRight,
   getBottom,
   getTop,
+  selection,
 }: GetReferenceElementArgs) {
-  const { selection } = editorState;
+  const _selection = selection ?? editorState.selection;
   const virtualElement: VirtualElement = {
     getBoundingClientRect: () => {
-      const coordsFrom = editorView.coordsAtPos(selection.from, -1);
-      const coordsTo = editorView.coordsAtPos(selection.to, -1);
+      const coordsFrom = editorView.coordsAtPos(_selection.from, -1);
+      const coordsTo = editorView.coordsAtPos(_selection.to, -1);
       const left =
         getLeft?.(coordsFrom, coordsTo) ??
         Math.min(coordsFrom.left, coordsTo.left);
