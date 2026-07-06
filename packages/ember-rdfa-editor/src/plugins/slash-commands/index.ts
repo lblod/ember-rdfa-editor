@@ -8,6 +8,8 @@ export interface PluginState {
   menuOpen: boolean;
   preSlashEditorState: EditorState | null;
   slashPos: number | null;
+  // Search end position
+  endPos: number | null;
   searchString: string | null;
   transition: (
     tr: Transaction,
@@ -20,6 +22,7 @@ export interface PluginState {
 class IdleState implements PluginState {
   menuOpen = false;
   slashPos = null;
+  endPos = null;
   searchString = null;
   preSlashEditorState: EditorState | null;
 
@@ -102,6 +105,26 @@ class SearchingState implements PluginState {
   }
 }
 
+/*
+ * This is needed because we need to be able to hide the placeholder
+ * when the menu is opened externally (e.g. via the floating plus button)
+ */
+class MenuExternallyOpenedState implements PluginState {
+  menuOpen = true;
+  slashPos = null;
+  endPos = null;
+  preSlashEditorState: EditorState;
+  searchString = null;
+
+  constructor(preSlashEditorState: EditorState) {
+    this.preSlashEditorState = preSlashEditorState;
+  }
+
+  transition(_tr: Transaction, _oldState: EditorState, newState: EditorState) {
+    return new IdleState(newState);
+  }
+}
+
 function isValidSearchRange(
   state: EditorState,
   slashPos: number,
@@ -153,25 +176,6 @@ function getTextBetween(
     '\0',
     '\0',
   );
-}
-
-/*
- * This is needed because we need to be able to hide the placeholder
- * when the menu is opened externally (e.g. via the floating plus button)
- */
-class MenuExternallyOpenedState implements PluginState {
-  menuOpen = true;
-  slashPos = null;
-  preSlashEditorState: EditorState;
-  searchString = null;
-
-  constructor(preSlashEditorState: EditorState) {
-    this.preSlashEditorState = preSlashEditorState;
-  }
-
-  transition(_tr: Transaction, _oldState: EditorState, newState: EditorState) {
-    return new IdleState(newState);
-  }
 }
 
 export function slashCommandsStateChanged(
@@ -255,6 +259,48 @@ function transactionIsSlashTyped(tr: Transaction) {
   return transactionIsCharacterTyped(tr, '/');
 }
 
+function createPlaceholderDecoration(state: EditorState, text: string) {
+  return Decoration.widget(
+    state.selection.from,
+    () => {
+      const el = document.createElement('span');
+      el.textContent = text;
+      el.style.color = 'rgb(161, 158, 153)';
+      el.style.caretColor = '#000';
+      return el;
+    },
+    { side: activeIsRightAligned(state) ? -1 : 1 },
+  );
+}
+
+function getDecorations(state: EditorState, options: SlashCommandsPluginArgs) {
+  const pluginState = getSlashCommandsPluginState(state);
+  if (
+    pluginState instanceof IdleState &&
+    shouldShowPlaceholder(state, options.getGroups)
+  ) {
+    return [
+      createPlaceholderDecoration(
+        state,
+        options.intl.t(
+          'ember-rdfa-editor.contextual-actions.type-/-for-actions',
+        ),
+      ),
+    ];
+  }
+  if (
+    pluginState instanceof SearchingState &&
+    pluginState.slashPos === pluginState.endPos
+  ) {
+    return [
+      createPlaceholderDecoration(
+        state,
+        options.intl.t('ember-rdfa-editor.contextual-actions.type-to-search'),
+      ),
+    ];
+  }
+}
+
 export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
   return new Plugin<PluginState>({
     key: slashCommandsPluginKey,
@@ -273,25 +319,11 @@ export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
     },
     props: {
       decorations(state: EditorState) {
-        const { doc, selection } = state;
-        if (!shouldShowPlaceholder(state, options.getGroups)) {
-          return null;
-        }
-        return DecorationSet.create(doc, [
-          Decoration.widget(
-            selection.from,
-            () => {
-              const el = document.createElement('span');
-              el.textContent = options.intl.t(
-                'ember-rdfa-editor.contextual-actions.type-/-for-actions',
-              );
-              el.style.color = 'rgb(161, 158, 153)';
-              el.style.caretColor = '#000';
-              return el;
-            },
-            { side: activeIsRightAligned(state) ? -1 : 1 },
-          ),
-        ]);
+        const { doc } = state;
+        const decorations = getDecorations(state, options);
+        if (!decorations) return;
+
+        return DecorationSet.create(doc, decorations);
       },
     },
   });
