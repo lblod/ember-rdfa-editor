@@ -28,6 +28,7 @@ import {
   timeout,
   type TaskInstance,
 } from 'ember-concurrency';
+import { not } from 'ember-truth-helpers';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -50,7 +51,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   @service declare intl: IntlService;
 
   @tracked loadActionsError: string | null = null;
-  @tracked searchQuery: string = '';
+  @tracked localSearchQuery: string = '';
   @tracked loadGroupTaskInstances: {
     group: ContextualActionGroup;
     taskInstance: TaskInstance<ContextualAction[]>;
@@ -120,7 +121,7 @@ export default class ContextualActionsContainer extends Component<Args> {
     tr.setMeta('SLASH_COMMANDS_PLUGIN', 'close_context_menu');
     this.controller.mainEditorView.dispatch(tr);
     this.plusButtonClicked = false;
-    this.searchQuery = '';
+    this.localSearchQuery = '';
     this.selectedEditorNodeLocal = null;
     void this.getActionsTask.cancelAll();
     runTask(this, () => this.controller.mainEditorView.focus());
@@ -197,16 +198,18 @@ export default class ContextualActionsContainer extends Component<Args> {
     }));
   }
 
+  get menuWasOpenedBySlash() {
+    return !this.plusButtonClicked && this.slashCommandsPluginState?.menuOpen;
+  }
+
   @action
   executeAction(action: ContextualAction) {
-    const menuWasOpenedBySlash =
-      !this.plusButtonClicked && this.slashCommandsPluginState?.menuOpen;
     if (
-      menuWasOpenedBySlash &&
-      this.slashCommandsPluginState?.latestEditorState
+      this.menuWasOpenedBySlash &&
+      this.slashCommandsPluginState?.preSlashEditorState
     ) {
       this.controller.mainEditorView.updateState(
-        this.slashCommandsPluginState.latestEditorState,
+        this.slashCommandsPluginState.preSlashEditorState,
       );
     }
     if ('command' in action) {
@@ -236,8 +239,12 @@ export default class ContextualActionsContainer extends Component<Args> {
     );
   }
 
+  get searchQuery() {
+    return this.slashCommandsPluginState?.searchString ?? this.localSearchQuery;
+  }
+
   setSearchQuery = (query: string) => {
-    this.searchQuery = query;
+    this.localSearchQuery = query;
   };
 
   startGetActionsTask = modifier(() => {
@@ -260,13 +267,13 @@ export default class ContextualActionsContainer extends Component<Args> {
       {{#if this.showContextMenu}}
         <ContextualActionsMenu
           {{this.startGetActionsTask}}
-          @enableSearch={{true}}
+          @enableSearch={{not this.menuWasOpenedBySlash}}
           @controller={{this.controller}}
           @groups={{this.groupsWithStatus}}
           @onActionSelected={{this.selectAction}}
           @onClose={{this.closeContextMenu}}
           @onSearch={{this.setSearchQuery}}
-          @searchQuery={{this.searchQuery}}
+          @searchQuery={{this.localSearchQuery}}
         />
       {{/if}}
     </div>

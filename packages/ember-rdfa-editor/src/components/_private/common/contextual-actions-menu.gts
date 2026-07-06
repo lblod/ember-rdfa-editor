@@ -122,6 +122,7 @@ export default class ContextualActionsMenu extends Component<Args> {
         }
         case 'Delete':
         case 'Backspace':
+          if (!this.args.enableSearch) break;
           if (!this.args.searchQuery) {
             event.preventDefault();
             this.args.onClose?.();
@@ -365,6 +366,8 @@ export default class ContextualActionsMenu extends Component<Args> {
             }}
           />
         </div>
+      {{else}}
+        <div class="au-u-padding-top-tiny" />
       {{/if}}
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">

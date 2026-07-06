@@ -6,8 +6,9 @@ import { ReplaceStep } from 'prosemirror-transform';
 
 export interface PluginState {
   menuOpen: boolean;
-  latestEditorState: EditorState | null;
+  preSlashEditorState: EditorState | null;
   slashPos: number | null;
+  searchString: string | null;
   transition: (
     tr: Transaction,
     oldState: EditorState,
@@ -19,10 +20,11 @@ export interface PluginState {
 class IdleState implements PluginState {
   menuOpen = false;
   slashPos = null;
-  latestEditorState: EditorState | null;
+  searchString = null;
+  preSlashEditorState: EditorState | null;
 
   constructor(latestState?: EditorState | null) {
-    this.latestEditorState = latestState ?? null;
+    this.preSlashEditorState = latestState ?? null;
   }
 
   transition(
@@ -43,7 +45,8 @@ class IdleState implements PluginState {
       shouldShowPlaceholder(oldState, getGroups) &&
       transactionIsSlashTyped(tr)
     ) {
-      return new SearchingState(oldState, newState.selection.$from.pos);
+      const pos = newState.selection.$from.pos;
+      return new SearchingState(oldState, pos, pos, '');
     }
     return new IdleState(newState);
   }
@@ -51,34 +54,119 @@ class IdleState implements PluginState {
 
 class SearchingState implements PluginState {
   menuOpen = true;
+  preSlashEditorState: EditorState;
   slashPos: number;
-  latestEditorState: EditorState;
+  endPos: number;
+  searchString: string;
 
-  constructor(latestState: EditorState, slashPos: number) {
+  constructor(
+    preSlashEditorState: EditorState,
+    slashPos: number,
+    endPos: number,
+    searchString: string,
+  ) {
+    this.preSlashEditorState = preSlashEditorState;
     this.slashPos = slashPos;
-    this.latestEditorState = latestState;
+    this.endPos = endPos;
+    this.searchString = searchString;
   }
 
   transition(tr: Transaction, _oldState: EditorState, newState: EditorState) {
-    if (keepOpenContextActions(newState, tr, this.slashPos)) {
-      return new SearchingState(this.latestEditorState, this.slashPos);
+    if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'close_context_menu') {
+      return new IdleState(newState);
     }
 
-    return new IdleState(newState);
+    const newSlashPos = tr.mapping.map(this.slashPos, -1);
+    const newEndPos = tr.mapping.map(this.endPos, 1);
+
+    if (!isValidSearchRange(newState, newSlashPos, newEndPos)) {
+      return new IdleState(newState);
+    }
+
+    // The cursor must stay within the search range
+    const { selection } = newState;
+    if (
+      !selection.empty ||
+      selection.$from.pos < newSlashPos ||
+      selection.$from.pos > newEndPos
+    ) {
+      return new IdleState(newState);
+    }
+
+    return new SearchingState(
+      this.preSlashEditorState,
+      newSlashPos,
+      newEndPos,
+      getTextBetween(newState, newSlashPos, newEndPos) ?? '',
+    );
   }
+}
+
+function isValidSearchRange(
+  state: EditorState,
+  slashPos: number,
+  endPos: number,
+): boolean {
+  if (endPos < slashPos) return false;
+
+  let $slash;
+  try {
+    $slash = state.doc.resolve(slashPos);
+  } catch {
+    return false;
+  }
+  if (!$slash.parent.isTextblock) return false;
+
+  const slashOffset = $slash.parentOffset;
+  const charBeforeSlash = $slash.parent.textBetween(
+    slashOffset - 1,
+    slashOffset,
+    '\0',
+    '\0',
+  );
+  if (charBeforeSlash !== '/') return false;
+
+  let $end;
+  try {
+    $end = state.doc.resolve(endPos);
+  } catch {
+    return false;
+  }
+
+  // Search must stay in same block
+  if ($end.parent !== $slash.parent) return false;
+
+  return true;
+}
+
+function getTextBetween(
+  state: EditorState,
+  slashPos: number,
+  endPos: number,
+): string | null {
+  if (!isValidSearchRange(state, slashPos, endPos)) return null;
+  const $slash = state.doc.resolve(slashPos);
+  const $end = state.doc.resolve(endPos);
+  return $slash.parent.textBetween(
+    $slash.parentOffset,
+    $end.parentOffset,
+    '\0',
+    '\0',
+  );
 }
 
 /*
  * This is needed because we need to be able to hide the placeholder
- * when the menu is opened externally
+ * when the menu is opened externally (e.g. via the floating plus button)
  */
 class MenuExternallyOpenedState implements PluginState {
   menuOpen = true;
   slashPos = null;
-  latestEditorState: EditorState;
+  preSlashEditorState: EditorState;
+  searchString = null;
 
-  constructor(latestState: EditorState) {
-    this.latestEditorState = latestState;
+  constructor(preSlashEditorState: EditorState) {
+    this.preSlashEditorState = preSlashEditorState;
   }
 
   transition(_tr: Transaction, _oldState: EditorState, newState: EditorState) {
@@ -93,7 +181,8 @@ export function slashCommandsStateChanged(
   return (
     oldState?.menuOpen !== newState?.menuOpen ||
     oldState?.slashPos !== newState?.slashPos ||
-    oldState?.latestEditorState !== newState?.latestEditorState ||
+    oldState?.preSlashEditorState !== newState?.preSlashEditorState ||
+    oldState?.searchString !== newState?.searchString ||
     oldState?.constructor.name !== newState?.constructor.name
   );
 }
@@ -144,39 +233,13 @@ interface SlashCommandsPluginArgs {
   getGroups: GetContextualActionGroups;
 }
 
-function keepOpenContextActions(
-  state: EditorState,
-  tr: Transaction,
-  slashPos: number | null,
-) {
-  if (tr.getMeta('SLASH_COMMANDS_PLUGIN') === 'close_context_menu') {
-    return false;
-  }
-  if (slashPos === null) return false;
-
-  const { pos } = state.selection.$from;
-  if (pos !== slashPos) return false;
-
-  const $slash = state.doc.resolve(slashPos);
-  const { parent, parentOffset } = $slash;
-  const textBetween = parent.textBetween(
-    parentOffset - 1,
-    parentOffset,
-    '\0',
-    '\0',
-  );
-  if (textBetween !== '/') return false;
-
-  return true;
-}
-
 function activeIsRightAligned(state: EditorState) {
   const parent = state.selection.$from.parent;
   if (!parent) return false;
   return parent.attrs['alignment'] === 'right';
 }
 
-function transactionIsSlashTyped(tr: Transaction) {
+function transactionIsCharacterTyped(tr: Transaction, character: string) {
   if (tr.steps.length !== 1) return false;
   const [step] = tr.steps;
   if (!(step instanceof ReplaceStep)) return false;
@@ -184,8 +247,12 @@ function transactionIsSlashTyped(tr: Transaction) {
   return (
     slice.content.childCount === 1 &&
     slice.content.firstChild?.isText &&
-    slice.content.firstChild.text === '/'
+    slice.content.firstChild.text === character
   );
+}
+
+function transactionIsSlashTyped(tr: Transaction) {
+  return transactionIsCharacterTyped(tr, '/');
 }
 
 export function slashCommandsPlugin(options: SlashCommandsPluginArgs) {
