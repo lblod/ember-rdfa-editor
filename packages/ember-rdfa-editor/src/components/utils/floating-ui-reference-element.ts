@@ -21,7 +21,7 @@ type GetReferenceElementArgs = {
   getRight?: GetPositionFromSelectionCoords;
   getBottom?: GetPositionFromSelectionCoords;
   getTop?: GetPositionFromSelectionCoords;
-  selection?: Selection
+  selection?: Selection;
 };
 
 /**
