@@ -94,6 +94,26 @@ const streetSuggestionActions = [
     priority: 2,
   },
   {
+    label: 'Molenstraat 3, 9300 Aalst',
+    group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    priority: 2,
+  },
+  {
+    label: 'Perceel 45A 1.2',
+    group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    priority: 2,
+  },
+  {
+    label: 'Recreatiepark Blaarmeersen',
+    group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    priority: 2,
+  },
+  {
+    label: 'Monterreystraat 37, 9000 Gent',
+    group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
+    priority: 2,
+  },
+  {
     label: 'Perceel 44A, 9000 Aalst',
     group: 'street-suggestions-1d8563d6-bfd8-487f-a2a0-6d7a6ab01cb5',
     priority: 9,

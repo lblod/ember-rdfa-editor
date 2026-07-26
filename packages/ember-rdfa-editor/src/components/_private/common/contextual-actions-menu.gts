@@ -24,6 +24,8 @@ import { getReferenceElementFromSelection } from '#root/components/utils/floatin
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 import { eq, and } from 'ember-truth-helpers';
+import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
+import { TextSelection } from 'prosemirror-state';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -122,6 +124,7 @@ export default class ContextualActionsMenu extends Component<Args> {
         }
         case 'Delete':
         case 'Backspace':
+          if (!this.args.enableSearch) break;
           if (!this.args.searchQuery) {
             event.preventDefault();
             this.args.onClose?.();
@@ -217,9 +220,15 @@ export default class ContextualActionsMenu extends Component<Args> {
   }
 
   get referenceElement() {
+    const state = this.controller.mainEditorState;
+    const slashPos = getSlashCommandsPluginState(state)?.slashPos;
+    const selection = slashPos
+      ? TextSelection.create(state.doc, slashPos)
+      : state.selection;
     return getReferenceElementFromSelection({
       editorState: this.controller.mainEditorState,
       editorView: this.controller.mainEditorView,
+      selection,
     });
   }
 
@@ -365,6 +374,8 @@ export default class ContextualActionsMenu extends Component<Args> {
             }}
           />
         </div>
+      {{else}}
+        <div class="au-u-padding-top-tiny" />
       {{/if}}
       {{#if @isLoading}}
         <div class="au-u-flex au-u-flex--center au-u-padding">
