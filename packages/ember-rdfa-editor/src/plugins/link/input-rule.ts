@@ -65,9 +65,7 @@ export const link_input_rule = ({
     const link = match[2];
     const textAfterLink = match[3];
     const linkStart = start + textBeforeLink.length;
-    console.log('Link: ', link);
     const linkParserResult = linkParser(link);
-    console.log(linkParserResult);
     if (!linkParserResult.isSuccessful) {
       return null;
     }
