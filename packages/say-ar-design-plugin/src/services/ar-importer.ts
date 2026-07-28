@@ -254,9 +254,11 @@ export default class ArImporterService extends Service {
     );
     console.log(monads)
     console.log(warnings)
+    console.log(processDocumentHeadlessly)
     const document = processDocumentHeadlessly(`<div></div>`, (state) =>
       transactionCombinator<boolean>(state)(monads),
     );
+    console.log(document)
     return { result: document, warnings };
   }
 
