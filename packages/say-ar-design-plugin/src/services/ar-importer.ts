@@ -24,7 +24,10 @@ import type TrafficSignal from '../plugin/models/traffic-signal.ts';
 import type VariableInstance from '../plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
-import { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
+import {
+  afterLastArticle,
+  ArticleInsertPosition,
+} from '../plugin/utils/article-insert-position.ts';
 
 export type ImportResult<R> = {
   result: R;
@@ -248,9 +251,10 @@ export default class ArImporterService extends Service {
     ) => string,
   ): Promise<ImportResult<string>> {
     console.log('generating preview');
+    console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
-      false,
+      afterLastArticle,
     );
     console.log(monads);
     console.log(warnings);
