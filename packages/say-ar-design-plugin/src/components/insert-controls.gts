@@ -93,6 +93,13 @@ export class InsertControls extends Component<Sig> {
     };
   }
 
+  get onCursor(): InsertPositionOption {
+    return {
+      value: false,
+      label: this.intl.t('ar-importer.controls.on-cursor'),
+    };
+  }
+
   get articleOptions(): InsertPositionOption[] {
     return this.args.articles.map((_, i) => ({
       value: new ArticleInsertPosition(i),
@@ -103,7 +110,7 @@ export class InsertControls extends Component<Sig> {
   }
 
   get options(): InsertPositionOption[] {
-    return [this.afterLast, this.beforeFirst, ...this.articleOptions];
+    return [this.afterLast, this.beforeFirst, this.onCursor, ...this.articleOptions];
   }
 
   get selected(): InsertPositionOption {
