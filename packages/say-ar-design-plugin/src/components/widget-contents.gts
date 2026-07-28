@@ -57,7 +57,7 @@ export default class ArWidgetContents extends Component<Sig> {
   arDesignsQuery = restartableTask(async () => {
     await timeout(FILTER_TIMEOUT_MS);
     const { pageNumber, pageSize, sort, nameFilter } = this;
-    console.log('query')
+    console.log('query');
     try {
       return this.args.designQuery({ pageNumber, pageSize, sort, nameFilter });
     } catch (e) {
@@ -87,7 +87,7 @@ export default class ArWidgetContents extends Component<Sig> {
   };
 
   selectDesign = (design: ArDesign) => {
-    console.log('select')
+    console.log('select');
     this.selectedDesign = design;
   };
 

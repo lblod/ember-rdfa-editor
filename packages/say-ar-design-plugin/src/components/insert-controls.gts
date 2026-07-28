@@ -29,7 +29,7 @@ const InsertButton: TOC<{
     arDesign: ArDesign;
     insertLoading?: boolean;
     onInsertAr: ArInsertFunc;
-    insertPosition: ArticleInsertPosition;
+    insertPosition: ArticleInsertPosition | false;
   };
 }> = <template>
   <AuButton
@@ -110,7 +110,12 @@ export class InsertControls extends Component<Sig> {
   }
 
   get options(): InsertPositionOption[] {
-    return [this.afterLast, this.beforeFirst, this.onCursor, ...this.articleOptions];
+    return [
+      this.afterLast,
+      this.beforeFirst,
+      this.onCursor,
+      ...this.articleOptions,
+    ];
   }
 
   get selected(): InsertPositionOption {

@@ -247,18 +247,18 @@ export default class ArImporterService extends Service {
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
   ): Promise<ImportResult<string>> {
-    console.log('generating preview')
+    console.log('generating preview');
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
       false,
     );
-    console.log(monads)
-    console.log(warnings)
-    console.log(processDocumentHeadlessly)
+    console.log(monads);
+    console.log(warnings);
+    console.log(processDocumentHeadlessly);
     const document = processDocumentHeadlessly(`<div></div>`, (state) =>
       transactionCombinator<boolean>(state)(monads),
     );
-    console.log(document)
+    console.log(document);
     return { result: document, warnings };
   }
 
