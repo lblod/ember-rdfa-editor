@@ -22,6 +22,7 @@ type ArPreviewSignature = {
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
   };
   Element: HTMLDivElement;
+  controller: SayController;
 };
 
 export default class ArPreview extends Component<ArPreviewSignature> {
@@ -33,6 +34,7 @@ export default class ArPreview extends Component<ArPreviewSignature> {
       return this.arImporter.generatePreview(
         this.args.arDesign,
         this.args.processDocumentHeadlessly,
+        this.args.controller,
       );
     } catch (e) {
       console.error('Error generating preview', e);

@@ -89,6 +89,7 @@ export default function insertMeasure({
   articleUriGenerator,
   ...args
 }: InsertMeasureArgs): TransactionMonad<boolean> {
+  console.log('inserting measure')
   return function (state: EditorState) {
     const measureConcept =
       'measureConcept' in args
@@ -248,6 +249,7 @@ export default function insertMeasure({
           insertFreely: false,
           position: args.position,
         } satisfies InsertArticleToDecisionArgs);
+    console.log(insertArticleArgs)
     const initialTransaction =
       insertArticle(insertArticleArgs)(state).transaction;
     const resultingSelection = initialTransaction.selection;
@@ -276,9 +278,11 @@ export default function insertMeasure({
         }),
       ),
     ]);
-    transaction.setSelection(
-      Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
-    );
+    if(!args.multipleInsertion) {
+       transaction.setSelection(
+        Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
+      );
+    }
     return {
       initialState: state,
       transaction,

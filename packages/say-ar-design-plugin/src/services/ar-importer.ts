@@ -116,6 +116,7 @@ export default class ArImporterService extends Service {
     controller?: SayController,
     decisionUriOverride?: string,
   ): Promise<GenerateImportResult> {
+    console.log('generating insertion monads')
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
@@ -145,7 +146,7 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const monads = measureDesigns.flatMap((measureDesign) => {
+      const monads = measureDesigns.flatMap((measureDesign, index, array) => {
         const {
           measureConcept,
           trafficSignals,
@@ -227,6 +228,7 @@ export default class ArImporterService extends Service {
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
+            multipleInsertion: index !== (array.length - 1)
           }),
         ];
       });
@@ -249,12 +251,14 @@ export default class ArImporterService extends Service {
         state: EditorState,
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
+    controller: SayController
   ): Promise<ImportResult<string>> {
     console.log('generating preview');
     console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
       afterLastArticle,
+      controller
     );
     console.log(monads);
     console.log(warnings);
