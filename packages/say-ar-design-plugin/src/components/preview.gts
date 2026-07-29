@@ -10,6 +10,7 @@ import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import type ArImporterService from '../services/ar-importer.ts';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   InsertControls,
   type ArInsertControlArgs,
@@ -20,9 +21,9 @@ type ArPreviewSignature = {
   Args: ArInsertControlArgs & {
     onReturnToOverview: () => unknown;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    controller: SayController;
   };
   Element: HTMLDivElement;
-  controller: SayController;
 };
 
 export default class ArPreview extends Component<ArPreviewSignature> {

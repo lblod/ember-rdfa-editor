@@ -70,6 +70,7 @@ type InsertMeasureArgs = {
   variables: Record<string, VariableInstance & { __rdfaId: string }>;
   templateString: string;
   articleUriGenerator?: () => string;
+  multipleInsertion?: boolean;
 } & InsertPositionArgs &
   (
     | {
@@ -89,7 +90,7 @@ export default function insertMeasure({
   articleUriGenerator,
   ...args
 }: InsertMeasureArgs): TransactionMonad<boolean> {
-  console.log('inserting measure')
+  console.log('inserting measure');
   return function (state: EditorState) {
     const measureConcept =
       'measureConcept' in args
@@ -249,7 +250,7 @@ export default function insertMeasure({
           insertFreely: false,
           position: args.position,
         } satisfies InsertArticleToDecisionArgs);
-    console.log(insertArticleArgs)
+    console.log(insertArticleArgs);
     const initialTransaction =
       insertArticle(insertArticleArgs)(state).transaction;
     const resultingSelection = initialTransaction.selection;
@@ -278,8 +279,8 @@ export default function insertMeasure({
         }),
       ),
     ]);
-    if(!args.multipleInsertion) {
-       transaction.setSelection(
+    if (!args.multipleInsertion) {
+      transaction.setSelection(
         Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
       );
     }
