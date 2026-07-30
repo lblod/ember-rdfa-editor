@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.15.1
+
+### Patch Changes
+
+- [`d4c008f`](https://github.com/lblod/ember-rdfa-editor/commit/d4c008f3e7d9c9d6ed49199d47402f26d0b22cfd) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Bump ember focus trap to [2.0.0](https://github.com/josemarluedke/ember-focus-trap/releases/tag/v2.0.0)
+
 ## 13.15.0
 
 ### Minor Changes
