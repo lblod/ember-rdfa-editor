@@ -10,7 +10,6 @@ import { hash } from '@ember/helper';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import DropdownItem from './dropdown-item.gts';
 import { on } from '@ember/modifier';
-// @ts-expect-error ember-focus-trap does not have ts support
 import { focusTrap } from 'ember-focus-trap';
 
 export type ToolbarDropdownSignature = {
@@ -38,14 +37,14 @@ export type ToolbarDropdownSignature = {
 export default class ToolbarDropdown extends Component<ToolbarDropdownSignature> {
   @tracked referenceElement?: Element = undefined;
   @tracked dropdownOpen = false;
-  @tracked dropdownMenu?: Element = undefined;
+  @tracked dropdownMenu?: SVGElement = undefined;
 
   reference = modifier((element) => {
     this.referenceElement = element;
   });
 
   dropdownMenuReference = modifier((element) => {
-    this.dropdownMenu = element;
+    this.dropdownMenu = element as SVGElement;
   });
 
   @action
@@ -70,7 +69,7 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
   }
 
   @action
-  async clickOutsideDeactivates(event: InputEvent) {
+  async clickOutsideDeactivates(event: MouseEvent | TouchEvent) {
     const isClosedByToggleButton = this.referenceElement?.contains(
       event.target as Node,
     );
