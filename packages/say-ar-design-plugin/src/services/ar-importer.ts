@@ -227,7 +227,7 @@ export default class ArImporterService extends Service {
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
-            multipleInsertion: index !== array.length - 1,
+            multipleInsertion: true,
           }),
         ];
       });
