@@ -129,7 +129,6 @@ export default class ArWidgetContents extends Component<Sig> {
         @insertLoading={{this.insertAr.isRunning}}
         @articles={{@articles}}
         @processDocumentHeadlessly={{@processDocumentHeadlessly}}
-        @controller={{@controller}}
       />
     {{else}}
       <ArDesignOverview

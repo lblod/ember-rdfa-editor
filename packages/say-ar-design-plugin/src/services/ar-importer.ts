@@ -25,7 +25,6 @@ import type VariableInstance from '../plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
 import {
-  afterLastArticle,
   ArticleInsertPosition,
 } from '../plugin/utils/article-insert-position.ts';
 
@@ -116,7 +115,7 @@ export default class ArImporterService extends Service {
     controller?: SayController,
     decisionUriOverride?: string,
   ): Promise<GenerateImportResult> {
-    console.log('generating insertion monads')
+    console.log('generating insertion monads');
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
@@ -228,7 +227,7 @@ export default class ArImporterService extends Service {
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
-            multipleInsertion: index !== (array.length - 1)
+            multipleInsertion: index !== array.length - 1,
           }),
         ];
       });
@@ -251,14 +250,11 @@ export default class ArImporterService extends Service {
         state: EditorState,
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
-    controller: SayController
   ): Promise<ImportResult<string>> {
     console.log('generating preview');
     console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
-      afterLastArticle,
-      controller
     );
     console.log(monads);
     console.log(warnings);
