@@ -279,6 +279,8 @@ export default function insertMeasure({
         }),
       ),
     ]);
+    console.log('multiple insertion')
+    console.log(args.multipleInsertion)
     if (!args.multipleInsertion) {
       transaction.setSelection(
         Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
