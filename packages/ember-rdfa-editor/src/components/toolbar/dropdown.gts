@@ -69,12 +69,12 @@ export default class ToolbarDropdown extends Component<ToolbarDropdownSignature>
   }
 
   @action
-  async clickOutsideDeactivates(event: MouseEvent | TouchEvent) {
+  clickOutsideDeactivates(event: MouseEvent | TouchEvent) {
     const isClosedByToggleButton = this.referenceElement?.contains(
       event.target as Node,
     );
     if (!isClosedByToggleButton) {
-      await this.closeDropdown();
+      void this.closeDropdown();
     }
     return true;
   }
