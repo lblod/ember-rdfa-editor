@@ -126,7 +126,9 @@ export const DECISION_ARTICLE: StructureConfig = {
   absoluteNumbering: true,
 };
 
-export const RB_ARTICLE: StructureConfig = STRUCTURE_HIERARCHY.find((structure) => structure.rdfType.full === SAY('Article').full)
+export const RB_ARTICLE: StructureConfig = STRUCTURE_HIERARCHY.find(
+  (structure) => structure.rdfType.full === SAY('Article').full,
+);
 
 export function isHierarchyNode(node: PNode) {
   return STRUCTURE_HIERARCHY.some(({ rdfType }) =>

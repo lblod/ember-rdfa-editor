@@ -24,9 +24,7 @@ import type TrafficSignal from '../plugin/models/traffic-signal.ts';
 import type VariableInstance from '../plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
-import {
-  ArticleInsertPosition,
-} from '../plugin/utils/article-insert-position.ts';
+import { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
 
 export type ImportResult<R> = {
   result: R;
@@ -186,7 +184,7 @@ export default class ArImporterService extends Service {
             signal.designStatus &&
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
-        console.log('calling insert measure')
+        console.log('calling insert measure');
         return [
           ...(!controller && onlyExistingSignals
             ? [
@@ -256,7 +254,7 @@ export default class ArImporterService extends Service {
     console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
-      false
+      false,
     );
     console.log(monads);
     console.log(warnings);

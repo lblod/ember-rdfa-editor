@@ -11,7 +11,6 @@ import {
   RB_ARTICLE,
   type StructurePluginOptions,
   type StructureConfig,
-
 } from './structure-types.ts';
 
 export function generateStructureAttrs({
@@ -68,9 +67,9 @@ export function buildArticleStructure(
     const articleId = uuid();
     articleResource = `http://data.lblod.info/artikels/${uriGenerator === 'template-uuid4' ? '--ref-uuid4-' : ''}${articleId}`;
   }
-  let structureType = DECISION_ARTICLE
-  if(regulatoryArticle) {
-    structureType = RB_ARTICLE
+  let structureType = DECISION_ARTICLE;
+  if (regulatoryArticle) {
+    structureType = RB_ARTICLE;
   }
   return schema.node(
     'structure',

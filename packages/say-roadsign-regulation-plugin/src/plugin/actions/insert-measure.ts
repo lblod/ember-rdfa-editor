@@ -238,9 +238,9 @@ export default function insertMeasure({
       state.schema,
       articleUriGenerator,
       undefined,
-      true
+      true,
     ).copy(Fragment.from(measureNode));
-    console.log(articleNode)
+    console.log(articleNode);
     const insertArticleArgs = args.insertFreely
       ? ({
           node: articleNode,
@@ -282,11 +282,11 @@ export default function insertMeasure({
         }),
       ),
     ]);
-    console.log('multiple insertion')
-    console.log(args.multipleInsertion)
-    console.log(transaction.selection)
+    console.log('multiple insertion');
+    console.log(args.multipleInsertion);
+    console.log(transaction.selection);
     if (!args.multipleInsertion) {
-      console.log('setting new selection')
+      console.log('setting new selection');
 
       transaction.setSelection(
         Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
