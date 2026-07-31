@@ -245,7 +245,7 @@ export default function insertMeasure({
       : ({
           node: articleNode,
           decisionUri: args.decisionUri,
-          insertFreely: false,
+          insertFreely: true,
           position: args.position,
         } satisfies InsertArticleToDecisionArgs);
     const initialTransaction =
