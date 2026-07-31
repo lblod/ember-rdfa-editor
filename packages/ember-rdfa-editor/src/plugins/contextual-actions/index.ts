@@ -7,6 +7,7 @@ export type ContextualAction = {
   group: string;
   command: Command;
   description?: string;
+  selected?: boolean;
 
   priority?: number;
 };
