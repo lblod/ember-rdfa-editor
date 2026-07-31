@@ -112,7 +112,7 @@ export function insertArticle(
           insertLocation + node.nodeSize - 1,
         ),
       );
-    } else {
+    } else if (positionBeforeInsertion) {
       console.log('selection without changing it', tr.selection);
       console.log('setting selection');
       console.log(positionBeforeInsertion + node.nodeSize + 1);

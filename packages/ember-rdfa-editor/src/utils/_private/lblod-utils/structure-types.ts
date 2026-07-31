@@ -128,7 +128,7 @@ export const DECISION_ARTICLE: StructureConfig = {
 
 export const RB_ARTICLE: StructureConfig = STRUCTURE_HIERARCHY.find(
   (structure) => structure.rdfType.full === SAY('Article').full,
-);
+) as StructureConfig;
 
 export function isHierarchyNode(node: PNode) {
   return STRUCTURE_HIERARCHY.some(({ rdfType }) =>
