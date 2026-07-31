@@ -1,4 +1,4 @@
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { EditorState, TextSelection, Transaction, Selection } from 'prosemirror-state';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { ELI, PROV } from '#root/utils/_private/lblod-utils/constants.ts';
 import { getOutgoingTriple } from '#root/utils/namespace.ts';
@@ -10,6 +10,7 @@ import { addPropertyToNode, findNodeByRdfaId } from '#root/utils/rdfa-utils.ts';
 import { SayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
 import { recalculateNumbers } from '#root/utils/_private/lblod-utils/recalculate-structure-numbers.ts';
+import { GapCursor } from '#root/plugins/gap-cursor/index.ts';
 
 export interface InsertArticleToDecisionArgs {
   node: PNode;
@@ -23,11 +24,13 @@ export interface InsertArticleToDecisionArgs {
    * - Otherwise, insert before the child at that index.
    */
   position?: number;
+  insertMultiple?: boolean
 }
 export interface InsertArticleFreelyArgs {
   node: PNode;
   insertFreely: true;
   decisionUri?: string;
+  insertMultiple?: boolean
 }
 
 export function insertArticle(
@@ -38,8 +41,16 @@ export function insertArticle(
     const tr = state.tr;
     let replacementTr: Transaction;
     let insertLocation: number | undefined;
+    let positionBeforeInsertion: number | undefined;
     if ('insertFreely' in args && args.insertFreely) {
-      replacementTr = tr.replaceSelectionWith(node);
+      console.log('document size before', tr.doc.nodeSize)
+      console.log('position before', tr.selection.$from.pos)
+      positionBeforeInsertion = tr.selection.$from.pos;
+      console.log('node size', node.nodeSize)
+
+      //if(positionBeforeInsertion === 1) {
+      replacementTr = tr.replaceWith(positionBeforeInsertion, positionBeforeInsertion, node);
+      //}
     } else {
       const { position } = args;
       const decision = getNodesBySubject(state, args.decisionUri)[0];
@@ -97,6 +108,23 @@ export function insertArticle(
           insertLocation + node.nodeSize - 1,
         ),
       );
+    } else {
+      console.log('selection without changing it', tr.selection)
+      console.log('setting selection')
+      console.log(positionBeforeInsertion + node.nodeSize + 1)
+      console.log('document node size', transaction.doc.nodeSize)
+      new GapCursor(transaction.doc.resolve(positionBeforeInsertion + node.nodeSize + 1))
+      try {
+        transaction.setSelection(
+           TextSelection.create(transaction.doc,
+          positionBeforeInsertion + node.nodeSize + 1,
+          positionBeforeInsertion + node.nodeSize + 1),
+
+        );
+      }catch(e) {
+        console.log(e)
+      }
+      console.log(transaction.selection)
     }
 
     transaction.scrollIntoView();

@@ -145,7 +145,7 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const monads = measureDesigns.flatMap((measureDesign, index, array) => {
+      const monads = measureDesigns.flatMap((measureDesign) => {
         const {
           measureConcept,
           trafficSignals,
@@ -186,6 +186,7 @@ export default class ArImporterService extends Service {
             signal.designStatus &&
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
+        console.log('calling insert measure')
         return [
           ...(!controller && onlyExistingSignals
             ? [
@@ -255,6 +256,7 @@ export default class ArImporterService extends Service {
     console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
+      false
     );
     console.log(monads);
     console.log(warnings);
