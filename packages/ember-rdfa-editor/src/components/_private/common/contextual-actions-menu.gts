@@ -26,6 +26,7 @@ import { runTask } from 'ember-lifeline';
 import { eq, and } from 'ember-truth-helpers';
 import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
 import { TextSelection } from 'prosemirror-state';
+import type { Option } from '#root/utils/option.ts';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -41,7 +42,7 @@ type Args = {
   enableSearch?: boolean;
   searchQuery?: string;
 
-  onActionSelected?: (action: ContextualAction) => void;
+  onActionSelected?: (action: ContextualAction, keepOpen: boolean) => void;
   onClose?: () => void;
   onSearch?: (searchQuery: string) => void;
 };
@@ -76,7 +77,7 @@ export default class ContextualActionsMenu extends Component<Args> {
   actionToElement = new Map<ContextualAction, Element>();
 
   scrollActionIntoView = (actionIndex: number) => {
-    const focusedAction = this.getActionByIndex(actionIndex);
+    const { focusedAction } = this.getActionByIndex(actionIndex);
     if (focusedAction !== null && focusedAction !== undefined) {
       const focusedActionElement = this.actionToElement.get(focusedAction);
       focusedActionElement?.scrollIntoView({ block: 'center' });
@@ -114,11 +115,14 @@ export default class ContextualActionsMenu extends Component<Args> {
         case 'Enter': {
           event.preventDefault();
           if (this.focusedActionIndex === null) break;
-          const focusedAction = this.getActionByIndex(
+          const { focusedAction, focusedGroup } = this.getActionByIndex(
             this.focusedActionIndex,
           );
           if (focusedAction !== null && focusedAction !== undefined) {
-            this.args.onActionSelected?.(focusedAction);
+            this.args.onActionSelected?.(
+              focusedAction,
+              focusedGroup?.keepOpen ?? false,
+            );
           }
           break;
         }
@@ -158,19 +162,24 @@ export default class ContextualActionsMenu extends Component<Args> {
     };
   });
 
-  getActionByIndex(index: number) {
-    if (!this.groupedActions || this.focusedActionIndex === null) return null;
+  getActionByIndex(index: number): {
+    focusedAction: Option<ContextualAction>;
+    focusedGroup: Option<ContextualActionGroup>;
+  } {
+    if (!this.groupedActions || this.focusedActionIndex === null)
+      return { focusedAction: null, focusedGroup: null };
 
     let searchIndex = 0;
-    for (const group of this.groupedActions) {
-      for (const actionIter of group.actions) {
+    for (const focusedGroup of this.groupedActions) {
+      for (const actionIter of focusedGroup.actions) {
         if (searchIndex === index) {
-          return actionIter;
+          return { focusedAction: actionIter, focusedGroup };
         } else {
           searchIndex += 1;
         }
       }
     }
+    return { focusedAction: null, focusedGroup: null };
   }
 
   getIndexByAction(action: ContextualAction) {
@@ -288,8 +297,8 @@ export default class ContextualActionsMenu extends Component<Args> {
     },
   );
 
-  selectAction = (action: ContextualAction) => {
-    this.args.onActionSelected?.(action);
+  selectAction = (action: ContextualAction, keepOpen?: boolean) => {
+    this.args.onActionSelected?.(action, keepOpen ?? false);
   };
 
   isFocusedAction = (action: ContextualAction) => {
@@ -439,7 +448,10 @@ export default class ContextualActionsMenu extends Component<Args> {
                   {{#each group.actions as |actionItem|}}
                     <button
                       {{this.addActionElementToMap actionItem}}
-                      {{on "click" (fn this.selectAction actionItem)}}
+                      {{on
+                        "click"
+                        (fn this.selectAction actionItem group.keepOpen)
+                      }}
                       {{on
                         "mousemove"
                         (fn this.updateFocusedActionIndex actionItem)
@@ -449,10 +461,7 @@ export default class ContextualActionsMenu extends Component<Args> {
                           (this.isFocusedAction actionItem)
                           'focused-menu-entry'
                         }}
-                        {{if
-                          actionItem.selected
-                          'selected-menu-entry'
-                        }}"
+                        {{if actionItem.selected 'selected-menu-entry'}}"
                       type="button"
                       title={{actionItem.description}}
                     >
@@ -462,7 +471,11 @@ export default class ContextualActionsMenu extends Component<Args> {
                         {{/if}}
                         <span class="au-u-flex-grow">{{actionItem.label}}</span>
                         {{#if actionItem.selected}}
-                          <AuIcon @size="large" @icon="circle-check" class="au-u-flex-self-end" />
+                          <AuIcon
+                            @size="large"
+                            @icon="circle-check"
+                            class="au-u-flex-self-end"
+                          />
                         {{/if}}
                       </div>
                     </button>

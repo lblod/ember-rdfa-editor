@@ -17,6 +17,7 @@ export type ContextualActionGroup = {
   label?: string;
   sticky?: 'bottom';
   priority?: number;
+  keepOpen?: boolean;
 
   loadingMessage?: string;
   searchDebounceMs?: number;
