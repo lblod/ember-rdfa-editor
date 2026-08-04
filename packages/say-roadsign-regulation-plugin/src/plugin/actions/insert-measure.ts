@@ -71,7 +71,7 @@ type InsertMeasureArgs = {
   templateString: string;
   articleUriGenerator?: () => string;
   multipleInsertion?: boolean;
-  regulatoryStatementMode?: boolean
+  regulatoryStatementMode?: boolean;
 } & InsertPositionArgs &
   (
     | {

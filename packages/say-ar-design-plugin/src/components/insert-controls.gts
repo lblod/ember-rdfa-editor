@@ -30,7 +30,6 @@ const InsertButton: TOC<{
     insertLoading?: boolean;
     onInsertAr: ArInsertFunc;
     insertPosition: ArticleInsertPosition | false;
-
   };
 }> = <template>
   <AuButton
@@ -72,7 +71,7 @@ export interface ArInsertControlArgs {
   onInsertAr: ArInsertFunc;
   insertLoading?: boolean;
   articles: ArticlePosition[];
-  regulatoryStatementMode?: boolean
+  regulatoryStatementMode?: boolean;
 }
 type Sig = {
   Args: ArInsertControlArgs;
@@ -112,8 +111,8 @@ export class InsertControls extends Component<Sig> {
   }
 
   get options(): InsertPositionOption[] {
-    if(this.args.regulatoryStatementMode) {
-      return [this.onCursor]
+    if (this.args.regulatoryStatementMode) {
+      return [this.onCursor];
     } else {
       return [
         this.afterLast,
@@ -125,12 +124,11 @@ export class InsertControls extends Component<Sig> {
   }
 
   get selected(): InsertPositionOption {
-    if(this._selected) {
-      return this._selected
+    if (this._selected) {
+      return this._selected;
     } else {
       return this.args.regulatoryStatementMode ? this.onCursor : this.afterLast;
     }
-
   }
 
   setSelected = (val: InsertPositionOption | null) => {

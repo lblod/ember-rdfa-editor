@@ -20,7 +20,7 @@ type ArPreviewSignature = {
   Args: ArInsertControlArgs & {
     onReturnToOverview: () => unknown;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
-    regulatoryStatementMode?: boolean
+    regulatoryStatementMode?: boolean;
   };
   Element: HTMLDivElement;
 };

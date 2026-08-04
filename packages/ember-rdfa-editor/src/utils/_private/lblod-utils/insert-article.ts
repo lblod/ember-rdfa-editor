@@ -103,15 +103,13 @@ export function insertArticle(
         ),
       );
     } else if (positionBeforeInsertion) {
-
-        transaction.setSelection(
-          new GapCursor(
-            transaction.doc.resolve(
-              transaction.mapping.map(positionBeforeInsertion),
-            ),
+      transaction.setSelection(
+        new GapCursor(
+          transaction.doc.resolve(
+            transaction.mapping.map(positionBeforeInsertion),
           ),
-        );
-
+        ),
+      );
     }
 
     transaction.scrollIntoView();

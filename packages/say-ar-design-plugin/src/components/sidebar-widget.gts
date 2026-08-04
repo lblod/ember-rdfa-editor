@@ -25,7 +25,7 @@ export type ArDesignSidebarWidgetSig = {
       decisionUri: string;
       decisionType?: string;
     };
-    regulatoryStatementMode?: boolean
+    regulatoryStatementMode?: boolean;
   };
   Element: HTMLLIElement;
 };
@@ -41,7 +41,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
     this.modalOpen = false;
   };
   get disableInsert() {
-    if(this.args.regulatoryStatementMode) return false
+    if (this.args.regulatoryStatementMode) return false;
     const decisionContext = this.args.decisionContext;
     return decisionContext
       ? !!decisionContext.decisionType &&

@@ -112,25 +112,29 @@ export default class ArImporterService extends Service {
     /** If controller is not passed, this is a preview */
     controller?: SayController,
     decisionUriOverride?: string,
-    regulatoryStatementMode?: boolean
+    regulatoryStatementMode?: boolean,
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
       const decisionRange = getCurrentBesluitRange(controller);
       decisionUri = decisionRange?.node.attrs['subject'] as string;
-      if (!regulatoryStatementMode && (!decisionRange || typeof decisionUri !== 'string' || !insertPos)) {
+      if (
+        !regulatoryStatementMode &&
+        (!decisionRange || typeof decisionUri !== 'string' || !insertPos)
+      ) {
         this._notifyError(controller, 'ar-importer.message.error-no-decision');
         return { result: [], warnings: [] };
       } else {
-        if(regulatoryStatementMode) {
+        if (regulatoryStatementMode) {
           insertPositionArgs = {
-           insertFreely: true,
-          }
+            insertFreely: true,
+          };
         } else {
+          // insertPos should be handled by the previous if, so just keep TS happy here
           insertPositionArgs = {
             insertFreely: false,
-            position: insertPos && insertPos.insertMeasureIndex,
+            position: insertPos ? insertPos.insertMeasureIndex : 0,
             decisionUri,
           };
         }
@@ -233,7 +237,7 @@ export default class ArImporterService extends Service {
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
             multipleInsertion: !isLastMeasureInserted,
-            regulatoryStatementMode
+            regulatoryStatementMode,
           }),
         ];
       });
