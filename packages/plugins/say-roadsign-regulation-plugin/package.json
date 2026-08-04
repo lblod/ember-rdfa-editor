@@ -12,32 +12,18 @@
   "license": "MIT",
   "author": "redpencil.io",
   "exports": {
-    ".": {
-      "types": "./declarations/index.d.ts",
-      "default": "./dist/index.js"
-    },
     "./addon-main.js": "./addon-main.cjs",
-    "./components": {
-      "types": "./declarations/components/index.d.ts",
-      "default": "./dist/components/index.js"
-    },
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
     "./*": {
+      "@say-editor/development": "./src/*",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }
   },
   "imports": {
-    "#root": null,
-    "#root/index.ts": null,
-    "#root/*.ts": {
-      "types": "./declarations/*.d.ts",
-      "default": "./src/*.ts"
-    },
     "#root/*": {
-      "types": "./declarations/*.d.ts",
       "default": "./src/*"
     }
   },

@@ -7,6 +7,6 @@
   "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["test-app"],
-  "bumpVersionsWithWorkspaceProtocolOnly": true
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
+  "ignore": ["test-app", "@lblod/say-config"]
 }
