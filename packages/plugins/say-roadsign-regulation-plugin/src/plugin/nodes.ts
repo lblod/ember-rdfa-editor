@@ -10,7 +10,7 @@ import {
   MOBILITEIT,
   PROV,
   RDF,
-} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
+} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants.ts';
 import {
   getOutgoingTriple,
   hasOutgoingNamedNodeTriple,
