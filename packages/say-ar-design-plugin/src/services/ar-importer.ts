@@ -143,7 +143,7 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const monads = measureDesigns.flatMap((measureDesign) => {
+      const monads = measureDesigns.flatMap((measureDesign, index, array) => {
         const {
           measureConcept,
           trafficSignals,
@@ -185,6 +185,7 @@ export default class ArImporterService extends Service {
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
         console.log('calling insert measure');
+        const isLastMeasureInserted = index === array.length - 1;
         return [
           ...(!controller && onlyExistingSignals
             ? [
@@ -226,7 +227,7 @@ export default class ArImporterService extends Service {
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
-            multipleInsertion: true,
+            multipleInsertion: !isLastMeasureInserted,
           }),
         ];
       });

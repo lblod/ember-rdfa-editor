@@ -282,9 +282,6 @@ export default function insertMeasure({
         }),
       ),
     ]);
-    console.log('multiple insertion');
-    console.log(args.multipleInsertion);
-    console.log(transaction.selection);
     if (!args.multipleInsertion) {
       console.log('setting new selection');
 
