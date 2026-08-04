@@ -141,6 +141,7 @@
       gap: 0.5rem;
       display: flex;
       align-items: center;
+      min-height: var(--au-icon-size-large);
     }
 
     // This util is added by AU 3.16, so won't be needed after upgrading beyond that
