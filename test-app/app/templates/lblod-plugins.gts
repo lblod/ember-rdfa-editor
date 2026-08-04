@@ -163,7 +163,7 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import DummyContainer from 'test-app/components/dummy-container';
 import type { DesignInfo } from '@lblod/say-ar-design-plugin/plugin/types.ts';
-import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder.ts';
+import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
   triple,

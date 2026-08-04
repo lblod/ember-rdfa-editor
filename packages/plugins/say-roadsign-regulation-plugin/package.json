@@ -27,7 +27,7 @@
       "default": "./dist/*.js"
     },
     "./*": {
-      "@say-editor/development": "./src/*",
+      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }
