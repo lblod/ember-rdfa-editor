@@ -9,7 +9,7 @@
     "lint:fix": "pnpm --filter '*' lint:fix",
     "lint:types": "pnpm --filter '*' lint:types",
     "prepack": "pnpm build",
-    "start": "turbo dev",
+    "start": "pnpm --filter test-app start",
     "tui": "turbo dev --ui tui",
     "start:editor": "pnpm --filter @lblod/ember-rdfa-editor start --no-watch.clearScreen",
     "start:roadsigns": "pnpm --filter @lblod/say-roadsign-regulation-plugin start --no-watch.clearScreen",

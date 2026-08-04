@@ -4,6 +4,9 @@ import { babel } from '@rollup/plugin-babel';
 import yaml from '@modyfi/vite-plugin-yaml';
 
 export default defineConfig({
+  resolve: {
+    conditions: ['@say-editor/development'],
+  },
   optimizeDeps: {
     exclude: [
       '@lblod/ember-rdfa-editor',

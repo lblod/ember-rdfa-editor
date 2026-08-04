@@ -1,6 +1,8 @@
 {
   "extends": "@tsconfig/ember/tsconfig.json",
   "compilerOptions": {
+
+    "customConditions": ["@say-editor/development"],
     "allowJs": true,
     "declaration": true,
     /**
