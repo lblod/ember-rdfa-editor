@@ -113,7 +113,6 @@ export default class ArImporterService extends Service {
     controller?: SayController,
     decisionUriOverride?: string,
   ): Promise<GenerateImportResult> {
-    console.log('generating insertion monads');
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
@@ -184,7 +183,6 @@ export default class ArImporterService extends Service {
             signal.designStatus &&
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
-        console.log('calling insert measure');
         const isLastMeasureInserted = index === array.length - 1;
         return [
           ...(!controller && onlyExistingSignals
@@ -251,19 +249,13 @@ export default class ArImporterService extends Service {
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
   ): Promise<ImportResult<string>> {
-    console.log('generating preview');
-    console.log(design);
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
       false,
     );
-    console.log(monads);
-    console.log(warnings);
-    console.log(processDocumentHeadlessly);
     const document = processDocumentHeadlessly(`<div></div>`, (state) =>
       transactionCombinator<boolean>(state)(monads),
     );
-    console.log(document);
     return { result: document, warnings };
   }
 

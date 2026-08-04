@@ -44,7 +44,6 @@ export function insertArticle(
     let positionBeforeInsertion: number | undefined;
     if ('insertFreely' in args && args.insertFreely) {
       positionBeforeInsertion = state.selection.from;
-      console.log(state.selection);
       replacementTr = tr.replaceSelectionWith(node);
     } else {
       const { position } = args;
@@ -104,8 +103,7 @@ export function insertArticle(
         ),
       );
     } else if (positionBeforeInsertion) {
-      console.log('setting gap cur');
-      try {
+
         transaction.setSelection(
           new GapCursor(
             transaction.doc.resolve(
@@ -113,10 +111,7 @@ export function insertArticle(
             ),
           ),
         );
-        console.log(transaction.selection);
-      } catch (e) {
-        console.log(e);
-      }
+
     }
 
     transaction.scrollIntoView();
