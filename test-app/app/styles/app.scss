@@ -3,8 +3,8 @@
    ================================== */
 @use "@appuniversum/ember-appuniversum/styles";
 @use "@lblod/ember-rdfa-editor";
-@use "@lblod/say-roadsign-regulation-plugin";
-@use "@lblod/say-ar-design-plugin";
+@use "@lblod/say-roadsign-regulation-plugin/say-roadsign-regulation-plugin.scss";
+@use "@lblod/say-ar-design-plugin/say-ar-design-plugin.scss";
 @use "c-dummy";
 
 html,
