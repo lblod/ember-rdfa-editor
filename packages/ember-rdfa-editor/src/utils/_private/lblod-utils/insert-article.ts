@@ -24,13 +24,11 @@ export interface InsertArticleToDecisionArgs {
    * - Otherwise, insert before the child at that index.
    */
   position?: number;
-  insertMultiple?: boolean;
 }
 export interface InsertArticleFreelyArgs {
   node: PNode;
   insertFreely: true;
   decisionUri?: string;
-  insertMultiple?: boolean;
 }
 
 export function insertArticle(
