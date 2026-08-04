@@ -10,7 +10,7 @@ import {
   MOBILITEIT,
   PROV,
   RDF,
-} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
 import {
   getOutgoingTriple,
   hasOutgoingNamedNodeTriple,
@@ -34,9 +34,8 @@ import {
   TRAFFIC_SIGNAL_TYPES,
 } from './constants.ts';
 
-const CONTENT_SELECTOR = `div[property~='${
-  DCT('description').full
-}'],div[property~='${DCT('description').prefixed}']`;
+const CONTENT_SELECTOR = `div[property~='${DCT('description').full
+  }'],div[property~='${DCT('description').prefixed}']`;
 
 export const roadsign_regulation: NodeSpec = {
   content: 'block+',

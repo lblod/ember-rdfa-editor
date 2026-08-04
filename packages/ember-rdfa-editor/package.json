@@ -216,6 +216,10 @@
       "types": "./declarations/components/_private/debug-info/index.d.ts",
       "default": "./dist/components/_private/debug-info/index.js"
     },
+    "./utils/_private/lblod-utils/constants": {
+      "types": "./declarations/utils/_private/lblod-utils/constants.d.ts",
+      "default": "./dist/utils/_private/lblod-utils/constants.js"
+    },
     "./*.gts": {
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
@@ -225,6 +229,7 @@
       "default": "./dist/*.js"
     },
     "./*": {
+      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }
