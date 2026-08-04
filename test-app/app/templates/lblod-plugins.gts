@@ -725,7 +725,7 @@ export default class LblodPluginsTemplate extends Component {
                     @controller={{container.controller}}
                     @designQuery={{this.arDesignTest}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
-                    @decisionContext={{this.pluginConfig.arDesign.decision}}
+                    @regulatoryStatementMode={{true}}
                   />
                 </Item>
               </Sb.Collapsible>

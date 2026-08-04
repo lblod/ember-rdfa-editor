@@ -112,21 +112,28 @@ export default class ArImporterService extends Service {
     /** If controller is not passed, this is a preview */
     controller?: SayController,
     decisionUriOverride?: string,
+    regulatoryStatementMode?: boolean
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
       const decisionRange = getCurrentBesluitRange(controller);
       decisionUri = decisionRange?.node.attrs['subject'] as string;
-      if (!decisionRange || typeof decisionUri !== 'string' || !insertPos) {
+      if (!regulatoryStatementMode && (!decisionRange || typeof decisionUri !== 'string' || !insertPos)) {
         this._notifyError(controller, 'ar-importer.message.error-no-decision');
         return { result: [], warnings: [] };
       } else {
-        insertPositionArgs = {
-          insertFreely: false,
-          position: insertPos.insertMeasureIndex,
-          decisionUri,
-        };
+        if(regulatoryStatementMode) {
+          insertPositionArgs = {
+           insertFreely: true,
+          }
+        } else {
+          insertPositionArgs = {
+            insertFreely: false,
+            position: insertPos && insertPos.insertMeasureIndex,
+            decisionUri,
+          };
+        }
       }
     } else {
       insertPositionArgs =
@@ -226,6 +233,7 @@ export default class ArImporterService extends Service {
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
             multipleInsertion: !isLastMeasureInserted,
+            regulatoryStatementMode
           }),
         ];
       });

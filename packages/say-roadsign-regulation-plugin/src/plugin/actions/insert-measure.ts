@@ -71,6 +71,7 @@ type InsertMeasureArgs = {
   templateString: string;
   articleUriGenerator?: () => string;
   multipleInsertion?: boolean;
+  regulatoryStatementMode?: boolean
 } & InsertPositionArgs &
   (
     | {
@@ -237,7 +238,7 @@ export default function insertMeasure({
       state.schema,
       articleUriGenerator,
       undefined,
-      true,
+      args.regulatoryStatementMode,
     ).copy(Fragment.from(measureNode));
     const insertArticleArgs = args.insertFreely
       ? ({

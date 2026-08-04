@@ -20,6 +20,7 @@ type ArPreviewSignature = {
   Args: ArInsertControlArgs & {
     onReturnToOverview: () => unknown;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    regulatoryStatementMode?: boolean
   };
   Element: HTMLDivElement;
 };
@@ -88,6 +89,7 @@ export default class ArPreview extends Component<ArPreviewSignature> {
           @onInsertAr={{@onInsertAr}}
           @insertLoading={{@insertLoading}}
           @articles={{@articles}}
+          @regulatoryStatementMode={{@regulatoryStatementMode}}
         />
       </AuToolbar>
     </div>
