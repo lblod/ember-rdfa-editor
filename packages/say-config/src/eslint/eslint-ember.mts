@@ -31,7 +31,6 @@ const baseParserOptions = {
     },
     ts: {
       projectService: true,
-      project: true,
     },
   },
 };

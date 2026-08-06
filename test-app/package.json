@@ -68,7 +68,6 @@
     "@lblod/say-roadsign-regulation-plugin": "workspace:*",
     "@modyfi/vite-plugin-yaml": "catalog:",
     "@playwright/test": "catalog:",
-    "@prosopo/vite-plugin-watch-workspace": "catalog:",
     "@rdfjs/to-ntriples": "catalog:",
     "@rdfjs/types": "catalog:",
     "@rollup/plugin-babel": "catalog:",

@@ -306,7 +306,7 @@
     "ember-template-imports": "catalog:",
     "ember-truth-helpers": "catalog:",
     "ember-velcro": "catalog:",
-    "iter-tools": "catalog:",
+    "iter-tools-es": "^7.5.4",
     "js-beautify": "catalog:",
     "libphonenumber-js": "catalog:",
     "linkifyjs": "catalog:",

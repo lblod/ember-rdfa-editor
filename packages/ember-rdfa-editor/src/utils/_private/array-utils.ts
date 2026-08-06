@@ -1,4 +1,4 @@
-import { filter, takeLastOr } from 'iter-tools';
+import { filter, takeLastOr } from 'iter-tools-es';
 
 export default class ArrayUtils {
   static findCommonSlice<T>(array1: T[], array2: T[]): T[] {

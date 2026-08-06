@@ -46,7 +46,6 @@ catalog:
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
   "@playwright/test": 1.50.0
-  "@prosopo/vite-plugin-watch-workspace": ^2.6.31
   "@rdfjs/to-ntriples": ^3.0.1
   "@rdfjs/types": ^2.0.1
   "@rollup/plugin-babel": ^6.0.4
@@ -167,7 +166,7 @@ catalog:
   tracked-toolbox: ^2.2.0
   tsx: ^4.20.6
   typescript: ^5.9.3
-  typescript-eslint: ^7.18.0
+  typescript-eslint: ^8.66.0
   unified: ^11.0.5
   uuid: ^9.0.1
   validator: ^13.15.26
@@ -183,8 +182,15 @@ overrides:
 
 peerDependencyRules:
   allowedVersions:
-    react: "18"
-    react-dom: "18"
+    "@ember/string": "^4.0.1"
+    ember-truth-helpers: "^5.0.0"
+    tracked-build-ins: "^4.1.0"
+    "ember-leaflet>ember-source": "^6.7.0"
+    "@embroider/test-setup>@embroider/core": "^4.0.0"
+    "@embroider/test-setup>@embroider/compat": "^4.0.0"
+    react: "19"
+    react-dom: "19"
+    "@appuniversum/ember-appuniversum>tracked-built-ins": "^4.1.0"
     "@ember/render-modifiers>ember-source": "6"
 
 patchedDependencies:
