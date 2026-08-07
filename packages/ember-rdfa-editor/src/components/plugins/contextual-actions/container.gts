@@ -203,7 +203,7 @@ export default class ContextualActionsContainer extends Component<Args> {
   }
 
   @action
-  executeAction(action: ContextualAction) {
+  executeAction(action: ContextualAction, keepOpen: boolean) {
     if (
       this.menuWasOpenedBySlash &&
       this.slashCommandsPluginState?.preSlashEditorState
@@ -213,15 +213,19 @@ export default class ContextualActionsContainer extends Component<Args> {
       );
     }
     if ('command' in action) {
-      this.controller.focus();
+      if (!keepOpen) {
+        this.controller.focus();
+      }
       this.controller.doCommand(action.command);
     }
   }
 
   @action
-  selectAction(action: ContextualAction) {
-    this.executeAction(action);
-    this.closeContextMenu();
+  selectAction(action: ContextualAction, keepOpen: boolean) {
+    this.executeAction(action, keepOpen);
+    if (!keepOpen) {
+      this.closeContextMenu();
+    }
   }
 
   get slashCommandsPluginState() {
