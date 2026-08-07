@@ -14,9 +14,7 @@ import {
   getOutgoingTriple,
   hasOutgoingNamedNodeTriple,
 } from '#root/utils/namespace.ts';
-import {
-  RDF
-} from '#root/utils/_private/lblod-utils/constants.ts';
+import { RDF } from '#root/utils/_private/lblod-utils/constants.ts';
 import { findAncestors } from '#root/utils/position-utils.ts';
 import { ResolvedPos } from 'prosemirror-model';
 
@@ -100,7 +98,7 @@ export function insertArticle(
       recalculateNumbers,
     ]);
 
-    if (!'insertFreely' in args || !args.insertFreely) {
+    if (!args.insertFreely) {
       transaction.setSelection(
         TextSelection.create(
           transaction.doc,
@@ -108,12 +106,10 @@ export function insertArticle(
           insertLocation + node.nodeSize - 1,
         ),
       );
-    } else  {
+    } else {
       transaction.setSelection(
         new GapCursor(
-          transaction.doc.resolve(
-            transaction.mapping.map(insertLocation),
-          ),
+          transaction.doc.resolve(transaction.mapping.map(insertLocation)),
         ),
       );
     }
@@ -162,17 +158,19 @@ function resolveInsertLocation(
 }
 
 function getClosestValidPosition(position: ResolvedPos, node: PNode) {
-   const parentArticle = findAncestors(position, isSameArticleNode.bind(this, node))[0]
-   if(parentArticle) {
+  const parentArticle = findAncestors(
+    position,
+    isSameArticleNode.bind(undefined, node),
+  )[0];
+  if (parentArticle) {
     return parentArticle.pos + parentArticle.node.nodeSize;
-   } else {
-    return position.pos
-   }
+  } else {
+    return position.pos;
+  }
 }
 
-
 export function isSameArticleNode(nodeA: PNode, nodeB: PNode) {
-  const rdfType = getOutgoingTriple(nodeA.attrs, RDF('type'))
-    ?.object.value;
-  return hasOutgoingNamedNodeTriple(nodeB.attrs, RDF('type'), rdfType)
+  const rdfType = getOutgoingTriple(nodeA.attrs, RDF('type'))?.object.value;
+  if (!rdfType) return false;
+  return hasOutgoingNamedNodeTriple(nodeB.attrs, RDF('type'), rdfType);
 }
