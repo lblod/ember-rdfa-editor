@@ -1,7 +1,6 @@
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { PNode } from '#root/prosemirror-aliases.ts';
 import { ELI, PROV } from '#root/utils/_private/lblod-utils/constants.ts';
-import { getOutgoingTriple } from '#root/utils/namespace.ts';
 import {
   transactionCombinator,
   type TransactionMonad,
@@ -11,6 +10,15 @@ import { SayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { getNodesBySubject } from '#root/plugins/rdfa-info/index.ts';
 import { recalculateNumbers } from '#root/utils/_private/lblod-utils/recalculate-structure-numbers.ts';
 import { GapCursor } from '#root/plugins/gap-cursor/index.ts';
+import {
+  getOutgoingTriple,
+  hasOutgoingNamedNodeTriple,
+} from '#root/utils/namespace.ts';
+import {
+  RDF
+} from '#root/utils/_private/lblod-utils/constants.ts';
+import { findAncestors } from '#root/utils/position-utils.ts';
+import { ResolvedPos } from 'prosemirror-model';
 
 export interface InsertArticleToDecisionArgs {
   node: PNode;
@@ -39,10 +47,10 @@ export function insertArticle(
     const tr = state.tr;
     let replacementTr: Transaction;
     let insertLocation: number | undefined;
-    let positionBeforeInsertion: number | undefined;
     if ('insertFreely' in args && args.insertFreely) {
-      positionBeforeInsertion = state.selection.from;
-      replacementTr = tr.replaceSelectionWith(node);
+      // Avoid insertion inside another article
+      insertLocation = getClosestValidPosition(state.selection.$from, node);
+      replacementTr = tr.replaceWith(insertLocation, insertLocation, node);
     } else {
       const { position } = args;
       const decision = getNodesBySubject(state, args.decisionUri)[0];
@@ -92,7 +100,7 @@ export function insertArticle(
       recalculateNumbers,
     ]);
 
-    if (insertLocation) {
+    if (!'insertFreely' in args || !args.insertFreely) {
       transaction.setSelection(
         TextSelection.create(
           transaction.doc,
@@ -100,11 +108,11 @@ export function insertArticle(
           insertLocation + node.nodeSize - 1,
         ),
       );
-    } else if (positionBeforeInsertion) {
+    } else  {
       transaction.setSelection(
         new GapCursor(
           transaction.doc.resolve(
-            transaction.mapping.map(positionBeforeInsertion),
+            transaction.mapping.map(insertLocation),
           ),
         ),
       );
@@ -151,4 +159,20 @@ function resolveInsertLocation(
   }
 
   return containerLocation.pos + containerNode.nodeSize - 1;
+}
+
+function getClosestValidPosition(position: ResolvedPos, node: PNode) {
+   const parentArticle = findAncestors(position, isSameArticleNode.bind(this, node))[0]
+   if(parentArticle) {
+    return parentArticle.pos + parentArticle.node.nodeSize;
+   } else {
+    return position.pos
+   }
+}
+
+
+export function isSameArticleNode(nodeA: PNode, nodeB: PNode) {
+  const rdfType = getOutgoingTriple(nodeA.attrs, RDF('type'))
+    ?.object.value;
+  return hasOutgoingNamedNodeTriple(nodeB.attrs, RDF('type'), rdfType)
 }
