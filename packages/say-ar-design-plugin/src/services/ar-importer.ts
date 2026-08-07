@@ -112,21 +112,32 @@ export default class ArImporterService extends Service {
     /** If controller is not passed, this is a preview */
     controller?: SayController,
     decisionUriOverride?: string,
+    regulatoryStatementMode?: boolean,
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
     if (!decisionUri && controller) {
       const decisionRange = getCurrentBesluitRange(controller);
       decisionUri = decisionRange?.node.attrs['subject'] as string;
-      if (!decisionRange || typeof decisionUri !== 'string' || !insertPos) {
+      if (
+        !regulatoryStatementMode &&
+        (!decisionRange || typeof decisionUri !== 'string' || !insertPos)
+      ) {
         this._notifyError(controller, 'ar-importer.message.error-no-decision');
         return { result: [], warnings: [] };
       } else {
-        insertPositionArgs = {
-          insertFreely: false,
-          position: insertPos.insertMeasureIndex,
-          decisionUri,
-        };
+        if (regulatoryStatementMode) {
+          insertPositionArgs = {
+            insertFreely: true,
+          };
+        } else {
+          // insertPos should be handled by the previous if, so just keep TS happy here
+          insertPositionArgs = {
+            insertFreely: false,
+            position: insertPos ? insertPos.insertMeasureIndex : 0,
+            decisionUri,
+          };
+        }
       }
     } else {
       insertPositionArgs =
@@ -142,7 +153,7 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const monads = measureDesigns.flatMap((measureDesign) => {
+      const monads = measureDesigns.flatMap((measureDesign, index, array) => {
         const {
           measureConcept,
           trafficSignals,
@@ -183,6 +194,7 @@ export default class ArImporterService extends Service {
             signal.designStatus &&
             TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
         );
+        const isLastMeasureInserted = index === array.length - 1;
         return [
           ...(!controller && onlyExistingSignals
             ? [
@@ -224,6 +236,8 @@ export default class ArImporterService extends Service {
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
+            multipleInsertion: !isLastMeasureInserted,
+            regulatoryStatementMode,
           }),
         ];
       });
