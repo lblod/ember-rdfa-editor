@@ -7,6 +7,7 @@ export type ContextualAction = {
   group: string;
   command: Command;
   description?: string;
+  selected?: boolean;
 
   priority?: number;
 };
@@ -16,6 +17,7 @@ export type ContextualActionGroup = {
   label?: string;
   sticky?: 'bottom';
   priority?: number;
+  keepOpen?: boolean;
 
   loadingMessage?: string;
   searchDebounceMs?: number;

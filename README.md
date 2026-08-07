@@ -423,25 +423,6 @@ except on the table, where you will need to add the classNames to the options of
   }),
 ```
 
-## Embroider
-To use `@lblod/ember-rdfa-editor` with Embroider some extra Webpack configuration is needed, which you can import like this:
-
-```js
-// ember-cli-build.js
-  // ...
-  const { Webpack } = require('@embroider/webpack');
-  return require('@embroider/compat').compatBuild(app, Webpack, {
-    // other Embroider options
-    packagerOptions: {
-      webpackConfig: require('@lblod/ember-rdfa-editor/webpack-config'),
-    },
-    extraPublicTrees: [],
-  });
-};
-```
-
-If you already provide some Webpack configuration, you can deep merge that with the config object we provide.
-
 ## Translation
 
 Translations are provided for UI elements using ember-intl.

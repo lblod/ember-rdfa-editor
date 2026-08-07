@@ -28,9 +28,10 @@ const DEFAULT_REGEX = new RegExp(
       [A-Za-z0-9.-]+ ${/* domain */ ''}
       \.
       [A-Za-z]{2,} ${/* extension */ ''}
+      (?:[\/?#][^\s]*)? ${/* optional path, query string, or fragment */ ''}
     )
   )
-  ( |\n)$ ${/* single space or newline/enter after url/email */ ''}
+  ([ \n])$ ${/* single space or newline/enter after url/email */ ''}
   `
     .replace(/^\s+|\s+$/gm, '') // remove white space before and at the end of lines (trimming)
     .replace(/\n/g, ''), // remove newlines
@@ -64,7 +65,6 @@ export const link_input_rule = ({
     const link = match[2];
     const textAfterLink = match[3];
     const linkStart = start + textBeforeLink.length;
-
     const linkParserResult = linkParser(link);
     if (!linkParserResult.isSuccessful) {
       return null;

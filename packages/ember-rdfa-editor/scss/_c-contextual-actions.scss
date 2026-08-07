@@ -121,6 +121,10 @@
     font-family: "flanders-sans";
     font-size: var(--au-global-font-size);
 
+    &.selected-menu-entry {
+      background-color: var(--au-select-text-bg);
+    }
+
     &:hover,
     &.focused-menu-entry {
       color: var(--au-gray-900);
@@ -137,6 +141,12 @@
       gap: 0.5rem;
       display: flex;
       align-items: center;
+      min-height: var(--au-icon-size-large);
+    }
+
+    // This util is added by AU 3.16, so won't be needed after upgrading beyond that
+    .au-u-flex-grow {
+      flex-grow: 1 !important;
     }
   }
 }

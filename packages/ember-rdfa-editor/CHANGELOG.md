@@ -1,5 +1,23 @@
 # @lblod/ember-rdfa-editor
 
+## 13.15.1
+
+### Patch Changes
+
+- [`d4c008f`](https://github.com/lblod/ember-rdfa-editor/commit/d4c008f3e7d9c9d6ed49199d47402f26d0b22cfd) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Bump ember focus trap to [2.0.0](https://github.com/josemarluedke/ember-focus-trap/releases/tag/v2.0.0)
+
+## 13.15.0
+
+### Minor Changes
+
+- [#1396](https://github.com/lblod/ember-rdfa-editor/pull/1396) [`37cbfd1`](https://github.com/lblod/ember-rdfa-editor/commit/37cbfd181381628d99e5b8bef6bc7191de1abed9) Thanks [@elpoelma](https://github.com/elpoelma)! - Link plugin: detect path/query string/fragment correctly
+
+- [#1395](https://github.com/lblod/ember-rdfa-editor/pull/1395) [`af53abc`](https://github.com/lblod/ember-rdfa-editor/commit/af53abc93c6ee54eacd64304067dbec242ed5967) Thanks [@kobemertens](https://github.com/kobemertens)! - Add inline search for slash commands
+
+### Patch Changes
+
+- [`e49ecb4`](https://github.com/lblod/ember-rdfa-editor/commit/e49ecb4738e40739b2cbbca5a41b9d2ab165a51d) Thanks [@kobemertens](https://github.com/kobemertens)! - Contextual actions: fix "No results" styling
+
 ## 13.14.0
 
 ### Minor Changes
