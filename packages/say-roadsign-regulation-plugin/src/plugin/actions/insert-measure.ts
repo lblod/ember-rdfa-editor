@@ -281,9 +281,11 @@ export default function insertMeasure({
       ),
     ]);
     if (!args.multipleInsertion) {
-      transaction.setSelection(
-        Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
-      );
+      transaction
+        .setSelection(
+          Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
+        )
+        .scrollIntoView();
     }
     return {
       initialState: state,
