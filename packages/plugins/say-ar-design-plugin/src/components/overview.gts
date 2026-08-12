@@ -13,7 +13,7 @@ import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import { v4 as uuidv4 } from 'uuid';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
-import { detailedDate } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/detailed-date.ts';
+import { detailedDate } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/detailed-date';
 import type ArDesign from '../plugin/models/ar-design.ts';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';

@@ -16,18 +16,7 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
-    "./*.gts": {
-      "@say-editor/development": "./src/*.gts",
-      "types": "./declarations/*.d.ts",
-      "default": "./dist/*.js"
-    },
-    "./*.ts": {
-      "@say-editor/development": "./src/*.ts",
-      "types": "./declarations/*.d.ts",
-      "default": "./dist/*.js"
-    },
     "./*": {
-      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }

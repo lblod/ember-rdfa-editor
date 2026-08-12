@@ -1,4 +1,4 @@
-import { MOBILITEIT } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants.ts';
+import { MOBILITEIT } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
 import { type ValueOf } from '@lblod/ember-rdfa-editor/utils/_private/types';
 
 export const ROADSIGN_REGULATION_DECISION_TYPES = [

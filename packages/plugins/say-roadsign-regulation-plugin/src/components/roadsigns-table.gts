@@ -9,7 +9,6 @@ import ExpandedMeasure, {
 } from './expanded-measure.gts';
 import MeasurePreview from './measure-preview.gts';
 
-// @ts-expect-error notypes
 import AuDataTable from '@appuniversum/ember-appuniversum/components/au-data-table';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuHelpText from '@appuniversum/ember-appuniversum/components/au-help-text';
@@ -59,6 +58,7 @@ export default class RoadSignsTable extends Component<Signature> {
   };
 
   <template>
+    {{! @glint-expect-error }}
     <AuDataTable @isLoading={{@isLoading}} @noDataMessage="No data" as |table|>
       <table.content as |c|>
         <c.header>

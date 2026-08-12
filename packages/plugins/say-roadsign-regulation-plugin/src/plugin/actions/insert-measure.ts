@@ -7,7 +7,7 @@ import {
   Selection,
 } from '@lblod/ember-rdfa-editor';
 import { type FullTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
-import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory/index.ts';
+import { sayDataFactory } from '@lblod/ember-rdfa-editor/core/say-data-factory/index';
 import { buildArticleStructure } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/build-article-structure';
 import {
   DCT,
@@ -16,7 +16,7 @@ import {
   ONDERDEEL,
   PROV,
   RDF,
-} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants.ts';
+} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
 import {
   insertArticle,
   type InsertArticleFreelyArgs,

@@ -6,9 +6,9 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import type { SayController } from '@lblod/ember-rdfa-editor';
 import ArWidgetContents from './widget-contents.gts';
-import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils.ts';
-import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils.ts';
-import { ROADSIGN_REGULATION_DECISION_TYPES } from '@lblod/say-roadsign-regulation-plugin/plugin/constants.ts';
+import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
+import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
+import { ROADSIGN_REGULATION_DECISION_TYPES } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
 import type {
   ArDesignQuery,
   ArticlePosition,
