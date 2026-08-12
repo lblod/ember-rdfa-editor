@@ -3,8 +3,8 @@ import {
   createEmberNodeSpec,
   createEmberNodeView,
   type EmberNodeConfig,
-} from '@lblod/ember-rdfa-editor/utils/_private/ember-node.ts';
-import Card from 'test-app/components/sample-ember-nodes/card.gts';
+} from '@lblod/ember-rdfa-editor/utils/_private/ember-node';
+import Card from 'test-app/components/sample-ember-nodes/card';
 
 const emberNodeConfig: EmberNodeConfig = {
   name: 'card',

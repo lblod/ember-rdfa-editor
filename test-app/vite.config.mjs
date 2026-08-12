@@ -7,22 +7,22 @@ export default defineConfig({
   resolve: {
     conditions: ['module', 'browser', 'development|production'],
   },
-  // optimizeDeps: {
-  //   include: [
-  //     '@lblod/ember-rdfa-editor',
-  //     '@lblod/say-roadsign-regulation-plugin',
-  //     '@lblod/say-ar-design-plugin',
-  //   ],
-  // },
-  server: {
-    warmup: {
-      clientFiles: [
-        // Start bundling some code before any requests are actually made, since we will need this
-        './app/routes/application.ts',
-        './app/templates/application.gts',
-      ],
-    },
+  optimizeDeps: {
+    exclude: [
+      '@lblod/ember-rdfa-editor',
+      '@lblod/say-roadsign-regulation-plugin',
+      '@lblod/say-ar-design-plugin',
+    ],
   },
+  // server: {
+  //   warmup: {
+  //     clientFiles: [
+  //       // Start bundling some code before any requests are actually made, since we will need this
+  //       './app/routes/application.ts',
+  //       './app/templates/application.gts',
+  //     ],
+  //   },
+  // },
   plugins: [
     yaml(),
     classicEmberSupport(),

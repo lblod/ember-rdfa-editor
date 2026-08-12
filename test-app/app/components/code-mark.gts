@@ -1,6 +1,6 @@
 import type { TOC } from '@ember/component/template-only';
 import type { SayController } from '@lblod/ember-rdfa-editor';
-import ToolbarMark from '@lblod/ember-rdfa-editor/components/toolbar/mark.gts';
+import ToolbarMark from '@lblod/ember-rdfa-editor/components/toolbar/mark';
 import { HtmlIcon } from '@appuniversum/ember-appuniversum/components/icons/html';
 
 type Signature = {

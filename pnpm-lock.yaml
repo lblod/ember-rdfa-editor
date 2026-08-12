@@ -15538,7 +15538,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.101.3(esbuild@0.25.10)(uglify-js@3.19.3)
+      webpack: 5.101.3(uglify-js@3.19.3)
 
   babel-plugin-debug-macros@0.2.0(@babel/core@7.29.7):
     dependencies:
@@ -16684,7 +16684,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       schema-utils: 3.3.0
       semver: 7.8.5
-      webpack: 5.101.3(esbuild@0.25.10)(uglify-js@3.19.3)
+      webpack: 5.101.3(uglify-js@3.19.3)
 
   css-tree@3.1.0:
     dependencies:
@@ -20807,7 +20807,7 @@ snapshots:
     dependencies:
       schema-utils: 4.3.3
       tapable: 2.3.3
-      webpack: 5.101.3(esbuild@0.25.10)(uglify-js@3.19.3)
+      webpack: 5.101.3(uglify-js@3.19.3)
 
   minimalistic-assert@1.0.1: {}
 
@@ -22774,7 +22774,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.101.3(esbuild@0.25.10)(uglify-js@3.19.3)
+      webpack: 5.101.3(uglify-js@3.19.3)
 
   style-mod@4.1.2: {}
 
@@ -22925,6 +22925,17 @@ snapshots:
       webpack: 5.101.3(esbuild@0.25.10)(uglify-js@3.19.3)
     optionalDependencies:
       esbuild: 0.25.10
+      uglify-js: 3.19.3
+
+  terser-webpack-plugin@5.3.14(uglify-js@3.19.3)(webpack@5.101.3):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      serialize-javascript: 6.0.2
+      terser: 5.49.0
+      webpack: 5.101.3(uglify-js@3.19.3)
+    optionalDependencies:
       uglify-js: 3.19.3
 
   terser@5.49.0:
@@ -23667,6 +23678,38 @@ snapshots:
       schema-utils: 4.3.3
       tapable: 2.3.3
       terser-webpack-plugin: 5.3.14(esbuild@0.25.10)(uglify-js@3.19.3)(webpack@5.101.3)
+      watchpack: 2.4.4
+      webpack-sources: 3.3.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+
+  webpack@5.101.3(uglify-js@3.19.3):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.18.0
+      acorn-import-phases: 1.0.4(acorn@8.18.0)
+      browserslist: 4.28.7
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.18.3
+      es-module-lexer: 1.7.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.0
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.3
+      terser-webpack-plugin: 5.3.14(uglify-js@3.19.3)(webpack@5.101.3)
       watchpack: 2.4.4
       webpack-sources: 3.3.3
     transitivePeerDependencies:

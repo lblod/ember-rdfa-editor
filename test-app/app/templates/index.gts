@@ -8,7 +8,7 @@ import {
   subscript,
   superscript,
   underline,
-} from '@lblod/ember-rdfa-editor/plugins/text-style/index.ts';
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
 import {
   blockRdfaWithConfig,
   docWithConfig,
@@ -18,8 +18,8 @@ import {
   repairedBlockWithConfig,
   text,
 } from '@lblod/ember-rdfa-editor/nodes';
-import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code.ts';
-import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa.ts';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { invisibleRdfaWithConfig } from '@lblod/ember-rdfa-editor/nodes/invisible-rdfa';
 import {
   tableKeymap,
   tableNodes,
@@ -39,7 +39,7 @@ import {
 } from '@lblod/ember-rdfa-editor/plugins/list';
 import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
 import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
-import SayController from '@lblod/ember-rdfa-editor/core/say-controller.ts';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
 import {
   link,
   linkPasteHandler,
@@ -53,8 +53,8 @@ import {
   heading as headingInvisible,
   paragraph as paragraphInvisible,
 } from '@lblod/ember-rdfa-editor/plugins/invisibles';
-import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight.ts';
-import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color.ts';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
 import { lastKeyPressedPlugin } from '@lblod/ember-rdfa-editor/plugins/last-key-pressed';
 import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
 import {
@@ -64,22 +64,22 @@ import {
 import { inputRules } from '@lblod/ember-rdfa-editor';
 import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
 import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
-import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading.ts';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
-import { unwrap } from '@lblod/ember-rdfa-editor/utils/option.ts';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import Component from '@glimmer/component';
 import DummyContainer from 'test-app/components/dummy-container';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
 
-import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools.ts';
-import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container.gts';
-import Editor from '@lblod/ember-rdfa-editor/components/editor.ts';
-import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar.gts';
-import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip.ts';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import Editor from '@lblod/ember-rdfa-editor/components/editor';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
 import { hash } from '@ember/helper';
-import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget.gts';
-import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule.ts';
+import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
 
 export default class extends Component {
   @tracked rdfaEditor?: SayController;
