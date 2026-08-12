@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@ember/optional-features": "catalog:",
-    "@ember/render-modifiers": "^3.0.0",
+    "@ember/render-modifiers": "catalog:",
     "@embroider/addon-shim": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
     "decorator-transforms": "catalog:",
@@ -86,7 +86,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~4.2.2",
+    "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
@@ -95,6 +95,8 @@
     "@embroider/addon-dev": "catalog:",
     "@embroider/core": "catalog:",
     "@embroider/macros": "catalog:",
+    "@lblod/ember-rdfa-editor": "workspace:^13.13.0",
+    "@lblod/say-roadsign-regulation-plugin": "workspace:^3.0.0",
     "@eslint/js": "catalog:",
     "@glimmer/component": "catalog:",
     "@glimmer/tracking": "catalog:",

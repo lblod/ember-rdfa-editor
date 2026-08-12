@@ -37,8 +37,10 @@ const baseParserOptions = {
 
 function config(tsconfigRootDir: string): ReturnType<typeof ts.config> {
   const parserOptions = {
-    ...baseParserOptions,
-    ...{ ts: { tsconfigRootDir } },
+    esm: {
+      ...baseParserOptions.esm,
+      ...{ ts: { tsconfigRootDir } },
+    },
   };
 
   return ts.config(

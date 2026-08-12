@@ -8,7 +8,7 @@
     "target": "esnext",
     "types": [],
 
-    "customConditions": ["@say-editor/development"],
+    // "customConditions": ["@say-editor/development"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

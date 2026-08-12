@@ -85,7 +85,8 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~4.2.2",
+    "@appuniversum/ember-appuniversum": "catalog:",
+    "@lblod/ember-rdfa-editor": "workspace:^13.13.0",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",

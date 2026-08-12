@@ -4,7 +4,8 @@ packages:
   - test-app
 
 catalog:
-  "@appuniversum/ember-appuniversum": ^3.15.1
+  "@lblod/ember-rdfa-editor-lblod-plugins": "^38.0.3"
+  "@appuniversum/ember-appuniversum": ^4.2.2
   "@babel/core": ^7.28.6
   "@babel/eslint-parser": ^7.28.6
   "@babel/plugin-proposal-decorators": ^7.28.6
@@ -178,6 +179,7 @@ catalog:
 overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
+  # "@lblod/ember-rdfa-editor": "workspace:"
   prosemirror-view: "catalog:"
 
 peerDependencyRules:
@@ -191,6 +193,7 @@ peerDependencyRules:
     react: "19"
     react-dom: "19"
     "@appuniversum/ember-appuniversum>tracked-built-ins": "^4.1.0"
+    "@appuniversum/ember-appuniversum": "^4.2.0"
     "@ember/render-modifiers>ember-source": "6"
 
 patchedDependencies:
@@ -209,9 +212,11 @@ autoInstallPeers: true
 strictPeerDependencies: true
 resolvePeersFromWorkspaceRoot: false
 dedupePeerDependents: true
+dedupePeers: true
 publicHoistPattern:
   - ember-source
   - "@lblod/ember-rdfa-editor"
   - "@lblod/say-ar-design-plugin"
+  - ember-intl
 
 resolutionMode: highest

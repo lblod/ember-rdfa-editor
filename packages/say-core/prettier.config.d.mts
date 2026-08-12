@@ -1,2 +1,2 @@
 export { default } from '@lblod/say-config/prettier/prettier-library';
-//# sourceMappingURL=prettier.config.mjs.map
+//# sourceMappingURL=prettier.config.d.mts.map

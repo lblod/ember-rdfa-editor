@@ -2,6 +2,9 @@
   "extends": "./src/typescript/tsconfig.lib.json",
 
   "compilerOptions": {
+    "module": "nodenext",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "types": ["node"]

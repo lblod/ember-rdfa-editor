@@ -2,11 +2,6 @@
   "name": "@lblod/say-config",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,8 +11,7 @@
       "default": "./src/*.json"
     },
     "./*": {
-      "types": "./dist/*.d.mts",
-      "default": "./dist/*.mjs"
+      "default": "./src/*.ts"
     }
   },
   "devDependencies": {

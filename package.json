@@ -3,7 +3,7 @@
   "license": "MIT",
   "author": "redpencil.io",
   "scripts": {
-    "build": "turbo --filter=!test-app build",
+    "build": "turbo --filter=!test-app --filter=!@lblod/say-config --filter=!@lblod/say-core build",
     "build:test-app": "turbo --filter test-app build",
     "lint": "turbo lint",
     "lint:fix": "pnpm --filter '*' lint:fix",
@@ -31,7 +31,7 @@
     "doc:generate": "pnpm say doc:generate",
     "doc:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
   },
-  "packageManager": "pnpm@11.4.0",
+  "packageManager": "pnpm@11.20.0",
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@changesets/get-release-plan": "catalog:",
