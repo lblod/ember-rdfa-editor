@@ -6,6 +6,11 @@ import yaml from '@modyfi/vite-plugin-yaml';
 export default defineConfig({
   resolve: {
     conditions: ['module', 'browser', 'development|production'],
+    dedupe: [
+      '@lblod/ember-rdfa-editor',
+      '@lblod/say-roadsign-regulation-plugin',
+      '@lblod/say-ar-design-plugin',
+    ],
   },
   optimizeDeps: {
     exclude: [

@@ -10,6 +10,7 @@
     "lint:types": "pnpm --filter '*' lint:types",
     "prepack": "pnpm build",
     "start": "turbo --filter=test-app dev",
+    "devbuild": "turbo watch --filter=!test-app --filter=!@lblod/say-config --filter=!@lblod/say-core  build",
     "tui": "turbo dev --ui tui",
     "start:editor": "pnpm --filter @lblod/ember-rdfa-editor start --no-watch.clearScreen",
     "start:roadsigns": "pnpm --filter @lblod/say-roadsign-regulation-plugin start --no-watch.clearScreen",
