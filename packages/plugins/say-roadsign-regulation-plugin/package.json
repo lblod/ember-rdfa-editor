@@ -1,48 +1,17 @@
 {
   "name": "@lblod/say-roadsign-regulation-plugin",
-  "version": "3.0.0",
-  "description": "Say Editor plugin as part of the LBLOD project",
-  "keywords": [
-    "ember-addon"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
   },
-  "license": "MIT",
+  "description": "Say Editor plugin as part of the LBLOD project",
+  "version": "3.0.0",
   "author": "redpencil.io",
-  "exports": {
-    "./addon-main.js": "./addon-main.cjs",
-    "./translations/*": "./translations/*",
-    "./_index.scss": "./_index.scss",
-    "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
-    "./*": {
-      "types": "./declarations/*.d.ts",
-      "default": "./dist/*.js"
-    }
-  },
-  "imports": {
-    "#root/*": {
-      "default": "./src/*"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "declarations/*"
-      ]
-    }
-  },
-  "files": [
-    "addon-main.cjs",
-    "declarations",
-    "dist",
-    "translations",
-    "_index.scss",
-    "say-roadsign-regulation-plugin.scss"
-  ],
+  "license": "MIT",
   "scripts": {
     "build": "rollup --config",
+    "dev": "rollup --config --watch",
+    "doc:generate": "pnpm typedoc",
     "format": "prettier . --cache --write",
     "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
     "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto && pnpm run format",
@@ -54,9 +23,7 @@
     "lint:types": "ember-tsc --noEmit",
     "prepack": "pnpm build",
     "start": "pnpm dev",
-    "dev": "rollup --config --watch",
-    "test": "echo 'A v2 addon does not have tests, run tests in test-app'",
-    "doc:generate": "pnpm typedoc"
+    "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
   },
   "dependencies": {
     "@ember/optional-features": "catalog:",
@@ -75,7 +42,6 @@
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "catalog:",
-    "@lblod/ember-rdfa-editor": "workspace:^13.13.0",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
@@ -88,6 +54,7 @@
     "@glimmer/tracking": "catalog:",
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
+    "@lblod/ember-rdfa-editor": "workspace:^13.13.0",
     "@lblod/say-config": "workspace:*",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
@@ -134,7 +101,7 @@
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
     "@glimmer/component": "^1.1.2 || ^2.0.0",
     "@glimmer/tracking": "^1.1.2",
-    "@glint/template": ">= 1.0.0",
+    "@glint/template": ">=1.0.0",
     "@lblod/ember-rdfa-editor": "workspace:^13.13.0",
     "ember-basic-dropdown": "^8.0.0",
     "ember-concurrency": "^4.0.2 || ^5.0.0",
@@ -147,6 +114,21 @@
   "peerDependenciesMeta": {
     "@glint/template": {
       "optional": true
+    }
+  },
+  "imports": {
+    "#root/*": {
+      "default": "./src/*"
+    }
+  },
+  "exports": {
+    "./addon-main.js": "./addon-main.cjs",
+    "./translations/*": "./translations/*",
+    "./_index.scss": "./_index.scss",
+    "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
+    "./*": {
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
     }
   },
   "ember": {
@@ -166,9 +148,27 @@
       "./helpers/removeZFromLabel.js": "./dist/_app_/helpers/removeZFromLabel.js"
     }
   },
+  "files": [
+    "addon-main.cjs",
+    "declarations",
+    "dist",
+    "translations",
+    "_index.scss",
+    "say-roadsign-regulation-plugin.scss"
+  ],
+  "keywords": [
+    "ember-addon"
+  ],
   "typedocOptions": {
     "tsconfig": "tsconfig.typedoc.json",
     "out": "docs",
     "readme": "./README.md"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "declarations/*"
+      ]
+    }
   }
 }

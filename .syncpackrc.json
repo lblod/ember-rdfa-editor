@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/syncpack/schema.json",
+  "indent": "  ",
+  "sortFirst": [
+    "name",
+    "private",
+    "repository",
+    "description",
+    "version",
+    "author",
+    "license",
+    "scripts",
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "peerDependenciesMeta",
+    "imports",
+    "exports"
+  ],
+  "sortExports": [
+    "@say-editor/development",
+    "types",
+    "node-addons",
+    "node",
+    "browser",
+    "module",
+    "import",
+    "require",
+    "svelte",
+    "development",
+    "production",
+    "script",
+    "default"
+  ],
+  "versionGroups": [
+    {
+      "dependencies": ["*"],
+      "dependencyTypes": ["peer"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["test-app"],
+      "isIgnored": true
+    }
+  ]
+}

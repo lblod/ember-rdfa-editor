@@ -1,19 +1,21 @@
 {
   "name": "@lblod/say-core",
-  "version": "1.0.0",
-  "description": "core logic for say-editor",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
   },
-  "license": "MIT",
+  "description": "core logic for say-editor",
+  "version": "1.0.0",
   "author": "redpencil.io",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "type": "module",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@lblod/say-config": "workspace:*",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
   },
   "exports": {
     ".": {
@@ -25,10 +27,8 @@
       "default": "./dist/*.js"
     }
   },
-  "types": "dist/index.d.ts",
-  "devDependencies": {
-    "@lblod/say-config": "workspace:*",
-    "prettier": "catalog:",
-    "typescript": "catalog:"
-  }
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts"
 }

@@ -213,10 +213,10 @@ strictPeerDependencies: true
 resolvePeersFromWorkspaceRoot: false
 dedupePeerDependents: true
 dedupePeers: true
-publicHoistPattern:
-  - ember-source
-  - "@lblod/ember-rdfa-editor"
-  - "@lblod/say-ar-design-plugin"
-  - ember-intl
+# publicHoistPattern:
+#   - ember-source
+#   - "@lblod/ember-rdfa-editor"
+#   - "@lblod/say-ar-design-plugin"
+#   - ember-intl
 
 resolutionMode: highest

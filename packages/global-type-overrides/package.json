@@ -1,22 +1,22 @@
 {
   "name": "global-type-overrides",
-  "version": "1.0.0",
-  "description": "",
   "private": true,
-  "types": "./types/global/index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
+  "description": "",
+  "version": "1.0.0",
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "exports": {
-    "./types": "./types/global/index.d.ts"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
     "@glint/ember-tsc": "catalog:",
     "typescript": "catalog:",
     "yup": "catalog:"
-  }
+  },
+  "exports": {
+    "./types": "./types/global/index.d.ts"
+  },
+  "keywords": [],
+  "type": "module",
+  "types": "./types/global/index.d.ts"
 }

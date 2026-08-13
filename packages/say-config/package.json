@@ -1,19 +1,9 @@
 {
   "name": "@lblod/say-config",
-  "version": "1.0.0",
   "description": "",
-  "keywords": [],
+  "version": "1.0.0",
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "exports": {
-    "./*.json": {
-      "default": "./src/*.json"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
   "devDependencies": {
     "@babel/eslint-parser": "catalog:",
     "@eslint/js": "catalog:",
@@ -29,5 +19,15 @@
     "prettier-plugin-ember-template-tag": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
-  }
+  },
+  "exports": {
+    "./*.json": {
+      "default": "./src/*.json"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "keywords": [],
+  "type": "module"
 }

@@ -2,29 +2,11 @@
   "name": "test-app",
   "private": true,
   "description": "Test app for ember-rdfa-editor addon",
-  "license": "MIT",
   "author": "redpencil.io",
-  "directories": {
-    "doc": "doc",
-    "test": "tests"
-  },
+  "license": "MIT",
   "scripts": {
     "build": "vite build",
-    "format": "prettier . --cache --write",
-    "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
-    "lint:css": "stylelint \"**/*.css\"",
-    "lint:css:fix": "concurrently \"pnpm:lint:css -- --fix\"",
-    "lint:format": "prettier . --cache --check",
-    "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto",
-    "lint:hbs": "ember-template-lint .",
-    "lint:hbs:fix": "ember-template-lint . --fix",
-    "lint:js": "eslint . --cache",
-    "lint:js:fix": "eslint . --fix",
-    "lint:types": "ember-tsc --noEmit",
-    "start": "pnpm dev",
     "dev": "vite",
-    "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
-    "test:ember": "vite build --mode test && ember test --path dist",
     "e2e": "playwright",
     "e2e:open": "playwright test --ui",
     "e2e:open:docker": "./scripts/e2e.sh test --ui",
@@ -32,7 +14,25 @@
     "e2e:run:docker": "./scripts/e2e.sh test",
     "e2e:run:vrt": "./scripts/e2e.sh test --grep @vrt",
     "e2e:run:vrt:update": "./scripts/e2e.sh test --grep @vrt --update-snapshots",
-    "e2e:show-report": "playwright show-report"
+    "e2e:show-report": "playwright show-report",
+    "format": "prettier . --cache --write",
+    "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
+    "lint:css": "stylelint \"**/*.css\"",
+    "lint:css:fix": "concurrently \"pnpm:lint:css -- --fix\"",
+    "lint:deps": "syncpack lint",
+    "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto",
+    "lint:format": "prettier . --cache --check",
+    "lint:hbs": "ember-template-lint .",
+    "lint:hbs:fix": "ember-template-lint . --fix",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "lint:types": "ember-tsc --noEmit",
+    "start": "pnpm dev",
+    "test": "concurrently 'pnpm:test:* {@}' --passthrough-arguments --names 'test:' --prefixColors auto",
+    "test:ember": "vite build --mode test && ember test --path dist"
+  },
+  "dependencies": {
+    "@types/react": "catalog:"
   },
   "devDependencies": {
     "@appuniversum/ember-appuniversum": "catalog:",
@@ -142,26 +142,27 @@
     "uuid": "catalog:",
     "vite": "catalog:"
   },
-  "engines": {
-    "node": ">= 18"
-  },
-  "ember": {
-    "edition": "octane"
+  "exports": {
+    "./tests/*": "./tests/*",
+    "./*": "./app/*"
   },
   "browserslist": [
     "last 1 Chrome version",
     "last 1 Firefox version",
     "last 1 Edge version"
   ],
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "ember": {
+    "edition": "octane"
+  },
   "ember-addon": {
     "type": "app",
     "version": 2
   },
-  "exports": {
-    "./tests/*": "./tests/*",
-    "./*": "./app/*"
-  },
-  "dependencies": {
-    "@types/react": "catalog:"
+  "engines": {
+    "node": ">= 18"
   }
 }
