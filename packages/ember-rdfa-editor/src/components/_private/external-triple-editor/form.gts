@@ -21,11 +21,12 @@ import {
 import PowerSelect from 'ember-power-select/components/power-select';
 import { eq } from 'ember-truth-helpers';
 import { type Option } from '#root/utils/option.ts';
-import type { TemplateOnlyComponent } from '@ember/component/template-only';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ModifierLike } from '@glint/template';
+import { isNone } from '@ember/utils';
+import type { TOC } from '@ember/component/template-only';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({
@@ -65,6 +66,20 @@ const DEFAULT_TRIPLE: FullTriple = {
   object: sayDataFactory.namedNode(''),
 };
 export type SupportedTermType = 'NamedNode' | 'Literal';
+function formDataToString(
+  formDataEntryValue: FormDataEntryValue | null | undefined,
+): string | null {
+  if (isNone(formDataEntryValue)) {
+    return null;
+  }
+  if (typeof formDataEntryValue === 'string') {
+    return formDataEntryValue;
+  }
+  throw new Error(
+    `formdataEntryValue was a file where we expected it to be a string. Filename: ${formDataEntryValue.name}`,
+  );
+  //formdata is a file
+}
 export default class ExternalTripleForm extends Component<ExternalTripleFormSig> {
   formElement?: HTMLFormElement;
   setupFormElement = modifier((element: HTMLFormElement) => {
@@ -121,13 +136,15 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   }
   get hasLanguage() {
     return Boolean(
-      this.currentFormData?.get(this.languagePath)?.toString().length,
+      formDataToString(this.currentFormData?.get(this.languagePath))?.length,
     );
   }
   get hasDatatype() {
     return (
       !this.hasLanguage &&
-      Boolean(this.currentFormData?.get(this.datatypePath)?.toString().length)
+      Boolean(
+        formDataToString(this.currentFormData?.get(this.datatypePath))?.length,
+      )
     );
   }
   selectTermType = (value: SupportedTermType) => {
@@ -137,7 +154,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   extractNamedNode = (formData: FormData, base: string) => {
     return {
       termType: 'NamedNode',
-      value: formData.get(`${base}.value`)?.toString(),
+      value: formDataToString(formData.get(`${base}.value`)),
     };
   };
   extractLiteral = (formData: FormData, base: string) => {
@@ -151,9 +168,9 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
 
     return {
       termType: 'Literal',
-      value: formData.get(`${base}.value`)?.toString(),
+      value: formDataToString(formData.get(`${base}.value`)),
       datatype,
-      language: formData.get(`${base}.language`)?.toString(),
+      language: formDataToString(formData.get(`${base}.language`)),
     };
   };
   validateFormData = (formData: FormData): ValidationResult => {
@@ -162,7 +179,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = namedNodeTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
-            predicate: formData.get('predicate')?.toString(),
+            predicate: formDataToString(formData.get('predicate')),
             object: this.extractNamedNode(formData, 'object'),
           },
           { abortEarly: false },
@@ -179,7 +196,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = literalTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
-            predicate: formData.get('predicate')?.toString(),
+            predicate: formDataToString(formData.get('predicate')),
             object: this.extractLiteral(formData, 'object'),
           },
           { abortEarly: false },
@@ -312,7 +329,7 @@ interface StringFieldSig {
   Element: AuInputSignature['Element'];
 }
 
-const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
+const StringField = <template>
   <FormField @name={{@name}} @errors={{@errors}} @required={{@required}}>
     <:label>
       {{yield}}
@@ -330,7 +347,7 @@ const StringField: TemplateOnlyComponent<StringFieldSig> = <template>
       />
     </:default>
   </FormField>
-</template>;
+</template> satisfies TOC<StringFieldSig>;
 
 interface SelectFieldArgs<T> extends FieldArgs {
   options: T[];

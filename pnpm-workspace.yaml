@@ -40,9 +40,9 @@ catalog:
   "@glimmer/runtime": ^0.94.11
   "@glimmer/tracking": ^1.1.2
   "@glimmer/validator": ^0.94.8
-  "@glint/ember-tsc": ^1.1.0
-  "@glint/template": ^1.7.3
-  "@glint/tsserver-plugin": 2.1.0
+  "@glint/ember-tsc": ^1.10.0
+  "@glint/template": ^1.8.0
+  "@glint/tsserver-plugin": 2.7.0
   "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
@@ -100,7 +100,7 @@ catalog:
   ember-power-select-with-create: ^3.1.0
   ember-qunit: ^9.0.4
   ember-resolver: ^13.1.1
-  ember-source: ^6.7.0
+  ember-source: ^6.12.0
   ember-source-channel-url: ^3.0.0
   ember-template-imports: ^4.4.0
   ember-template-lint: ^6.1.0
@@ -213,10 +213,11 @@ strictPeerDependencies: true
 resolvePeersFromWorkspaceRoot: false
 dedupePeerDependents: true
 dedupePeers: true
-# publicHoistPattern:
-#   - ember-source
+publicHoistPattern:
+  # this is required, for example for glint to be able to understand TOCs
+  - ember-source
 #   - "@lblod/ember-rdfa-editor"
 #   - "@lblod/say-ar-design-plugin"
-#   - ember-intl
+  - ember-intl
 
 resolutionMode: highest

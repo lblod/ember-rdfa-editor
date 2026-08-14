@@ -30,7 +30,7 @@ export default class HashSet<I> implements Set<I> {
     return this.items[Symbol.toStringTag];
   }
 
-  [Symbol.iterator](): IterableIterator<I> {
+  [Symbol.iterator](): MapIterator<I> {
     return this.items.values();
   }
 
@@ -71,7 +71,7 @@ export default class HashSet<I> implements Set<I> {
     return didDelete;
   }
 
-  entries(): IterableIterator<[I, I]> {
+  entries(): MapIterator<[I, I]> {
     return new Set<I>(this.items.values()).entries();
   }
 
@@ -99,11 +99,11 @@ export default class HashSet<I> implements Set<I> {
     return !!item && item === value;
   }
 
-  keys(): IterableIterator<I> {
+  keys(): MapIterator<I> {
     return this.items.values();
   }
 
-  values(): IterableIterator<I> {
+  values(): MapIterator<I> {
     return this.items.values();
   }
 

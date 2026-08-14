@@ -19,6 +19,7 @@ type Signature = {
   Blocks: {
     default: [];
   };
+  Element: HTMLDivElement;
 };
 
 export default class SelectionTooltip extends Component<Signature> {

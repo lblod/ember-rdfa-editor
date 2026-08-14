@@ -35,7 +35,14 @@ const tsParserOptions = (rootDir: string) => ({
 
 function config(tsconfigRootDir: string): ReturnType<typeof defineConfig> {
   return defineConfig(
-    globalIgnores(['dist/', 'dist-*/', 'vendor/', 'declarations/', 'coverage/', '!**/.*']),
+    globalIgnores([
+      'dist/',
+      'dist-*/',
+      'vendor/',
+      'declarations/',
+      'coverage/',
+      '!**/.*',
+    ]),
     js.configs.recommended,
     prettier,
     ember.configs.base,
@@ -84,6 +91,7 @@ function config(tsconfigRootDir: string): ReturnType<typeof defineConfig> {
             argsIgnorePattern: '^_',
             destructuredArrayIgnorePattern: '^_',
             varsIgnorePattern: '^_',
+            caughtErrorsIgnorePattern: '^_',
           },
         ],
       },

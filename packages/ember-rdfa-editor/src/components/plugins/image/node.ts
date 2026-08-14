@@ -153,6 +153,9 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     event.preventDefault();
     event.stopPropagation();
     if (this.image && handlePosition) {
+      // TODO: can probably be removed, cause it should not be doing anything
+      // but not in a position to test in this pass
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.handleReferences;
       this.resizeState = {
         handle: HANDLES[handlePosition],

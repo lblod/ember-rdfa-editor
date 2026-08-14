@@ -3,7 +3,8 @@ import Component from '@glimmer/component';
 import type { ComponentLike } from '@glint/template';
 import { eq, notEq } from 'ember-truth-helpers';
 
-const PILL_SIZES = ['small'] as const;
+// expand when we support more sizes
+type PILL_SIZES = 'small';
 
 export type PillComponentSignature = {
   Element: HTMLSpanElement;
@@ -16,7 +17,7 @@ export type PillComponentSignature = {
       | 'success'
       | 'warning'
       | 'error';
-    size?: (typeof PILL_SIZES)[number];
+    size?: PILL_SIZES;
     iconAlignment?: 'left' | 'right';
     icon?: ComponentLike<{ Element: Element }>;
   };

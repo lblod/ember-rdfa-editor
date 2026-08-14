@@ -2,7 +2,9 @@
   "extends": "@ember/library-tsconfig",
   "compilerOptions": {
 
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    // TODO: need to turn this on eventually!
+    "strictFunctionTypes": false
     // "customConditions": ["@say-editor/development"],
     // "allowJs": true,
     // "declaration": true,
@@ -27,7 +29,6 @@
     // "noEmitOnError": false,
     //
     // "noUncheckedIndexedAccess": false,
-    // "strictFunctionTypes": false,
     //
     // /**
     //   https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions

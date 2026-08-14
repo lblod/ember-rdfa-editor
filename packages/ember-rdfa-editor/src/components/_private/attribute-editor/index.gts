@@ -76,8 +76,7 @@ export default class AttributeEditor extends Component<Signature> {
     if (this.isEditable(attr)) {
       //@ts-expect-error handler is not defined on attribute-spec type
       const handler = this.node.value.type.spec.attrs[attr].editHandler as
-        | AttributeEditHandler
-        | undefined;
+        AttributeEditHandler | undefined;
       if (handler) {
         return handler;
       } else {
@@ -210,8 +209,11 @@ export default class AttributeEditor extends Component<Signature> {
                             <EditorComponent
                               {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               id={{field.id}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               value={{field.value}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               name={{key}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               {{on "change" (fn this.setField field)}}
                             />
                           {{else}}

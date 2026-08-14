@@ -212,7 +212,9 @@ class Modal extends Component<ModalArgs> {
   @tracked generateNewUri = 'yes';
   @tracked resourceUriBase = '';
 
-  updateUriBase = (event: InputEvent) => {
+  updateUriBase = (event: Event & { currentTarget: HTMLInputElement }) => {
+    // TODO: can likely switch to event.currentTarget to avoid the cast
+    // but currentTarget has slightly different semantics so needs to be tested
     this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
   shouldGenerateNewUri = (value: 'yes' | 'no') => {

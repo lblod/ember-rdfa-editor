@@ -19,14 +19,17 @@ import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link
 import { MessageIcon } from '@appuniversum/ember-appuniversum/components/icons/message';
 import { modifier } from 'ember-modifier';
 
-type Args = {
-  controller: SayController;
-  linkParser: LinkParser;
-  link: { pos: number; node: PNode };
-  showTitle?: boolean;
+type Sig = {
+  Args: {
+    controller: SayController;
+    linkParser: LinkParser;
+    link: { pos: number; node: PNode };
+    showTitle?: boolean;
+  };
+  Element: AuCard['element'];
 };
 
-export default class LinkEditor extends Component<Args> {
+export default class LinkEditor extends Component<Sig> {
   get isNewLink() {
     return this.link.node.attrs['isNew'] as boolean;
   }
@@ -55,7 +58,7 @@ export default class LinkEditor extends Component<Args> {
   }
 
   @action
-  setHref(event: InputEvent) {
+  setHref(event: Event & { currentTarget: Element }) {
     const text = (event.target as HTMLInputElement).value;
     const result = this.parseLink(text);
 
@@ -76,7 +79,7 @@ export default class LinkEditor extends Component<Args> {
   }
 
   @action
-  setLinkText(event: InputEvent) {
+  setLinkText(event: Event & { currentTarget: Element }) {
     const text = (event.target as HTMLInputElement).value;
     const { pos, node } = this.link;
     this.controller.withTransaction(
