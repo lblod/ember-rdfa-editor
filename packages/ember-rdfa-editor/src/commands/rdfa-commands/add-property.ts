@@ -86,8 +86,7 @@ export function addProperty({
         }
         targets?.forEach((target) => {
           const backlinks = target.value.attrs['backlinks'] as
-            | IncomingTriple[]
-            | undefined;
+            IncomingTriple[] | undefined;
           const newBacklinks = backlinks
             ? [...backlinks, newBacklink]
             : [newBacklink];
