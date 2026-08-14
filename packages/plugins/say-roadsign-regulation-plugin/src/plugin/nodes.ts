@@ -34,8 +34,9 @@ import {
   TRAFFIC_SIGNAL_TYPES,
 } from './constants.ts';
 
-const CONTENT_SELECTOR = `div[property~='${DCT('description').full
-  }'],div[property~='${DCT('description').prefixed}']`;
+const CONTENT_SELECTOR = `div[property~='${
+  DCT('description').full
+}'],div[property~='${DCT('description').prefixed}']`;
 
 export const roadsign_regulation: NodeSpec = {
   content: 'block+',
