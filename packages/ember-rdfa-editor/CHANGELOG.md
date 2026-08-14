@@ -1,5 +1,13 @@
 # @lblod/ember-rdfa-editor
 
+## 13.16.0
+
+### Minor Changes
+
+- [#1398](https://github.com/lblod/ember-rdfa-editor/pull/1398) [`f213d22`](https://github.com/lblod/ember-rdfa-editor/commit/f213d22639fc18e0bc75d30b2b05390481d7088d) Thanks [@piemonkey](https://github.com/piemonkey)! - Add selected prop to context actions to support multiple select
+
+- [#1398](https://github.com/lblod/ember-rdfa-editor/pull/1398) [`c5cefcf`](https://github.com/lblod/ember-rdfa-editor/commit/c5cefcf9a50117c08ff14a54a8b585d176b0654c) Thanks [@piemonkey](https://github.com/piemonkey)! - Add option to contextual action groups to keep the menu open after selection
+
 ## 13.15.1
 
 ### Patch Changes
