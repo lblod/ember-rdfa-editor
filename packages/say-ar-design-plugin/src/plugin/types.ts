@@ -7,12 +7,12 @@ export type ArticlePosition = { node: PNode; pos: number };
 
 export type InsertPositionOption = {
   label: string;
-  value: ArticleInsertPosition;
+  value: ArticleInsertPosition | false;
 };
 
 export type ArInsertFunc = (
   arDesign: ArDesign,
-  insertPosition: ArticleInsertPosition,
+  insertPosition: ArticleInsertPosition | false,
   skipWarnings?: boolean,
 ) => void;
 
