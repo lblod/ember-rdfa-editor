@@ -17,6 +17,7 @@ import { service } from '@ember/service';
 import IntlService from 'ember-intl/services/intl';
 import { PNode } from '@lblod/ember-rdfa-editor';
 import PowerSelect from 'ember-power-select/components/power-select';
+import type Owner from '@ember/owner';
 
 export type InsertMobilityMeasureTask = Task<
   void,
@@ -48,7 +49,7 @@ export default class ExpandedMeasure extends Component<Signature> {
   insertPositionOptionFirst: InsertPositionOption;
   insertPositionOptionLast: InsertPositionOption;
 
-  constructor(owner: unknown, args: Signature['Args']) {
+  constructor(owner: Owner, args: Signature['Args']) {
     super(owner, args);
     this.insertPositionOptionFirst = {
       label: this.intl.t(

@@ -158,7 +158,16 @@
   "imports": {
     "#root": null,
     "#root/index.ts": null,
-    "#root/*": "./src/*"
+    "#root/*.gts": {
+      "@say-editor/development": "./src/*.gts",
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*.gts"
+    },
+    "#root/*.ts": {
+      "@say-editor/development": "./src/*.ts",
+      "types": "./declarations/*.d.ts",
+      "default": "./src/*.ts"
+    }
   },
   "exports": {
     ".": {

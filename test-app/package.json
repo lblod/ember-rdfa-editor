@@ -38,9 +38,9 @@
     "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
-    "@babel/plugin-proposal-decorators": "catalog:",
     "@babel/plugin-transform-runtime": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
+    "@babel/runtime": "^7.29.7",
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
     "@curvenote/prosemirror-utils": "catalog:",
@@ -51,6 +51,7 @@
     "@embroider/config-meta-loader": "catalog:",
     "@embroider/core": "catalog:",
     "@embroider/legacy-inspector-support": "catalog:",
+    "@embroider/macros": "catalog:",
     "@embroider/test-setup": "catalog:",
     "@embroider/vite": "catalog:",
     "@eslint/js": "catalog:",
@@ -134,8 +135,6 @@
     "sass": "catalog:",
     "sinon": "catalog:",
     "stylelint": "catalog:",
-    "stylelint-config-standard": "catalog:",
-    "stylelint-prettier": "catalog:",
     "tracked-built-ins": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
@@ -163,6 +162,6 @@
     "version": 2
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 26"
   }
 }

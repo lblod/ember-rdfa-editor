@@ -413,7 +413,7 @@ export default class LblodPluginsTemplate extends Component {
       const result = getActiveEditableNode(this.rdfaEditor.activeEditorState);
       return result;
     }
-    return;
+    return undefined;
   }
 
   @action
@@ -435,6 +435,7 @@ export default class LblodPluginsTemplate extends Component {
     if (this.rdfaEditor) {
       return combineConfigs(documentConfig(this.rdfaEditor), lovConfig());
     }
+    return undefined;
   }
 
   subjectOptionGeneratorTask = restartableTask(

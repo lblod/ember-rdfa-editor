@@ -1,8 +1,13 @@
 {
   "extends": "@ember/app-tsconfig",
   "compilerOptions": {
+    "target": "es2024",
+    "module": "esnext",
+    "moduleResolution": "bundler",
 
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    // TODO: need to turn this on eventually!
+    "strictFunctionTypes": false
     // "customConditions": ["@say-editor/development"],
     // "allowJs": true,
     // "declaration": true,

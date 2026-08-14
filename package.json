@@ -33,6 +33,7 @@
     "tui": "turbo dev --ui tui"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
     "@changesets/cli": "catalog:",
     "@changesets/get-release-plan": "catalog:",
     "@manypkg/get-packages": "catalog:",

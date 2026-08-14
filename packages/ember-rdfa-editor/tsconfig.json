@@ -3,6 +3,7 @@
 
   "include": ["src/**/*"],
   "compilerOptions": {
+    "customConditions": ["@say-editor/development"],
     /**
       https://www.typescriptlang.org/tsconfig#rootDir
       "Default: The longest common path of all non-declaration input files."

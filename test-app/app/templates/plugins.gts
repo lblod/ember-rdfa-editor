@@ -55,7 +55,6 @@ import {
   superscript,
   underline,
 } from '@lblod/ember-rdfa-editor/plugins/text-style/index';
-import type { SayNodeViewConstructor } from '@lblod/ember-rdfa-editor/utils/ember-node';
 import { Schema } from '@lblod/ember-rdfa-editor';
 import { tracked } from 'tracked-built-ins';
 import {

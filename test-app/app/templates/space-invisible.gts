@@ -133,7 +133,7 @@ export default class extends Component {
     };
   }
 
-  asdfasf='asdf'
+  asdfasf = 'asdf';
   toggleEditable = () => {
     this.editable = !this.editable;
   };

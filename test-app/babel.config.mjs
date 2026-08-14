@@ -1,11 +1,12 @@
-const {
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
   babelCompatSupport,
   templateCompatSupport,
-} = require('@embroider/compat/babel');
+} from '@embroider/compat/babel';
 
-module.exports = {
+export default {
   plugins: [
-    require.resolve('ember-concurrency/async-arrow-task-transform'),
     [
       '@babel/plugin-transform-typescript',
       {
@@ -17,7 +18,6 @@ module.exports = {
     [
       'babel-plugin-ember-template-compilation',
       {
-        compilerPath: 'ember-source/dist/ember-template-compiler.js',
         enableLegacyModules: [
           'ember-cli-htmlbars',
           'ember-cli-htmlbars-inline-precompile',
@@ -30,18 +30,21 @@ module.exports = {
       'module:decorator-transforms',
       {
         runtime: {
-          import: require.resolve('decorator-transforms/runtime-esm'),
+          import: fileURLToPath(
+            import.meta.resolve('decorator-transforms/runtime-esm'),
+          ),
         },
       },
     ],
     [
       '@babel/plugin-transform-runtime',
       {
-        absoluteRuntime: __dirname,
+        absoluteRuntime: dirname(fileURLToPath(import.meta.url)),
         useESModules: true,
         regenerator: false,
       },
     ],
+    import.meta.resolve('ember-concurrency/async-arrow-task-transform'),
     ...babelCompatSupport(),
   ],
 

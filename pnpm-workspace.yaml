@@ -7,13 +7,13 @@ catalog:
   "@lblod/ember-rdfa-editor-lblod-plugins": "^38.0.3"
   "@appuniversum/ember-appuniversum": ^4.2.2
   "@babel/core": ^7.28.6
-  "@babel/eslint-parser": ^7.28.6
+  "@babel/eslint-parser": ^7.29.7
   "@babel/plugin-proposal-decorators": ^7.28.6
-  "@babel/plugin-transform-runtime": ^7.28.5
+  "@babel/plugin-transform-runtime": ^7.29.7
   "@babel/plugin-transform-typescript": 7.27.0
   "@babel/runtime": ^7.28.6
   "@changesets/changelog-github": ^0.5.2
-  "@changesets/cli": ^2.29.8
+  "@changesets/cli": ^2.31.1
   "@changesets/get-release-plan": ^4.0.14
   "@codemirror/commands": ^6.10.4
   "@codemirror/lang-html": ^6.4.12
@@ -21,35 +21,34 @@ catalog:
   "@codemirror/state": ^6.7.1
   "@codemirror/view": ^6.43.8
   "@curvenote/prosemirror-utils": ^1.0.5
-  "@ember/optional-features": ^2.3.0
+  "@ember/optional-features": ^3.0.0
   "@ember/render-modifiers": ^3.0.0
   "@ember/string": ^4.0.1
-  "@ember/test-helpers": ^5.4.1
-  "@embroider/addon-dev": ^7.1.6
-  "@embroider/addon-shim": ^1.10.2
-  "@embroider/compat": ^4.1.21
+  "@ember/test-helpers": ^5.4.3
+  "@embroider/addon-dev": ^8.3.1
+  "@embroider/addon-shim": ^1.10.3
+  "@embroider/compat": ^4.1.22
   "@embroider/config-meta-loader": ^1.0.0
-  "@embroider/core": ^4.6.2
+  "@embroider/core": ^4.6.3
   "@embroider/legacy-inspector-support": ^0.1.3
-  "@embroider/macros": ^1.19.6
+  "@embroider/macros": ^1.20.6
   "@embroider/test-setup": ^4.0.0
-  "@embroider/vite": ^1.7.8
-  "@eslint/js": ^9.36.0
+  "@embroider/vite": ^1.7.9
+  "@eslint/js": ^9.39.5
   "@floating-ui/dom": ^1.7.4
-  "@glimmer/component": ^1.1.2
+  "@glimmer/component": ^2.1.1
   "@glimmer/runtime": ^0.94.11
   "@glimmer/tracking": ^1.1.2
   "@glimmer/validator": ^0.94.8
   "@glint/ember-tsc": ^1.10.0
   "@glint/template": ^1.8.0
   "@glint/tsserver-plugin": 2.7.0
-  "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
   "@playwright/test": 1.50.0
   "@rdfjs/to-ntriples": ^3.0.1
   "@rdfjs/types": ^2.0.1
-  "@rollup/plugin-babel": ^6.0.4
+  "@rollup/plugin-babel": ^7.1.0
   "@rollup/plugin-commonjs": ^28.0.9
   "@rollup/plugin-inject": ^5.0.5
   "@rollup/plugin-json": ^6.1.0
@@ -58,7 +57,7 @@ catalog:
   "@say-editor/prosemirror-tables": ^0.3.0
   "@tsconfig/ember": ^3.0.12
   "@types/common-tags": ^1.8.4
-  "@types/debug": ^4.1.12
+  "@types/debug": ^4.1.13
   "@types/eslint__js": ^8.42.3
   "@types/git-url-parse": ^9.0.3
   "@types/htmlbars-inline-precompile": ^3.0.4
@@ -66,7 +65,7 @@ catalog:
   "@types/n3": ^1.26.1
   "@types/node": ^26.2.0
   "@types/prosemirror-dev-tools": ^3.0.6
-  "@types/qunit": ^2.19.13
+  "@types/qunit": ^2.19.14
   "@types/react": 19.1.13
   "@types/responselike": ^1.0.3
   "@types/rsvp": ^4.0.9
@@ -76,15 +75,15 @@ catalog:
   "@typescript-eslint/eslint-plugin": ^8.44.1
   "@typescript-eslint/parser": ^8.44.1
   autoprefixer: ^10.4.23
-  babel-plugin-ember-template-compilation: ^2.4.1
+  babel-plugin-ember-template-compilation: ^4.0.0
   codemirror: ^6.0.2
   common-tags: ^1.8.2
-  concurrently: ^9.2.1
+  concurrently: ^9.2.4
   debug: ^4.4.3
-  decorator-transforms: ^2.3.1
+  decorator-transforms: ^2.4.0
   dompurify: 3.2.4
   ember-auto-import: ^2.12.0
-  ember-basic-dropdown: ^8.11.0
+  ember-basic-dropdown: ^8.11.1
   ember-cli: ~6.5.0
   ember-cli-babel: ^8.2.0
   ember-cli-htmlbars: ^6.3.0
@@ -92,14 +91,14 @@ catalog:
   ember-focus-trap: ^2.0.0
   ember-headless-form: ^1.1.1
   ember-headless-form-yup: ^1.0.0
-  ember-intl: ^7.4.1
+  ember-intl: ^7.5.0
   ember-load-initializers: ^3.0.1
-  ember-modifier: ^4.2.2
+  ember-modifier: ^4.3.0
   ember-page-title: ^9.0.3
-  ember-power-select: ^8.12.1
+  ember-power-select: ^8.12.2
   ember-power-select-with-create: ^3.1.0
-  ember-qunit: ^9.0.4
-  ember-resolver: ^13.1.1
+  ember-qunit: ^9.1.0
+  ember-resolver: ^13.2.0
   ember-source: ^6.12.0
   ember-source-channel-url: ^3.0.0
   ember-template-imports: ^4.4.0
@@ -107,14 +106,14 @@ catalog:
   ember-truth-helpers: ^5.0.0
   ember-try: ^4.0.0
   ember-velcro: ^2.2.0
-  eslint: ^9.36.0
+  eslint: ^9.39.5
   eslint-config-prettier: ^10.1.8
   eslint-plugin-ember: ^13.5.0
   eslint-plugin-import: ^2.32.0
   eslint-plugin-n: ^18.3.0
-  eslint-plugin-playwright: ^2.2.2
-  eslint-plugin-prettier: ^5.5.5
-  eslint-plugin-qunit: ^8.2.5
+  eslint-plugin-playwright: ^2.11.0
+  eslint-plugin-prettier: ^5.5.6
+  eslint-plugin-qunit: ^8.2.6
   execa: ^9.6.1
   git-url-parse: ^16.1.0
   globals: ^17.11.0
@@ -144,11 +143,11 @@ catalog:
   prosemirror-test-builder: ^1.1.1
   prosemirror-transform: ^1.11.0
   prosemirror-view: ^1.41.5
-  qunit: ^2.25.0
-  qunit-dom: ^3.5.0
+  qunit: ^2.26.0
+  qunit-dom: ^3.6.0
   rdf-data-factory: ^2.0.2
-  react: ^19.2.4
-  react-dom: ^19.2.4
+  react: ^19.2.8
+  react-dom: ^19.2.8
   reactiveweb: ^1.9.1
   read-package-up: ^11.0.0
   relative-to-absolute-iri: ^1.0.7
@@ -158,20 +157,20 @@ catalog:
   rollup: ^4.52.2
   rollup-plugin-copy: ^3.5.0
   rollup-plugin-sass: ^1.15.3
-  sass: ^1.93.2
+  sass: ^1.102.0
   sinon: ^19.0.5
-  stylelint: ^16.24.0
-  stylelint-config-standard: ^36.0.1
+  stylelint: ^17.14.1
+  stylelint-config-standard-scss: ^17.0.0
   stylelint-prettier: ^5.0.3
-  tracked-built-ins: ^4.1.0
+  tracked-built-ins: ^4.1.2
   tracked-toolbox: ^2.2.0
   tsx: ^4.20.6
-  typescript: ^5.9.3
+  typescript: ^5.9.0
   typescript-eslint: ^8.67.0
   unified: ^11.0.5
   uuid: ^9.0.1
   validator: ^13.15.26
-  vite: ^8.0.0
+  vite: ^8.2.1
   walk-sync: ^4.0.1
   webpack: ^5.101.3
   yup: ^1.7.1
@@ -184,6 +183,9 @@ overrides:
 
 peerDependencyRules:
   allowedVersions:
+    "@glimmer/component": "^2.0.0"
+    # typescript: "^6.0.0"
+    "@babel/core": "^7.0.0"
     "@ember/string": "^4.0.1"
     ember-truth-helpers: "^5.0.0"
     tracked-build-ins: "^4.1.0"
@@ -210,14 +212,17 @@ minimumReleaseAgeExclude:
   - "@lblod/ember-rdfa-editor-lblod-plugins"
 autoInstallPeers: true
 strictPeerDependencies: true
-resolvePeersFromWorkspaceRoot: false
+# resolvePeersFromWorkspaceRoot: false
 dedupePeerDependents: true
 dedupePeers: true
 publicHoistPattern:
   # this is required, for example for glint to be able to understand TOCs
   - ember-source
-#   - "@lblod/ember-rdfa-editor"
-#   - "@lblod/say-ar-design-plugin"
+  - stylelint-config-standard-scss
+  - "@babel/core"
+  - "@embroider/macros"
+  #   - "@lblod/ember-rdfa-editor"
+  #   - "@lblod/say-ar-design-plugin"
   - ember-intl
 
 resolutionMode: highest
