@@ -1,5 +1,5 @@
 {
-  "extends": "@lblod/say-config/typescript/tsconfig.ember.json",
+  "extends": "@lblod/say-config/typescript/tsconfig.ember-lib.json",
 
   "include": ["src/**/*", "unpublished-development-types/**/*"],
   "compilerOptions": {

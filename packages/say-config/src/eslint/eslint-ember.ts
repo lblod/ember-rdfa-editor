@@ -12,9 +12,9 @@
  *     npx eslint --inspect-config
  *
  */
-import babelParser from '@babel/eslint-parser';
+import babelParser from '@babel/eslint-parser/experimental-worker';
 import js from '@eslint/js';
-//@ts-expect-error no types
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 //@ts-expect-error no types
 import ember from 'eslint-plugin-ember/recommended';
@@ -23,50 +23,24 @@ import n from 'eslint-plugin-n';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
-const baseParserOptions = {
-  esm: {
-    js: {
-      ecmaFeatures: { modules: true },
-      ecmaVersion: 'latest',
-    },
-    ts: {
-      projectService: true,
-    },
-  },
+const esmParserOptions = {
+  ecmaFeatures: { modules: true },
+  ecmaVersion: 'latest',
 };
 
-function config(tsconfigRootDir: string): ReturnType<typeof ts.config> {
-  const parserOptions = {
-    esm: {
-      ...baseParserOptions.esm,
-      ...{ ts: { tsconfigRootDir } },
-    },
-  };
+const tsParserOptions = (rootDir: string) => ({
+  projectService: true,
+  tsconfigRootDir: rootDir,
+});
 
-  return ts.config(
+function config(tsconfigRootDir: string): ReturnType<typeof defineConfig> {
+  return defineConfig(
+    globalIgnores(['dist/', 'dist-*/', 'vendor/', 'declarations/', 'coverage/', '!**/.*']),
     js.configs.recommended,
+    prettier,
     ember.configs.base,
     ember.configs.gjs,
     ember.configs.gts,
-    prettier,
-    /**
-     * Ignores must be in their own object
-     * https://eslint.org/docs/latest/use/configure/ignore
-     */
-    {
-      ignores: [
-        'dist/',
-        'declarations/',
-        'node_modules/',
-        'coverage/',
-        'vendor/',
-        'docs/',
-        '!**/.*',
-      ],
-    },
-    /**
-     * https://eslint.org/docs/latest/use/configure/configuration-files#configuring-linter-options
-     */
     {
       linterOptions: {
         reportUnusedDisableDirectives: 'error',
@@ -82,7 +56,7 @@ function config(tsconfigRootDir: string): ReturnType<typeof ts.config> {
     {
       files: ['**/*.{js,gjs}'],
       languageOptions: {
-        parserOptions: parserOptions.esm.js,
+        parserOptions: esmParserOptions,
         globals: {
           ...globals.browser,
         },
@@ -92,9 +66,16 @@ function config(tsconfigRootDir: string): ReturnType<typeof ts.config> {
       files: ['**/*.{ts,gts}'],
       languageOptions: {
         parser: ember.parser,
-        parserOptions: parserOptions.esm.ts,
+        parserOptions: tsParserOptions(tsconfigRootDir),
       },
-      extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+      extends: [
+        ...ts.configs.recommendedTypeChecked,
+        {
+          ...ts.configs.eslintRecommended,
+          files: undefined,
+        },
+        ember.configs.gts,
+      ],
 
       rules: {
         '@typescript-eslint/no-unused-vars': [
@@ -152,7 +133,7 @@ function config(tsconfigRootDir: string): ReturnType<typeof ts.config> {
       languageOptions: {
         sourceType: 'module',
         ecmaVersion: 'latest',
-        parserOptions: parserOptions.esm.js,
+        parserOptions: esmParserOptions,
         globals: {
           ...globals.node,
         },
