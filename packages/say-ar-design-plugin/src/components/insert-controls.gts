@@ -29,7 +29,7 @@ const InsertButton: TOC<{
     arDesign: ArDesign;
     insertLoading?: boolean;
     onInsertAr: ArInsertFunc;
-    insertPosition: ArticleInsertPosition;
+    insertPosition: ArticleInsertPosition | false;
   };
 }> = <template>
   <AuButton
@@ -71,6 +71,7 @@ export interface ArInsertControlArgs {
   onInsertAr: ArInsertFunc;
   insertLoading?: boolean;
   articles: ArticlePosition[];
+  regulatoryStatementMode?: boolean;
 }
 type Sig = {
   Args: ArInsertControlArgs;
@@ -93,6 +94,13 @@ export class InsertControls extends Component<Sig> {
     };
   }
 
+  get onCursor(): InsertPositionOption {
+    return {
+      value: false,
+      label: this.intl.t('ar-importer.controls.on-cursor'),
+    };
+  }
+
   get articleOptions(): InsertPositionOption[] {
     return this.args.articles.map((_, i) => ({
       value: new ArticleInsertPosition(i),
@@ -103,11 +111,24 @@ export class InsertControls extends Component<Sig> {
   }
 
   get options(): InsertPositionOption[] {
-    return [this.afterLast, this.beforeFirst, ...this.articleOptions];
+    if (this.args.regulatoryStatementMode) {
+      return [this.onCursor];
+    } else {
+      return [
+        this.afterLast,
+        this.beforeFirst,
+        this.onCursor,
+        ...this.articleOptions,
+      ];
+    }
   }
 
   get selected(): InsertPositionOption {
-    return this._selected ?? this.afterLast;
+    if (this._selected) {
+      return this._selected;
+    } else {
+      return this.args.regulatoryStatementMode ? this.onCursor : this.afterLast;
+    }
   }
 
   setSelected = (val: InsertPositionOption | null) => {

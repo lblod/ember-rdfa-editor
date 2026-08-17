@@ -30,6 +30,7 @@ ar-importer:
     last: Na het laatste artikel
     after-article-x: Na artikel {articleNumber}
     select-position: Kies invoegpositie
+    on-cursor: Bij de cursor
   preview:
     return-to-overview: Terug naar overzicht
     only-existing-label: bestaand
