@@ -96,8 +96,6 @@ export const editableNodePlugin = (getPos?: () => number | undefined) =>
     },
   });
 
-// TODO: we should rename this function, the "editable node" wording is conflicting with the concept of a prosemirror node whose content
-// can be editable.
 export function getActiveEditableNode(state: EditorState) {
   return editableNodePluginKey.getState(state)?.activeNode;
 }
