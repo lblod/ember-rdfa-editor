@@ -38,6 +38,7 @@ export default class Collapsible extends Component<CollapsibleSignature> {
   @localCopy('args.expanded') _expanded?: boolean;
 
   get expanded() {
+    console.log('test');
     return this._expanded ?? this.args.expandedInitially;
   }
 

@@ -126,7 +126,24 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./say-roadsign-regulation-plugin.scss": "./say-roadsign-regulation-plugin.scss",
+
+    "./components/*": {
+      "@say-editor/development": "./src/components/*.gts",
+      "types": "./declarations/components/*.d.ts",
+      "default": "./dist/components/*.js"
+    },
+    "./*.gts": {
+      "@say-editor/development": "./src/*.gts",
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./*.ts": {
+      "@say-editor/development": "./src/*.ts",
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
     "./*": {
+      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }

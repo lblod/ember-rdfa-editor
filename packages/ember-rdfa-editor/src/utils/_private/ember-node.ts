@@ -12,7 +12,6 @@
 
  */
 
-import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
 import type {
   AttributeSpec,
   TagParseRule,
@@ -27,8 +26,6 @@ import {
   type NodeViewConstructor,
 } from 'prosemirror-view';
 import { v4 as uuidv4 } from 'uuid';
-// eslint-disable-next-line ember/no-classic-components
-import Component from '@ember/component';
 import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
@@ -39,6 +36,7 @@ import type {
 } from '#root/core/say-serializer.ts';
 import type SayView from '#root/core/say-view.ts';
 import { NodeSelection } from 'prosemirror-state';
+import { renderComponent } from '@ember/renderer';
 
 export interface EmberInlineComponent extends Component, EmberNodeArgs {
   appendTo(selector: string | Element): this;
@@ -162,6 +160,7 @@ export class EmberNodeView implements NodeView {
     this.config = emberNodeConfig;
     const { name, component: componentClass, atom, inline } = emberNodeConfig;
 
+    //@ts-expect-error temp
     this.template = hbs`<this.component
                           @getPos={{this.getPos}}
                           @node={{this.node}}

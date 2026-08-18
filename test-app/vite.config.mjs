@@ -5,7 +5,12 @@ import yaml from '@modyfi/vite-plugin-yaml';
 
 export default defineConfig({
   resolve: {
-    conditions: ['module', 'browser', 'development|production'],
+    conditions: [
+      'module',
+      'browser',
+      'development|production',
+      '@say-editor/development',
+    ],
     dedupe: [
       '@lblod/ember-rdfa-editor',
       '@lblod/say-roadsign-regulation-plugin',
@@ -37,14 +42,14 @@ export default defineConfig({
       babelHelpers: 'runtime',
       extensions,
     }),
-    {
-      name: 'watch-node-modules',
-      configureServer: (server) => {
-        server.watcher.options = {
-          ...server.watcher.options,
-          ignored: ['**/.git/**'],
-        };
-      },
-    },
+    // {
+    //   name: 'watch-node-modules',
+    //   configureServer: (server) => {
+    //     server.watcher.options = {
+    //       ...server.watcher.options,
+    //       ignored: ['**/.git/**'],
+    //     };
+    //   },
+    // },
   ],
 });

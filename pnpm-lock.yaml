@@ -701,6 +701,9 @@ importers:
       prosemirror-dropcursor:
         specifier: 'catalog:'
         version: 1.8.2
+      prosemirror-history:
+        specifier: file:./vendored-deps/prosemirror-history-1.5.0.tgz
+        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.1
@@ -867,9 +870,6 @@ importers:
       prettier-plugin-ember-template-tag:
         specifier: 'catalog:'
         version: 2.1.7(prettier@3.9.6)(supports-color@10.2.2)
-      prosemirror-history:
-        specifier: file:./vendored-deps/prosemirror-history-1.5.0.tgz
-        version: file:packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
       prosemirror-test-builder:
         specifier: 'catalog:'
         version: 1.1.1

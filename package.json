@@ -9,7 +9,7 @@
     "dev-release:ar": "tsx scripts/dev-release/run.mts say-ar-design-plugin",
     "dev-release:rr": "tsx scripts/dev-release/run.mts say-roadsign-regulation-plugin",
     "dev-release:say": "tsx scripts/dev-release/run.mts ember-rdfa-editor",
-    "devbuild": "turbo watch --filter=!test-app --filter=!@lblod/say-config --filter=!@lblod/say-core  build",
+    "devbuild": "turbo watch --filter=test-app dev",
     "doc": "pnpm run doc:generate && pnpm run doc:serve",
     "doc:generate": "pnpm say doc:generate",
     "doc:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs",

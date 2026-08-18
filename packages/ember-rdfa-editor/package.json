@@ -78,6 +78,7 @@
     "rdf-data-factory": "catalog:",
     "reactiveweb": "catalog:",
     "relative-to-absolute-iri": "catalog:",
+    "prosemirror-history": "file:./vendored-deps/prosemirror-history-1.5.0.tgz",
     "tracked-toolbox": "catalog:",
     "typedoc": "^0.28.17",
     "uuid": "catalog:",
@@ -378,7 +379,13 @@
       "types": "./declarations/utils/_private/lblod-utils/constants.d.ts",
       "default": "./dist/utils/_private/lblod-utils/constants.js"
     },
+    "./components/*": {
+      "@say-editor/development": "./src/components/*.gts",
+      "types": "./declarations/components/*.d.ts",
+      "default": "./dist/components/*.js"
+    },
     "./*": {
+      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }
