@@ -100,8 +100,6 @@ export default class FloatingWindow extends Component<Signature> {
         strategy="fixed"
         useTransform=false
       }}
-
-
       class="say-floating-element"
       {{this.setUpListeners}}
       ...attributes

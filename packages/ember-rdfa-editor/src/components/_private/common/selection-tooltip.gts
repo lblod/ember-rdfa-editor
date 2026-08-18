@@ -23,7 +23,7 @@ type Signature = {
 
 /**
  * @deprecated Use #root/components/floating-window.gts instead
- */ 
+ */
 export default class SelectionTooltip extends Component<Signature> {
   get controller() {
     return this.args.controller;
