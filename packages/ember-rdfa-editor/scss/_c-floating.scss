@@ -6,9 +6,9 @@
     0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
     0 1px 1px rgba(au-settings.$au-gray-900, 0.025);
 
-  overflow: hidden;
+  overflow: scroll;
   border-radius: 0.5rem;
-  border: 0.1rem solid var(--au-gray-300);
-  background: var(--au-gray-100);
+  border: 0.1rem solid var(--au-gray-200);
   z-index: 10;
+  animation: popup 0.1s ease forwards;
 }
