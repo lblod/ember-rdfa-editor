@@ -22,7 +22,7 @@ type Signature = {
 };
 
 /**
- * @deprecated Use #root/components/floating-window.gts instead
+ * @deprecated Use #root/components/popover.gts instead
  */
 export default class SelectionTooltip extends Component<Signature> {
   get controller() {

@@ -18,7 +18,7 @@ import { eq, and } from 'ember-truth-helpers';
 import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
 import { TextSelection } from 'prosemirror-state';
 import type { Option } from '#root/utils/option.ts';
-import FloatingWindow from '#root/components/floating-window.gts';
+import FloatingWindow from '#root/components/popover.gts';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
