@@ -96,6 +96,12 @@ export const editableNodePlugin = (getPos?: () => number | undefined) =>
     },
   });
 
+/**
+ * Returns the currently selected "editable" node.
+ * NOTE: Editable in this context means that its properties are editable using the dev tools
+ * Not to be confused with a regular Prosemirror Node whose content is editable. If that is what you need
+ * use `editorState.selection` instead and check if it is a node manually.
+ */
 export function getActiveEditableNode(state: EditorState) {
   return editableNodePluginKey.getState(state)?.activeNode;
 }
