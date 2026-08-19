@@ -188,7 +188,7 @@ export class EmberNodeView implements NodeView {
   update(
     node: PNode,
     _decorations: readonly Decoration[],
-    innerDecorations: DecorationSource,
+    _innerDecorations: DecorationSource,
   ) {
     if (node.type !== this.node.type) return false;
     this.node = node;

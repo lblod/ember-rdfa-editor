@@ -219,6 +219,7 @@ export default class ImageNode extends Component<EmberNodeArgs> {
       <img
         src={{@node.attrs.src}}
         alt={{@node.attrs.alt}}
+        role="button"
         {{on "click" @selectNode}}
         {{this.setUpImage}}
         style={{this.style}}
