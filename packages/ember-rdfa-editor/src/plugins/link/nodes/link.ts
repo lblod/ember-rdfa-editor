@@ -10,8 +10,7 @@ import {
   createEmberNodeView,
   type EmberNodeConfig,
 } from '../../../utils/ember-node.ts';
-import type { ComponentLike } from '@glint/template';
-import Link from '#root/components/ember-node/link.gts';
+import Link from '../../../components/ember-node/link.gts';
 import { defaultLinkParser, type LinkParser } from '../parser.ts';
 
 type LinkOptions = {
@@ -32,7 +31,7 @@ const emberNodeConfig: (options?: LinkOptions) => EmberNodeConfig = ({
 } = {}) => {
   return {
     name: 'link',
-    component: Link as unknown as ComponentLike,
+    component: Link,
     inline: true,
     group: 'inline',
     content: 'text*',

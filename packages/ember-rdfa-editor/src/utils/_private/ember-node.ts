@@ -39,6 +39,8 @@ import {
   type EmberNodeSig,
   type EmberNodeWrapperArgs,
 } from './ember-node-wrapper.gts';
+import { trackedObject } from '@ember/reactive/collections';
+import type { renderComponent } from '@ember/renderer';
 
 export interface EmberNodeArgs {
   getPos: () => number | undefined;
@@ -113,6 +115,8 @@ export class EmberNodeView implements NodeView {
   contentDOM?: HTMLElement;
   emberComponent: ComponentLike<EmberNodeSig>;
   config: EmberNodeConfig;
+  componentArgs: EmberNodeWrapperArgs;
+  renderResult: ReturnType<typeof renderComponent>;
 
   constructor(
     controller: SayController,
@@ -137,8 +141,9 @@ export class EmberNodeView implements NodeView {
 
     const node = document.createElement(inline ? 'span' : 'div');
     node.classList.add('ember-node');
+    document.body.appendChild(node);
 
-    const args: EmberNodeWrapperArgs = {
+    const args: EmberNodeWrapperArgs & Record<string, unknown> = trackedObject({
       getPos,
       node: pNode,
       updateAttribute: (attr, value, ignoreHistory) => {
@@ -167,14 +172,21 @@ export class EmberNodeView implements NodeView {
       atom,
       view,
       selected: false,
-    };
-    const { component } = renderEmberNode({
+      comp: componentClass,
+    });
+    this.componentArgs = args;
+    const {
+      comp,
+      renderResult,
+      node: nodeWithRender,
+    } = renderEmberNode({
       owner: controller.owner,
       into: node,
       args,
-      component: componentClass,
+      comp: componentClass,
     });
-    this.dom = node;
+    this.renderResult = renderResult;
+    this.dom = nodeWithRender;
     if (this.config.domClassNames) {
       this.dom.classList.add(...this.config.domClassNames);
     }
@@ -182,33 +194,33 @@ export class EmberNodeView implements NodeView {
       this.contentDOM.classList.add(...this.config.contentDomClassNames);
     }
 
-    this.emberComponent = component;
+    this.emberComponent = comp;
   }
 
   update(
     node: PNode,
     _decorations: readonly Decoration[],
-    _innerDecorations: DecorationSource,
+    innerDecorations: DecorationSource,
   ) {
     if (node.type !== this.node.type) return false;
     this.node = node;
-    // this.emberComponent.set('node', node);
-    // this.emberComponent.set('contentDecorations', innerDecorations);
+    this.componentArgs.node = node;
+    this.componentArgs.contentDecorations = innerDecorations;
     return true;
   }
 
   selectNode() {
     this.dom.classList.add('ProseMirror-selectednode');
-    // this.emberComponent.set('selected', true);
+    this.componentArgs.selected = true;
   }
 
   deselectNode() {
     this.dom.classList.remove('ProseMirror-selectednode');
-    // this.emberComponent.set('selected', false);
+    this.componentArgs.selected = false;
   }
 
   destroy() {
-    // this.emberComponent.destroy();
+    this.renderResult.destroy();
   }
 
   /**

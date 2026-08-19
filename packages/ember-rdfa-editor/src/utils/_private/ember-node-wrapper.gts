@@ -13,7 +13,7 @@ export interface EmberNodeSig {
   Args: EmberNodeWrapperArgs;
 }
 
-const wrapper: TOC<{
+const Wrapper: TOC<{
   Args: EmberNodeWrapperArgs & { comp: ComponentLike<EmberNodeWrapperArgs> };
 }> = <template>
   <@comp
@@ -37,23 +37,24 @@ const wrapper: TOC<{
 interface RenderEmberNodeArgs {
   owner: Owner;
   into: HTMLElement;
-  args: EmberNodeSig['Args'];
-  component: ComponentLike<EmberNodeSig>;
+  args: EmberNodeSig['Args'] & Record<string, unknown>;
+  comp: ComponentLike<EmberNodeSig>;
 }
 export function renderEmberNode({
   owner,
   into,
   args,
-  component,
+  comp,
 }: RenderEmberNodeArgs): {
-  node: Node;
-  component: ComponentLike<EmberNodeSig>;
+  node: HTMLElement;
+  comp: ComponentLike<EmberNodeSig>;
   renderResult: ReturnType<typeof renderComponent>;
 } {
-  const renderResult = renderComponent(wrapper, {
+  const renderResult = renderComponent(Wrapper, {
     owner,
     into,
-    args: { ...args },
+    args,
+    env: { isInteractive: true },
   });
-  return { node: into, component, renderResult };
+  return { node: into, comp, renderResult };
 }
