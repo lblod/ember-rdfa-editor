@@ -2,8 +2,8 @@
   "extends": ["//"],
   "tasks": {
     "dev": {
-      "dependsOn": ["^build"],
-      "interruptible": true
+      "dependsOn": [],
+      "persistent": true
     }
   }
 }

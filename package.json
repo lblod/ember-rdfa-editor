@@ -20,16 +20,11 @@
     "release": "tsx scripts/release/run.mts",
     "say": "pnpm --filter @lblod/ember-rdfa-editor",
     "start": "turbo --filter=test-app dev",
-    "start:ar-designs": "pnpm --filter @lblod/say-ar-design-plugin start --no-watch.clearScreen",
-    "start:editor": "pnpm --filter @lblod/ember-rdfa-editor start --no-watch.clearScreen",
-    "start:roadsigns": "pnpm --filter @lblod/say-roadsign-regulation-plugin start --no-watch.clearScreen",
-    "start:test-app": "pnpm --filter test-app start",
     "tapp": "pnpm --filter test-app",
     "test": "pnpm --filter '*' test",
     "test:ember": "pnpm --filter '*' test:ember",
     "test:quickstart": "cd quickstart && npm run setup && npm run ci && npm run teardown",
-    "test:quickstart:setup": "cd quickstart && npm run setup",
-    "tui": "turbo dev --ui tui"
+    "test:quickstart:setup": "cd quickstart && npm run setup"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",

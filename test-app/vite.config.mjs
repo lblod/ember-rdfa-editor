@@ -69,14 +69,15 @@ export default defineConfig({
     yaml(),
     contentFor(),
     // classicEmberSupport(),
-    ember(),
     // extra plugins here
+    ember(),
     babel({
       babelHelpers: 'runtime',
       extensions,
     }),
     {
       name: 'custom-resolve',
+      enforce: 'pre',
       buildStart() {
         // note: you might have to manually restart the dev server if you change the exports config of package.json
         // without changing the corresponding import
@@ -88,7 +89,11 @@ export default defineConfig({
           return cachedId;
         }
         for (const pkg of monorepoPackages) {
-          if (id.startsWith(pkg)) {
+          if (
+            id.startsWith(pkg) &&
+            (id.charAt(pkg.length) === undefined ||
+              id.charAt(pkg.length) === '/')
+          ) {
             const resolvedPath = resolveExports(parsedPackageMap[pkg], id)[0];
             const packagePath = packageMap[pkg];
             if (resolvedPath) {
