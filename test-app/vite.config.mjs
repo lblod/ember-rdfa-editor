@@ -83,7 +83,7 @@ export default defineConfig({
         // without changing the corresponding import
         customResolverCache.clear();
       },
-      async resolveId(id) {
+      async resolveId(id, parent) {
         const cachedId = customResolverCache.get(id);
         if (cachedId) {
           return cachedId;
@@ -122,13 +122,16 @@ export default defineConfig({
 
               console.log(`found a match for the id in the package.json exports, but could not find a real file in src.
 Original import id: ${id}
+imported from: ${parent}
 match found: ${resolvedPath}
 searched in: ${searchDir}
 tried extensions: ${sourceExtensions.join(',')}
 `);
               return null;
             } else {
-              console.log('could not resolve');
+              console.log(
+                `Could not resolve import id ${id}, imported from ${parent} in it's project's package.json. Make sure you're importing without a file extension, and/or check the exports config of ${packageMap[pkg]}`,
+              );
               return null;
             }
           }
