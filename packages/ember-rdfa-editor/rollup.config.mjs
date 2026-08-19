@@ -124,8 +124,8 @@ export default [
         babelHelpers: 'bundled',
       }),
 
-      // Ensure that standalone .hbs files are properly integrated as Javascript.
-      addon.hbs(),
+      // // Ensure that standalone .hbs files are properly integrated as Javascript.
+      // addon.hbs(),
 
       // Ensure that .gjs files are properly integrated as Javascript
       addon.gjs(),

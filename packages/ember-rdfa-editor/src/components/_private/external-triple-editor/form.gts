@@ -23,7 +23,7 @@ import { eq } from 'ember-truth-helpers';
 import { type Option } from '#root/utils/option.ts';
 import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import type { ModifierLike } from '@glint/template';
 import { isNone } from '@ember/utils';
 import type { TOC } from '@ember/component/template-only';

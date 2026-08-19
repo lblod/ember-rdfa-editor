@@ -21,7 +21,7 @@ import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import type Owner from '@ember/owner';
 
 type WrappingUtilsArgs = {

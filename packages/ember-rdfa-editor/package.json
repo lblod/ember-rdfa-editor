@@ -380,10 +380,23 @@
       "types": "./declarations/utils/_private/lblod-utils/constants.d.ts",
       "default": "./dist/utils/_private/lblod-utils/constants.js"
     },
+    "./components/*.ts": {
+      "@say-editor/development": "./src/components/*.ts",
+      "types": "./declarations/components/*.d.ts",
+      "default": "./dist/components/*.js"
+    },
     "./components/*": {
       "@say-editor/development": "./src/components/*.gts",
       "types": "./declarations/components/*.d.ts",
       "default": "./dist/components/*.js"
+    },
+    "./*.gts": {
+      "@say-editor/development": "./src/*.gts",
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./_app_/*": {
+      "@say-editor/development": "./src/*"
     },
     "./*": {
       "@say-editor/development": "./src/*.ts",

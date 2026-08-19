@@ -4,7 +4,7 @@ import {
   createEmberNodeView,
   type EmberNodeConfig,
 } from '#root/utils/ember-node.ts';
-import Image from '#root/components/plugins/image/node.ts';
+import Image from '#root/components/plugins/image/node.gts';
 import { Node as PNode } from 'prosemirror-model';
 import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 

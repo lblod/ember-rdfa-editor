@@ -54,7 +54,7 @@ import type { OptionGeneratorConfig } from './types.ts';
 import ContentPredicateForm, {
   type SubmissionBody as ContentPredicateFormSubmissionBody,
 } from './content-predicate-form.gts';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import type { ContentLiteralTerm } from '#root/core/say-data-factory/index.ts';
 import type { OutgoingTriple } from '#root/core/rdfa-processor.ts';
 import { htmlSafe } from '@ember/template';

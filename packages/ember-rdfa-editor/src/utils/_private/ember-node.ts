@@ -25,8 +25,6 @@ import {
   type NodeView,
   type NodeViewConstructor,
 } from 'prosemirror-view';
-import { v4 as uuidv4 } from 'uuid';
-import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
@@ -36,11 +34,11 @@ import type {
 } from '#root/core/say-serializer.ts';
 import type SayView from '#root/core/say-view.ts';
 import { NodeSelection } from 'prosemirror-state';
-import { renderComponent } from '@ember/renderer';
-
-export interface EmberInlineComponent extends Component, EmberNodeArgs {
-  appendTo(selector: string | Element): this;
-}
+import {
+  renderEmberNode,
+  type EmberNodeSig,
+  type EmberNodeWrapperArgs,
+} from './ember-node-wrapper.gts';
 
 export interface EmberNodeArgs {
   getPos: () => number | undefined;
@@ -64,37 +62,6 @@ export interface EmberNodeArgs {
   view: SayView | EditorView;
   selected: boolean;
   contentDecorations?: DecorationSource;
-}
-
-function emberComponent(
-  owner: Owner,
-  name: string,
-  inline: boolean,
-  template: TemplateFactory,
-  props: EmberNodeArgs & {
-    atom: boolean;
-    component: ComponentLike<{ Args: EmberNodeArgs }>;
-    contentDOM?: HTMLElement;
-  },
-): { node: HTMLElement; component: EmberInlineComponent } {
-  // const instance = window.__APPLICATION;
-  const componentName = `${name}-${uuidv4()}`;
-  owner.register(
-    `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes
-    Component.extend({
-      layout: template,
-      tagName: '',
-      ...props,
-    }),
-  );
-  const component = owner.lookup(
-    `component:${componentName}`,
-  ) as EmberInlineComponent;
-  const node = document.createElement(inline ? 'span' : 'div');
-  node.classList.add('ember-node');
-  component.appendTo(node);
-  return { node, component };
 }
 
 /**
@@ -144,8 +111,7 @@ export class EmberNodeView implements NodeView {
   node: PNode;
   dom: Element;
   contentDOM?: HTMLElement;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory;
+  emberComponent: ComponentLike<EmberNodeSig>;
   config: EmberNodeConfig;
 
   constructor(
@@ -158,24 +124,8 @@ export class EmberNodeView implements NodeView {
     // when a node gets updated, `update()` is called.
     // We set the new node here and pass it to the component to render it.
     this.config = emberNodeConfig;
-    const { name, component: componentClass, atom, inline } = emberNodeConfig;
+    const { component: componentClass, atom, inline } = emberNodeConfig;
 
-    //@ts-expect-error temp
-    this.template = hbs`<this.component
-                          @getPos={{this.getPos}}
-                          @node={{this.node}}
-                          @updateAttribute={{this.updateAttribute}}
-                          @controller={{this.controller}}
-                          @view={{this.view}}
-                          @selected={{this.selected}}
-                          @contentDecorations={{this.contentDecorations}}
-                          @selectNode={{this.selectNode}}
-                        >
-                          {{#unless this.atom}}
-                            {{! @glint-expect-error: not typesafe yet }}
-                            <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
-                          {{/unless}}
-                        </this.component>`;
     this.node = pNode;
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div', {})
@@ -184,43 +134,46 @@ export class EmberNodeView implements NodeView {
     if (this.contentDOM) {
       this.contentDOM.dataset['emberNodeContent'] = 'true';
     }
-    const { node, component } = emberComponent(
-      controller.owner,
-      name,
-      inline,
-      this.template,
-      {
-        getPos,
-        node: pNode,
-        updateAttribute: (attr, value, ignoreHistory) => {
-          const pos = getPos();
-          if (pos !== undefined) {
-            const transaction = view.state.tr;
-            if (ignoreHistory) {
-              transaction.setMeta('addToHistory', false);
-            }
-            transaction.setNodeAttribute(pos, attr, value);
-            view.dispatch(transaction);
+
+    const node = document.createElement(inline ? 'span' : 'div');
+    node.classList.add('ember-node');
+
+    const args: EmberNodeWrapperArgs = {
+      getPos,
+      node: pNode,
+      updateAttribute: (attr, value, ignoreHistory) => {
+        const pos = getPos();
+        if (pos !== undefined) {
+          const transaction = view.state.tr;
+          if (ignoreHistory) {
+            transaction.setMeta('addToHistory', false);
           }
-        },
-        selectNode: () => {
-          const pos = getPos();
-          if (pos !== undefined) {
-            const tr = controller.activeEditorState.tr;
-            tr.setSelection(
-              NodeSelection.create(controller.activeEditorState.doc, pos),
-            );
-            controller.activeEditorView.dispatch(tr);
-          }
-        },
-        controller,
-        contentDOM: this.contentDOM,
-        component: componentClass,
-        atom,
-        view,
-        selected: false,
+          transaction.setNodeAttribute(pos, attr, value);
+          view.dispatch(transaction);
+        }
       },
-    );
+      selectNode: () => {
+        const pos = getPos();
+        if (pos !== undefined) {
+          const tr = controller.activeEditorState.tr;
+          tr.setSelection(
+            NodeSelection.create(controller.activeEditorState.doc, pos),
+          );
+          controller.activeEditorView.dispatch(tr);
+        }
+      },
+      controller,
+      contentDOM: this.contentDOM,
+      atom,
+      view,
+      selected: false,
+    };
+    const { component } = renderEmberNode({
+      owner: controller.owner,
+      into: node,
+      args,
+      component: componentClass,
+    });
     this.dom = node;
     if (this.config.domClassNames) {
       this.dom.classList.add(...this.config.domClassNames);
@@ -239,23 +192,23 @@ export class EmberNodeView implements NodeView {
   ) {
     if (node.type !== this.node.type) return false;
     this.node = node;
-    this.emberComponent.set('node', node);
-    this.emberComponent.set('contentDecorations', innerDecorations);
+    // this.emberComponent.set('node', node);
+    // this.emberComponent.set('contentDecorations', innerDecorations);
     return true;
   }
 
   selectNode() {
     this.dom.classList.add('ProseMirror-selectednode');
-    this.emberComponent.set('selected', true);
+    // this.emberComponent.set('selected', true);
   }
 
   deselectNode() {
     this.dom.classList.remove('ProseMirror-selectednode');
-    this.emberComponent.set('selected', false);
+    // this.emberComponent.set('selected', false);
   }
 
   destroy() {
-    this.emberComponent.destroy();
+    // this.emberComponent.destroy();
   }
 
   /**

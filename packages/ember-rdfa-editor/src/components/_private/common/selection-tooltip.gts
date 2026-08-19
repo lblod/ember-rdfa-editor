@@ -14,7 +14,7 @@ type Signature = {
   Args: {
     controller: SayController;
     visible: boolean;
-    position: 'left' | 'bottom';
+    position?: 'left' | 'bottom';
   };
   Blocks: {
     default: [];
