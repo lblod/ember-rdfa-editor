@@ -11,5 +11,5 @@ Router.map(function () {
   this.route('backspace');
   this.route('editable-node');
   this.route('space-invisible');
-  // this.route('lblod-plugins');
+  this.route('lblod-plugins');
 });
