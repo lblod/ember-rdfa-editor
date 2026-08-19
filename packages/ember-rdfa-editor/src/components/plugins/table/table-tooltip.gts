@@ -43,11 +43,13 @@ type Args = {
 
 type TitledAction = {
   title: string;
-  icon?: ComponentLike;
+  icon?: ComponentLike<{ Element: Element }>;
   label?: string;
   command: Command;
 };
-type ComponentAction = { component: ComponentLike };
+type ComponentAction = {
+  component: ComponentLike<{ Args: { controller: SayController } }>;
+};
 type Action = TitledAction | ComponentAction;
 
 function isTitledAction(action: Action): action is TitledAction {
