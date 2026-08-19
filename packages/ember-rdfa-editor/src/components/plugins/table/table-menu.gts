@@ -192,16 +192,17 @@ export default class TableMenu extends Component<Args> {
       as |Menu|
     >
       {{#if this.isInTable}}
-        {{#each this.tableActions as |action|}}
+        {{! do not use 'action' as a variable name, it confuses the linter }}
+        {{#each this.tableActions as |act|}}
           <Menu.Item
-            @menuAction={{fn this.executeAction action}}
-            title={{action.title}}
-            disabled={{not (this.canExecuteAction action)}}
+            @menuAction={{fn this.executeAction act}}
+            title={{act.title}}
+            disabled={{not (this.canExecuteAction act)}}
           >
-            {{#if action.icon}}
-              <AuIcon @icon={{action.icon}} @ariaHidden={{true}} />
+            {{#if act.icon}}
+              <AuIcon @icon={{act.icon}} @ariaHidden={{true}} />
             {{/if}}
-            {{action.title}}
+            {{act.title}}
           </Menu.Item>
         {{/each}}
       {{else}}

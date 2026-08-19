@@ -182,7 +182,6 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./ember-rdfa-editor.scss": "./ember-rdfa-editor.scss",
-
     "./commands": {
       "types": "./declarations/commands/index.d.ts",
       "default": "./dist/commands/index.js"

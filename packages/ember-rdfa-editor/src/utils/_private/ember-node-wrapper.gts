@@ -13,10 +13,10 @@ export interface EmberNodeSig {
   Args: EmberNodeWrapperArgs;
 }
 
-const wrapper = (
-  wrappedComponent: ComponentLike<EmberNodeSig>,
-): TOC<EmberNodeSig> => <template>
-  <wrappedComponent
+const wrapper: TOC<{
+  Args: EmberNodeWrapperArgs & { comp: ComponentLike<EmberNodeWrapperArgs> };
+}> = <template>
+  <@comp
     @getPos={{@getPos}}
     @node={{@node}}
     @updateAttribute={{@updateAttribute}}
@@ -31,7 +31,7 @@ const wrapper = (
         <EmberNodeSlot @contentDOM={{@contentDOM}} />
       {{/if}}
     {{/unless}}
-  </wrappedComponent>
+  </@comp>
 </template>;
 
 interface RenderEmberNodeArgs {
@@ -50,7 +50,7 @@ export function renderEmberNode({
   component: ComponentLike<EmberNodeSig>;
   renderResult: ReturnType<typeof renderComponent>;
 } {
-  const renderResult = renderComponent(wrapper(component), {
+  const renderResult = renderComponent(wrapper, {
     owner,
     into,
     args: { ...args },
