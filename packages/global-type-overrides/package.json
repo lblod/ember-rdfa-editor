@@ -6,10 +6,12 @@
   "author": "",
   "license": "ISC",
   "scripts": {
+    "format": "prettier . --cache --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
     "@glint/ember-tsc": "catalog:",
+    "prettier": "catalog:",
     "typescript": "catalog:",
     "yup": "catalog:"
   },

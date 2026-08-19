@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "format": "prettier . --cache --write"
+  },
   "peerDependencies": {
     "@babel/eslint-parser": "catalog:",
     "@ember/app-tsconfig": "^2.0.0",
