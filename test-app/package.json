@@ -131,6 +131,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "read-package-up": "catalog:",
+    "resolve.exports": "^2.0.3",
     "rimraf": "catalog:",
     "sass": "catalog:",
     "sinon": "catalog:",

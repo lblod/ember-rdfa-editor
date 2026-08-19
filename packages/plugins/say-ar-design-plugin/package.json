@@ -126,13 +126,7 @@
     "./translations/*": "./translations/*",
     "./_index.scss": "./_index.scss",
     "./say-ar-design-plugin.scss": "./say-ar-design-plugin.scss",
-    "./components/*": {
-      "@say-editor/development": "./src/components/*.gts",
-      "types": "./declarations/components/*.d.ts",
-      "default": "./dist/components/*.js"
-    },
     "./*": {
-      "@say-editor/development": "./src/*.ts",
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
     }

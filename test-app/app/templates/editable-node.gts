@@ -101,7 +101,7 @@ import {
   combineConfigs,
   documentConfig,
   lovConfig,
-} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs.ts';
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
 import type {
   OptionGeneratorConfig,
   PredicateOptionGeneratorArgs,

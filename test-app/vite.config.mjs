@@ -2,39 +2,51 @@ import { defineConfig } from 'vite';
 import { extensions, ember, contentFor } from '@embroider/vite';
 import { babel } from '@rollup/plugin-babel';
 import yaml from '@modyfi/vite-plugin-yaml';
+import { exports as resolveExports } from 'resolve.exports';
 
 import fs from 'fs';
+import path from 'node:path';
 
 function fileExists(filePath) {
   try {
     return fs.statSync(filePath).isFile();
-  } catch (_err) {
+    // eslint-disable-next-line no-unused-vars
+  } catch (_) {
     return false;
   }
 }
+const packageMap = {
+  '@lblod/ember-rdfa-editor': '../packages/ember-rdfa-editor',
+  '@lblod/say-ar-design-plugin': '../packages/plugins/say-ar-design-plugin',
+  '@lblod/say-roadsign-regulation-plugin':
+    '../packages/plugins/say-roadsign-regulation-plugin',
+};
+const parsedPackageMap = Object.fromEntries(
+  Object.entries(packageMap).map(([pkg, location]) => {
+    return [pkg, JSON.parse(fs.readFileSync(`${location}/package.json`))];
+  }),
+);
+
+// order matters
+const sourceExtensions = ['.ts', '.gts'];
+const monorepoPackages = Object.keys(packageMap);
+const customResolverCache = new Map();
 export default defineConfig({
   resolve: {
-    alias: [
-      {
-        find: '@lblod/ember-rdfa-editor/_app_/modifiers/leave-with-arrow-keys.gts',
-        replacement:
-          '@lblod/ember-rdfa-editor/modifiers/leave-with-arrow-keys.ts',
-      },
-      {
-        find: '@lblod/ember-rdfa-editor/_app_/modifiers/leave-on-enter-key.gts',
-        replacement: '@lblod/ember-rdfa-editor/modifiers/leave-on-enter-key.ts',
-      },
-    ],
-    conditions: [
-      'module',
-      'browser',
-      'development|production',
-      '@say-editor/development',
-    ],
+    conditions: ['module', 'browser', 'development|production'],
     dedupe: [
       '@lblod/ember-rdfa-editor',
       '@lblod/say-roadsign-regulation-plugin',
       '@lblod/say-ar-design-plugin',
+    ],
+    // this is a small hack we need to make the implicit component injection work in the lblod-plugins package,
+    // which still has some loose-mode components.
+    // once that's converted to gts and/or fully incorporated, this can go away
+    alias: [
+      {
+        find: '@lblod/ember-rdfa-editor/_app_',
+        replacement: '@lblod/ember-rdfa-editor',
+      },
     ],
   },
   optimizeDeps: {
@@ -56,6 +68,7 @@ export default defineConfig({
   plugins: [
     yaml(),
     contentFor(),
+    // classicEmberSupport(),
     ember(),
     // extra plugins here
     babel({
@@ -64,32 +77,59 @@ export default defineConfig({
     }),
     {
       name: 'custom-resolve',
-      async resolveId(id, parent, options) {
-        console.log('id', id);
-        if (id.startsWith('@lblod/ember-rdfa-editor/')) {
-          const path = id.substring(25);
-          console.log('path', path);
-          if (fileExists(`../packages/ember-rdfa-editor/src/${path}.gts`)) {
-            console.log('caught');
-            return `../packages/ember-rdfa-editor/src/${path}.gts`;
+      buildStart() {
+        // note: you might have to manually restart the dev server if you change the exports config of package.json
+        // without changing the corresponding import
+        customResolverCache.clear();
+      },
+      async resolveId(id) {
+        const cachedId = customResolverCache.get(id);
+        if (cachedId) {
+          return cachedId;
+        }
+        for (const pkg of monorepoPackages) {
+          if (id.startsWith(pkg)) {
+            const resolvedPath = resolveExports(parsedPackageMap[pkg], id)[0];
+            const packagePath = packageMap[pkg];
+            if (resolvedPath) {
+              const modifiedPath = resolvedPath.replace('dist', 'src');
+
+              const searchDir = path.join(
+                packagePath,
+                path.dirname(modifiedPath),
+              );
+              // get the bare filename without extension
+              const filenameToSearch = path.basename(
+                modifiedPath,
+                path.extname(modifiedPath),
+              );
+              for (const ext of sourceExtensions) {
+                const finalFilename = `${filenameToSearch}${ext}`;
+                const finalPath = path.join(searchDir, finalFilename);
+                if (fileExists(finalPath)) {
+                  // we return the absolute resolved path to avoid any more implicit
+                  // resolution shenanigans
+                  const fullPath = path.resolve(finalPath);
+                  customResolverCache.set(id, fullPath);
+                  return fullPath;
+                }
+              }
+
+              console.log(`found a match for the id in the package.json exports, but could not find a real file in src.
+Original import id: ${id}
+match found: ${resolvedPath}
+searched in: ${searchDir}
+tried extensions: ${sourceExtensions.join(',')}
+`);
+              return null;
+            } else {
+              console.log('could not resolve');
+              return null;
+            }
           }
-          if (fileExists(`../packages/ember-rdfa-editor/src/${path}.ts`)) {
-            console.log('caught');
-            return `../packages/ember-rdfa-editor/src/${path}.ts`;
-          }
-          return null;
         }
         return null;
       },
     },
-    // {
-    //   name: 'watch-node-modules',
-    //   configureServer: (server) => {
-    //     server.watcher.options = {
-    //       ...server.watcher.options,
-    //       ignored: ['**/.git/**'],
-    //     };
-    //   },
-    // },
   ],
 });
