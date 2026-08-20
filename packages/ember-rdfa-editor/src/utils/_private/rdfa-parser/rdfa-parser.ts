@@ -82,6 +82,7 @@ export interface RdfaParseConfig<N> {
 
   baseIRI: string;
   pathFromDomRoot?: Node[];
+  defaultPrefixes?: Record<string, string>;
 }
 
 export interface QuadNodes<N> {
@@ -193,7 +194,7 @@ export class RdfaParser<N> {
           ? INITIAL_CONTEXT_XHTML['@context']
           : {}),
       },
-      prefixesCustom: defaultPrefixes,
+      prefixesCustom: options.defaultPrefixes ?? defaultPrefixes,
       skipElement: false,
       vocab: options.vocab,
       node: this.rootModelNode,
@@ -202,7 +203,11 @@ export class RdfaParser<N> {
 
   static parse<N>(config: RdfaParseConfig<N>): RdfaParseResponse<N> {
     const { pathFromDomRoot = [], root, baseIRI, parseRoot = true } = config;
-    const parser = new RdfaParser<N>({ rootModelNode: root, baseIRI });
+    const parser = new RdfaParser<N>({
+      rootModelNode: root,
+      baseIRI,
+      defaultPrefixes: config.defaultPrefixes,
+    });
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
@@ -1482,6 +1487,8 @@ export interface IRdfaParserOptions<N> {
   htmlParseListener?: IHtmlParseListener;
 
   rootModelNode: N;
+
+  defaultPrefixes?: Record<string, string>;
 }
 
 /**

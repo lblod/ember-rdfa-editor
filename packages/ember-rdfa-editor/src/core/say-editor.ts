@@ -50,6 +50,7 @@ export interface SayEditorArgs {
   ) => Record<string, NodeViewConstructor>;
   defaultAttrGenerators?: DefaultAttrGenPuginOptions;
   editable?: SayView['props']['editable'];
+  defaultPrefixes?: Record<string, string>;
 }
 
 export default class SayEditor {
@@ -84,6 +85,7 @@ export default class SayEditor {
     defaultAttrGenerators = [],
     keyMapOptions,
     editable,
+    defaultPrefixes,
   }: SayEditorArgs & { keyMapOptions?: KeymapOptions }) {
     this.logger = createLogger(this.constructor.name);
     this.owner = owner;
@@ -107,7 +109,11 @@ export default class SayEditor {
       );
 
       pluginConf = [
-        datastore({ pathFromRoot: this.pathFromRoot, baseIRI }),
+        datastore({
+          pathFromRoot: this.pathFromRoot,
+          baseIRI,
+          defaultPrefixes,
+        }),
         ...filteredPluginArr,
         dropCursor(),
         gapCursor(),
@@ -167,6 +173,7 @@ export default class SayEditor {
         preprocessRDFa(
           cleanedHTMLNode,
           editorView ? getPathFromRoot(editorView.dom, false) : [],
+          defaultPrefixes,
         );
 
         return cleanedHTMLNode.innerHTML;
