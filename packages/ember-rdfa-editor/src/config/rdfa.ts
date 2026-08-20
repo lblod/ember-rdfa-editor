@@ -62,6 +62,20 @@ const defaultPrefixes = {
   vcard: 'http://www.w3.org/2006/vcard/ns#',
   schema: 'http://schema.org/',
   ext: 'http://mu.semte.ch/vocabularies/ext/',
+  person: 'http://www.w3.org/ns/person#',
+  eli: 'http://data.europa.eu/eli/ontology#',
+  say: 'https://say.data.gift/ns/',
+  dateplugin: 'http://say.data.gift/manipulators/insertion/',
+  mandaat: 'http://data.vlaanderen.be/ns/mandaat#',
+  besluit: 'http://data.vlaanderen.be/ns/besluit#',
+  dossier: 'https://data.vlaanderen.be/ns/dossier',
+  persoon: 'http://data.vlaanderen.be/ns/persoon#',
+  besluittype: 'https://data.vlaanderen.be/id/concept/BesluitType/',
+  besluitpublicatie:
+    'https://data.vlaanderen.be/doc/applicatieprofiel/besluit-publicatie#',
+  mobiliteit: 'https://data.vlaanderen.be/ns/mobiliteit#',
+  lblodgn: 'http://data.lblod.info/vocabularies/gelinktnotuleren/',
+  lblodmow: 'http://data.lblod.info/vocabularies/mobiliteit/',
 };
 
 export { rdfaKeywords, prefixableRdfaKeywords, defaultPrefixes };

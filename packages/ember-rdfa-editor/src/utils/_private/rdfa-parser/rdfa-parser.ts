@@ -31,6 +31,7 @@ import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 import { N3StoreWrapper } from '../datastore/n3-store-wrapper.ts';
+import { defaultPrefixes } from '#root/config/rdfa.ts';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -192,7 +193,7 @@ export class RdfaParser<N> {
           ? INITIAL_CONTEXT_XHTML['@context']
           : {}),
       },
-      prefixesCustom: {},
+      prefixesCustom: defaultPrefixes,
       skipElement: false,
       vocab: options.vocab,
       node: this.rootModelNode,
