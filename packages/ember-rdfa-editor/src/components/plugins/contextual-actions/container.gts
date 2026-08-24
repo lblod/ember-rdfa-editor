@@ -184,7 +184,9 @@ export default class ContextualActionsContainer extends Component<Args> {
     }));
 
     // Child tasks get cancelled automagically on restart
-    await all(this.loadGroupTaskInstances);
+    await all(
+      this.loadGroupTaskInstances.map(({ taskInstance }) => taskInstance),
+    );
   });
 
   get groupsWithStatus(): GroupWithStatus[] {
