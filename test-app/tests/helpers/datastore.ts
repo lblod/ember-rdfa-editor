@@ -31,6 +31,7 @@ export function calculateDataset(html: string) {
     textContent(node: Node): string {
       return node.textContent || '';
     },
+    defaultPrefixes: {},
   });
   return datastore.dataset;
 }

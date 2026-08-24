@@ -113,6 +113,7 @@ export default class SayController {
       shouldFocus = true,
       doNotClean = false,
       startsDirty = false,
+      defaultPrefixes,
     }: Exclude<SetHtmlOptions, 'range'> = {},
   ) {
     if (!startsDirty) {
@@ -122,6 +123,7 @@ export default class SayController {
       schema: this.schema,
       editorView: this.editor.mainView,
       parser: this.editor.parser,
+      defaultPrefixes,
       doNotClean,
     });
 

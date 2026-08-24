@@ -31,6 +31,7 @@ import { postProcessTagAsRdfaNode } from './post-process-as-rdfa-nodes.ts';
 import { sayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { LANG_STRING } from '../constants.ts';
 import { N3StoreWrapper } from '../datastore/n3-store-wrapper.ts';
+import { defaultPrefixes } from '#root/config/rdfa.ts';
 
 export type ModelTerm<N> =
   | ModelQuadObject<N>
@@ -81,6 +82,7 @@ export interface RdfaParseConfig<N> {
 
   baseIRI: string;
   pathFromDomRoot?: Node[];
+  defaultPrefixes?: Record<string, string>;
 }
 
 export interface QuadNodes<N> {
@@ -192,7 +194,7 @@ export class RdfaParser<N> {
           ? INITIAL_CONTEXT_XHTML['@context']
           : {}),
       },
-      prefixesCustom: {},
+      prefixesCustom: options.defaultPrefixes ?? defaultPrefixes,
       skipElement: false,
       vocab: options.vocab,
       node: this.rootModelNode,
@@ -201,7 +203,11 @@ export class RdfaParser<N> {
 
   static parse<N>(config: RdfaParseConfig<N>): RdfaParseResponse<N> {
     const { pathFromDomRoot = [], root, baseIRI, parseRoot = true } = config;
-    const parser = new RdfaParser<N>({ rootModelNode: root, baseIRI });
+    const parser = new RdfaParser<N>({
+      rootModelNode: root,
+      baseIRI,
+      defaultPrefixes: config.defaultPrefixes,
+    });
     for (const domNode of pathFromDomRoot) {
       if (isElement(domNode)) {
         const attributeObj: Record<string, string> = {};
@@ -1481,6 +1487,8 @@ export interface IRdfaParserOptions<N> {
   htmlParseListener?: IHtmlParseListener;
 
   rootModelNode: N;
+
+  defaultPrefixes?: Record<string, string>;
 }
 
 /**
