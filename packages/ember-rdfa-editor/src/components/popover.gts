@@ -16,6 +16,7 @@ type Signature = {
   Args: {
     controller: SayController;
     forSelection: Selection;
+    maxHeightPx?: number;
 
     onClose?: () => void;
   };
@@ -72,6 +73,7 @@ export default class FloatingWindow extends Component<Signature> {
   }
 
   get floatingUIMiddleware(): Middleware[] {
+    const args = this.args;
     return [
       offset(10),
       autoPlacement({
@@ -82,7 +84,7 @@ export default class FloatingWindow extends Component<Signature> {
       size({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            maxHeight: `${Math.min(window.innerHeight / 2, availableHeight)}px`,
+            maxHeight: `${Math.min(args.maxHeightPx ?? Infinity, availableHeight)}px`,
           });
         },
       }),
