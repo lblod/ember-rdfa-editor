@@ -98,6 +98,7 @@
     "ember-cli-babel": "catalog:",
     "ember-cli-htmlbars": "catalog:",
     "ember-concurrency": "catalog:",
+    "ember-file-upload": "^10.1.0",
     "ember-intl": "catalog:",
     "ember-load-initializers": "catalog:",
     "ember-modifier": "catalog:",
