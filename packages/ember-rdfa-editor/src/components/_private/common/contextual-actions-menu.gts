@@ -310,11 +310,16 @@ export default class ContextualActionsMenu extends Component<Args> {
       : state.selection;
   }
 
+  get maxMenuHeightPx() {
+    return window.innerHeight / 2;
+  }
+
   <template>
     <FloatingWindow
       @controller={{@controller}}
       @forSelection={{this.anchorSelection}}
       @onClose={{@onClose}}
+      @maxHeightPx={{this.maxMenuHeightPx}}
       class="say-contextual-actions-menu"
       ...attributes
       {{this.setUpListeners}}
