@@ -6,8 +6,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "format": "prettier . --cache --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "prettier . --cache --write"
   },
   "devDependencies": {
     "@glint/ember-tsc": "catalog:",
