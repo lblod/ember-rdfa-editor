@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { extensions, ember, contentFor, classicEmberSupport } from '@embroider/vite';
+import { extensions, ember, contentFor, classicEmberSupport, compatPrebuild } from '@embroider/vite';
 import { babel } from '@rollup/plugin-babel';
 import yaml from '@modyfi/vite-plugin-yaml';
 import { exports as resolveExports } from 'resolve.exports';
@@ -68,6 +68,8 @@ export default defineConfig({
   plugins: [
     yaml(),
     contentFor(),
+    // TODO: remove when we upgrade ember-intl to v8+, and when we've ported all the plugins over to v2 addons
+    compatPrebuild(),
     // classicEmberSupport(),
     // extra plugins here
     ember(),
