@@ -15,6 +15,7 @@ export function insertHtml(
   marks?: Mark[],
   preserveWhitespace = false,
   shouldPreprocessRdfa = false,
+  defaultPrefixes?: Record<string, string>,
 ): Command {
   return function (state, dispatch, view) {
     if (dispatch) {
@@ -32,6 +33,7 @@ export function insertHtml(
         preprocessRDFa(
           'body' in htmlNode ? htmlNode.body : htmlNode,
           view ? getPathFromRoot(view.dom, false) : [],
+          defaultPrefixes,
         );
       }
       let fragment = ProseParser.fromSchema(state.schema).parseSlice(htmlNode, {

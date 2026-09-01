@@ -178,8 +178,9 @@ catalog:
 overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
-  # "@lblod/ember-rdfa-editor": "workspace:"
-  prosemirror-view: "catalog:"
+  prosemirror-view: 'catalog:'
+  ember-focus-trap: 'catalog:'
+  browserslist: '^4.28.8'
 
 peerDependencyRules:
   allowedVersions:

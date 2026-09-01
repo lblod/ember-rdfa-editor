@@ -1,11 +1,11 @@
 {
   "name": "@lblod/ember-rdfa-editor",
+  "version": "13.18.0",
+  "description": "Ember addon wrapping an RDFa editor with a public API",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
   },
-  "description": "Ember addon wrapping an RDFa editor with a public API",
-  "version": "13.16.0",
   "author": "redpencil.io",
   "license": "MIT",
   "scripts": {

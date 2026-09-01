@@ -1,5 +1,7 @@
 {
   "name": "@lblod/say-roadsign-regulation-plugin",
+  "version": "3.1.0",
+  "description": "Say Editor plugin as part of the LBLOD project",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"

@@ -32,6 +32,7 @@ type Sig = {
       decisionUri: string;
       decisionType?: string;
     };
+    regulatoryStatementMode?: boolean;
   };
 };
 
@@ -111,6 +112,7 @@ export default class ArWidgetContents extends Component<Sig> {
         insertPos,
         this.args.controller,
         this.args.decisionContext?.decisionUri,
+        this.args.regulatoryStatementMode,
       );
       if (skipWarnings || monadsResult.warnings.length === 0) {
         this.doInsert(monadsResult.result);
@@ -127,6 +129,7 @@ export default class ArWidgetContents extends Component<Sig> {
         @insertLoading={{this.insertAr.isRunning}}
         @articles={{@articles}}
         @processDocumentHeadlessly={{@processDocumentHeadlessly}}
+        @regulatoryStatementMode={{@regulatoryStatementMode}}
       />
     {{else}}
       <ArDesignOverview

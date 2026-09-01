@@ -48,6 +48,7 @@ export function getAppliedMarks(pnode: DatastoreResolvedPNode): Mark[] {
 export interface DatastorePluginArgs {
   pathFromRoot: Node[];
   baseIRI: string;
+  defaultPrefixes?: Record<string, string>;
 }
 
 export interface DatastorePluginState {
@@ -58,6 +59,7 @@ export interface DatastorePluginState {
 export function datastore({
   pathFromRoot,
   baseIRI,
+  defaultPrefixes,
 }: DatastorePluginArgs): ProsePlugin<DatastorePluginState> {
   const logger = createLogger('datastore');
   return new ProsePlugin<DatastorePluginState>({
@@ -72,6 +74,7 @@ export function datastore({
           pathFromRoot,
           baseIRI,
           logger,
+          defaultPrefixes,
         );
 
         const refman = new ProseReferenceManager();
@@ -86,6 +89,7 @@ export function datastore({
 
           pathFromDomRoot: pathFromRoot,
           baseIRI,
+          defaultPrefixes,
         });
         return {
           datastore,
@@ -104,6 +108,7 @@ export function datastore({
             pathFromRoot,
             baseIRI,
             logger,
+            defaultPrefixes,
           ),
           contextStore: oldStore.contextStore,
         };
@@ -119,6 +124,7 @@ function createDataStoreGetter(
   pathFromRoot: Node[],
   baseIRI: string,
   logger: Logger,
+  defaultPrefixes?: Record<string, string>,
 ) {
   const refman = new ProseReferenceManager();
   return function () {
@@ -132,7 +138,7 @@ function createDataStoreGetter(
         children: children(state.schema, refman),
         attributes,
         isText,
-
+        defaultPrefixes,
         pathFromDomRoot: pathFromRoot,
         baseIRI,
       });

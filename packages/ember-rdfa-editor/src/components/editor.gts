@@ -8,7 +8,7 @@ import { tracked } from 'tracked-built-ins';
 import SayEditor, { type PluginConfig } from '#root/core/say-editor.ts';
 import type { NodeViewConstructor } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
-import { getOwner } from '@ember/application';
+import { getOwner } from '@ember/owner';
 import type Owner from '@ember/owner';
 import type { DefaultAttrGenPuginOptions } from '#root/plugins/default-attribute-value-generation/index.ts';
 import SayController from '#root/core/say-controller.ts';
@@ -24,29 +24,39 @@ import type IntlService from 'ember-intl/services/intl';
 // eslint-disable-next-line ember/no-at-ember-render-modifiers
 import didInsert from '@ember/render-modifiers/modifiers/did-insert';
 import AuToaster from '@appuniversum/ember-appuniversum/components/au-toaster';
+/** @import { defaultPrefixes } from '#root/config/rdfa.ts' */
 
-export interface RdfaEditorArgs {
-  /**
-   * callback that is called with an interface to the editor after editor init completed
-   * @default 'default'
-   * @public
-   */
-  rdfaEditorInit(editor: SayController): void;
+export interface RdfaEditorSig {
+  Args: {
+    /**
+     * callback that is called with an interface to the editor after editor init completed
+     * @default 'default'
+     * @public
+     */
+    rdfaEditorInit(editor: SayController): void;
 
-  initializers?: Array<Promise<void>>;
-  schema: Schema;
-  baseIRI?: string;
-  plugins?: PluginConfig;
-  stealFocus?: boolean;
-  nodeViews?: (controller: SayController) => {
-    [node: string]: NodeViewConstructor;
+    initializers?: Array<Promise<void>>;
+    schema: Schema;
+    baseIRI?: string;
+    plugins?: PluginConfig;
+    stealFocus?: boolean;
+    nodeViews?: (controller: SayController) => {
+      [node: string]: NodeViewConstructor;
+    };
+    defaultAttrGenerators?: DefaultAttrGenPuginOptions;
+    keyMapOptions?: KeymapOptions;
+    editable?: boolean;
+    notificationCallback?: (notification: Notification) => void;
+    notificationToaster?: boolean;
+    /**
+     * An object mapping prefixes (without the trailing `:`) to their expanded versions. These are
+     * used to expand prefixes in any RDFa loaded into the editor. Can be overriden with an empty
+     * object. If not passed, a default list is used {@link defaultPrefixes}.
+     */
+    defaultPrefixes?: Record<string, string>;
   };
-  defaultAttrGenerators?: DefaultAttrGenPuginOptions;
-  keyMapOptions?: KeymapOptions;
-  editable?: boolean;
-  notificationCallback?: (notification: Notification) => void;
-  notificationToaster?: boolean;
 }
+export type RdfaEditorArgs = RdfaEditorSig['Args'];
 
 /**
  * RDFa editor
@@ -172,6 +182,7 @@ export default class RdfaEditor extends Component<RdfaEditorArgs> {
       editable: () => {
         return !(this.editable === false);
       },
+      defaultPrefixes: this.args.defaultPrefixes,
     });
     window.__PM = this.prosemirror;
     window.__PC = new SayController(this.prosemirror);

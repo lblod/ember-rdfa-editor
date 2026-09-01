@@ -1,5 +1,23 @@
 # @lblod/ember-rdfa-editor
 
+## 13.18.0
+
+### Minor Changes
+
+- [#1405](https://github.com/lblod/ember-rdfa-editor/pull/1405) [`f70d290`](https://github.com/lblod/ember-rdfa-editor/commit/f70d290e73bcb7064afbe28406c81f04176a2170) Thanks [@piemonkey](https://github.com/piemonkey)! - Add configuration option to allow configuration of prefixes to be expanded when parsing RDFa inserted into the editor
+
+### Patch Changes
+
+- [`4e9182f`](https://github.com/lblod/ember-rdfa-editor/commit/4e9182ff14403164ed2a4f497b5dc8d87879a039) Thanks [@kobemertens](https://github.com/kobemertens)! - Fix a bug where search tasks are not canceled correctly
+
+- [#1405](https://github.com/lblod/ember-rdfa-editor/pull/1405) [`91f8736`](https://github.com/lblod/ember-rdfa-editor/commit/91f8736ae67ad5a083f4c13f94f287feac4149b0) Thanks [@piemonkey](https://github.com/piemonkey)! - Expand prefixes from a preconfigured list when loading RDFa into the editor to avoid problems from prefixes not being defined
+
+## 13.17.0
+
+### Minor Changes
+
+- [#1399](https://github.com/lblod/ember-rdfa-editor/pull/1399) [`e9240f9`](https://github.com/lblod/ember-rdfa-editor/commit/e9240f95d94c8adcd28ca11bcb300c0b676bc4c9) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Add argument to build article structure function to build RB articles and improve selection handling when inserting articles freely
+
 ## 13.16.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @lblod/say-roadsign-regulation-plugin
 
+## 3.1.0
+
+### Minor Changes
+
+- [#1399](https://github.com/lblod/ember-rdfa-editor/pull/1399) [`e9240f9`](https://github.com/lblod/ember-rdfa-editor/commit/e9240f95d94c8adcd28ca11bcb300c0b676bc4c9) Thanks [@lagartoverde](https://github.com/lagartoverde)! - Add multiple insertion argument to insert measure so it only modifies the selection once, and pass down the reg statement mode to build article structure
+
+### Patch Changes
+
+- Updated dependencies [[`e9240f9`](https://github.com/lblod/ember-rdfa-editor/commit/e9240f95d94c8adcd28ca11bcb300c0b676bc4c9)]:
+  - @lblod/ember-rdfa-editor@13.17.0
+
 ## 3.0.0
 
 ### Patch Changes

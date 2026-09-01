@@ -70,6 +70,8 @@ type InsertMeasureArgs = {
   variables: Record<string, VariableInstance & { __rdfaId: string }>;
   templateString: string;
   articleUriGenerator?: () => string;
+  multipleInsertion?: boolean;
+  regulatoryStatementMode?: boolean;
 } & InsertPositionArgs &
   (
     | {
@@ -235,6 +237,8 @@ export default function insertMeasure({
     const articleNode = buildArticleStructure(
       state.schema,
       articleUriGenerator,
+      undefined,
+      args.regulatoryStatementMode,
     ).copy(Fragment.from(measureNode));
     const insertArticleArgs = args.insertFreely
       ? ({
@@ -276,9 +280,13 @@ export default function insertMeasure({
         }),
       ),
     ]);
-    transaction.setSelection(
-      Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
-    );
+    if (!args.multipleInsertion) {
+      transaction
+        .setSelection(
+          Selection.fromJSON(transaction.doc, resultingSelection.toJSON()),
+        )
+        .scrollIntoView();
+    }
     return {
       initialState: state,
       transaction,

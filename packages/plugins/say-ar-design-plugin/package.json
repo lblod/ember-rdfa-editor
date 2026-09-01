@@ -1,11 +1,11 @@
 {
   "name": "@lblod/say-ar-design-plugin",
+  "version": "3.1.0",
+  "description": "Say Editor plugin as part of the LBLOD project",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lblod/ember-rdfa-editor.git"
   },
-  "description": "Say Editor plugin as part of the LBLOD project",
-  "version": "3.0.0",
   "author": "redpencil.io",
   "license": "MIT",
   "scripts": {
