@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { extensions, ember, contentFor, classicEmberSupport, compatPrebuild } from '@embroider/vite';
+import { extensions, ember, contentFor, compatPrebuild } from '@embroider/vite';
 import { babel } from '@rollup/plugin-babel';
 import yaml from '@modyfi/vite-plugin-yaml';
 import { exports as resolveExports } from 'resolve.exports';
@@ -93,9 +93,9 @@ export default defineConfig({
         for (const pkg of monorepoPackages) {
           if (
             id === pkg ||
-            id.startsWith(pkg) &&
-            (id.charAt(pkg.length) === undefined ||
-              id.charAt(pkg.length) === '/')
+            (id.startsWith(pkg) &&
+              (id.charAt(pkg.length) === undefined ||
+                id.charAt(pkg.length) === '/'))
           ) {
             const resolvedPath = resolveExports(parsedPackageMap[pkg], id)[0];
             const packagePath = packageMap[pkg];
