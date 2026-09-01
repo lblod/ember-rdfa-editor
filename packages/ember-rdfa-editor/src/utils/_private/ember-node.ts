@@ -39,8 +39,15 @@ import {
   type EmberNodeSig,
   type EmberNodeWrapperArgs,
 } from './ember-node-wrapper.gts';
-import { trackedObject } from '@ember/reactive/collections';
 import type { renderComponent } from '@ember/renderer';
+// polyfill for @ember/reactive/collections,
+// remove when we drop support for ember < 6.12, and/or
+// https://github.com/embroider-build/embroider/pull/2801 lands
+import { TrackedObject } from 'tracked-built-ins';
+
+function trackedObject<O extends Record<string, unknown>>(obj: O) {
+  return new TrackedObject(obj);
+}
 
 export interface EmberNodeArgs {
   getPos: () => number | undefined;
