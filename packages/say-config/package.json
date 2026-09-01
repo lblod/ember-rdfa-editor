@@ -1,0 +1,40 @@
+{
+  "name": "@lblod/say-config",
+  "description": "",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "format": "prettier . --cache --write"
+  },
+  "peerDependencies": {
+    "@babel/eslint-parser": "catalog:",
+    "@ember/app-tsconfig": "^2.0.0",
+    "@ember/library-tsconfig": "^2.0.0",
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-ember": "catalog:",
+    "eslint-plugin-import": "catalog:",
+    "eslint-plugin-n": "catalog:",
+    "eslint-plugin-qunit": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-ember-template-tag": "catalog:",
+    "stylelint": "catalog:",
+    "stylelint-config-standard-scss": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "exports": {
+    "./*.json": {
+      "default": "./src/*.json"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "keywords": [],
+  "type": "module"
+}

@@ -2,19 +2,21 @@ import { babel } from '@rollup/plugin-babel';
 import copy from 'rollup-plugin-copy';
 import { Addon } from '@embroider/addon-dev/rollup';
 
-import sass from 'rollup-plugin-sass';
+// import sass from 'rollup-plugin-sass';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import postcss from 'postcss';
-import path from 'path';
-import autoprefixer from 'autoprefixer';
-import rollupDeclarationsPlugin from './rollup-plugins/declarations.mjs';
+// import postcss from 'postcss';
+// import path from 'path';
+// import autoprefixer from 'autoprefixer';
 
 const nodeResolvePlugin = nodeResolve({
   preferBuiltins: false,
+  // exportConditions: ['node', '@say-editor/development'],
   mainFields: ['module', 'jsnext:main', 'browser', 'main'],
-  extensions: ['.mjs', '.js', '.json', '.node', '.ts', '.scss'],
+  // resolveOnly: [/^#/, /^src/, /prosemirror-history/],
+
+  extensions: ['.mjs', '.js', '.json', '.node', '.ts'],
 });
 const addon = new Addon({
   srcDir: 'src',
@@ -23,27 +25,27 @@ const addon = new Addon({
 
 const BUNDLED_DEPS = ['prosemirror-history'];
 export default [
-  {
-    input: './_index.scss',
-    output: {
-      file: './vendor/ember-rdfa-editor.js',
-      assetFileNames: '[name][extname]',
-    },
-    plugins: [
-      sass({
-        output: './vendor/ember-rdfa-editor.css',
-        options: {
-          api: 'modern',
-          includePaths: [path.resolve('node_modules')],
-          quietDeps: true,
-        },
-        processor: (css) =>
-          postcss([autoprefixer])
-            .process(css)
-            .then((result) => result.css),
-      }),
-    ],
-  },
+  // {
+  //   input: './_index.scss',
+  //   output: {
+  //     file: './vendor/ember-rdfa-editor.js',
+  //     assetFileNames: '[name][extname]',
+  //   },
+  //   plugins: [
+  //     sass({
+  //       output: './vendor/ember-rdfa-editor.css',
+  //       options: {
+  //         api: 'modern',
+  //         includePaths: [path.resolve('node_modules')],
+  //         quietDeps: true,
+  //       },
+  //       processor: (css) =>
+  //         postcss([autoprefixer])
+  //           .process(css)
+  //           .then((result) => result.css),
+  //     }),
+  //   ],
+  // },
   {
     preserveSymlinks: false,
     onwarn: (message, defaultHandler) => {
@@ -74,7 +76,6 @@ export default [
       // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
       addon.publicEntrypoints([
         'index.js',
-        'styles.js',
         '**/*.js',
         '**/*.ts',
         'template-registry.js',
@@ -123,21 +124,25 @@ export default [
         babelHelpers: 'bundled',
       }),
 
-      // Ensure that standalone .hbs files are properly integrated as Javascript.
-      addon.hbs(),
+      // // Ensure that standalone .hbs files are properly integrated as Javascript.
+      // addon.hbs(),
 
       // Ensure that .gjs files are properly integrated as Javascript
       addon.gjs(),
 
-      // Emit .d.ts declaration files
-      rollupDeclarationsPlugin(
+      // // Emit .d.ts declaration files
+      // rollupDeclarationsPlugin(
+      //   'declarations',
+      //   'pnpm ember-tsc --build --declaration --emitDeclarationOnly',
+      // ),
+      addon.declarations(
         'declarations',
-        'pnpm ember-tsc --build --declaration --emitDeclarationOnly',
+        'pnpm ember-tsc --declaration --project ./tsconfig.json',
       ),
 
       // addons are allowed to contain imports of .css files, which we want rollup
       // to leave alone and keep in the published output.
-      addon.keepAssets(['**/*.css']),
+      // addon.keepAssets(['**/*.css']),
 
       // Remove leftover build artifacts when starting a new build.
       addon.clean(),

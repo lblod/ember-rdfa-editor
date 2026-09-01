@@ -18,7 +18,7 @@ import { BinIcon } from '@appuniversum/ember-appuniversum/components/icons/bin';
 import { fn } from '@ember/helper';
 import AuList from '@appuniversum/ember-appuniversum/components/au-list';
 import { isSome, type Option } from '#root/utils/option.ts';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import { modifier } from 'ember-modifier';
 import { action } from '@ember/object';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';

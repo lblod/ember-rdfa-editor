@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { NodeSelection } from 'prosemirror-state';
 import type SayController from '#root/core/say-controller.ts';
-import type { LinkParser } from '#root/plugins/link/parser.js';
+import type { LinkParser } from '#root/plugins/link/parser.ts';
 import { defaultLinkParser } from '#root/plugins/link/parser.ts';
 import LinkEditor from './_private/link-editor.gts';
 

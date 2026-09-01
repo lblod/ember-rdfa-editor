@@ -1,4 +1,4 @@
-import { first, isEmpty, type Iterable, map } from 'iter-tools';
+import { first, isEmpty, type Iterable, map } from 'iter-tools-es';
 import { single } from '../iterator-utils.ts';
 
 export class ResultSet<I> implements Iterable<I> {

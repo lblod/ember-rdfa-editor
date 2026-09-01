@@ -4,7 +4,7 @@ import AuModal, {
   type AuModalSignature,
 } from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
@@ -60,9 +60,7 @@ type RelationshipEditorDevModalSig = {
     title?: string;
     source: LiteralNodeTerm | ResourceNodeTerm<string>;
     supportedDirections?:
-      | ['property']
-      | ['backlink']
-      | ['property', 'backlink'];
+      ['property'] | ['backlink'] | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     optionGeneratorConfig?: OptionGeneratorConfig;

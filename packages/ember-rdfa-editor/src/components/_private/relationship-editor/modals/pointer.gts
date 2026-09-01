@@ -4,7 +4,7 @@ import AuModal, {
   type AuModalSignature,
 } from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import PowerSelect, {
   type Select,
 } from 'ember-power-select/components/power-select';
@@ -32,7 +32,7 @@ import type {
 } from '../types.ts';
 import { isFullUri, isPrefixedUri } from '#root/plugins/rdfa-info/utils.ts';
 import { modifier } from 'ember-modifier';
-import type { RdfaAttrs } from '#root/core/rdfa-types.js';
+import type { RdfaAttrs } from '#root/core/rdfa-types.ts';
 
 type RelationshipEditorDevModalSig = {
   Element: AuModalSignature['Element'];
@@ -40,9 +40,7 @@ type RelationshipEditorDevModalSig = {
     title?: string;
     sourceAttrs: RdfaAttrs;
     supportedDirections?:
-      | ['property']
-      | ['backlink']
-      | ['property', 'backlink'];
+      ['property'] | ['backlink'] | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     optionGeneratorConfig?: OptionGeneratorConfig;

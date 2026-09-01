@@ -46,11 +46,7 @@ export type SubjectOptionGenerator =
   TargetOptionGenerator<SubjectOptionTermType>;
 
 type ObjectOptionTermType =
-  | ResourceNodeTerm
-  | LiteralNodeTerm
-  | NamedNode
-  | Literal
-  | ContentLiteralTerm;
+  ResourceNodeTerm | LiteralNodeTerm | NamedNode | Literal | ContentLiteralTerm;
 
 export type ObjectOption = TermOption<ObjectOptionTermType>;
 
@@ -79,3 +75,12 @@ export type PointerSubmissionBody = {
   pointerDirection: 'property' | 'backlink';
 };
 export type SubmissionBody = RelationshipSubmissionBody | PointerSubmissionBody;
+
+export function isRelationshipSubmissionBody(
+  body: SubmissionBody,
+): body is RelationshipSubmissionBody {
+  if ('target' in body) {
+    return true;
+  }
+  return false;
+}

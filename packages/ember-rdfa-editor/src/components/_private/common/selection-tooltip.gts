@@ -14,11 +14,12 @@ type Signature = {
   Args: {
     controller: SayController;
     visible: boolean;
-    position: 'left' | 'bottom';
+    position?: 'left' | 'bottom';
   };
   Blocks: {
     default: [];
   };
+  Element: HTMLDivElement;
 };
 
 export default class SelectionTooltip extends Component<Signature> {

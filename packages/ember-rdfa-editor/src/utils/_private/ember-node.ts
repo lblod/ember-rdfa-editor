@@ -12,7 +12,6 @@
 
  */
 
-import { hbs, type TemplateFactory } from 'ember-cli-htmlbars';
 import type {
   AttributeSpec,
   TagParseRule,
@@ -26,10 +25,6 @@ import {
   type NodeView,
   type NodeViewConstructor,
 } from 'prosemirror-view';
-import { v4 as uuidv4 } from 'uuid';
-// eslint-disable-next-line ember/no-classic-components
-import Component from '@ember/component';
-import type Owner from '@ember/owner';
 import type { ComponentLike } from '@glint/template';
 import SayController from '#root/core/say-controller.ts';
 import type SayNodeSpec from '#root/core/say-node-spec.ts';
@@ -37,11 +32,21 @@ import type {
   NodeSerializer,
   SayNodeToDOM,
 } from '#root/core/say-serializer.ts';
-import type SayView from '#root/core/say-view.js';
+import type SayView from '#root/core/say-view.ts';
 import { NodeSelection } from 'prosemirror-state';
+import {
+  renderEmberNode,
+  type EmberNodeSig,
+  type EmberNodeWrapperArgs,
+} from './ember-node-wrapper.gts';
+import type { renderComponent } from '@ember/renderer';
+// polyfill for @ember/reactive/collections,
+// remove when we drop support for ember < 6.12, and/or
+// https://github.com/embroider-build/embroider/pull/2801 lands
+import { TrackedObject } from 'tracked-built-ins';
 
-export interface EmberInlineComponent extends Component, EmberNodeArgs {
-  appendTo(selector: string | Element): this;
+function trackedObject<O extends Record<string, unknown>>(obj: O) {
+  return new TrackedObject(obj);
 }
 
 export interface EmberNodeArgs {
@@ -66,37 +71,6 @@ export interface EmberNodeArgs {
   view: SayView | EditorView;
   selected: boolean;
   contentDecorations?: DecorationSource;
-}
-
-function emberComponent(
-  owner: Owner,
-  name: string,
-  inline: boolean,
-  template: TemplateFactory,
-  props: EmberNodeArgs & {
-    atom: boolean;
-    component: ComponentLike<{ Args: EmberNodeArgs }>;
-    contentDOM?: HTMLElement;
-  },
-): { node: HTMLElement; component: EmberInlineComponent } {
-  // const instance = window.__APPLICATION;
-  const componentName = `${name}-${uuidv4()}`;
-  owner.register(
-    `component:${componentName}`,
-    // eslint-disable-next-line ember/no-classic-classes
-    Component.extend({
-      layout: template,
-      tagName: '',
-      ...props,
-    }),
-  );
-  const component = owner.lookup(
-    `component:${componentName}`,
-  ) as EmberInlineComponent;
-  const node = document.createElement(inline ? 'span' : 'div');
-  node.classList.add('ember-node');
-  component.appendTo(node);
-  return { node, component };
 }
 
 /**
@@ -146,9 +120,10 @@ export class EmberNodeView implements NodeView {
   node: PNode;
   dom: Element;
   contentDOM?: HTMLElement;
-  emberComponent: EmberInlineComponent;
-  template: TemplateFactory;
+  emberComponent: ComponentLike<EmberNodeSig>;
   config: EmberNodeConfig;
+  componentArgs: EmberNodeWrapperArgs;
+  renderResult: ReturnType<typeof renderComponent>;
 
   constructor(
     controller: SayController,
@@ -160,23 +135,8 @@ export class EmberNodeView implements NodeView {
     // when a node gets updated, `update()` is called.
     // We set the new node here and pass it to the component to render it.
     this.config = emberNodeConfig;
-    const { name, component: componentClass, atom, inline } = emberNodeConfig;
+    const { component: componentClass, atom, inline } = emberNodeConfig;
 
-    this.template = hbs`<this.component
-                          @getPos={{this.getPos}}
-                          @node={{this.node}}
-                          @updateAttribute={{this.updateAttribute}}
-                          @controller={{this.controller}}
-                          @view={{this.view}}
-                          @selected={{this.selected}}
-                          @contentDecorations={{this.contentDecorations}}
-                          @selectNode={{this.selectNode}}
-                        >
-                          {{#unless this.atom}}
-                            {{! @glint-expect-error: not typesafe yet }}
-                            <EmberNode::Slot @contentDOM={{this.contentDOM}}/>
-                          {{/unless}}
-                        </this.component>`;
     this.node = pNode;
     this.contentDOM = !atom
       ? document.createElement(inline ? 'span' : 'div', {})
@@ -185,44 +145,55 @@ export class EmberNodeView implements NodeView {
     if (this.contentDOM) {
       this.contentDOM.dataset['emberNodeContent'] = 'true';
     }
-    const { node, component } = emberComponent(
-      controller.owner,
-      name,
-      inline,
-      this.template,
-      {
-        getPos,
-        node: pNode,
-        updateAttribute: (attr, value, ignoreHistory) => {
-          const pos = getPos();
-          if (pos !== undefined) {
-            const transaction = view.state.tr;
-            if (ignoreHistory) {
-              transaction.setMeta('addToHistory', false);
-            }
-            transaction.setNodeAttribute(pos, attr, value);
-            view.dispatch(transaction);
+
+    const node = document.createElement(inline ? 'span' : 'div');
+    node.classList.add('ember-node');
+    document.body.appendChild(node);
+
+    const args: EmberNodeWrapperArgs & Record<string, unknown> = trackedObject({
+      getPos,
+      node: pNode,
+      updateAttribute: (attr, value, ignoreHistory) => {
+        const pos = getPos();
+        if (pos !== undefined) {
+          const transaction = view.state.tr;
+          if (ignoreHistory) {
+            transaction.setMeta('addToHistory', false);
           }
-        },
-        selectNode: () => {
-          const pos = getPos();
-          if (pos !== undefined) {
-            const tr = controller.activeEditorState.tr;
-            tr.setSelection(
-              NodeSelection.create(controller.activeEditorState.doc, pos),
-            );
-            controller.activeEditorView.dispatch(tr);
-          }
-        },
-        controller,
-        contentDOM: this.contentDOM,
-        component: componentClass,
-        atom,
-        view,
-        selected: false,
+          transaction.setNodeAttribute(pos, attr, value);
+          view.dispatch(transaction);
+        }
       },
-    );
-    this.dom = node;
+      selectNode: () => {
+        const pos = getPos();
+        if (pos !== undefined) {
+          const tr = controller.activeEditorState.tr;
+          tr.setSelection(
+            NodeSelection.create(controller.activeEditorState.doc, pos),
+          );
+          controller.activeEditorView.dispatch(tr);
+        }
+      },
+      controller,
+      contentDOM: this.contentDOM,
+      atom,
+      view,
+      selected: false,
+      comp: componentClass,
+    });
+    this.componentArgs = args;
+    const {
+      comp,
+      renderResult,
+      node: nodeWithRender,
+    } = renderEmberNode({
+      owner: controller.owner,
+      into: node,
+      args,
+      comp: componentClass,
+    });
+    this.renderResult = renderResult;
+    this.dom = nodeWithRender;
     if (this.config.domClassNames) {
       this.dom.classList.add(...this.config.domClassNames);
     }
@@ -230,7 +201,7 @@ export class EmberNodeView implements NodeView {
       this.contentDOM.classList.add(...this.config.contentDomClassNames);
     }
 
-    this.emberComponent = component;
+    this.emberComponent = comp;
   }
 
   update(
@@ -240,23 +211,23 @@ export class EmberNodeView implements NodeView {
   ) {
     if (node.type !== this.node.type) return false;
     this.node = node;
-    this.emberComponent.set('node', node);
-    this.emberComponent.set('contentDecorations', innerDecorations);
+    this.componentArgs.node = node;
+    this.componentArgs.contentDecorations = innerDecorations;
     return true;
   }
 
   selectNode() {
     this.dom.classList.add('ProseMirror-selectednode');
-    this.emberComponent.set('selected', true);
+    this.componentArgs.selected = true;
   }
 
   deselectNode() {
     this.dom.classList.remove('ProseMirror-selectednode');
-    this.emberComponent.set('selected', false);
+    this.componentArgs.selected = false;
   }
 
   destroy() {
-    this.emberComponent.destroy();
+    this.renderResult.destroy();
   }
 
   /**

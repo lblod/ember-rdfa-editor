@@ -18,7 +18,7 @@ import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import { CircleXIcon } from '@appuniversum/ember-appuniversum/components/icons/circle-x';
 
-export default class Link extends Component<EmberNodeArgs> {
+export default class Link extends Component<{ Args: EmberNodeArgs }> {
   @service declare intl: IntlService;
   @tracked hideTooltip = false;
 

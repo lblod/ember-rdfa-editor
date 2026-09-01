@@ -12,7 +12,7 @@ const TIME_CHAR_REGEX = new RegExp('[abBhHkKmsStTp]');
 export function formatDate(date: Date, format: string) {
   try {
     return formatWithOptions({ locale: nlBE }, format)(date);
-  } catch (e) {
+  } catch (_e) {
     return '';
   }
 }

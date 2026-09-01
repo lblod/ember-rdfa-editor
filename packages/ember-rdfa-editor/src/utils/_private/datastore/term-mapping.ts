@@ -3,7 +3,7 @@ import {
   conciseToRdfjs,
   type PrefixMapping,
 } from '#root/utils/_private/concise-term-string.ts';
-import { execPipe, filter, first, flatMap, isEmpty, map } from 'iter-tools';
+import { execPipe, filter, first, flatMap, isEmpty, map } from 'iter-tools-es';
 import type { TermSpec } from '#root/utils/_private/datastore/term-spec.ts';
 import { single } from '../iterator-utils.ts';
 

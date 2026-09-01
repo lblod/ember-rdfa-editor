@@ -34,15 +34,11 @@ import { N3StoreWrapper } from '../datastore/n3-store-wrapper.ts';
 import { defaultPrefixes } from '#root/config/rdfa.ts';
 
 export type ModelTerm<N> =
-  | ModelQuadObject<N>
-  | ModelQuadPredicate<N>
-  | ModelQuadSubject<N>;
+  ModelQuadObject<N> | ModelQuadPredicate<N> | ModelQuadSubject<N>;
 export type ModelQuadSubject<N> = ModelNamedNode<N> | ModelBlankNode<N>;
 export type ModelQuadPredicate<N> = ModelNamedNode<N>;
 export type ModelQuadObject<N> =
-  | ModelNamedNode<N>
-  | ModelBlankNode<N>
-  | ModelLiteral<N>;
+  ModelNamedNode<N> | ModelBlankNode<N> | ModelLiteral<N>;
 
 export interface ModelNamedNode<
   N,
@@ -413,10 +409,7 @@ export class RdfaParser<N> {
     let newSubject: ModelNamedNode<N> | ModelBlankNode<N> | boolean | null =
       null;
     let currentObjectResource:
-      | ModelNamedNode<N>
-      | ModelBlankNode<N>
-      | boolean
-      | null = null;
+      ModelNamedNode<N> | ModelBlankNode<N> | boolean | null = null;
     let typedResource: ModelNamedNode<N> | ModelBlankNode<N> | boolean | null =
       null;
 
@@ -1061,13 +1054,11 @@ export class RdfaParser<N> {
     activeTag.content =
       activeTag.attributes['content'] ?? textSegments.join('');
 
-    if (
-      !(
-        activeTag.collectChildTags &&
-        parentTag.collectChildTags &&
-        this.features.skipHandlingXmlLiteralChildren
-      )
-    ) {
+    if (!(
+      activeTag.collectChildTags &&
+      parentTag.collectChildTags &&
+      this.features.skipHandlingXmlLiteralChildren
+    )) {
       // If we detect a finalized rdfa:Pattern tag, store it
       if (
         this.features.copyRdfaPatterns &&

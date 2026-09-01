@@ -492,8 +492,7 @@ export function addPropertyToNode({
       }
       targets?.forEach((target) => {
         const backlinks = target.value.attrs['backlinks'] as
-          | IncomingTriple[]
-          | undefined;
+          IncomingTriple[] | undefined;
         const newBacklinks = addBacklink(backlinks ?? [], newBacklink);
         TransformUtils.setAttribute(tr, target.pos, 'backlinks', newBacklinks);
       });

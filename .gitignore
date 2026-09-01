@@ -1,10 +1,12 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist/
+**/dist/
+**/node_modules/
 /declarations/
 /tmp/
 vendor/
+.turbo
 
 # dependencies
 /bower_components/

@@ -161,18 +161,18 @@ export class TwoWayMap<K, V, HK = K, HV = V> implements Map<K, V> {
   get size() {
     return this.keyToValue.size;
   }
-  *entries(): IterableIterator<[K, V]> {
+  *entries(): MapIterator<[K, V]> {
     for (const key of this.keySet.values()) {
       yield [key, unwrap(this.keyToValue.get(this.keyHasher(key)))];
     }
   }
-  keys(): IterableIterator<K> {
+  keys(): MapIterator<K> {
     return this.keySet.values();
   }
-  values(): IterableIterator<V> {
+  values(): MapIterator<V> {
     return this.keyToValue.values();
   }
-  [Symbol.iterator](): IterableIterator<[K, V]> {
+  [Symbol.iterator](): MapIterator<[K, V]> {
     return this.entries();
   }
   get [Symbol.toStringTag](): string {

@@ -1,0 +1,23 @@
+{
+  "name": "global-type-overrides",
+  "private": true,
+  "description": "",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "format": "prettier . --cache --write"
+  },
+  "devDependencies": {
+    "@glint/ember-tsc": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "yup": "catalog:"
+  },
+  "exports": {
+    "./types": "./types/global/index.d.ts"
+  },
+  "keywords": [],
+  "type": "module",
+  "types": "./types/global/index.d.ts"
+}

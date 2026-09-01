@@ -149,8 +149,7 @@ export class RdfaInfo {
     const newInfo: InfoEntries[] = [];
     const { doc } = this.state;
     const importedResources = this.state.doc.attrs[IMPORTED_RESOURCES_ATTR] as
-      | string[]
-      | undefined;
+      string[] | undefined;
     if (importedResources) {
       // This document defines additional external resources that can be used in RDFa relationships,
       // such as when editing a snippet. Add those resources to those available in the document.
@@ -193,7 +192,7 @@ export class RdfaInfo {
       }
       return newMaps;
     } else {
-      throw abortSignal.throwIfAborted();
+      throw new Error(abortSignal.reason as string);
     }
   }
 
@@ -201,8 +200,7 @@ export class RdfaInfo {
     const newInfo: InfoEntries[] = [];
     const { doc } = this.state;
     const importedResources = this.state.doc.attrs[IMPORTED_RESOURCES_ATTR] as
-      | string[]
-      | undefined;
+      string[] | undefined;
     if (importedResources) {
       // This document defines additional external resources that can be used in RDFa relationships,
       // such as when editing a snippet. Add those resources to those available in the document.

@@ -20,7 +20,7 @@ import {
   addImportedResource,
   removeImportedResource,
 } from '#root/plugins/rdfa-info/imported-resources.ts';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
 import {
   isLinkTriple,
   type OutgoingTriple,
@@ -36,7 +36,10 @@ import ConfigurableRdfaDisplay, {
 import DefineImportedResourceForm from './form.gts';
 import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
 import { localCopy } from 'tracked-toolbox';
-import type { RelationshipSubmissionBody } from '#root/components/_private/relationship-editor/types.ts';
+import {
+  isRelationshipSubmissionBody,
+  type SubmissionBody,
+} from '#root/components/_private/relationship-editor/types.ts';
 import RelationshipEditorDevModeModal from '../relationship-editor/modals/dev-mode.gts';
 import { sayDataFactory } from '#root/core/say-data-factory/data-factory.ts';
 import type { FormData } from '../relationship-editor/modals/dev-mode.gts';
@@ -223,12 +226,17 @@ export default class DocImportedResourceEditorCard extends Component<Sig> {
     };
   };
 
-  onFormSubmit = (body: RelationshipSubmissionBody) => {
+  onFormSubmit = (body: SubmissionBody) => {
     if (!this.status) {
       return;
     }
     if (this.status.mode === 'update') {
       this.removeProperty(this.status.property);
+    }
+    if (!isRelationshipSubmissionBody(body)) {
+      throw new Error(
+        `unexpected bodyType on form submit. Expected RelationshipSubmissionBody, got PointerSubmissionBody. Body received: ${JSON.stringify(body)}`,
+      );
     }
     const { predicate, target } = body;
     if (predicate.direction === 'property') {

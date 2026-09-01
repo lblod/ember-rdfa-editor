@@ -70,8 +70,8 @@ import {
   editableNodePlugin,
   getActiveEditableNode,
 } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info';
-import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor';
+import DebugInfo from '@lblod/ember-rdfa-editor/components/_private/debug-info/index';
+import AttributeEditor from '@lblod/ember-rdfa-editor/components/_private/attribute-editor/index';
 import NodeControlsCard from '@lblod/ember-rdfa-editor/components/_private/node-controls/card';
 import DocImportedResourceEditorCard from '@lblod/ember-rdfa-editor/components/_private/doc-imported-resource-editor/card';
 import ImportedResourceLinkerCard from '@lblod/ember-rdfa-editor/components/_private/imported-resource-linker/card';
@@ -420,7 +420,7 @@ export default class LblodPluginsTemplate extends Component {
       const result = getActiveEditableNode(this.rdfaEditor.activeEditorState);
       return result;
     }
-    return;
+    return undefined;
   }
 
   @action
@@ -442,6 +442,7 @@ export default class LblodPluginsTemplate extends Component {
     if (this.rdfaEditor) {
       return combineConfigs(documentConfig(this.rdfaEditor), lovConfig());
     }
+    return undefined;
   }
 
   subjectOptionGeneratorTask = restartableTask(
@@ -725,6 +726,7 @@ export default class LblodPluginsTemplate extends Component {
                     @controller={{container.controller}}
                     @designQuery={{this.arDesignTest}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
+                    {{! @glint-expect-error}}
                     @regulatoryStatementMode={{true}}
                   />
                 </Item>

@@ -63,12 +63,9 @@ export const documentConfig: (
   },
   objects: ({ searchString = '' } = {}) => {
     const resources = getSubjects(controller.mainEditorState);
-    const options = resources.map(
-      (resource) =>
-        ({
-          term: sayDataFactory.resourceNode(resource),
-        }) as ObjectOption,
-    );
+    const options: ObjectOption[] = resources.map((resource) => ({
+      term: sayDataFactory.resourceNode(resource),
+    }));
 
     const rdfaIdMapping = rdfaInfoPluginKey.getState(
       controller.mainEditorState,
@@ -247,31 +244,31 @@ export const combineConfigs = (
 ): OptionGeneratorConfig => ({
   subjects: async (args) => {
     const results = await Promise.all(
-      configs.map((config) => config.subjects?.(args) ?? []),
+      configs.map(async (config) => config.subjects?.(args) ?? []),
     );
     return results.flat();
   },
   predicates: async (args) => {
     const results = await Promise.all(
-      configs.map((config) => config.predicates?.(args) ?? []),
+      configs.map(async (config) => config.predicates?.(args) ?? []),
     );
     return results.flat();
   },
   objects: async (args) => {
     const results = await Promise.all(
-      configs.map((config) => config.objects?.(args) ?? []),
+      configs.map(async (config) => config.objects?.(args) ?? []),
     );
     return results.flat();
   },
   pointerSources: async (args) => {
     const results = await Promise.all(
-      configs.map((config) => config.pointerSources?.(args) ?? []),
+      configs.map(async (config) => config.pointerSources?.(args) ?? []),
     );
     return results.flat();
   },
   pointerTargets: async (args) => {
     const results = await Promise.all(
-      configs.map((config) => config.pointerTargets?.(args) ?? []),
+      configs.map(async (config) => config.pointerTargets?.(args) ?? []),
     );
     return results.flat();
   },

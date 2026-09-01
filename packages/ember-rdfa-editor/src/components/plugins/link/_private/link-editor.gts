@@ -3,7 +3,9 @@ import Component from '@glimmer/component';
 import { LinkExternalIcon } from '@appuniversum/ember-appuniversum/components/icons/link-external';
 import { LinkBrokenIcon } from '@appuniversum/ember-appuniversum/components/icons/link-broken';
 import type SayController from '#root/core/say-controller.ts';
-import AuCard from '@appuniversum/ember-appuniversum/components/au-card';
+import AuCard, {
+  type AuCardSignature,
+} from '@appuniversum/ember-appuniversum/components/au-card';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import t from 'ember-intl/helpers/t';
@@ -12,21 +14,24 @@ import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuLinkExternal from '@appuniversum/ember-appuniversum/components/au-link-external';
 import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import { cached } from '@glimmer/tracking';
-import type { LinkParser } from '#root/plugins/link/parser.js';
+import type { LinkParser } from '#root/plugins/link/parser.ts';
 import { defaultLinkParser } from '#root/plugins/link/parser.ts';
-import type { PNode } from '#root/prosemirror-aliases.js';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 import { LinkIcon } from '@appuniversum/ember-appuniversum/components/icons/link';
 import { MessageIcon } from '@appuniversum/ember-appuniversum/components/icons/message';
 import { modifier } from 'ember-modifier';
 
-type Args = {
-  controller: SayController;
-  linkParser: LinkParser;
-  link: { pos: number; node: PNode };
-  showTitle?: boolean;
+type Sig = {
+  Args: {
+    controller: SayController;
+    linkParser: LinkParser;
+    link: { pos: number; node: PNode };
+    showTitle?: boolean;
+  };
+  Element: AuCardSignature['Element'];
 };
 
-export default class LinkEditor extends Component<Args> {
+export default class LinkEditor extends Component<Sig> {
   get isNewLink() {
     return this.link.node.attrs['isNew'] as boolean;
   }
@@ -55,7 +60,7 @@ export default class LinkEditor extends Component<Args> {
   }
 
   @action
-  setHref(event: InputEvent) {
+  setHref(event: Event & { currentTarget: Element }) {
     const text = (event.target as HTMLInputElement).value;
     const result = this.parseLink(text);
 
@@ -76,7 +81,7 @@ export default class LinkEditor extends Component<Args> {
   }
 
   @action
-  setLinkText(event: InputEvent) {
+  setLinkText(event: Event & { currentTarget: Element }) {
     const text = (event.target as HTMLInputElement).value;
     const { pos, node } = this.link;
     this.controller.withTransaction(

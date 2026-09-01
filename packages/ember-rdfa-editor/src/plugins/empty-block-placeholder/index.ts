@@ -1,4 +1,4 @@
-import type { PNode } from '#root/prosemirror-aliases.js';
+import type { PNode } from '#root/prosemirror-aliases.ts';
 import { EditorState, Plugin, PluginKey, Selection } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
 

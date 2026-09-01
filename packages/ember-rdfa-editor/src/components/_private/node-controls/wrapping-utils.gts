@@ -21,7 +21,8 @@ import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
-import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import WithUniqueId from '#root/components/_private/utils/with-unique-id.gts';
+import type Owner from '@ember/owner';
 
 type WrappingUtilsArgs = {
   controller?: SayController;
@@ -31,7 +32,7 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   @tracked modalOpen = false;
   @tracked wrapWithResource;
 
-  constructor(owner: unknown, args: WrappingUtilsArgs) {
+  constructor(owner: Owner, args: WrappingUtilsArgs) {
     super(owner, args);
     this.wrapWithResource = this.wrapWithBlockResource;
   }
@@ -212,7 +213,9 @@ class Modal extends Component<ModalArgs> {
   @tracked generateNewUri = 'yes';
   @tracked resourceUriBase = '';
 
-  updateUriBase = (event: InputEvent) => {
+  updateUriBase = (event: Event & { currentTarget: HTMLInputElement }) => {
+    // TODO: can likely switch to event.currentTarget to avoid the cast
+    // but currentTarget has slightly different semantics so needs to be tested
     this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
   shouldGenerateNewUri = (value: 'yes' | 'no') => {

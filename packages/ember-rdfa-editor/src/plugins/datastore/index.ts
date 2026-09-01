@@ -8,7 +8,7 @@ import {
   proseStoreFromParse,
   SayStore,
 } from '#root/utils/_private/datastore/say-store.ts';
-import { map, objectFrom } from 'iter-tools';
+import { map, objectFrom } from 'iter-tools-es';
 import { ProseReferenceManager } from './prose-reference-manager.ts';
 import {
   createLogger,
