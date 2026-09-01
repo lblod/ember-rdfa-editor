@@ -1,0 +1,31 @@
+diff --git a/dist/src/module-resolver.js b/dist/src/module-resolver.js
+index 6f05662e06f246c8101925bb1cbc554bb5fec4b0..faf8c0e7f6f93a983901d62710f694944c479ff9 100644
+--- a/dist/src/module-resolver.js
++++ b/dist/src/module-resolver.js
+@@ -243,7 +243,7 @@ class Resolver {
+                     else {
+                         targetFile = fastbootFile.localFilename;
+                     }
+-                    return logTransition('matched app entry', request, 
++                    return logTransition('matched app entry', request,
+                     // deliberately not using rehome because we want
+                     // generateFastbootSwitch to see that this request is coming *from*
+                     // a fastboot switch so it won't cycle back around. Instead we make
+@@ -957,7 +957,7 @@ class Resolver {
+             // resolving this (non-relative) request from inside the actual addon, so
+             // next try to resolve it from the corresponding logical location in the
+             // app.
+-            return logTransition('fallbackResolve: retry from logical home of app-js file', request, 
++            return logTransition('fallbackResolve: retry from logical home of app-js file', request,
+             // it might look more precise to rehome into logicalLocation.inAppName
+             // rather than package.json. But that logical location may not actually
+             // exist, and some systems (including node's require.resolve) will be
+@@ -1117,7 +1117,7 @@ __decorate([
+ // work because of the symlinking) without setting up "exports" (which makes
+ // your own name reliably resolvable)
+ function reliablyResolvable(pkg, packageName) {
+-    if (pkg.hasDependency(packageName)) {
++    if (pkg.hasDependency(packageName) || packageName === "prosemirror-history") {
+         return true;
+     }
+     if (pkg.name === packageName && pkg.packageJSON.exports) {

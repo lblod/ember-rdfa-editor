@@ -178,10 +178,14 @@ catalog:
 overrides:
   chalk@^2.0.0: ^4.1.2
   js-beautify>glob: ^10.5.0
-  prosemirror-view: 'catalog:'
-  ember-focus-trap: 'catalog:'
-  browserslist: '^4.28.8'
+  prosemirror-view: "catalog:"
+  ember-focus-trap: "catalog:"
+  browserslist: "^4.28.8"
 
+packageExtensions:
+  "test-app>@lblod/ember-rdfa-editor":
+    dependencies:
+      "prosemirror-history": "../../vendored-deps/prosemirror-history-1.5.0.tgz"
 peerDependencyRules:
   allowedVersions:
     "@glimmer/component": "^2.0.0"
@@ -200,6 +204,19 @@ peerDependencyRules:
     "@ember/render-modifiers>ember-source": "6"
 
 patchedDependencies:
+  # this is purely for making the vite devserver work while we have prosemirror-history set up as a vendored dependency.
+  # Basically, embroider's vite resolver hard-checks that all imported dependencies are correctly declared in the package.json `dependencies`.
+  # Normally, this is a good check as it avoids accidental includes of devdependencies, which wouldn't work outside of the dev setup.
+  # However, for the prosemirror-history dependency, we can't include it as a dependency, since we bundle it ourselves, cause it's an unpublished version of the package. If we would include it, the consuming app's (p)npm install would try to resolve it, which wouldn't work.
+  # We could strip it pre-publication, but then our internal usage of the built addon still wouldn't reliably work.
+  # So since the vite plugin is only used for the devserver, this seems like the most self-contained solution.
+  #
+  # Long term solutions are:
+  # 1. find a way to meet our needs without the changes (ideal)
+  # 2. include the source-code of the modified package in this monorepo and treat it as our own code (ok if we cant do 1)
+  # 3. publish the forked history package under a new name (not bad, but maybe a bit lame towards the prosemirror project)
+
+  '@embroider/core': patches/@embroider__core.patch
   ember-headless-form: "patches/ember-headless-form.patch"
 allowUnusedPatches: true
 

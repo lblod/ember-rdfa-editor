@@ -67,7 +67,6 @@
     "n3": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-dropcursor": "catalog:",
-    "prosemirror-history": "file:./vendored-deps/prosemirror-history-1.5.0.tgz",
     "prosemirror-inputrules": "catalog:",
     "prosemirror-keymap": "catalog:",
     "prosemirror-model": "catalog:",
