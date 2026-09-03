@@ -13,6 +13,7 @@ export function htmlToDoc(
     parser: ProseParser;
     editorView?: EditorView;
     doNotClean?: boolean;
+    defaultPrefixes?: Record<string, string>;
   },
 ) {
   const { parser } = options;
@@ -23,6 +24,7 @@ export function htmlToDoc(
   preprocessRDFa(
     parsed,
     options.editorView && getPathFromRoot(options.editorView.dom, false),
+    options.defaultPrefixes,
   );
   const topNodeMatch = matchTopNode(parsed, { schema: options.schema });
   let doc: PNode;
@@ -44,6 +46,7 @@ export function htmlToFragment(
     parser: ProseParser;
     editorView: EditorView;
     doNotClean?: boolean;
+    defaultPrefixes?: Record<string, string>;
   },
 ) {
   const { parser, editorView } = options;
@@ -51,7 +54,11 @@ export function htmlToFragment(
   const cleanedHTML = htmlCleaner.prepareHTML(html, false, options.doNotClean);
   const domParser = new DOMParser();
   const parsed = domParser.parseFromString(cleanedHTML, 'text/html').body;
-  preprocessRDFa(parsed, getPathFromRoot(editorView.dom, false));
+  preprocessRDFa(
+    parsed,
+    getPathFromRoot(editorView.dom, false),
+    options.defaultPrefixes,
+  );
   return parser.parseSlice(parsed, { preserveWhitespace: true });
 }
 

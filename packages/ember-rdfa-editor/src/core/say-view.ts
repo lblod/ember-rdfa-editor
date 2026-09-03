@@ -5,6 +5,7 @@ import { htmlToDoc, htmlToFragment } from '../utils/_private/html-utils.ts';
 import { SetDocAttributesStep } from '../utils/steps.ts';
 import { ProseParser } from '#root/prosemirror-aliases.ts';
 import { DOMSerializer } from 'prosemirror-model';
+/** @import { defaultPrefixes } from '#root/config/rdfa.ts' */
 
 export interface SetHtmlOptions {
   shouldFocus?: boolean;
@@ -20,6 +21,12 @@ export interface SetHtmlOptions {
    * document that has not yet been saved.
    */
   startsDirty?: boolean;
+  /**
+   * An object mapping prefixes (without the trailing `:`) to their expanded versions. These are
+   * used to expand prefixes in any RDFa loaded into the editor. Can be overriden with an empty
+   * object. If not passed, a default list is used {@link defaultPrefixes}.
+   */
+  defaultPrefixes?: Record<string, string>;
 }
 export type DocumentRange = {
   from: number;
@@ -67,6 +74,7 @@ export default class SayView extends EditorView {
         parser: this.domParser,
         editorView: this,
         doNotClean,
+        defaultPrefixes: options.defaultPrefixes,
       });
       tr.replaceRange(range.from, range.to, fragment);
     } else {
@@ -75,6 +83,7 @@ export default class SayView extends EditorView {
         parser: this.domParser,
         editorView: this,
         doNotClean,
+        defaultPrefixes: options.defaultPrefixes,
       });
       tr.step(new SetDocAttributesStep(doc.attrs));
       tr.replaceWith(0, tr.doc.nodeSize - 2, doc);

@@ -261,6 +261,13 @@ export default class LblodPluginsTemplate extends Component {
       fullLengthArticles: false,
       onlyArticleSpecialName: true,
     } satisfies StructurePluginOptions,
+    arDesign: {
+      decision: {
+        decisionUri: 'decisionUri',
+        decisionType:
+          'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/fc1036e7-703b-4290-b732-49abb39d0588',
+      },
+    },
   };
 
   rdfa = {
@@ -568,6 +575,82 @@ export default class LblodPluginsTemplate extends Component {
                 },
               ],
             },
+
+            {
+              id: 'test',
+              uri: 'test',
+              trafficSignals: [
+                {
+                  id: 'test',
+                  uri: 'test',
+                  designStatus:
+                    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/fc1036e7-703b-4290-b732-49abb39d0588',
+                  trafficSignalConcept: {
+                    id: 'test',
+                    uri: 'test',
+                    code: 'Parkeerautomaat',
+                    type: 'https://data.vlaanderen.be/ns/mobiliteit#Verkeersbordconcept',
+                    categories: [
+                      {
+                        id: 'test',
+                        uri: 'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/29ea3335e357e414d07229242607b352941c0c21e78760600cc0f5270f18c38b',
+                        label: 'StilstaanParkeerBord',
+                      },
+                    ],
+                  },
+                },
+              ],
+              measureConcept: {
+                id: 'test',
+                uri: 'test',
+                label: 'E9a-GVIId-GVIId-GXa-GXd-GXb-Parkeerautomaat',
+                templateString:
+                  '${locatie} \nhet parkeren is toegelaten; \nhet parkeren is voorbehouden voor ${categorie_voertuig}; \nhet parkeren is betalend; de parkeerreglementering is beperkt in de tijd ${maximumduur_betalend_parkeren}; \nhet begin van de parkeerreglementering wordt aangeduid; \nde parkeerreglementering geldt over een afstand van meer dan 300 meter; \nhet einde van de parkeerreglementering wordt aangeduid; \nbestuurders moeten parkeren op de wijze en onder de voorwaarden die op de parkeerautomaat zijn vermeld.',
+                rawTemplateString:
+                  '${locatie} \n${E9a}; \n${GVIId}; \n${GVIId2}; \n${GXa}; \n${GXd}; \n${GXb}; \n${Parkeerautomaat}.',
+              },
+              unusedSignalConcepts: [],
+              unIncludedSignalConcepts: [],
+              variableInstances: [
+                {
+                  id: 'test1',
+                  uri: 'test1',
+                  variable: {
+                    id: 'test1',
+                    uri: 'test1',
+                    type: 'codelist',
+                    label: 'categorie_voertuig',
+                    source: 'https://roadsigns.lblod.info/sparql',
+                    codelist:
+                      'http://lblod.data.gift/concept-schemes/61AE3534BF5C750009000050',
+                  },
+                },
+                {
+                  id: 'test2',
+                  uri: 'test2',
+                  variable: {
+                    id: 'test2',
+                    uri: 'test2',
+                    type: 'codelist',
+                    label: 'maximumduur_betalend_parkeren',
+                    source: 'https://roadsigns.lblod.info/sparql',
+                    codelist:
+                      'http://lblod.data.gift/concept-schemes/98ce0acb-a92d-4641-860e-d7f581810686',
+                  },
+                },
+                {
+                  id: 'test3',
+                  uri: 'test3',
+                  variable: {
+                    id: 'test3',
+                    uri: 'test3',
+                    type: 'location',
+                    label: 'locatie',
+                    source: 'https://roadsigns.lblod.info/sparql',
+                  },
+                },
+              ],
+            },
           ]),
         },
       ],
@@ -642,6 +725,7 @@ export default class LblodPluginsTemplate extends Component {
                     @controller={{container.controller}}
                     @designQuery={{this.arDesignTest}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
+                    @regulatoryStatementMode={{true}}
                   />
                 </Item>
               </Sb.Collapsible>

@@ -1,6 +1,6 @@
 {
   "name": "@lblod/say-ar-design-plugin",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Say Editor plugin as part of the LBLOD project",
   "keywords": [
     "ember-addon"
