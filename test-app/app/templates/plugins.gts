@@ -87,6 +87,7 @@ import { getContextualGroups } from 'test-app/dummy-plugins/expose-contextual-ac
 import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
+import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
@@ -255,6 +256,7 @@ export default class extends Component {
                 @controller={{this.rdfaEditor}}
                 @getGroups={{this.contextualGroupGetters}}
               />
+              <TableTooltip @controller={{this.rdfaEditor}} />
             {{/if}}
           </:default>
           <:sidebarRight as |container|>

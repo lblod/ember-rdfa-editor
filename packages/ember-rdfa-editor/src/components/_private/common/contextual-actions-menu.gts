@@ -18,7 +18,7 @@ import { eq, and } from 'ember-truth-helpers';
 import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
 import { TextSelection } from 'prosemirror-state';
 import type { Option } from '#root/utils/option.ts';
-import FloatingWindow from '#root/components/popover.gts';
+import Popover from '#root/components/popover.gts';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -310,16 +310,16 @@ export default class ContextualActionsMenu extends Component<Args> {
       : state.selection;
   }
 
-  get maxMenuHeightPx() {
+  get maxPopoverHeightPx() {
     return window.innerHeight / 2;
   }
 
   <template>
-    <FloatingWindow
+    <Popover
       @controller={{@controller}}
       @forSelection={{this.anchorSelection}}
       @onClose={{@onClose}}
-      @maxHeightPx={{this.maxMenuHeightPx}}
+      @maxHeightPx={{this.maxPopoverHeightPx}}
       class="say-contextual-actions-menu"
       ...attributes
       {{this.setUpListeners}}
@@ -455,6 +455,6 @@ export default class ContextualActionsMenu extends Component<Args> {
           {{/each}}
         </div>
       {{/if}}
-    </FloatingWindow>
+    </Popover>
   </template>
 }

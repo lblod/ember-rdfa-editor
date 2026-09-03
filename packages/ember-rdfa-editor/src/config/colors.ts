@@ -1,8 +1,16 @@
 export const defaultColors: string[] = [
-  '#ff8000',
-  '#ffff00',
-  '#00ff00',
-  '#00ffff',
-  '#0000ff',
-  '#ff0000',
+  '#B2CCEF',
+  '#FFEEB9',
+  '#F4C8C9',
+  '#C5E5CC',
+
+  '#5990DE',
+  '#FFE49C',
+  '#F1AEAE',
+  '#b1dcbb',
+
+  '#0055CC',
+  '#FFA10A',
+  '#D2373C',
+  '#009E47',
 ];

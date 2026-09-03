@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/template';
-import SelectionTooltip from '../../_private/common/selection-tooltip.gts';
+import Popover from '#root/components/popover.gts';
 import {
   addColumnAfter,
   addColumnBefore,
@@ -44,7 +44,7 @@ type Action =
 export default class TableTooltip extends Component<Args> {
   @service declare intl: IntlService;
 
-  SelectionTooltip = SelectionTooltip;
+  Popover = Popover;
 
   @tracked _justClicked = false;
 
