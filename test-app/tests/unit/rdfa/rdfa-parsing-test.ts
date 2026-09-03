@@ -188,7 +188,9 @@ module('rdfa | parsing', function () {
 
     assert.strictEqual(actualProps.length, 2);
     assert.deepArrayContains(actualProps, {
-      object: sayDataFactory.namedNode('besluit:Besluit'),
+      object: sayDataFactory.namedNode(
+        'http://data.vlaanderen.be/ns/besluit#Besluit',
+      ),
       predicate: rdf('type'),
     });
 
@@ -244,14 +246,16 @@ module('rdfa | parsing', function () {
 
     const expectedBacklinks: IncomingTriple[] = [];
     assert.deepArrayContains(actualProps, {
-      object: sayDataFactory.namedNode('ext:BesluitNieuweStijl'),
+      object: sayDataFactory.namedNode(
+        'http://mu.semte.ch/vocabularies/ext/BesluitNieuweStijl',
+      ),
       predicate: rdf('type'),
     });
     assert.deepArrayContains(actualProps, {
       object: sayDataFactory.namedNode(
         'http://publications.europa.eu/resource/authority/language/NLD',
       ),
-      predicate: 'eli:language',
+      predicate: 'http://data.europa.eu/eli/ontology#language',
     });
 
     assert.deepEqual(actualBacklinks, expectedBacklinks);

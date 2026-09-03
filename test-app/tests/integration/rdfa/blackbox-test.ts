@@ -25,10 +25,13 @@ module('Integration | RDFa blackbox test ', function () {
         plugins: SAMPLE_PLUGINS,
         override: true,
       });
-      controller.initialize(html);
+      controller.initialize(html, { defaultPrefixes: {} });
       const outputHTML = controller.htmlContent;
       // run through the editor twice to test for stability
-      controller.initialize(outputHTML, { doNotClean: true });
+      controller.initialize(outputHTML, {
+        doNotClean: true,
+        defaultPrefixes: {},
+      });
 
       const finalHTML = controller.htmlContent;
       assert.strictEqual(finalHTML, outputHTML);

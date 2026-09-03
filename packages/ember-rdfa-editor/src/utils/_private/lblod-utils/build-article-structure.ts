@@ -8,6 +8,7 @@ import { SayDataFactory } from '#root/core/say-data-factory/index.ts';
 import { v4 as uuid } from 'uuid';
 import {
   DECISION_ARTICLE,
+  RB_ARTICLE,
   type StructurePluginOptions,
   type StructureConfig,
 } from './structure-types.ts';
@@ -56,6 +57,7 @@ export function buildArticleStructure(
    * document with this URI imported it works as expected. It creates valid RDFa in either case.
    */
   decisionUri?: string,
+  regulatoryArticle?: boolean,
 ) {
   const factory = new SayDataFactory();
   let articleResource: string;
@@ -65,10 +67,14 @@ export function buildArticleStructure(
     const articleId = uuid();
     articleResource = `http://data.lblod.info/artikels/${uriGenerator === 'template-uuid4' ? '--ref-uuid4-' : ''}${articleId}`;
   }
+  let structureType = DECISION_ARTICLE;
+  if (regulatoryArticle) {
+    structureType = RB_ARTICLE;
+  }
   return schema.node(
     'structure',
     generateStructureAttrs({
-      config: DECISION_ARTICLE,
+      config: structureType,
       subject: articleResource,
       properties: [
         {

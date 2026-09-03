@@ -26,9 +26,30 @@ import type { RdfaInfo } from './plugin';
 
 export const rdfaInfoPluginKey = new PluginKey<RdfaInfo>('rdfa_info');
 
+// From https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes
+const knownProtocols = new Set([
+  'blob',
+  'data',
+  'file',
+  'ftp',
+  'http',
+  'https',
+  'javascript',
+  'mailto',
+  'ssh',
+  'tel',
+  'urn',
+  'ws',
+  'wss',
+]);
+
 // ### Lifted from @lblod/marawa as it was the only part we were still using
+// Modified to also include known protocols as otherwise was e.g. reporting mailto: links as
+// prefixed
 export function isFullUri(uri: string) {
-  return uri.includes('://');
+  if (uri.includes('://')) return true;
+  const potentialPrefix = uri.split(':')[0];
+  return knownProtocols.has(potentialPrefix);
 }
 /**
  * Returns whether a given URI is prefixed

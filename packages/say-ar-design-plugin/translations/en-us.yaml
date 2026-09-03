@@ -30,6 +30,7 @@ ar-importer:
     last: After the last article
     after-article-x: After article {articleNumber}
     select-position: Choose insertion point
+    on-cursor: On cursor
   preview:
     return-to-overview: Return to overview
     only-existing-label: existing
