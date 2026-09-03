@@ -8,6 +8,9 @@
   display: flex;
   width: 3.3rem;
   height: 3.3rem;
+  background: var(--au-gray-100);
+  overflow: hidden;
+  animation: none;
 }
 
 .say-floating-plus-content {
@@ -55,7 +58,7 @@
 .say-contextual-actions-menu {
   @extend .say-floating-element;
 
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 
   // Because the scroll is set on the whole menu, the overscroll behavior on

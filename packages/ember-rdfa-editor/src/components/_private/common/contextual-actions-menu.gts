@@ -1,12 +1,4 @@
 import Component from '@glimmer/component';
-import {
-  autoPlacement,
-  hide,
-  offset,
-  size,
-  type Middleware,
-} from '@floating-ui/dom';
-import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 import type SayController from '#root/core/say-controller.ts';
 import {
   type ContextualAction,
@@ -20,13 +12,13 @@ import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
 import t from 'ember-intl/helpers/t';
 import { modifier as eModifier } from 'ember-modifier';
-import { getReferenceElementFromSelection } from '#root/components/utils/floating-ui-reference-element.ts';
 import { cached, tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 import { eq, and } from 'ember-truth-helpers';
 import { getSlashCommandsPluginState } from '#root/plugins/slash-commands/index.ts';
 import { TextSelection } from 'prosemirror-state';
 import type { Option } from '#root/utils/option.ts';
+import FloatingWindow from '#root/components/popover.gts';
 
 type GroupWithStatus = ContextualActionGroup & {
   isLoading: boolean;
@@ -85,9 +77,6 @@ export default class ContextualActionsMenu extends Component<Args> {
   };
 
   setUpListeners = eModifier(() => {
-    const handleMousedown = () => {
-      this.args.onClose?.();
-    };
     const handleKeydown = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'ArrowDown':
@@ -108,9 +97,6 @@ export default class ContextualActionsMenu extends Component<Args> {
             this.scrollActionIntoView(this.focusedActionIndex);
           }
           event.preventDefault();
-          break;
-        case 'Escape':
-          this.args.onClose?.();
           break;
         case 'Enter': {
           event.preventDefault();
@@ -151,13 +137,10 @@ export default class ContextualActionsMenu extends Component<Args> {
       }
     };
 
-    const viewDom = this.controller.mainEditorView.dom;
-    viewDom.addEventListener('mousedown', handleMousedown);
     // Hacky but needed because otherwise the editor handles
     // the event first by inserting an enter
     document.addEventListener('keydown', handleKeydown, { capture: true });
     return () => {
-      viewDom.removeEventListener('mousedown', handleMousedown);
       document.removeEventListener('keydown', handleKeydown, { capture: true });
     };
   });
@@ -226,39 +209,6 @@ export default class ContextualActionsMenu extends Component<Args> {
 
   get controller() {
     return this.args.controller;
-  }
-
-  get referenceElement() {
-    const state = this.controller.mainEditorState;
-    const slashPos = getSlashCommandsPluginState(state)?.slashPos;
-    const selection = slashPos
-      ? TextSelection.create(state.doc, slashPos)
-      : state.selection;
-    return getReferenceElementFromSelection({
-      editorState: this.controller.mainEditorState,
-      editorView: this.controller.mainEditorView,
-      selection,
-    });
-  }
-
-  get tooltipMiddleWare(): Middleware[] {
-    return [
-      offset(10),
-      autoPlacement({
-        allowedPlacements: this.textIsRightAligned
-          ? ['bottom-end', 'top-end']
-          : ['bottom-start', 'top-start'],
-      }),
-      size({
-        apply({ availableHeight, elements }) {
-          Object.assign(elements.floating.style, {
-            maxHeight: `${Math.min(window.innerHeight / 2, availableHeight)}px`,
-          });
-        },
-      }),
-      hide({ strategy: 'referenceHidden' }),
-      hide({ strategy: 'escaped' }),
-    ];
   }
 
   // This can be removed once the `:sticky` selector becomes supported
@@ -352,15 +302,24 @@ export default class ContextualActionsMenu extends Component<Args> {
     return this.menuHeightPx > 250;
   }
 
+  get anchorSelection() {
+    const state = this.controller.mainEditorState;
+    const slashPos = getSlashCommandsPluginState(state)?.slashPos;
+    return slashPos
+      ? TextSelection.create(state.doc, slashPos)
+      : state.selection;
+  }
+
+  get maxMenuHeightPx() {
+    return window.innerHeight / 2;
+  }
+
   <template>
-    <div
-      {{floatingUI
-        referenceElement=this.referenceElement
-        placement=this.menuPlacement
-        middleware=this.tooltipMiddleWare
-        strategy="fixed"
-        useTransform=false
-      }}
+    <FloatingWindow
+      @controller={{@controller}}
+      @forSelection={{this.anchorSelection}}
+      @onClose={{@onClose}}
+      @maxHeightPx={{this.maxMenuHeightPx}}
       class="say-contextual-actions-menu"
       ...attributes
       {{this.setUpListeners}}
@@ -496,6 +455,6 @@ export default class ContextualActionsMenu extends Component<Args> {
           {{/each}}
         </div>
       {{/if}}
-    </div>
+    </FloatingWindow>
   </template>
 }
