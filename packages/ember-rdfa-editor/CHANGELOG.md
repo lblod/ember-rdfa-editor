@@ -1,5 +1,15 @@
 # @lblod/ember-rdfa-editor
 
+## 13.19.0
+
+### Minor Changes
+
+- [#1403](https://github.com/lblod/ember-rdfa-editor/pull/1403) [`ed69931`](https://github.com/lblod/ember-rdfa-editor/commit/ed6993157f5c1c5be2906d061d0900d8958f9de3) Thanks [@kobemertens](https://github.com/kobemertens)! - Add popover component
+
+- [#1406](https://github.com/lblod/ember-rdfa-editor/pull/1406) [`684bd39`](https://github.com/lblod/ember-rdfa-editor/commit/684bd39fc72071733739df39ef76010495faa41a) Thanks [@kobemertens](https://github.com/kobemertens)! - Remove deprecated `SelectionTooltip` component
+
+- [#1403](https://github.com/lblod/ember-rdfa-editor/pull/1403) [`ed69931`](https://github.com/lblod/ember-rdfa-editor/commit/ed6993157f5c1c5be2906d061d0900d8958f9de3) Thanks [@kobemertens](https://github.com/kobemertens)! - Add custom datepicker component
+
 ## 13.18.0
 
 ### Minor Changes
