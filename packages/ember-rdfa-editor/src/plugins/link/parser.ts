@@ -46,9 +46,9 @@ export const defaultLinkParser = ({
      * `linkifyjs` and `libphonenumber-js` will check if the input text has the form of a link, and will add a protocol if necessary
      * Note: e.g. `mailto:test` or `http://test` will be seen as valid by this step, so a second validation step is also necessary
      */
-    const href = detectLink(trimmedInput, defaultCountryCode);
+    const url = detectLink(trimmedInput, defaultCountryCode);
 
-    if (!href) {
+    if (!url) {
       return INVALID_LINK_RESULT;
     }
 
@@ -56,15 +56,13 @@ export const defaultLinkParser = ({
      * Second step: link validation
      * Using `isURL`/`isEmail`/custom validators from the validator.js library, we check if the produced href is valid
      */
-    if (
-      !isValidHref(href, supportedProtocols, customProtocolValidatorMapping)
-    ) {
+    if (!isValidURL(url, supportedProtocols, customProtocolValidatorMapping)) {
       return INVALID_LINK_RESULT;
     }
 
     return {
       isSuccessful: true,
-      value: href,
+      value: url.href,
     };
   };
 };
@@ -72,18 +70,18 @@ export const defaultLinkParser = ({
 const detectLink = (
   input: string,
   defaultCountryCode: CountryCode,
-): string | undefined => {
+): URL | undefined => {
   if (linkifyTest(input)) {
     const matches = linkifyFind(input);
-    return matches[0].href;
+    return new URL(matches[0].href);
   }
 
   const phoneNumber = parsePhoneNumber(input, defaultCountryCode);
   if (phoneNumber) {
     const phoneUri = phoneNumber.getURI();
-    return input.startsWith('sms:')
-      ? phoneUri.replace('tel:', 'sms:')
-      : phoneUri;
+    return /^sms:/i.test(input)
+      ? new URL(phoneUri.replace('tel:', 'sms:'))
+      : new URL(phoneUri);
   }
 
   return;
@@ -103,13 +101,12 @@ const BUILT_IN_VALIDATORS: ProtocolValidatorMapping = {
     isURL(url.href, { require_protocol: true, require_tld: true }),
 };
 
-const isValidHref = (
-  href: string,
+const isValidURL = (
+  url: URL,
   supportedProtocols: string[],
   customProtocolValidatorMapping?: ProtocolValidatorMapping,
 ) => {
   try {
-    const url = new URL(href);
     if (!supportedProtocols.includes(url.protocol)) {
       return false;
     }
