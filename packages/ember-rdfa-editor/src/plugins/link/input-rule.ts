@@ -14,7 +14,7 @@ const DEFAULT_REGEX = new RegExp(
   (^|\s)
   (
     (?: ${/* parse email */ ''}
-      (?:mailto:)? ${/* optional mailto: protocol */ ''}
+      (?i:mailto:)? ${/* optional mailto: protocol */ ''}
       [A-Za-z0-9._%+-]+ ${/* local-part */ ''}
       @
       [A-Za-z0-9.-]+ ${/* domain */ ''}
@@ -23,7 +23,7 @@ const DEFAULT_REGEX = new RegExp(
     )
     |
     (?: ${/* parse weblinks */ ''}
-      (?:https?:\/\/)? ${/* optional http(s): protocol */ ''}
+      (?i:https?:\/\/)? ${/* optional http(s): protocol */ ''}
       (?:www\.)? ${/* optional www */ ''}
       [A-Za-z0-9.-]+ ${/* domain */ ''}
       \.
@@ -66,6 +66,7 @@ export const link_input_rule = ({
     const textAfterLink = match[3];
     const linkStart = start + textBeforeLink.length;
     const linkParserResult = linkParser(link);
+
     if (!linkParserResult.isSuccessful) {
       return null;
     }
