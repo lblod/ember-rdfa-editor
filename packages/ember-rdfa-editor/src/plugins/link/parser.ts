@@ -80,7 +80,8 @@ const detectLink = (
   if (phoneNumber) {
     const phoneUri = phoneNumber.getURI();
     return /^sms:/i.test(input)
-      ? new URL(phoneUri.replace('tel:', 'sms:'))
+      ? // libphonenumber-js transforms sms: automatically to tel:, so revert this transform if necessary
+        new URL(phoneUri.replace('tel:', 'sms:'))
       : new URL(phoneUri);
   }
 
