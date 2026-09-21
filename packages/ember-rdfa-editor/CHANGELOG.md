@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.19.1
+
+### Patch Changes
+
+- [#1407](https://github.com/lblod/ember-rdfa-editor/pull/1407) [`33a56d7`](https://github.com/lblod/ember-rdfa-editor/commit/33a56d7fe4fd8db3e1e1a0ac4fe2e8184f99165d) Thanks [@elpoelma](https://github.com/elpoelma)! - link-plugin: adjustment of `DEFAULT_REGEX` to ensure that URL schemes are parsed in a case insensitive way. E.g. `HttP` is now also accepted and parsed as `http`
+
 ## 13.19.0
 
 ### Minor Changes
