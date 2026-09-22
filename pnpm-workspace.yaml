@@ -163,7 +163,7 @@ catalog:
   stylelint-config-standard: ^36.0.1
   stylelint-prettier: ^5.0.3
   tracked-built-ins: ^4.1.0
-  tracked-toolbox: ^2.2.0
+  tracked-toolbox: ^2.2.0 || ^3.0.0
   tsx: ^4.20.6
   typescript: ^5.9.3
   typescript-eslint: ^7.18.0
