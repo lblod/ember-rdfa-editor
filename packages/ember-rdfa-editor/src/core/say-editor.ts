@@ -36,6 +36,7 @@ import HTMLInputParser from '#root/utils/_private/html-input-parser.ts';
 import { preprocessRDFa } from '#root/core/rdfa-processor.ts';
 import { ProseParser } from '#root/prosemirror-aliases.ts';
 import { onChangedPlugin } from '#root/plugins/on-changed/plugin.ts';
+import { keyboardSelectionHandler } from '#root/plugins/keyboard-selection-handler/index.ts';
 
 export type PluginConfig = Plugin[] | { plugins: Plugin[]; override?: boolean };
 
@@ -119,6 +120,7 @@ export default class SayEditor {
         gapCursor(),
         keymap(baseKeymap(schema, keyMapOptions)),
         history(),
+        keyboardSelectionHandler(),
         recreateUuidsOnPastePlugin ?? recreateUuidsOnPaste,
         defaultAttributeValueGeneration([
           {
