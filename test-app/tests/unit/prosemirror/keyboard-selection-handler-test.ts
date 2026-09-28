@@ -7,7 +7,7 @@ import {
   TextSelection,
 } from '@lblod/ember-rdfa-editor';
 import { link } from '@lblod/ember-rdfa-editor/plugins/link';
-import { keyboardSelectionNavigator } from '@lblod/ember-rdfa-editor/plugins/keyboard-selection-navigator';
+import { keyboardSelectionHandler } from '@lblod/ember-rdfa-editor/plugins/keyboard-selection-handler';
 
 const TEST_SCHEMA = new Schema({
   nodes: {
@@ -75,7 +75,7 @@ const docWithLinkNode = {
 };
 
 function setup(docJson: unknown, anchor: number, head = anchor) {
-  const plugin = keyboardSelectionNavigator();
+  const plugin = keyboardSelectionHandler();
   const state = EditorState.create({
     schema: TEST_SCHEMA,
     plugins: [plugin],
@@ -107,7 +107,7 @@ function keyDown(key: string, options: KeyboardEventInit = {}) {
   });
 }
 
-module('Unit | ProseMirror | keyboard-selection-navigator', function () {
+module('Unit | ProseMirror | keyboard-selection-handler', function () {
   module('block atoms', function () {
     test('Shift-ArrowDown selects the whole atom next to the caret', function (assert) {
       const { view, handleKey } = setup(docWithAtomInMiddle, 4);
@@ -186,7 +186,7 @@ module('Unit | ProseMirror | keyboard-selection-navigator', function () {
     });
 
     test('nothing happens when the selection is not a text selection', function (assert) {
-      const plugin = keyboardSelectionNavigator();
+      const plugin = keyboardSelectionHandler();
       const state = EditorState.create({
         schema: TEST_SCHEMA,
         plugins: [plugin],

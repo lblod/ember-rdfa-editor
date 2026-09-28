@@ -109,6 +109,10 @@
       "types": "./declarations/plugins/imported-resources/index.d.ts",
       "default": "./dist/plugins/imported-resources/index.js"
     },
+    "./plugins/keyboard-selection-handler": {
+      "types": "./declarations/plugins/keyboard-selection-handler/index.d.ts",
+      "default": "./dist/plugins/keyboard-selection-handler/index.js"
+    },
     "./plugins/invisibles": {
       "types": "./declarations/plugins/invisibles/index.d.ts",
       "default": "./dist/plugins/invisibles/index.js"

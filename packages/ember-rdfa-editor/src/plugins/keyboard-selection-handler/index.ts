@@ -120,7 +120,7 @@ function extendSelectionOverAtom(
  *   alongside whatever was already selected, instead of the caret
  *   snapping into (or refusing to enter) the atom.
  */
-export function keyboardSelectionNavigator(): ProsePlugin {
+export function keyboardSelectionHandler(): ProsePlugin {
   return new ProsePlugin({
     props: {
       handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
