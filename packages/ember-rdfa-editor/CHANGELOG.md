@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.20.0
+
+### Minor Changes
+
+- [#1408](https://github.com/lblod/ember-rdfa-editor/pull/1408) [`cd46609`](https://github.com/lblod/ember-rdfa-editor/commit/cd46609ada77f9bc4042457227d7520fc403a03c) Thanks [@Windvis](https://github.com/Windvis)! - Add support for tracked-toolbox v3
+
 ## 13.19.1
 
 ### Patch Changes
