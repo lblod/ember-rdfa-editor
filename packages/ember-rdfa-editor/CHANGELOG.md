@@ -1,5 +1,11 @@
 # @lblod/ember-rdfa-editor
 
+## 13.20.1
+
+### Patch Changes
+
+- [`c26eb4c`](https://github.com/lblod/ember-rdfa-editor/commit/c26eb4c6086b2ff032b42c78d6f368f39d13b257) Thanks [@abeforgit](https://github.com/abeforgit)! - switch to esm version of iter-tools
+
 ## 13.20.0
 
 ### Minor Changes
