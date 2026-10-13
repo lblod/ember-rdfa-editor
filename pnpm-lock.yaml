@@ -339,9 +339,6 @@ catalogs:
     globals:
       specifier: ^15.15.0
       version: 15.15.0
-    iter-tools:
-      specifier: ^7.5.4
-      version: 7.5.4
     js-beautify:
       specifier: ^1.15.4
       version: 1.15.4
@@ -673,8 +670,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.0(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-source@6.7.0(@glimmer/component@1.1.2(@babel/core@7.28.6))(rsvp@4.8.5))
       iter-tools:
-        specifier: 'catalog:'
-        version: 7.5.4
+        specifier: npm:iter-tools-es@^7.5.4
+        version: iter-tools-es@7.5.4
       js-beautify:
         specifier: 'catalog:'
         version: 1.15.4
@@ -8588,8 +8585,8 @@ packages:
     resolution: {integrity: sha512-+XRlFseT8B3L9KyjxxLjfXSLMuErKDsd8DBNrsaxoViABMEZlOSCstwmw0qpoFX3+U6yWU1yhLudAe6/lETGGA==}
     engines: {node: '>=0.12'}
 
-  iter-tools@7.5.4:
-    resolution: {integrity: sha512-87ZdQS5L48py+tEw71VfvELwoc1aqWGO1l7mZrIG6wjWZ4/d/eXTpWalbBlPDwibfnxih47xhdP8Q1GFBGPPJg==}
+  iter-tools-es@7.5.4:
+    resolution: {integrity: sha512-Of+EJp3cTuxdYmt/bidzODOuhH/MbHBJf9nK21dqlO6hyPjKYzhw0lnZlDYfOzZ2baL5NwnsICC6mccV+CNRPg==}
 
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
@@ -22307,9 +22304,7 @@ snapshots:
       editions: 2.3.1
       textextensions: 2.6.0
 
-  iter-tools@7.5.4:
-    dependencies:
-      '@babel/runtime': 7.28.6
+  iter-tools-es@7.5.4: {}
 
   jackspeak@3.4.3:
     dependencies:
