@@ -10,12 +10,7 @@ type AdjacentBlock = {
   pos: number;
 };
 
-/**
- * Returns the block node directly before/after the innermost block
- * containing `$head`, climbing up out of parents which have no
- * sibling in the given direction. Returns `null` when no such block
- * exists.
- */
+
 function adjacentBlock(
   $head: ResolvedPos,
   direction: Direction,
@@ -37,13 +32,7 @@ function adjacentBlock(
   return null;
 }
 
-/**
- * Extends the selection over an inline atom (e.g. a link node)
- * directly next to the selection head.
- *
- * The head jumps over the whole atom, so the atom is selected as a
- * single unit, alongside the content that was already selected.
- */
+
 function extendSelectionOverInlineAtom(
   view: EditorView,
   node: PNode,
@@ -61,17 +50,7 @@ function extendSelectionOverInlineAtom(
   return true;
 }
 
-/**
- * Extends the selection so it covers the whole block atom next to
- * the current selection head, alongside the content that was
- * already selected.
- *
- * The head moves to the first valid caret position beyond the atom,
- * which makes the atom part of the selection range. When no such
- * position exists (e.g. the atom is the first/last node of the
- * document) and nothing was selected yet, the atom itself is selected
- * as a node selection instead.
- */
+
 function extendSelectionOverAtom(
   view: EditorView,
   atom: AdjacentBlock,
@@ -107,19 +86,6 @@ function extendSelectionOverAtom(
   return false;
 }
 
-/**
- * Plugin which makes extending a selection with **Shift-Arrow** keys
- * work when the next thing to select is an atom.
- *
- * - **Shift-ArrowRight** / **Shift-ArrowLeft**: when the inline node
- *   directly before/after the selection head is an atom (e.g. a link
- *   node), the whole atom is selected as a single unit and the head
- *   jumps to the content after/before it.
- * - **Shift-ArrowUp** / **Shift-ArrowDown**: when the block next to
- *   the selection head is an atom, the whole atom is selected
- *   alongside whatever was already selected, instead of the caret
- *   snapping into (or refusing to enter) the atom.
- */
 export function keyboardSelectionHandler(): ProsePlugin {
   return new ProsePlugin({
     props: {
@@ -133,29 +99,27 @@ export function keyboardSelectionHandler(): ProsePlugin {
         }
         switch (event.key) {
           case 'ArrowRight':
-          case 'ArrowLeft': {
-            const direction =
-              event.key === 'ArrowRight' ? 'forward' : 'backward';
-            const node =
-              direction === 'forward'
-                ? selection.$head.nodeAfter
-                : selection.$head.nodeBefore;
-            // text nodes are atoms too (they are leaves), but the
-            // caret can travel through them natively
-            if (!node || node.isText || !node.isAtom) {
-              return false;
-            }
-            return extendSelectionOverInlineAtom(view, node, direction);
-          }
+          case 'ArrowLeft':
           case 'ArrowDown':
           case 'ArrowUp': {
             const direction =
-              event.key === 'ArrowDown' ? 'forward' : 'backward';
-            const adjacent = adjacentBlock(selection.$head, direction);
-            if (!adjacent || !adjacent.node.isAtom) {
-              return false;
+              event.key === 'ArrowRight' || event.key === 'ArrowDown'
+                ? 'forward'
+                : 'backward';
+            const inlineAtom =
+              direction === 'forward'
+                ? selection.$head.nodeAfter
+                : selection.$head.nodeBefore;
+            if (inlineAtom && !inlineAtom.isText && inlineAtom.isAtom) {
+              return extendSelectionOverInlineAtom(view, inlineAtom, direction);
             }
-            return extendSelectionOverAtom(view, adjacent, direction);
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              const block = adjacentBlock(selection.$head, direction);
+              if (block && block.node.isAtom) {
+                return extendSelectionOverAtom(view, block, direction);
+              }
+            }
+            return false;
           }
           default:
             return false;

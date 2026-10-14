@@ -74,6 +74,45 @@ const docWithLinkNode = {
   content: [paragraph(text('text '), linkNode('link'), text(' more'))],
 };
 
+// <paragraph>text <link>link</link></paragraph>
+// The paragraph spans [0..13] (content 1..12): "text " occupies
+// [1..6] and the link node spans [6..12].
+const docWithLinkAtEnd = {
+  type: 'doc',
+  content: [paragraph(text('text '), linkNode('link'))],
+};
+
+// <paragraph><link>link</link> more</paragraph>
+// The paragraph spans [0..13] (content 1..12): the link node spans
+// [1..7] and " more" occupies [7..12].
+const docWithLinkAtStart = {
+  type: 'doc',
+  content: [paragraph(linkNode('link'), text(' more'))],
+};
+
+// <paragraph><link>one</link><link>two</link></paragraph>
+// "one" and "two" are 3 characters, so both link nodes have a
+// node size of 5. The paragraph spans [0..12] (content 1..11):
+// the first link node spans [1..6], the second one spans [6..11]
+// and the caret position between both links is 6.
+const docWithConsecutiveLinks = {
+  type: 'doc',
+  content: [paragraph(linkNode('one'), linkNode('two'))],
+};
+
+// <paragraph>text <link>link</link></paragraph><horizontal_rule/><paragraph>after</paragraph>
+// paragraph 1 spans [0..13] (content 1..12: "text " occupies
+// [1..6], the link node spans [6..12]), the rule spans [13..14] and
+// paragraph 2 spans [14..21] (content 15..20).
+const docWithLinkThenAtom = {
+  type: 'doc',
+  content: [
+    paragraph(text('text '), linkNode('link')),
+    { type: 'horizontal_rule' },
+    paragraph(text('after')),
+  ],
+};
+
 function setup(docJson: unknown, anchor: number, head = anchor) {
   const plugin = keyboardSelectionHandler();
   const state = EditorState.create({
@@ -258,6 +297,149 @@ module('Unit | ProseMirror | keyboard-selection-handler', function () {
       assert.strictEqual(view.state.selection.to, 12);
       assert.strictEqual(view.state.selection.anchor, 12);
       assert.strictEqual(view.state.selection.head, 6);
+    });
+
+    module('vertical keys', function () {
+      test('Shift-ArrowDown selects the whole link node after the caret', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 6);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 12);
+        assert.strictEqual(view.state.selection.anchor, 6);
+        assert.strictEqual(view.state.selection.head, 12);
+      });
+
+      test('Shift-ArrowUp selects the whole link node before the caret', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 12);
+        const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 12);
+        assert.strictEqual(view.state.selection.anchor, 12);
+        assert.strictEqual(view.state.selection.head, 6);
+      });
+
+      test('Shift-ArrowDown selects the whole link node alongside the existing selection', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 3, 6);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 3);
+        assert.strictEqual(view.state.selection.to, 12);
+        assert.strictEqual(view.state.selection.anchor, 3);
+        assert.strictEqual(view.state.selection.head, 12);
+      });
+
+      test('Shift-ArrowUp selects the whole link node alongside the existing selection', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 13, 12);
+        const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 13);
+        assert.strictEqual(view.state.selection.anchor, 13);
+        assert.strictEqual(view.state.selection.head, 6);
+      });
+
+      test('Shift-ArrowDown before a link at the end of a paragraph moves the head to the end of the paragraph', function (assert) {
+        const { view, handleKey } = setup(docWithLinkAtEnd, 6);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 12);
+        assert.strictEqual(view.state.selection.head, 12);
+
+        // the head is at the end of the paragraph now, so there is
+        // nothing left to handle for the plugin
+        const handledAgain = handleKey(
+          keyDown('ArrowDown', { shiftKey: true }),
+        );
+        assert.false(handledAgain, 'next event is not handled');
+        assert.strictEqual(view.state.selection.head, 12);
+      });
+
+      test('Shift-ArrowUp after a link at the start of a paragraph moves the head to the start of the paragraph', function (assert) {
+        const { view, handleKey } = setup(docWithLinkAtStart, 7);
+        const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 1);
+        assert.strictEqual(view.state.selection.to, 7);
+        assert.strictEqual(view.state.selection.head, 1);
+      });
+
+      test('caret between two consecutive links: Shift-ArrowDown selects the second link', function (assert) {
+        const { view, handleKey } = setup(docWithConsecutiveLinks, 6);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 11);
+        assert.strictEqual(view.state.selection.anchor, 6);
+        assert.strictEqual(view.state.selection.head, 11);
+      });
+
+      test('caret between two consecutive links: Shift-ArrowUp selects the first link', function (assert) {
+        const { view, handleKey } = setup(docWithConsecutiveLinks, 6);
+        const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 1);
+        assert.strictEqual(view.state.selection.to, 6);
+        assert.strictEqual(view.state.selection.anchor, 6);
+        assert.strictEqual(view.state.selection.head, 1);
+      });
+
+      test('the inline atom is selected before falling back to the adjacent block atom', function (assert) {
+        const { view, handleKey } = setup(docWithLinkThenAtom, 6);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.true(handled, 'event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 12);
+        assert.strictEqual(view.state.selection.head, 12);
+
+        // the head is now after the link and the next block is the
+        // rule, so the block logic selects over the rule
+        const handledAgain = handleKey(
+          keyDown('ArrowDown', { shiftKey: true }),
+        );
+        assert.true(handledAgain, 'next event is handled');
+        assert.strictEqual(view.state.selection.from, 6);
+        assert.strictEqual(view.state.selection.to, 15);
+        assert.strictEqual(view.state.selection.head, 15);
+      });
+
+      test('Shift-ArrowUp ignores the link node after the caret', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 6);
+        const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+        assert.false(handled, 'event is not handled');
+        assert.strictEqual(view.state.selection.head, 6);
+      });
+
+      test('Shift-ArrowDown ignores the link node before the caret', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 12);
+        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+        assert.false(handled, 'event is not handled');
+        assert.strictEqual(view.state.selection.head, 12);
+      });
+
+      test('vertical keys do not handle the link node without shift', function (assert) {
+        const { view, handleKey } = setup(docWithLinkNode, 6);
+
+        assert.false(
+          handleKey(keyDown('ArrowDown')),
+          'ArrowDown without shift',
+        );
+        assert.false(handleKey(keyDown('ArrowUp')), 'ArrowUp without shift');
+        assert.strictEqual(view.state.selection.head, 6);
+      });
     });
 
     test('Shift-ArrowRight selects the whole link node alongside the existing selection', function (assert) {
