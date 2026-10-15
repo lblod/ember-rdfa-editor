@@ -2,22 +2,18 @@ import type { Node as PNode, ResolvedPos } from 'prosemirror-model';
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 import { ProsePlugin } from '#root/prosemirror-aliases.ts';
+import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 
 type Direction = 'backward' | 'forward';
 
-type AdjacentBlock = {
-  node: PNode;
-  pos: number;
-};
 
-
-function adjacentBlock(
-  $head: ResolvedPos,
+function findAdjacentBlock(
+  head: ResolvedPos,
   direction: Direction,
-): AdjacentBlock | null {
-  for (let depth = $head.depth; depth > 0; depth--) {
-    const parent = $head.node(depth - 1);
-    const index = $head.index(depth - 1);
+): ResolvedPNode | null {
+  for (let depth = head.depth; depth > 0; depth--) {
+    const parent = head.node(depth - 1);
+    const index = head.index(depth - 1);
     const siblingIndex = direction === 'forward' ? index + 1 : index - 1;
     if (siblingIndex < 0 || siblingIndex >= parent.childCount) {
       continue;
@@ -25,15 +21,15 @@ function adjacentBlock(
     const node = parent.child(siblingIndex);
     const pos =
       direction === 'forward'
-        ? $head.after(depth)
-        : $head.before(depth) - node.nodeSize;
-    return { node, pos };
+        ? head.after(depth)
+        : head.before(depth) - node.nodeSize;
+    return { value: node, pos };
   }
   return null;
 }
 
 
-function extendSelectionOverInlineAtom(
+function extendSelectionOverInlineNode(
   view: EditorView,
   node: PNode,
   direction: Direction,
@@ -51,14 +47,14 @@ function extendSelectionOverInlineAtom(
 }
 
 
-function extendSelectionOverAtom(
+function extendSelectionOverBlockNode(
   view: EditorView,
-  atom: AdjacentBlock,
+  node: ResolvedPNode,
   direction: Direction,
 ): boolean {
   const { doc, selection } = view.state;
   const boundary =
-    direction === 'forward' ? atom.pos + atom.node.nodeSize : atom.pos;
+    direction === 'forward' ? node.pos + node.value.nodeSize : node.pos;
   const target = Selection.findFrom(
     doc.resolve(boundary),
     direction === 'forward' ? 1 : -1,
@@ -74,10 +70,10 @@ function extendSelectionOverAtom(
     return true;
   }
 
-  if (selection.empty && NodeSelection.isSelectable(atom.node)) {
+  if (selection.empty && NodeSelection.isSelectable(node.value)) {
     view.dispatch(
       view.state.tr
-        .setSelection(NodeSelection.create(doc, atom.pos))
+        .setSelection(NodeSelection.create(doc, node.pos))
         .scrollIntoView(),
     );
     return true;
@@ -111,12 +107,11 @@ export function keyboardSelectionHandler(): ProsePlugin {
                 ? selection.$head.nodeAfter
                 : selection.$head.nodeBefore;
             if (inlineAtom && !inlineAtom.isText && inlineAtom.isAtom) {
-              return extendSelectionOverInlineAtom(view, inlineAtom, direction);
-            }
-            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-              const block = adjacentBlock(selection.$head, direction);
-              if (block && block.node.isAtom) {
-                return extendSelectionOverAtom(view, block, direction);
+              return extendSelectionOverInlineNode(view, inlineAtom, direction);
+            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              const block = findAdjacentBlock(selection.$head, direction);
+              if (block && block.value.isAtom) {
+                return extendSelectionOverBlockNode(view, block, direction);
               }
             }
             return false;
