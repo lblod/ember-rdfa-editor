@@ -67,6 +67,7 @@ function extendSelectionOverBlockNode(
     return true;
   }
 
+  // This is needed for when the block node is the last or first position of a document and we want to select it
   if (selection.empty && NodeSelection.isSelectable(node.value)) {
     view.dispatch(
       view.state.tr
