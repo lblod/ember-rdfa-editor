@@ -1,5 +1,5 @@
 import type { Node as PNode, ResolvedPos } from 'prosemirror-model';
-import { NodeSelection, Selection, TextSelection } from 'prosemirror-state';
+import { Selection, TextSelection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 import { ProsePlugin } from '#root/prosemirror-aliases.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -67,15 +67,6 @@ function extendSelectionOverBlockNode(
     return true;
   }
 
-  if (selection.empty && NodeSelection.isSelectable(node.value)) {
-    view.dispatch(
-      view.state.tr
-        .setSelection(NodeSelection.create(doc, node.pos))
-        .scrollIntoView(),
-    );
-    return true;
-  }
-
   return false;
 }
 
@@ -103,8 +94,11 @@ export function keyboardSelectionHandler(): ProsePlugin {
               direction === 'forward'
                 ? selection.$head.nodeAfter
                 : selection.$head.nodeBefore;
+            // If the selection is an inline atom we just extend the selection over it
             if (inlineAtom && !inlineAtom.isText && inlineAtom.isAtom) {
               return extendSelectionOverInlineNode(view, inlineAtom, direction);
+            // But if not and the user has pressed up or down we try to find the next block to extend the
+            // selection over, with the right/left arrows the behaviour stops at the end of the line
             } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
               const block = findAdjacentBlock(selection.$head, direction);
               if (block && block.value.isAtom) {
