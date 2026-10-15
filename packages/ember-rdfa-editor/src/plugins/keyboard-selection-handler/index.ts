@@ -6,7 +6,6 @@ import type { ResolvedPNode } from '#root/utils/_private/types.ts';
 
 type Direction = 'backward' | 'forward';
 
-
 function findAdjacentBlock(
   head: ResolvedPos,
   direction: Direction,
@@ -28,7 +27,6 @@ function findAdjacentBlock(
   return null;
 }
 
-
 function extendSelectionOverInlineNode(
   view: EditorView,
   node: PNode,
@@ -45,7 +43,6 @@ function extendSelectionOverInlineNode(
   );
   return true;
 }
-
 
 function extendSelectionOverBlockNode(
   view: EditorView,
