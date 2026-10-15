@@ -1,5 +1,5 @@
 import type { Node as PNode, ResolvedPos } from 'prosemirror-model';
-import { Selection, TextSelection } from 'prosemirror-state';
+import { NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 import { ProsePlugin } from '#root/prosemirror-aliases.ts';
 import type { ResolvedPNode } from '#root/utils/_private/types.ts';
@@ -62,6 +62,15 @@ function extendSelectionOverBlockNode(
     view.dispatch(
       view.state.tr
         .setSelection(TextSelection.create(doc, selection.anchor, target.head))
+        .scrollIntoView(),
+    );
+    return true;
+  }
+
+  if (selection.empty && NodeSelection.isSelectable(node.value)) {
+    view.dispatch(
+      view.state.tr
+        .setSelection(NodeSelection.create(doc, node.pos))
         .scrollIntoView(),
     );
     return true;

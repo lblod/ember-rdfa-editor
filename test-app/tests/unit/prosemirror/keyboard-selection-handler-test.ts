@@ -55,6 +55,12 @@ const docWithAtomAtEnd = {
   content: [paragraph(text('hello')), { type: 'horizontal_rule' }],
 };
 
+// <horizontal_rule/><paragraph>hello</paragraph>
+const docWithAtomAtStart = {
+  type: 'doc',
+  content: [{ type: 'horizontal_rule' }, paragraph(text('hello'))],
+};
+
 // <paragraph>hello</paragraph><paragraph>world</paragraph>
 const docWithoutAtom = {
   type: 'doc',
@@ -242,6 +248,26 @@ module('Unit | ProseMirror | keyboard-selection-handler', function () {
 
       assert.false(handled, 'event is not handled');
       assert.true(view.state.selection instanceof NodeSelection);
+    });
+
+    test('Shift-ArrowDown selects the atom itself when it is the last block of the document', function (assert) {
+      const { view, handleKey } = setup(docWithAtomAtEnd, 4);
+      const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
+
+      assert.true(handled, 'event is handled');
+      assert.true(view.state.selection instanceof NodeSelection);
+      assert.strictEqual(view.state.selection.from, 7);
+      assert.strictEqual(view.state.selection.to, 8);
+    });
+
+    test('Shift-ArrowUp selects the atom itself when it is the first block of the document', function (assert) {
+      const { view, handleKey } = setup(docWithAtomAtStart, 4);
+      const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
+
+      assert.true(handled, 'event is handled');
+      assert.true(view.state.selection instanceof NodeSelection);
+      assert.strictEqual(view.state.selection.from, 0);
+      assert.strictEqual(view.state.selection.to, 1);
     });
   });
 
