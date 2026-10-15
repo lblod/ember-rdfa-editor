@@ -97,8 +97,8 @@ export function keyboardSelectionHandler(): ProsePlugin {
             // If the selection is an inline atom we just extend the selection over it
             if (inlineAtom && !inlineAtom.isText && inlineAtom.isAtom) {
               return extendSelectionOverInlineNode(view, inlineAtom, direction);
-            // But if not and the user has pressed up or down we try to find the next block to extend the
-            // selection over, with the right/left arrows the behaviour stops at the end of the line
+              // But if not and the user has pressed up or down we try to find the next block to extend the
+              // selection over, with the right/left arrows the behaviour stops at the end of the line
             } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
               const block = findAdjacentBlock(selection.$head, direction);
               if (block && block.value.isAtom) {
