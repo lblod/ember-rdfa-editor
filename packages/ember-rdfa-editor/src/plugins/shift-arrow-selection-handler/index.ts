@@ -26,7 +26,7 @@ export function shiftArrowSelectionHandler(): ProsePlugin {
   return new ProsePlugin({
     props: {
       handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
-        if (!event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) {
+        if (!event.shiftKey || event.metaKey || event.altKey) {
           return false;
         }
         const { selection } = view.state;
