@@ -80,7 +80,7 @@ function extendSelectionOverBlockNode(
   return false;
 }
 
-export function keyboardSelectionHandler(): ProsePlugin {
+export function shiftArrowSelectionHandler(): ProsePlugin {
   return new ProsePlugin({
     props: {
       handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
@@ -88,6 +88,7 @@ export function keyboardSelectionHandler(): ProsePlugin {
           return false;
         }
         const { selection } = view.state;
+        // We decided to only handle text selections in the future, we could have a look at node selections too
         if (!(selection instanceof TextSelection)) {
           return false;
         }
@@ -100,13 +101,13 @@ export function keyboardSelectionHandler(): ProsePlugin {
               event.key === 'ArrowRight' || event.key === 'ArrowDown'
                 ? 'forward'
                 : 'backward';
-            const inlineAtom =
+            const nextNode =
               direction === 'forward'
                 ? selection.$head.nodeAfter
                 : selection.$head.nodeBefore;
             // If the selection is an inline atom we just extend the selection over it
-            if (inlineAtom && !inlineAtom.isText && inlineAtom.isAtom) {
-              return extendSelectionOverInlineNode(view, inlineAtom, direction);
+            if (nextNode && !nextNode.isText && nextNode.isAtom) {
+              return extendSelectionOverInlineNode(view, nextNode, direction);
               // But if not and the user has pressed up or down we try to find the next block to extend the
               // selection over, with the right/left arrows the behaviour stops at the end of the line
             } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
