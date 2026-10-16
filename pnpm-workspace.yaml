@@ -142,7 +142,7 @@ catalog:
   prosemirror-state: ^1.4.4
   prosemirror-test-builder: ^1.1.1
   prosemirror-transform: ^1.11.0
-  prosemirror-view: ^1.41.5
+  prosemirror-view: ^1.42.3
   qunit: ^2.25.0
   qunit-dom: ^3.5.0
   rdf-data-factory: ^2.0.2
