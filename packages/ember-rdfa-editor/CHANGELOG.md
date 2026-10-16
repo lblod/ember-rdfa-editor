@@ -1,5 +1,17 @@
 # @lblod/ember-rdfa-editor
 
+## 13.20.1
+
+### Patch Changes
+
+- [`c26eb4c`](https://github.com/lblod/ember-rdfa-editor/commit/c26eb4c6086b2ff032b42c78d6f368f39d13b257) Thanks [@abeforgit](https://github.com/abeforgit)! - switch to esm version of iter-tools
+
+## 13.20.0
+
+### Minor Changes
+
+- [#1408](https://github.com/lblod/ember-rdfa-editor/pull/1408) [`cd46609`](https://github.com/lblod/ember-rdfa-editor/commit/cd46609ada77f9bc4042457227d7520fc403a03c) Thanks [@Windvis](https://github.com/Windvis)! - Add support for tracked-toolbox v3
+
 ## 13.19.1
 
 ### Patch Changes
