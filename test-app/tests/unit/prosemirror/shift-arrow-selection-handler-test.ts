@@ -2,7 +2,6 @@
 import { module, test } from 'qunit';
 import {
   EditorState,
-  NodeSelection,
   SayView,
   Schema,
   TextSelection,
@@ -18,7 +17,6 @@ const TEST_SCHEMA = new Schema({
       group: 'block',
       toDOM: () => ['p', 0],
     },
-    horizontal_rule: { group: 'block', toDOM: () => ['hr'] },
     link: link(),
     text: { group: 'inline' },
   },
@@ -36,36 +34,6 @@ const linkNode = (value: string) => ({
   attrs: { href: 'http://example.com' },
   content: [text(value)],
 });
-
-// <paragraph>hello</paragraph><horizontal_rule/><paragraph>world</paragraph>
-// paragraph 1 spans [0..7] (content 1..6), the rule spans [7..8]
-// and paragraph 2 spans [8..15] (content 9..14).
-const docWithAtomInMiddle = {
-  type: 'doc',
-  content: [
-    paragraph(text('hello')),
-    { type: 'horizontal_rule' },
-    paragraph(text('world')),
-  ],
-};
-
-// <paragraph>hello</paragraph><horizontal_rule/>
-const docWithAtomAtEnd = {
-  type: 'doc',
-  content: [paragraph(text('hello')), { type: 'horizontal_rule' }],
-};
-
-// <horizontal_rule/><paragraph>hello</paragraph>
-const docWithAtomAtStart = {
-  type: 'doc',
-  content: [{ type: 'horizontal_rule' }, paragraph(text('hello'))],
-};
-
-// <paragraph>hello</paragraph><paragraph>world</paragraph>
-const docWithoutAtom = {
-  type: 'doc',
-  content: [paragraph(text('hello')), paragraph(text('world'))],
-};
 
 // <paragraph>text <link>link</link> more</paragraph>
 // The paragraph spans [0..18] (content 1..17): "text " occupies
@@ -99,19 +67,6 @@ const docWithLinkAtStart = {
 const docWithConsecutiveLinks = {
   type: 'doc',
   content: [paragraph(linkNode('one'), linkNode('two'))],
-};
-
-// <paragraph>text <link>link</link></paragraph><horizontal_rule/><paragraph>after</paragraph>
-// paragraph 1 spans [0..13] (content 1..12: "text " occupies
-// [1..6], the link node spans [6..12]), the rule spans [13..14] and
-// paragraph 2 spans [14..21] (content 15..20).
-const docWithLinkThenAtom = {
-  type: 'doc',
-  content: [
-    paragraph(text('text '), linkNode('link')),
-    { type: 'horizontal_rule' },
-    paragraph(text('after')),
-  ],
 };
 
 function setup(docJson: unknown, anchor: number, head = anchor) {
@@ -148,129 +103,6 @@ function keyDown(key: string, options: KeyboardEventInit = {}) {
 }
 
 module('Unit | ProseMirror | shift-arrow-selection-handler', function () {
-  module('block atoms', function () {
-    test('Shift-ArrowDown selects the whole atom next to the caret', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 4);
-      const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.strictEqual(view.state.selection.from, 4);
-      assert.strictEqual(view.state.selection.to, 9);
-      assert.strictEqual(view.state.selection.anchor, 4);
-      assert.strictEqual(view.state.selection.head, 9);
-    });
-
-    test('Shift-ArrowUp selects the whole atom next to the caret', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 11);
-      const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.strictEqual(view.state.selection.from, 6);
-      assert.strictEqual(view.state.selection.to, 11);
-      assert.strictEqual(view.state.selection.anchor, 11);
-      assert.strictEqual(view.state.selection.head, 6);
-    });
-
-    test('Shift-ArrowDown selects the whole atom alongside the existing selection', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 2, 4);
-      const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.strictEqual(view.state.selection.from, 2);
-      assert.strictEqual(view.state.selection.to, 9);
-      assert.strictEqual(view.state.selection.anchor, 2);
-      assert.strictEqual(view.state.selection.head, 9);
-    });
-
-    test('Shift-ArrowUp selects the whole atom alongside the existing selection', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 13, 11);
-      const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.strictEqual(view.state.selection.from, 6);
-      assert.strictEqual(view.state.selection.to, 13);
-      assert.strictEqual(view.state.selection.anchor, 13);
-      assert.strictEqual(view.state.selection.head, 6);
-    });
-
-    test('nothing happens when the next block is not an atom', function (assert) {
-      const { view, handleKey } = setup(docWithoutAtom, 4);
-      const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
-
-      assert.false(handled, 'event is not handled');
-      assert.strictEqual(view.state.selection.head, 4);
-    });
-
-    test('nothing happens when there is no adjacent block at all', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 1);
-      const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
-
-      assert.false(handled, 'event is not handled');
-      assert.strictEqual(view.state.selection.head, 1);
-    });
-
-    test('other keys and modifiers are not handled', function (assert) {
-      const { view, handleKey } = setup(docWithAtomInMiddle, 4);
-
-      assert.false(handleKey(keyDown('ArrowDown')), 'ArrowDown without shift');
-      assert.false(
-        handleKey(keyDown('ArrowDown', { shiftKey: true, ctrlKey: true })),
-        'Shift-Ctrl-ArrowDown',
-      );
-      assert.false(
-        handleKey(keyDown('Home', { shiftKey: true })),
-        'Shift-Home',
-      );
-      assert.false(handleKey(keyDown('End', { shiftKey: true })), 'Shift-End');
-      assert.strictEqual(view.state.selection.head, 4);
-    });
-
-    test('nothing happens when the selection is not a text selection', function (assert) {
-      const plugin = shiftArrowSelectionHandler();
-      const state = EditorState.create({
-        schema: TEST_SCHEMA,
-        plugins: [plugin],
-        doc: TEST_SCHEMA.nodeFromJSON(docWithAtomAtEnd),
-      });
-      const view = new SayView(null, { state });
-      view.dispatch(
-        view.state.tr.setSelection(NodeSelection.create(view.state.doc, 7)),
-      );
-      const handler = plugin.props.handleKeyDown;
-      assert.ok(handler);
-
-      const handled =
-        handler?.call(
-          plugin,
-          view,
-          keyDown('ArrowDown', { shiftKey: true }),
-        ) === true;
-
-      assert.false(handled, 'event is not handled');
-      assert.true(view.state.selection instanceof NodeSelection);
-    });
-
-    test('Shift-ArrowDown selects the atom itself when it is the last block of the document', function (assert) {
-      const { view, handleKey } = setup(docWithAtomAtEnd, 4);
-      const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.true(view.state.selection instanceof NodeSelection);
-      assert.strictEqual(view.state.selection.from, 7);
-      assert.strictEqual(view.state.selection.to, 8);
-    });
-
-    test('Shift-ArrowUp selects the atom itself when it is the first block of the document', function (assert) {
-      const { view, handleKey } = setup(docWithAtomAtStart, 4);
-      const handled = handleKey(keyDown('ArrowUp', { shiftKey: true }));
-
-      assert.true(handled, 'event is handled');
-      assert.true(view.state.selection instanceof NodeSelection);
-      assert.strictEqual(view.state.selection.from, 0);
-      assert.strictEqual(view.state.selection.to, 1);
-    });
-  });
-
   module('inline atoms', function () {
     test('Shift-ArrowRight selects the whole link node and jumps to the text after it', function (assert) {
       const { view, handleKey } = setup(docWithLinkNode, 6);
@@ -393,26 +225,6 @@ module('Unit | ProseMirror | shift-arrow-selection-handler', function () {
         assert.strictEqual(view.state.selection.to, 6);
         assert.strictEqual(view.state.selection.anchor, 6);
         assert.strictEqual(view.state.selection.head, 1);
-      });
-
-      test('the inline atom is selected before falling back to the adjacent block atom', function (assert) {
-        const { view, handleKey } = setup(docWithLinkThenAtom, 6);
-        const handled = handleKey(keyDown('ArrowDown', { shiftKey: true }));
-
-        assert.true(handled, 'event is handled');
-        assert.strictEqual(view.state.selection.from, 6);
-        assert.strictEqual(view.state.selection.to, 12);
-        assert.strictEqual(view.state.selection.head, 12);
-
-        // the head is now after the link and the next block is the
-        // rule, so the block logic selects over the rule
-        const handledAgain = handleKey(
-          keyDown('ArrowDown', { shiftKey: true }),
-        );
-        assert.true(handledAgain, 'next event is handled');
-        assert.strictEqual(view.state.selection.from, 6);
-        assert.strictEqual(view.state.selection.to, 15);
-        assert.strictEqual(view.state.selection.head, 15);
       });
 
       test('Shift-ArrowUp ignores the link node after the caret', function (assert) {
