@@ -1,6 +1,6 @@
 steps:
   test-compat:
-    image: node:22-slim
+    image: danlynn/ember-cli:6.7.2-node_24.8
     commands:
       - echo "inject-workspace-packages=true" >> .npmrc
       - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
