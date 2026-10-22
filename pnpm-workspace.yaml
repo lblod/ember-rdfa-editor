@@ -200,3 +200,26 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@lblod/ember-rdfa-editor-lblod-plugins'
+
+####################
+# super strict mode
+####################
+autoInstallPeers: false
+resolvePeersFromWorkspaceRoot: false
+
+################
+# Optimizations
+################
+# Less strict, but required for tooling to not barf on duplicate peer trees when using ember-try.
+# (many libraries declare the same peers, which resolve to the same
+#  versions)
+dedupePeerDependents: true
+publicHoistPattern:
+  - ember-source
+
+################
+# Compatibility
+################
+# highest is what everyone is used to, but
+# not ensuring folks are actually compatible with declared ranges.
+resolutionMode: highest
