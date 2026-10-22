@@ -4,7 +4,7 @@ steps:
     commands:
       - echo "inject-workspace-packages=true" >> .npmrc
       - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - corepack enable
       - pnpm i --frozen-lockfile
       - pnpm build

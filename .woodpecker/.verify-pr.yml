@@ -3,7 +3,7 @@ steps:
     image: node:24-slim
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - corepack enable
       - pnpm i --frozen-lockfile
       - pnpm build
@@ -13,13 +13,13 @@ steps:
     image: node:24-slim
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm lint
   test:
     image: node:24-slim
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm test
 when:
   event:
