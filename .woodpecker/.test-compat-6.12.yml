@@ -1,12 +1,13 @@
 steps:
   test-compat:
     image: danlynn/ember-cli:6.7.2-node_24.8
+    environment:
+      PNPM_CONFIG_INJECT_WORKSPACE_PACKAGES: "true"
+      PNPM_CONFIG_SYNC_INJECTED_DEPS_AFTER_SCRIPTS: '["build"]'
     commands:
-      - echo "inject-workspace-packages=true" >> .npmrc
-      - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
       - npm i -g corepack@0.36
       - corepack enable
-      - pnpm i --no-frozen-lockfile
+      - pnpm install --no-frozen-lockfile
       - pnpm build
       - pnpm --filter test-app exec ember try:one ember-lts-6.12.0 --skip-cleanup=true
 when:
