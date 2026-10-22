@@ -13,7 +13,7 @@ steps:
       - npm run lint:js
       - npm run lint:types
   test:
-    image: danlynn/ember-cli:6.10.0
+    image: node:24-slim
     depends_on: [setup]
     commands:
       - cd quickstart
