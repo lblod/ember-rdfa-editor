@@ -1,13 +1,10 @@
 steps:
   test-compat:
-    image: danlynn/ember-cli:5.12.0-node_20.18
+    image: node:24-slim
     commands:
       - echo "inject-workspace-packages=true" >> .npmrc
       - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
-      # Install pnpm 10 for Node <v22 support
-      - npm i -g pnpm@10.34.1
-      - sed -i 's/pnpm@11.4.0/pnpm@10.34.1/' package.json
-      - pnpm i --no-frozen-lockfile
+      - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm --filter test-app exec ember try:one ember-lts-6.12.0 --skip-cleanup=true
 when:
