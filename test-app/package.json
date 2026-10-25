@@ -83,8 +83,6 @@
     "@types/rsvp": "catalog:",
     "@types/sinon": "catalog:",
     "@types/uuid": "catalog:",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "common-tags": "catalog:",
     "concurrently": "catalog:",
