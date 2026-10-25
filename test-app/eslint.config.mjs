@@ -85,6 +85,16 @@ export default defineConfig(
     },
     extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
   },
+  /**
+   * `ts.configs.eslintRecommended` (extended above) only targets real
+   * TypeScript files, so its disables of core rules that duplicate compiler
+   * checks (`getter-return`, `no-undef`, ...) don't apply to `.gts` files.
+   * Re-apply them there, since `.gts` is TypeScript too.
+   */
+  {
+    files: ['**/*.gts'],
+    rules: ts.configs.eslintRecommended.rules,
+  },
   {
     files: ['tests/**/*-test.{js,gjs,ts,gts}'],
     plugins: {
@@ -137,10 +147,7 @@ export default defineConfig(
   },
   {
     files: ['e2e/**/*.spec.{js,ts}'],
-    extends: [playwright.recommended],
-    plugins: {
-      playwright,
-    },
+    extends: [playwright.configs['flat/recommended']],
     rules: {
       'playwright/expect-expect': [
         'error',

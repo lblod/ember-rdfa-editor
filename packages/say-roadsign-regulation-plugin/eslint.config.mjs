@@ -92,11 +92,22 @@ export default defineConfig(
         'error',
         {
           argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],
     },
+  },
+  /**
+   * `ts.configs.eslintRecommended` (extended above) only targets real
+   * TypeScript files, so its disables of core rules that duplicate compiler
+   * checks (`getter-return`, `no-undef`, ...) don't apply to `.gts` files.
+   * Re-apply them there, since `.gts` is TypeScript too.
+   */
+  {
+    files: ['**/*.gts'],
+    rules: ts.configs.eslintRecommended.rules,
   },
   {
     files: ['src/**/*'],
