@@ -1,6 +1,7 @@
 steps:
   install:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
       - cat .npmrc
@@ -8,6 +9,7 @@ steps:
       - pnpm i --frozen-lockfile
   publish-editor:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
       - npm i -g corepack@0.35
@@ -24,6 +26,7 @@ steps:
         include: refs/tags/@lblod/ember-rdfa-editor@*
   publish-roadsign-regulation-plugin:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
       - npm i -g corepack@0.35
@@ -41,6 +44,7 @@ steps:
         include: refs/tags/@lblod/say-roadsign-regulation-plugin@*
   publish-ar-design-plugin:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
       - npm i -g corepack@0.35
