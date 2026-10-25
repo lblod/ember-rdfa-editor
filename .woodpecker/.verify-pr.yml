@@ -16,7 +16,7 @@ steps:
       - npm i -g corepack@0.35
       - pnpm lint
   test:
-    image: danlynn/ember-cli:6.5.0
+    image: cypress/browsers:24.22.1
     depends_on: [install]
     commands:
       - npm i -g corepack@0.35
