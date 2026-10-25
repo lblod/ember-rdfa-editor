@@ -39,9 +39,9 @@ steps:
       ref:
         exclude: refs/tags/@lblod/ember-rdfa-editor@*-*
   push-tagged-build:
-    image: plugins/docker
+    image: woodpeckerci/plugin-docker-buildx:latest
     settings:
-      repo: lblod/ember-rdfa-editor
+      repo: ${CI_REPO}
       tags: "${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}"
       purge: true
       username:
