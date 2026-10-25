@@ -3,6 +3,7 @@ import Component from '@glimmer/component';
 import type { ComponentLike } from '@glint/template';
 import { eq, notEq } from 'ember-truth-helpers';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PILL_SIZES = ['small'] as const;
 
 export type PillComponentSignature = {

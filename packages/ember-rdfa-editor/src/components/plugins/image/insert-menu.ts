@@ -41,7 +41,7 @@ export default class ImageInsertMenu extends Component<Args> {
     try {
       const parsedUrl = new URL(this.url);
       return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
-    } catch (_) {
+    } catch {
       return false;
     }
   }

@@ -30,7 +30,7 @@
     "doc:generate": "pnpm say doc:generate",
     "doc:serve": "pnpm static-server ./packages/ember-rdfa-editor/docs"
   },
-  "packageManager": "pnpm@11.4.0",
+  "packageManager": "pnpm@11.28.8",
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@changesets/get-release-plan": "catalog:",

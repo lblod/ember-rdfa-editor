@@ -262,6 +262,7 @@ export default class RelationshipEditorCard extends Component<Args> {
     if (this.contentPredicateProperty) {
       this.removePropertyOrBacklink(this.contentPredicateProperty);
     }
+
     if (body.contentPredicate) {
       const property = {
         predicate: body.contentPredicate,

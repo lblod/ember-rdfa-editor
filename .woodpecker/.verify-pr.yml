@@ -1,9 +1,10 @@
 steps:
   install:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - corepack enable
       - pnpm i --frozen-lockfile
       - pnpm build
@@ -11,15 +12,16 @@ steps:
       - pnpm i -f
   lint:
     image: node:24-slim
+    pull: true
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm lint
   test:
-    image: danlynn/ember-cli:6.5.0
+    image: cypress/browsers:24.22.1
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm test
 when:
   event:

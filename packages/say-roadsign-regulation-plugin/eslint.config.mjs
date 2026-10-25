@@ -12,12 +12,12 @@
  *     npx eslint --inspect-config
  *
  */
+import { defineConfig } from 'eslint/config';
 import babelParser from '@babel/eslint-parser';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import ember from 'eslint-plugin-ember/recommended';
 import importPlugin from 'eslint-plugin-import';
-import n from 'eslint-plugin-n';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
@@ -29,13 +29,12 @@ const parserOptions = {
     },
     ts: {
       projectService: true,
-      project: true,
       tsconfigRootDir: import.meta.dirname,
     },
   },
 };
 
-export default ts.config(
+export default defineConfig(
   js.configs.recommended,
   ember.configs.base,
   ember.configs.gjs,
@@ -85,18 +84,29 @@ export default ts.config(
       parser: ember.parser,
       parserOptions: parserOptions.esm.ts,
     },
-    extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+    extends: [...ts.configs.recommendedTypeChecked],
 
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
           argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],
     },
+  },
+  /**
+   * `ts.configs.eslintRecommended` (extended above) only targets real
+   * TypeScript files, so its disables of core rules that duplicate compiler
+   * checks (`getter-return`, `no-undef`, ...) don't apply to `.gts` files.
+   * Re-apply them there, since `.gts` is TypeScript too.
+   */
+  {
+    files: ['**/*.gts'],
+    rules: ts.configs.eslintRecommended.rules,
   },
   {
     files: ['src/**/*'],
@@ -119,10 +129,6 @@ export default ts.config(
       '.template-lintrc.js',
       'addon-main.cjs',
     ],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'script',
       ecmaVersion: 'latest',
@@ -136,10 +142,6 @@ export default ts.config(
    */
   {
     files: ['**/*.mjs'],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'module',
       ecmaVersion: 'latest',

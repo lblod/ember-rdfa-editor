@@ -65,6 +65,8 @@ export const documentConfig: (
     const resources = getSubjects(controller.mainEditorState);
     const options = resources.map(
       (resource) =>
+        // eslint is wrong here, the type assertion is still required (for now)
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         ({
           term: sayDataFactory.resourceNode(resource),
         }) as ObjectOption,
@@ -247,30 +249,40 @@ export const combineConfigs = (
 ): OptionGeneratorConfig => ({
   subjects: async (args) => {
     const results = await Promise.all(
+      // the `subjects` property is possibly a thenable, eslint is wrong
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.subjects?.(args) ?? []),
     );
     return results.flat();
   },
   predicates: async (args) => {
     const results = await Promise.all(
+      // the `predicates` property is possibly a thenable, eslint is wrong
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.predicates?.(args) ?? []),
     );
     return results.flat();
   },
   objects: async (args) => {
     const results = await Promise.all(
+      // the `objects` property is possibly a thenable, eslint is wrong
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.objects?.(args) ?? []),
     );
     return results.flat();
   },
   pointerSources: async (args) => {
     const results = await Promise.all(
+      // the `pointerSources` property is possibly a thenable, eslint is wrong
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.pointerSources?.(args) ?? []),
     );
     return results.flat();
   },
   pointerTargets: async (args) => {
     const results = await Promise.all(
+      // the `pointerTargets` property is possibly a thenable, eslint is wrong
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       configs.map((config) => config.pointerTargets?.(args) ?? []),
     );
     return results.flat();

@@ -12,6 +12,7 @@
  *     npx eslint --inspect-config
  *
  */
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import js from '@eslint/js';
 
@@ -21,7 +22,6 @@ import ember from 'eslint-plugin-ember/recommended';
 
 import prettier from 'eslint-plugin-prettier/recommended';
 import qunit from 'eslint-plugin-qunit';
-import n from 'eslint-plugin-n';
 
 import babelParser from '@babel/eslint-parser';
 import playwright from 'eslint-plugin-playwright';
@@ -40,7 +40,7 @@ const parserOptions = {
   },
 };
 
-export default ts.config(
+export default defineConfig(
   js.configs.recommended,
   ember.configs.base,
   ember.configs.gjs,
@@ -82,7 +82,17 @@ export default ts.config(
       parser: ember.parser,
       parserOptions: parserOptions.esm.ts,
     },
-    extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+    extends: [...ts.configs.recommendedTypeChecked],
+  },
+  /**
+   * `ts.configs.eslintRecommended` (extended above) only targets real
+   * TypeScript files, so its disables of core rules that duplicate compiler
+   * checks (`getter-return`, `no-undef`, ...) don't apply to `.gts` files.
+   * Re-apply them there, since `.gts` is TypeScript too.
+   */
+  {
+    files: ['**/*.gts'],
+    rules: ts.configs.eslintRecommended.rules,
   },
   {
     files: ['tests/**/*-test.{js,gjs,ts,gts}'],
@@ -104,10 +114,6 @@ export default ts.config(
       '.template-lintrc.js',
       'ember-cli-build.js',
     ],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'script',
       ecmaVersion: 'latest',
@@ -121,10 +127,6 @@ export default ts.config(
    */
   {
     files: ['**/*.mjs'],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'module',
       ecmaVersion: 'latest',
@@ -136,10 +138,7 @@ export default ts.config(
   },
   {
     files: ['e2e/**/*.spec.{js,ts}'],
-    extends: [playwright.recommended],
-    plugins: {
-      playwright,
-    },
+    extends: [playwright.configs['flat/recommended']],
     rules: {
       'playwright/expect-expect': [
         'error',

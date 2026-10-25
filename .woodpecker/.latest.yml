@@ -1,8 +1,8 @@
 steps:
   push-latest:
-    image: plugins/docker
+    image: woodpeckerci/plugin-docker-buildx:latest
     settings:
-      repo: lblod/ember-rdfa-editor
+      repo: ${CI_REPO}
       tags: latest
       username:
         from_secret: docker_username
