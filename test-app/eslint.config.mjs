@@ -12,6 +12,7 @@
  *     npx eslint --inspect-config
  *
  */
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import js from '@eslint/js';
 
@@ -40,7 +41,7 @@ const parserOptions = {
   },
 };
 
-export default ts.config(
+export default defineConfig(
   js.configs.recommended,
   ember.configs.base,
   ember.configs.gjs,

@@ -12,6 +12,7 @@
  *     npx eslint --inspect-config
  *
  */
+import { defineConfig } from 'eslint/config';
 import babelParser from '@babel/eslint-parser';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
@@ -34,7 +35,7 @@ const parserOptions = {
   },
 };
 
-export default ts.config(
+export default defineConfig(
   js.configs.recommended,
   ember.configs.base,
   ember.configs.gjs,
