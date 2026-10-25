@@ -3,7 +3,7 @@ steps:
     # this image must be the same as in `scripts/e2e.sh`
     image: mcr.microsoft.com/playwright:v1.50.0-jammy
     commands:
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm i --frozen-lockfile
       - pnpm build
       - pnpm i -f

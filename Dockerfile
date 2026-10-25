@@ -3,7 +3,7 @@ FROM node:24-slim AS builder
 LABEL maintainer="info@redpencil.io"
 
 RUN corepack enable
-RUN npm i -g corepack@0.35
+RUN npm i -g corepack@0.36
 WORKDIR /app
 COPY . .
 RUN npm config set ignore-scripts true
