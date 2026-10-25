@@ -84,7 +84,7 @@ export default defineConfig(
       parser: ember.parser,
       parserOptions: parserOptions.esm.ts,
     },
-    extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+    extends: [...ts.configs.recommendedTypeChecked],
 
     rules: {
       '@typescript-eslint/no-unused-vars': [

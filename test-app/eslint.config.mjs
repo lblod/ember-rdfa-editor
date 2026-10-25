@@ -82,7 +82,7 @@ export default defineConfig(
       parser: ember.parser,
       parserOptions: parserOptions.esm.ts,
     },
-    extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+    extends: [...ts.configs.recommendedTypeChecked],
   },
   /**
    * `ts.configs.eslintRecommended` (extended above) only targets real
