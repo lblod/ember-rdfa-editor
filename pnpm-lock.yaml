@@ -127,8 +127,8 @@ catalogs:
       specifier: ^1.1.1
       version: 1.1.1
     '@playwright/test':
-      specifier: 1.50.0
-      version: 1.50.0
+      specifier: 1.64.1
+      version: 1.64.1
     '@prosopo/vite-plugin-watch-workspace':
       specifier: ^2.6.31
       version: 2.6.31
@@ -1401,7 +1401,7 @@ importers:
         version: 1.1.1(rollup@4.52.2)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
       '@playwright/test':
         specifier: 'catalog:'
-        version: 1.50.0
+        version: 1.64.1
       '@prosopo/vite-plugin-watch-workspace':
         specifier: 'catalog:'
         version: 2.6.31(supports-color@8.1.1)(vite@6.4.1(@types/node@20.19.30)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2))
@@ -3603,9 +3603,9 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.50.0':
-    resolution: {integrity: sha512-ZGNXbt+d65EGjBORQHuYKj+XhCewlwpnSd/EDuLPZGSiEWmgOJB5RmMCCYGy5aMfTs9wx61RivfDKi8H/hcMvw==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.64.1':
+    resolution: {integrity: sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@pnpm/constants@1001.3.1':
@@ -6826,11 +6826,6 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -8765,14 +8760,14 @@ packages:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
 
-  playwright-core@1.50.0:
-    resolution: {integrity: sha512-CXkSSlr4JaZs2tZHI40DsZUN/NIwgaUPsyLuOAaIZp2CyF2sN5MM5NJsyB188lFSSozFxQ5fPT4qM+f0tH/6wQ==}
-    engines: {node: '>=18'}
+  playwright-core@1.64.1:
+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.50.0:
-    resolution: {integrity: sha512-+GinGfGTrd2IfX1TA4N2gNmeIksSb+IAe589ZH+FlmpV3MYTx6+buChGIuDLQwrGNCw2lWibqV50fU510N7S+w==}
-    engines: {node: '>=18'}
+  playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
+    engines: {node: '>=20'}
     hasBin: true
 
   portfinder@1.0.38:
@@ -13347,9 +13342,9 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@playwright/test@1.50.0':
+  '@playwright/test@1.64.1':
     dependencies:
-      playwright: 1.50.0
+      playwright: 1.64.1
 
   '@pnpm/constants@1001.3.1': {}
 
@@ -17666,9 +17661,6 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
-  fsevents@2.3.2:
-    optional: true
-
   fsevents@2.3.3:
     optional: true
 
@@ -19796,13 +19788,11 @@ snapshots:
     dependencies:
       find-up: 3.0.0
 
-  playwright-core@1.50.0: {}
+  playwright-core@1.64.1: {}
 
-  playwright@1.50.0:
+  playwright@1.64.1:
     dependencies:
-      playwright-core: 1.50.0
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.64.1
 
   portfinder@1.0.38(supports-color@8.1.1):
     dependencies:

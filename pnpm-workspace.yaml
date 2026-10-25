@@ -44,7 +44,7 @@ catalog:
   '@glint/typescript-plugin': 1.4.1-unstable.9b657e4
   '@manypkg/get-packages': ^2.2.2
   '@modyfi/vite-plugin-yaml': ^1.1.1
-  '@playwright/test': 1.50.0
+  '@playwright/test': 1.64.1
   '@prosopo/vite-plugin-watch-workspace': ^2.6.31
   '@rdfjs/to-ntriples': ^3.0.1
   '@rdfjs/types': ^2.0.1
