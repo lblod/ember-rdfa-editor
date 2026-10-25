@@ -22,7 +22,6 @@ import ember from 'eslint-plugin-ember/recommended';
 
 import prettier from 'eslint-plugin-prettier/recommended';
 import qunit from 'eslint-plugin-qunit';
-import n from 'eslint-plugin-n';
 
 import babelParser from '@babel/eslint-parser';
 import playwright from 'eslint-plugin-playwright';
@@ -115,10 +114,6 @@ export default defineConfig(
       '.template-lintrc.js',
       'ember-cli-build.js',
     ],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'script',
       ecmaVersion: 'latest',
@@ -132,10 +127,6 @@ export default defineConfig(
    */
   {
     files: ['**/*.mjs'],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'module',
       ecmaVersion: 'latest',

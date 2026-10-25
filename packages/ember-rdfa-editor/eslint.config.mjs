@@ -18,7 +18,6 @@ import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import ember from 'eslint-plugin-ember/recommended';
 import importPlugin from 'eslint-plugin-import';
-import n from 'eslint-plugin-n';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
@@ -130,10 +129,6 @@ export default defineConfig(
       '.template-lintrc.js',
       'addon-main.cjs',
     ],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'script',
       ecmaVersion: 'latest',
@@ -147,10 +142,6 @@ export default defineConfig(
    */
   {
     files: ['**/*.mjs'],
-    plugins: {
-      n,
-    },
-
     languageOptions: {
       sourceType: 'module',
       ecmaVersion: 'latest',

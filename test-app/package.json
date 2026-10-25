@@ -110,7 +110,6 @@
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-ember": "catalog:",
-    "eslint-plugin-n": "catalog:",
     "eslint-plugin-playwright": "catalog:",
     "eslint-plugin-prettier": "catalog:",
     "eslint-plugin-qunit": "catalog:",

@@ -330,7 +330,6 @@
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-ember": "catalog:",
     "eslint-plugin-import": "catalog:",
-    "eslint-plugin-n": "catalog:",
     "execa": "catalog:",
     "globals": "catalog:",
     "postcss": "catalog:",

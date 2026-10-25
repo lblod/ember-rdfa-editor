@@ -108,7 +108,6 @@ catalog:
   eslint-config-prettier: ^9.1.2
   eslint-plugin-ember: ^13.9.0
   eslint-plugin-import: ^2.32.0
-  eslint-plugin-n: ^17.23.2
   eslint-plugin-playwright: ^2.2.2
   eslint-plugin-prettier: ^5.5.5
   eslint-plugin-qunit: ^8.2.5
