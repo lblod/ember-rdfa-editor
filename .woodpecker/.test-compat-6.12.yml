@@ -1,12 +1,12 @@
 steps:
   test-compat:
-    image: danlynn/ember-cli:5.12.0-node_20.18
+    image: cypress/browsers:24.22.1
+    environment:
+      PNPM_CONFIG_INJECT_WORKSPACE_PACKAGES: "true"
+      PNPM_CONFIG_SYNC_INJECTED_DEPS_AFTER_SCRIPTS: '["build"]'
     commands:
-      - echo "inject-workspace-packages=true" >> .npmrc
-      - echo "sync-injected-deps-after-scripts[]=build" >> .npmrc
-      # Install pnpm 10 for Node <v22 support
-      - npm i -g pnpm@10.34.1
-      - sed -i 's/pnpm@11.4.0/pnpm@10.34.1/' package.json
+      - npm i -g corepack@0.36
+      - corepack enable
       - pnpm i --no-frozen-lockfile
       - pnpm build
       - pnpm --filter test-app exec ember try:one ember-lts-6.12.0 --skip-cleanup=true

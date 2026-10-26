@@ -1,15 +1,17 @@
 steps:
   install:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       - pnpm i --frozen-lockfile
   release-next:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - pnpm --filter @lblod/ember-rdfa-editor build
@@ -22,9 +24,10 @@ steps:
         include: refs/tags/@lblod/ember-rdfa-editor@*-next.*
   release:
     image: node:24-slim
+    pull: true
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
+      - npm i -g corepack@0.36
       # pnpm doesn't handle this setting well, so we do it with npm
       - npm config set --location project '//registry.npmjs.org/:_authToken' $NPM_TOKEN
       - pnpm --filter @lblod/ember-rdfa-editor build
@@ -36,9 +39,9 @@ steps:
       ref:
         exclude: refs/tags/@lblod/ember-rdfa-editor@*-*
   push-tagged-build:
-    image: plugins/docker
+    image: woodpeckerci/plugin-docker-buildx:latest
     settings:
-      repo: lblod/ember-rdfa-editor
+      repo: ${CI_REPO}
       tags: "${CI_COMMIT_TAG##@lblod/ember-rdfa-editor@}"
       purge: true
       username:

@@ -121,12 +121,14 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   }
   get hasLanguage() {
     return Boolean(
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       this.currentFormData?.get(this.languagePath)?.toString().length,
     );
   }
   get hasDatatype() {
     return (
       !this.hasLanguage &&
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       Boolean(this.currentFormData?.get(this.datatypePath)?.toString().length)
     );
   }
@@ -137,6 +139,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   extractNamedNode = (formData: FormData, base: string) => {
     return {
       termType: 'NamedNode',
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       value: formData.get(`${base}.value`)?.toString(),
     };
   };
@@ -151,8 +154,10 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
 
     return {
       termType: 'Literal',
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       value: formData.get(`${base}.value`)?.toString(),
       datatype,
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       language: formData.get(`${base}.language`)?.toString(),
     };
   };
@@ -162,6 +167,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = namedNodeTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             predicate: formData.get('predicate')?.toString(),
             object: this.extractNamedNode(formData, 'object'),
           },
@@ -179,6 +185,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = literalTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             predicate: formData.get('predicate')?.toString(),
             object: this.extractLiteral(formData, 'object'),
           },
