@@ -9,7 +9,7 @@ steps:
       - pnpm i --frozen-lockfile
       - pnpm build
       # resync injected addon build
-      - pnpm i -f
+      - pnpm i --force
   lint:
     image: node:24-slim
     pull: true
