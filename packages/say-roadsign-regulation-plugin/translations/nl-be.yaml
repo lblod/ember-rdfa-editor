@@ -64,3 +64,7 @@ editor-plugins:
         image:
           alt: verkeersteken {code}
         no-data-message: Er werden geen maatregelen gevonden.
+traffic-measure-concept:
+  main-sign: Hoofdbord
+  road-marking: Wegmarkering
+  traffic-light: Verkeerslicht

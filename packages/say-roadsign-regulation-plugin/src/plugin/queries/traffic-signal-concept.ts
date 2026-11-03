@@ -11,6 +11,7 @@ import {
 } from '../schemas/traffic-signal-concept.ts';
 import queryRoadSignCategories from './road-sign-category.ts';
 import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '../constants.ts';
+import queryTrafficSignalInstructions from './traffic-signal-instructions.ts';
 
 type QueryOptions = {
   imageBaseUrl?: string;
@@ -38,6 +39,7 @@ export async function queryTrafficSignalConcepts(
       ?regulatoryNotation
       ?image
       ?position
+      ?mainSign
     WHERE {
       ?uri
         a mobiliteit:Verkeerstekenconcept;
@@ -70,6 +72,10 @@ export async function queryTrafficSignalConcepts(
         ?uri ext:regulatoryNotation ?regulatoryNotation.
       }
 
+      OPTIONAL  {
+        ?mainSign mobiliteit:heeftOnderbordConcept ?uri.
+      }
+
       VALUES ?type {
         <https://data.vlaanderen.be/ns/mobiliteit#Verkeersbordconcept>
         <https://data.vlaanderen.be/ns/mobiliteit#Wegmarkeringconcept>
@@ -92,20 +98,65 @@ export async function queryTrafficSignalConcepts(
       };
     }),
   );
-  const conceptsWithCategories = await Promise.all(
+  const conceptsWithCategoriesAndMainSigns = await Promise.all(
     concepts.map(async (concept) => {
       if (concept.type === TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) {
         const categories = await queryRoadSignCategories(endpoint, {
           roadSignConceptUri: concept.uri,
         });
+        const mainSigns = await queryRoadSignMainSign(endpoint, {
+          roadSignConceptUri: concept.uri,
+        });
+        const instructions = await queryTrafficSignalInstructions(endpoint, {
+          roadSignConceptUri: concept.uri,
+        })
         return {
           ...concept,
           categories,
+          mainSigns,
+          instructions
         };
       } else {
         return concept;
       }
     }),
   );
-  return conceptsWithCategories;
+
+  return conceptsWithCategoriesAndMainSigns;
+}
+
+
+type MainSignUriBinding = {
+  mainSign: string
+}
+
+type MainSignQueryOptions = {
+  abortSignal?: AbortSignal;
+  roadSignConceptUri?: string;
+};
+
+async function queryRoadSignMainSign(
+  endpoint: string,
+  options: MainSignQueryOptions = {},
+) {
+  const { abortSignal, roadSignConceptUri } = options;
+  const query = /* sparql */ `
+    PREFIX mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+
+    SELECT DISTINCT
+      ?mainSign
+    WHERE {
+      ?mainSign mobiliteit:heeftMogelijkOnderbord ${roadSignConceptUri ? sparqlEscapeUri(roadSignConceptUri) : ''}.
+
+    }
+  `;
+  const queryResult = await executeQuery<BindingObject<MainSignUriBinding>>({
+    endpoint,
+    query,
+    abortSignal,
+  });
+  const bindings = queryResult.results.bindings;
+  return bindings.map(binding => binding.mainSign.value)
 }

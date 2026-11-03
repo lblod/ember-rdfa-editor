@@ -64,3 +64,12 @@ editor-plugins:
         image:
           alt: traffic sign {code}
         no-data-message: No measures could be found.
+    insert:
+      choose-traffic-signs-title: 1. Choose traffic signs
+      supplement-measure-title: 2. Suplement measure
+      add-measure-title: 3. Add measure
+      instruction: Instruction
+traffic-measure-concept:
+  main-sign: Main sign
+  road-marking: Road marking
+  traffic-light: Traffic light

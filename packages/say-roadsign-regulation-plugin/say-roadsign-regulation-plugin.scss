@@ -1,3 +1,25 @@
 .roadsign > td {
   vertical-align: middle;
 }
+
+.u-border-solid {
+  border-style: solid;
+}
+
+.u-border-divider {
+  border-color: var(--au-divider-color);
+}
+
+.u-border-l {
+  border-left-width: 0.1rem;
+}
+
+.traffic-measure-preview--main-sign-container {
+  background-color: #F4F7FB;
+  border: 1px solid #CFD5DD;
+}
+
+.traffic-measure-preview--sign-image {
+  max-width: 3.6rem;
+  max-height: 3.6rem;
+}

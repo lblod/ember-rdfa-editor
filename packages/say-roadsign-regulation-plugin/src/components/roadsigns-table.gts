@@ -4,33 +4,26 @@ import { tracked } from '@glimmer/tracking';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import { addAll } from '@lblod/ember-rdfa-editor/utils/set-utils';
-import ExpandedMeasure, {
-  type InsertMobilityMeasureTask,
-} from './expanded-measure.gts';
 import MeasurePreview from './measure-preview.gts';
 
 import AuDataTable from '@appuniversum/ember-appuniversum/components/au-data-table';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import AuHelpText from '@appuniversum/ember-appuniversum/components/au-help-text';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
-import AuIcon from '@appuniversum/ember-appuniversum/components/au-icon';
-import { NavUpIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-up';
-import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import { eq } from 'ember-truth-helpers';
 import t from 'ember-intl/helpers/t';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import removeZFromLabel from '#root/helpers/removeZFromLabel.ts';
-import { PNode } from '@lblod/ember-rdfa-editor';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 
 type Signature = {
   Args: {
     options: RoadsignRegulationPluginOptions;
     content?: MobilityMeasureConcept[];
     isLoading?: boolean;
-    insert: InsertMobilityMeasureTask;
-    articleNodes: PNode[];
+    selectMeasureToInsert: (measure: MobilityMeasureConcept) => void;
   };
 };
 
@@ -146,30 +139,13 @@ export default class RoadSignsTable extends Component<Signature> {
                     {{/each}}
                   </td>
                   <td>
-                    {{#if (eq this.selected measureConcept.uri)}}
-                      <AuIcon
-                        @icon={{NavUpIcon}}
-                        @ariaHidden={{true}}
-                        class="au-c-data-table__clickable-row-icon"
-                      />
-                    {{else}}
-                      <AuIcon
-                        @icon={{NavDownIcon}}
-                        @ariaHidden={{true}}
-                        class="au-c-data-table__clickable-row-icon"
-                      />
-                    {{/if}}
+                    <AuButton
+                      {{on "click" (fn @selectMeasureToInsert measureConcept)}}
+                    >
+                      This will change screen
+                    </AuButton>
                   </td>
                 </tr>
-                {{#if (eq this.selected measureConcept.uri)}}
-                  <ExpandedMeasure
-                    @concept={{measureConcept}}
-                    @insert={{@insert}}
-                    @selectRow={{this.selectRow}}
-                    @endpoint={{@options.endpoint}}
-                    @articleNodes={{@articleNodes}}
-                  />
-                {{/if}}
               {{else}}
                 <tr>
                   <td colspan="5" class="no-data-message">

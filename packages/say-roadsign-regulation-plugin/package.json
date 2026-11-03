@@ -173,8 +173,12 @@
       "./components/measure-preview.js": "./dist/_app_/components/measure-preview.js",
       "./components/pagination-view.js": "./dist/_app_/components/pagination-view.js",
       "./components/roadsign-regulation-card.js": "./dist/_app_/components/roadsign-regulation-card.js",
+      "./components/roadsigns-insert-screen.js": "./dist/_app_/components/roadsigns-insert-screen.js",
       "./components/roadsigns-modal.js": "./dist/_app_/components/roadsigns-modal.js",
+      "./components/roadsigns-table-screen.js": "./dist/_app_/components/roadsigns-table-screen.js",
       "./components/roadsigns-table.js": "./dist/_app_/components/roadsigns-table.js",
+      "./components/sub-sign-list.js": "./dist/_app_/components/sub-sign-list.js",
+      "./helpers/is-selected-sign.js": "./dist/_app_/helpers/is-selected-sign.js",
       "./helpers/removeZFromLabel.js": "./dist/_app_/helpers/removeZFromLabel.js"
     }
   },
