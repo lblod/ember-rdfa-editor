@@ -7,25 +7,22 @@ import { action } from '@ember/object';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import generateMeasureSignTree from '#root/plugin/generate-measure-sign-tree.ts';
-import TrafficMeasureSubSignList from '#root/components/sub-sign-list.gts';
+import SignAccordion from '#root/components/sign-accordion.gts';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { service } from '@ember/service';
-import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { ZONALITY_OPTIONS, type ZonalOrNot } from '#root/plugin/constants.ts';
 import set from '@lblod/ember-rdfa-editor/helpers/set';
 import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
-import { fn } from '@ember/helper';
-import AuCheckbox from '@appuniversum/ember-appuniversum/components/au-checkbox';
-import isSelectedSign from '#root/helpers/is-selected-sign.ts';
 
 type Signature = {
   Args: {
     controller: SayController;
     options: RoadsignRegulationPluginOptions;
     measureToInsert?: MobilityMeasureConcept;
+    goBack: () => void;
   };
 };
 
@@ -34,17 +31,6 @@ type InsertPositionOption = {
   position: 'first' | 'last' | 'custom';
   insertIndex?: number;
 };
-
-function signalLabel(signal: TrafficSignalConcept, intl: IntlService) {
-  switch (signal.type) {
-    case TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN:
-      return intl.t('traffic-measure-concept.main-sign');
-    case TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_MARKING:
-      return intl.t('traffic-measure-concept.road-marking');
-    case TRAFFIC_SIGNAL_CONCEPT_TYPES.TRAFFIC_LIGHT:
-      return intl.t('traffic-measure-concept.traffic-light');
-  }
-}
 
 export default class RoadsignsInsertScreen extends Component<Signature> {
   @service declare intl: IntlService;
@@ -197,37 +183,14 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
           </AuHeading>
         </div>
         {{#each this.measureSignTree.signs as |sign|}}
-          <div
-            class="traffic-measure-preview--main-sign-container au-u-margin-small au-u-padding-small"
-          >
-            <AuCheckbox
-              @checked={{isSelectedSign this.selectedSigns sign.mainSign}}
-              @onChange={{fn this.selectMainSign sign.mainSign}}
-            >
-              <AuHeading
-                @level="6"
-                @skin="6"
-                class="au-u-flex au-u-flex--vertical-center"
-              >
-                <img
-                  src={{sign.mainSign.image}}
-                  alt=""
-                  class="traffic-measure-preview--sign-image au-u-margin-right-small"
-                />
-                {{signalLabel sign.mainSign this.intl}}
-                {{sign.mainSign.code}}
-              </AuHeading>
-            </AuCheckbox>
-            {{#if sign.subSigns.length}}
-              <TrafficMeasureSubSignList
-                @subSigns={{sign.subSigns}}
-                @mainSign={{sign.mainSign}}
-                @selectedSigns={{this.selectedSigns}}
-                @selectSubSign={{this.selectSubSign}}
-              />
-            {{/if}}
-          </div>
+          <SignAccordion
+            @sign={{sign}}
+            @selectedSigns={{this.selectedSigns}}
+            @selectMainSign={{this.selectMainSign}}
+            @selectSubSign={{this.selectSubSign}}
+          />
         {{/each}}
+
       </div>
       <div
         class="au-o-grid__item au-u-1-3@medium au-u-height-full u-border-solid u-border-l u-border-divider au-u-padding"

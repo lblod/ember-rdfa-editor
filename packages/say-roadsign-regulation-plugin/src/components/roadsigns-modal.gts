@@ -9,6 +9,8 @@ import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measu
 import RoadsignsTableScreen from '#root/components/roadsigns-table-screen.gts';
 import RoadsignsInsertScreen from '#root/components/roadsigns-insert-screen.gts';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { on } from '@ember/modifier';
 
 type Signature = {
   Args: {
@@ -23,8 +25,8 @@ export default class RoadsignsModal extends Component<Signature> {
   @tracked measureToInsert?: MobilityMeasureConcept;
 
   @action
-  changeScreen(screen: string) {
-    this.screen = screen;
+  backToTable() {
+    this.screen = 'table';
   }
 
   @action
@@ -54,9 +56,28 @@ export default class RoadsignsModal extends Component<Signature> {
             @controller={{@controller}}
             @options={{@options}}
             @measureToInsert={{this.measureToInsert}}
+            @goBack={{this.backToTable}}
           />
         {{/if}}
+
       </Modal.Body>
+      {{#if (eq this.screen "insert")}}
+        <Modal.Footer>
+          <div class="au-u-flex au-u-flex--between">
+            <AuButton @skin="link" {{on "click" this.backToTable}}>
+              {{t "editor-plugins.roadsign-regulation.insert.go-back"}}
+            </AuButton>
+            <div>
+              <AuButton @skin="naked" {{on "click" @closeModal}}>
+                {{t "editor-plugins.roadsign-regulation.modal.cancel"}}
+              </AuButton>
+              <AuButton {{on "click" this.insert}}>
+                {{t "editor-plugins.roadsign-regulation.modal.insert"}}
+              </AuButton>
+            </div>
+          </div>
+        </Modal.Footer>
+      {{/if}}
     </AuModal>
   </template>
 }

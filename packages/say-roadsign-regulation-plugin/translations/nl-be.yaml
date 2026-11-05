@@ -47,13 +47,16 @@ editor-plugins:
     modal:
       title: Mobiliteitsmaatregel toevoegen
       filter:
-        type: Filter op type
-        code: Filter op code
-        text: Filter op tekst
-        zonal-validity: Filter op zonale geldigheid
-      combine-with-code: Combineer met code
+        type: Type
+        code: Code
+        category: Categorie
+        zonal-validity: Geldigheid
+      cancel: Annuleren
+      insert: Invoegen
     pagination:
       publications: Publicaties
+    accordion:
+      no-sub-signs: Geen onderborden bechrikbaar
     table:
       header:
         code: Code
@@ -64,6 +67,13 @@ editor-plugins:
         image:
           alt: verkeersteken {code}
         no-data-message: Er werden geen maatregelen gevonden.
+        insert-measure-button: Invullen en tovoegen
+    insert:
+      choose-traffic-signs-title: 1. Verkeerstekens kiezen
+      supplement-measure-title: 2. Maatregel aanvullen
+      add-measure-title: 3. Maatregel toevoegen
+      instruction: Instructie
+      go-back: Terug naar overzichtslijst
 traffic-measure-concept:
   main-sign: Hoofdbord
   road-marking: Wegmarkering

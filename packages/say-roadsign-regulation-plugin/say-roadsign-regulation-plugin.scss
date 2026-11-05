@@ -17,9 +17,16 @@
 .traffic-measure-preview--main-sign-container {
   background-color: #F4F7FB;
   border: 1px solid #CFD5DD;
+  border-radius: 3px;
 }
 
 .traffic-measure-preview--sign-image {
   max-width: 3.6rem;
   max-height: 3.6rem;
+}
+
+
+.ember-power-select-dropdown.ember-basic-dropdown-content--in-place {
+  //TODO check if this is needed
+  z-index: 999;
 }

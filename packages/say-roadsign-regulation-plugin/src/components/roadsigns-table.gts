@@ -4,11 +4,9 @@ import { tracked } from '@glimmer/tracking';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import { addAll } from '@lblod/ember-rdfa-editor/utils/set-utils';
-import MeasurePreview from './measure-preview.gts';
 
 import AuDataTable from '@appuniversum/ember-appuniversum/components/au-data-table';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
-import AuHelpText from '@appuniversum/ember-appuniversum/components/au-help-text';
 import AuPill from '@appuniversum/ember-appuniversum/components/au-pill';
 import { eq } from 'ember-truth-helpers';
 import t from 'ember-intl/helpers/t';
@@ -60,9 +58,6 @@ export default class RoadSignsTable extends Component<Signature> {
             }}</th>
           <th class="data-table__header-title">{{t
               "editor-plugins.roadsign-regulation.table.header.image"
-            }}</th>
-          <th class="data-table__header-title">{{t
-              "editor-plugins.roadsign-regulation.table.header.preview"
             }}</th>
           <th class="data-table__header-title">{{t
               "editor-plugins.roadsign-regulation.table.header.category"
@@ -122,27 +117,18 @@ export default class RoadSignsTable extends Component<Signature> {
                     </div>
                   </td>
                   <td>
-                    <AuHelpText
-                      @size="large"
-                      @skin="secondary"
-                      class="au-u-margin-none"
-                    >
-                      <MeasurePreview
-                        @concept={{measureConcept}}
-                        @limitText={{true}}
-                      />
-                    </AuHelpText>
-                  </td>
-                  <td>
                     {{#each (this.categories measureConcept) as |category|}}
                       <AuPill @skin="border">{{category}}</AuPill>
                     {{/each}}
                   </td>
                   <td>
                     <AuButton
+                      @skin="link"
                       {{on "click" (fn @selectMeasureToInsert measureConcept)}}
                     >
-                      This will change screen
+                      {{t
+                        "editor-plugins.roadsign-regulation.table.content.insert-measure-button"
+                      }}
                     </AuButton>
                   </td>
                 </tr>
