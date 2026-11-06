@@ -22,7 +22,6 @@ type Signature = {
     controller: SayController;
     options: RoadsignRegulationPluginOptions;
     measureToInsert?: MobilityMeasureConcept;
-    goBack: () => void;
   };
 };
 
@@ -161,10 +160,6 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
         insertIndex: index + 1,
       })),
     ];
-  }
-
-  get insertPositionDropdownTitle() {
-    return this.selectedInsertPosition?.label.toLowerCase();
   }
 
   get measureSignTree() {

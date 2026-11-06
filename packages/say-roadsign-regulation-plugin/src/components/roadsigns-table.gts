@@ -1,6 +1,4 @@
-import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import { addAll } from '@lblod/ember-rdfa-editor/utils/set-utils';
@@ -32,17 +30,6 @@ function removeSubSigns(signs: TrafficSignalConcept[]) {
 }
 
 export default class RoadSignsTable extends Component<Signature> {
-  @tracked selected?: string;
-
-  @action
-  selectRow(id: string) {
-    if (this.selected === id) {
-      this.selected = undefined;
-    } else {
-      this.selected = id;
-    }
-  }
-
   categories = (measureConcept: MobilityMeasureConcept) => {
     const categorySet: Set<string> = new Set();
     for (const signalConcept of measureConcept.trafficSignalConcepts) {
@@ -56,7 +43,7 @@ export default class RoadSignsTable extends Component<Signature> {
 
   <template>
     {{! @glint-expect-error expect this error }}
-    <AuDataTable @isLoading={{@isLoading}} @noDataMessage="No data" as |table|>
+    <AuDataTable @isLoading={{@isLoading}} as |table|>
       <table.content as |c|>
         <c.header>
           <th class="data-table__header-title">{{t
@@ -82,12 +69,7 @@ export default class RoadSignsTable extends Component<Signature> {
               </tr>
             {{else}}
               {{#each @content as |measureConcept|}}
-                {{! template-lint-disable require-presentational-children }}
-                <tr
-                  role="button"
-                  class="au-c-data-table__clickable-row roadsign"
-                  {{on "click" (fn this.selectRow measureConcept.uri)}}
-                >
+                <tr class="roadsign">
                   <td>
                     <p>{{removeZFromLabel measureConcept.label}}</p>
                   </td>

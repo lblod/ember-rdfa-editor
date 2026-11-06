@@ -62,7 +62,6 @@ editor-plugins:
       header:
         code: Code
         image: Image
-        preview: Preview
         category: Category
       content:
         image:

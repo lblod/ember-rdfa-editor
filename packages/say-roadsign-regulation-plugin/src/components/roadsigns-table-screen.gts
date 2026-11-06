@@ -67,11 +67,8 @@ export default class RoadsignsModal extends Component<Signature> {
 
   @tracked selectedZonality?: Zonality;
   @tracked selectedCode?: Code;
-  @tracked selectedCodeCombination?: Code[];
   @tracked selectedType?: TypeOption;
   @tracked selectedCategory?: Category;
-
-  @tracked searchQuery?: string;
 
   zonalityOptions: Zonality[] = [
     {
@@ -111,7 +108,6 @@ export default class RoadsignsModal extends Component<Signature> {
       this.selectedType = option;
       this.selectedCategory = undefined;
       this.selectedCode = undefined;
-      this.selectedCodeCombination = undefined;
       this.resetPagination();
     }
   }
@@ -123,7 +119,6 @@ export default class RoadsignsModal extends Component<Signature> {
     } else {
       this.selectedCategory = option;
       this.selectedCode = undefined;
-      this.selectedCodeCombination = undefined;
       this.resetPagination();
     }
   }
@@ -131,13 +126,6 @@ export default class RoadsignsModal extends Component<Signature> {
   @action
   changeCode(value: Code) {
     this.selectedCode = value;
-    this.selectedCodeCombination = undefined;
-    this.resetPagination();
-  }
-
-  @action
-  changeCodeCombination(value: Code[]) {
-    this.selectedCodeCombination = value;
     this.resetPagination();
   }
 
@@ -147,12 +135,6 @@ export default class RoadsignsModal extends Component<Signature> {
       (option) => option.uri === value,
     );
     this.selectedZonality = zonality;
-    this.resetPagination();
-  }
-
-  @action
-  handleSearch(event: InputEvent) {
-    this.searchQuery = (event.target as HTMLInputElement).value;
     this.resetPagination();
   }
 
@@ -174,40 +156,12 @@ export default class RoadsignsModal extends Component<Signature> {
     const type = this.selectedType?.uri;
     const types = type ? [type] : undefined;
     await timeout(DEBOUNCE_MS);
-    const abortController = new AbortController();
-    try {
-      return queryTrafficSignalCodes(this.endpoint, {
-        searchString: term,
-        roadSignCategory: category,
-        types,
-      });
-    } finally {
-      abortController.abort();
-    }
-  });
-
-  // Note: this code does not fully work/is not fully reactive with ember 5.6+
-  // Check-out https://github.com/universal-ember/reactiveweb/issues/110 for more information
-  codeCombinationOptionsQuery = trackedFunction(this, async () => {
-    const selectedCode = this.selectedCode;
-    if (!selectedCode) {
-      return [];
-    }
-    let combinedWith: string[] = [selectedCode.uri];
-    if (this.selectedCodeCombination) {
-      combinedWith = [
-        ...combinedWith,
-        ...this.selectedCodeCombination.map((s) => s.uri),
-      ];
-    }
     return queryTrafficSignalCodes(this.endpoint, {
-      combinedWith,
+      searchString: term,
+      roadSignCategory: category,
+      types,
     });
   });
-
-  get codeCombinationOptions() {
-    return this.codeCombinationOptionsQuery.value ?? [];
-  }
 
   classificationsQuery = trackedFunction(this, async () => {
     return queryRoadSignCategories(this.endpoint);
@@ -241,16 +195,9 @@ export default class RoadsignsModal extends Component<Signature> {
   }
 
   measureConceptsTask = restartableTask(async () => {
-    const codes: Code[] = [];
-    if (this.selectedCodeCombination) {
-      codes.push(...this.selectedCodeCombination);
-    }
-    if (this.selectedCode) {
-      codes.push(this.selectedCode);
-    }
+    const codes: Code[] = this.selectedCode ? [this.selectedCode] : [];
     const queryOptions: MobilityMeasureQueryOptions = {
       imageBaseUrl: this.imageBaseUrl,
-      searchString: this.searchQuery,
       zonality: this.selectedZonality ? this.selectedZonality.uri : undefined,
       trafficSignalType: this.selectedType ? this.selectedType.uri : undefined,
       codes: codes.length ? codes.map((code) => code.uri) : undefined,
@@ -285,10 +232,8 @@ export default class RoadsignsModal extends Component<Signature> {
     concepts: MobilityMeasureConcept[];
     count: number;
   }> = trackedTask(this, this.measureConceptsTask, () => [
-    this.searchQuery,
     this.selectedZonality,
     this.selectedType,
-    this.selectedCodeCombination,
     this.selectedCode,
     this.selectedCategory,
     this.pageNumber,

@@ -39,7 +39,6 @@ export async function queryTrafficSignalConcepts(
       ?regulatoryNotation
       ?image
       ?position
-      ?mainSign
     WHERE {
       ?uri
         a mobiliteit:Verkeerstekenconcept;
@@ -70,10 +69,6 @@ export async function queryTrafficSignalConcepts(
 
       OPTIONAL  {
         ?uri ext:regulatoryNotation ?regulatoryNotation.
-      }
-
-      OPTIONAL  {
-        ?mainSign mobiliteit:heeftOnderbordConcept ?uri.
       }
 
       VALUES ?type {
@@ -131,12 +126,12 @@ type MainSignUriBinding = {
 
 type MainSignQueryOptions = {
   abortSignal?: AbortSignal;
-  roadSignConceptUri?: string;
+  roadSignConceptUri: string;
 };
 
 async function queryRoadSignMainSign(
   endpoint: string,
-  options: MainSignQueryOptions = {},
+  options: MainSignQueryOptions,
 ) {
   const { abortSignal, roadSignConceptUri } = options;
   const query = /* sparql */ `
@@ -147,7 +142,7 @@ async function queryRoadSignMainSign(
     SELECT DISTINCT
       ?mainSign
     WHERE {
-      ?mainSign mobiliteit:heeftMogelijkOnderbord ${roadSignConceptUri ? sparqlEscapeUri(roadSignConceptUri) : ''}.
+      ?mainSign mobiliteit:heeftMogelijkOnderbord ${sparqlEscapeUri(roadSignConceptUri)}.
 
     }
   `;

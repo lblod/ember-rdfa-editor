@@ -62,7 +62,6 @@ editor-plugins:
       header:
         code: Code
         image: Afbeelding
-        preview: Preview
         category: Categorie
       content:
         image:

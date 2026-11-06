@@ -61,7 +61,6 @@ export default class RoadsignsModal extends Component<Signature> {
             @controller={{@controller}}
             @options={{@options}}
             @measureToInsert={{this.measureToInsert}}
-            @goBack={{this.backToTable}}
           />
         {{/if}}
 
