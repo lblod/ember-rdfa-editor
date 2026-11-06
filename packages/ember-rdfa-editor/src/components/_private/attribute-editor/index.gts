@@ -34,6 +34,7 @@ type Signature = {
     expanded?: boolean;
     onToggle?: (expanded: boolean) => void;
   };
+  Element: HTMLElement;
 };
 export type AttributeEditHandler = (
   pos: number,
@@ -76,8 +77,7 @@ export default class AttributeEditor extends Component<Signature> {
     if (this.isEditable(attr)) {
       //@ts-expect-error handler is not defined on attribute-spec type
       const handler = this.node.value.type.spec.attrs[attr].editHandler as
-        | AttributeEditHandler
-        | undefined;
+        AttributeEditHandler | undefined;
       if (handler) {
         return handler;
       } else {

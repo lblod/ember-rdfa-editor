@@ -212,7 +212,7 @@ class Modal extends Component<ModalArgs> {
   @tracked generateNewUri = 'yes';
   @tracked resourceUriBase = '';
 
-  updateUriBase = (event: InputEvent) => {
+  updateUriBase = (event: Event & { currentTarget: Element }) => {
     this.resourceUriBase = (event.target as HTMLInputElement).value;
   };
   shouldGenerateNewUri = (value: 'yes' | 'no') => {
