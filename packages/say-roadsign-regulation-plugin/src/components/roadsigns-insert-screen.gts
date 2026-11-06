@@ -173,7 +173,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
   }
   <template>
     <div class="au-o-grid au-u-height-full au-u-margin-none">
-      <div class="au-o-grid__item au-u-1-3@medium au-u-height-full">
+      <div class="au-o-grid__item au-u-1-3@medium au-u-height-full@medium">
         <div class="au-u-padding">
           <AuHeading @skin="3" @level="2">
             {{t
@@ -192,7 +192,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
 
       </div>
       <div
-        class="au-o-grid__item au-u-1-3@medium au-u-height-full u-border-solid u-border-l u-border-divider au-u-padding"
+        class="au-o-grid__item au-u-1-3@medium au-u-height-full@medium u-border-solid u-border-l u-border-divider au-u-padding"
       >
         <div class="au-u-padding">
           <AuHeading @skin="3" @level="2">
@@ -218,7 +218,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
         </div>
       </div>
       <div
-        class="au-o-grid__item au-u-1-3@medium au-u-height-full u-border-solid u-border-l u-border-divider au-u-padding"
+        class="au-o-grid__item au-u-1-3@medium au-u-height-full@medium u-border-solid u-border-l u-border-divider au-u-padding"
       >
         <div class="au-u-padding">
           <AuHeading @skin="3" @level="2">
