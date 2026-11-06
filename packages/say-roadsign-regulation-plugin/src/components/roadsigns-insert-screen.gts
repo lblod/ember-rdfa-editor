@@ -173,7 +173,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
     return generateMeasureSignTree(this.args.measureToInsert);
   }
   <template>
-    <div class="au-o-grid au-u-height-full">
+    <div class="au-o-grid au-u-height-full au-u-margin-none">
       <div class="au-o-grid__item au-u-1-3@medium au-u-height-full">
         <div class="au-u-padding">
           <AuHeading @skin="3" @level="2">

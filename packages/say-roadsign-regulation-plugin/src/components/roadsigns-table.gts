@@ -15,6 +15,8 @@ import { fn } from '@ember/helper';
 import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import removeZFromLabel from '#root/helpers/removeZFromLabel.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { isSubSign } from '#root/plugin/generate-measure-sign-tree.ts';
+import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
 
 type Signature = {
   Args: {
@@ -24,6 +26,11 @@ type Signature = {
     selectMeasureToInsert: (measure: MobilityMeasureConcept) => void;
   };
 };
+
+function removeSubSigns(signs: TrafficSignalConcept[]){
+  return signs.filter(sign => !isSubSign(sign))
+}
+
 
 export default class RoadSignsTable extends Component<Signature> {
   @tracked selected?: string;
@@ -88,7 +95,7 @@ export default class RoadSignsTable extends Component<Signature> {
                   <td>
                     <div class="au-o-grid au-o-grid--tiny">
                       {{#each
-                        measureConcept.trafficSignalConcepts
+                        (removeSubSigns measureConcept.trafficSignalConcepts)
                         as |signalConcept|
                       }}
                         <div class="au-o-grid__item au-u-1-3">

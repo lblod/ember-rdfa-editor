@@ -8,11 +8,11 @@ type SignPreviewItem = {
     subSigns: TrafficSignalConcept[];
   };
 
-function isSubSign(signal: TrafficSignalConcept) {
+export function isSubSign(signal: TrafficSignalConcept): boleean {
     if(signal.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) return false
     const classifications = signal.categories;
     return classifications.some((category) => category.label === 'Onderbord');
-  }
+}
 
 export default function generateMeasureSignTree(measure: MobilityMeasureConcept) {
     const trafficSignConcepts = measure.trafficSignalConcepts;

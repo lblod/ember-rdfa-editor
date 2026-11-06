@@ -10,6 +10,7 @@ import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { service } from '@ember/service';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import TrafficMeasureSubSignList from '#root/components/sub-sign-list.gts';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
@@ -49,8 +50,7 @@ export default class SignAccordion extends Component<Signature> {
       class="traffic-measure-preview--main-sign-container au-u-margin-small au-u-padding-small"
     >
       <AuButton
-        {{! TODO: Convert to import component }}
-        @icon="nav-down"
+        @icon={{NavDownIcon}}
         @hideText="true"
         @skin="naked"
         {{on "click" this.toggleOpen}}
