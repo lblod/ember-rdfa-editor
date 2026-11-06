@@ -21,6 +21,7 @@ catalog:
   "@curvenote/prosemirror-utils": ^1.0.5
   "@ember/optional-features": ^2.3.0
   "@ember/render-modifiers": ^3.0.0
+  "@ember-data-types/model": ^5.9.1
   "@ember/string": ^4.0.1
   "@ember/test-helpers": ^5.8.0
   "@embroider/addon-dev": ^7.1.6
@@ -42,6 +43,7 @@ catalog:
   "@glint/template": ^1.11.1
   "@glint/tsserver-plugin": 2.1.0
   "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
+  "@lblod/ember-rdfa-editor-lblod-plugins": 37.3.0
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
   "@playwright/test": 1.50.0
@@ -74,11 +76,15 @@ catalog:
   "@types/validator": ^13.15.10
   "@typescript-eslint/eslint-plugin": ^8.72.1
   "@typescript-eslint/parser": ^8.72.1
+  "@warp-drive-types/core-types": ^5.9.1
+  "@warp-drive/core": ^5.9.1
+  "@warp-drive/legacy": ^5.9.1
   autoprefixer: ^10.6.2
   babel-plugin-ember-template-compilation: ^2.4.1
   codemirror: ^6.0.2
   common-tags: ^1.8.2
   concurrently: ^9.2.5
+  date-fns: ^2.30.0
   debug: ^4.4.3
   decorator-transforms: ^2.4.0
   dompurify: 3.2.4
@@ -92,6 +98,7 @@ catalog:
   ember-headless-form: ^1.1.1
   ember-headless-form-yup: ^1.0.0
   ember-intl: ^7.5.0
+  ember-lifeline: ^7.1.0
   ember-load-initializers: ^3.0.1
   ember-modifier: ^4.3.0
   ember-page-title: ^9.0.3
@@ -99,6 +106,7 @@ catalog:
   ember-power-select-with-create: ^3.1.0
   ember-qunit: ^9.2.0
   ember-resolver: ^13.2.0
+  ember-resources: ^7.1.0
   ember-source: ^6.12.1
   ember-source-channel-url: ^3.0.0
   ember-template-imports: ^4.4.0
@@ -117,7 +125,7 @@ catalog:
   execa: ^9.6.1
   git-url-parse: ^16.1.0
   globals: ^15.15.0
-  iter-tools: ^7.5.4
+  iter-tools: npm:iter-tools-es@^7.5.4
   js-beautify: ^1.15.4
   libphonenumber-js: ^1.13.15
   linkifyjs: ^4.4.0
@@ -159,12 +167,14 @@ catalog:
   rollup-plugin-sass: ^1.15.3
   sass: ^1.107.1
   sinon: ^19.0.5
+  static-server: ^2.2.1
   stylelint: ^16.26.1
   stylelint-config-standard: ^36.0.1
   stylelint-prettier: ^5.0.3
   tracked-built-ins: ^4.1.2
   tracked-toolbox: ^3.0.0
   tsx: ^4.23.15
+  typedoc: ^0.28.20
   typescript: ^5.9.3
   typescript-eslint: ^7.18.0
   unified: ^11.0.5
@@ -174,6 +184,7 @@ catalog:
   walk-sync: ^4.0.2
   webpack: ^5.112.2
   yup: ^1.7.1
+  zod: ^3.24.1
 
 overrides:
   chalk@^2.0.0: ^4.1.2

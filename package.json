@@ -46,7 +46,7 @@
     "prettier-plugin-ember-template-tag": "catalog:",
     "remark-parse": "catalog:",
     "remark-stringify": "catalog:",
-    "static-server": "^2.2.1",
+    "static-server": "catalog:",
     "tsx": "catalog:",
     "unified": "catalog:"
   }
