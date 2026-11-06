@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
+import { type SignPreviewItem } from '#root/plugin/generate-measure-sign-tree.ts';
 import { fn } from '@ember/helper';
 import AuCheckbox from '@appuniversum/ember-appuniversum/components/au-checkbox';
 import isSelectedSign from '#root/helpers/is-selected-sign.ts';
@@ -28,7 +29,7 @@ function signalLabel(signal: TrafficSignalConcept, intl: IntlService) {
 
 type Signature = {
   Args: {
-    sign: TrafficSignalConcept;
+    sign: SignPreviewItem;
     selectedSigns: TrafficSignalConcept[];
     selectMainSign: (sign: TrafficSignalConcept) => void;
     selectSubSign: (
@@ -39,7 +40,7 @@ type Signature = {
 };
 
 export default class SignAccordion extends Component<Signature> {
-  @tracked isOpen;
+  @tracked isOpen = false;
   @service declare intl: IntlService;
   @action
   toggleOpen() {
@@ -51,7 +52,7 @@ export default class SignAccordion extends Component<Signature> {
     >
       <AuButton
         @icon={{NavDownIcon}}
-        @hideText="true"
+        @hideText={{true}}
         @skin="naked"
         {{on "click" this.toggleOpen}}
       />

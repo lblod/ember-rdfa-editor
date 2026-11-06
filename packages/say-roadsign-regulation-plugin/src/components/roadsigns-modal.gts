@@ -10,6 +10,7 @@ import RoadsignsTableScreen from '#root/components/roadsigns-table-screen.gts';
 import RoadsignsInsertScreen from '#root/components/roadsigns-insert-screen.gts';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
 import { on } from '@ember/modifier';
 
 type Signature = {
@@ -34,6 +35,10 @@ export default class RoadsignsModal extends Component<Signature> {
     this.screen = 'insert';
     this.measureToInsert = measure;
   }
+
+  // TODO: move the insert logic here
+  @action
+  insert() {}
 
   <template>
     <AuModal
@@ -64,7 +69,11 @@ export default class RoadsignsModal extends Component<Signature> {
       {{#if (eq this.screen "insert")}}
         <Modal.Footer>
           <div class="au-u-flex au-u-flex--between">
-            <AuButton @skin="link" {{on "click" this.backToTable}}>
+            <AuButton
+              @skin="link"
+              @icon={{ArrowLeftIcon}}
+              {{on "click" this.backToTable}}
+            >
               {{t "editor-plugins.roadsign-regulation.insert.go-back"}}
             </AuButton>
             <div>

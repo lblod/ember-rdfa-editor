@@ -109,12 +109,12 @@ export async function queryTrafficSignalConcepts(
         });
         const instructions = await queryTrafficSignalInstructions(endpoint, {
           roadSignConceptUri: concept.uri,
-        })
+        });
         return {
           ...concept,
           categories,
           mainSigns,
-          instructions
+          instructions,
         };
       } else {
         return concept;
@@ -125,10 +125,9 @@ export async function queryTrafficSignalConcepts(
   return conceptsWithCategoriesAndMainSigns;
 }
 
-
 type MainSignUriBinding = {
-  mainSign: string
-}
+  mainSign: string;
+};
 
 type MainSignQueryOptions = {
   abortSignal?: AbortSignal;
@@ -158,5 +157,5 @@ async function queryRoadSignMainSign(
     abortSignal,
   });
   const bindings = queryResult.results.bindings;
-  return bindings.map(binding => binding.mainSign.value)
+  return bindings.map((binding) => binding.mainSign.value);
 }

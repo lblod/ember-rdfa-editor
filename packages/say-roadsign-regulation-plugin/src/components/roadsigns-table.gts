@@ -27,10 +27,9 @@ type Signature = {
   };
 };
 
-function removeSubSigns(signs: TrafficSignalConcept[]){
-  return signs.filter(sign => !isSubSign(sign))
+function removeSubSigns(signs: TrafficSignalConcept[]) {
+  return signs.filter((sign) => !isSubSign(sign));
 }
-
 
 export default class RoadSignsTable extends Component<Signature> {
   @tracked selected?: string;

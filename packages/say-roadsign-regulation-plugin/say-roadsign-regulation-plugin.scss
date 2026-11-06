@@ -1,4 +1,4 @@
-.roadsign > td {
+.roadsign>td {
   vertical-align: middle;
 }
 
@@ -15,8 +15,8 @@
 }
 
 .traffic-measure-preview--main-sign-container {
-  background-color: #F4F7FB;
-  border: 1px solid #CFD5DD;
+  background-color: #f4f7fb;
+  border: 1px solid #cfd5dd;
   border-radius: 3px;
 }
 
@@ -25,8 +25,10 @@
   max-height: 3.6rem;
 }
 
-
-.ember-power-select-dropdown.ember-basic-dropdown-content--in-place {
-  //TODO check if this is needed
-  z-index: 999;
+.traffic-measure-preview--template-preview {
+  background-color: #f4f7fb;
+  border: 1px solid #cfd5dd;
+  border-radius: 3px;
+  color: var(--au-gray-700);
+  min-height: 14rem;
 }

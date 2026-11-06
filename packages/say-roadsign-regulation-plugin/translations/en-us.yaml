@@ -42,6 +42,7 @@ editor-plugins:
         label: Varying signalisation
         varying: Varying
         non-varying: Non varying
+      template-preview: Template preview
     card:
       insert-measure: Insert traffic measure
     modal:

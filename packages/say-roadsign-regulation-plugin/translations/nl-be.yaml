@@ -42,6 +42,7 @@ editor-plugins:
         label: Variabele signalisatie
         varying: Variabel
         non-varying: Niet variabel
+      template-preview: Maatregelpreview
     card:
       insert-measure: Voeg mobiliteitsmaatregel in
     modal:

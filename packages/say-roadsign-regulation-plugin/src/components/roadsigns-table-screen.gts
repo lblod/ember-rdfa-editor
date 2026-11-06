@@ -142,8 +142,11 @@ export default class RoadsignsModal extends Component<Signature> {
   }
 
   @action
-  changeZonality(value: Zonality) {
-    this.selectedZonality = value;
+  changeZonality(value: string | undefined) {
+    const zonality = this.zonalityOptions.find(
+      (option) => option.uri === value,
+    );
+    this.selectedZonality = zonality;
     this.resetPagination();
   }
 
@@ -393,7 +396,6 @@ export default class RoadsignsModal extends Component<Signature> {
               {{t "editor-plugins.roadsign-regulation.modal.filter.code"}}
             </AuLabel>
             <PowerSelect
-              @renderInPlace={{true}}
               @verticalPosition="below"
               @searchEnabled={{true}}
               @search={{this.searchCodes.perform}}
@@ -412,7 +414,6 @@ export default class RoadsignsModal extends Component<Signature> {
               {{t "editor-plugins.roadsign-regulation.modal.filter.type"}}
             </AuLabel>
             <PowerSelect
-              @renderInPlace={{true}}
               @verticalPosition="below"
               @options={{this.typeOptions}}
               @searchEnabled={{true}}
@@ -430,7 +431,6 @@ export default class RoadsignsModal extends Component<Signature> {
               {{t "editor-plugins.roadsign-regulation.modal.filter.category"}}
             </AuLabel>
             <PowerSelect
-              @renderInPlace={{true}}
               @verticalPosition="below"
               @options={{this.categoryOptions}}
               @searchEnabled={{true}}
