@@ -41,7 +41,7 @@ catalog:
   "@glimmer/validator": ^0.94.8
   "@glint/ember-tsc": ^1.14.3
   "@glint/template": ^1.11.1
-  "@glint/tsserver-plugin": 2.1.0
+  "@glint/tsserver-plugin": 2.7.16
   "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
   "@lblod/ember-rdfa-editor-lblod-plugins": 37.3.0
   "@manypkg/get-packages": ^2.2.2

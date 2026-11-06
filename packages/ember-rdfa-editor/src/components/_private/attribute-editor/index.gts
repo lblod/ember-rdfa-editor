@@ -210,8 +210,11 @@ export default class AttributeEditor extends Component<Signature> {
                             <EditorComponent
                               {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               id={{field.id}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               value={{field.value}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               name={{key}}
+                              {{! @glint-expect-error fix signature of dynamic `EditorComponent` }}
                               {{on "change" (fn this.setField field)}}
                             />
                           {{else}}
