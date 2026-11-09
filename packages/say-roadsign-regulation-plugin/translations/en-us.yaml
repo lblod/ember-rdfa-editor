@@ -74,7 +74,9 @@ editor-plugins:
       supplement-measure-title: 2. Suplement measure
       add-measure-title: 3. Add measure
       instruction: Instruction
+      instruction-placeholder: Select instruction
       go-back: Back to the overview list
+      no-instructions: Select the relevant road signs. Then enter the correct instructions here.
 traffic-measure-concept:
   main-sign: Main sign
   road-marking: Road marking

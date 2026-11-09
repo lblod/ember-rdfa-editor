@@ -52,6 +52,7 @@ editor-plugins:
         code: Code
         category: Categorie
         zonal-validity: Geldigheid
+        clear-all-filters: Herstel alle filters
       cancel: Annuleren
       insert: Invoegen
     pagination:
@@ -73,7 +74,9 @@ editor-plugins:
       supplement-measure-title: 2. Maatregel aanvullen
       add-measure-title: 3. Maatregel toevoegen
       instruction: Instructie
+      instruction-placeholder: Selecteer instructie
       go-back: Terug naar overzichtslijst
+      no-instructions: Selecteer de nodige verkeerstekens. Vul dan hier de juiste instructies aan.
 traffic-measure-concept:
   main-sign: Hoofdbord
   road-marking: Wegmarkering

@@ -48,12 +48,13 @@ export default class SignAccordion extends Component<Signature> {
   }
   <template>
     <div
-      class="traffic-measure-preview--main-sign-container au-u-margin-small au-u-padding-small"
+      class="traffic-measure-preview--main-sign-container au-u-margin-bottom au-u-padding-small"
     >
       <AuButton
         @icon={{NavDownIcon}}
         @hideText={{true}}
         @skin="naked"
+        @size="large"
         {{on "click" this.toggleOpen}}
       />
       <AuCheckbox

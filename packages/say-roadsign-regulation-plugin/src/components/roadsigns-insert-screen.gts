@@ -170,34 +170,33 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
     <div class="au-o-grid au-u-height-full au-u-margin-none">
       <div class="au-o-grid__item au-u-1-3@medium">
         <div class="au-u-padding">
-          <AuHeading @skin="3" @level="2">
+          <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
             {{t
               "editor-plugins.roadsign-regulation.insert.choose-traffic-signs-title"
             }}
           </AuHeading>
+          {{#each this.measureSignTree.signs as |sign|}}
+            <SignAccordion
+              @sign={{sign}}
+              @selectedSigns={{this.selectedSigns}}
+              @selectMainSign={{this.selectMainSign}}
+              @selectSubSign={{this.selectSubSign}}
+            />
+          {{/each}}
         </div>
-        {{#each this.measureSignTree.signs as |sign|}}
-          <SignAccordion
-            @sign={{sign}}
-            @selectedSigns={{this.selectedSigns}}
-            @selectMainSign={{this.selectMainSign}}
-            @selectSubSign={{this.selectSubSign}}
-          />
-        {{/each}}
 
       </div>
       <div
-        class="au-o-grid__item au-u-1-3@medium u-border-solid u-border-l u-border-divider au-u-padding"
+        class="au-o-grid__item au-u-1-3@medium traffic-measure-preview--insert-step-container au-u-padding"
       >
         <div class="au-u-padding">
-          <AuHeading @skin="3" @level="2">
+          <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
             {{t
               "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
             }}
           </AuHeading>
-          <div>
-            {{#each this.selectedSigns as |sign|}}
-
+          {{#each this.selectedSigns as |sign|}}
+            <div class="au-u-margin-bottom">
               <AuHeading @skin="6" @level="3">
                 {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
                 {{sign.code}}
@@ -206,21 +205,28 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 @onChange={{set this "selectedInsertPosition"}}
                 @selected={{this.selectedInsertPosition}}
                 @options={{sign.instructions}}
+                @placeholder={{t
+                  "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
+                }}
                 as |option|
               >{{option.preview}}</PowerSelect>
-            {{/each}}
-          </div>
+            </div>
+          {{else}}
+            <p class="au-u-muted au-u-italic">{{t
+                "editor-plugins.roadsign-regulation.insert.no-instructions"
+              }}</p>
+          {{/each}}
         </div>
       </div>
       <div
-        class="au-o-grid__item au-u-1-3@medium u-border-solid u-border-l u-border-divider au-u-padding"
+        class="au-o-grid__item au-u-1-3@medium traffic-measure-preview--insert-step-container au-u-padding"
       >
         <div class="au-u-padding">
-          <AuHeading @skin="3" @level="2">
+          <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
             {{t "editor-plugins.roadsign-regulation.insert.add-measure-title"}}
           </AuHeading>
           <div>
-            <div class="au-u-margin">
+            <div class="au-u-margin-bottom">
               {{#if this.isPotentiallyZonal}}
                 <AuHeading @level="6" @skin="6">
                   {{t
@@ -248,7 +254,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 </div>
               {{/if}}
             </div>
-            <div class="au-u-margin">
+            <div class="au-u-margin-bottom">
               {{#if @measureToInsert.variableSignage}}
                 <AuHeading @level="6" @skin="6">
                   {{t
@@ -276,7 +282,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 </div>
               {{/if}}
             </div>
-            <div class="au-u-margin">
+            <div class="au-u-margin-bottom">
               <AuHeading @level="6" @skin="6">
                 {{t
                   "editor-plugins.roadsign-regulation.expanded-measure.insert-position"
@@ -291,7 +297,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
               >{{option.label}}</PowerSelect>
             </div>
           </div>
-          <div class="au-u-margin au-u-margin-top-huge">
+          <div class="au-u-margin-top-huge">
             <AuHeading @level="6" @skin="6">
               {{t
                 "editor-plugins.roadsign-regulation.expanded-measure.template-preview"
