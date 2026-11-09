@@ -39,7 +39,13 @@ export default class RoadsignsModal extends Component<Signature> {
   // TODO: move the insert logic here
   @action
   insert() {
-    this.args.closeModal();
+    this.closeModal();
+  }
+
+  @action
+  closeModal() {
+    this.screen = 'table';
+    this.measureToInsert = undefined;
   }
 
   <template>
@@ -48,7 +54,7 @@ export default class RoadsignsModal extends Component<Signature> {
       @size="large"
       @title={{t "editor-plugins.roadsign-regulation.modal.title"}}
       @modalOpen={{@modalOpen}}
-      @closeModal={{@closeModal}}
+      @closeModal={{this.closeModal}}
       as |Modal|
     >
       <Modal.Body>
@@ -78,7 +84,7 @@ export default class RoadsignsModal extends Component<Signature> {
               {{t "editor-plugins.roadsign-regulation.insert.go-back"}}
             </AuButton>
             <div>
-              <AuButton @skin="naked" {{on "click" @closeModal}}>
+              <AuButton @skin="naked" {{on "click" this.closeModal}}>
                 {{t "editor-plugins.roadsign-regulation.modal.cancel"}}
               </AuButton>
               <AuButton {{on "click" this.insert}}>
