@@ -37,6 +37,9 @@ import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_pri
 import { mapObject } from '@lblod/ember-rdfa-editor/utils/map-utils';
 import { v4 as uuid } from 'uuid';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
+import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
+import { on } from '@ember/modifier';
+import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 
 type Option = {
   uri: string;
@@ -332,9 +335,20 @@ export default class RoadsignsModal extends Component<Signature> {
     this.pageNumber = pageNumber;
   }
 
+  @action
+  removeAllFilters() {
+    this.selectedZonality = undefined;
+    this.selectedType = undefined;
+    this.selectedCode = undefined;
+    this.selectedCategory = undefined;
+    this.resetPagination();
+  }
+
   <template>
     <div class="au-o-grid au-u-height-full au-u-margin-none">
-      <div class="au-o-box au-u-background-gray-100 au-o-grid__item au-u-1-5">
+      <div
+        class="au-o-box au-u-background-gray-100 au-o-grid__item au-u-1-5 au-u-flex au-u-flex--column au-u-flex--between"
+      >
         <div class="au-u-flex au-u-flex--column au-u-padding">
           <div class="au-u-margin-bottom">
             <AuLabel>
@@ -406,6 +420,17 @@ export default class RoadsignsModal extends Component<Signature> {
               {{/each}}
             </AuRadioGroup>
           </div>
+        </div>
+        <div class="au-u-flex au-u-flex--end">
+          <AuButton
+            @skin="naked"
+            @icon={{CrossIcon}}
+            {{on "click" this.removeAllFilters}}
+          >
+            {{t
+              "editor-plugins.roadsign-regulation.modal.filter.clear-all-filters"
+            }}
+          </AuButton>
         </div>
       </div>
       <div
