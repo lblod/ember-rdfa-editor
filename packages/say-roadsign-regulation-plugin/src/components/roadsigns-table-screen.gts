@@ -14,7 +14,7 @@ import queryRoadSignCategories from '#root/plugin/queries/road-sign-category.ts'
 import queryTrafficSignalCodes from '#root/plugin/queries/traffic-signal-codes.ts';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import { pagination } from '@lblod/ember-rdfa-editor/helpers/pagination';
-import { restartableTask, task, timeout } from 'ember-concurrency';
+import { restartableTask, timeout } from 'ember-concurrency';
 import t from 'ember-intl/helpers/t';
 import PowerSelect, {
   type Select,
@@ -27,15 +27,7 @@ import { not, or } from 'ember-truth-helpers';
 import {
   TRAFFIC_SIGNAL_CONCEPT_TYPES,
   ZONALITY_OPTIONS,
-  type ZonalOrNot,
 } from '#root/plugin/constants.ts';
-import { resolveTemplate } from '#root/plugin/actions/resolve-template.ts';
-import { queryMobilityTemplates } from '#root/plugin/queries/mobility-template.ts';
-import insertMeasure from '#root/plugin/actions/insert-measure.ts';
-import { type Variable } from '#root/plugin/schemas/variable.ts';
-import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
-import { mapObject } from '@lblod/ember-rdfa-editor/utils/map-utils';
-import { v4 as uuid } from 'uuid';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
@@ -250,71 +242,6 @@ export default class RoadsignsModal extends Component<Signature> {
     return this.measureConceptsQuery.value?.count;
   }
 
-  insertMeasure = task(
-    async (
-      concept: MobilityMeasureConcept,
-      zonality: ZonalOrNot,
-      temporal: boolean,
-      position?: number,
-    ) => {
-      const decisionContext = this.args.options.decisionContext;
-      const decisionUri =
-        decisionContext?.decisionUri ??
-        (this.decisionLocation?.node.attrs['subject'] as string);
-      if (!decisionUri) {
-        console.warn(
-          'No decision URI available, unable to insert roadsign regulation',
-        );
-        return;
-      }
-      const abortController = new AbortController();
-      try {
-        const conceptTemplate = (
-          await queryMobilityTemplates(this.endpoint, {
-            measureConceptUri: concept.uri,
-            abortSignal: abortController.signal,
-          })
-        )[0];
-        const resolvedTemplate = await resolveTemplate(
-          this.endpoint,
-          conceptTemplate,
-          {
-            abortSignal: abortController.signal,
-          },
-        );
-        const variableInstances = mapObject(
-          resolvedTemplate.variables,
-          ([key, variableOrVariableInstance]) => {
-            return [key, instantiateVariable(variableOrVariableInstance)];
-          },
-        );
-        this.controller.withTransaction(
-          () => {
-            const insertLocationArgs:
-              | { position?: number; insertFreely: false }
-              | { insertFreely: true } = decisionContext
-              ? { insertFreely: true }
-              : { insertFreely: false, position };
-            return insertMeasure({
-              measureConcept: concept,
-              variables: variableInstances,
-              templateString: resolvedTemplate.templateString,
-              articleUriGenerator: this.args.options.articleUriGenerator,
-              decisionUri,
-              zonality,
-              temporal,
-              ...insertLocationArgs,
-            })(this.controller.mainEditorState).transaction;
-          },
-          { view: this.controller.mainEditorView },
-        );
-        //this.args.closeModal();
-      } finally {
-        abortController.abort();
-      }
-    },
-  );
-
   @action
   resetPagination() {
     this.goToPage(0);
@@ -465,48 +392,4 @@ export default class RoadsignsModal extends Component<Signature> {
       </div>
     </div>
   </template>
-}
-
-function instantiateVariable(
-  variable: Exclude<Variable, { type: 'instruction' }>,
-) {
-  const __rdfaId = uuid();
-  switch (variable.type) {
-    case 'text':
-      return {
-        uri: generateVariableInstanceUri(),
-        value: variable.defaultValue,
-        variable,
-        __rdfaId,
-      };
-    case 'number':
-      return {
-        uri: generateVariableInstanceUri(),
-        value: variable.defaultValue,
-        variable,
-        __rdfaId,
-      };
-    case 'date':
-      return {
-        uri: generateVariableInstanceUri(),
-        value: variable.defaultValue,
-        variable,
-        __rdfaId,
-      };
-    case 'location':
-      return {
-        uri: generateVariableInstanceUri(),
-        value: variable.defaultValue,
-        variable,
-        __rdfaId,
-      };
-    case 'codelist':
-      return {
-        uri: generateVariableInstanceUri(),
-        value: variable.defaultValue,
-        valueLabel: variable.defaultValueLabel,
-        variable,
-        __rdfaId,
-      };
-  }
 }

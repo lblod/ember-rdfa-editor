@@ -38,14 +38,16 @@ export default class RoadsignsModal extends Component<Signature> {
 
   // TODO: move the insert logic here
   @action
-  insert() {}
+  insert() {
+    this.args.closeModal();
+  }
 
   <template>
     <AuModal
       class="au-c-modal--flush"
       @size="large"
       @title={{t "editor-plugins.roadsign-regulation.modal.title"}}
-      @modalOpen={{true}}
+      @modalOpen={{@modalOpen}}
       @closeModal={{@closeModal}}
       as |Modal|
     >
