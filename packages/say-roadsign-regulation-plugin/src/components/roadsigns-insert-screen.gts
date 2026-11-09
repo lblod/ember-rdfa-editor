@@ -65,14 +65,6 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
     );
   }
 
-  // get insertButtonDisabled() {
-  //   return (
-  //     (this.isPotentiallyZonal && !this.zonalityValue) ||
-  //     this.args.insert.isRunning ||
-  //     (this.args.concept.variableSignage && !isSome(this.temporalValue))
-  //   );
-  // }
-
   @action
   selectSubSign(subSign: TrafficSignalConcept, mainSign: TrafficSignalConcept) {
     let mainSignIndex = -1;
@@ -127,18 +119,6 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
   @action
   changeTemporality(temporality: 'true' | 'false') {
     this.temporalValue = temporality === 'true';
-  }
-
-  @action
-  insert() {
-    //const { insertIndex } = this.selectedInsertPosition;
-    // return this.args.insert.perform(
-    //   this.args.measureToInsert,
-    //   // POTENTIALLY_ZONAL option is filtered out by requiring a zonalityValue to submit
-    //   (this.zonalityValue ?? this.args.concept.zonality) as ZonalOrNot,
-    //   this.temporalValue ?? false,
-    //   insertIndex,
-    // );
   }
 
   get articlesInDocument() {
