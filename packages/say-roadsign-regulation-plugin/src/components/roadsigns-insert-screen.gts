@@ -28,6 +28,17 @@ type Signature = {
     controller: SayController;
     options: RoadsignRegulationPluginOptions;
     measureToInsert?: MobilityMeasureConcept;
+    selectedSigns: SelectedSigns;
+    template: string;
+    selectMainSign: (sign: TrafficSignalConcept) => void;
+    selectSubSign: (
+      subSign: TrafficSignalConcept,
+      mainSign: TrafficSignalConcept,
+    ) => void;
+    selectInstruction: (
+      selectedSign: SelectedSign,
+      instruction: Instruction,
+    ) => void;
   };
 };
 
@@ -39,7 +50,6 @@ type InsertPositionOption = {
 
 export default class RoadsignsInsertScreen extends Component<Signature> {
   @service declare intl: IntlService;
-  @tracked selectedSigns: SelectedSigns = new Map();
   @tracked zonalityValue?: ZonalOrNot;
   @tracked temporalValue?: boolean;
   @tracked selectedInsertPosition: InsertPositionOption;
@@ -69,41 +79,6 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
     return (
       this.args.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL
     );
-  }
-
-  @action
-  selectSubSign(subSign: TrafficSignalConcept, mainSign: TrafficSignalConcept) {
-    const selection = this.selectedSigns.get(mainSign.uri);
-    const subSigns = new Map(selection?.subSigns);
-    if (subSigns.has(subSign.uri)) {
-      subSigns.delete(subSign.uri);
-    } else {
-      subSigns.set(subSign.uri, new SelectedSign(subSign));
-    }
-    this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
-      // Keep the main sign to preserve the instruction
-      mainSign: selection?.mainSign ?? new SelectedSign(mainSign),
-      subSigns,
-    });
-  }
-
-  @action
-  selectMainSign(mainSign: TrafficSignalConcept) {
-    if (this.selectedSigns.has(mainSign.uri)) {
-      this.selectedSigns = new Map(
-        [...this.selectedSigns].filter(([uri]) => uri !== mainSign.uri),
-      );
-    } else {
-      this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
-        mainSign: new SelectedSign(mainSign),
-        subSigns: new Map(),
-      });
-    }
-  }
-
-  @action
-  selectInstruction(selectedSign: SelectedSign, instruction: Instruction) {
-    selectedSign.selectedInstruction = instruction;
   }
 
   @action
@@ -144,7 +119,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
 
   get flattenedSelectedSigns() {
     const signs: SelectedSign[] = [];
-    for (const selection of this.selectedSigns.values()) {
+    for (const selection of this.args.selectedSigns.values()) {
       signs.push(selection.mainSign);
       for (const subSign of selection.subSigns.values()) {
         signs.push(subSign);
@@ -164,9 +139,9 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
           {{#each this.measureSignTree.signs as |sign|}}
             <SignAccordion
               @sign={{sign}}
-              @selectedSigns={{this.selectedSigns}}
-              @selectMainSign={{this.selectMainSign}}
-              @selectSubSign={{this.selectSubSign}}
+              @selectedSigns={{@selectedSigns}}
+              @selectMainSign={{@selectMainSign}}
+              @selectSubSign={{@selectSubSign}}
             />
           {{/each}}
         </div>
@@ -188,7 +163,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 {{selectedSign.sign.code}}
               </AuHeading>
               <PowerSelect
-                @onChange={{fn this.selectInstruction selectedSign}}
+                @onChange={{fn @selectInstruction selectedSign}}
                 @selected={{selectedSign.selectedInstruction}}
                 @options={{selectedSign.sign.instructions}}
                 @placeholder={{t
@@ -292,7 +267,7 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
             <div
               class="traffic-measure-preview--template-preview au-u-padding-small"
             >
-              {{@measureToInsert.preview}}
+              {{@template}}
             </div>
           </div>
         </div>

@@ -12,6 +12,12 @@ import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
 import { on } from '@ember/modifier';
+import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
+import { type Instruction } from '#root/plugin/schemas/instruction.ts';
+import {
+  SelectedSign,
+  type SelectedSigns,
+} from '#root/plugin/selected-signs.ts';
 
 type Signature = {
   Args: {
@@ -24,6 +30,7 @@ type Signature = {
 export default class RoadsignsModal extends Component<Signature> {
   @tracked screen = 'table';
   @tracked measureToInsert?: MobilityMeasureConcept;
+  @tracked selectedSigns: SelectedSigns = new Map();
 
   @action
   backToTable() {
@@ -34,6 +41,61 @@ export default class RoadsignsModal extends Component<Signature> {
   selectMeasureToInsert(measure: MobilityMeasureConcept) {
     this.screen = 'insert';
     this.measureToInsert = measure;
+    this.selectedSigns = new Map();
+  }
+
+  get template() {
+    const lines: string[] = [];
+    const selections = [...this.selectedSigns.values()];
+    for (let i = 0; i < selections.length; i++) {
+      const selection = selections[i];
+      const line: string[] = [`\${locatie${i === 0 ? '' : i + 1}}`];
+      if (selection.mainSign.selectedInstruction) {
+        line.push(selection.mainSign.selectedInstruction.value);
+      }
+      for (const subSign of selection.subSigns.values()) {
+        if (subSign.selectedInstruction) {
+          line.push(subSign.selectedInstruction.value);
+        }
+      }
+      lines.push(line.join(' '));
+    }
+    return lines.join('\n');
+  }
+
+  @action
+  selectSubSign(subSign: TrafficSignalConcept, mainSign: TrafficSignalConcept) {
+    const selection = this.selectedSigns.get(mainSign.uri);
+    const subSigns = new Map(selection?.subSigns);
+    if (subSigns.has(subSign.uri)) {
+      subSigns.delete(subSign.uri);
+    } else {
+      subSigns.set(subSign.uri, new SelectedSign(subSign));
+    }
+    this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
+      // Keep the main sign to preserve the instruction
+      mainSign: selection?.mainSign ?? new SelectedSign(mainSign),
+      subSigns,
+    });
+  }
+
+  @action
+  selectMainSign(mainSign: TrafficSignalConcept) {
+    if (this.selectedSigns.has(mainSign.uri)) {
+      this.selectedSigns = new Map(
+        [...this.selectedSigns].filter(([uri]) => uri !== mainSign.uri),
+      );
+    } else {
+      this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
+        mainSign: new SelectedSign(mainSign),
+        subSigns: new Map(),
+      });
+    }
+  }
+
+  @action
+  selectInstruction(selectedSign: SelectedSign, instruction: Instruction) {
+    selectedSign.selectedInstruction = instruction;
   }
 
   // TODO: move the insert logic here
@@ -69,6 +131,11 @@ export default class RoadsignsModal extends Component<Signature> {
             @controller={{@controller}}
             @options={{@options}}
             @measureToInsert={{this.measureToInsert}}
+            @selectedSigns={{this.selectedSigns}}
+            @selectMainSign={{this.selectMainSign}}
+            @selectSubSign={{this.selectSubSign}}
+            @selectInstruction={{this.selectInstruction}}
+            @template={{this.template}}
           />
         {{/if}}
 
