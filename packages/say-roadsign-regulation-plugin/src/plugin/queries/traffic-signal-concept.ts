@@ -5,19 +5,117 @@ import {
   sparqlEscapeString,
   sparqlEscapeUri,
 } from '@lblod/ember-rdfa-editor/utils/sparql-helpers';
-import {
-  type TrafficSignalConcept,
-  TrafficSignalConceptSchema,
-} from '../schemas/traffic-signal-concept.ts';
-import queryRoadSignCategories from './road-sign-category.ts';
+import type { Instruction } from '../schemas/instruction.ts';
+import type { RoadSignCategory } from '../schemas/road-sign-category.ts';
+import { TrafficSignalConceptSchema } from '../schemas/traffic-signal-concept.ts';
 import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '../constants.ts';
-import queryTrafficSignalInstructions from './traffic-signal-instructions.ts';
 
 type QueryOptions = {
   imageBaseUrl?: string;
   measureConceptUri: string;
   abortSignal?: AbortSignal;
 };
+
+type TrafficSignalConceptBinding = {
+  uri: string;
+  type: string;
+  code: string;
+  regulatoryNotation?: string;
+  image?: string;
+  position?: string;
+  category?: string;
+  categoryLabel?: string;
+  instruction?: string;
+  instructionValue?: string;
+  instructionPreview?: string;
+  mainSign?: string;
+};
+
+type GroupedTrafficSignalConcept = {
+  uri: string;
+  type: string;
+  code: string;
+  regulatoryNotation?: string;
+  image: string;
+  position?: string;
+  categories: Map<string, RoadSignCategory>;
+  instructions: Map<string, Instruction>;
+  mainSigns: Set<string>;
+};
+
+function trafficSignalConceptPattern(measureConceptUri: string) {
+  return /* sparql */ `
+    ?uri
+      a mobiliteit:Verkeerstekenconcept;
+      a ?type;
+      skos:prefLabel ?code.
+    {
+      ${sparqlEscapeUri(measureConceptUri)}
+        mobiliteit:heeftVerkeerstekenLijstItem ?listItem.
+      ?listItem
+        schema:item ?uri;
+        schema:position ?position.
+    }
+    UNION
+    {
+      ?uri mobiliteit:heeftMaatregelconcept ${sparqlEscapeUri(measureConceptUri)}.
+      FILTER NOT EXISTS {
+        ${sparqlEscapeUri(measureConceptUri)}
+          mobiliteit:heeftVerkeerstekenLijstItem ?listItem.
+        ?listItem
+          schema:item ?uri.
+      }
+    }
+  `;
+}
+
+function imagePattern(imageBaseUrl?: string) {
+  return /* sparql */ `
+    OPTIONAL {
+      ?uri mobiliteit:grafischeWeergave/ext:hasFile/mu:uuid ?imageId.
+      BIND(CONCAT(${sparqlEscapeString(imageBaseUrl ?? '')}, "/files/", ?imageId, "/download") AS ?image)
+    }
+  `;
+}
+
+const regulatoryNotationPattern = /* sparql */ `
+  OPTIONAL {
+    ?uri ext:regulatoryNotation ?regulatoryNotation.
+  }
+`;
+
+const roadSignCategoryPattern = /* sparql */ `
+  OPTIONAL {
+    ?uri dct:type ?category.
+    ?category
+      a mobiliteit:Verkeersbordcategorie;
+      skos:prefLabel ?categoryLabel.
+  }
+`;
+
+const instructionPattern = /* sparql */ `
+  OPTIONAL {
+    ?uri mobiliteit:heeftInstructie ?instruction.
+    ?instruction
+      a mobiliteit:Template;
+      rdf:value ?instructionValue;
+      ext:preview ?instructionPreview.
+  }
+`;
+
+const mainSignPattern = /* sparql */ `
+  OPTIONAL {
+    ?mainSign mobiliteit:heeftMogelijkOnderbord ?uri.
+  }
+`;
+
+const typeValuesPattern = /* sparql */ `
+  VALUES ?type {
+    ${sparqlEscapeUri(TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN)}
+    ${sparqlEscapeUri(TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_MARKING)}
+    ${sparqlEscapeUri(TRAFFIC_SIGNAL_CONCEPT_TYPES.TRAFFIC_LIGHT)}
+  }
+`;
 
 export async function queryTrafficSignalConcepts(
   endpoint: string,
@@ -31,6 +129,7 @@ export async function queryTrafficSignalConcepts(
     PREFIX dct: <http://purl.org/dc/terms/>
     PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
     PREFIX schema: <http://schema.org/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
     SELECT DISTINCT
       ?uri
@@ -39,118 +138,94 @@ export async function queryTrafficSignalConcepts(
       ?regulatoryNotation
       ?image
       ?position
+      ?category
+      ?categoryLabel
+      ?instruction
+      ?instructionValue
+      ?instructionPreview
+      ?mainSign
     WHERE {
-      ?uri
-        a mobiliteit:Verkeerstekenconcept;
-        a ?type;
-        skos:prefLabel ?code.
-      {
-        ${sparqlEscapeUri(measureConceptUri)}
-          mobiliteit:heeftVerkeerstekenLijstItem ?listItem.
-        ?listItem
-          schema:item ?uri;
-          schema:position ?position.
-      }
-      UNION
-      {
-        ?uri mobiliteit:heeftMaatregelconcept ${sparqlEscapeUri(measureConceptUri)}.
-        FILTER NOT EXISTS {
-          ${sparqlEscapeUri(measureConceptUri)}
-            mobiliteit:heeftVerkeerstekenLijstItem ?listItem.
-          ?listItem
-            schema:item ?uri.
-        }
-      }
+      ${trafficSignalConceptPattern(measureConceptUri)}
 
-      OPTIONAL {
-        ?uri mobiliteit:grafischeWeergave/ext:hasFile/mu:uuid ?imageId.
-        BIND(CONCAT(${sparqlEscapeString(imageBaseUrl ?? '')}, "/files/", ?imageId, "/download") AS ?image)
-      }
+      ${imagePattern(imageBaseUrl)}
 
-      OPTIONAL  {
-        ?uri ext:regulatoryNotation ?regulatoryNotation.
-      }
+      ${regulatoryNotationPattern}
 
-      VALUES ?type {
-        <https://data.vlaanderen.be/ns/mobiliteit#Verkeersbordconcept>
-        <https://data.vlaanderen.be/ns/mobiliteit#Wegmarkeringconcept>
-        <https://data.vlaanderen.be/ns/mobiliteit#Verkeerslichtconcept>
-      }
+      ${roadSignCategoryPattern}
+
+      ${instructionPattern}
+
+      ${mainSignPattern}
+
+      ${typeValuesPattern}
     }
   `;
-  const queryResult = await executeQuery<BindingObject<TrafficSignalConcept>>({
+  const queryResult = await executeQuery<
+    BindingObject<TrafficSignalConceptBinding>
+  >({
     query,
     endpoint,
     abortSignal,
   });
-  const bindings = queryResult.results.bindings;
-  const concepts = TrafficSignalConceptSchema.array().parse(
-    bindings.map((binding) => {
-      const objectified = objectify(binding);
+  const groupedConcepts = groupBindingsByConcept(queryResult.results.bindings);
+  return TrafficSignalConceptSchema.array().parse(
+    [...groupedConcepts.values()].map((groupedConcept) => {
+      const { categories, instructions, mainSigns, ...concept } =
+        groupedConcept;
+      if (concept.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) {
+        return concept;
+      }
       return {
-        ...objectified,
-        image: objectified.image ?? '',
+        ...concept,
+        categories: [...categories.values()],
+        instructions: [...instructions.values()],
+        mainSigns: [...mainSigns],
       };
     }),
   );
-  const conceptsWithCategoriesAndMainSigns = await Promise.all(
-    concepts.map(async (concept) => {
-      if (concept.type === TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) {
-        const categories = await queryRoadSignCategories(endpoint, {
-          roadSignConceptUri: concept.uri,
-        });
-        const mainSigns = await queryRoadSignMainSign(endpoint, {
-          roadSignConceptUri: concept.uri,
-        });
-        const instructions = await queryTrafficSignalInstructions(endpoint, {
-          roadSignConceptUri: concept.uri,
-        });
-        return {
-          ...concept,
-          categories,
-          mainSigns,
-          instructions,
-        };
-      } else {
-        return concept;
-      }
-    }),
-  );
-
-  return conceptsWithCategoriesAndMainSigns;
 }
 
-type MainSignUriBinding = {
-  mainSign: string;
-};
-
-type MainSignQueryOptions = {
-  abortSignal?: AbortSignal;
-  roadSignConceptUri: string;
-};
-
-async function queryRoadSignMainSign(
-  endpoint: string,
-  options: MainSignQueryOptions,
+function groupBindingsByConcept(
+  bindings: BindingObject<TrafficSignalConceptBinding>[],
 ) {
-  const { abortSignal, roadSignConceptUri } = options;
-  const query = /* sparql */ `
-    PREFIX mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#>
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    PREFIX dct: <http://purl.org/dc/terms/>
-
-    SELECT DISTINCT
-      ?mainSign
-    WHERE {
-      ?mainSign mobiliteit:heeftMogelijkOnderbord ${sparqlEscapeUri(roadSignConceptUri)}.
-
+  const concepts = new Map<string, GroupedTrafficSignalConcept>();
+  for (const binding of bindings) {
+    const objectified = objectify(binding);
+    let concept = concepts.get(objectified.uri);
+    if (!concept) {
+      concept = {
+        uri: objectified.uri,
+        type: objectified.type,
+        code: objectified.code,
+        regulatoryNotation: objectified.regulatoryNotation,
+        image: objectified.image ?? '',
+        position: objectified.position,
+        categories: new Map<string, RoadSignCategory>(),
+        instructions: new Map<string, Instruction>(),
+        mainSigns: new Set<string>(),
+      };
+      concepts.set(objectified.uri, concept);
     }
-  `;
-  const queryResult = await executeQuery<BindingObject<MainSignUriBinding>>({
-    endpoint,
-    query,
-    abortSignal,
-  });
-  const bindings = queryResult.results.bindings;
-  return bindings.map((binding) => binding.mainSign.value);
+    if (objectified.category && objectified.categoryLabel) {
+      concept.categories.set(objectified.category, {
+        uri: objectified.category,
+        label: objectified.categoryLabel,
+      });
+    }
+    if (
+      objectified.instruction &&
+      objectified.instructionValue &&
+      objectified.instructionPreview
+    ) {
+      concept.instructions.set(objectified.instruction, {
+        uri: objectified.instruction,
+        value: objectified.instructionValue,
+        preview: objectified.instructionPreview,
+      });
+    }
+    if (objectified.mainSign) {
+      concept.mainSigns.add(objectified.mainSign);
+    }
+  }
+  return concepts;
 }
