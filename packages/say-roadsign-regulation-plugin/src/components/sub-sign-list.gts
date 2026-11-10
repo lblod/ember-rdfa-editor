@@ -1,5 +1,6 @@
 import type { TOC } from '@ember/component/template-only';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
+import { type MainSignSelection } from '#root/plugin/selected-signs.ts';
 import { fn } from '@ember/helper';
 import AuCheckbox from '@appuniversum/ember-appuniversum/components/au-checkbox';
 import isSelectedSign from '#root/helpers/is-selected-sign.ts';
@@ -8,7 +9,7 @@ type Sig = {
   Args: {
     subSigns: TrafficSignalConcept[];
     mainSign: TrafficSignalConcept;
-    selectedSigns: TrafficSignalConcept[];
+    selectedSigns: Map<string, MainSignSelection>;
     selectSubSign: (
       subSign: TrafficSignalConcept,
       mainSign: TrafficSignalConcept,
@@ -21,7 +22,7 @@ const TrafficMeasureSubSignList: TOC<Sig> = <template>
     {{#each @subSigns as |subSign|}}
       <div class="au-u-margin-top-small au-u-flex au-u-flex--vertical-center">
         <AuCheckbox
-          @checked={{isSelectedSign @selectedSigns subSign}}
+          @checked={{isSelectedSign @selectedSigns subSign @mainSign}}
           @onChange={{fn @selectSubSign subSign @mainSign}}
         >
           <img

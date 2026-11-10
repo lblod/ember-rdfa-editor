@@ -4,11 +4,17 @@ import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import t from 'ember-intl/helpers/t';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
+import { fn } from '@ember/helper';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import generateMeasureSignTree from '#root/plugin/generate-measure-sign-tree.ts';
 import SignAccordion from '#root/components/sign-accordion.gts';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
+import { type Instruction } from '#root/plugin/schemas/instruction.ts';
+import {
+  SelectedSign,
+  type SelectedSigns,
+} from '#root/plugin/selected-signs.ts';
 import type IntlService from 'ember-intl/services/intl';
 import { service } from '@ember/service';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
@@ -33,7 +39,7 @@ type InsertPositionOption = {
 
 export default class RoadsignsInsertScreen extends Component<Signature> {
   @service declare intl: IntlService;
-  @tracked selectedSigns: TrafficSignalConcept[] = [];
+  @tracked selectedSigns: SelectedSigns = new Map();
   @tracked zonalityValue?: ZonalOrNot;
   @tracked temporalValue?: boolean;
   @tracked selectedInsertPosition: InsertPositionOption;
@@ -67,48 +73,37 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
 
   @action
   selectSubSign(subSign: TrafficSignalConcept, mainSign: TrafficSignalConcept) {
-    let mainSignIndex = -1;
-    let subSignIndex = -1;
-    for (let i = 0; i < this.selectedSigns.length; i++) {
-      const sign = this.selectedSigns[i];
-      if (sign.uri === subSign.uri) {
-        subSignIndex = i;
-      } else if (sign.uri === mainSign.uri) {
-        mainSignIndex = i;
-      }
-      if (mainSignIndex !== -1 && subSignIndex !== -1) {
-        break;
-      }
-    }
-    if (subSignIndex === -1) {
-      if (mainSignIndex === -1) {
-        this.selectedSigns = [...this.selectedSigns, mainSign, subSign];
-      } else {
-        this.selectedSigns = [...this.selectedSigns, subSign];
-      }
+    const selection = this.selectedSigns.get(mainSign.uri);
+    const subSigns = new Map(selection?.subSigns);
+    if (subSigns.has(subSign.uri)) {
+      subSigns.delete(subSign.uri);
     } else {
-      // TODO refactor this
-      const newSelectedSigns = this.selectedSigns.slice();
-      newSelectedSigns.splice(subSignIndex, 1);
-      this.selectedSigns = newSelectedSigns;
+      subSigns.set(subSign.uri, new SelectedSign(subSign));
     }
+    this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
+      // Keep the main sign to preserve the instruction
+      mainSign: selection?.mainSign ?? new SelectedSign(mainSign),
+      subSigns,
+    });
   }
 
   @action
   selectMainSign(mainSign: TrafficSignalConcept) {
-    const mainSignSelected = Boolean(
-      this.selectedSigns.find(
-        (selectedSign) => selectedSign.uri === mainSign.uri,
-      ),
-    );
-    if (mainSignSelected) {
-      //TODO: do the logic
-      this.selectedSigns = this.selectedSigns.filter(
-        (selectedSign) => selectedSign.uri !== mainSign.uri,
+    if (this.selectedSigns.has(mainSign.uri)) {
+      this.selectedSigns = new Map(
+        [...this.selectedSigns].filter(([uri]) => uri !== mainSign.uri),
       );
     } else {
-      this.selectedSigns = [...this.selectedSigns, mainSign];
+      this.selectedSigns = new Map(this.selectedSigns).set(mainSign.uri, {
+        mainSign: new SelectedSign(mainSign),
+        subSigns: new Map(),
+      });
     }
+  }
+
+  @action
+  selectInstruction(selectedSign: SelectedSign, instruction: Instruction) {
+    selectedSign.selectedInstruction = instruction;
   }
 
   @action
@@ -146,6 +141,17 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
     if (!this.args.measureToInsert) return { signs: [] };
     return generateMeasureSignTree(this.args.measureToInsert);
   }
+
+  get flattenedSelectedSigns() {
+    const signs: SelectedSign[] = [];
+    for (const selection of this.selectedSigns.values()) {
+      signs.push(selection.mainSign);
+      for (const subSign of selection.subSigns.values()) {
+        signs.push(subSign);
+      }
+    }
+    return signs;
+  }
   <template>
     <div class="au-o-grid au-u-height-full au-u-margin-none">
       <div class="au-o-grid__item au-u-1-3@medium">
@@ -175,16 +181,16 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
               "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
             }}
           </AuHeading>
-          {{#each this.selectedSigns as |sign|}}
+          {{#each this.flattenedSelectedSigns as |selectedSign|}}
             <div class="au-u-margin-bottom">
               <AuHeading @skin="6" @level="3">
                 {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
-                {{sign.code}}
+                {{selectedSign.sign.code}}
               </AuHeading>
               <PowerSelect
-                @onChange={{set this "selectedInsertPosition"}}
-                @selected={{this.selectedInsertPosition}}
-                @options={{sign.instructions}}
+                @onChange={{fn this.selectInstruction selectedSign}}
+                @selected={{selectedSign.selectedInstruction}}
+                @options={{selectedSign.sign.instructions}}
                 @placeholder={{t
                   "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
                 }}
