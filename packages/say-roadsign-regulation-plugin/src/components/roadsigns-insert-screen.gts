@@ -2,8 +2,6 @@ import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import t from 'ember-intl/helpers/t';
-import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
 import { fn } from '@ember/helper';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
@@ -15,13 +13,9 @@ import {
   SelectedSign,
   type SelectedSigns,
 } from '#root/plugin/selected-signs.ts';
-import type IntlService from 'ember-intl/services/intl';
-import { service } from '@ember/service';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { ZONALITY_OPTIONS, type ZonalOrNot } from '#root/plugin/constants.ts';
-import set from '@lblod/ember-rdfa-editor/helpers/set';
-import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
 
 type Signature = {
   Args: {
@@ -30,6 +24,13 @@ type Signature = {
     measureToInsert?: MobilityMeasureConcept;
     selectedSigns: SelectedSigns;
     template: string;
+    zonalityValue?: ZonalOrNot;
+    changeZonality: (zonality: ZonalOrNot) => void;
+    temporalValue?: boolean;
+    changeTemporality: (temporality: 'true' | 'false') => void;
+    selectedInsertPosition: InsertPositionOption;
+    selectInsertPosition: (option: InsertPositionOption) => void;
+    insertPositionOptions: InsertPositionOption[];
     selectMainSign: (sign: TrafficSignalConcept) => void;
     selectSubSign: (
       subSign: TrafficSignalConcept,
@@ -42,74 +43,17 @@ type Signature = {
   };
 };
 
-type InsertPositionOption = {
+export type InsertPositionOption = {
   label: string;
   position: 'first' | 'last' | 'custom';
   insertIndex?: number;
 };
 
 export default class RoadsignsInsertScreen extends Component<Signature> {
-  @service declare intl: IntlService;
-  @tracked zonalityValue?: ZonalOrNot;
-  @tracked temporalValue?: boolean;
-  @tracked selectedInsertPosition: InsertPositionOption;
-
-  insertPositionOptionFirst: InsertPositionOption;
-  insertPositionOptionLast: InsertPositionOption;
-
-  constructor(owner: unknown, args: Signature['Args']) {
-    super(owner, args);
-    this.insertPositionOptionFirst = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
-      ),
-      position: 'first',
-      insertIndex: 0,
-    };
-    this.insertPositionOptionLast = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
-      ),
-      position: 'last',
-    };
-    this.selectedInsertPosition = this.insertPositionOptionLast;
-  }
-
   get isPotentiallyZonal() {
     return (
       this.args.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL
     );
-  }
-
-  @action
-  changeZonality(zonality: ZonalOrNot) {
-    this.zonalityValue = zonality;
-  }
-
-  @action
-  changeTemporality(temporality: 'true' | 'false') {
-    this.temporalValue = temporality === 'true';
-  }
-
-  get articlesInDocument() {
-    return getArticleNodes(this.args.controller.mainEditorState).map(
-      (node) => node.node,
-    );
-  }
-
-  get insertPositionOptions() {
-    return [
-      this.insertPositionOptionLast,
-      this.insertPositionOptionFirst,
-      ...this.articlesInDocument.slice(1).map((_, index) => ({
-        label: this.intl.t(
-          'editor-plugins.roadsign-regulation.expanded-measure.after-article-x',
-          { articleNumber: index + 1 },
-        ),
-        position: 'custom',
-        insertIndex: index + 1,
-      })),
-    ];
   }
 
   get measureSignTree() {
@@ -197,8 +141,8 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 <div class="au-c-form">
                   <AuRadioGroup
                     @name="zonal"
-                    @selected={{this.zonalityValue}}
-                    @onChange={{this.changeZonality}}
+                    @selected={{@zonalityValue}}
+                    @onChange={{@changeZonality}}
                     as |Group|
                   >
                     <Group.Radio @value={{ZONALITY_OPTIONS.ZONAL}}>
@@ -225,8 +169,8 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
                 <div class="au-c-form">
                   <AuRadioGroup
                     @name="temporal"
-                    @selected={{this.temporalValue}}
-                    @onChange={{this.changeTemporality}}
+                    @selected={{@temporalValue}}
+                    @onChange={{@changeTemporality}}
                     as |Group|
                   >
                     <Group.Radio @value="true">
@@ -251,9 +195,9 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
               </AuHeading>
               <PowerSelect
                 @allowClear={{false}}
-                @onChange={{set this "selectedInsertPosition"}}
-                @selected={{this.selectedInsertPosition}}
-                @options={{this.insertPositionOptions}}
+                @onChange={{@selectInsertPosition}}
+                @selected={{@selectedInsertPosition}}
+                @options={{@insertPositionOptions}}
                 as |option|
               >{{option.label}}</PowerSelect>
             </div>
