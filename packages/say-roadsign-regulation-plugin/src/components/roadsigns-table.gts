@@ -74,12 +74,12 @@ export default class RoadSignsTable extends Component<Signature> {
                     <p>{{removeZFromLabel measureConcept.label}}</p>
                   </td>
                   <td>
-                    <div class="au-o-grid au-o-grid--tiny au-u-flex--no-wrap">
+                    <div class="au-u-flex">
                       {{#each
                         (removeSubSigns measureConcept.trafficSignalConcepts)
                         as |signalConcept|
                       }}
-                        <div class="au-o-grid__item au-u-1-3">
+                        <div class="au-u-margin-left-small">
                           {{#unless (eq signalConcept.code "Z")}}
                             {{#if signalConcept.image}}
                               <img

@@ -50,7 +50,12 @@ export default class SignAccordion extends Component<Signature> {
 
   <template>
     <div
-      class="traffic-measure-preview--main-sign-container au-u-margin-bottom au-u-padding-small"
+      class="traffic-measure-preview--main-sign-container au-u-margin-bottom au-u-padding-small
+        {{if
+          @sign.subSigns.length
+          ''
+          'traffic-measure-preview--main-sign-container-without-checkbox'
+        }}"
     >
       {{#if @sign.subSigns.length}}
         <AuButton
