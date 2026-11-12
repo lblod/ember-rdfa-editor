@@ -47,7 +47,22 @@ type Code = Option;
 type Category = Option;
 
 const DEBOUNCE_MS = 100;
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 15;
+
+const trafficSignalConceptTypes = [
+  {
+    label: 'Verkeersborden',
+    uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN,
+  },
+  {
+    label: 'Wegmarkeringen',
+    uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_MARKING,
+  },
+  {
+    label: 'Verkeerslichten',
+    uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.TRAFFIC_LIGHT,
+  },
+];
 
 type Signature = {
   Args: {
@@ -166,23 +181,8 @@ export default class RoadsignsModal extends Component<Signature> {
     return this.classificationsQuery.value ?? [];
   }
 
-  trafficSignalConceptTypes = [
-    {
-      label: 'Verkeersborden',
-      uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN,
-    },
-    {
-      label: 'Wegmarkeringen',
-      uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_MARKING,
-    },
-    {
-      label: 'Verkeerslichten',
-      uri: TRAFFIC_SIGNAL_CONCEPT_TYPES.TRAFFIC_LIGHT,
-    },
-  ];
-
   get typeOptions() {
-    return this.trafficSignalConceptTypes;
+    return trafficSignalConceptTypes;
   }
 
   get categoryOptions() {
@@ -274,7 +274,7 @@ export default class RoadsignsModal extends Component<Signature> {
   <template>
     <div class="au-o-grid au-u-height-full au-u-margin-none">
       <div
-        class="au-o-box au-u-background-gray-100 au-o-grid__item au-u-1-5 au-u-flex au-u-flex--column au-u-flex--between"
+        class="au-o-box au-u-background-gray-100 au-o-grid__item au-u-1-3 au-u-1-5@large au-u-flex au-u-flex--column au-u-flex--between"
       >
         <div class="au-u-flex au-u-flex--column au-u-padding">
           <div class="au-u-margin-bottom">
@@ -361,7 +361,7 @@ export default class RoadsignsModal extends Component<Signature> {
         </div>
       </div>
       <div
-        class="au-c-body-container au-o-grid__item au-u-4-5 au-u-padding-none"
+        class="au-c-body-container au-o-grid__item au-u-2-3 au-u-4-5@large au-u-padding-none"
       >
         <RoadSignsTable
           @content={{this.measureConcepts}}

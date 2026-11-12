@@ -14,7 +14,7 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { NavDownIcon } from '@appuniversum/ember-appuniversum/components/icons/nav-down';
 import TrafficMeasureSubSignList from '#root/components/sub-sign-list.gts';
 import { on } from '@ember/modifier';
-import t from 'ember-intl/helpers/t';
+import { and } from 'ember-truth-helpers';
 
 function signalLabel(signal: TrafficSignalConcept, intl: IntlService) {
   switch (signal.type) {
@@ -40,23 +40,27 @@ type Signature = {
 };
 
 export default class SignAccordion extends Component<Signature> {
-  @tracked isOpen = false;
   @service declare intl: IntlService;
+  @tracked isOpen = false;
+
   @action
   toggleOpen() {
     this.isOpen = !this.isOpen;
   }
+
   <template>
     <div
       class="traffic-measure-preview--main-sign-container au-u-margin-bottom au-u-padding-small"
     >
-      <AuButton
-        @icon={{NavDownIcon}}
-        @hideText={{true}}
-        @skin="naked"
-        @size="large"
-        {{on "click" this.toggleOpen}}
-      />
+      {{#if @sign.subSigns.length}}
+        <AuButton
+          @icon={{NavDownIcon}}
+          @hideText={{true}}
+          @skin="naked"
+          @size="large"
+          {{on "click" this.toggleOpen}}
+        />
+      {{/if}}
       <AuCheckbox
         @checked={{isSelectedSign @selectedSigns @sign.mainSign}}
         @onChange={{fn @selectMainSign @sign.mainSign}}
@@ -75,19 +79,13 @@ export default class SignAccordion extends Component<Signature> {
           {{@sign.mainSign.code}}
         </AuHeading>
       </AuCheckbox>
-      {{#if this.isOpen}}
-        {{#if @sign.subSigns.length}}
-          <TrafficMeasureSubSignList
-            @subSigns={{@sign.subSigns}}
-            @mainSign={{@sign.mainSign}}
-            @selectedSigns={{@selectedSigns}}
-            @selectSubSign={{@selectSubSign}}
-          />
-        {{else}}
-          <p class="au-u-muted au-u-margin-left-large au-u-margin-small">
-            {{t "editor-plugins.roadsign-regulation.accordion.no-sub-signs"}}
-          </p>
-        {{/if}}
+      {{#if (and this.isOpen @sign.subSigns.length)}}
+        <TrafficMeasureSubSignList
+          @subSigns={{@sign.subSigns}}
+          @mainSign={{@sign.mainSign}}
+          @selectedSigns={{@selectedSigns}}
+          @selectSubSign={{@selectSubSign}}
+        />
       {{/if}}
     </div>
   </template>

@@ -36,28 +36,23 @@ export default class RoadsignsInsertScreen extends Component<Signature> {
   @tracked selectedSigns: TrafficSignalConcept[] = [];
   @tracked zonalityValue?: ZonalOrNot;
   @tracked temporalValue?: boolean;
-  @tracked selectedInsertPosition: InsertPositionOption;
 
-  insertPositionOptionFirst: InsertPositionOption;
-  insertPositionOptionLast: InsertPositionOption;
+  insertPositionOptionFirst: InsertPositionOption = {
+    label: this.intl.t(
+      'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
+    ),
+    position: 'first',
+    insertIndex: 0,
+  };
+  insertPositionOptionLast: InsertPositionOption = {
+    label: this.intl.t(
+      'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
+    ),
+    position: 'last',
+  };
 
-  constructor(owner: unknown, args: Signature['Args']) {
-    super(owner, args);
-    this.insertPositionOptionFirst = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
-      ),
-      position: 'first',
-      insertIndex: 0,
-    };
-    this.insertPositionOptionLast = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
-      ),
-      position: 'last',
-    };
-    this.selectedInsertPosition = this.insertPositionOptionLast;
-  }
+  @tracked selectedInsertPosition: InsertPositionOption =
+    this.insertPositionOptionLast;
 
   get isPotentiallyZonal() {
     return (
