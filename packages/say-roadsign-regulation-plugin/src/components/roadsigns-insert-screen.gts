@@ -159,7 +159,7 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
             "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
           }}
         </AuHeading>
-        {{#each this.args.selectedSigns as |sign|}}
+        {{#each @selectedSigns as |sign|}}
           <div class="au-u-margin-bottom">
             <AuHeading @skin="6" @level="3">
               {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
@@ -197,22 +197,28 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
   @tracked zonalityValue?: ZonalOrNot;
   @tracked temporalValue?: boolean;
 
-  insertPositionOptionFirst: InsertPositionOption = {
-    label: this.intl.t(
-      'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
-    ),
-    position: 'first',
-    insertIndex: 0,
-  };
-  insertPositionOptionLast: InsertPositionOption = {
-    label: this.intl.t(
-      'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
-    ),
-    position: 'last',
-  };
+  insertPositionOptionFirst: InsertPositionOption;
+  insertPositionOptionLast: InsertPositionOption;
 
-  @tracked selectedInsertPosition: InsertPositionOption =
-    this.insertPositionOptionLast;
+  @tracked selectedInsertPosition: InsertPositionOption;
+
+  constructor(owner: unknown, args: Signature['Args']) {
+    super(owner, args);
+    this.insertPositionOptionFirst = {
+      label: this.intl.t(
+        'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
+      ),
+      position: 'first',
+      insertIndex: 0,
+    };
+    this.insertPositionOptionLast = {
+      label: this.intl.t(
+        'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
+      ),
+      position: 'last',
+    };
+    this.selectedInsertPosition = this.insertPositionOptionLast;
+  }
 
   get isPotentiallyZonal() {
     return (
