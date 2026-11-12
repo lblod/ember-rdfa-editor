@@ -47,7 +47,7 @@ type Code = Option;
 type Category = Option;
 
 const DEBOUNCE_MS = 100;
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 const trafficSignalConceptTypes = [
   {
