@@ -15,6 +15,7 @@ import removeZFromLabel from '#root/helpers/removeZFromLabel.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { isSubSign } from '#root/plugin/generate-measure-sign-tree.ts';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 
 type Signature = {
   Args: {
@@ -112,6 +113,8 @@ export default class RoadSignsTable extends Component<Signature> {
                   <td>
                     <AuButton
                       @skin="link"
+                      @icon={{PencilIcon}}
+                      @iconAlignment="right"
                       {{on "click" (fn @selectMeasureToInsert measureConcept)}}
                     >
                       {{t
