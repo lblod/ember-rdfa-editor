@@ -24,7 +24,7 @@ import {
   SelectedSign,
   type SelectedSigns,
 } from '#root/plugin/selected-signs.ts';
-import { type ZonalOrNot } from '#root/plugin/constants.ts';
+import { type ZonalOrNot, ZONALITY_OPTIONS } from '#root/plugin/constants.ts';
 import insertMeasure from '#root/plugin/actions/insert-measure.ts';
 import { queryVariables } from '#root/plugin/queries/variable.ts';
 import { type Variable } from '#root/plugin/schemas/variable.ts';
@@ -132,18 +132,18 @@ export default class RoadsignsModal extends Component<Signature> {
   }
 
   get selectedInstructionUris() {
-    const uris: string[] = [];
+    const uris: Set<string> = new Set();
     for (const selection of this.selectedSigns.values()) {
       if (selection.mainSign.selectedInstruction) {
-        uris.push(selection.mainSign.selectedInstruction.uri);
+        uris.add(selection.mainSign.selectedInstruction.uri);
       }
       for (const subSign of selection.subSigns.values()) {
         if (subSign.selectedInstruction) {
-          uris.push(subSign.selectedInstruction.uri);
+          uris.add(subSign.selectedInstruction.uri);
         }
       }
     }
-    return uris;
+    return [...uris];
   }
 
   @action
@@ -156,6 +156,9 @@ export default class RoadsignsModal extends Component<Signature> {
     this.screen = 'insert';
     this.measureToInsert = measure;
     this.selectedSigns = new Map();
+    this.zonalityValue = undefined;
+    this.temporalValue = undefined;
+    this.selectedInsertPosition = this.insertPositionOptionLast;
   }
 
   @action
@@ -296,13 +299,17 @@ export default class RoadsignsModal extends Component<Signature> {
   }
 
   get canInsert() {
-    if(!this.selectedSigns.values().length) return false;
-    for(const mainSign of this.selectedSigns.values()) {
-      if(!mainSign.instruction) {
+    if( this.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL && !this.zonalityValue) return false;
+    if(this.measureToInsert?.variableSignage && this.temporalValue === undefined) return false;
+    if(!this.selectedSigns.size) return false;
+    for(const selectedSign of this.selectedSigns.values()) {
+      console.log(selectedSign.mainSign)
+      console.log(selectedSign.mainSign.selectedInstruction)
+      if(!selectedSign.mainSign.selectedInstruction) {
         return false;
       }
-      for (const subSign of mainSign.subSigns.values()) {
-        if(!subSign.instruction) {
+      for (const subSign of selectedSign.subSigns.values()) {
+        if(!subSign.selectedInstruction) {
         return false;
       }
       }
@@ -314,6 +321,10 @@ export default class RoadsignsModal extends Component<Signature> {
   closeModal() {
     this.screen = 'table';
     this.measureToInsert = undefined;
+    this.selectedSigns = new Map();
+    this.zonalityValue = undefined;
+    this.temporalValue = undefined;
+    this.selectedInsertPosition = this.insertPositionOptionLast;
     this.args.closeModal();
   }
 
@@ -368,7 +379,7 @@ export default class RoadsignsModal extends Component<Signature> {
               <AuButton @skin="naked" {{on "click" this.closeModal}}>
                 {{t "editor-plugins.roadsign-regulation.modal.cancel"}}
               </AuButton>
-              <AuButton {{on "click" this.insert}} @disabled={{not this.canInsert}}>
+              <AuButton {{on "click" this.insert}} @disabled={{not this.canInsert}} @loading={{this.insertMeasure.isRunning}}>
                 {{t "editor-plugins.roadsign-regulation.modal.insert"}}
               </AuButton>
             </div>

@@ -21,8 +21,6 @@ import { ZONALITY_OPTIONS, type ZonalOrNot } from '#root/plugin/constants.ts';
 
 type Signature = {
   Args: {
-    controller: SayController;
-    options: RoadsignRegulationPluginOptions;
     measureToInsert?: MobilityMeasureConcept;
     selectedSigns: SelectedSigns;
     template: string;

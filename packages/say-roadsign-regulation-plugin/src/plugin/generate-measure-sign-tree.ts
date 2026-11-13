@@ -1,6 +1,6 @@
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
-import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from './constants.ts';
+import { TRAFFIC_SIGNAL_CONCEPT_TYPES, ROAD_SIGN_CATEGORIES } from './constants.ts';
 
 export type SignPreviewItem = {
   mainSign: TrafficSignalConcept;
@@ -10,7 +10,7 @@ export type SignPreviewItem = {
 export function isSubSign(signal: TrafficSignalConcept): boolean {
   if (signal.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) return false;
   const classifications = signal.categories;
-  return classifications.some((category) => category.label === 'Onderbord');
+  return classifications.some((category) => category.uri === ROAD_SIGN_CATEGORIES.ONDERBORD);
 }
 
 export default function generateMeasureSignTree(

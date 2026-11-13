@@ -3,7 +3,6 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
-import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import {
   countMobilityMeasures,
@@ -72,7 +71,7 @@ type Signature = {
     selectMeasureToInsert: (measure: MobilityMeasureConcept) => void;
   };
 };
-export default class RoadsignsModal extends Component<Signature> {
+export default class RoadsignsTableScreen extends Component<Signature> {
   pageSize = PAGE_SIZE;
   @tracked pageNumber = 0;
 
@@ -100,16 +99,6 @@ export default class RoadsignsModal extends Component<Signature> {
     return this.args.options.imageBaseUrl;
   }
 
-  get controller() {
-    return this.args.controller;
-  }
-
-  get decisionLocation() {
-    const decisionRange = getCurrentBesluitRange(this.controller);
-    return decisionRange
-      ? { node: decisionRange.node, pos: decisionRange.from }
-      : null;
-  }
 
   @action
   changeType(option: Option) {
@@ -340,7 +329,7 @@ export default class RoadsignsModal extends Component<Signature> {
               }}
             </AuLabel>
             <AuRadioGroup
-              @selected={{this.selectedZonality.uri}}
+              @selected={{this.selectedZonality?.uri}}
               @onChange={{this.changeZonality}}
               as |Group|
             >
