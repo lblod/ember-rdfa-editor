@@ -37,7 +37,7 @@ catalog:
   "@glimmer/component": ^2.2.1
   "@glimmer/runtime": ^0.94.11
   "@glimmer/tracking": ^1.1.2
-  "@glimmer/validator": ^0.94.8
+  "@glimmer/validator": ^0.95.0
   "@glint/ember-tsc": ^1.14.3
   "@glint/template": ^1.11.1
   "@glint/tsserver-plugin": 2.7.16
@@ -47,7 +47,7 @@ catalog:
   "@lblod/say-ar-design-plugin": "workspace:*"
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
-  "@playwright/test": 1.50.0
+  "@playwright/test": 1.65.0
   "@prosopo/vite-plugin-watch-workspace": ^2.6.33
   "@rdfjs/to-ntriples": ^3.0.1
   "@rdfjs/types": ^2.0.1
@@ -84,7 +84,7 @@ catalog:
   babel-plugin-ember-template-compilation: ^2.4.1
   codemirror: ^6.0.2
   common-tags: ^1.8.2
-  concurrently: ^9.2.5
+  concurrently: ^10.0.7
   date-fns: ^2.30.0
   debug: ^4.4.3
   decorator-transforms: ^2.4.0
@@ -160,7 +160,7 @@ catalog:
   relative-to-absolute-iri: ^1.0.8
   remark-parse: ^11.0.0
   remark-stringify: ^11.0.0
-  rimraf: ^5.0.10
+  rimraf: ^6.1.4
   rollup: ^4.68.2
   rollup-plugin-copy: ^3.5.0
   rollup-plugin-sass: ^1.15.3
