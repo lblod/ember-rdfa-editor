@@ -26,7 +26,7 @@ import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ModifierLike } from '@glint/template';
-import { hasFormValue, getFormValue } from '#root/utils/formdata-utils.js';
+import { hasFormValue, getFormValue } from '#root/utils/formdata-utils.ts';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({
