@@ -32,6 +32,7 @@ import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-g
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
+import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 
 type Option = {
   uri: string;
@@ -276,7 +277,14 @@ export default class RoadsignsModal extends Component<Signature> {
       <div
         class="au-o-box au-u-background-gray-100 au-o-grid__item au-u-1-3 au-u-1-4@medium au-u-1-5@large au-u-flex au-u-flex--column au-u-flex--between"
       >
-        <div class="au-u-flex au-u-flex--column au-u-padding">
+        <div class="au-u-flex au-u-flex--column">
+          <AuHeading
+            @level="4"
+            @skin="4"
+            class='au-u-margin-bottom'
+          >
+            {{t "editor-plugins.roadsign-regulation.modal.filter.heading"}}
+          </AuHeading>
           <div class="au-u-margin-bottom">
             <AuLabel>
               {{t "editor-plugins.roadsign-regulation.modal.filter.code"}}
