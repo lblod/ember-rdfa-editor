@@ -19,7 +19,7 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@codemirror/view": ^6.43.15
   "@curvenote/prosemirror-utils": ^1.0.5
-  "@ember/render-modifiers": ^3.0.0
+  "@ember/render-modifiers": ^4.0.0
   "@ember-data-types/model": ^5.9.1
   "@ember/string": ^4.0.1
   "@ember/test-helpers": ^5.8.0
@@ -90,9 +90,9 @@ catalog:
   decorator-transforms: ^2.4.0
   dompurify: 3.2.4
   ember-basic-dropdown: ^8.11.1
-  ember-cli: ~6.5.0
+  ember-cli: ~7.3.0
   ember-cli-babel: ^8.3.2
-  ember-cli-htmlbars: ^6.3.0
+  ember-cli-htmlbars: ^7.0.1
   ember-concurrency: ^4.0.6
   ember-focus-trap: ^2.0.0
   ember-headless-form: ^1.1.1
