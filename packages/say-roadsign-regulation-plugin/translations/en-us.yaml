@@ -42,25 +42,43 @@ editor-plugins:
         label: Varying signalisation
         varying: Varying
         non-varying: Non varying
+      template-preview: Template preview
     card:
       insert-measure: Insert traffic measure
     modal:
       title: Insert traffic measure
       filter:
-        type: Filter on type
-        code: Filter on code
-        text: Filter on text
-        zonal-validity: Filter op zonal validity
-      combine-with-code: Combine with code
+        type: Type
+        code: Code
+        category: Category
+        zonal-validity: Validity
+        heading: Filters
+        clear-all-filters: Clear all filters
+      cancel: Cancel
+      insert: Insert
     pagination:
       publications: Publications
+    accordion:
+      no-sub-signs: No sub signs available
     table:
       header:
         code: Code
         image: Image
-        preview: Preview
         category: Category
       content:
         image:
           alt: traffic sign {code}
         no-data-message: No measures could be found.
+        insert-measure-button: Fill in and insert
+    insert:
+      choose-traffic-signs-title: 1. Choose traffic signs
+      supplement-measure-title: 2. Suplement measure
+      add-measure-title: 3. Add measure
+      instruction: Instruction
+      instruction-placeholder: Select instruction
+      go-back: Back to the overview list
+      no-instructions: Select the relevant road signs. Then enter the correct instructions here.
+traffic-measure-concept:
+  main-sign: Main sign
+  road-marking: Road marking
+  traffic-light: Traffic light

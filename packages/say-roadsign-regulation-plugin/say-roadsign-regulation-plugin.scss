@@ -1,3 +1,63 @@
 .roadsign > td {
   vertical-align: middle;
 }
+
+.u-border-solid {
+  border-style: solid;
+}
+
+.u-border-divider {
+  border-color: var(--au-divider-color);
+}
+
+.u-border-l {
+  border-left-width: 0.1rem;
+}
+
+.traffic-measure-preview--insert-step-container {
+  border-style: solid;
+  border-color: var(--au-divider-color);
+  border-left-width: 0.1rem;
+}
+
+@media (max-width: 63.9375em) {
+  .traffic-measure-preview--insert-step-container {
+    border-left-width: 0;
+    border-top-width: 0.1rem;
+  }
+}
+
+.traffic-measure-preview--main-sign-container {
+  background-color: #f4f7fb;
+  border: 1px solid #cfd5dd;
+  border-radius: 3px;
+
+  .au-c-control {
+    align-items: center;
+
+    .au-c-control__indicator {
+      margin-right: 0.6rem;
+    }
+  }
+}
+
+.traffic-measure-preview--subsign-container {
+  margin-left: 9rem;
+}
+
+.traffic-measure-preview--sign-header {
+  min-height: 3.6rem;
+}
+
+.traffic-measure-preview--sign-image {
+  max-width: 3.6rem;
+  max-height: 3.6rem;
+}
+
+.traffic-measure-preview--template-preview {
+  background-color: #f4f7fb;
+  border: 1px solid #cfd5dd;
+  border-radius: 3px;
+  color: var(--au-gray-700);
+  min-height: 14rem;
+}
