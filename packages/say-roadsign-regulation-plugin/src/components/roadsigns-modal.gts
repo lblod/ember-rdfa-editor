@@ -299,6 +299,7 @@ export default class RoadsignsModal extends Component<Signature> {
   closeModal() {
     this.screen = 'table';
     this.measureToInsert = undefined;
+    this.args.closeModal();
   }
 
   <template>

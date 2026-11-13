@@ -1,4 +1,4 @@
-.roadsign > td {
+.roadsign>td {
   vertical-align: middle;
 }
 
@@ -31,12 +31,28 @@
   background-color: #f4f7fb;
   border: 1px solid #cfd5dd;
   border-radius: 3px;
+
   .au-c-control {
     align-items: center;
+
     .au-c-control__indicator {
       margin-right: 0.6rem;
     }
   }
+}
+
+.traffic-measure-preview--subsign-container {
+  margin-left: 9rem;
+}
+
+
+.traffic-measure-preview--sign-header {
+  min-height: 3.6rem;
+}
+
+.traffic-measure-preview--main-sign-container-without-checkbox {
+  // Needed to align the items without checkbox to the ones with checkbox
+  padding-left: 6.4rem !important;
 }
 
 .traffic-measure-preview--sign-image {

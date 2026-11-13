@@ -68,7 +68,7 @@ editor-plugins:
         image:
           alt: verkeersteken {code}
         no-data-message: Er werden geen maatregelen gevonden.
-        insert-measure-button: Invullen en tovoegen
+        insert-measure-button: Invullen en toevoegen
     insert:
       choose-traffic-signs-title: 1. Verkeerstekens kiezen
       supplement-measure-title: 2. Maatregel aanvullen
