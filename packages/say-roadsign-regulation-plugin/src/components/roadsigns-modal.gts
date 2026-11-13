@@ -2,7 +2,7 @@ import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import Component from '@glimmer/component';
 import { SayController } from '@lblod/ember-rdfa-editor';
 import t from 'ember-intl/helpers/t';
-import { eq } from 'ember-truth-helpers';
+import { eq, not } from 'ember-truth-helpers';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
@@ -295,6 +295,21 @@ export default class RoadsignsModal extends Component<Signature> {
     );
   }
 
+  get canInsert() {
+    if(!this.selectedSigns.values().length) return false;
+    for(const mainSign of this.selectedSigns.values()) {
+      if(!mainSign.instruction) {
+        return false;
+      }
+      for (const subSign of mainSign.subSigns.values()) {
+        if(!subSign.instruction) {
+        return false;
+      }
+      }
+    }
+    return true;
+  }
+
   @action
   closeModal() {
     this.screen = 'table';
@@ -353,7 +368,7 @@ export default class RoadsignsModal extends Component<Signature> {
               <AuButton @skin="naked" {{on "click" this.closeModal}}>
                 {{t "editor-plugins.roadsign-regulation.modal.cancel"}}
               </AuButton>
-              <AuButton {{on "click" this.insert}}>
+              <AuButton {{on "click" this.insert}} @disabled={{not this.canInsert}}>
                 {{t "editor-plugins.roadsign-regulation.modal.insert"}}
               </AuButton>
             </div>
