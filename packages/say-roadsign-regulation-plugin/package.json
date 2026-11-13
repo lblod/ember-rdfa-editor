@@ -13,6 +13,7 @@
   "author": "redpencil.io",
   "exports": {
     ".": {
+      "style": "./_index.scss",
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },

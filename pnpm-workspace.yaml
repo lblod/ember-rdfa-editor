@@ -51,8 +51,8 @@ catalog:
   "@prosopo/vite-plugin-watch-workspace": ^2.6.33
   "@rdfjs/to-ntriples": ^3.0.1
   "@rdfjs/types": ^2.0.1
-  "@rollup/plugin-babel": ^6.1.0
-  "@rollup/plugin-commonjs": ^28.0.9
+  "@rollup/plugin-babel": ^7.1.0
+  "@rollup/plugin-commonjs": ^29.0.3
   "@rollup/plugin-inject": ^5.0.5
   "@rollup/plugin-json": ^6.1.0
   "@rollup/plugin-node-resolve": ^16.0.3
@@ -81,7 +81,7 @@ catalog:
   "@warp-drive/core": ^5.9.1
   "@warp-drive/legacy": ^5.9.1
   autoprefixer: ^10.6.2
-  babel-plugin-ember-template-compilation: ^2.4.1
+  babel-plugin-ember-template-compilation: ^4.0.1
   codemirror: ^6.0.2
   common-tags: ^1.8.2
   concurrently: ^10.0.7
@@ -163,7 +163,7 @@ catalog:
   rimraf: ^6.1.4
   rollup: ^4.68.2
   rollup-plugin-copy: ^3.5.0
-  rollup-plugin-sass: ^1.15.3
+  rollup-plugin-sass: ^1.16.0-rc.1
   sass: ^1.108.2
   sinon: ^22.1.0
   static-server: ^2.2.1
@@ -179,7 +179,7 @@ catalog:
   unified: ^11.0.5
   uuid: ^9.0.1
   validator: ^13.15.35
-  vite: ^6.4.6
+  vite: ^8.3.8
   walk-sync: ^4.0.2
   webpack: ^5.112.2
   yup: ^1.7.1
