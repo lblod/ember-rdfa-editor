@@ -78,7 +78,6 @@
     "@types/node": "catalog:",
     "@types/prosemirror-dev-tools": "catalog:",
     "@types/qunit": "catalog:",
-    "@types/responselike": "catalog:",
     "@types/rsvp": "catalog:",
     "@types/sinon": "catalog:",
     "@types/uuid": "catalog:",
