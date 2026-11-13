@@ -1,3 +1,18 @@
+import { ZONALITY_OPTIONS } from '#root/plugin/constants.ts';
+
+export type Option = {
+  uri: string;
+  label: string;
+};
+
+export type Zonality = {
+  uri: (typeof ZONALITY_OPTIONS)[keyof typeof ZONALITY_OPTIONS];
+  label: string;
+};
+export type TypeOption = Option;
+export type Code = Option;
+export type Category = Option;
+
 export type RoadsignRegulationPluginOptions = {
   endpoint: string;
   imageBaseUrl: string;

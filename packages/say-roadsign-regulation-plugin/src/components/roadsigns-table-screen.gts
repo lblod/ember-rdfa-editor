@@ -1,9 +1,15 @@
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import { SayController } from '@lblod/ember-rdfa-editor';
-import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
+import {
+  type Category,
+  type Code,
+  type Option,
+  type RoadsignRegulationPluginOptions,
+  type TypeOption,
+  type Zonality,
+} from '#root/plugin/types.ts';
 import {
   countMobilityMeasures,
   type MobilityMeasureQueryOptions,
@@ -23,28 +29,12 @@ import { trackedFunction } from 'reactiveweb/function';
 import RoadSignsTable from './roadsigns-table.gts';
 import PaginationView from './pagination-view.gts';
 import { not, or } from 'ember-truth-helpers';
-import {
-  TRAFFIC_SIGNAL_CONCEPT_TYPES,
-  ZONALITY_OPTIONS,
-} from '#root/plugin/constants.ts';
+import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { on } from '@ember/modifier';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
-
-type Option = {
-  uri: string;
-  label: string;
-};
-
-type Zonality = {
-  uri: (typeof ZONALITY_OPTIONS)[keyof typeof ZONALITY_OPTIONS];
-  label: string;
-};
-type TypeOption = Option;
-type Code = Option;
-type Category = Option;
 
 const DEBOUNCE_MS = 100;
 const PAGE_SIZE = 20;
@@ -69,27 +59,23 @@ type Signature = {
     controller: SayController;
     options: RoadsignRegulationPluginOptions;
     selectMeasureToInsert: (measure: MobilityMeasureConcept) => void;
+    selectedZonality?: Zonality;
+    changeSelectedZonality: (value: string | undefined) => void;
+    selectedCode?: Code;
+    changeCode: (value: Code) => void;
+    selectedType?: TypeOption;
+    changeType: (option: Option) => void;
+    selectedCategory?: Category;
+    changeCategory: (option: Option) => void;
+    zonalityOptions: Zonality[];
+    removeAllFilters: () => void;
+    pageNumber: number;
+    goToNextPage: () => void;
+    goToPreviousPage: () => void;
   };
 };
 export default class RoadsignsTableScreen extends Component<Signature> {
   pageSize = PAGE_SIZE;
-  @tracked pageNumber = 0;
-
-  @tracked selectedZonality?: Zonality;
-  @tracked selectedCode?: Code;
-  @tracked selectedType?: TypeOption;
-  @tracked selectedCategory?: Category;
-
-  zonalityOptions: Zonality[] = [
-    {
-      uri: ZONALITY_OPTIONS.ZONAL,
-      label: 'Zonaal',
-    },
-    {
-      uri: ZONALITY_OPTIONS.NON_ZONAL,
-      label: 'Niet zonaal',
-    },
-  ];
 
   get endpoint() {
     return this.args.options.endpoint;
@@ -97,45 +83,6 @@ export default class RoadsignsTableScreen extends Component<Signature> {
 
   get imageBaseUrl() {
     return this.args.options.imageBaseUrl;
-  }
-
-
-  @action
-  changeType(option: Option) {
-    if (!option) {
-      this.selectedType = undefined;
-    } else {
-      this.selectedType = option;
-      this.selectedCategory = undefined;
-      this.selectedCode = undefined;
-      this.resetPagination();
-    }
-  }
-
-  @action
-  changeCategory(option: Option) {
-    if (!option) {
-      this.selectedCategory = undefined;
-    } else {
-      this.selectedCategory = option;
-      this.selectedCode = undefined;
-      this.resetPagination();
-    }
-  }
-
-  @action
-  changeCode(value: Code) {
-    this.selectedCode = value;
-    this.resetPagination();
-  }
-
-  @action
-  changeZonality(value: string | undefined) {
-    const zonality = this.zonalityOptions.find(
-      (option) => option.uri === value,
-    );
-    this.selectedZonality = zonality;
-    this.resetPagination();
   }
 
   @action
@@ -152,8 +99,8 @@ export default class RoadsignsTableScreen extends Component<Signature> {
     return true;
   }
   searchCodes = restartableTask(async (term: string) => {
-    const category = this.selectedCategory?.uri;
-    const type = this.selectedType?.uri;
+    const category = this.args.selectedCategory?.uri;
+    const type = this.args.selectedType?.uri;
     const types = type ? [type] : undefined;
     await timeout(DEBOUNCE_MS);
     return queryTrafficSignalCodes(this.endpoint, {
@@ -180,14 +127,22 @@ export default class RoadsignsTableScreen extends Component<Signature> {
   }
 
   measureConceptsTask = restartableTask(async () => {
-    const codes: Code[] = this.selectedCode ? [this.selectedCode] : [];
+    const codes: Code[] = this.args.selectedCode
+      ? [this.args.selectedCode]
+      : [];
     const queryOptions: MobilityMeasureQueryOptions = {
       imageBaseUrl: this.imageBaseUrl,
-      zonality: this.selectedZonality ? this.selectedZonality.uri : undefined,
-      trafficSignalType: this.selectedType ? this.selectedType.uri : undefined,
+      zonality: this.args.selectedZonality
+        ? this.args.selectedZonality.uri
+        : undefined,
+      trafficSignalType: this.args.selectedType
+        ? this.args.selectedType.uri
+        : undefined,
       codes: codes.length ? codes.map((code) => code.uri) : undefined,
-      category: this.selectedCategory ? this.selectedCategory.uri : undefined,
-      page: this.pageNumber,
+      category: this.args.selectedCategory
+        ? this.args.selectedCategory.uri
+        : undefined,
+      page: this.args.pageNumber,
       pageSize: PAGE_SIZE,
     };
     await timeout(DEBOUNCE_MS);
@@ -217,11 +172,11 @@ export default class RoadsignsTableScreen extends Component<Signature> {
     concepts: MobilityMeasureConcept[];
     count: number;
   }> = trackedTask(this, this.measureConceptsTask, () => [
-    this.selectedZonality,
-    this.selectedType,
-    this.selectedCode,
-    this.selectedCategory,
-    this.pageNumber,
+    this.args.selectedZonality,
+    this.args.selectedType,
+    this.args.selectedCode,
+    this.args.selectedCategory,
+    this.args.pageNumber,
   ]);
 
   get measureConcepts() {
@@ -230,35 +185,6 @@ export default class RoadsignsTableScreen extends Component<Signature> {
 
   get measureConceptCount() {
     return this.measureConceptsQuery.value?.count;
-  }
-
-  @action
-  resetPagination() {
-    this.goToPage(0);
-  }
-
-  @action
-  goToPreviousPage() {
-    this.goToPage(this.pageNumber - 1);
-  }
-
-  @action
-  goToNextPage() {
-    this.goToPage(this.pageNumber + 1);
-  }
-
-  @action
-  goToPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-  }
-
-  @action
-  removeAllFilters() {
-    this.selectedZonality = undefined;
-    this.selectedType = undefined;
-    this.selectedCode = undefined;
-    this.selectedCategory = undefined;
-    this.resetPagination();
   }
 
   <template>
@@ -279,9 +205,9 @@ export default class RoadsignsTableScreen extends Component<Signature> {
               @searchEnabled={{true}}
               @search={{this.searchCodes.perform}}
               @options={{or this.searchCodes.last.value undefined}}
-              @selected={{this.selectedCode}}
+              @selected={{@selectedCode}}
               @allowClear={{true}}
-              @onChange={{this.changeCode}}
+              @onChange={{@changeCode}}
               @onOpen={{this.doFirstCodeSearch}}
               as |option|
             >
@@ -297,9 +223,9 @@ export default class RoadsignsTableScreen extends Component<Signature> {
               @options={{this.typeOptions}}
               @searchEnabled={{true}}
               @searchField="label"
-              @selected={{this.selectedType}}
+              @selected={{@selectedType}}
               @allowClear={{true}}
-              @onChange={{this.changeType}}
+              @onChange={{@changeType}}
               as |option|
             >
               {{option.label}}
@@ -314,9 +240,9 @@ export default class RoadsignsTableScreen extends Component<Signature> {
               @options={{this.categoryOptions}}
               @searchEnabled={{true}}
               @searchField="label"
-              @selected={{this.selectedCategory}}
+              @selected={{@selectedCategory}}
               @allowClear={{true}}
-              @onChange={{this.changeCategory}}
+              @onChange={{@changeCategory}}
               as |option|
             >
               {{option.label}}
@@ -329,11 +255,11 @@ export default class RoadsignsTableScreen extends Component<Signature> {
               }}
             </AuLabel>
             <AuRadioGroup
-              @selected={{this.selectedZonality?.uri}}
-              @onChange={{this.changeZonality}}
+              @selected={{@selectedZonality?.uri}}
+              @onChange={{@changeSelectedZonality}}
               as |Group|
             >
-              {{#each this.zonalityOptions as |zonality|}}
+              {{#each @zonalityOptions as |zonality|}}
                 <Group.Radio
                   @value={{zonality.uri}}
                 >{{zonality.label}}</Group.Radio>
@@ -345,7 +271,7 @@ export default class RoadsignsTableScreen extends Component<Signature> {
           <AuButton
             @skin="naked"
             @icon={{CrossIcon}}
-            {{on "click" this.removeAllFilters}}
+            {{on "click" @removeAllFilters}}
           >
             {{t
               "editor-plugins.roadsign-regulation.modal.filter.clear-all-filters"
@@ -365,7 +291,7 @@ export default class RoadsignsTableScreen extends Component<Signature> {
         {{#if this.measureConceptCount}}
           {{#let
             (pagination
-              page=this.pageNumber
+              page=@pageNumber
               pageSize=this.pageSize
               count=this.measureConceptCount
             )
@@ -375,8 +301,8 @@ export default class RoadsignsTableScreen extends Component<Signature> {
               @totalCount={{pg.count}}
               @rangeStart={{pg.pageStart}}
               @rangeEnd={{pg.pageEnd}}
-              @onNextPage={{this.goToNextPage}}
-              @onPreviousPage={{this.goToPreviousPage}}
+              @onNextPage={{@goToNextPage}}
+              @onPreviousPage={{@goToPreviousPage}}
               @isFirstPage={{not pg.hasPreviousPage}}
               @isLastPage={{not pg.hasNextPage}}
             />

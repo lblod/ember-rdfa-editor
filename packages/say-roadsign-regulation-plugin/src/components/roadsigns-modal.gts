@@ -14,7 +14,14 @@ import RoadsignsTableScreen from '#root/components/roadsigns-table-screen.gts';
 import RoadsignsInsertScreen, {
   type InsertPositionOption,
 } from '#root/components/roadsigns-insert-screen.gts';
-import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
+import {
+  type Category,
+  type Code,
+  type Option,
+  type RoadsignRegulationPluginOptions,
+  type TypeOption,
+  type Zonality,
+} from '#root/plugin/types.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
 import { on } from '@ember/modifier';
@@ -55,8 +62,26 @@ export default class RoadsignsModal extends Component<Signature> {
   @tracked temporalValue?: boolean;
   @tracked selectedInsertPosition: InsertPositionOption;
 
+  @tracked pageNumber = 0;
+
+  @tracked selectedZonality?: Zonality;
+  @tracked selectedCode?: Code;
+  @tracked selectedType?: TypeOption;
+  @tracked selectedCategory?: Category;
+
   insertPositionOptionFirst: InsertPositionOption;
   insertPositionOptionLast: InsertPositionOption;
+
+  zonalityOptions: Zonality[] = [
+    {
+      uri: ZONALITY_OPTIONS.ZONAL,
+      label: 'Zonaal',
+    },
+    {
+      uri: ZONALITY_OPTIONS.NON_ZONAL,
+      label: 'Niet zonaal',
+    },
+  ];
 
   constructor(owner: unknown, args: Signature['Args']) {
     super(owner, args);
@@ -211,6 +236,73 @@ export default class RoadsignsModal extends Component<Signature> {
     this.selectedInsertPosition = option;
   }
 
+  @action
+  changeType(option: Option) {
+    if (!option) {
+      this.selectedType = undefined;
+    } else {
+      this.selectedType = option;
+      this.selectedCategory = undefined;
+      this.selectedCode = undefined;
+      this.resetPagination();
+    }
+  }
+
+  @action
+  changeCategory(option: Option) {
+    if (!option) {
+      this.selectedCategory = undefined;
+    } else {
+      this.selectedCategory = option;
+      this.selectedCode = undefined;
+      this.resetPagination();
+    }
+  }
+
+  @action
+  changeCode(value: Code) {
+    this.selectedCode = value;
+    this.resetPagination();
+  }
+
+  @action
+  changeSelectedZonality(value: string | undefined) {
+    const zonality = this.zonalityOptions.find(
+      (option) => option.uri === value,
+    );
+    this.selectedZonality = zonality;
+    this.resetPagination();
+  }
+
+  @action
+  removeAllFilters() {
+    this.selectedZonality = undefined;
+    this.selectedType = undefined;
+    this.selectedCode = undefined;
+    this.selectedCategory = undefined;
+    this.resetPagination();
+  }
+
+  @action
+  resetPagination() {
+    this.goToPage(0);
+  }
+
+  @action
+  goToPreviousPage() {
+    this.goToPage(this.pageNumber - 1);
+  }
+
+  @action
+  goToNextPage() {
+    this.goToPage(this.pageNumber + 1);
+  }
+
+  @action
+  goToPage(pageNumber: number) {
+    this.pageNumber = pageNumber;
+  }
+
   insertMeasure = task(
     async (
       concept: MobilityMeasureConcept,
@@ -299,19 +391,25 @@ export default class RoadsignsModal extends Component<Signature> {
   }
 
   get canInsert() {
-    if( this.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL && !this.zonalityValue) return false;
-    if(this.measureToInsert?.variableSignage && this.temporalValue === undefined) return false;
-    if(!this.selectedSigns.size) return false;
-    for(const selectedSign of this.selectedSigns.values()) {
-      console.log(selectedSign.mainSign)
-      console.log(selectedSign.mainSign.selectedInstruction)
-      if(!selectedSign.mainSign.selectedInstruction) {
+    if (
+      this.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL &&
+      !this.zonalityValue
+    )
+      return false;
+    if (
+      this.measureToInsert?.variableSignage &&
+      this.temporalValue === undefined
+    )
+      return false;
+    if (!this.selectedSigns.size) return false;
+    for (const selectedSign of this.selectedSigns.values()) {
+      if (!selectedSign.mainSign.selectedInstruction) {
         return false;
       }
       for (const subSign of selectedSign.subSigns.values()) {
-        if(!subSign.selectedInstruction) {
-        return false;
-      }
+        if (!subSign.selectedInstruction) {
+          return false;
+        }
       }
     }
     return true;
@@ -325,6 +423,11 @@ export default class RoadsignsModal extends Component<Signature> {
     this.zonalityValue = undefined;
     this.temporalValue = undefined;
     this.selectedInsertPosition = this.insertPositionOptionLast;
+    this.selectedZonality = undefined;
+    this.selectedType = undefined;
+    this.selectedCode = undefined;
+    this.selectedCategory = undefined;
+    this.pageNumber = 0;
     this.args.closeModal();
   }
 
@@ -343,11 +446,22 @@ export default class RoadsignsModal extends Component<Signature> {
             @controller={{@controller}}
             @options={{@options}}
             @selectMeasureToInsert={{this.selectMeasureToInsert}}
+            @selectedZonality={{this.selectedZonality}}
+            @changeSelectedZonality={{this.changeSelectedZonality}}
+            @selectedCode={{this.selectedCode}}
+            @changeCode={{this.changeCode}}
+            @selectedType={{this.selectedType}}
+            @changeType={{this.changeType}}
+            @selectedCategory={{this.selectedCategory}}
+            @changeCategory={{this.changeCategory}}
+            @zonalityOptions={{this.zonalityOptions}}
+            @removeAllFilters={{this.removeAllFilters}}
+            @pageNumber={{this.pageNumber}}
+            @goToNextPage={{this.goToNextPage}}
+            @goToPreviousPage={{this.goToPreviousPage}}
           />
         {{else if (eq this.screen "insert")}}
           <RoadsignsInsertScreen
-            @controller={{@controller}}
-            @options={{@options}}
             @measureToInsert={{this.measureToInsert}}
             @selectedSigns={{this.selectedSigns}}
             @selectMainSign={{this.selectMainSign}}
@@ -379,7 +493,11 @@ export default class RoadsignsModal extends Component<Signature> {
               <AuButton @skin="naked" {{on "click" this.closeModal}}>
                 {{t "editor-plugins.roadsign-regulation.modal.cancel"}}
               </AuButton>
-              <AuButton {{on "click" this.insert}} @disabled={{not this.canInsert}} @loading={{this.insertMeasure.isRunning}}>
+              <AuButton
+                {{on "click" this.insert}}
+                @disabled={{not this.canInsert}}
+                @loading={{this.insertMeasure.isRunning}}
+              >
                 {{t "editor-plugins.roadsign-regulation.modal.insert"}}
               </AuButton>
             </div>
