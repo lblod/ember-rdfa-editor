@@ -22,6 +22,7 @@ import AuInput from '@appuniversum/ember-appuniversum/components/au-input';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
+import type Owner from '@ember/owner';
 
 type WrappingUtilsArgs = {
   controller?: SayController;
@@ -31,7 +32,7 @@ export default class WrappingUtils extends Component<WrappingUtilsArgs> {
   @tracked modalOpen = false;
   @tracked wrapWithResource;
 
-  constructor(owner: unknown, args: WrappingUtilsArgs) {
+  constructor(owner: Owner, args: WrappingUtilsArgs) {
     super(owner, args);
     this.wrapWithResource = this.wrapWithBlockResource;
   }
