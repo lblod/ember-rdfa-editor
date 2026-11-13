@@ -7,18 +7,14 @@ import getClassnamesFromNode from '#root/utils/get-classnames-from-node.ts';
 import { onChanged } from './on-changed.ts';
 
 export type OrderListStyle =
-  | 'decimal'
-  | 'upper-roman'
-  | 'lower-alpha'
-  | 'upper-alpha';
+  'decimal' | 'upper-roman' | 'lower-alpha' | 'upper-alpha';
 
 const getListStyleFromDomElement = (dom: HTMLElement) => {
   const { listStyleType } = dom.style;
 
   // Falling back to dataset for back-compatability
   return (listStyleType || dom.dataset['listStyle']) as
-    | OrderListStyle
-    | undefined;
+    OrderListStyle | undefined;
 };
 
 type Config = {

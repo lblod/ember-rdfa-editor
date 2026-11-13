@@ -50,8 +50,7 @@ export default class ColorMenu extends Component<Args> {
       try {
         const $cell = selectionCell(state);
         const background = $cell.nodeAfter?.attrs['background'] as
-          | string
-          | undefined;
+          string | undefined;
         return background || DEFAULT_COLOR;
       } catch {
         return DEFAULT_COLOR;

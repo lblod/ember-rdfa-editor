@@ -60,8 +60,7 @@ export default class AlignmentMenu extends Component<Args> {
     if (this.controller) {
       const { selection } = this.controller.mainEditorState;
       const anchorAlignment = selection.$anchor.parent.attrs['alignment'] as
-        | AlignmentOption
-        | undefined;
+        AlignmentOption | undefined;
       return anchorAlignment ?? DEFAULT_ALIGNMENT;
     } else {
       return DEFAULT_ALIGNMENT;

@@ -48,8 +48,7 @@ export default class ImportedResourceLinkerCard extends Component<Signature> {
 
   get importedResources(): Record<string, string | undefined> | undefined {
     return this.node.attrs['importedResources'] as
-      | Record<string, string | undefined>
-      | undefined;
+      Record<string, string | undefined> | undefined;
   }
 
   linkImportedResource = (imported: string, linked: string) => {

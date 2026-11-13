@@ -10,14 +10,10 @@ export type StrongDisplay = { strong: string };
 export type PillDisplay = { pill: string };
 export type HiddenDisplay = { hidden: true };
 export type DisplayElement =
-  | StringDisplay
-  | StrongDisplay
-  | PillDisplay
-  | HiddenDisplay;
+  StringDisplay | StrongDisplay | PillDisplay | HiddenDisplay;
 export type DisplayMeta = { title?: string };
 export type DisplayConfig =
-  | { meta: DisplayMeta; elements: DisplayElement[] }
-  | DisplayElement[];
+  { meta: DisplayMeta; elements: DisplayElement[] } | DisplayElement[];
 
 export interface GeneratorContext {
   controller: SayController;

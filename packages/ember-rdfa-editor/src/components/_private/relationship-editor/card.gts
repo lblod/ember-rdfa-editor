@@ -240,8 +240,7 @@ export default class RelationshipEditorCard extends Component<Args> {
   get contentPredicateInitialFormData() {
     const predicate = this.contentPredicateProperty?.predicate;
     const object = this.contentPredicateProperty?.object as
-      | ContentLiteralTerm
-      | undefined;
+      ContentLiteralTerm | undefined;
     return {
       contentPredicate: predicate,
       language: object?.language,
