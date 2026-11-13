@@ -282,7 +282,6 @@ export default class RoadsignsModal extends Component<Signature> {
           { view: this.controller.mainEditorView },
         );
         this.closeModal();
-        this.args.closeModal();
       } finally {
         abortController.abort();
       }
