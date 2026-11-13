@@ -52,6 +52,7 @@ editor-plugins:
         code: Code
         category: Categorie
         zonal-validity: Geldigheid
+        heading: Filters
         clear-all-filters: Herstel alle filters
       cancel: Annuleren
       insert: Invoegen
