@@ -26,6 +26,7 @@ import { modifier } from 'ember-modifier';
 import type { Select } from 'ember-power-select/components/power-select';
 import WithUniqueId from '#root/components/_private/utils/with-unique-id.ts';
 import type { ModifierLike } from '@glint/template';
+import { hasFormValue, getFormValue } from '#root/utils/formdata-utils.ts';
 const predicateSchema = string().curie().required();
 
 const literalTripleSchema = object({
@@ -120,14 +121,11 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
     return ['NamedNode', 'Literal'];
   }
   get hasLanguage() {
-    return Boolean(
-      this.currentFormData?.get(this.languagePath)?.toString().length,
-    );
+    return hasFormValue(this.currentFormData, this.languagePath);
   }
   get hasDatatype() {
     return (
-      !this.hasLanguage &&
-      Boolean(this.currentFormData?.get(this.datatypePath)?.toString().length)
+      !this.hasLanguage && hasFormValue(this.currentFormData, this.datatypePath)
     );
   }
   selectTermType = (value: SupportedTermType) => {
@@ -137,7 +135,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
   extractNamedNode = (formData: FormData, base: string) => {
     return {
       termType: 'NamedNode',
-      value: formData.get(`${base}.value`)?.toString(),
+      value: getFormValue(formData, `${base}.value`),
     };
   };
   extractLiteral = (formData: FormData, base: string) => {
@@ -151,9 +149,9 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
 
     return {
       termType: 'Literal',
-      value: formData.get(`${base}.value`)?.toString(),
+      value: getFormValue(formData, `${base}.value`),
       datatype,
-      language: formData.get(`${base}.language`)?.toString(),
+      language: getFormValue(formData, `${base}.language`),
     };
   };
   validateFormData = (formData: FormData): ValidationResult => {
@@ -162,7 +160,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = namedNodeTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
-            predicate: formData.get('predicate')?.toString(),
+            predicate: getFormValue(formData, 'predicate'),
             object: this.extractNamedNode(formData, 'object'),
           },
           { abortEarly: false },
@@ -179,7 +177,7 @@ export default class ExternalTripleForm extends Component<ExternalTripleFormSig>
         const validated = literalTripleSchema.validateSync(
           {
             subject: this.extractNamedNode(formData, 'subject'),
-            predicate: formData.get('predicate')?.toString(),
+            predicate: getFormValue(formData, 'predicate'),
             object: this.extractLiteral(formData, 'object'),
           },
           { abortEarly: false },

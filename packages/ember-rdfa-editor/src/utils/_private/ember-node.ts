@@ -144,7 +144,7 @@ function emberComponent(
  */
 export class EmberNodeView implements NodeView {
   node: PNode;
-  dom: Element;
+  dom: HTMLElement;
   contentDOM?: HTMLElement;
   emberComponent: EmberInlineComponent;
   template: TemplateFactory;

@@ -492,8 +492,7 @@ export function addPropertyToNode({
       }
       targets?.forEach((target) => {
         const backlinks = target.value.attrs['backlinks'] as
-          | IncomingTriple[]
-          | undefined;
+          IncomingTriple[] | undefined;
         const newBacklinks = addBacklink(backlinks ?? [], newBacklink);
         TransformUtils.setAttribute(tr, target.pos, 'backlinks', newBacklinks);
       });
@@ -527,7 +526,7 @@ export function removePropertyFromNode(
 
     const properties = getProperties(resourceNodes[0].value);
     let propertyToRemove: OutgoingTriple | undefined;
-    let index = -1;
+    let index;
     if ('index' in args) {
       propertyToRemove = properties?.[args.index];
       index = args.index;

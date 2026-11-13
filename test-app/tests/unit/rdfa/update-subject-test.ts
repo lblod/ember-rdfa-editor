@@ -4,7 +4,7 @@ import {
   SAMPLE_PLUGINS,
   SAMPLE_SCHEMA,
 } from 'test-app/tests/helpers/prosemirror';
-import { EditorState, PNode, type RdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
@@ -302,7 +302,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/3',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -328,7 +328,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/3',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -351,7 +351,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
             ],
             backlinks: [],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -373,7 +373,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/4',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -391,7 +391,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
             ],
             content: null,
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
       );
@@ -417,7 +417,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/4',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -443,7 +443,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -466,7 +466,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               backlinks: [],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -488,7 +488,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/4',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -506,7 +506,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               content: null,
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
         );
@@ -552,7 +552,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -578,7 +578,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -607,7 +607,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               backlinks: [],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -635,7 +635,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -653,7 +653,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               content: null,
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
         );
@@ -707,7 +707,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -733,7 +733,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -762,7 +762,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               backlinks: [],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -798,7 +798,7 @@ module('rdfa | updateSubject', (hooks) => {
                   predicate: 'http://predicates.org/3',
                 },
               ],
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
           block_rdfa(
@@ -822,7 +822,7 @@ module('rdfa | updateSubject', (hooks) => {
                 },
               ],
               content: null,
-            } as RdfaAttrs,
+            },
             paragraph('Content'),
           ),
         );
@@ -867,7 +867,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/4',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -888,7 +888,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
             ],
             backlinks: [],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -906,7 +906,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
             ],
             content: null,
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
       );
@@ -945,7 +945,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/4',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -981,7 +981,7 @@ module('rdfa | updateSubject', (hooks) => {
                 predicate: 'http://predicates.org/4',
               },
             ],
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
         block_rdfa(
@@ -999,7 +999,7 @@ module('rdfa | updateSubject', (hooks) => {
               },
             ],
             content: null,
-          } as RdfaAttrs,
+          },
           paragraph('Content'),
         ),
       );

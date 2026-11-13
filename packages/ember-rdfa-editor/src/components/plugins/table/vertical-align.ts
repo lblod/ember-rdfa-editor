@@ -115,8 +115,7 @@ export default class VerticalAlign extends Component<Args> {
       try {
         const $cell = selectionCell(state);
         const verticalAlign = $cell.nodeAfter?.attrs['verticalAlign'] as
-          | VerticalAlignment
-          | undefined;
+          VerticalAlignment | undefined;
         return verticalAlign || DEFAULT_ALIGN;
       } catch {
         return DEFAULT_ALIGN;

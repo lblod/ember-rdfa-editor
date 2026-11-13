@@ -26,17 +26,20 @@ type GroupWithStatus = ContextualActionGroup & {
   actions: ContextualAction[] | null;
 };
 
-type Args = {
-  controller: SayController;
-  groups?: GroupWithStatus[];
-  isLoading?: boolean;
-  errorMessage?: string;
-  enableSearch?: boolean;
-  searchQuery?: string;
+type Sig = {
+  Args: {
+    controller: SayController;
+    groups?: GroupWithStatus[];
+    isLoading?: boolean;
+    errorMessage?: string;
+    enableSearch?: boolean;
+    searchQuery?: string;
 
-  onActionSelected?: (action: ContextualAction, keepOpen: boolean) => void;
-  onClose?: () => void;
-  onSearch?: (searchQuery: string) => void;
+    onActionSelected?: (action: ContextualAction, keepOpen: boolean) => void;
+    onClose?: () => void;
+    onSearch?: (searchQuery: string) => void;
+  };
+  Element: HTMLElement;
 };
 
 function sortByPriority(
@@ -62,7 +65,7 @@ function sortGroups(
   }
 }
 
-export default class ContextualActionsMenu extends Component<Args> {
+export default class ContextualActionsMenu extends Component<Sig> {
   @tracked focusedActionIndex: number = 0;
   @tracked menuHeightPx: number = 0;
 
@@ -276,7 +279,7 @@ export default class ContextualActionsMenu extends Component<Args> {
     return this.textIsRightAligned ? 'bottom-end' : 'bottom-start';
   }
 
-  setSearchQuery = (event: InputEvent) => {
+  setSearchQuery = (event: Event & { currentTarget: Element }) => {
     this.focusedActionIndex = 0;
     this.args.onSearch?.((event.target as HTMLInputElement).value);
   };

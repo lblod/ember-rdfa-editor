@@ -19,12 +19,12 @@ const TextVariableInstanceSchema = BaseVariableInstanceSchema.extend({
 });
 
 const NumberVariableInstanceSchema = BaseVariableInstanceSchema.extend({
-  value: z.number({ coerce: true }).optional(),
+  value: z.coerce.number().optional(),
   variable: NumberVariableSchema,
 });
 
 const DateVariableInstanceSchema = BaseVariableInstanceSchema.extend({
-  value: z.date({ coerce: true }).optional(),
+  value: z.coerce.date().optional(),
   variable: DateVariableSchema,
 });
 

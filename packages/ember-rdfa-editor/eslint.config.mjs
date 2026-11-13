@@ -29,13 +29,12 @@ const parserOptions = {
     },
     ts: {
       projectService: true,
-      project: true,
       tsconfigRootDir: import.meta.dirname,
     },
   },
 };
 
-export default ts.config(
+export default ts.config([
   js.configs.recommended,
   ember.configs.base,
   ember.configs.gjs,
@@ -88,11 +87,16 @@ export default ts.config(
     extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
 
     rules: {
+      '@typescript-eslint/await-thenable': [
+        'error',
+        { allowMixedPromiseArrays: true },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
           argsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],
@@ -149,4 +153,4 @@ export default ts.config(
       },
     },
   },
-);
+]);

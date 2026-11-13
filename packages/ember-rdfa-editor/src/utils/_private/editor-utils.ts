@@ -68,7 +68,7 @@ export function moveCaret(node: Node, position: number): null | Selection {
     }
     return currentSelection;
   } else {
-    throw 'window.getSelection did not return a selection';
+    throw new Error('window.getSelection did not return a selection');
   }
 }
 

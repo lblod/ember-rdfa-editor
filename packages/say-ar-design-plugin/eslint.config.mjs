@@ -29,7 +29,6 @@ const parserOptions = {
     },
     ts: {
       projectService: true,
-      project: true,
       tsconfigRootDir: import.meta.dirname,
     },
   },
@@ -93,6 +92,7 @@ export default ts.config(
         {
           argsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],

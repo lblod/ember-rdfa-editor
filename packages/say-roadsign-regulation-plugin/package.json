@@ -13,6 +13,7 @@
   "author": "redpencil.io",
   "exports": {
     ".": {
+      "style": "./_index.scss",
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
@@ -73,7 +74,6 @@
     "doc:generate": "pnpm typedoc"
   },
   "dependencies": {
-    "@ember/optional-features": "catalog:",
     "@embroider/addon-shim": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
     "decorator-transforms": "catalog:",
@@ -83,12 +83,12 @@
     "ember-template-imports": "catalog:",
     "ember-truth-helpers": "catalog:",
     "reactiveweb": "catalog:",
-    "typedoc": "^0.28.17",
+    "typedoc": "catalog:",
     "uuid": "catalog:",
-    "zod": "^3.24.1"
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@appuniversum/ember-appuniversum": "~4.2.2",
+    "@appuniversum/ember-appuniversum": "catalog:",
     "@babel/core": "catalog:",
     "@babel/eslint-parser": "catalog:",
     "@babel/plugin-transform-typescript": "catalog:",
@@ -101,7 +101,7 @@
     "@glimmer/tracking": "catalog:",
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
-    "@lblod/ember-rdfa-editor": "workspace:*",
+    "@lblod/ember-rdfa-editor": "catalog:",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
     "@rollup/plugin-inject": "catalog:",
@@ -112,7 +112,7 @@
     "autoprefixer": "catalog:",
     "babel-plugin-ember-template-compilation": "catalog:",
     "concurrently": "catalog:",
-    "ember-auto-import": "^2.12.0",
+    "ember-auto-import": "^2.13.1",
     "ember-basic-dropdown": "catalog:",
     "ember-concurrency": "catalog:",
     "ember-intl": "catalog:",
@@ -142,19 +142,18 @@
     "webpack": "catalog:"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.11.0 || ^4.2.1",
+    "@appuniversum/ember-appuniversum": "^4.2.1",
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
-    "@glimmer/component": "^1.1.2 || ^2.0.0",
+    "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
     "@lblod/ember-rdfa-editor": "^13.13.0",
     "ember-basic-dropdown": "^8.0.0",
-    "ember-concurrency": "^4.0.2 || ^5.0.0",
-    "ember-intl": "^6.4.0 || ^7.0.0",
-    "ember-power-select": "^7.0.0 || ^8.0.0",
-    "ember-power-select-with-create": "^2.0.0 || ^3.0.0",
-    "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
-    "tracked-built-ins": "^3.3.0 || ^4.0.0"
+    "ember-concurrency": "^5.0.0",
+    "ember-intl": "^7.0.0",
+    "ember-power-select": "^8.0.0",
+    "ember-power-select-with-create": "^3.0.0",
+    "tracked-built-ins": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "@glint/template": {

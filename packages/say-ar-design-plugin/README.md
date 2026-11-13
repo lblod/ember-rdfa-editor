@@ -50,8 +50,7 @@ interface MeasureDesign {
   unusedSignalConcepts: HasMany<TrafficSignalConcept> | TrafficSignalConcept[];
 
   unIncludedSignalConcepts:
-    | HasMany<TrafficSignalConcept>
-    | TrafficSignalConcept[];
+    HasMany<TrafficSignalConcept> | TrafficSignalConcept[];
 
   variableInstances: HasMany<VariableInstance> | VariableInstance[];
 }

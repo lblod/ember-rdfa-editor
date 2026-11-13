@@ -12,12 +12,12 @@ export const TextVariableSchema = BaseVariableSchema.extend({
 
 export const NumberVariableSchema = BaseVariableSchema.extend({
   type: z.literal('number'),
-  defaultValue: z.number({ coerce: true }).optional(),
+  defaultValue: z.coerce.number().optional(),
 });
 
 export const DateVariableSchema = BaseVariableSchema.extend({
   type: z.literal('date'),
-  defaultValue: z.date({ coerce: true }).optional(),
+  defaultValue: z.coerce.date().optional(),
 });
 
 export const CodelistVariableSchema = BaseVariableSchema.extend({
