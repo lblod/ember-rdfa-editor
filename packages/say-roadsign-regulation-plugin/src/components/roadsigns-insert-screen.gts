@@ -129,10 +129,12 @@ type SupplementMeasureStepSig = {
 class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
   get flattenedAndSortedSelectedSigns() {
     const signs: SelectedSign[] = [];
-    const selectedSignsSorted: MainSignSelection[] = [...this.args.selectedSigns.values()]
+    const selectedSignsSorted: MainSignSelection[] = [
+      ...this.args.selectedSigns.values(),
+    ];
     selectedSignsSorted.sort((signA, signB) => {
       return signA.mainSign.sign.position - signB.mainSign.sign.position;
-    })
+    });
     for (const selection of selectedSignsSorted) {
       signs.push(selection.mainSign);
       for (const subSign of selection.subSigns.values()) {
