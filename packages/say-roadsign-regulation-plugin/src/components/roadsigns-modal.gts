@@ -118,6 +118,9 @@ export default class RoadsignsModal extends Component<Signature> {
   get template() {
     const lines: string[] = [];
     const selections = [...this.selectedSigns.values()];
+    selections.sort((signA, signB) => {
+      return signA.mainSign.sign.position - signB.mainSign.sign.position;
+    });
     for (let i = 0; i < selections.length; i++) {
       const selection = selections[i];
       const line: string[] = [`\${${locatieLabel(i)}}`];
