@@ -238,7 +238,6 @@
     "@codemirror/state": "catalog:",
     "@codemirror/view": "catalog:",
     "@curvenote/prosemirror-utils": "catalog:",
-    "@ember/optional-features": "catalog:",
     "@ember/render-modifiers": "catalog:",
     "@embroider/addon-shim": "catalog:",
     "@floating-ui/dom": "catalog:",

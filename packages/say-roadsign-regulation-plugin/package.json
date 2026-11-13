@@ -73,7 +73,6 @@
     "doc:generate": "pnpm typedoc"
   },
   "dependencies": {
-    "@ember/optional-features": "catalog:",
     "@embroider/addon-shim": "catalog:",
     "@glint/tsserver-plugin": "catalog:",
     "decorator-transforms": "catalog:",

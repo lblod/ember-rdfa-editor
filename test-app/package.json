@@ -43,7 +43,6 @@
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
     "@curvenote/prosemirror-utils": "catalog:",
-    "@ember/optional-features": "catalog:",
     "@ember/string": "catalog:",
     "@ember/test-helpers": "catalog:",
     "@embroider/compat": "catalog:",

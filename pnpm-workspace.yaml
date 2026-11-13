@@ -19,7 +19,6 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@codemirror/view": ^6.43.15
   "@curvenote/prosemirror-utils": ^1.0.5
-  "@ember/optional-features": ^2.3.0
   "@ember/render-modifiers": ^3.0.0
   "@ember-data-types/model": ^5.9.1
   "@ember/string": ^4.0.1
