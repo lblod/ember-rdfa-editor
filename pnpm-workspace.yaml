@@ -167,8 +167,8 @@ catalog:
   sass: ^1.108.2
   sinon: ^22.1.0
   static-server: ^2.2.1
-  stylelint: ^16.26.1
-  stylelint-config-standard: ^36.0.1
+  stylelint: ^18.0.0
+  stylelint-config-standard: ^41.0.0
   stylelint-prettier: ^5.1.0
   tracked-built-ins: ^4.1.2
   tracked-toolbox: ^3.0.0
