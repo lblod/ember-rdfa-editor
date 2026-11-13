@@ -115,8 +115,7 @@ class ChooseTrafficSignsStep extends Component<ChooseTrafficSignsStepSig> {
     return generateMeasureSignTree(this.args.measureToInsert);
   }
   <template>
-    <div class="au-o-grid__item au-u-1-3@medium">
-      <div class="au-u-padding">
+    <div class="au-o-grid__item au-u-1-3@medium au-u-padding">
         <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
           {{t
             "editor-plugins.roadsign-regulation.insert.choose-traffic-signs-title"
@@ -130,7 +129,6 @@ class ChooseTrafficSignsStep extends Component<ChooseTrafficSignsStepSig> {
             @selectSubSign={{@selectSubSign}}
           />
         {{/each}}
-      </div>
 
     </div>
   </template>
@@ -153,7 +151,6 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
     <div
       class="au-o-grid__item au-u-1-3@medium traffic-measure-preview--insert-step-container au-u-padding"
     >
-      <div class="au-u-padding">
         <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
           {{t
             "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
@@ -180,7 +177,6 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
               "editor-plugins.roadsign-regulation.insert.no-instructions"
             }}</p>
         {{/each}}
-      </div>
     </div>
   </template>
 }
@@ -261,93 +257,89 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
     <div
       class="au-o-grid__item au-u-1-3@medium traffic-measure-preview--insert-step-container au-u-padding"
     >
-      <div class="au-u-padding">
-        <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
-          {{t "editor-plugins.roadsign-regulation.insert.add-measure-title"}}
-        </AuHeading>
-        <div>
-          <div class="au-u-margin-bottom">
-            {{#if this.isPotentiallyZonal}}
-              <AuHeading @level="6" @skin="6">
-                {{t
-                  "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.label"
-                }}
-              </AuHeading>
-              <div class="au-c-form">
-                <AuRadioGroup
-                  @name="zonal"
-                  @selected={{this.zonalityValue}}
-                  @onChange={{this.changeZonality}}
-                  as |Group|
-                >
-                  <Group.Radio @value={{ZONALITY_OPTIONS.ZONAL}}>
-                    {{t
-                      "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.zonal"
-                    }}
-                  </Group.Radio>
-                  <Group.Radio @value={{ZONALITY_OPTIONS.NON_ZONAL}}>
-                    {{t
-                      "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.non-zonal"
-                    }}
-                  </Group.Radio>
-                </AuRadioGroup>
-              </div>
-            {{/if}}
-          </div>
-          <div class="au-u-margin-bottom">
-            {{#if @measureToInsert.variableSignage}}
-              <AuHeading @level="6" @skin="6">
-                {{t
-                  "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.label"
-                }}
-              </AuHeading>
-              <div class="au-c-form">
-                <AuRadioGroup
-                  @name="temporal"
-                  @selected={{this.temporalValue}}
-                  @onChange={{this.changeTemporality}}
-                  as |Group|
-                >
-                  <Group.Radio @value="true">
-                    {{t
-                      "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.varying"
-                    }}
-                  </Group.Radio>
-                  <Group.Radio @value="false">
-                    {{t
-                      "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.non-varying"
-                    }}
-                  </Group.Radio>
-                </AuRadioGroup>
-              </div>
-            {{/if}}
-          </div>
-          <div class="au-u-margin-bottom">
-            <AuHeading @level="6" @skin="6">
-              {{t
-                "editor-plugins.roadsign-regulation.expanded-measure.insert-position"
-              }}
-            </AuHeading>
-            <PowerSelect
-              @allowClear={{false}}
-              @onChange={{set this "selectedInsertPosition"}}
-              @selected={{this.selectedInsertPosition}}
-              @options={{this.insertPositionOptions}}
-              as |option|
-            >{{option.label}}</PowerSelect>
-          </div>
-        </div>
-        <div class="au-u-margin-top-huge">
+      <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
+        {{t "editor-plugins.roadsign-regulation.insert.add-measure-title"}}
+      </AuHeading>
+      <div class="au-u-margin-bottom">
+        {{#if this.isPotentiallyZonal}}
           <AuHeading @level="6" @skin="6">
             {{t
-              "editor-plugins.roadsign-regulation.expanded-measure.template-preview"
+              "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.label"
             }}
           </AuHeading>
-          <div
-            class="traffic-measure-preview--template-preview au-u-padding-small"
-          >
-            {{@measureToInsert.preview}}
+          <div class="au-c-form">
+            <AuRadioGroup
+              @name="zonal"
+              @selected={{this.zonalityValue}}
+              @onChange={{this.changeZonality}}
+              as |Group|
+            >
+              <Group.Radio @value={{ZONALITY_OPTIONS.ZONAL}}>
+                {{t
+                  "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.zonal"
+                }}
+              </Group.Radio>
+              <Group.Radio @value={{ZONALITY_OPTIONS.NON_ZONAL}}>
+                {{t
+                  "editor-plugins.roadsign-regulation.expanded-measure.select-zonality.non-zonal"
+                }}
+              </Group.Radio>
+            </AuRadioGroup>
           </div>
+        {{/if}}
+      </div>
+      <div class="au-u-margin-bottom">
+        {{#if @measureToInsert.variableSignage}}
+          <AuHeading @level="6" @skin="6">
+            {{t
+              "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.label"
+            }}
+          </AuHeading>
+          <div class="au-c-form">
+            <AuRadioGroup
+              @name="temporal"
+              @selected={{this.temporalValue}}
+              @onChange={{this.changeTemporality}}
+              as |Group|
+            >
+              <Group.Radio @value="true">
+                {{t
+                  "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.varying"
+                }}
+              </Group.Radio>
+              <Group.Radio @value="false">
+                {{t
+                  "editor-plugins.roadsign-regulation.expanded-measure.varying-signalisation.non-varying"
+                }}
+              </Group.Radio>
+            </AuRadioGroup>
+          </div>
+        {{/if}}
+      </div>
+      <div class="au-u-margin-bottom">
+        <AuHeading @level="6" @skin="6">
+          {{t
+            "editor-plugins.roadsign-regulation.expanded-measure.insert-position"
+          }}
+        </AuHeading>
+        <PowerSelect
+          @allowClear={{false}}
+          @onChange={{set this "selectedInsertPosition"}}
+          @selected={{this.selectedInsertPosition}}
+          @options={{this.insertPositionOptions}}
+          as |option|
+        >{{option.label}}</PowerSelect>
+      </div>
+      <div class="au-u-margin-top-huge">
+        <AuHeading @level="6" @skin="6">
+          {{t
+            "editor-plugins.roadsign-regulation.expanded-measure.template-preview"
+          }}
+        </AuHeading>
+        <div
+          class="traffic-measure-preview--template-preview au-u-padding-small"
+        >
+          {{@measureToInsert.preview}}
         </div>
       </div>
     </div>
