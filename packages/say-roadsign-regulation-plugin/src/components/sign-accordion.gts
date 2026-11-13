@@ -73,7 +73,7 @@ export default class SignAccordion extends Component<Signature> {
         <AuHeading
           @level="6"
           @skin="6"
-          class="au-u-flex au-u-flex--vertical-center"
+          class="au-u-flex au-u-flex--vertical-center traffic-measure-preview--sign-header"
         >
           <img
             src={{@sign.mainSign.image}}
