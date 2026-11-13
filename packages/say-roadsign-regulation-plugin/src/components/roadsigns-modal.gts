@@ -14,14 +14,8 @@ import RoadsignsTableScreen from '#root/components/roadsigns-table-screen.gts';
 import RoadsignsInsertScreen, {
   type InsertPositionOption,
 } from '#root/components/roadsigns-insert-screen.gts';
-import {
-  type Category,
-  type Code,
-  type Option,
-  type RoadsignRegulationPluginOptions,
-  type TypeOption,
-  type Zonality,
-} from '#root/plugin/types.ts';
+import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
+import MeasureFilters from '#root/plugin/measure-filters.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
 import { on } from '@ember/modifier';
@@ -62,26 +56,10 @@ export default class RoadsignsModal extends Component<Signature> {
   @tracked temporalValue?: boolean;
   @tracked selectedInsertPosition: InsertPositionOption;
 
-  @tracked pageNumber = 0;
-
-  @tracked selectedZonality?: Zonality;
-  @tracked selectedCode?: Code;
-  @tracked selectedType?: TypeOption;
-  @tracked selectedCategory?: Category;
+  readonly filters = new MeasureFilters();
 
   insertPositionOptionFirst: InsertPositionOption;
   insertPositionOptionLast: InsertPositionOption;
-
-  zonalityOptions: Zonality[] = [
-    {
-      uri: ZONALITY_OPTIONS.ZONAL,
-      label: 'Zonaal',
-    },
-    {
-      uri: ZONALITY_OPTIONS.NON_ZONAL,
-      label: 'Niet zonaal',
-    },
-  ];
 
   constructor(owner: unknown, args: Signature['Args']) {
     super(owner, args);
@@ -236,73 +214,6 @@ export default class RoadsignsModal extends Component<Signature> {
     this.selectedInsertPosition = option;
   }
 
-  @action
-  changeType(option: Option) {
-    if (!option) {
-      this.selectedType = undefined;
-    } else {
-      this.selectedType = option;
-      this.selectedCategory = undefined;
-      this.selectedCode = undefined;
-      this.resetPagination();
-    }
-  }
-
-  @action
-  changeCategory(option: Option) {
-    if (!option) {
-      this.selectedCategory = undefined;
-    } else {
-      this.selectedCategory = option;
-      this.selectedCode = undefined;
-      this.resetPagination();
-    }
-  }
-
-  @action
-  changeCode(value: Code) {
-    this.selectedCode = value;
-    this.resetPagination();
-  }
-
-  @action
-  changeSelectedZonality(value: string | undefined) {
-    const zonality = this.zonalityOptions.find(
-      (option) => option.uri === value,
-    );
-    this.selectedZonality = zonality;
-    this.resetPagination();
-  }
-
-  @action
-  removeAllFilters() {
-    this.selectedZonality = undefined;
-    this.selectedType = undefined;
-    this.selectedCode = undefined;
-    this.selectedCategory = undefined;
-    this.resetPagination();
-  }
-
-  @action
-  resetPagination() {
-    this.goToPage(0);
-  }
-
-  @action
-  goToPreviousPage() {
-    this.goToPage(this.pageNumber - 1);
-  }
-
-  @action
-  goToNextPage() {
-    this.goToPage(this.pageNumber + 1);
-  }
-
-  @action
-  goToPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-  }
-
   insertMeasure = task(
     async (
       concept: MobilityMeasureConcept,
@@ -423,11 +334,7 @@ export default class RoadsignsModal extends Component<Signature> {
     this.zonalityValue = undefined;
     this.temporalValue = undefined;
     this.selectedInsertPosition = this.insertPositionOptionLast;
-    this.selectedZonality = undefined;
-    this.selectedType = undefined;
-    this.selectedCode = undefined;
-    this.selectedCategory = undefined;
-    this.pageNumber = 0;
+    this.filters.reset();
     this.args.closeModal();
   }
 
@@ -445,19 +352,19 @@ export default class RoadsignsModal extends Component<Signature> {
           <RoadsignsTableScreen
             @options={{@options}}
             @selectMeasureToInsert={{this.selectMeasureToInsert}}
-            @selectedZonality={{this.selectedZonality}}
-            @changeSelectedZonality={{this.changeSelectedZonality}}
-            @selectedCode={{this.selectedCode}}
-            @changeCode={{this.changeCode}}
-            @selectedType={{this.selectedType}}
-            @changeType={{this.changeType}}
-            @selectedCategory={{this.selectedCategory}}
-            @changeCategory={{this.changeCategory}}
-            @zonalityOptions={{this.zonalityOptions}}
-            @removeAllFilters={{this.removeAllFilters}}
-            @pageNumber={{this.pageNumber}}
-            @goToNextPage={{this.goToNextPage}}
-            @goToPreviousPage={{this.goToPreviousPage}}
+            @selectedZonality={{this.filters.selectedZonality}}
+            @changeSelectedZonality={{this.filters.changeSelectedZonality}}
+            @selectedCode={{this.filters.selectedCode}}
+            @changeCode={{this.filters.changeCode}}
+            @selectedType={{this.filters.selectedType}}
+            @changeType={{this.filters.changeType}}
+            @selectedCategory={{this.filters.selectedCategory}}
+            @changeCategory={{this.filters.changeCategory}}
+            @zonalityOptions={{this.filters.zonalityOptions}}
+            @removeAllFilters={{this.filters.reset}}
+            @pageNumber={{this.filters.pageNumber}}
+            @goToNextPage={{this.filters.goToNextPage}}
+            @goToPreviousPage={{this.filters.goToPreviousPage}}
           />
         {{else if (eq this.screen "insert")}}
           <RoadsignsInsertScreen
