@@ -17,7 +17,9 @@ type Sig = {
 };
 
 const TrafficMeasureSubSignList: TOC<Sig> = <template>
-  <div class="au-u-flex au-u-flex--column traffic-measure-preview--subsign-container">
+  <div
+    class="au-u-flex au-u-flex--column traffic-measure-preview--subsign-container"
+  >
     {{#each @subSigns as |subSign|}}
       <div class="au-u-margin-top-small au-u-flex au-u-flex--vertical-center">
         <AuCheckbox

@@ -116,19 +116,19 @@ class ChooseTrafficSignsStep extends Component<ChooseTrafficSignsStepSig> {
   }
   <template>
     <div class="au-o-grid__item au-u-1-3@medium au-u-padding">
-        <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
-          {{t
-            "editor-plugins.roadsign-regulation.insert.choose-traffic-signs-title"
-          }}
-        </AuHeading>
-        {{#each this.measureSignTree.signs as |sign|}}
-          <SignAccordion
-            @sign={{sign}}
-            @selectedSigns={{@selectedSigns}}
-            @selectMainSign={{@selectMainSign}}
-            @selectSubSign={{@selectSubSign}}
-          />
-        {{/each}}
+      <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
+        {{t
+          "editor-plugins.roadsign-regulation.insert.choose-traffic-signs-title"
+        }}
+      </AuHeading>
+      {{#each this.measureSignTree.signs as |sign|}}
+        <SignAccordion
+          @sign={{sign}}
+          @selectedSigns={{@selectedSigns}}
+          @selectMainSign={{@selectMainSign}}
+          @selectSubSign={{@selectSubSign}}
+        />
+      {{/each}}
 
     </div>
   </template>
@@ -151,32 +151,32 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
     <div
       class="au-o-grid__item au-u-1-3@medium traffic-measure-preview--insert-step-container au-u-padding"
     >
-        <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
-          {{t
-            "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
-          }}
-        </AuHeading>
-        {{#each @selectedSigns as |sign|}}
-          <div class="au-u-margin-bottom">
-            <AuHeading @skin="6" @level="3">
-              {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
-              {{sign.code}}
-            </AuHeading>
-            <PowerSelect
-              @onChange={{this.selectInstruction}}
-              @selected={{this.selectedInstruction}}
-              @options={{sign.instructions}}
-              @placeholder={{t
-                "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
-              }}
-              as |option|
-            >{{option.preview}}</PowerSelect>
-          </div>
-        {{else}}
-          <p class="au-u-muted au-u-italic">{{t
-              "editor-plugins.roadsign-regulation.insert.no-instructions"
-            }}</p>
-        {{/each}}
+      <AuHeading @skin="3" @level="2" class="au-u-margin-bottom">
+        {{t
+          "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
+        }}
+      </AuHeading>
+      {{#each @selectedSigns as |sign|}}
+        <div class="au-u-margin-bottom">
+          <AuHeading @skin="6" @level="3">
+            {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
+            {{sign.code}}
+          </AuHeading>
+          <PowerSelect
+            @onChange={{this.selectInstruction}}
+            @selected={{this.selectedInstruction}}
+            @options={{sign.instructions}}
+            @placeholder={{t
+              "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
+            }}
+            as |option|
+          >{{option.preview}}</PowerSelect>
+        </div>
+      {{else}}
+        <p class="au-u-muted au-u-italic">{{t
+            "editor-plugins.roadsign-regulation.insert.no-instructions"
+          }}</p>
+      {{/each}}
     </div>
   </template>
 }
