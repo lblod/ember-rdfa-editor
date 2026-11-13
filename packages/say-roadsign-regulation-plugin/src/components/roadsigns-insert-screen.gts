@@ -13,6 +13,7 @@ import { type Instruction } from '#root/plugin/schemas/instruction.ts';
 import {
   SelectedSign,
   type SelectedSigns,
+  type MainSignSelection,
 } from '#root/plugin/selected-signs.ts';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import PowerSelect from 'ember-power-select/components/power-select';
@@ -126,9 +127,13 @@ type SupplementMeasureStepSig = {
 };
 
 class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
-  get flattenedSelectedSigns() {
+  get flattenedAndSortedSelectedSigns() {
     const signs: SelectedSign[] = [];
-    for (const selection of this.args.selectedSigns.values()) {
+    const selectedSignsSorted: MainSignSelection[] = [...this.args.selectedSigns.values()]
+    selectedSignsSorted.sort((signA, signB) => {
+      return signA.mainSign.sign.position - signB.mainSign.sign.position;
+    })
+    for (const selection of selectedSignsSorted) {
       signs.push(selection.mainSign);
       for (const subSign of selection.subSigns.values()) {
         signs.push(subSign);
@@ -145,7 +150,7 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
           "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
         }}
       </AuHeading>
-      {{#each this.flattenedSelectedSigns as |selectedSign|}}
+      {{#each this.flattenedAndSortedSelectedSigns as |selectedSign|}}
         <div class="au-u-margin-bottom">
           <AuHeading @skin="6" @level="3">
             {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
