@@ -126,13 +126,12 @@ catalog:
   git-url-parse: ^16.1.0
   globals: ^17.14.0
   iter-tools: npm:iter-tools-es@^7.5.4
-  js-beautify: ^1.15.4
+  js-beautify: ^2.0.3
   libphonenumber-js: ^1.13.16
   linkifyjs: ^4.4.0
   loader.js: ^4.7.0
   mdast-util-to-string: ^4.0.0
   mdn-polyfills: ^5.20.0
-  mongoose: ^8.24.8
   n3: ^2.13.12
   octokit: ^4.1.4
   postcss: ^8.5.32
