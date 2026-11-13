@@ -316,11 +316,12 @@ export default class RoadsignsModal extends Component<Signature> {
       return false;
     if (!this.selectedSigns.size) return false;
     for (const selectedSign of this.selectedSigns.values()) {
-      if (!selectedSign.mainSign.selectedInstruction) {
+      const { mainSign } = selectedSign;
+      if (mainSign.sign.instructions.length && !mainSign.selectedInstruction) {
         return false;
       }
       for (const subSign of selectedSign.subSigns.values()) {
-        if (!subSign.selectedInstruction) {
+        if (subSign.sign.instructions.length && !subSign.selectedInstruction) {
           return false;
         }
       }
