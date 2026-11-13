@@ -4,7 +4,7 @@ import {
   SAMPLE_PLUGINS,
   SAMPLE_SCHEMA,
 } from 'test-app/tests/helpers/prosemirror';
-import { EditorState, PNode, type RdfaAttrs } from '@lblod/ember-rdfa-editor';
+import { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import {
   getNodeByRdfaId,
   getNodesBySubject,
