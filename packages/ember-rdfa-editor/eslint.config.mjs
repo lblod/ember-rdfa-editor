@@ -87,6 +87,7 @@ export default ts.config([
     extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
 
     rules: {
+      '@typescript-eslint/await-thenable': ['error', { allowMixedPromiseArrays: true }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
