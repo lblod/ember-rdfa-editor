@@ -1,7 +1,5 @@
 import Component from '@glimmer/component';
 import { type TOC } from '@ember/component/template-only';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import t from 'ember-intl/helpers/t';
 import { fn } from '@ember/helper';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -57,7 +55,7 @@ const RoadsignsInsertScreen: TOC<Signature> = <template>
       @selectSubSign={{@selectSubSign}}
       @selectMainSign={{@selectMainSign}}
     />
-    <SuplementMeasureStep
+    <SupplementMeasureStep
       @selectedSigns={{@selectedSigns}}
       @selectInstruction={{@selectInstruction}}
     />
@@ -124,7 +122,7 @@ type SupplementMeasureStepSig = {
   };
 };
 
-class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
+class SupplementMeasureStep extends Component<SupplementMeasureStepSig> {
   get flattenedAndSortedSelectedSigns() {
     const signs: SelectedSign[] = [];
     const selectedSignsSorted: MainSignSelection[] = [

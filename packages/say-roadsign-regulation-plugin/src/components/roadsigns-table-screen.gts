@@ -1,7 +1,6 @@
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
 import {
   type Category,
   type Code,
@@ -56,7 +55,6 @@ const trafficSignalConceptTypes = [
 
 type Signature = {
   Args: {
-    controller: SayController;
     options: RoadsignRegulationPluginOptions;
     selectMeasureToInsert: (measure: MobilityMeasureConcept) => void;
     selectedZonality?: Zonality;

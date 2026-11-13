@@ -443,7 +443,6 @@ export default class RoadsignsModal extends Component<Signature> {
       <Modal.Body>
         {{#if (eq this.screen "table")}}
           <RoadsignsTableScreen
-            @controller={{@controller}}
             @options={{@options}}
             @selectMeasureToInsert={{this.selectMeasureToInsert}}
             @selectedZonality={{this.selectedZonality}}
