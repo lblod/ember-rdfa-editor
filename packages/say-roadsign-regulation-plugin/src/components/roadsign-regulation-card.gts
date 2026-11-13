@@ -42,7 +42,7 @@ export default class RoadsingRegulationCard extends Component<Signature> {
 
   get showCard() {
     const decisionContext = this.args.options.decisionContext;
-    let decisionTypes = [];
+    let decisionTypes;
     if (decisionContext) {
       if (!decisionContext.decisionType) {
         // No type for passed decision, so assume it's valid

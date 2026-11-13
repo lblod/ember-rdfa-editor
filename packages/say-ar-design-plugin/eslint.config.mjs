@@ -92,6 +92,7 @@ export default ts.config(
         {
           argsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],

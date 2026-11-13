@@ -58,7 +58,7 @@ export default class RoadSignsTable extends Component<Signature> {
   };
 
   <template>
-    {{! @glint-expect-error expect this error }}
+    {{! @glint-expect-error datatable has wonky types}}
     <AuDataTable @isLoading={{@isLoading}} @noDataMessage="No data" as |table|>
       <table.content as |c|>
         <c.header>

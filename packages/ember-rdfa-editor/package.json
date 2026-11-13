@@ -349,18 +349,17 @@
     "webpack": "catalog:"
   },
   "peerDependencies": {
-    "@appuniversum/ember-appuniversum": "^3.11.0 || ^4.2.1",
+    "@appuniversum/ember-appuniversum": "^4.2.1",
     "@ember/test-helpers": "^2.9.4 || ^3.2.1 || ^4.0.2 || ^5.0.0",
-    "@glimmer/component": "^1.1.2 || ^2.0.0",
+    "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": "^1.1.2",
     "@glint/template": ">= 1.0.0",
     "ember-basic-dropdown": "^8.0.0",
-    "ember-concurrency": "^4.0.2 || ^5.0.0",
-    "ember-intl": "^6.4.0 || ^7.0.0",
-    "ember-power-select": "^7.0.0 || ^8.0.0",
-    "ember-power-select-with-create": "^2.0.0 || ^3.0.0",
-    "ember-source": "^4.12.0 || ^5.0.0 || ^6.0.0",
-    "tracked-built-ins": "^3.3.0 || ^4.0.0"
+    "ember-concurrency": "^5.0.0",
+    "ember-intl": "^7.0.0",
+    "ember-power-select": "^8.0.0",
+    "ember-power-select-with-create": "^3.0.0",
+    "tracked-built-ins": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "@glint/template": {
