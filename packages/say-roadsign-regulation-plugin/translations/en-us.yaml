@@ -72,7 +72,7 @@ editor-plugins:
         insert-measure-button: Fill in and insert
     insert:
       choose-traffic-signs-title: 1. Choose traffic signs
-      supplement-measure-title: 2. Suplement measure
+      supplement-measure-title: 2. Supplement measure
       add-measure-title: 3. Add measure
       instruction: Instruction
       instruction-placeholder: Select instruction

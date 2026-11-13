@@ -59,7 +59,7 @@ editor-plugins:
     pagination:
       publications: Publicaties
     accordion:
-      no-sub-signs: Geen onderborden bechrikbaar
+      no-sub-signs: Geen onderborden beschikbaar
     table:
       header:
         code: Code
