@@ -101,7 +101,7 @@
     "@glimmer/tracking": "catalog:",
     "@glint/ember-tsc": "catalog:",
     "@glint/template": "catalog:",
-    "@lblod/ember-rdfa-editor": "workspace:*",
+    "@lblod/ember-rdfa-editor": "catalog:",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-commonjs": "catalog:",
     "@rollup/plugin-inject": "catalog:",

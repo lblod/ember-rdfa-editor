@@ -42,8 +42,10 @@ catalog:
   "@glint/ember-tsc": ^1.14.3
   "@glint/template": ^1.11.1
   "@glint/tsserver-plugin": 2.7.16
-  "@glint/typescript-plugin": 1.4.1-unstable.9b657e4
   "@lblod/ember-rdfa-editor-lblod-plugins": 37.3.0
+  "@lblod/ember-rdfa-editor": "workspace:*"
+  "@lblod/say-roadsign-regulation-plugin": "workspace:*"
+  "@lblod/say-ar-design-plugin": "workspace:*"
   "@manypkg/get-packages": ^2.2.2
   "@modyfi/vite-plugin-yaml": ^1.1.1
   "@playwright/test": 1.50.0
@@ -88,7 +90,6 @@ catalog:
   debug: ^4.4.3
   decorator-transforms: ^2.4.0
   dompurify: 3.2.4
-  ember-auto-import: ^2.13.1
   ember-basic-dropdown: ^8.11.1
   ember-cli: ~6.5.0
   ember-cli-babel: ^8.3.2
@@ -141,7 +142,6 @@ catalog:
   prosemirror-commands: ^1.7.2
   prosemirror-dev-tools: ^4.3.0
   prosemirror-dropcursor: ^1.8.4
-  prosemirror-history: ./packages/ember-rdfa-editor/vendored-deps/prosemirror-history-1.5.0.tgz
   prosemirror-inputrules: ^1.5.1
   prosemirror-keymap: ^1.2.3
   prosemirror-model: ^1.25.13
@@ -175,7 +175,7 @@ catalog:
   tracked-toolbox: ^3.0.0
   tsx: ^4.23.15
   typedoc: ^0.28.20
-  typescript: ^5.9.3
+  typescript: ^6.0.3
   typescript-eslint: ^8.72.2
   unified: ^11.0.5
   uuid: ^9.0.1
@@ -211,3 +211,5 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@lblod/ember-rdfa-editor-lblod-plugins'
+catalogMode: prefer
+catalogPrune: true
