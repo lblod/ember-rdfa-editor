@@ -526,7 +526,7 @@ export function removePropertyFromNode(
 
     const properties = getProperties(resourceNodes[0].value);
     let propertyToRemove: OutgoingTriple | undefined;
-    let index = -1;
+    let index;
     if ('index' in args) {
       propertyToRemove = properties?.[args.index];
       index = args.index;

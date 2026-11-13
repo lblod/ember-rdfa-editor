@@ -153,6 +153,8 @@ export default class ImageNode extends Component<EmberNodeArgs> {
     event.preventDefault();
     event.stopPropagation();
     if (this.image && handlePosition) {
+      // unsure while doing a linting pass, so disabling the rule here
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.handleReferences;
       this.resizeState = {
         handle: HANDLES[handlePosition],

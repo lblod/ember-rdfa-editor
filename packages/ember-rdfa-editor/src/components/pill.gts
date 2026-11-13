@@ -3,7 +3,7 @@ import Component from '@glimmer/component';
 import type { ComponentLike } from '@glint/template';
 import { eq, notEq } from 'ember-truth-helpers';
 
-const PILL_SIZES = ['small'] as const;
+export const PILL_SIZES = ['small'] as const;
 
 export type PillComponentSignature = {
   Element: HTMLSpanElement;

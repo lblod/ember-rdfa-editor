@@ -192,7 +192,10 @@ export class RdfaInfo {
       }
       return newMaps;
     } else {
-      throw abortSignal.throwIfAborted();
+      abortSignal.throwIfAborted();
+      throw new Error(
+        'Should not be reached, abortsignal should have thrown before this',
+      );
     }
   }
 
