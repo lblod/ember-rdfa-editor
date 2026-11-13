@@ -115,7 +115,7 @@ catalog:
   ember-velcro: ^2.2.0
   eslint: ^10.14.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-ember: ^13.9.1
+  eslint-plugin-ember: ^13.10.0
   eslint-plugin-import: ^2.32.0
   eslint-plugin-n: ^18.5.0
   eslint-plugin-playwright: ^2.12.2
