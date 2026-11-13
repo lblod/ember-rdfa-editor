@@ -41,7 +41,7 @@ type Signature = {
 
 export default class SignAccordion extends Component<Signature> {
   @service declare intl: IntlService;
-  @tracked isOpen = false;
+  @tracked isOpen = true;
 
   @action
   toggleOpen() {
