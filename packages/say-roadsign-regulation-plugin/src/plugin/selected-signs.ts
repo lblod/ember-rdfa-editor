@@ -10,6 +10,10 @@ export class SelectedSign {
 
   constructor(sign: TrafficSignalConcept) {
     this.sign = sign;
+    //If the sign has only one instruction we should autoselect it
+    if(sign.instructions.length === 1) {
+      this.selectedInstruction = sign.instructions[0];
+    }
   }
 }
 
