@@ -280,7 +280,7 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
         <div
           class="traffic-measure-preview--template-preview au-u-padding-small"
         >
-          {{@template}}
+          <p class="traffic-measure-preview--pre-wrap">{{@template}}</p>
         </div>
       </div>
     </div>
