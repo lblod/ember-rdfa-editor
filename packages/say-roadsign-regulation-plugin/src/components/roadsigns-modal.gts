@@ -11,9 +11,7 @@ import { task } from 'ember-concurrency';
 import { v4 as uuid } from 'uuid';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import RoadsignsTableScreen from '#root/components/roadsigns-table-screen.gts';
-import RoadsignsInsertScreen, {
-  type InsertPositionOption,
-} from '#root/components/roadsigns-insert-screen.gts';
+import RoadsignsInsertScreen from '#root/components/roadsigns-insert-screen.gts';
 import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
 import MeasureFilters from '#root/plugin/measure-filters.ts';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
@@ -31,11 +29,9 @@ import { queryVariables } from '#root/plugin/queries/variable.ts';
 import { type Variable } from '#root/plugin/schemas/variable.ts';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
-import {
-  generateVariableInstanceUri,
-  generateVariableUri,
-} from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
+import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
 import { mapObject } from '@lblod/ember-rdfa-editor/utils/map-utils';
+import type { InsertPositionOption } from '../plugin/types.ts';
 
 type Signature = {
   Args: {
@@ -245,7 +241,7 @@ export default class RoadsignsModal extends Component<Signature> {
         const locatieVariables: Variable[] = [];
         for (let i = 0; i < this.selectedSigns.size; i++) {
           locatieVariables.push({
-            uri: generateVariableUri(),
+            uri: `http://data.lblod.info/variable/${uuid()}`,
             label: locatieLabel(i),
             type: 'location',
             source: this.endpoint,

@@ -16,6 +16,7 @@ import {
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { ZONALITY_OPTIONS, type ZonalOrNot } from '#root/plugin/constants.ts';
+import type { InsertPositionOption } from '../plugin/types.ts';
 
 type Signature = {
   Args: {
@@ -39,12 +40,6 @@ type Signature = {
       instruction: Instruction,
     ) => void;
   };
-};
-
-export type InsertPositionOption = {
-  label: string;
-  position: 'first' | 'last' | 'custom';
-  insertIndex?: number;
 };
 
 const RoadsignsInsertScreen: TOC<Signature> = <template>

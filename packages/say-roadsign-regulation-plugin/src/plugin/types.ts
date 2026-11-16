@@ -1,5 +1,11 @@
 import { ZONALITY_OPTIONS } from '#root/plugin/constants.ts';
 
+export type InsertPositionOption = {
+  label: string;
+  position: 'first' | 'last' | 'custom';
+  insertIndex?: number;
+};
+
 export type Option = {
   uri: string;
   label: string;
