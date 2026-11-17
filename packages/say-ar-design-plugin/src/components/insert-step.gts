@@ -1,20 +1,18 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { on } from '@ember/modifier';
-import { htmlSafe } from '@ember/template';
 import t from 'ember-intl/helpers/t';
 import { trackedFunction } from 'reactiveweb/function';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
-import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import type ArImporterService from '../services/ar-importer.ts';
-import AuAlert from '@appuniversum/ember-appuniversum/components/au-alert';
 import {
   InsertControls,
   type ArInsertControlArgs,
 } from './insert-controls.gts';
 import type { ProcessDocumentHeadlessly } from '../plugin/types.ts';
+import InsertStepSidebar from './insert-step-sidebar.gts';
 
 type ArPreviewSignature = {
   Args: ArInsertControlArgs & {
@@ -25,7 +23,7 @@ type ArPreviewSignature = {
   Element: HTMLDivElement;
 };
 
-export default class ArPreview extends Component<ArPreviewSignature> {
+export default class InsertStep extends Component<ArPreviewSignature> {
   @service declare arImporter: ArImporterService;
 
   preview = trackedFunction(this, async () => {
@@ -55,31 +53,13 @@ export default class ArPreview extends Component<ArPreviewSignature> {
           >{{t "ar-importer.preview.return-to-overview"}}</AuButton>
         </Group>
       </AuToolbar>
-      <div class="ar-importer-preview__content au-o-layout">
-        {{#if this.preview.isLoading}}
-          <AuLoader @centered={{true}} @hideMessage={{false}}>
-            {{t "application.loading"}}
-          </AuLoader>
-        {{/if}}
-        {{#if this.preview.isError}}
-          <AuAlert @icon="alert-triangle" @skin="error">
-            {{t "ar-importer.message.error-processing-design"}}
-          </AuAlert>
-        {{/if}}
-        {{#if this.preview.value}}
-          {{#if this.preview.value.warnings}}
-            <AuAlert
-              @icon="alert-triangle"
-              @skin="warning"
-              class="au-u-margin-left au-u-margin-right"
-            >
-              {{#each this.preview.value.warnings as |warning|}}
-                <p>{{warning}}</p>
-              {{/each}}
-            </AuAlert>
-          {{/if}}
-          {{htmlSafe this.preview.value.result}}
-        {{/if}}
+      <div class="au-o-grid au-u-height-full au-u-margin-none">
+        <div class="au-o-grid__item au-u-1-3 au-u-1-4@medium au-u-1-5@large">
+          <InsertStepSidebar @arDesign={{@arDesign}} />
+        </div>
+        <div class="au-o-grid__item au-u-2-3 au-u-3-4@medium au-u-4-5@large">
+          Content
+        </div>
       </div>
 
       <AuToolbar @size="medium" as |Group|>

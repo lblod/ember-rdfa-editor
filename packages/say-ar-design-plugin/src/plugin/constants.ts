@@ -1,3 +1,5 @@
+import { MOBILITEIT } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/constants';
+
 // From https://github.com/Informatievlaanderen/OSLOthema-lokaleBesluiten/blob/feature%2Fbestaande-signalisatie/codelijsten%2Fverkeersbordontwerpstatus.ttl
 export const TRAFFIC_SIGNAL_DESIGN_STATUSES = {
   IN_VOORONTWERP:
@@ -49,3 +51,33 @@ export const TRAFFIC_SIGNAL_EXISTING_STATUSES = [
   TRAFFIC_SIGNAL_DESIGN_STATUSES.VERWIJDERING_UITGEVOERD,
   TRAFFIC_SIGNAL_DESIGN_STATUSES.UITGEVOERD,
 ];
+
+export const TRAFFIC_SIGNAL_CONCEPT_TYPES = {
+  TRAFFIC_SIGNAL: MOBILITEIT('Verkeerstekenconcept').full,
+  ROAD_SIGN: MOBILITEIT('Verkeersbordconcept').full,
+  TRAFFIC_LIGHT: MOBILITEIT('Verkeerslichtconcept').full,
+  ROAD_MARKING: MOBILITEIT('Wegmarkeringconcept').full,
+} as const;
+
+export const ROAD_SIGN_CATEGORIES = {
+  XXBORD:
+    'https://data.vlaanderen.be/id/concept/Verkeersbordcategorie/ae1b7231-1f31-492d-947a-25fc5d114492',
+  'XX-AWVBORD':
+    'https://data.vlaanderen.be/id/concept/Verkeersbordcategorie/8e302648-0eca-478b-8b48-67c3b0e39c0a',
+  GEVAARSBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/2982567006d9e19f04063df73123f56f40e3a28941031a7ba6e6667f64740fa9',
+  STILSTAANPARKEERBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/29ea3335e357e414d07229242607b352941c0c21e78760600cc0f5270f18c38b',
+  VOORRANGSBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/737da5751bc7f311398a834f34df310dd95255a0b62afa2db2882c72d54b47d2',
+  ZONEBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/86a67f3cba6512ae10c4b9b09ba35d8c80109189b44d37e848858af9efb37019',
+  VERBODSBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/955a9adc73d076a2a424754cd540b73da8d15fb002ab6c9f115d080edddb57e8',
+  ONDERBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/991b04b477b77bc7cf1414fb5d255cc4435dd9c1681e8de66f770710c1c83ad0',
+  GEBODSBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/9d84069e70f192b7a474d02f07687bc3343ee324207ad9e093c0b2f5def647f8',
+  AANWIJSBORD:
+    'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/9ea8f8b421343370d20a8bd45d6226aadc48125bda8ddbbeeb53d99f181ee05a',
+};

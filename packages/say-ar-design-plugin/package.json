@@ -177,10 +177,13 @@
     "main": "addon-main.cjs",
     "app-js": {
       "./components/insert-controls.js": "./dist/_app_/components/insert-controls.js",
+      "./components/insert-step-sidebar.js": "./dist/_app_/components/insert-step-sidebar.js",
+      "./components/insert-step.js": "./dist/_app_/components/insert-step.js",
       "./components/overview.js": "./dist/_app_/components/overview.js",
-      "./components/preview.js": "./dist/_app_/components/preview.js",
       "./components/reactive-table.js": "./dist/_app_/components/reactive-table.js",
       "./components/sidebar-widget.js": "./dist/_app_/components/sidebar-widget.js",
+      "./components/sign-accordion.js": "./dist/_app_/components/sign-accordion.js",
+      "./components/sub-sign-list.js": "./dist/_app_/components/sub-sign-list.js",
       "./components/widget-contents.js": "./dist/_app_/components/widget-contents.js",
       "./services/ar-importer.js": "./dist/_app_/services/ar-importer.js"
     }

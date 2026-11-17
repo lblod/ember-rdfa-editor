@@ -2,6 +2,7 @@ import type { EditorState, PNode } from '@lblod/ember-rdfa-editor';
 import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
 import type ArDesign from './models/ar-design.ts';
 import type { ArticleInsertPosition } from './utils/article-insert-position.ts';
+import  type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
 
 export type ArticlePosition = { node: PNode; pos: number };
 
@@ -42,3 +43,8 @@ export type ProcessDocumentHeadlessly = (
     state: EditorState,
   ) => TransactionCombinatorResult<boolean>,
 ) => string;
+
+export type SignPreviewItem = {
+  mainSign: TrafficSignalConcept;
+  subSigns: TrafficSignalConcept[];
+};

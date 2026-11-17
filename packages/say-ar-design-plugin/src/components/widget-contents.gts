@@ -7,7 +7,7 @@ import type { SayController } from '@lblod/ember-rdfa-editor';
 import type ArDesign from '../plugin/models/ar-design.ts';
 import type ArImporterService from '../services/ar-importer.ts';
 import type { GenerateImportResult } from '../services/ar-importer.ts';
-import ArPreview from './preview.gts';
+import InsertStep from './insert-step.gts';
 import ArDesignOverview from './overview.gts';
 import { trackedTask } from 'reactiveweb/ember-concurrency';
 import type {
@@ -122,7 +122,7 @@ export default class ArWidgetContents extends Component<Sig> {
 
   <template>
     {{#if this.selectedDesign}}
-      <ArPreview
+      <InsertStep
         @arDesign={{this.selectedDesign}}
         @onReturnToOverview={{this.returnToOverview}}
         @onInsertAr={{this.insertAr.perform}}
