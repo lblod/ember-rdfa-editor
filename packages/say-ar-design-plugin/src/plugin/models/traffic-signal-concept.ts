@@ -1,4 +1,4 @@
-import type RoadSignCategory from './road-sign-category.ts';
+import type RoadSignCategory from '#root/plugin/models/road-sign-category.ts';
 
 export default interface TrafficSignalConcept {
   id: string | null;

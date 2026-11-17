@@ -5,7 +5,7 @@ import t from 'ember-intl/helpers/t';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuModal from '@appuniversum/ember-appuniversum/components/au-modal';
 import type { SayController } from '@lblod/ember-rdfa-editor';
-import ArWidgetContents from './widget-contents.gts';
+import ArWidgetContents from '#root/components/widget-contents.gts';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
 import { ROADSIGN_REGULATION_DECISION_TYPES } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
@@ -13,7 +13,7 @@ import type {
   ArDesignQuery,
   ArticlePosition,
   ProcessDocumentHeadlessly,
-} from '../plugin/types.ts';
+} from '#root/plugin/types.ts';
 
 export type ArDesignSidebarWidgetSig = {
   Args: {

@@ -4,11 +4,11 @@ import { tracked } from 'tracked-built-ins';
 import { restartableTask, task, timeout } from 'ember-concurrency';
 import type { SayController } from '@lblod/ember-rdfa-editor';
 
-import type ArDesign from '../plugin/models/ar-design.ts';
-import type ArImporterService from '../services/ar-importer.ts';
-import type { GenerateImportResult } from '../services/ar-importer.ts';
-import InsertStep from './insert-step.gts';
-import ArDesignOverview from './overview.gts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
+import type ArImporterService from '#root/services/ar-importer.ts';
+import type { GenerateImportResult } from '#root/services/ar-importer.ts';
+import InsertStep from '#root/components/insert-step.gts';
+import ArDesignOverview from '#root/components/overview.gts';
 import { trackedTask } from 'reactiveweb/ember-concurrency';
 import type {
   ArDesignOverviewSortField,
@@ -16,8 +16,8 @@ import type {
   ArticlePosition,
   DesignInfo,
   ProcessDocumentHeadlessly,
-} from '../plugin/types';
-import type { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
+} from '#root/plugin/types.ts';
+import type { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 
 const FILTER_TIMEOUT_MS = 300;
 

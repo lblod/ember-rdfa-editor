@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { fn, get } from '@ember/helper';
 import type { AuMainContainerSignature } from '@appuniversum/ember-appuniversum/components/au-main-container';
-import ReactiveTable from './reactive-table.gts';
+import ReactiveTable from '#root/components/reactive-table.gts';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { VisibleIcon } from '@appuniversum/ember-appuniversum/components/icons/visible';
@@ -14,10 +14,13 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import { v4 as uuidv4 } from 'uuid';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 import { detailedDate } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/detailed-date';
-import type ArDesign from '../plugin/models/ar-design.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
-import type { ArDesignOverviewSortField, DesignInfo } from '../plugin/types.ts';
+import type {
+  ArDesignOverviewSortField,
+  DesignInfo,
+} from '#root/plugin/types.ts';
 import { trackedFunction } from 'reactiveweb/function';
 import type { TOC } from '@ember/component/template-only';
 

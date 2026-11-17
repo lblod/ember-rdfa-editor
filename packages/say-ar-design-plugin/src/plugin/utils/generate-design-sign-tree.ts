@@ -1,12 +1,11 @@
-import  type MeasureDesign  from '#root/plugin/models/measure-design.ts';
-import  type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
+import type MeasureDesign from '#root/plugin/models/measure-design.ts';
+import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
 import {
   TRAFFIC_SIGNAL_CONCEPT_TYPES,
   ROAD_SIGN_CATEGORIES,
-} from '../constants.ts';
-import type ArDesign from '../models/ar-design.ts';
-import {type SignPreviewItem} from '../types.ts'
-
+} from '#root/plugin/constants.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
+import { type SignPreviewItem } from '#root/plugin/types.ts';
 
 export function isSubSign(signal: TrafficSignalConcept): boolean {
   if (signal.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) return false;

@@ -5,7 +5,7 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import type { TOC } from '@ember/component/template-only';
-import type ArDesign from '../plugin/models/ar-design.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
 import t from 'ember-intl/helpers/t';
 import PowerSelect, {
   type Select,
@@ -17,12 +17,12 @@ import type {
   ArInsertFunc,
   ArticlePosition,
   InsertPositionOption,
-} from '../plugin/types.ts';
+} from '#root/plugin/types.ts';
 import {
   afterLastArticle,
   ArticleInsertPosition,
   beforeFirstArticle,
-} from '../plugin/utils/article-insert-position.ts';
+} from '#root/plugin/utils/article-insert-position.ts';
 
 const InsertButton: TOC<{
   Args: {

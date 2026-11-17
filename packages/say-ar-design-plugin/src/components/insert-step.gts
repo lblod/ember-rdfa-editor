@@ -6,13 +6,13 @@ import { trackedFunction } from 'reactiveweb/function';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
-import type ArImporterService from '../services/ar-importer.ts';
+import type ArImporterService from '#root/services/ar-importer.ts';
 import {
   InsertControls,
   type ArInsertControlArgs,
-} from './insert-controls.gts';
-import type { ProcessDocumentHeadlessly } from '../plugin/types.ts';
-import InsertStepSidebar from './insert-step-sidebar.gts';
+} from '#root/components/insert-controls.gts';
+import type { ProcessDocumentHeadlessly } from '#root/plugin/types.ts';
+import InsertStepSidebar from '#root/components/insert-step-sidebar.gts';
 
 type ArPreviewSignature = {
   Args: ArInsertControlArgs & {

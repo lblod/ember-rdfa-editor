@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import type ArDesign from '../plugin/models/ar-design.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { cached } from '@glimmer/tracking';

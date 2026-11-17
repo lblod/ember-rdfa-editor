@@ -19,12 +19,12 @@ import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/c
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
 import { TrafficSignalConceptSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/traffic-signal-concept';
-import type ArDesign from '../plugin/models/ar-design.ts';
-import type TrafficSignal from '../plugin/models/traffic-signal.ts';
-import type VariableInstance from '../plugin/models/variable-instance.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
+import type TrafficSignal from '#root/plugin/models/traffic-signal.ts';
+import type VariableInstance from '#root/plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
-import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
-import { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
+import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '#root/plugin/constants.ts';
+import { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 
 export type ImportResult<R> = {
   result: R;
