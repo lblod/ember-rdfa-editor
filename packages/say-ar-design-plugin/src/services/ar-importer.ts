@@ -153,7 +153,12 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const monads = measureDesigns.flatMap((measureDesign, index, array) => {
+      //TODO: Add comment to explain the reverse
+      const monads = (
+        insertPositionArgs.insertFreely
+          ? [...measureDesigns].reverse()
+          : measureDesigns
+      ).flatMap((measureDesign, index, array) => {
         const {
           measureConcept,
           trafficSignals,
