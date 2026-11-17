@@ -13,6 +13,7 @@ import {
 } from '#root/components/insert-controls.gts';
 import type { ProcessDocumentHeadlessly } from '#root/plugin/types.ts';
 import InsertStepSidebar from '#root/components/insert-step-sidebar.gts';
+import InsertStepContent from '#root/components/insert-step-content.gts';
 
 type ArPreviewSignature = {
   Args: ArInsertControlArgs & {
@@ -58,7 +59,7 @@ export default class InsertStep extends Component<ArPreviewSignature> {
           <InsertStepSidebar @arDesign={{@arDesign}} />
         </div>
         <div class="au-o-grid__item au-u-2-3 au-u-3-4@medium au-u-4-5@large">
-          Content
+          <InsertStepContent @arDesign={{@arDesign}} @articles={{@articles}} @processDocumentHeadlessly={{@processDocumentHeadlessly}}/>
         </div>
       </div>
 

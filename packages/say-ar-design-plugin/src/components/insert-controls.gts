@@ -40,31 +40,6 @@ const InsertButton: TOC<{
   >{{t "ar-importer.controls.insert"}}</AuButton>
 </template>;
 
-const InsertPositionSelector: TOC<{
-  Args: {
-    options: InsertPositionOption[];
-    selected: InsertPositionOption | null;
-    onChange: (
-      selected: InsertPositionOption,
-      select: Select,
-      event?: Event,
-    ) => void;
-  };
-}> = <template>
-  <AuLabel for="ar-importer-position-selector">{{t
-      "ar-importer.controls.select-position"
-    }}:</AuLabel>
-  <div class="ar-importer-insert-controls__selector">
-    <PowerSelect
-      id="ar-importer-position-selector"
-      @allowClear={{false}}
-      @onChange={{@onChange}}
-      @selected={{@selected}}
-      @options={{@options}}
-      as |option|
-    >{{option.label}}</PowerSelect>
-  </div>
-</template>;
 
 export interface ArInsertControlArgs {
   arDesign: ArDesign;
@@ -78,70 +53,8 @@ type Sig = {
 };
 
 export class InsertControls extends Component<Sig> {
-  @tracked _selected: InsertPositionOption | null = null;
-  @service declare intl: IntlService;
-
-  get beforeFirst(): InsertPositionOption {
-    return {
-      value: beforeFirstArticle,
-      label: this.intl.t('ar-importer.controls.first'),
-    };
-  }
-  get afterLast(): InsertPositionOption {
-    return {
-      value: afterLastArticle,
-      label: this.intl.t('ar-importer.controls.last'),
-    };
-  }
-
-  get onCursor(): InsertPositionOption {
-    return {
-      value: false,
-      label: this.intl.t('ar-importer.controls.on-cursor'),
-    };
-  }
-
-  get articleOptions(): InsertPositionOption[] {
-    return this.args.articles.map((_, i) => ({
-      value: new ArticleInsertPosition(i),
-      label: this.intl.t('ar-importer.controls.after-article-x', {
-        articleNumber: i + 1,
-      }),
-    }));
-  }
-
-  get options(): InsertPositionOption[] {
-    if (this.args.regulatoryStatementMode) {
-      return [this.onCursor];
-    } else {
-      return [
-        this.afterLast,
-        this.beforeFirst,
-        this.onCursor,
-        ...this.articleOptions,
-      ];
-    }
-  }
-
-  get selected(): InsertPositionOption {
-    if (this._selected) {
-      return this._selected;
-    } else {
-      return this.args.regulatoryStatementMode ? this.onCursor : this.afterLast;
-    }
-  }
-
-  setSelected = (val: InsertPositionOption | null) => {
-    this._selected = val;
-  };
-
   <template>
     <div class="ar-importer-insert-controls">
-      <InsertPositionSelector
-        @options={{this.options}}
-        @selected={{this.selected}}
-        @onChange={{this.setSelected}}
-      />
       <InsertButton
         @arDesign={{@arDesign}}
         @onInsertAr={{@onInsertAr}}

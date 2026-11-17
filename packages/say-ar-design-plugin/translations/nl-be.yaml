@@ -32,6 +32,7 @@ ar-importer:
     select-position: Kies invoegpositie
     on-cursor: Bij de cursor
   preview:
+    heading: Maatregelpreview
     return-to-overview: Terug naar overzicht
     only-existing-label: bestaand
     only-existing: Dit maatregelontwerp bevat enkel reeds bestaande verkeerstekens.

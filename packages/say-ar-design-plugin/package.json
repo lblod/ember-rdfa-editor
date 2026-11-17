@@ -177,6 +177,7 @@
     "main": "addon-main.cjs",
     "app-js": {
       "./components/insert-controls.js": "./dist/_app_/components/insert-controls.js",
+      "./components/insert-step-content.js": "./dist/_app_/components/insert-step-content.js",
       "./components/insert-step-sidebar.js": "./dist/_app_/components/insert-step-sidebar.js",
       "./components/insert-step.js": "./dist/_app_/components/insert-step.js",
       "./components/overview.js": "./dist/_app_/components/overview.js",

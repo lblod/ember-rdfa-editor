@@ -91,6 +91,7 @@ import VisualiserCard from '@lblod/ember-rdfa-editor/components/_private/rdfa-vi
 import type { OutgoingTriple } from '@lblod/ember-rdfa-editor/core/rdfa-processor';
 import {
   getNodeByRdfaId,
+  rdfaInfoPlugin,
   type DisplayGenerator,
   type RdfaVisualizerConfig,
 } from '@lblod/ember-rdfa-editor/plugins/rdfa-info';
@@ -116,6 +117,14 @@ import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
+import { EditorState, ProseParser } from '@lblod/ember-rdfa-editor';
+import { htmlToDoc } from '@lblod/ember-rdfa-editor/utils/_private/html-utils';
+import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils/transaction-utils';
+import SaySerializer from '@lblod/ember-rdfa-editor/core/say-serializer';
+import { removePropertiesOfDeletedNodes } from '@lblod/ember-rdfa-editor/plugins/remove-properties-of-deleted-nodes';
+import { defaultAttributeValueGeneration } from '@lblod/ember-rdfa-editor/plugins/default-attribute-value-generation';
+import { onChangedPlugin } from '@lblod/ember-rdfa-editor/plugins/on-changed/plugin';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   number,
@@ -658,9 +667,69 @@ export default class LblodPluginsTemplate extends Component {
         test: Promise.resolve(1),
       },
     });
-  processDocumentHeadlessly = () => {
-    console.warn('Not implemented');
-    return 'Not implemented';
+  getState = (html: string) => {
+    const schema = this.schema;
+    const plugins =
+      this.plugins instanceof Array ? this.plugins : this.plugins.plugins;
+    const parser = ProseParser.fromSchema(schema);
+    const doc = htmlToDoc(html, {
+      schema: schema,
+      parser,
+    });
+
+    const state = EditorState.create({
+      doc,
+      // We need to configure some additional (default) plugins for the headless editor
+      // (they are already configured by default on the headful one)
+      plugins: [
+        defaultAttributeValueGeneration([
+          {
+            attribute: '__guid',
+            generator() {
+              return uuidv4();
+            },
+          },
+          {
+            attribute: '__rdfaId',
+            generator() {
+              return uuidv4();
+            },
+          },
+        ]),
+        removePropertiesOfDeletedNodes(),
+        rdfaInfoPlugin(),
+        onChangedPlugin,
+        ...plugins,
+      ],
+    });
+    return state;
+  };
+
+  // TODO ideally this function would be pulled into the editor. This way it could be unified with
+  // the copy that exists in embeddable. This would require ideally passing in the schema and
+  // plugins, but it could also be getState() that is passed in.
+  /**
+   * Use a headless prosemirror instance to load the given HTML, pass the state to the generator to
+   * produce some transactions, then apply those transactions to the instance and pass back the
+   * resulting HTML
+   */
+  processDocumentHeadlessly = (
+    html: string,
+    transactionGenerator: (
+      state: EditorState,
+    ) => TransactionCombinatorResult<boolean>,
+  ): string => {
+    let state = this.getState(html);
+    const combResult = transactionGenerator(state);
+    if (combResult.result.every((ok) => ok)) {
+      state = state.applyTransaction(combResult.transaction).state;
+    }
+    const serializer = SaySerializer.fromSchema(state.schema, () => state);
+    const div = document.createElement('div');
+    const doc = serializer.serializeNode(state.doc, undefined);
+    div.appendChild(doc);
+
+    return div.innerHTML;
   };
 
   <template>

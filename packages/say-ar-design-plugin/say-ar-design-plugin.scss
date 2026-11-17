@@ -46,6 +46,7 @@
   flex-direction: column;
   height: 100%;
 }
+
 .ar-importer-insert-controls {
   width: 100%;
   flex-shrink: 1;
@@ -54,10 +55,19 @@
   justify-content: end;
   align-items: baseline;
 }
+
 .ar-importer-insert-controls__selector {
   flex-basis: 25rem;
   flex-shrink: 0;
   flex-grow: 0;
   justify-self: right;
   align-self: right;
+}
+
+.ar-importer-preview__content [data-say-structure-type="article"] {
+  background-color: #f4f7fb;
+  border: 1px solid #cfd5dd;
+  border-radius: 3px;
+  color: var(--au-gray-700);
+  padding: 1rem;
 }
