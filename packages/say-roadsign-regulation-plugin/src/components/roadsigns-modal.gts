@@ -121,9 +121,11 @@ export default class RoadsignsModal extends Component<Signature> {
       const selection = selections[i];
       const line: string[] = [];
       if (selection.mainSign.selectedInstruction) {
-        line.push(`\${${locatieLabel(i)}} ${selection.mainSign.selectedInstruction.value}`);
+        line.push(
+          `\${${locatieLabel(i)}} ${selection.mainSign.selectedInstruction.value}`,
+        );
       } else {
-         line.push(`\${${locatieLabel(i)}}`)
+        line.push(`\${${locatieLabel(i)}}`);
       }
       for (const subSign of selection.subSigns.values()) {
         if (subSign.selectedInstruction) {
