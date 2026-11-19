@@ -165,6 +165,10 @@
       "types": "./declarations/components/index.d.ts",
       "default": "./dist/components/index.js"
     },
+    "./components/modern-sidebar": {
+      "types": "./declarations/components/modern-sidebar.d.ts",
+      "default": "./dist/components/modern-sidebar.js"
+    },
     "./components/_private/rdfa-editor": {
       "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
       "default": "./dist/components/_private/rdfa-editor/index.js"
@@ -421,6 +425,7 @@
       "./components/icons/format-text.js": "./dist/_app_/components/icons/format-text.js",
       "./components/icons/rdfa.js": "./dist/_app_/components/icons/rdfa.js",
       "./components/index.js": "./dist/_app_/components/index.js",
+      "./components/modern-sidebar.js": "./dist/_app_/components/modern-sidebar.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
       "./components/plugins/contextual-actions/container.js": "./dist/_app_/components/plugins/contextual-actions/container.js",

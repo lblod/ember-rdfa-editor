@@ -129,6 +129,11 @@ export type InlineDecorationSpec = NonNullable<
 
 export { default as SayView } from '#root/core/say-view.ts';
 export { default as SayController } from '#root/core/say-controller.ts';
+export type {
+  ModernSidebarBadge,
+  ModernSidebarPlacement,
+  ModernSidebarTab,
+} from '#root/components/modern-sidebar.gts';
 addMethod(
   string,
   'curie',
