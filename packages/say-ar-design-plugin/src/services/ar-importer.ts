@@ -153,11 +153,12 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
+      const appendsToEnd =
+        insertPositionArgs.insertFreely === false &&
+        insertPositionArgs.position === undefined;
       //TODO: Add comment to explain the reverse
       const monads = (
-        insertPositionArgs.insertFreely
-          ? [...measureDesigns].reverse()
-          : measureDesigns
+        appendsToEnd ? measureDesigns : [...measureDesigns].reverse()
       ).flatMap((measureDesign, index, array) => {
         const {
           measureConcept,

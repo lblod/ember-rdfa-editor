@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
-import { type SignPreviewItem } from '#root/plugin/types.ts';
+import { type MainSignWithInstruction } from '#root/plugin/types.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { TRAFFIC_SIGNAL_CONCEPT_TYPES } from '#root/plugin/constants.ts';
 import type IntlService from 'ember-intl/services/intl';
@@ -20,7 +20,7 @@ function signalLabel(signal: TrafficSignalConcept, intl: IntlService) {
 
 type Signature = {
   Args: {
-    sign: SignPreviewItem;
+    signWithInstruction: MainSignWithInstruction;
   };
 };
 
@@ -36,17 +36,16 @@ export default class SignAccordion extends Component<Signature> {
         class="au-u-flex au-u-flex--vertical-center traffic-measure-preview--sign-header"
       >
         <img
-          src={{@sign.mainSign.image}}
+          src={{@signWithInstruction.mainSign.sign.image}}
           alt=""
           class="traffic-measure-preview--sign-image au-u-margin-right-small"
         />
-        {{signalLabel @sign.mainSign this.intl}}
-        {{@sign.mainSign.code}}
+        {{signalLabel @signWithInstruction.mainSign.sign this.intl}}
+        {{@signWithInstruction.mainSign.sign.code}}
       </AuHeading>
-      {{#if @sign.subSigns.length}}
+      {{#if @signWithInstruction.subSigns.length}}
         <TrafficMeasureSubSignList
-          @subSigns={{@sign.subSigns}}
-          @mainSign={{@sign.mainSign}}
+          @subSigns={{@signWithInstruction.subSigns}}
         />
       {{/if}}
     </div>

@@ -1,4 +1,3 @@
-import { tracked } from '@glimmer/tracking';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import type { TOC } from '@ember/component/template-only';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
@@ -8,16 +7,7 @@ import PowerSelect, {
 } from 'ember-power-select/components/power-select';
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
-import type IntlService from 'ember-intl/services/intl';
-import type {
-  InsertPositionOption,
-  ArticlePosition
-} from '#root/plugin/types.ts';
-import {
-  afterLastArticle,
-  ArticleInsertPosition,
-  beforeFirstArticle,
-} from '#root/plugin/utils/article-insert-position.ts';
+import type { InsertPositionOption } from '#root/plugin/types.ts';
 import type { ProcessDocumentHeadlessly } from '../plugin/types.ts';
 import type ArImporterService from '../services/ar-importer.ts';
 import { trackedFunction } from 'reactiveweb/function';
@@ -29,71 +19,20 @@ import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 type Sig = {
   Args: {
     arDesign: ArDesign;
-     articles: ArticlePosition[];
-     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    options: InsertPositionOption[];
+    selected: InsertPositionOption;
+    onChange: (
+      selected: InsertPositionOption,
+      select: Select,
+      event?: Event,
+    ) => void;
   };
   Element: HTMLDivElement;
 };
 
 export default class InsertStepContent extends Component<Sig> {
-  @service declare intl: IntlService;
   @service declare arImporter: ArImporterService;
-
-  @tracked _selected: InsertPositionOption | null = null;
-
-  get beforeFirst(): InsertPositionOption {
-    return {
-      value: beforeFirstArticle,
-      label: this.intl.t('ar-importer.controls.first'),
-    };
-  }
-  get afterLast(): InsertPositionOption {
-    return {
-      value: afterLastArticle,
-      label: this.intl.t('ar-importer.controls.last'),
-    };
-  }
-
-  get onCursor(): InsertPositionOption {
-    return {
-      value: false,
-      label: this.intl.t('ar-importer.controls.on-cursor'),
-    };
-  }
-
-  get articleOptions(): InsertPositionOption[] {
-    return this.args.articles.map((_, i) => ({
-      value: new ArticleInsertPosition(i),
-      label: this.intl.t('ar-importer.controls.after-article-x', {
-        articleNumber: i + 1,
-      }),
-    }));
-  }
-
-  get options(): InsertPositionOption[] {
-    if (this.args.regulatoryStatementMode) {
-      return [this.onCursor];
-    } else {
-      return [
-        this.afterLast,
-        this.beforeFirst,
-        this.onCursor,
-        ...this.articleOptions,
-      ];
-    }
-  }
-
-  get selected(): InsertPositionOption {
-    if (this._selected) {
-      return this._selected;
-    } else {
-      return this.args.regulatoryStatementMode ? this.onCursor : this.afterLast;
-    }
-  }
-
-  setSelected = (val: InsertPositionOption | null) => {
-    this._selected = val;
-  };
 
   preview = trackedFunction(this, async () => {
     try {
@@ -110,9 +49,9 @@ export default class InsertStepContent extends Component<Sig> {
   <template>
     <div class='ar-importer__insert-position-container au-u-margin-bottom'>
       <InsertPositionSelector
-        @options={{this.options}}
-        @selected={{this.selected}}
-        @onChange={{this.setSelected}}
+        @options={{@options}}
+        @selected={{@selected}}
+        @onChange={{@onChange}}
       />
     </div>
     <div class="ar-importer-preview__content">

@@ -1,9 +1,9 @@
 import type { TOC } from '@ember/component/template-only';
-import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
+import type {  SignWithInstruction } from '#root/plugin/types.ts';
 
 type Sig = {
   Args: {
-    subSigns: TrafficSignalConcept[];
+    subSigns: SignWithInstruction[];
   };
 };
 
@@ -14,11 +14,11 @@ const TrafficMeasureSubSignList: TOC<Sig> = <template>
     {{#each @subSigns as |subSign|}}
       <div class="au-u-margin-top-small au-u-flex au-u-flex--vertical-center">
         <img
-          src={{subSign.image}}
+          src={{subSign.sign.image}}
           alt=""
           class="traffic-measure-preview--sign-image au-u-margin-right-small"
         />
-        {{subSign.code}}
+        {{subSign.sign.code}}
       </div>
     {{/each}}
   </div>

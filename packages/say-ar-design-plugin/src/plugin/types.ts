@@ -3,6 +3,8 @@ import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import type { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
+import { tracked } from '@glimmer/tracking';
+import  type Instruction  from '#root/plugin/models/instruction.ts';
 
 export type ArticlePosition = { node: PNode; pos: number };
 
@@ -44,7 +46,22 @@ export type ProcessDocumentHeadlessly = (
   ) => TransactionCombinatorResult<boolean>,
 ) => string;
 
-export type SignPreviewItem = {
-  mainSign: TrafficSignalConcept;
-  subSigns: TrafficSignalConcept[];
+export class SignWithInstruction {
+  readonly sign: TrafficSignalConcept;
+
+  // Nested reactivity so we don't have to rebuild the map on every instruction change
+  @tracked selectedInstruction?: Instruction;
+
+  constructor(sign: TrafficSignalConcept) {
+    this.sign = sign;
+    //If the sign has only one instruction we should autoselect it
+    if (sign.instructions.length === 1) {
+      this.selectedInstruction = sign.instructions[0];
+    }
+  }
+}
+
+export type MainSignWithInstruction = {
+  mainSign: SignWithInstruction;
+  subSigns: SignWithInstruction[];
 };

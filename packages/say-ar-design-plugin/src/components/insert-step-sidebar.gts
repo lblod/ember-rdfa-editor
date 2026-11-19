@@ -1,37 +1,55 @@
 import Component from '@glimmer/component';
-import type ArDesign from '#root/plugin/models/ar-design.ts';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
-import { getPromiseState } from 'reactiveweb/get-promise-state';
-import { cached } from '@glimmer/tracking';
-import generateDesignSignTree from '#root/plugin/utils/generate-design-sign-tree.ts';
 import SignAccordion from '#root/components/sign-accordion.gts';
+import PowerSelect from 'ember-power-select/components/power-select';
+import t from 'ember-intl/helpers/t';
+import { fn } from '@ember/helper';
+import  type {  MainSignWithInstruction, SignWithInstruction} from '#root/plugin/types.ts';
+import { action } from '@ember/object';
+import type Instruction from '#root/plugin/models/instruction.ts';
+import type { State } from 'reactiveweb/get-promise-state';
 
 type ArPreviewSignature = {
   Args: {
-    arDesign: ArDesign;
+    measureDesigns: State<{ signs: MainSignWithInstruction[] }[]>;
   };
   Element: HTMLDivElement;
 };
 
 export default class InsertStepSidebar extends Component<ArPreviewSignature> {
-  @cached
-  get measureDesignSignTree() {
-    return generateDesignSignTree(this.args.arDesign);
+  @action
+  selectInstruction(sign: SignWithInstruction, instruction: Instruction) {
+    sign.selectedInstruction = instruction;
   }
-  get measureDesigns() {
-    return getPromiseState(this.measureDesignSignTree);
-  }
+
   <template>
-    {{#if this.measureDesigns.resolved}}
-      {{#each this.measureDesigns.resolved as |design index|}}
+    {{#if @measureDesigns.resolved}}
+      {{#each @measureDesigns.resolved as |design index|}}
         <AuHeading @level="4" @skin="4">
           Artikel
           {{generateArticleNumber index}}
           .
-          {{#each design.signs as |sign|}}
-            <SignAccordion @sign={{sign}} />
-          {{/each}}
         </AuHeading>
+        {{#each design.signs as |signWithInstruction|}}
+          <SignAccordion @signWithInstruction={{signWithInstruction}} />
+        {{/each}}
+        {{#each (flattenAndSortSigns design.signs) as |signWithInstruction|}}
+          <div class="au-u-margin-bottom">
+            <AuHeading @skin="6" @level="3">
+              {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
+              {{signWithInstruction.sign.code}}
+            </AuHeading>
+            <PowerSelect
+              @onChange={{fn this.selectInstruction signWithInstruction}}
+              @selected={{signWithInstruction.selectedInstruction}}
+              @options={{signWithInstruction.sign.instructions}}
+              @placeholder={{t
+                "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
+              }}
+              as |option|
+            >{{option.preview}}</PowerSelect>
+          </div>
+        {{/each}}
       {{/each}}
     {{/if}}
   </template>
@@ -39,4 +57,21 @@ export default class InsertStepSidebar extends Component<ArPreviewSignature> {
 
 function generateArticleNumber(index: number) {
   return index + 1;
+}
+
+function flattenAndSortSigns(signs: MainSignWithInstruction[]) {
+    const sortedAndFlattedSigns: SignWithInstruction[] = [];
+    const selectedSignsSorted: MainSignWithInstruction[] = [
+      ...signs,
+    ];
+    selectedSignsSorted.sort((signA, signB) => {
+      return signA.mainSign.sign.position - signB.mainSign.sign.position;
+    });
+    for (const sign of selectedSignsSorted) {
+      sortedAndFlattedSigns.push(sign.mainSign);
+      for (const subSign of sign.subSigns.values()) {
+        sortedAndFlattedSigns.push(subSign);
+      }
+    }
+    return sortedAndFlattedSigns;
 }
