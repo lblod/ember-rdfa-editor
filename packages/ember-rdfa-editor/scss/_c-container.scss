@@ -21,8 +21,21 @@
 
 .say-container__main {
   position: relative;
+  display: flex;
   min-height: 0;
   flex-grow: 1;
+}
+
+.say-container__sidebar-left {
+  display: flex;
+  flex-shrink: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.say-container__main > .say-editor {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .say-container__aside {

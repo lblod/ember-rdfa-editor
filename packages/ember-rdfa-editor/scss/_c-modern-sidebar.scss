@@ -6,12 +6,12 @@
 
 .say-modern-sidebar {
   --say-modern-sidebar-ribbon-width: #{au-settings.$au-unit * 2};
-  --say-modern-sidebar-pane-width: #{au-settings.$au-unit * 10};
+  --say-modern-sidebar-pane-width: #{au-settings.$au-unit * 15};
   --say-modern-sidebar-pane-header-height: #{au-settings.$au-unit * 2};
   --say-modern-sidebar-background: var(--au-gray-100);
   --say-modern-sidebar-active-background: var(--au-gray-200);
   --say-modern-sidebar-border-color: var(--au-gray-200);
-  --say-modern-sidebar-pane-background: var(--au-white);
+  --say-modern-sidebar-pane-background: var(--au-gray-100);
   --say-modern-sidebar-pane-padding: 1.6rem;
   --say-modern-sidebar-icon-color: var(--au-gray-800);
 

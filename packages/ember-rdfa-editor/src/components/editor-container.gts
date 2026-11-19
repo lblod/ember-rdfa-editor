@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { deprecate } from '@ember/debug';
-import { and, or } from 'ember-truth-helpers';
+import { and, not, or } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/option.ts';
@@ -29,6 +29,7 @@ type Signature = {
     /** @deprecated Using aside is deprecated. Pass a controller and use sidebarRight instead */
     aside: [];
     toolbar: [{ controller: SayController }];
+    sidebarLeft: [{ controller: SayController }];
     sidebarRight: [{ controller: SayController }];
   };
 };
@@ -71,7 +72,10 @@ export default class EditorContainer extends Component<Signature> {
     <div
       class="say-container
         {{if this.showPaper 'say-container--paper'}}
-        {{if this.showSidebarLeft 'say-container--sidebar-left'}}
+        {{if
+          (and this.showSidebarLeft (not (has-block 'sidebarLeft')))
+          'say-container--sidebar-left'
+        }}
         {{if
           (and
             (or (has-block 'aside') (has-block 'sidebarRight'))
@@ -95,6 +99,13 @@ export default class EditorContainer extends Component<Signature> {
           </AuLoader>
         {{/if}}
 
+        {{#if (has-block "sidebarLeft")}}
+          <div class="say-container__sidebar-left">
+            {{#if @controller}}
+              {{yield (hash controller=@controller) to="sidebarLeft"}}
+            {{/if}}
+          </div>
+        {{/if}}
         <div class="say-editor {{if @loading 'au-u-hidden-visually'}}">
           {{yield}}
 
