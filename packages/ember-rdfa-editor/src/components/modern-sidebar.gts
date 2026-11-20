@@ -24,11 +24,9 @@ import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 export type ModernSidebarPlacement = 'left' | 'right' | 'top';
 
 type BadgeNumber = NonNullable<AuBadgeSignature['Args']['number']>;
-type BadgeSkin = NonNullable<AuBadgeSignature['Args']['skin']>;
 
 export type ModernSidebarBadge =
-  | { number: BadgeNumber; skin?: BadgeSkin }
-  | { number?: BadgeNumber; skin: BadgeSkin };
+  | { number: BadgeNumber; skin?: AuBadgeSignature['Args']['skin'] }
 
 export type ModernSidebarTab = {
   title: string;
