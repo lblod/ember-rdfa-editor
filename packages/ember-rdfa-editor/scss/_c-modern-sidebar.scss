@@ -47,12 +47,13 @@
   &--top {
     position: relative;
     flex-direction: column;
-    height: auto;
+    height: 100%;
+    min-height: var(--say-modern-sidebar-ribbon-width);
 
     .say-modern-sidebar__ribbon {
+      height: 100%;
       flex-direction: row;
       width: 100%;
-      height: var(--say-modern-sidebar-ribbon-width);
       border-bottom: 1px solid var(--say-modern-sidebar-border-color);
       overflow-x: auto;
       overflow-y: hidden;
@@ -60,7 +61,7 @@
 
     .say-modern-sidebar__tab {
       width: var(--say-modern-sidebar-ribbon-width);
-      height: var(--say-modern-sidebar-ribbon-width);
+      height: 100%;
     }
 
     .say-modern-sidebar__pane {
