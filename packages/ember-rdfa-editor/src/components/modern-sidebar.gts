@@ -185,12 +185,24 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
             }}
           >
             <header class="say-modern-sidebar__pane-header">
-              <h2
-                class="say-modern-sidebar__pane-title"
-                title={{selectedTab.title}}
-              >
-                {{selectedTab.title}}
-              </h2>
+              <div class="say-modern-sidebar__pane-heading">
+                <h2
+                  class="say-modern-sidebar__pane-title"
+                  title={{selectedTab.title}}
+                >
+                  {{selectedTab.title}}
+                </h2>
+                {{#let (badgeFor @controller selectedTab) as |badge|}}
+                  {{#if badge}}
+                    <AuBadge
+                      class="say-modern-sidebar__pane-badge"
+                      @number={{badge.number}}
+                      @skin={{badge.skin}}
+                      @size="small"
+                    />
+                  {{/if}}
+                {{/let}}
+              </div>
               <AuButton
                 class="say-modern-sidebar__collapse"
                 @skin="naked"

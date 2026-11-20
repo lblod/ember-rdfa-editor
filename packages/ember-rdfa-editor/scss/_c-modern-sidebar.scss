@@ -150,25 +150,43 @@
   justify-content: space-between;
   gap: au-settings.$au-unit-small;
   flex-shrink: 0;
-  height: var(--say-modern-sidebar-pane-header-height);
-  padding: 0 var(--say-modern-sidebar-pane-padding);
+  min-height: var(--say-modern-sidebar-pane-header-height);
+  padding: 0.4rem var(--say-modern-sidebar-pane-padding);
   border-bottom: 1px solid var(--say-modern-sidebar-border-color);
+}
+
+.say-modern-sidebar__pane-heading {
+  display: flex;
+  align-items: center;
+  gap: au-settings.$au-unit-small;
+  flex: 1;
+  min-width: 0;
 }
 
 .say-modern-sidebar__pane-title {
   @include au-tools.au-font-size(au-settings.$au-tiny);
 
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   margin: 0;
-  overflow: hidden;
+  overflow-wrap: anywhere;
   color: var(--au-gray-800);
   font-weight: 600;
   letter-spacing: 0.05em;
   line-height: 1.2;
-  text-overflow: ellipsis;
   text-transform: uppercase;
-  white-space: nowrap;
+}
+
+.say-modern-sidebar__pane-badge {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+
+  .au-c-badge__number {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
 }
 
 .say-modern-sidebar__collapse {
