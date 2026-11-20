@@ -23,7 +23,10 @@ import type ArDesign from '../plugin/models/ar-design.ts';
 import type TrafficSignal from '../plugin/models/traffic-signal.ts';
 import type VariableInstance from '../plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
-import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '../plugin/constants.ts';
+import {
+  TRAFFIC_SIGNAL_EXISTING_STATUSES,
+  TRAFFIC_SIGNAL_REMOVAL_STATUSES,
+} from '../plugin/constants.ts';
 import { ArticleInsertPosition } from '../plugin/utils/article-insert-position.ts';
 
 export type ImportResult<R> = {
@@ -54,6 +57,19 @@ function convertVariableInstances(variableInstances: VariableInstance[]) {
       return [varInstance.variable.label, variableInstanceWithRdfaId];
     }),
   );
+}
+function filterRemovals(signals: TrafficSignal[]): TrafficSignal[] {
+  return signals.filter((signal) => {
+    if (signal.designStatus) {
+      // in our current implementation we do not track the removal of signs
+      // every measure in the resulting regulation text describes the new state
+      // without referring to what was changed in relation to the old state, so signs that are removed
+      // are just not mentioned.
+      return !TRAFFIC_SIGNAL_REMOVAL_STATUSES.includes(signal.designStatus);
+    }
+    // signals with an unknown status should still be processed
+    return true;
+  });
 }
 
 function convertSignals(signals: TrafficSignal[]) {
@@ -180,7 +196,9 @@ export default class ArImporterService extends Service {
             ),
           ),
         );
-        const filteredAndDeduplicatedConcepts = convertSignals(trafficSignals);
+        const filteredAndDeduplicatedConcepts = convertSignals(
+          filterRemovals(trafficSignals),
+        );
         const convertedVariableInstances =
           convertVariableInstances(variableInstances);
         const isZonal = Boolean(
