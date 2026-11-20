@@ -4,7 +4,6 @@ import InsertPane from 'test-app/components/sample-ember-nodes/insert-pane';
 
 const sampleSidebarTabs: ModernSidebarTab[] = [
   {
-    id: 'insert',
     title: 'Add an element to the document',
     icon: PlusIcon,
     paneContent: InsertPane,

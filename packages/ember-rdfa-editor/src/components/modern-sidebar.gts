@@ -26,8 +26,6 @@ export type ModernSidebarBadge = Pick<
 >;
 
 export type ModernSidebarTab = {
-  /** Stable identifier used to track the selected tab. */
-  id: string;
   /** Used for the tab tooltip and the pane title. */
   title: string;
   icon: AuIconSignature['Args']['icon'];
@@ -55,7 +53,7 @@ type ModernSidebarSignature = {
 };
 
 export default class ModernSidebar extends Component<ModernSidebarSignature> {
-  @tracked selectedTabId?: string;
+  @tracked selectedIndex = -1;
 
   private readonly uid = guidFor(this);
 
@@ -67,13 +65,10 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
     return this.placement === 'top';
   }
 
-  get selectedIndex() {
-    return this.args.tabs.findIndex((tab) => tab.id === this.selectedTabId);
-  }
-
   get selectedTab(): ModernSidebarTab | undefined {
-    const index = this.selectedIndex;
-    return index >= 0 ? this.args.tabs[index] : undefined;
+    return this.selectedIndex >= 0
+      ? this.args.tabs[this.selectedIndex]
+      : undefined;
   }
 
   get selectedTabDomId() {
@@ -104,6 +99,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
 
       return {
         tab,
+        index,
         badge,
         showBadge: this.hasBadge(badge),
         selected,
@@ -114,17 +110,13 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   private badgeFor(tab: ModernSidebarTab) {
-    if (!tab.badge) {
-      return undefined;
-    }
-
     return typeof tab.badge === 'function'
       ? tab.badge(this.args.controller)
       : tab.badge;
   }
 
   private hasBadge(badge: ModernSidebarBadge) {
-    return Boolean(badge.number || badge.icon || badge.skin);
+    return Boolean(badge.number || badge.skin);
   }
 
   private tabDomId(index: number) {
@@ -136,13 +128,13 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   @action
-  selectTab(id: string) {
-    this.selectedTabId = this.selectedTabId === id ? undefined : id;
+  selectTab(index: number) {
+    this.selectedIndex = this.selectedIndex === index ? -1 : index;
   }
 
   @action
   collapse() {
-    this.selectedTabId = undefined;
+    this.selectedIndex = -1;
   }
 
   <template>
@@ -165,8 +157,8 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
             aria-controls={{if entry.selected entry.panelDomId}}
             aria-label={{entry.tab.title}}
             title={{entry.tab.title}}
-            data-test-modern-sidebar-tab={{entry.tab.id}}
-            {{on "click" (fn this.selectTab entry.tab.id)}}
+            data-test-modern-sidebar-tab={{entry.index}}
+            {{on "click" (fn this.selectTab entry.index)}}
           >
             <span class="say-modern-sidebar__tab-icon" role="presentation">
               <AuIcon
@@ -190,13 +182,15 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
       </div>
 
       {{#let this.selectedTab as |selectedTab|}}
-        {{#if selectedTab}}
-          <section
-            id={{this.selectedPanelDomId}}
-            class="say-modern-sidebar__pane"
-            role="tabpanel"
-            aria-labelledby={{this.selectedTabDomId}}
-          >
+        <section
+          id={{if selectedTab this.selectedPanelDomId}}
+          class="say-modern-sidebar__pane {{if selectedTab 'is-open'}}"
+          role="tabpanel"
+          aria-hidden={{unless selectedTab "true"}}
+          aria-labelledby={{if selectedTab this.selectedTabDomId}}
+          inert={{unless selectedTab true}}
+        >
+          {{#if selectedTab}}
             <header class="say-modern-sidebar__pane-header">
               <h2
                 class="say-modern-sidebar__pane-title"
@@ -219,8 +213,8 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 <PaneContent @controller={{@controller}} />
               {{/let}}
             </div>
-          </section>
-        {{/if}}
+          {{/if}}
+        </section>
       {{/let}}
     </div>
   </template>
