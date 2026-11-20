@@ -69,7 +69,7 @@
       top: 0;
       left: 0;
       z-index: var(--au-z-index-beta);
-      width: 100%;
+      width: var(--say-modern-sidebar-pane-width);
       max-height: 50vh;
       border-bottom: 1px solid var(--say-modern-sidebar-border-color);
     }
