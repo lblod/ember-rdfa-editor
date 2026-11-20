@@ -13,6 +13,9 @@
   --say-editor-tabs-border-color: var(--au-gray-300);
   --say-editor-tabs-panel-background: var(--au-gray-100);
   --say-editor-tabs-panel-padding: 1.6rem;
+  --say-editor-tabs-panel-shadow: #{0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025)};
   --say-editor-tabs-icon-color: var(--au-gray-800);
 
   display: flex;
@@ -139,7 +142,7 @@
   left: 0;
   z-index: var(--au-z-index-beta);
   max-height: 50vh;
-  border-bottom: 1px solid var(--say-editor-tabs-border-color);
+  box-shadow: var(--say-editor-tabs-panel-shadow);
 }
 
 .say-editor-tabs__panel-header {
