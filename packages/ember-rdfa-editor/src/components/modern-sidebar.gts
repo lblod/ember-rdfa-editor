@@ -23,23 +23,17 @@ import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 
 export type ModernSidebarPlacement = 'left' | 'right' | 'top';
 
-export type ModernSidebarBadge = Pick<
-  AuBadgeSignature['Args'],
-  'number' | 'skin'
->;
+type BadgeNumber = NonNullable<AuBadgeSignature['Args']['number']>;
+type BadgeSkin = NonNullable<AuBadgeSignature['Args']['skin']>;
+
+export type ModernSidebarBadge =
+  | { number: BadgeNumber; skin?: BadgeSkin }
+  | { number?: BadgeNumber; skin: BadgeSkin };
 
 export type ModernSidebarTab = {
-  /** Used for the tab tooltip and the pane title. */
   title: string;
   icon: AuIconSignature['Args']['icon'];
-  /** Rendered in the shared pane when this tab is selected. */
   paneContent: ComponentLike<{ Args: { controller: SayController } }>;
-  /**
-   * Optional badge shown on the tab.
-   *
-   * Pass an object for static badges, or a function to derive the badge from
-   * controller state. Returning `undefined` hides the badge.
-   */
   badge?:
     | ModernSidebarBadge
     | ((controller: SayController) => ModernSidebarBadge | undefined);
@@ -66,15 +60,8 @@ function panelDomId(uid: string, index: number) {
 function badgeFor(
   controller: SayController,
   tab: ModernSidebarTab,
-): ModernSidebarBadge {
-  const badge =
-    typeof tab.badge === 'function' ? tab.badge(controller) : tab.badge;
-
-  return badge ?? {};
-}
-
-function hasBadge(badge: ModernSidebarBadge) {
-  return Boolean(badge.number || badge.skin);
+): ModernSidebarBadge | undefined {
+  return typeof tab.badge === 'function' ? tab.badge(controller) : tab.badge;
 }
 
 export default class ModernSidebar extends Component<ModernSidebarSignature> {
@@ -167,7 +154,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                   role="presentation"
                 />
                 {{#let (badgeFor @controller tab) as |badge|}}
-                  {{#if (hasBadge badge)}}
+                  {{#if badge}}
                     <AuBadge
                       class="say-modern-sidebar__badge"
                       @number={{badge.number}}
