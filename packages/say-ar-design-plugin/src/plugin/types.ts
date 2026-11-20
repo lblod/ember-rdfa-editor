@@ -48,12 +48,14 @@ export type ProcessDocumentHeadlessly = (
 
 export class SignWithInstruction {
   readonly sign: TrafficSignalConcept;
+  readonly position: number;
 
   // Nested reactivity so we don't have to rebuild the map on every instruction change
   @tracked selectedInstruction?: Instruction;
 
-  constructor(sign: TrafficSignalConcept) {
+  constructor(sign: TrafficSignalConcept, position: number) {
     this.sign = sign;
+    this.position = position;
     //If the sign has only one instruction we should autoselect it
     if (sign.instructions.length === 1) {
       this.selectedInstruction = sign.instructions[0];

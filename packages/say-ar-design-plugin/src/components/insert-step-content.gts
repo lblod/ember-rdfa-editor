@@ -20,6 +20,7 @@ type Sig = {
   Args: {
     arDesign: ArDesign;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    measureTemplates?: string[];
     options: InsertPositionOption[];
     selected: InsertPositionOption;
     onChange: (
@@ -35,10 +36,13 @@ export default class InsertStepContent extends Component<Sig> {
   @service declare arImporter: ArImporterService;
 
   preview = trackedFunction(this, async () => {
+    // TODO: Add comment to explain
+    const measureTemplates = this.args.measureTemplates;
     try {
       return this.arImporter.generatePreview(
         this.args.arDesign,
         this.args.processDocumentHeadlessly,
+        measureTemplates,
       );
     } catch (e) {
       console.error('Error generating preview', e);

@@ -65,7 +65,7 @@ function flattenAndSortSigns(signs: MainSignWithInstruction[]) {
       ...signs,
     ];
     selectedSignsSorted.sort((signA, signB) => {
-      return signA.mainSign.sign.position - signB.mainSign.sign.position;
+      return signA.mainSign.position - signB.mainSign.position;
     });
     for (const sign of selectedSignsSorted) {
       sortedAndFlattedSigns.push(sign.mainSign);

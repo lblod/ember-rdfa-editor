@@ -6,6 +6,7 @@ import t from 'ember-intl/helpers/t';
 import { trackedFunction } from 'reactiveweb/function';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import generateDesignSignTree from '#root/plugin/utils/generate-design-sign-tree.ts';
+import generateMeasureTemplate from '#root/plugin/utils/generate-measure-template.ts';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
@@ -48,6 +49,12 @@ export default class InsertStep extends Component<ArPreviewSignature> {
 
   get measureDesigns() {
     return getPromiseState(this.measureDesignSignTree);
+  }
+
+  get measureTemplates(): string[] | undefined {
+    return this.measureDesigns.resolved?.map((signTree) =>
+      generateMeasureTemplate(signTree.signs),
+    );
   }
 
   get beforeFirst(): InsertPositionOption {
@@ -139,6 +146,7 @@ export default class InsertStep extends Component<ArPreviewSignature> {
           <InsertStepContent
             @arDesign={{@arDesign}}
             @processDocumentHeadlessly={{@processDocumentHeadlessly}}
+            @measureTemplates={{this.measureTemplates}}
             @options={{this.options}}
             @selected={{this.insertPosition}}
             @onChange={{this.setInsertPosition}}

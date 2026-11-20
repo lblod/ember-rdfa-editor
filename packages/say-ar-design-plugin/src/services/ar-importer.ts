@@ -25,6 +25,7 @@ import type VariableInstance from '#root/plugin/models/variable-instance.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '#root/plugin/constants.ts';
 import { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
+import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
 
 export type ImportResult<R> = {
   result: R;
@@ -54,6 +55,35 @@ function convertVariableInstances(variableInstances: VariableInstance[]) {
       return [varInstance.variable.label, variableInstanceWithRdfaId];
     }),
   );
+}
+
+function addMissingLocationVariables(
+  variables: ReturnType<typeof convertVariableInstances>,
+  templateString: string,
+  designVariableInstances: VariableInstance[],
+) {
+  const locationVariableInstance = designVariableInstances.find(
+    (varInstance) => varInstance.variable.type === 'location',
+  );
+  const source = locationVariableInstance?.variable.source ?? '';
+  for (const match of templateString.matchAll(/\$\{(locatie\d*)\}/g)) {
+    const label = match[1];
+    if (!variables[label]) {
+      const variableInstance = VariableInstanceSchema.parse({
+        uri: generateVariableInstanceUri(),
+        variable: {
+          uri: `http://data.lblod.info/variable/${uuidv4()}`,
+          label,
+          type: 'location',
+          source,
+        },
+      });
+      variables[label] = {
+        ...variableInstance,
+        __rdfaId: uuidv4(),
+      };
+    }
+  }
 }
 
 function convertSignals(signals: TrafficSignal[]) {
@@ -113,6 +143,7 @@ export default class ArImporterService extends Service {
     controller?: SayController,
     decisionUriOverride?: string,
     regulatoryStatementMode?: boolean,
+    measureTemplates?: string[],
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
@@ -189,6 +220,19 @@ export default class ArImporterService extends Service {
         const filteredAndDeduplicatedConcepts = convertSignals(trafficSignals);
         const convertedVariableInstances =
           convertVariableInstances(variableInstances);
+        // TODO: Add comment to explain
+        const templateIndex = appendsToEnd
+          ? index
+          : measureDesigns.length - 1 - index;
+        const templateString = measureTemplates?.[templateIndex] ?? '';
+        // TODO: Add comment to explain
+        if (controller) {
+          addMissingLocationVariables(
+            convertedVariableInstances,
+            templateString,
+            variableInstances,
+          );
+        }
         const isZonal = Boolean(
           trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
         );
@@ -228,7 +272,7 @@ export default class ArImporterService extends Service {
               measureConcept: {
                 uri: measureConcept.uri,
                 label: `${measureConcept.label}${onlyExistingSignals ? ` (${this.intl.t('ar-importer.preview.only-existing-label')})` : ''}`,
-                preview: measureConcept.templateString,
+                preview: templateString,
                 zonality,
                 variableSignage: false,
                 trafficSignalConcepts: filteredAndDeduplicatedConcepts,
@@ -238,7 +282,7 @@ export default class ArImporterService extends Service {
             zonality,
             temporal: false,
             variables: convertedVariableInstances,
-            templateString: measureConcept.templateString,
+            templateString,
             ...insertPositionArgs,
             articleUriGenerator: () =>
               `http://data.lblod.info/artikels/${uuidv4()}`,
@@ -266,10 +310,15 @@ export default class ArImporterService extends Service {
         state: EditorState,
       ) => TransactionCombinatorResult<boolean>,
     ) => string,
+    measureTemplates?: string[],
   ): Promise<ImportResult<string>> {
     const { result: monads, warnings } = await this.generateInsertionMonads(
       design,
       false,
+      undefined,
+      undefined,
+      undefined,
+      measureTemplates,
     );
     const document = processDocumentHeadlessly(`<div></div>`, (state) =>
       transactionCombinator<boolean>(state)(monads),

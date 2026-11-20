@@ -515,6 +515,7 @@ export default class LblodPluginsTemplate extends Component {
               trafficSignals: [
                 {
                   id: 'test-traffic-signal-e9a',
+                  position: 0,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-e9a',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/fc1036e7-703b-4290-b732-49abb39d0588',
@@ -546,6 +547,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-gviid',
+                  position: 1,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-gviid',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -644,6 +646,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-gxa',
+                  position: 2,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-gxa',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -691,6 +694,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-gxd',
+                  position: 3,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-gxd',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -739,6 +743,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-gxb',
+                  position: 4,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-gxb',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -786,6 +791,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-parkeerautomaat',
+                  position: 5,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-parkeerautomaat',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -832,17 +838,6 @@ export default class LblodPluginsTemplate extends Component {
               unIncludedSignalConcepts: [],
               variableInstances: [
                 {
-                  id: 'test-variable-instance-locatie',
-                  uri: 'test-variable-instance-locatie',
-                  variable: {
-                    id: '61C091F5E32491000800063A',
-                    uri: 'http://data.lblod.info/mappings/61C091F5E32491000800063A',
-                    type: 'location',
-                    label: 'locatie',
-                    source: 'https://dev.roadsigns.lblod.info/sparql',
-                  },
-                },
-                {
                   id: 'test-variable-instance-categorie-voertuig',
                   uri: 'test-variable-instance-categorie-voertuig',
                   variable: {
@@ -863,6 +858,7 @@ export default class LblodPluginsTemplate extends Component {
               trafficSignals: [
                 {
                   id: 'test-traffic-signal-vl611',
+                  position: 0,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-vl611',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
@@ -890,6 +886,7 @@ export default class LblodPluginsTemplate extends Component {
                 },
                 {
                   id: 'test-traffic-signal-vl6119',
+                  position: 1,
                   uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-vl6119',
                   designStatus:
                     'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/fc1036e7-703b-4290-b732-49abb39d0588',
@@ -927,19 +924,7 @@ export default class LblodPluginsTemplate extends Component {
               },
               unusedSignalConcepts: [],
               unIncludedSignalConcepts: [],
-              variableInstances: [
-                {
-                  id: 'test-variable-instance-locatie-vl',
-                  uri: 'test-variable-instance-locatie-vl',
-                  variable: {
-                    id: '64301B355BDCDA240120BE0C',
-                    uri: 'http://data.lblod.info/mappings/64301B355BDCDA240120BE0C',
-                    type: 'location',
-                    label: 'locatie',
-                    source: 'https://dev.roadsigns.lblod.info/sparql',
-                  },
-                },
-              ],
+              variableInstances: [],
             },
           ]),
         },
