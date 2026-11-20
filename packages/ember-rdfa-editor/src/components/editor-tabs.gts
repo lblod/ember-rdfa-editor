@@ -20,56 +20,57 @@ import t from 'ember-intl/helpers/t';
 import type SayController from '#root/core/say-controller.ts';
 import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 
-export type ModernSidebarPlacement = 'left' | 'right' | 'top';
+export type TabPanelPlacement = 'left' | 'right' | 'bottom';
 
 type BadgeNumber = NonNullable<AuBadgeSignature['Args']['number']>;
 
-export type ModernSidebarBadge = {
+export type EditorTabBadge = {
   number: BadgeNumber;
   skin?: AuBadgeSignature['Args']['skin'];
 };
 
-export type ModernSidebarTab = {
+export type EditorTab = {
   title: string;
   icon: AuIconSignature['Args']['icon'];
-  paneContent: ComponentLike<{ Args: { controller: SayController } }>;
+  panelContent: ComponentLike<{ Args: { controller: SayController } }>;
   badge?:
-    | ModernSidebarBadge
-    | ((controller: SayController) => ModernSidebarBadge | undefined);
+    | EditorTabBadge
+    | ((controller: SayController) => EditorTabBadge | undefined);
 };
 
-type ModernSidebarSignature = {
+type EditorTabsSignature = {
   Args: {
     controller: SayController;
-    tabs: ModernSidebarTab[];
-    /** @default 'left' */
-    placement?: ModernSidebarPlacement;
+    tabs: EditorTab[];
+    panelPlacement: TabPanelPlacement;
   };
   Element: HTMLDivElement;
 };
 
 function badgeFor(
   controller: SayController,
-  tab: ModernSidebarTab,
-): ModernSidebarBadge | undefined {
+  tab: EditorTab,
+): EditorTabBadge | undefined {
   return typeof tab.badge === 'function' ? tab.badge(controller) : tab.badge;
 }
 
-export default class ModernSidebar extends Component<ModernSidebarSignature> {
+export default class EditorTabs extends Component<EditorTabsSignature> {
   @tracked selectedIndex = -1;
 
   private readonly uid = guidFor(this);
-  private readonly topPaneMiddleware: Middleware[] = [shift({ padding: 8 })];
+  private readonly bottomPanelMiddleware: Middleware[] = [
+    shift({ padding: 8 }),
+  ];
 
-  get placement(): ModernSidebarPlacement {
-    return this.args.placement ?? 'left';
+  get panelPlacement(): TabPanelPlacement {
+    return this.args.panelPlacement;
   }
 
-  get isHorizontal() {
-    return this.placement === 'top';
+  get isBottomPanel() {
+    return this.panelPlacement === 'bottom';
   }
 
-  get selectedTab(): ModernSidebarTab | undefined {
+  get selectedTab(): EditorTab | undefined {
     return this.selectedIndex >= 0
       ? this.args.tabs[this.selectedIndex]
       : undefined;
@@ -99,7 +100,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   get collapseIcon() {
-    return this.placement === 'left' ? ChevronLeftIcon : ChevronRightIcon;
+    return this.panelPlacement === 'right' ? ChevronLeftIcon : ChevronRightIcon;
   }
 
   @action
@@ -114,30 +115,30 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
 
   <template>
     <div
-      class="say-modern-sidebar say-modern-sidebar--{{this.placement}}"
+      class="say-editor-tabs say-editor-tabs--panel-{{this.panelPlacement}}"
       ...attributes
     >
       <div
         id={{this.ribbonDomId}}
-        class="say-modern-sidebar__ribbon"
+        class="say-editor-tabs__ribbon"
         role="tablist"
-        aria-orientation={{if this.isHorizontal "horizontal" "vertical"}}
+        aria-orientation={{if this.isBottomPanel "horizontal" "vertical"}}
       >
         {{#each @tabs as |tab index|}}
           {{#let (eq index this.selectedIndex) as |selected|}}
             <button
               type="button"
               id={{this.tabDomId index}}
-              class="say-modern-sidebar__tab {{if selected 'is-active'}}"
+              class="say-editor-tabs__tab {{if selected 'is-active'}}"
               role="tab"
               aria-selected={{if selected "true" "false"}}
               aria-controls={{if selected (this.panelDomId index)}}
               aria-label={{tab.title}}
               title={{tab.title}}
-              data-test-modern-sidebar-tab={{index}}
+              data-test-editor-tabs-tab={{index}}
               {{on "click" (fn this.selectTab index)}}
             >
-              <span class="say-modern-sidebar__tab-icon" role="presentation">
+              <span class="say-editor-tabs__tab-icon" role="presentation">
                 <AuIcon
                   @icon={{tab.icon}}
                   @ariaHidden={{true}}
@@ -147,7 +148,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 {{#let (badgeFor @controller tab) as |badge|}}
                   {{#if badge}}
                     <AuBadge
-                      class="say-modern-sidebar__badge"
+                      class="say-editor-tabs__badge"
                       @number={{badge.number}}
                       @skin={{badge.skin}}
                       @size="small"
@@ -165,21 +166,21 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
         {{#if selectedTab}}
           <section
             id={{this.selectedPanelDomId}}
-            class="say-modern-sidebar__pane"
+            class="say-editor-tabs__panel"
             role="tabpanel"
             aria-labelledby={{this.selectedTabDomId}}
             {{floatingUI
               referenceElement=this.ribbonReference
-              enabled=this.isHorizontal
+              enabled=this.isBottomPanel
               placement="bottom-start"
               strategy="absolute"
-              middleware=this.topPaneMiddleware
+              middleware=this.bottomPanelMiddleware
             }}
           >
-            <header class="say-modern-sidebar__pane-header">
-              <div class="say-modern-sidebar__pane-heading">
+            <header class="say-editor-tabs__panel-header">
+              <div class="say-editor-tabs__panel-heading">
                 <h2
-                  class="say-modern-sidebar__pane-title"
+                  class="say-editor-tabs__panel-title"
                   title={{selectedTab.title}}
                 >
                   {{selectedTab.title}}
@@ -187,7 +188,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 {{#let (badgeFor @controller selectedTab) as |badge|}}
                   {{#if badge}}
                     <AuBadge
-                      class="say-modern-sidebar__pane-badge"
+                      class="say-editor-tabs__panel-badge"
                       @number={{badge.number}}
                       @skin={{badge.skin}}
                       @size="small"
@@ -195,9 +196,9 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                   {{/if}}
                 {{/let}}
               </div>
-              {{#unless this.isHorizontal}}
+              {{#unless this.isBottomPanel}}
                 <AuButton
-                  class="say-modern-sidebar__collapse"
+                  class="say-editor-tabs__collapse"
                   @skin="naked"
                   @hideText={{true}}
                   @icon={{this.collapseIcon}}
@@ -207,9 +208,9 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 </AuButton>
               {{/unless}}
             </header>
-            <div class="say-modern-sidebar__pane-content">
-              {{#let selectedTab.paneContent as |PaneContent|}}
-                <PaneContent @controller={{@controller}} />
+            <div class="say-editor-tabs__panel-content">
+              {{#let selectedTab.panelContent as |PanelContent|}}
+                <PanelContent @controller={{@controller}} />
               {{/let}}
             </div>
           </section>

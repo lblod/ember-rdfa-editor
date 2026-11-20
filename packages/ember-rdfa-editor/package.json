@@ -165,9 +165,17 @@
       "types": "./declarations/components/index.d.ts",
       "default": "./dist/components/index.js"
     },
-    "./components/modern-sidebar": {
-      "types": "./declarations/components/modern-sidebar.d.ts",
-      "default": "./dist/components/modern-sidebar.js"
+    "./components/sidebar": {
+      "types": "./declarations/components/sidebar.d.ts",
+      "default": "./dist/components/sidebar.js"
+    },
+    "./components/editor-tabs": {
+      "types": "./declarations/components/editor-tabs.d.ts",
+      "default": "./dist/components/editor-tabs.js"
+    },
+    "./components/legacy-sidebar": {
+      "types": "./declarations/components/legacy-sidebar.d.ts",
+      "default": "./dist/components/legacy-sidebar.js"
     },
     "./components/_private/rdfa-editor": {
       "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
@@ -416,6 +424,7 @@
       "./components/date-picker.js": "./dist/_app_/components/date-picker.js",
       "./components/debug-tools.js": "./dist/_app_/components/debug-tools.js",
       "./components/editor-container.js": "./dist/_app_/components/editor-container.js",
+      "./components/editor-tabs.js": "./dist/_app_/components/editor-tabs.js",
       "./components/editor.js": "./dist/_app_/components/editor.js",
       "./components/ember-node/embedded-editor.js": "./dist/_app_/components/ember-node/embedded-editor.js",
       "./components/ember-node/inline-rdfa.js": "./dist/_app_/components/ember-node/inline-rdfa.js",
@@ -425,7 +434,7 @@
       "./components/icons/format-text.js": "./dist/_app_/components/icons/format-text.js",
       "./components/icons/rdfa.js": "./dist/_app_/components/icons/rdfa.js",
       "./components/index.js": "./dist/_app_/components/index.js",
-      "./components/modern-sidebar.js": "./dist/_app_/components/modern-sidebar.js",
+      "./components/legacy-sidebar.js": "./dist/_app_/components/legacy-sidebar.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
       "./components/plugins/contextual-actions/container.js": "./dist/_app_/components/plugins/contextual-actions/container.js",

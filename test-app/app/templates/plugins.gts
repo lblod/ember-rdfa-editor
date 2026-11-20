@@ -77,8 +77,8 @@ import DummyContainer from 'test-app/components/dummy-container';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import { hash } from '@ember/helper';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
-import ModernSidebar from '@lblod/ember-rdfa-editor/components/modern-sidebar';
-import sampleSidebarTabs from 'test-app/config/sample-sidebar-tabs';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import sampleEditorTabs from 'test-app/config/sample-editor-tabs';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
@@ -238,9 +238,9 @@ export default class extends Component {
             {{/if}}
           </:default>
           <:sidebarLeft as |container|>
-            <ModernSidebar
+            <Sidebar
               @controller={{container.controller}}
-              @tabs={{sampleSidebarTabs}}
+              @tabs={{sampleEditorTabs}}
               @placement="left"
             />
           </:sidebarLeft>
