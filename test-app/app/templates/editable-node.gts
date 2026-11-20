@@ -112,7 +112,7 @@ import Component from '@glimmer/component';
 import DummyContainer from 'test-app/components/dummy-container';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
-import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import LegacySidebar from '@lblod/ember-rdfa-editor/components/legacy-sidebar';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 
@@ -410,7 +410,7 @@ export default class extends Component {
             />
           </:default>
           <:sidebarRight as |container|>
-            <Sidebar as |Sb|>
+            <LegacySidebar as |Sb|>
               <Sb.Collapsible
                 @title={{t "ember-rdfa-editor.insert"}}
                 @expanded={{true}}
@@ -469,7 +469,7 @@ export default class extends Component {
                   {{/if}}
                 </div>
               {{/if}}
-            </Sidebar>
+            </LegacySidebar>
           </:sidebarRight>
         </EditorContainer>
       </:content>
