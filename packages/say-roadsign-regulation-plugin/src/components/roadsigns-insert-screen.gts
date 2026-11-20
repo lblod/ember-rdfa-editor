@@ -1,106 +1,79 @@
 import Component from '@glimmer/component';
-import { SayController } from '@lblod/ember-rdfa-editor';
-import { type RoadsignRegulationPluginOptions } from '#root/plugin/types.ts';
+import { type TOC } from '@ember/component/template-only';
 import t from 'ember-intl/helpers/t';
-import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
+import { fn } from '@ember/helper';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
 import { type MobilityMeasureConcept } from '#root/plugin/schemas/mobility-measure-concept.ts';
 import generateMeasureSignTree from '#root/plugin/generate-measure-sign-tree.ts';
 import SignAccordion from '#root/components/sign-accordion.gts';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
 import { type Instruction } from '#root/plugin/schemas/instruction.ts';
-import type IntlService from 'ember-intl/services/intl';
-import { service } from '@ember/service';
+import {
+  SelectedSign,
+  type SelectedSigns,
+  type MainSignSelection,
+} from '#root/plugin/selected-signs.ts';
 import AuRadioGroup from '@appuniversum/ember-appuniversum/components/au-radio-group';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { ZONALITY_OPTIONS, type ZonalOrNot } from '#root/plugin/constants.ts';
-import set from '@lblod/ember-rdfa-editor/helpers/set';
-import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/document-structure-utils';
+import type { InsertPositionOption } from '../plugin/types.ts';
 
 type Signature = {
   Args: {
-    controller: SayController;
-    options: RoadsignRegulationPluginOptions;
     measureToInsert?: MobilityMeasureConcept;
+    selectedSigns: SelectedSigns;
+    template: string;
+    zonalityValue?: ZonalOrNot;
+    changeZonality: (zonality: ZonalOrNot) => void;
+    temporalValue?: boolean;
+    changeTemporality: (temporality: 'true' | 'false') => void;
+    selectedInsertPosition: InsertPositionOption;
+    selectInsertPosition: (option: InsertPositionOption) => void;
+    insertPositionOptions: InsertPositionOption[];
+    selectMainSign: (sign: TrafficSignalConcept) => void;
+    selectSubSign: (
+      subSign: TrafficSignalConcept,
+      mainSign: TrafficSignalConcept,
+    ) => void;
+    selectInstruction: (
+      selectedSign: SelectedSign,
+      instruction: Instruction,
+    ) => void;
   };
 };
 
-type InsertPositionOption = {
-  label: string;
-  position: 'first' | 'last' | 'custom';
-  insertIndex?: number;
-};
+const RoadsignsInsertScreen: TOC<Signature> = <template>
+  <div class="au-o-grid au-u-height-full au-u-margin-none">
+    <ChooseTrafficSignsStep
+      @measureToInsert={{@measureToInsert}}
+      @selectedSigns={{@selectedSigns}}
+      @selectSubSign={{@selectSubSign}}
+      @selectMainSign={{@selectMainSign}}
+    />
+    <SupplementMeasureStep
+      @selectedSigns={{@selectedSigns}}
+      @selectInstruction={{@selectInstruction}}
+    />
+    <AddMeasureStep
+      @measureToInsert={{@measureToInsert}}
+      @template={{@template}}
+      @zonalityValue={{@zonalityValue}}
+      @changeZonality={{@changeZonality}}
+      @temporalValue={{@temporalValue}}
+      @changeTemporality={{@changeTemporality}}
+      @selectedInsertPosition={{@selectedInsertPosition}}
+      @selectInsertPosition={{@selectInsertPosition}}
+      @insertPositionOptions={{@insertPositionOptions}}
+    />
+  </div>
+</template>;
 
-export default class RoadsignsInsertScreen extends Component<Signature> {
-  @service declare intl: IntlService;
-  @tracked selectedSigns: TrafficSignalConcept[] = [];
-  @action
-  selectSubSign(subSign: TrafficSignalConcept, mainSign: TrafficSignalConcept) {
-    let mainSignIndex = -1;
-    let subSignIndex = -1;
-    for (let i = 0; i < this.selectedSigns.length; i++) {
-      const sign = this.selectedSigns[i];
-      if (sign.uri === subSign.uri) {
-        subSignIndex = i;
-      } else if (sign.uri === mainSign.uri) {
-        mainSignIndex = i;
-      }
-      if (mainSignIndex !== -1 && subSignIndex !== -1) {
-        break;
-      }
-    }
-    if (subSignIndex === -1) {
-      if (mainSignIndex === -1) {
-        this.selectedSigns = [...this.selectedSigns, mainSign, subSign];
-      } else {
-        this.selectedSigns = [...this.selectedSigns, subSign];
-      }
-    } else {
-      // TODO refactor this
-      const newSelectedSigns = this.selectedSigns.slice();
-      newSelectedSigns.splice(subSignIndex, 1);
-      this.selectedSigns = newSelectedSigns;
-    }
-  }
-
-  @action
-  selectMainSign(mainSign: TrafficSignalConcept) {
-    const mainSignSelected = Boolean(
-      this.selectedSigns.find(
-        (selectedSign) => selectedSign.uri === mainSign.uri,
-      ),
-    );
-    if (mainSignSelected) {
-      //TODO: do the logic
-      this.selectedSigns = this.selectedSigns.filter(
-        (selectedSign) => selectedSign.uri !== mainSign.uri,
-      );
-    } else {
-      this.selectedSigns = [...this.selectedSigns, mainSign];
-    }
-  }
-  <template>
-    <div class="au-o-grid au-u-height-full au-u-margin-none">
-      <ChooseTrafficSignsStep
-        @measureToInsert={{@measureToInsert}}
-        @selectedSigns={{this.selectedSigns}}
-        @selectSubSign={{this.selectSubSign}}
-        @selectMainSign={{this.selectMainSign}}
-      />
-      <SuplementMeasureStep @selectedSigns={{this.selectedSigns}} />
-      <AddMeasureStep
-        @measureToInsert={{@measureToInsert}}
-        @controller={{@controller}}
-      />
-    </div>
-  </template>
-}
+export default RoadsignsInsertScreen;
 
 type ChooseTrafficSignsStepSig = {
   Args: {
     measureToInsert?: MobilityMeasureConcept;
-    selectedSigns: TrafficSignalConcept[];
+    selectedSigns: SelectedSigns;
     selectMainSign: (sign: TrafficSignalConcept) => void;
     selectSubSign: (
       subSign: TrafficSignalConcept,
@@ -136,16 +109,34 @@ class ChooseTrafficSignsStep extends Component<ChooseTrafficSignsStepSig> {
 
 type SupplementMeasureStepSig = {
   Args: {
-    selectedSigns: TrafficSignalConcept[];
+    selectedSigns: SelectedSigns;
+    selectInstruction: (
+      selectedSign: SelectedSign,
+      instruction: Instruction,
+    ) => void;
   };
 };
 
-class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
-  @tracked selectedInstruction?: string;
-  @action
-  selectInstruction(instruction: Instruction) {
-    //TODO: in logic PR this should do something
-    this.selectedInstruction = instruction.uri;
+class SupplementMeasureStep extends Component<SupplementMeasureStepSig> {
+  get flattenedAndSortedSelectedSigns() {
+    const signs: SelectedSign[] = [];
+    const selectedSignsSorted: MainSignSelection[] = [
+      ...this.args.selectedSigns.values(),
+    ];
+    selectedSignsSorted.sort((signA, signB) => {
+      return signA.mainSign.sign.position - signB.mainSign.sign.position;
+    });
+    for (const sign of selectedSignsSorted) {
+      signs.push(sign.mainSign);
+      const subSigns = [...sign.subSigns.values()];
+      subSigns.sort((signA, signB) => {
+        return signA.sign.position - signB.sign.position;
+      });
+      for (const subSign of subSigns) {
+        signs.push(subSign);
+      }
+    }
+    return signs;
   }
   <template>
     <div
@@ -156,16 +147,16 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
           "editor-plugins.roadsign-regulation.insert.supplement-measure-title"
         }}
       </AuHeading>
-      {{#each @selectedSigns as |sign|}}
+      {{#each this.flattenedAndSortedSelectedSigns as |selectedSign|}}
         <div class="au-u-margin-bottom">
           <AuHeading @skin="6" @level="3">
             {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
-            {{sign.code}}
+            {{selectedSign.sign.code}}
           </AuHeading>
           <PowerSelect
-            @onChange={{this.selectInstruction}}
-            @selected={{this.selectedInstruction}}
-            @options={{sign.instructions}}
+            @onChange={{fn @selectInstruction selectedSign}}
+            @selected={{selectedSign.selectedInstruction}}
+            @options={{selectedSign.sign.instructions}}
             @placeholder={{t
               "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
             }}
@@ -184,73 +175,22 @@ class SuplementMeasureStep extends Component<SupplementMeasureStepSig> {
 type AddMeasureStepSig = {
   Args: {
     measureToInsert?: MobilityMeasureConcept;
-    controller: SayController;
+    template: string;
+    zonalityValue?: ZonalOrNot;
+    changeZonality: (zonality: ZonalOrNot) => void;
+    temporalValue?: boolean;
+    changeTemporality: (temporality: 'true' | 'false') => void;
+    selectedInsertPosition: InsertPositionOption;
+    selectInsertPosition: (option: InsertPositionOption) => void;
+    insertPositionOptions: InsertPositionOption[];
   };
 };
 
 class AddMeasureStep extends Component<AddMeasureStepSig> {
-  @service declare intl: IntlService;
-  @tracked zonalityValue?: ZonalOrNot;
-  @tracked temporalValue?: boolean;
-
-  insertPositionOptionFirst: InsertPositionOption;
-  insertPositionOptionLast: InsertPositionOption;
-
-  @tracked selectedInsertPosition: InsertPositionOption;
-
-  constructor(owner: unknown, args: Signature['Args']) {
-    super(owner, args);
-    this.insertPositionOptionFirst = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-first-article',
-      ),
-      position: 'first',
-      insertIndex: 0,
-    };
-    this.insertPositionOptionLast = {
-      label: this.intl.t(
-        'editor-plugins.roadsign-regulation.expanded-measure.as-last-article',
-      ),
-      position: 'last',
-    };
-    this.selectedInsertPosition = this.insertPositionOptionLast;
-  }
-
   get isPotentiallyZonal() {
     return (
       this.args.measureToInsert?.zonality === ZONALITY_OPTIONS.POTENTIALLY_ZONAL
     );
-  }
-
-  @action
-  changeZonality(zonality: ZonalOrNot) {
-    this.zonalityValue = zonality;
-  }
-
-  @action
-  changeTemporality(temporality: 'true' | 'false') {
-    this.temporalValue = temporality === 'true';
-  }
-
-  get articlesInDocument() {
-    return getArticleNodes(this.args.controller.mainEditorState).map(
-      (node) => node.node,
-    );
-  }
-
-  get insertPositionOptions() {
-    return [
-      this.insertPositionOptionLast,
-      this.insertPositionOptionFirst,
-      ...this.articlesInDocument.slice(1).map((_, index) => ({
-        label: this.intl.t(
-          'editor-plugins.roadsign-regulation.expanded-measure.after-article-x',
-          { articleNumber: index + 1 },
-        ),
-        position: 'custom',
-        insertIndex: index + 1,
-      })),
-    ];
   }
 
   <template>
@@ -270,8 +210,8 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
           <div class="au-c-form">
             <AuRadioGroup
               @name="zonal"
-              @selected={{this.zonalityValue}}
-              @onChange={{this.changeZonality}}
+              @selected={{@zonalityValue}}
+              @onChange={{@changeZonality}}
               as |Group|
             >
               <Group.Radio @value={{ZONALITY_OPTIONS.ZONAL}}>
@@ -298,8 +238,8 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
           <div class="au-c-form">
             <AuRadioGroup
               @name="temporal"
-              @selected={{this.temporalValue}}
-              @onChange={{this.changeTemporality}}
+              @selected={{@temporalValue}}
+              @onChange={{@changeTemporality}}
               as |Group|
             >
               <Group.Radio @value="true">
@@ -324,9 +264,9 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
         </AuHeading>
         <PowerSelect
           @allowClear={{false}}
-          @onChange={{set this "selectedInsertPosition"}}
-          @selected={{this.selectedInsertPosition}}
-          @options={{this.insertPositionOptions}}
+          @onChange={{@selectInsertPosition}}
+          @selected={{@selectedInsertPosition}}
+          @options={{@insertPositionOptions}}
           as |option|
         >{{option.label}}</PowerSelect>
       </div>
@@ -339,7 +279,7 @@ class AddMeasureStep extends Component<AddMeasureStepSig> {
         <div
           class="traffic-measure-preview--template-preview au-u-padding-small"
         >
-          {{@measureToInsert.preview}}
+          <p class="traffic-measure-preview--pre-wrap">{{@template}}</p>
         </div>
       </div>
     </div>
