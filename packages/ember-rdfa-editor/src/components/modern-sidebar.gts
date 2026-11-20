@@ -15,7 +15,6 @@ import AuIcon, {
 } from '@appuniversum/ember-appuniversum/components/au-icon';
 import { ChevronLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-left';
 import { ChevronRightIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-right';
-import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
 import { shift, type Middleware } from '@floating-ui/dom';
 import t from 'ember-intl/helpers/t';
 import type SayController from '#root/core/say-controller.ts';
@@ -100,14 +99,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   get collapseIcon() {
-    switch (this.placement) {
-      case 'left':
-        return ChevronLeftIcon;
-      case 'top':
-        return ChevronUpIcon;
-      default:
-        return ChevronRightIcon;
-    }
+    return this.placement === 'left' ? ChevronLeftIcon : ChevronRightIcon;
   }
 
   @action
@@ -203,15 +195,17 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                   {{/if}}
                 {{/let}}
               </div>
-              <AuButton
-                class="say-modern-sidebar__collapse"
-                @skin="naked"
-                @hideText={{true}}
-                @icon={{this.collapseIcon}}
-                {{on "click" this.collapse}}
-              >
-                {{t "ember-rdfa-editor.utils.collapse-sidebar"}}
-              </AuButton>
+              {{#unless this.isHorizontal}}
+                <AuButton
+                  class="say-modern-sidebar__collapse"
+                  @skin="naked"
+                  @hideText={{true}}
+                  @icon={{this.collapseIcon}}
+                  {{on "click" this.collapse}}
+                >
+                  {{t "ember-rdfa-editor.utils.collapse-sidebar"}}
+                </AuButton>
+              {{/unless}}
             </header>
             <div class="say-modern-sidebar__pane-content">
               {{#let selectedTab.paneContent as |PaneContent|}}
