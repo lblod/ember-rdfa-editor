@@ -25,8 +25,10 @@ export type ModernSidebarPlacement = 'left' | 'right' | 'top';
 
 type BadgeNumber = NonNullable<AuBadgeSignature['Args']['number']>;
 
-export type ModernSidebarBadge =
-  | { number: BadgeNumber; skin?: AuBadgeSignature['Args']['skin'] }
+export type ModernSidebarBadge = {
+  number: BadgeNumber;
+  skin?: AuBadgeSignature['Args']['skin'];
+};
 
 export type ModernSidebarTab = {
   title: string;
@@ -46,14 +48,6 @@ type ModernSidebarSignature = {
   };
   Element: HTMLDivElement;
 };
-
-function tabDomId(uid: string, index: number) {
-  return `${uid}-tab-${index}`;
-}
-
-function panelDomId(uid: string, index: number) {
-  return `${uid}-panel-${index}`;
-}
 
 function badgeFor(
   controller: SayController,
@@ -82,12 +76,19 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
       : undefined;
   }
 
+  private tabDomId(uid: string, index: number) {
+    return `${uid}-tab-${index}`;
+  }
+  private panelDomId(uid: string, index: number) {
+    return `${uid}-panel-${index}`;
+  }
+
   get selectedTabDomId() {
-    return tabDomId(this.uid, this.selectedIndex);
+    return this.tabDomId(this.uid, this.selectedIndex);
   }
 
   get selectedPanelDomId() {
-    return panelDomId(this.uid, this.selectedIndex);
+    return this.panelDomId(this.uid, this.selectedIndex);
   }
 
   get ribbonDomId() {
@@ -134,11 +135,11 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
           {{#let (eq index this.selectedIndex) as |selected|}}
             <button
               type="button"
-              id={{tabDomId this.uid index}}
+              id={{this.tabDomId index}}
               class="say-modern-sidebar__tab {{if selected 'is-active'}}"
               role="tab"
               aria-selected={{if selected "true" "false"}}
-              aria-controls={{if selected (panelDomId this.uid index)}}
+              aria-controls={{if selected (this.panelDomId index)}}
               aria-label={{tab.title}}
               title={{tab.title}}
               data-test-modern-sidebar-tab={{index}}
