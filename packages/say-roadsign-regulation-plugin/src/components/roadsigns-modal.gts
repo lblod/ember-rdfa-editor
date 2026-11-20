@@ -127,7 +127,11 @@ export default class RoadsignsModal extends Component<Signature> {
       } else {
         line.push(`\${${locatieLabel(i)}}`);
       }
-      for (const subSign of selection.subSigns.values()) {
+      const subSigns = [...selection.subSigns.values()];
+      subSigns.sort((signA, signB) => {
+        return signA.sign.position - signB.sign.position;
+      });
+      for (const subSign of subSigns) {
         if (subSign.selectedInstruction) {
           line.push(subSign.selectedInstruction.value);
         }
