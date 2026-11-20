@@ -22,7 +22,7 @@ export type ModernSidebarPlacement = 'left' | 'right' | 'top';
 
 export type ModernSidebarBadge = Pick<
   AuBadgeSignature['Args'],
-  'number' | 'icon' | 'skin'
+  'number' | 'skin'
 >;
 
 export type ModernSidebarTab = {
@@ -179,7 +179,6 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 <AuBadge
                   class="say-modern-sidebar__badge"
                   @number={{entry.badge.number}}
-                  @icon={{entry.badge.icon}}
                   @skin={{entry.badge.skin}}
                   @size="small"
                   role="presentation"
