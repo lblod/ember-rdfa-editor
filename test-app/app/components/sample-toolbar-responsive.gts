@@ -26,6 +26,8 @@ import LinkMenu from '@lblod/ember-rdfa-editor/components/plugins/link/link-menu
 import ImageInsertMenu from '@lblod/ember-rdfa-editor/components/plugins/image/insert-menu';
 import HtmlEditorMenu from '@lblod/ember-rdfa-editor/components/plugins/html-editor/menu';
 import FormattingToggle from '@lblod/ember-rdfa-editor/components/plugins/formatting/formatting-toggle';
+import sampleSidebarTabs from 'test-app/config/sample-sidebar-tabs';
+import ModernSidebar from '@lblod/ember-rdfa-editor/components/modern-sidebar';
 
 type Signature = {
   Args: {
@@ -37,7 +39,7 @@ type Signature = {
   };
 };
 
-export default class SampleToolbarResponsive extends Component<Signature> {
+export default class SampleToolbarResponsive extends Component<Signature> {  
   get supportsTables() {
     return this.args.controller?.activeEditorState.schema.nodes['table_cell'];
   }
@@ -125,6 +127,13 @@ export default class SampleToolbarResponsive extends Component<Signature> {
         </Tb.Group>
       </:main>
       <:side as |Tb|>
+        <Tb.Group>
+          <ModernSidebar
+              @controller={{@controller}}
+              @tabs={{sampleSidebarTabs}}
+              @placement="top"
+          />
+        </Tb.Group>
         <Tb.Group>
           <Dropdown
             @icon={{ThreeDotsIcon}}

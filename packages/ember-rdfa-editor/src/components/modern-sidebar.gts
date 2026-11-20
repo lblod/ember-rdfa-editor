@@ -15,8 +15,10 @@ import AuIcon, {
 import { ChevronLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-left';
 import { ChevronRightIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-right';
 import { ChevronUpIcon } from '@appuniversum/ember-appuniversum/components/icons/chevron-up';
+import { shift, type Middleware } from '@floating-ui/dom';
 import t from 'ember-intl/helpers/t';
 import type SayController from '#root/core/say-controller.ts';
+import floatingUI from '#root/modifiers/_private/floating-ui.ts';
 
 export type ModernSidebarPlacement = 'left' | 'right' | 'top';
 
@@ -56,6 +58,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   @tracked selectedIndex = -1;
 
   private readonly uid = guidFor(this);
+  private readonly topPaneMiddleware: Middleware[] = [shift({ padding: 8 })];
 
   get placement(): ModernSidebarPlacement {
     return this.args.placement ?? 'left';
@@ -77,6 +80,14 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
 
   get selectedPanelDomId() {
     return this.panelDomId(this.selectedIndex);
+  }
+
+  get ribbonDomId() {
+    return `${this.uid}-ribbon`;
+  }
+
+  get ribbonReference() {
+    return `#${this.ribbonDomId}`;
   }
 
   get collapseIcon() {
@@ -143,6 +154,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
       ...attributes
     >
       <div
+        id={{this.ribbonDomId}}
         class="say-modern-sidebar__ribbon"
         role="tablist"
         aria-orientation={{if this.isHorizontal "horizontal" "vertical"}}
@@ -189,6 +201,13 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
           aria-hidden={{unless selectedTab "true"}}
           aria-labelledby={{if selectedTab this.selectedTabDomId}}
           inert={{unless selectedTab true}}
+          {{floatingUI
+            referenceElement=this.ribbonReference
+            enabled=this.isHorizontal
+            placement="bottom-start"
+            strategy="absolute"
+            middleware=this.topPaneMiddleware
+          }}
         >
           {{#if selectedTab}}
             <header class="say-modern-sidebar__pane-header">

@@ -23,7 +23,10 @@ const sampleSidebarTabs: ModernSidebarTab[] = [
     title: 'Validation',
     icon: AlertTriangleIcon,
     paneContent: EmptyPane,
-    badge: (controller) => ({ number: controller.activeEditorState.selection.from, skin: 'warning' }),
+    badge: (controller) => ({
+      number: controller.activeEditorState.selection.from,
+      skin: 'warning',
+    }),
   },
   {
     title: 'Attachments',

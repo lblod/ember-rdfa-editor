@@ -91,7 +91,6 @@ import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/tabl
 
 export default class extends Component {
   @service declare intl: IntlService;
-  sidebarTabs = sampleSidebarTabs;
 
   @tracked rdfaEditor?: SayController;
 
@@ -241,7 +240,7 @@ export default class extends Component {
           <:sidebarLeft as |container|>
             <ModernSidebar
               @controller={{container.controller}}
-              @tabs={{this.sidebarTabs}}
+              @tabs={{sampleSidebarTabs}}
               @placement="left"
             />
           </:sidebarLeft>
