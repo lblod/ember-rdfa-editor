@@ -672,6 +672,7 @@ export default class LblodPluginsTemplate extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
+          @legacy={{true}}
         >
           <:toolbar as |container|>
             <SampleToolbarResponsive

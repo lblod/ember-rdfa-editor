@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { deprecate } from '@ember/debug';
-import { and, not, or } from 'ember-truth-helpers';
+import { and } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/option.ts';
@@ -21,13 +21,16 @@ type Signature = {
     controller?: Option<SayController>;
     editorOptions?: EditorOptions;
     loading?: boolean;
+    /**
+     * @deprecated Render the right sidebar as an overlay, like it did before
+     * docked sidebars were introduced. Use the docked layout instead.
+     */
+    legacy?: boolean;
   };
   Blocks: {
     default: [];
     /** @deprecated Using top is deprecated. Pass a controller and use toolbar instead */
     top: [];
-    /** @deprecated Using aside is deprecated. Pass a controller and use sidebarRight instead */
-    aside: [];
     toolbar: [{ controller: SayController }];
     sidebarLeft: [{ controller: SayController }];
     sidebarRight: [{ controller: SayController }];
@@ -73,15 +76,8 @@ export default class EditorContainer extends Component<Signature> {
       class="say-container
         {{if this.showPaper 'say-container--paper'}}
         {{if
-          (and this.showSidebarLeft (not (has-block 'sidebarLeft')))
-          'say-container--sidebar-left'
-        }}
-        {{if
-          (and
-            (or (has-block 'aside') (has-block 'sidebarRight'))
-            this.showSidebarRight
-          )
-          'say-container--sidebar-right'
+          (and (has-block 'sidebarRight') this.showSidebarRight @legacy)
+          'say-container--sidebar-right-legacy'
         }}
         {{if this.showToolbarBottom 'say-container--toolbar-bottom'}}"
     >
@@ -99,30 +95,33 @@ export default class EditorContainer extends Component<Signature> {
           </AuLoader>
         {{/if}}
 
-        {{#if (has-block "sidebarLeft")}}
-          <div class="say-container__sidebar-left">
-            {{#if @controller}}
-              {{yield (hash controller=@controller) to="sidebarLeft"}}
-            {{/if}}
-          </div>
+        {{#if this.showSidebarLeft}}
+          {{#if (has-block "sidebarLeft")}}
+            <div class="say-container__sidebar-left">
+              {{#if @controller}}
+                {{yield (hash controller=@controller) to="sidebarLeft"}}
+              {{/if}}
+            </div>
+          {{/if}}
         {{/if}}
         <div class="say-editor {{if @loading 'au-u-hidden-visually'}}">
           {{yield}}
 
         </div>
-        {{#if
-          (and
-            (or (has-block "aside") (has-block "sidebarRight"))
-            this.showSidebarRight
-          )
-        }}
-          <div class="say-container__aside">
-            {{#if (has-block "aside")}}
-              {{yield to="aside"}}
-            {{else if @controller}}
-              {{yield (hash controller=@controller) to="sidebarRight"}}
+        {{#if this.showSidebarRight}}
+          {{#if (has-block "sidebarRight")}}
+            {{#if @controller}}
+              <div
+                class={{if
+                  @legacy
+                  "say-container__sidebar-right-legacy"
+                  "say-container__sidebar-right"
+                }}
+              >
+                {{yield (hash controller=@controller) to="sidebarRight"}}
+              </div>
             {{/if}}
-          </div>
+          {{/if}}
         {{/if}}
       </div>
     </div>

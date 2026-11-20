@@ -237,13 +237,13 @@ export default class extends Component {
               <TableTooltip @controller={{this.rdfaEditor}} />
             {{/if}}
           </:default>
-          <:sidebarLeft as |container|>
+          <:sidebarRight as |container|>
             <Sidebar
               @controller={{container.controller}}
               @tabs={{sampleEditorTabs}}
-              @placement="left"
+              @placement="right"
             />
-          </:sidebarLeft>
+          </:sidebarRight>
         </EditorContainer>
       </:content>
     </DummyContainer>

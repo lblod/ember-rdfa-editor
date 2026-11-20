@@ -389,6 +389,7 @@ export default class extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
+          @legacy={{true}}
         >
           <:toolbar as |container|>
             <SampleToolbarResponsive
