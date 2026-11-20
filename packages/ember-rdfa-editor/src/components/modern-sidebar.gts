@@ -4,6 +4,7 @@ import { action } from '@ember/object';
 import { guidFor } from '@ember/object/internals';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
+import { eq } from 'ember-truth-helpers';
 import type { ComponentLike } from '@glint/template';
 import AuBadge, {
   type AuBadgeSignature,
@@ -54,6 +55,28 @@ type ModernSidebarSignature = {
   Element: HTMLDivElement;
 };
 
+function tabDomId(uid: string, index: number) {
+  return `${uid}-tab-${index}`;
+}
+
+function panelDomId(uid: string, index: number) {
+  return `${uid}-panel-${index}`;
+}
+
+function badgeFor(
+  controller: SayController,
+  tab: ModernSidebarTab,
+): ModernSidebarBadge {
+  const badge =
+    typeof tab.badge === 'function' ? tab.badge(controller) : tab.badge;
+
+  return badge ?? {};
+}
+
+function hasBadge(badge: ModernSidebarBadge) {
+  return Boolean(badge.number || badge.skin);
+}
+
 export default class ModernSidebar extends Component<ModernSidebarSignature> {
   @tracked selectedIndex = -1;
 
@@ -75,11 +98,11 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   get selectedTabDomId() {
-    return this.tabDomId(this.selectedIndex);
+    return tabDomId(this.uid, this.selectedIndex);
   }
 
   get selectedPanelDomId() {
-    return this.panelDomId(this.selectedIndex);
+    return panelDomId(this.uid, this.selectedIndex);
   }
 
   get ribbonDomId() {
@@ -99,43 +122,6 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
       default:
         return ChevronRightIcon;
     }
-  }
-
-  get renderedTabs() {
-    const selectedIndex = this.selectedIndex;
-
-    return this.args.tabs.map((tab, index) => {
-      const badge: ModernSidebarBadge = this.badgeFor(tab) ?? {};
-      const selected = index === selectedIndex;
-
-      return {
-        tab,
-        index,
-        badge,
-        showBadge: this.hasBadge(badge),
-        selected,
-        tabDomId: this.tabDomId(index),
-        panelDomId: this.panelDomId(index),
-      };
-    });
-  }
-
-  private badgeFor(tab: ModernSidebarTab) {
-    return typeof tab.badge === 'function'
-      ? tab.badge(this.args.controller)
-      : tab.badge;
-  }
-
-  private hasBadge(badge: ModernSidebarBadge) {
-    return Boolean(badge.number || badge.skin);
-  }
-
-  private tabDomId(index: number) {
-    return `${this.uid}-tab-${index}`;
-  }
-
-  private panelDomId(index: number) {
-    return `${this.uid}-panel-${index}`;
   }
 
   @action
@@ -159,37 +145,41 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
         role="tablist"
         aria-orientation={{if this.isHorizontal "horizontal" "vertical"}}
       >
-        {{#each this.renderedTabs as |entry|}}
-          <button
-            type="button"
-            id={{entry.tabDomId}}
-            class="say-modern-sidebar__tab {{if entry.selected 'is-active'}}"
-            role="tab"
-            aria-selected={{entry.selected}}
-            aria-controls={{if entry.selected entry.panelDomId}}
-            aria-label={{entry.tab.title}}
-            title={{entry.tab.title}}
-            data-test-modern-sidebar-tab={{entry.index}}
-            {{on "click" (fn this.selectTab entry.index)}}
-          >
-            <span class="say-modern-sidebar__tab-icon" role="presentation">
-              <AuIcon
-                @icon={{entry.tab.icon}}
-                @ariaHidden={{true}}
-                @size="large"
-                role="presentation"
-              />
-              {{#if entry.showBadge}}
-                <AuBadge
-                  class="say-modern-sidebar__badge"
-                  @number={{entry.badge.number}}
-                  @skin={{entry.badge.skin}}
-                  @size="small"
+        {{#each @tabs as |tab index|}}
+          {{#let (eq index this.selectedIndex) as |selected|}}
+            <button
+              type="button"
+              id={{tabDomId this.uid index}}
+              class="say-modern-sidebar__tab {{if selected 'is-active'}}"
+              role="tab"
+              aria-selected={{if selected "true" "false"}}
+              aria-controls={{if selected (panelDomId this.uid index)}}
+              aria-label={{tab.title}}
+              title={{tab.title}}
+              data-test-modern-sidebar-tab={{index}}
+              {{on "click" (fn this.selectTab index)}}
+            >
+              <span class="say-modern-sidebar__tab-icon" role="presentation">
+                <AuIcon
+                  @icon={{tab.icon}}
+                  @ariaHidden={{true}}
+                  @size="large"
                   role="presentation"
                 />
-              {{/if}}
-            </span>
-          </button>
+                {{#let (badgeFor @controller tab) as |badge|}}
+                  {{#if (hasBadge badge)}}
+                    <AuBadge
+                      class="say-modern-sidebar__badge"
+                      @number={{badge.number}}
+                      @skin={{badge.skin}}
+                      @size="small"
+                      role="presentation"
+                    />
+                  {{/if}}
+                {{/let}}
+              </span>
+            </button>
+          {{/let}}
         {{/each}}
       </div>
 
