@@ -39,7 +39,7 @@ type Signature = {
   };
 };
 
-export default class SampleToolbarResponsive extends Component<Signature> {  
+export default class SampleToolbarResponsive extends Component<Signature> {
   get supportsTables() {
     return this.args.controller?.activeEditorState.schema.nodes['table_cell'];
   }
@@ -129,9 +129,9 @@ export default class SampleToolbarResponsive extends Component<Signature> {
       <:side as |Tb|>
         <Tb.Group>
           <ModernSidebar
-              @controller={{@controller}}
-              @tabs={{sampleSidebarTabs}}
-              @placement="top"
+            @controller={{@controller}}
+            @tabs={{sampleSidebarTabs}}
+            @placement="top"
           />
         </Tb.Group>
         <Tb.Group>

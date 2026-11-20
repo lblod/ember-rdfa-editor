@@ -194,22 +194,20 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
       </div>
 
       {{#let this.selectedTab as |selectedTab|}}
-        <section
-          id={{if selectedTab this.selectedPanelDomId}}
-          class="say-modern-sidebar__pane {{if selectedTab 'is-open'}}"
-          role="tabpanel"
-          aria-hidden={{unless selectedTab "true"}}
-          aria-labelledby={{if selectedTab this.selectedTabDomId}}
-          inert={{unless selectedTab true}}
-          {{floatingUI
-            referenceElement=this.ribbonReference
-            enabled=this.isHorizontal
-            placement="bottom-start"
-            strategy="absolute"
-            middleware=this.topPaneMiddleware
-          }}
-        >
-          {{#if selectedTab}}
+        {{#if selectedTab}}
+          <section
+            id={{this.selectedPanelDomId}}
+            class="say-modern-sidebar__pane"
+            role="tabpanel"
+            aria-labelledby={{this.selectedTabDomId}}
+            {{floatingUI
+              referenceElement=this.ribbonReference
+              enabled=this.isHorizontal
+              placement="bottom-start"
+              strategy="absolute"
+              middleware=this.topPaneMiddleware
+            }}
+          >
             <header class="say-modern-sidebar__pane-header">
               <h2
                 class="say-modern-sidebar__pane-title"
@@ -232,8 +230,8 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
                 <PaneContent @controller={{@controller}} />
               {{/let}}
             </div>
-          {{/if}}
-        </section>
+          </section>
+        {{/if}}
       {{/let}}
     </div>
   </template>

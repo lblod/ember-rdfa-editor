@@ -30,10 +30,6 @@
     .say-modern-sidebar__pane {
       border-right: 1px solid var(--say-modern-sidebar-border-color);
     }
-
-    .say-modern-sidebar__pane.is-open {
-      width: var(--say-modern-sidebar-pane-width);
-    }
   }
 
   &--right {
@@ -45,10 +41,6 @@
 
     .say-modern-sidebar__pane {
       border-left: 1px solid var(--say-modern-sidebar-border-color);
-    }
-
-    .say-modern-sidebar__pane.is-open {
-      width: var(--say-modern-sidebar-pane-width);
     }
   }
 
@@ -75,14 +67,10 @@
       position: absolute;
       top: 0;
       left: 0;
+      z-index: var(--au-z-index-beta);
       width: 100%;
-      max-height: 0;
-      border-bottom: 1px solid var(--say-modern-sidebar-border-color);
-    }
-
-    .say-modern-sidebar__pane.is-open {
       max-height: 50vh;
-      opacity: 1;
+      border-bottom: 1px solid var(--say-modern-sidebar-border-color);
     }
   }
 }
@@ -150,16 +138,9 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  width: 0;
-  min-width: 0;
+  width: var(--say-modern-sidebar-pane-width);
   min-height: 0;
-  overflow: hidden;
-  visibility: hidden;
   background-color: var(--say-modern-sidebar-pane-background);
-  
-  &.is-open {
-    visibility: visible;
-  }
 }
 
 .say-modern-sidebar__pane-header {
