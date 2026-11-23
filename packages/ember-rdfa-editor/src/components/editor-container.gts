@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { deprecate } from '@ember/debug';
-import { and, not } from 'ember-truth-helpers';
+import { and, not, or } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/option.ts';
@@ -31,6 +31,8 @@ type Signature = {
     default: [];
     /** @deprecated Using top is deprecated. Pass a controller and use toolbar instead */
     top: [];
+    /** @deprecated Using aside is deprecated. Pass a controller and use sidebarRight instead */
+    aside: [];
     toolbar: [{ controller: SayController }];
     sidebarLeft: [{ controller: SayController }];
     sidebarRight: [{ controller: SayController }];
@@ -93,7 +95,7 @@ export default class EditorContainer extends Component<Signature> {
         }}
         {{if
           (and
-            (has-block 'sidebarRight')
+            (or (has-block 'aside') (has-block 'sidebarRight'))
             this.showSidebarRight
             this.useLegacySidebar
           )
@@ -129,18 +131,20 @@ export default class EditorContainer extends Component<Signature> {
 
         </div>
         {{#if this.showSidebarRight}}
-          {{#if (has-block "sidebarRight")}}
-            {{#if @controller}}
-              <div
-                class={{if
-                  this.useLegacySidebar
-                  "say-container__aside"
-                  "say-container__sidebar-right"
-                }}
-              >
+          {{#if (or (has-block "aside") (has-block "sidebarRight"))}}
+            <div
+              class={{if
+                this.useLegacySidebar
+                "say-container__aside"
+                "say-container__sidebar-right"
+              }}
+            >
+              {{#if (has-block "aside")}}
+                {{yield to="aside"}}
+              {{else if @controller}}
                 {{yield (hash controller=@controller) to="sidebarRight"}}
-              </div>
-            {{/if}}
+              {{/if}}
+            </div>
           {{/if}}
         {{/if}}
       </div>
