@@ -129,12 +129,6 @@ export type InlineDecorationSpec = NonNullable<
 
 export { default as SayView } from '#root/core/say-view.ts';
 export { default as SayController } from '#root/core/say-controller.ts';
-export type { SidebarPlacement } from '#root/components/sidebar.gts';
-export type {
-  EditorTab,
-  EditorTabBadge,
-  TabPanelPlacement,
-} from '#root/components/editor-tabs.gts';
 addMethod(
   string,
   'curie',

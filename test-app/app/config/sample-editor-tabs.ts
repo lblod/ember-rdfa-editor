@@ -4,7 +4,7 @@ import { LabelIcon } from '@appuniversum/ember-appuniversum/components/icons/lab
 import { PaperclipIcon } from '@appuniversum/ember-appuniversum/components/icons/paperclip';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
 import { SettingsIcon } from '@appuniversum/ember-appuniversum/components/icons/settings';
-import type { EditorTab } from '@lblod/ember-rdfa-editor';
+import type { EditorTab } from '@lblod/ember-rdfa-editor/components/editor-tabs';
 import EmptyPane from 'test-app/components/sample-ember-nodes/empty-pane';
 import InsertPane from 'test-app/components/sample-ember-nodes/insert-pane';
 
