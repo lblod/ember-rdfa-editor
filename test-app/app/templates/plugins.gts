@@ -78,7 +78,7 @@ import DummyContainer from 'test-app/components/dummy-container';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import { hash } from '@ember/helper';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
-import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
+import LegacySidebar from 'test-app/components/sample-ember-nodes/legacy-sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
@@ -260,7 +260,7 @@ export default class extends Component {
             {{/if}}
           </:default>
           <:sidebarRight as |container|>
-            <Sidebar
+            <LegacySidebar
               @expanded={{this.sidebarExpanded}}
               @onToggle={{this.onSidebarToggle}}
               @controller={{container.controller}}
