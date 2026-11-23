@@ -1123,7 +1123,6 @@ export default class LblodPluginsTemplate extends Component {
                     @designQuery={{this.arDesignTest}}
                     @instructionVariableQuery={{this.instructionVariableQuery}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
-                    @regulatoryStatementMode={{true}}
                   />
                 </Item>
               </Sb.Collapsible>

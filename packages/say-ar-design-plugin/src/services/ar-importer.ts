@@ -96,6 +96,7 @@ function parseVariables(
       __rdfaId: uuidv4(),
     };
   }
+  return variables;
 }
 
 function convertSignals(signals: TrafficSignal[]) {
