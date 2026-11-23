@@ -34,13 +34,13 @@ $say-paper-box-shadow:
   }
 
   @include au-tools.mq(1023px) {
-    .say-container--paper.say-container--sidebar-right-legacy & {
+    .say-container--paper.say-container--sidebar-right & {
       padding-right: $say-editor-sidebar-large;
     }
   }
 
   @include au-tools.mq(1280px) {
-    .say-container--paper.say-container--sidebar-right-legacy & {
+    .say-container--paper.say-container--sidebar-right & {
       padding-right: $say-editor-sidebar-large;
     }
   }

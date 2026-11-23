@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { deprecate } from '@ember/debug';
-import { and } from 'ember-truth-helpers';
+import { and, not } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/option.ts';
@@ -76,16 +76,28 @@ export default class EditorContainer extends Component<Signature> {
     return this.args.editorOptions?.showToolbarBottom ?? false;
   }
   <template>
+    {{! Legacy class names (`say-container--sidebar-left` and
+    `say-container--sidebar-right`) are kept for backwards compatibility with
+    consuming apps that target them directly. They are only rendered in the
+    legacy layout. }}
     <div
       class="say-container
         {{if this.showPaper 'say-container--paper'}}
+        {{if
+          (and
+            this.showSidebarLeft
+            this.useLegacySidebar
+            (not (has-block 'sidebarLeft'))
+          )
+          'say-container--sidebar-left'
+        }}
         {{if
           (and
             (has-block 'sidebarRight')
             this.showSidebarRight
             this.useLegacySidebar
           )
-          'say-container--sidebar-right-legacy'
+          'say-container--sidebar-right'
         }}
         {{if this.showToolbarBottom 'say-container--toolbar-bottom'}}"
     >
@@ -122,7 +134,7 @@ export default class EditorContainer extends Component<Signature> {
               <div
                 class={{if
                   this.useLegacySidebar
-                  "say-container__sidebar-right-legacy"
+                  "say-container__aside"
                   "say-container__sidebar-right"
                 }}
               >
