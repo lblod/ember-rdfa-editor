@@ -109,11 +109,13 @@
 
 .say-editor-tabs__tab-icon .say-editor-tabs__badge {
   position: absolute;
+  display: flex;
   right: -0.6rem;
   bottom: -0.6rem;
-  width: 1.5rem;
+  width: auto;
   height: 1.5rem;
   min-width: 1.5rem;
+  padding: 0 0.3rem;
   margin: 0;
   pointer-events: none;
 
@@ -185,9 +187,10 @@
 .say-editor-tabs__panel-badge {
   flex-shrink: 0;
 
-  width: 2rem;
+  width: auto;
   height: 2rem;
   min-width: 2rem;
+  padding: 0 0.5rem;
 
   .au-c-badge__number {
     font-size: 1.3rem;

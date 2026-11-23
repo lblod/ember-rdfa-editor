@@ -113,6 +113,10 @@ export default class EditorTabs extends Component<EditorTabsSignature> {
     this.selectedIndex = -1;
   }
 
+  badgeNumberRendered = (badge: EditorTabBadge) => {
+    return badge.number <= 9 ? badge.number : `9+`;
+  }
+
   <template>
     <div
       class="say-editor-tabs say-editor-tabs--panel-{{this.panelPlacement}}"
@@ -149,7 +153,8 @@ export default class EditorTabs extends Component<EditorTabsSignature> {
                   {{#if badge}}
                     <AuBadge
                       class="say-editor-tabs__badge"
-                      @number={{badge.number}}
+                      {{!-- @glint-expect-error au-badge doesn't accept a string --}}
+                      @number={{this.badgeNumberRendered badge}}
                       @skin={{badge.skin}}
                       @size="small"
                       role="presentation"
