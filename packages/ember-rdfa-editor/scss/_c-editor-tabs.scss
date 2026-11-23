@@ -39,12 +39,13 @@
 }
 
 .say-editor-tabs__ribbon {
+  flex-shrink: 0;
+
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  
   width: var(--say-editor-tabs-ribbon-size);
   min-height: 0;
-  overflow-x: hidden;
   overflow-y: auto;
   background-color: var(--say-editor-tabs-background);
 }
@@ -63,31 +64,25 @@
   height: 100%;
   border-bottom: 1px solid var(--say-editor-tabs-border-color);
   overflow-x: auto;
-  overflow-y: hidden;
 }
 
 .say-editor-tabs__tab {
-  position: relative;
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   width: 100%;
   height: var(--say-editor-tabs-ribbon-size);
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--say-editor-tabs-icon-color);
+  color: var(--au-gray-800);
   cursor: pointer;
 
   &:hover,
   &.is-active {
     background-color: var(--say-editor-tabs-active-background);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--au-blue-700);
-    outline-offset: -2px;
   }
 }
 
@@ -110,9 +105,6 @@
 
 .say-editor-tabs__tab-icon {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .say-editor-tabs__tab-icon .say-editor-tabs__badge {
@@ -132,13 +124,13 @@
 }
 
 .say-editor-tabs__panel {
+  flex-shrink: 0;
+
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
   width: var(--say-editor-tabs-panel-width);
   min-height: 0;
   background-color: var(--say-editor-tabs-panel-background);
-  resize: horizontal;
 }
 
 .say-editor-tabs--panel-left .say-editor-tabs__panel {
@@ -159,11 +151,12 @@
 }
 
 .say-editor-tabs__panel-header {
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: au-settings.$au-unit-small;
-  flex-shrink: 0;
   min-height: var(--say-editor-tabs-panel-header-height);
   padding: 0.4rem var(--say-editor-tabs-panel-padding);
   border-bottom: 1px solid var(--say-editor-tabs-border-color);
@@ -173,18 +166,12 @@
   display: flex;
   align-items: center;
   gap: au-settings.$au-unit-small;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0%;
   min-width: 0;
 }
 
 .say-editor-tabs__panel-title {
   @include au-tools.au-font-size(au-settings.$au-tiny);
 
-  flex-grow: 0;
-  flex-shrink: 1;
-  flex-basis: auto;
   min-width: 0;
   margin: 0;
   overflow-wrap: anywhere;
@@ -197,6 +184,7 @@
 
 .say-editor-tabs__panel-badge {
   flex-shrink: 0;
+
   width: 2rem;
   height: 2rem;
   min-width: 2rem;
@@ -209,6 +197,7 @@
 
 .say-editor-tabs__collapse {
   flex-shrink: 0;
+
   min-width: 0;
   min-height: 0;
   padding: 0;
@@ -217,8 +206,7 @@
 
 .say-editor-tabs__panel-content {
   flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  
   min-height: 0;
   padding: var(--say-editor-tabs-panel-padding);
   overflow-y: auto;
