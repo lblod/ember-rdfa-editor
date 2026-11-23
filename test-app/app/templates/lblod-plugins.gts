@@ -111,7 +111,7 @@ import type {
   TargetOptionGeneratorArgs,
 } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
-import LegacySidebar from '@lblod/ember-rdfa-editor/components/legacy-sidebar';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
@@ -672,7 +672,6 @@ export default class LblodPluginsTemplate extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
-          @legacy={{true}}
         >
           <:toolbar as |container|>
             <SampleToolbarResponsive
@@ -694,7 +693,7 @@ export default class LblodPluginsTemplate extends Component {
             />
           </:default>
           <:sidebarRight as |container|>
-            <LegacySidebar as |Sb|>
+            <Sidebar as |Sb|>
               <Sb.Collapsible
                 @title={{t "ember-rdfa-editor.insert"}}
                 @expanded={{true}}
@@ -767,7 +766,7 @@ export default class LblodPluginsTemplate extends Component {
                   {{/if}}
                 </div>
               {{/if}}
-            </LegacySidebar>
+            </Sidebar>
           </:sidebarRight>
         </EditorContainer>
       </:content>

@@ -2,7 +2,7 @@ import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import type { NodeType, SayController } from '@lblod/ember-rdfa-editor';
-import LegacySidebar from '@lblod/ember-rdfa-editor/components/legacy-sidebar';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import t from 'ember-intl/helpers/t';
 
@@ -50,7 +50,7 @@ export default class SampleEmberNodesSidebar extends Component<Signature> {
     }
   }
   <template>
-    <LegacySidebar as |sidebar|>
+    <Sidebar as |sidebar|>
       <sidebar.Collapsible
         @title={{t "ember-rdfa-editor.insert"}}
         @expanded={{@expanded}}
@@ -98,6 +98,6 @@ export default class SampleEmberNodesSidebar extends Component<Signature> {
           </AuButton>
         </Item>
       </sidebar.Collapsible>
-    </LegacySidebar>
+    </Sidebar>
   </template>
 }

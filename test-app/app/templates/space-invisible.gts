@@ -69,7 +69,7 @@ import Component from '@glimmer/component';
 import DummyContainer from 'test-app/components/dummy-container';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
-import LegacySidebar from '@lblod/ember-rdfa-editor/components/legacy-sidebar';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import LinkSidebarWidget from '@lblod/ember-rdfa-editor/components/plugins/link/link-sidebar-widget';
@@ -190,7 +190,6 @@ export default class extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
-          @legacy={{true}}
         >
           <:top>
             {{#if this.rdfaEditor}}
@@ -206,9 +205,9 @@ export default class extends Component {
             />
           </:default>
           <:sidebarRight as |container|>
-            <LegacySidebar>
+            <Sidebar>
               <LinkSidebarWidget @controller={{container.controller}} />
-            </LegacySidebar>
+            </Sidebar>
           </:sidebarRight>
         </EditorContainer>
       </:content>

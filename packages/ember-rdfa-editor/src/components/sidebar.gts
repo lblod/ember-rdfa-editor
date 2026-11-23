@@ -1,38 +1,58 @@
-import Component from '@glimmer/component';
+import type { TOC } from '@ember/component/template-only';
+import Collapsible from './collapsible.gts';
+import LegacySidebar from './_private/legacy-sidebar.gts';
+import ModernSidebar, {
+  type SidebarPlacement,
+} from './_private/modern-sidebar.gts';
+import type { EditorTab } from './editor-tabs.gts';
 import type SayController from '#root/core/say-controller.ts';
-import EditorTabs, {
-  type EditorTab,
-  type TabPanelPlacement,
-} from '#root/components/editor-tabs.gts';
 
-export type SidebarPlacement = 'left' | 'right';
+export type { SidebarPlacement };
 
-type SidebarSignature = {
-  Args: {
-    controller: SayController;
-    tabs: EditorTab[];
-    /** @default 'left' */
-    placement?: SidebarPlacement;
-  };
-  Element: HTMLDivElement;
-};
+type SidebarSignature =
+  | {
+      Args: {
+        useNew: true;
+        controller: SayController;
+        tabs: EditorTab[];
+        /** @default 'left' */
+        placement?: SidebarPlacement;
+      };
+      Blocks: {
+        default?: [];
+      };
+      Element: HTMLDivElement;
+    }
+  | {
+      Args: {
+        useNew?: false;
+        controller?: never;
+        tabs?: never;
+        placement?: never;
+      };
+      Blocks: {
+        default: [
+          {
+            Collapsible: typeof Collapsible;
+          },
+        ];
+      };
+      Element: HTMLDivElement;
+    };
 
-export default class Sidebar extends Component<SidebarSignature> {
-  get placement(): SidebarPlacement {
-    return this.args.placement ?? 'left';
-  }
+const Sidebar: TOC<SidebarSignature> = <template>
+  {{#if @useNew}}
+    <ModernSidebar
+      @controller={{@controller}}
+      @tabs={{@tabs}}
+      @placement={{@placement}}
+      ...attributes
+    />
+  {{else}}
+    <LegacySidebar ...attributes as |legacy|>
+      {{yield legacy}}
+    </LegacySidebar>
+  {{/if}}
+</template>;
 
-  get panelPlacement(): TabPanelPlacement {
-    return this.placement === 'left' ? 'right' : 'left';
-  }
-
-  <template>
-    <div class="say-sidebar say-sidebar--{{this.placement}}" ...attributes>
-      <EditorTabs
-        @controller={{@controller}}
-        @tabs={{@tabs}}
-        @panelPlacement={{this.panelPlacement}}
-      />
-    </div>
-  </template>
-}
+export default Sidebar;

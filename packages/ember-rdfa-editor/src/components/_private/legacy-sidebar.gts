@@ -1,6 +1,6 @@
 import type { TOC } from '@ember/component/template-only';
 import { hash } from '@ember/helper';
-import Collapsible from './collapsible.gts';
+import Collapsible from '../collapsible.gts';
 
 type LegacySidebarSignature = {
   Blocks: {

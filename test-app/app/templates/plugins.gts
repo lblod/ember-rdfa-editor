@@ -217,6 +217,7 @@ export default class extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
+          @useNewLayout={{true}}
         >
           <:toolbar as |container|>
             <SampleToolbarResponsive @controller={{container.controller}} />
@@ -242,6 +243,7 @@ export default class extends Component {
               @controller={{container.controller}}
               @tabs={{sampleEditorTabs}}
               @placement="right"
+              @useNew={{true}}
             />
           </:sidebarRight>
         </EditorContainer>

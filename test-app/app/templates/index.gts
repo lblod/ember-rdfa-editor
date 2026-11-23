@@ -74,7 +74,7 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
-import LegacySidebar from '@lblod/ember-rdfa-editor/components/legacy-sidebar';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
 import { hash } from '@ember/helper';
@@ -215,9 +215,9 @@ export default class extends Component {
             {{/if}}
           </:default>
           <:sidebarRight as |container|>
-            <LegacySidebar>
+            <Sidebar>
               <LinkSidebarWidget @controller={{container.controller}} />
-            </LegacySidebar>
+            </Sidebar>
           </:sidebarRight>
         </EditorContainer>
       </:content>

@@ -22,10 +22,10 @@ type Signature = {
     editorOptions?: EditorOptions;
     loading?: boolean;
     /**
-     * @deprecated Render the right sidebar as an overlay, like it did before
-     * docked sidebars were introduced. Use the docked layout instead.
+     * Render the new docked sidebar layout. Defaults to the legacy overlay
+     * layout.
      */
-    legacy?: boolean;
+    useNewLayout?: boolean;
   };
   Blocks: {
     default: [];
@@ -60,6 +60,10 @@ export default class EditorContainer extends Component<Signature> {
     return this.args.editorOptions?.showPaper ?? false;
   }
 
+  get useLegacySidebar() {
+    return !this.args.useNewLayout;
+  }
+
   get showSidebarLeft() {
     return this.args.editorOptions?.showSidebarLeft ?? true;
   }
@@ -76,7 +80,11 @@ export default class EditorContainer extends Component<Signature> {
       class="say-container
         {{if this.showPaper 'say-container--paper'}}
         {{if
-          (and (has-block 'sidebarRight') this.showSidebarRight @legacy)
+          (and
+            (has-block 'sidebarRight')
+            this.showSidebarRight
+            this.useLegacySidebar
+          )
           'say-container--sidebar-right-legacy'
         }}
         {{if this.showToolbarBottom 'say-container--toolbar-bottom'}}"
@@ -113,7 +121,7 @@ export default class EditorContainer extends Component<Signature> {
             {{#if @controller}}
               <div
                 class={{if
-                  @legacy
+                  this.useLegacySidebar
                   "say-container__sidebar-right-legacy"
                   "say-container__sidebar-right"
                 }}

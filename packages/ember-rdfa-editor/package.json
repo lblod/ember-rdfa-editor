@@ -173,10 +173,6 @@
       "types": "./declarations/components/editor-tabs.d.ts",
       "default": "./dist/components/editor-tabs.js"
     },
-    "./components/legacy-sidebar": {
-      "types": "./declarations/components/legacy-sidebar.d.ts",
-      "default": "./dist/components/legacy-sidebar.js"
-    },
     "./components/_private/rdfa-editor": {
       "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
       "default": "./dist/components/_private/rdfa-editor/index.js"
@@ -402,6 +398,8 @@
       "./components/_private/external-triple-editor/card.js": "./dist/_app_/components/_private/external-triple-editor/card.js",
       "./components/_private/external-triple-editor/form.js": "./dist/_app_/components/_private/external-triple-editor/form.js",
       "./components/_private/imported-resource-linker/card.js": "./dist/_app_/components/_private/imported-resource-linker/card.js",
+      "./components/_private/legacy-sidebar.js": "./dist/_app_/components/_private/legacy-sidebar.js",
+      "./components/_private/modern-sidebar.js": "./dist/_app_/components/_private/modern-sidebar.js",
       "./components/_private/node-controls/card.js": "./dist/_app_/components/_private/node-controls/card.js",
       "./components/_private/node-controls/remove-node.js": "./dist/_app_/components/_private/node-controls/remove-node.js",
       "./components/_private/node-controls/wrapping-utils.js": "./dist/_app_/components/_private/node-controls/wrapping-utils.js",
@@ -434,7 +432,6 @@
       "./components/icons/format-text.js": "./dist/_app_/components/icons/format-text.js",
       "./components/icons/rdfa.js": "./dist/_app_/components/icons/rdfa.js",
       "./components/index.js": "./dist/_app_/components/index.js",
-      "./components/legacy-sidebar.js": "./dist/_app_/components/legacy-sidebar.js",
       "./components/pill.js": "./dist/_app_/components/pill.js",
       "./components/plugins/alignment/alignment-menu.js": "./dist/_app_/components/plugins/alignment/alignment-menu.js",
       "./components/plugins/contextual-actions/container.js": "./dist/_app_/components/plugins/contextual-actions/container.js",
