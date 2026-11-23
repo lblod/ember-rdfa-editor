@@ -5,9 +5,9 @@
    ================================== */
 
 .say-editor-tabs {
-  --say-editor-tabs-ribbon-size: #{au-settings.$au-unit * 2};
-  --say-editor-tabs-panel-width: #{au-settings.$au-unit * 13};
-  --say-editor-tabs-panel-header-height: #{au-settings.$au-unit * 2};
+  --say-editor-tabs-ribbon-size: 4.8rem;
+  --say-editor-tabs-panel-width: 32rem;
+  --say-editor-tabs-panel-header-height: 4.8rem;
   --say-editor-tabs-background: var(--au-gray-100);
   --say-editor-tabs-active-background: var(--au-gray-300);
   --say-editor-tabs-border-color: var(--au-gray-300);
