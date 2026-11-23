@@ -222,6 +222,14 @@ export default class extends Component {
           <:toolbar as |container|>
             <SampleToolbarResponsive @controller={{container.controller}} />
           </:toolbar>
+          <:sidebarLeft as |container|>
+            <Sidebar
+              @controller={{container.controller}}
+              @tabs={{sampleEditorTabs}}
+              @placement="left"
+              @useNew={{true}}
+            />
+          </:sidebarLeft>
           <:default>
             <Editor
               @plugins={{this.plugins}}
@@ -238,14 +246,6 @@ export default class extends Component {
               <TableTooltip @controller={{this.rdfaEditor}} />
             {{/if}}
           </:default>
-          <:sidebarRight as |container|>
-            <Sidebar
-              @controller={{container.controller}}
-              @tabs={{sampleEditorTabs}}
-              @placement="right"
-              @useNew={{true}}
-            />
-          </:sidebarRight>
         </EditorContainer>
       </:content>
     </DummyContainer>
