@@ -1,0 +1,253 @@
+import { action } from '@ember/object';
+import { inputRules, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
+import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
+import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
+import {
+  blockRdfaWithConfig,
+  docWithConfig,
+  hard_break,
+  horizontal_rule,
+  invisibleRdfaWithConfig,
+  paragraph,
+  repairedBlockWithConfig,
+  text,
+} from '@lblod/ember-rdfa-editor/nodes';
+import { blockquote } from '@lblod/ember-rdfa-editor/plugins/blockquote';
+import { chromeHacksPlugin } from '@lblod/ember-rdfa-editor/plugins/chrome-hacks-plugin';
+import { code_block } from '@lblod/ember-rdfa-editor/plugins/code';
+import { code } from '@lblod/ember-rdfa-editor/plugins/code/marks/code';
+import { color } from '@lblod/ember-rdfa-editor/plugins/color/marks/color';
+import { emberApplication } from '@lblod/ember-rdfa-editor/plugins/ember-application';
+import { firefoxCursorFix } from '@lblod/ember-rdfa-editor/plugins/firefox-cursor-fix';
+import { highlight } from '@lblod/ember-rdfa-editor/plugins/highlight/marks/highlight';
+import { image, imageView } from '@lblod/ember-rdfa-editor/plugins/image';
+import {
+  createInvisiblesPlugin,
+  hardBreak,
+  heading as headingInvisible,
+  paragraph as paragraphInvisible,
+} from '@lblod/ember-rdfa-editor/plugins/invisibles';
+import {
+  link,
+  linkPasteHandler,
+  linkView,
+} from '@lblod/ember-rdfa-editor/plugins/link';
+import {
+  bulletListWithConfig,
+  listItemWithConfig,
+  orderedListWithConfig,
+} from '@lblod/ember-rdfa-editor/plugins/list';
+import {
+  bullet_list_input_rule,
+  ordered_list_input_rule,
+} from '@lblod/ember-rdfa-editor/plugins/list/input_rules';
+import { placeholder } from '@lblod/ember-rdfa-editor/plugins/placeholder';
+import {
+  tableKeymap,
+  tableNodes,
+  tablePlugins,
+} from '@lblod/ember-rdfa-editor/plugins/table';
+import {
+  em,
+  strikethrough,
+  strong,
+  subscript,
+  superscript,
+  underline,
+} from '@lblod/ember-rdfa-editor/plugins/text-style/index';
+import { Schema } from '@lblod/ember-rdfa-editor';
+import { tracked } from 'tracked-built-ins';
+import {
+  card,
+  cardView,
+  counter,
+  counterView,
+  dropdown,
+  dropdownView,
+} from '../dummy-nodes';
+import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { getOwner } from '@ember/owner';
+import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import {
+  sample_block,
+  sampleBlockView,
+} from 'test-app/dummy-nodes/sample-block';
+import Component from '@glimmer/component';
+import DummyContainer from 'test-app/components/dummy-container';
+import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
+import { hash } from '@ember/helper';
+import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
+import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
+import sampleEditorTabs from 'test-app/config/sample-editor-tabs';
+import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
+import Editor from '@lblod/ember-rdfa-editor/components/editor';
+import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
+import ContextualActionsContainer from '@lblod/ember-rdfa-editor/components/plugins/contextual-actions/container';
+import { getContextualGroups } from 'test-app/dummy-plugins/expose-contextual-actions';
+import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-commands/index';
+import { service } from '@ember/service';
+import type IntlService from 'ember-intl/services/intl';
+import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
+
+export default class extends Component {
+  @service declare intl: IntlService;
+
+  @tracked rdfaEditor?: SayController;
+
+  schema = new Schema({
+    nodes: {
+      doc: docWithConfig({
+        defaultLanguage: 'nl-BE',
+      }),
+      paragraph,
+
+      repaired_block: repairedBlockWithConfig(),
+
+      list_item: listItemWithConfig(),
+      ordered_list: orderedListWithConfig(),
+      bullet_list: bulletListWithConfig(),
+      placeholder,
+      ...tableNodes({
+        tableGroup: 'block',
+        cellContent: 'block+',
+        inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
+      }),
+      heading,
+      blockquote,
+
+      horizontal_rule,
+      code_block,
+
+      text,
+
+      image,
+
+      hard_break,
+      invisible_rdfa: invisibleRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig(),
+      card,
+      counter,
+      dropdown,
+      sample_block,
+      link: link(this.linkOptions),
+    },
+    marks: {
+      inline_rdfa,
+      code,
+      em,
+      strong,
+      underline,
+      strikethrough,
+      subscript,
+      superscript,
+      highlight,
+      color,
+    },
+  });
+
+  get linkOptions() {
+    return {
+      interactive: true,
+    };
+  }
+
+  @tracked nodeViews: (
+    proseController: SayController,
+  ) => Record<string, NodeViewConstructor> = (proseController) => {
+    return {
+      card: cardView(proseController),
+      counter: counterView(proseController),
+      dropdown: dropdownView(proseController),
+      link: linkView(this.linkOptions)(proseController),
+      image: imageView(proseController),
+      sample_block: sampleBlockView(proseController),
+    };
+  };
+
+  contextualGroupGetters = [getContextualGroups];
+
+  get plugins() {
+    return [
+      firefoxCursorFix(),
+      chromeHacksPlugin(),
+      ...tablePlugins,
+      tableKeymap,
+      linkPasteHandler(this.schema.nodes.link),
+      createInvisiblesPlugin(
+        [hardBreak, paragraphInvisible, headingInvisible],
+        {
+          shouldShowInvisibles: false,
+        },
+      ),
+      inputRules({
+        rules: [
+          bullet_list_input_rule(this.schema.nodes.bullet_list),
+          ordered_list_input_rule(this.schema.nodes.ordered_list),
+          link_input_rule({ nodeType: this.schema.nodes.link }),
+        ],
+      }),
+      emberApplication({ application: unwrap(getOwner(this)) }),
+      slashCommandsPlugin({
+        intl: this.intl,
+        getGroups: this.contextualGroupGetters,
+      }),
+    ];
+  }
+
+  @action
+  rdfaEditorInit(rdfaEditor: SayController) {
+    const presetContent = localStorage.getItem('EDITOR_CONTENT') ?? '';
+    this.rdfaEditor = rdfaEditor;
+    this.rdfaEditor.initialize(presetContent, { doNotClean: true });
+    const editorDone = new CustomEvent('editor-done');
+    window.dispatchEvent(editorDone);
+  }
+
+  @action
+  togglePlugin() {
+    console.warn('Live toggling plugins is currently not supported');
+  }
+
+  <template>
+    <DummyContainer>
+      <:header>
+        <DebugTools @controller={{this.rdfaEditor}} />
+      </:header>
+      <:content>
+        <EditorContainer
+          @controller={{this.rdfaEditor}}
+          @editorOptions={{hash showPaper=true}}
+          @useNewLayout={{true}}
+        >
+          <:toolbar as |container|>
+            <SampleToolbarResponsive @controller={{container.controller}} />
+          </:toolbar>
+          <:default>
+            <Editor
+              @plugins={{this.plugins}}
+              @schema={{this.schema}}
+              @nodeViews={{this.nodeViews}}
+              @rdfaEditorInit={{this.rdfaEditorInit}}
+            />
+
+            {{#if this.rdfaEditor}}
+              <ContextualActionsContainer
+                @controller={{this.rdfaEditor}}
+                @getGroups={{this.contextualGroupGetters}}
+              />
+              <TableTooltip @controller={{this.rdfaEditor}} />
+            {{/if}}
+          </:default>
+          <:sidebarRight as |container|>
+            <Sidebar
+              @controller={{container.controller}}
+              @tabs={{sampleEditorTabs}}
+              @placement="right"
+              @useNew={{true}}
+            />
+          </:sidebarRight>
+        </EditorContainer>
+      </:content>
+    </DummyContainer>
+  </template>
+}

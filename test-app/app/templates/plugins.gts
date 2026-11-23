@@ -68,6 +68,7 @@ import {
 import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
+import { modifier } from 'ember-modifier';
 import {
   sample_block,
   sampleBlockView,
@@ -77,8 +78,7 @@ import DummyContainer from 'test-app/components/dummy-container';
 import EditorContainer from '@lblod/ember-rdfa-editor/components/editor-container';
 import { hash } from '@ember/helper';
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
-import Sidebar from '@lblod/ember-rdfa-editor/components/sidebar';
-import sampleEditorTabs from 'test-app/config/sample-editor-tabs';
+import Sidebar from 'test-app/components/sample-ember-nodes/sidebar';
 import DebugTools from '@lblod/ember-rdfa-editor/components/debug-tools';
 import Editor from '@lblod/ember-rdfa-editor/components/editor';
 import { link_input_rule } from '@lblod/ember-rdfa-editor/plugins/link/input-rule';
@@ -89,8 +89,30 @@ import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 
+const DEFAULT_SIDEBAR_EXPANDED = true;
+const SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY = 'editor-sidebar-expanded';
+
 export default class extends Component {
   @service declare intl: IntlService;
+  @tracked sidebarExpanded: boolean = DEFAULT_SIDEBAR_EXPANDED;
+
+  loadConfig = modifier(() => {
+    const sidebarExpandedStr = localStorage.getItem(
+      SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY,
+    );
+    if (sidebarExpandedStr) {
+      this.sidebarExpanded = JSON.parse(sidebarExpandedStr) as boolean;
+    }
+  });
+
+  @action
+  onSidebarToggle(expanded: boolean) {
+    this.sidebarExpanded = expanded;
+    localStorage.setItem(
+      SIDEBAR_EXPANDED_LOCAL_STORAGE_KEY,
+      JSON.stringify(expanded),
+    );
+  }
 
   @tracked rdfaEditor?: SayController;
 
@@ -209,7 +231,7 @@ export default class extends Component {
   }
 
   <template>
-    <DummyContainer>
+    <DummyContainer {{this.loadConfig}}>
       <:header>
         <DebugTools @controller={{this.rdfaEditor}} />
       </:header>
@@ -217,7 +239,6 @@ export default class extends Component {
         <EditorContainer
           @controller={{this.rdfaEditor}}
           @editorOptions={{hash showPaper=true}}
-          @useNewLayout={{true}}
         >
           <:toolbar as |container|>
             <SampleToolbarResponsive @controller={{container.controller}} />
@@ -240,10 +261,9 @@ export default class extends Component {
           </:default>
           <:sidebarRight as |container|>
             <Sidebar
+              @expanded={{this.sidebarExpanded}}
+              @onToggle={{this.onSidebarToggle}}
               @controller={{container.controller}}
-              @tabs={{sampleEditorTabs}}
-              @placement="right"
-              @useNew={{true}}
             />
           </:sidebarRight>
         </EditorContainer>
