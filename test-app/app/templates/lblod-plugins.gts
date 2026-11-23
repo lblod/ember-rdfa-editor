@@ -166,6 +166,7 @@ import type { StructurePluginOptions } from '@lblod/ember-rdfa-editor-lblod-plug
 import RoadsignRegulationCard from '@lblod/say-roadsign-regulation-plugin/components/roadsign-regulation-card';
 import { roadsign_regulation } from '@lblod/say-roadsign-regulation-plugin/plugin/nodes';
 import type { RoadsignRegulationPluginOptions } from '@lblod/say-roadsign-regulation-plugin/plugin/types';
+import type { Variable } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable';
 import ArDesignSidebarWidget from '@lblod/say-ar-design-plugin/components/sidebar-widget';
 
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
@@ -933,6 +934,67 @@ export default class LblodPluginsTemplate extends Component {
         'test-ar-design': Promise.resolve(1),
       },
     });
+  instructionVariableQuery = (uri: string): Promise<Variable[]> => {
+    if (!uri) {
+      return Promise.resolve([]);
+    }
+    return Promise.resolve([
+      {
+        uri: 'http://data.lblod.info/mappings/61AE360CBF5C750009000055',
+        label: 'categorie_voertuig',
+        type: 'text',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/61AE3580BF5C750009000054',
+        label: 'categorie_voertuig',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/61AE3534BF5C750009000050',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/61AE3772BF5C750009000056',
+        label: 'categorie_voertuig',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/61AE3534BF5C750009000050',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/61AE3A86BF5C75000900005B',
+        label: 'maximumduur_betalend_parkeren',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/98ce0acb-a92d-4641-860e-d7f581810686',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/65C258C1F87130BD276778A9',
+        label: 'tijdsvenster',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/1a6fa842-0b50-4d41-9922-934cef57ed26',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/61AE3772BF5C750009000057',
+        label: 'tijdsvenster',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/1a6fa842-0b50-4d41-9922-934cef57ed26',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/61AE3AE0BF5C75000900005D',
+        label: 'type_parkeerkaart',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/cfde5b00-332a-4e0f-8791-413a40cec703',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+    ]);
+  };
   getState = (html: string) => {
     const schema = this.schema;
     const plugins =
@@ -1059,6 +1121,7 @@ export default class LblodPluginsTemplate extends Component {
                   <ArDesignSidebarWidget
                     @controller={{container.controller}}
                     @designQuery={{this.arDesignTest}}
+                    @instructionVariableQuery={{this.instructionVariableQuery}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
                     @regulatoryStatementMode={{true}}
                   />

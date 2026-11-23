@@ -13,12 +13,14 @@ import type {
   ArDesignQuery,
   ArticlePosition,
   ProcessDocumentHeadlessly,
+  InstructionVariableQuery
 } from '#root/plugin/types.ts';
 
 export type ArDesignSidebarWidgetSig = {
   Args: {
     controller: SayController;
     designQuery: ArDesignQuery;
+    instructionVariableQuery: InstructionVariableQuery
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
     /** Instead of finding a decision node in the document, pass the relevant URI and type */
     decisionContext?: {
@@ -80,6 +82,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
           @processDocumentHeadlessly={{@processDocumentHeadlessly}}
           @decisionContext={{@decisionContext}}
           @regulatoryStatementMode={{@regulatoryStatementMode}}
+          @instructionVariableQuery={{@instructionVariableQuery}}
         />
       </modal.Body>
     </AuModal>

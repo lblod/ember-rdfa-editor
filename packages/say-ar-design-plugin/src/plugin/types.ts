@@ -3,8 +3,9 @@ import type { TransactionCombinatorResult } from '@lblod/ember-rdfa-editor/utils
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import type { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
+import type { Variable } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable';
 import { tracked } from '@glimmer/tracking';
-import  type Instruction  from '#root/plugin/models/instruction.ts';
+import type Instruction from '#root/plugin/models/instruction.ts';
 
 export type ArticlePosition = { node: PNode; pos: number };
 
@@ -38,6 +39,8 @@ export type DesignInfo = {
 };
 
 export type ArDesignQuery = (pagination: Pagination) => Promise<DesignInfo>;
+
+export type InstructionVariableQuery = (uri: string) => Promise<Variable[]>;
 
 export type ProcessDocumentHeadlessly = (
   html: string,

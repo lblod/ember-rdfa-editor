@@ -1,12 +1,9 @@
 import Component from '@glimmer/component';
-import { service } from '@ember/service';
 import { tracked } from 'tracked-built-ins';
-import { restartableTask, task, timeout } from 'ember-concurrency';
+import { restartableTask, timeout } from 'ember-concurrency';
 import type { SayController } from '@lblod/ember-rdfa-editor';
 
 import type ArDesign from '#root/plugin/models/ar-design.ts';
-import type ArImporterService from '#root/services/ar-importer.ts';
-import type { GenerateImportResult } from '#root/services/ar-importer.ts';
 import InsertStep from '#root/components/insert-step.gts';
 import ArDesignOverview from '#root/components/overview.gts';
 import { trackedTask } from 'reactiveweb/ember-concurrency';
@@ -15,9 +12,9 @@ import type {
   ArDesignQuery,
   ArticlePosition,
   DesignInfo,
+  InstructionVariableQuery,
   ProcessDocumentHeadlessly,
 } from '#root/plugin/types.ts';
-import type { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 
 const FILTER_TIMEOUT_MS = 300;
 
@@ -28,6 +25,7 @@ type Sig = {
     articles: ArticlePosition[];
     designQuery: ArDesignQuery;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    instructionVariableQuery: InstructionVariableQuery;
     decisionContext?: {
       decisionUri: string;
       decisionType?: string;
@@ -37,8 +35,6 @@ type Sig = {
 };
 
 export default class ArWidgetContents extends Component<Sig> {
-  @service declare arImporter: ArImporterService;
-
   @tracked selectedDesign?: ArDesign | null;
 
   @tracked pageNumber: number = 0;
@@ -94,41 +90,17 @@ export default class ArWidgetContents extends Component<Sig> {
     this.selectedDesign = null;
   };
 
-  doInsert = (monads: GenerateImportResult['result']) => {
-    const isSuccess = this.arImporter.insertAr(this.args.controller, monads);
-    if (isSuccess) {
-      this.args.onInsert?.();
-    }
-  };
-
-  insertAr = task(
-    async (
-      design: ArDesign,
-      insertPos: ArticleInsertPosition,
-      skipWarnings?: boolean,
-    ) => {
-      const monadsResult = await this.arImporter.generateInsertionMonads(
-        design,
-        insertPos,
-        this.args.controller,
-        this.args.decisionContext?.decisionUri,
-        this.args.regulatoryStatementMode,
-      );
-      if (skipWarnings || monadsResult.warnings.length === 0) {
-        this.doInsert(monadsResult.result);
-      }
-    },
-  );
-
   <template>
     {{#if this.selectedDesign}}
       <InsertStep
         @arDesign={{this.selectedDesign}}
         @onReturnToOverview={{this.returnToOverview}}
-        @onInsertAr={{this.insertAr.perform}}
-        @insertLoading={{this.insertAr.isRunning}}
+        @controller={{@controller}}
+        @onInsert={{@onInsert}}
         @articles={{@articles}}
         @processDocumentHeadlessly={{@processDocumentHeadlessly}}
+        @decisionContext={{@decisionContext}}
+        @instructionVariableQuery={{@instructionVariableQuery}}
         @regulatoryStatementMode={{@regulatoryStatementMode}}
       />
     {{else}}

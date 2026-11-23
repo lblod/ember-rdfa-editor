@@ -18,6 +18,7 @@ import insertMeasure, {
 import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
 import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
+import type { Variable } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable';
 import { TrafficSignalConceptSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/traffic-signal-concept';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import type TrafficSignal from '#root/plugin/models/traffic-signal.ts';
@@ -26,6 +27,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TRAFFIC_SIGNAL_EXISTING_STATUSES } from '#root/plugin/constants.ts';
 import { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
+import type { InstructionVariableQuery } from '#root/plugin/types.ts';
 
 export type ImportResult<R> = {
   result: R;
@@ -33,9 +35,13 @@ export type ImportResult<R> = {
 };
 export type GenerateImportResult = ImportResult<TransactionMonad<boolean>[]>;
 
-function convertVariableInstances(variableInstances: VariableInstance[]) {
-  return Object.fromEntries(
-    variableInstances.map((varInstance) => {
+function parseVariables(
+  instructionVariables: Variable[],
+  templateString: string,
+  designVariableInstances: VariableInstance[],
+) {
+  const variables = Object.fromEntries(
+    designVariableInstances.map((varInstance) => {
       const variableInstance = VariableInstanceSchema.parse({
         uri: varInstance.uri,
         value: varInstance.value,
@@ -55,44 +61,50 @@ function convertVariableInstances(variableInstances: VariableInstance[]) {
       return [varInstance.variable.label, variableInstanceWithRdfaId];
     }),
   );
-}
-
-function addMissingLocationVariables(
-  variables: ReturnType<typeof convertVariableInstances>,
-  templateString: string,
-  designVariableInstances: VariableInstance[],
-) {
   const locationVariableInstance = designVariableInstances.find(
     (varInstance) => varInstance.variable.type === 'location',
   );
+  // What should be the default source of location variables?
   const source = locationVariableInstance?.variable.source ?? '';
+  const locationVariables: Variable[] = [];
   for (const match of templateString.matchAll(/\$\{(locatie\d*)\}/g)) {
-    const label = match[1];
-    if (!variables[label]) {
-      const variableInstance = VariableInstanceSchema.parse({
-        uri: generateVariableInstanceUri(),
-        variable: {
-          uri: `http://data.lblod.info/variable/${uuidv4()}`,
-          label,
-          type: 'location',
-          source,
-        },
-      });
-      variables[label] = {
-        ...variableInstance,
-        __rdfaId: uuidv4(),
-      };
+    locationVariables.push({
+      uri: `http://data.lblod.info/variable/${uuidv4()}`,
+      label: match[1],
+      type: 'location',
+      source,
+    });
+  }
+  const allVariables = [...instructionVariables, ...locationVariables];
+  for (const variable of allVariables) {
+    if (variable.type === 'instruction' || variables[variable.label]) {
+      continue;
     }
+    const variableInstance = VariableInstanceSchema.parse({
+      uri: generateVariableInstanceUri(),
+      variable: {
+        source: variable.source,
+        uri: variable.uri,
+        type: variable.type,
+        label: variable.label,
+        codelistUri:
+          variable.type === 'codelist' ? variable.codelistUri : undefined,
+      },
+    });
+    variables[variable.label] = {
+      ...variableInstance,
+      __rdfaId: uuidv4(),
+    };
   }
 }
 
 function convertSignals(signals: TrafficSignal[]) {
   const concepts = signals.map((s) => s.trafficSignalConcept);
-  const conceptssWithoutZSign = concepts.filter(
+  const conceptsWithoutZSign = concepts.filter(
     (concept) => concept.code !== 'Z',
   );
   const dedupedConcepts: typeof concepts = [];
-  for (const concept of conceptssWithoutZSign) {
+  for (const concept of conceptsWithoutZSign) {
     if (!dedupedConcepts.find((c) => c.code === concept.code)) {
       dedupedConcepts.push(concept);
     }
@@ -144,6 +156,7 @@ export default class ArImporterService extends Service {
     decisionUriOverride?: string,
     regulatoryStatementMode?: boolean,
     measureTemplates?: string[],
+    instructionVariableQuery?: InstructionVariableQuery,
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
@@ -189,108 +202,131 @@ export default class ArImporterService extends Service {
         insertPositionArgs.position === undefined;
       //TODO: Add comment to explain the reverse
       const monads = (
-        appendsToEnd ? measureDesigns : [...measureDesigns].reverse()
-      ).flatMap((measureDesign, index, array) => {
-        const {
-          measureConcept,
-          trafficSignals,
-          variableInstances,
-          unusedSignalConcepts,
-          unIncludedSignalConcepts,
-        } = measureDesign;
-        warnings.push(
-          ...unusedSignalConcepts.map((unused) =>
-            this.intl.t('ar-importer.message.warning-unused-signal-concept', {
-              measure: measureConcept.label,
-              signal: unused.code,
-            }),
-          ),
-        );
-        warnings.push(
-          ...unIncludedSignalConcepts.map((unIncluded) =>
-            this.intl.t(
-              'ar-importer.message.warning-un-included-signal-concept',
-              {
-                measure: measureConcept.label,
-                signal: unIncluded.code,
-              },
-            ),
-          ),
-        );
-        const filteredAndDeduplicatedConcepts = convertSignals(trafficSignals);
-        const convertedVariableInstances =
-          convertVariableInstances(variableInstances);
-        // TODO: Add comment to explain
-        const templateIndex = appendsToEnd
-          ? index
-          : measureDesigns.length - 1 - index;
-        const templateString = measureTemplates?.[templateIndex] ?? '';
-        // TODO: Add comment to explain
-        if (controller) {
-          addMissingLocationVariables(
-            convertedVariableInstances,
-            templateString,
-            variableInstances,
-          );
-        }
-        const isZonal = Boolean(
-          trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
-        );
-        const zonality = isZonal
-          ? ZONALITY_OPTIONS.ZONAL
-          : ZONALITY_OPTIONS.NON_ZONAL;
-        const onlyExistingSignals = measureDesign.trafficSignals.every(
-          (signal) =>
-            signal.designStatus &&
-            TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
-        );
-        const isLastMeasureInserted = index === array.length - 1;
-        return [
-          ...(!controller && onlyExistingSignals
-            ? [
-                (state: EditorState) => {
-                  const commentText = state.schema.text(
-                    this.intl.t('ar-importer.preview.only-existing'),
-                  );
-                  const cn =
-                    state.schema.nodes['templateComment']?.create(
-                      {},
-                      commentText,
-                    ) ?? commentText;
-                  return {
-                    initialState: state,
-                    transaction: state.tr.insert(state.selection.to + 1, cn),
-                    result: true,
-                  };
-                },
-              ]
-            : []),
-          insertMeasure({
-            arDesignUri: design.uri,
-            measureDesign: {
-              uri: measureDesign.uri,
-              measureConcept: {
-                uri: measureConcept.uri,
-                label: `${measureConcept.label}${onlyExistingSignals ? ` (${this.intl.t('ar-importer.preview.only-existing-label')})` : ''}`,
-                preview: templateString,
-                zonality,
-                variableSignage: false,
-                trafficSignalConcepts: filteredAndDeduplicatedConcepts,
-              },
-              trafficSignals: filteredAndDeduplicatedConcepts,
+        await Promise.all(
+          (appendsToEnd ? measureDesigns : [...measureDesigns].reverse()).map(
+            async (measureDesign, index, array) => {
+              const {
+                measureConcept,
+                trafficSignals,
+                variableInstances,
+                unusedSignalConcepts,
+                unIncludedSignalConcepts,
+              } = measureDesign;
+              warnings.push(
+                ...unusedSignalConcepts.map((unused) =>
+                  this.intl.t(
+                    'ar-importer.message.warning-unused-signal-concept',
+                    {
+                      measure: measureConcept.label,
+                      signal: unused.code,
+                    },
+                  ),
+                ),
+              );
+              warnings.push(
+                ...unIncludedSignalConcepts.map((unIncluded) =>
+                  this.intl.t(
+                    'ar-importer.message.warning-un-included-signal-concept',
+                    {
+                      measure: measureConcept.label,
+                      signal: unIncluded.code,
+                    },
+                  ),
+                ),
+              );
+              const filteredAndDeduplicatedConcepts =
+                convertSignals(trafficSignals);
+              let convertedVariableInstances = []
+              // TODO: Add comment to explain
+              const templateIndex = appendsToEnd
+                ? index
+                : measureDesigns.length - 1 - index;
+              const templateString = measureTemplates?.[templateIndex] ?? '';
+              // If we have controller we are in insert mode, so we should query and replace all variables
+              if (controller) {
+                const instructionVariables: Variable[] = (
+                  await Promise.all(
+                    trafficSignals.flatMap((signal) =>
+                      signal.trafficSignalConcept.instructions.map(
+                        (instruction) =>
+                          instructionVariableQuery?.(instruction.uri) ??
+                          Promise.resolve([]),
+                      ),
+                    ),
+                  )
+                ).flat();
+                convertedVariableInstances = parseVariables(
+                  instructionVariables,
+                  templateString,
+                  variableInstances,
+                );
+              }
+              const isZonal = Boolean(
+                trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
+              );
+              const zonality = isZonal
+                ? ZONALITY_OPTIONS.ZONAL
+                : ZONALITY_OPTIONS.NON_ZONAL;
+              const onlyExistingSignals = measureDesign.trafficSignals.every(
+                (signal) =>
+                  signal.designStatus &&
+                  TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(
+                    signal.designStatus,
+                  ),
+              );
+              const isLastMeasureInserted = index === array.length - 1;
+              return [
+                ...(!controller && onlyExistingSignals
+                  ? [
+                      (state: EditorState) => {
+                        const commentText = state.schema.text(
+                          this.intl.t('ar-importer.preview.only-existing'),
+                        );
+                        const cn =
+                          state.schema.nodes['templateComment']?.create(
+                            {},
+                            commentText,
+                          ) ?? commentText;
+                        return {
+                          initialState: state,
+                          transaction: state.tr.insert(
+                            state.selection.to + 1,
+                            cn,
+                          ),
+                          result: true,
+                        };
+                      },
+                    ]
+                  : []),
+                insertMeasure({
+                  arDesignUri: design.uri,
+                  measureDesign: {
+                    uri: measureDesign.uri,
+                    measureConcept: {
+                      uri: measureConcept.uri,
+                      label: `${measureConcept.label}${onlyExistingSignals ? ` (${this.intl.t('ar-importer.preview.only-existing-label')})` : ''}`,
+                      preview: templateString,
+                      zonality,
+                      variableSignage: false,
+                      trafficSignalConcepts: filteredAndDeduplicatedConcepts,
+                    },
+                    trafficSignals: filteredAndDeduplicatedConcepts,
+                  },
+                  zonality,
+                  temporal: false,
+                  variables: convertedVariableInstances,
+                  templateString,
+                  ...insertPositionArgs,
+                  articleUriGenerator: () =>
+                    `http://data.lblod.info/artikels/${uuidv4()}`,
+                  multipleInsertion: !isLastMeasureInserted,
+                  regulatoryStatementMode,
+                }),
+              ];
             },
-            zonality,
-            temporal: false,
-            variables: convertedVariableInstances,
-            templateString,
-            ...insertPositionArgs,
-            articleUriGenerator: () =>
-              `http://data.lblod.info/artikels/${uuidv4()}`,
-            multipleInsertion: !isLastMeasureInserted,
-            regulatoryStatementMode,
-          }),
-        ];
-      });
+          ),
+        )
+      ).flat();
 
       return {
         result: monads,

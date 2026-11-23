@@ -3,19 +3,23 @@ import { service } from '@ember/service';
 import { cached, tracked } from '@glimmer/tracking';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
-import { trackedFunction } from 'reactiveweb/function';
+import { task } from 'ember-concurrency';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import generateDesignSignTree from '#root/plugin/utils/generate-design-sign-tree.ts';
 import generateMeasureTemplate from '#root/plugin/utils/generate-measure-template.ts';
 import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
+import type { SayController } from '@lblod/ember-rdfa-editor';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
 import type ArImporterService from '#root/services/ar-importer.ts';
+import type { GenerateImportResult } from '#root/services/ar-importer.ts';
 import InsertControls, {
   type ArInsertControlArgs,
 } from '#root/components/insert-controls.gts';
 import type {
   InsertPositionOption,
+  InstructionVariableQuery,
   ProcessDocumentHeadlessly,
 } from '#root/plugin/types.ts';
 import InsertStepSidebar from '#root/components/insert-step-sidebar.gts';
@@ -28,9 +32,19 @@ import {
 } from '#root/plugin/utils/article-insert-position.ts';
 
 type ArPreviewSignature = {
-  Args: Omit<ArInsertControlArgs, 'insertPosition'> & {
+  Args: Omit<
+    ArInsertControlArgs,
+    'insertPosition' | 'onInsertAr' | 'insertLoading'
+  > & {
     onReturnToOverview: () => unknown;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
+    controller: SayController;
+    onInsert?: () => void;
+    decisionContext?: {
+      decisionUri: string;
+      decisionType?: string;
+    };
+    instructionVariableQuery: InstructionVariableQuery;
     regulatoryStatementMode?: boolean;
   };
   Element: HTMLDivElement;
@@ -111,21 +125,37 @@ export default class InsertStep extends Component<ArPreviewSignature> {
     this._insertPosition = val;
   };
 
-  preview = trackedFunction(this, async () => {
-    try {
-      return this.arImporter.generatePreview(
-        this.args.arDesign,
-        this.args.processDocumentHeadlessly,
-      );
-    } catch (e) {
-      console.error('Error generating preview', e);
-      throw e;
-    }
-  });
-
   returnToOverview = () => {
     this.args.onReturnToOverview();
   };
+
+  doInsert = (monads: GenerateImportResult['result']) => {
+    const isSuccess = this.arImporter.insertAr(this.args.controller, monads);
+    if (isSuccess) {
+      this.args.onInsert?.();
+    }
+  };
+
+  insertAr = task(
+    async (
+      design: ArDesign,
+      insertPos: ArticleInsertPosition,
+      skipWarnings?: boolean,
+    ) => {
+      const monadsResult = await this.arImporter.generateInsertionMonads(
+        design,
+        insertPos,
+        this.args.controller,
+        this.args.decisionContext?.decisionUri,
+        this.args.regulatoryStatementMode,
+        this.measureTemplates,
+        this.args.instructionVariableQuery,
+      );
+      if (skipWarnings || monadsResult.warnings.length === 0) {
+        this.doInsert(monadsResult.result);
+      }
+    },
+  );
 
   <template>
     <div class="ar-importer-preview" ...attributes>
@@ -158,8 +188,8 @@ export default class InsertStep extends Component<ArPreviewSignature> {
         <Group />
         <InsertControls
           @arDesign={{@arDesign}}
-          @onInsertAr={{@onInsertAr}}
-          @insertLoading={{@insertLoading}}
+          @onInsertAr={{this.insertAr.perform}}
+          @insertLoading={{this.insertAr.isRunning}}
           @articles={{@articles}}
           @regulatoryStatementMode={{@regulatoryStatementMode}}
           @insertPosition={{this.insertPosition.value}}
