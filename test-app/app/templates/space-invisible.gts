@@ -187,10 +187,7 @@ export default class extends Component {
         <DebugTools @controller={{this.rdfaEditor}} />
       </:header>
       <:content>
-        <EditorContainer
-          @controller={{this.rdfaEditor}}
-          @editorOptions={{hash showPaper=true}}
-        >
+        <EditorContainer @editorOptions={{hash showPaper=true}}>
           <:top>
             {{#if this.rdfaEditor}}
               <SampleToolbarResponsive @controller={{this.rdfaEditor}} />
@@ -204,11 +201,11 @@ export default class extends Component {
               @rdfaEditorInit={{this.rdfaEditorInit}}
             />
           </:default>
-          <:sidebarRight as |container|>
+          <:aside>
             <Sidebar>
-              <LinkSidebarWidget @controller={{container.controller}} />
+              <LinkSidebarWidget @controller={{this.rdfaEditor}} />
             </Sidebar>
-          </:sidebarRight>
+          </:aside>
         </EditorContainer>
       </:content>
     </DummyContainer>
