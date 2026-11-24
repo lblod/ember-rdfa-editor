@@ -4,7 +4,7 @@ import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
 import type { TOC } from '@ember/component/template-only';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import t from 'ember-intl/helpers/t';
-import type { ArInsertFunc, ArticlePosition } from '#root/plugin/types.ts';
+import type { ArInsertFunc } from '#root/plugin/types.ts';
 import { ArticleInsertPosition } from '#root/plugin/utils/article-insert-position.ts';
 import { not } from 'ember-truth-helpers';
 
@@ -21,7 +21,7 @@ const InsertButton: TOC<{
     @loading={{@insertLoading}}
     @loadingMessage={{t "application.loading"}}
     @disabled={{not @insertEnabled}}
-    {{on "click" (fn @onInsertAr @arDesign @insertPosition true)}}
+    {{on "click" (fn @onInsertAr @arDesign @insertPosition)}}
   >{{t "ar-importer.controls.insert"}}</AuButton>
 </template>;
 
@@ -29,8 +29,6 @@ export interface ArInsertControlArgs {
   arDesign: ArDesign;
   onInsertAr: ArInsertFunc;
   insertLoading?: boolean;
-  articles: ArticlePosition[];
-  regulatoryStatementMode?: boolean;
   insertPosition: ArticleInsertPosition | false;
   closeModal: () => void;
   insertEnabled: boolean;

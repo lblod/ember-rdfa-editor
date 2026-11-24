@@ -17,7 +17,6 @@ export type InsertPositionOption = {
 export type ArInsertFunc = (
   arDesign: ArDesign,
   insertPosition: ArticleInsertPosition | false,
-  skipWarnings?: boolean,
 ) => void;
 
 export type ArDesignOverviewSortField = 'name' | '-name' | 'date' | '-date';

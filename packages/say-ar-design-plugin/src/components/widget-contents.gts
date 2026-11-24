@@ -23,7 +23,6 @@ type Sig = {
     designQuery: ArDesignQuery;
     onSelectDesign: (design: ArDesign) => void;
     selectedDesign?: ArDesign | null;
-    onReturnToOverview: () => void;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
     measureDesigns: State<{ signs: MainSignWithInstruction[] }[]>;
     measureTemplates?: string[];
@@ -83,7 +82,6 @@ export default class ArWidgetContents extends Component<Sig> {
     {{#if @selectedDesign}}
       <InsertStep
         @arDesign={{@selectedDesign}}
-        @onReturnToOverview={{@onReturnToOverview}}
         @processDocumentHeadlessly={{@processDocumentHeadlessly}}
         @measureDesigns={{@measureDesigns}}
         @measureTemplates={{@measureTemplates}}

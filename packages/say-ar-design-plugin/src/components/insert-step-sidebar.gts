@@ -32,7 +32,7 @@ export default class InsertStepSidebar extends Component<ArPreviewSignature> {
     {{#if @measureDesigns.resolved}}
       {{#each @measureDesigns.resolved as |design index|}}
         <AuHeading @level="4" @skin="4">
-          Artikel
+          {{t "ar-importer.insert.article"}}
           {{generateArticleNumber index}}
           .
         </AuHeading>
@@ -42,16 +42,14 @@ export default class InsertStepSidebar extends Component<ArPreviewSignature> {
         {{#each (flattenAndSortSigns design.signs) as |signWithInstruction|}}
           <div class="au-u-margin-bottom">
             <AuHeading @skin="6" @level="3">
-              {{t "editor-plugins.roadsign-regulation.insert.instruction"}}
+              {{t "ar-importer.insert.instruction"}}
               {{signWithInstruction.sign.code}}
             </AuHeading>
             <PowerSelect
               @onChange={{fn this.selectInstruction signWithInstruction}}
               @selected={{signWithInstruction.selectedInstruction}}
               @options={{signWithInstruction.sign.instructions}}
-              @placeholder={{t
-                "editor-plugins.roadsign-regulation.insert.instruction-placeholder"
-              }}
+              @placeholder={{t "ar-importer.insert.instruction-placeholder"}}
               as |option|
             >{{option.preview}}</PowerSelect>
           </div>

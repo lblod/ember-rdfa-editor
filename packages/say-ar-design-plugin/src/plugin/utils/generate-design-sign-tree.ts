@@ -27,7 +27,7 @@ function generateMeasureSignTree(measure: MeasureDesign) {
   const subSigns: TrafficSignal[] = [];
   for (const signal of trafficSignConcepts) {
     const signalConcept = signal.trafficSignalConcept;
-    if (!signalConcept.uri) continue;
+    if (!signalConcept.uri || signalConcept.code === 'Z') continue;
     if (isSubSign(signalConcept)) {
       subSigns.push(signal);
     } else {

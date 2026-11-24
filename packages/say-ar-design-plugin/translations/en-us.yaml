@@ -34,7 +34,7 @@ ar-importer:
     go-back: Back to the overview list
     cancel: Cancel
   preview:
-    heading: Maatregelpreview
+    heading: AR preview
     return-to-overview: Return to overview
     only-existing-label: existing
     only-existing: This design only includes existing Traffic Signals.
@@ -46,3 +46,10 @@ ar-importer:
   insert:
     instructions-header: Signs and instructions
     content-header: Add 'AR'-design
+    instruction: Instruction
+    instruction-placeholder: Select instruction
+    article: Article
+traffic-measure-concept:
+  main-sign: Main sign
+  road-marking: Road marking
+  traffic-light: Traffic light

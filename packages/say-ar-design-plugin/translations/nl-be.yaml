@@ -34,7 +34,7 @@ ar-importer:
     go-back: Terug naar overzichtslijst
     cancel: Annuleren
   preview:
-    heading: Maatregelpreview
+    heading: AR preview
     return-to-overview: Terug naar overzicht
     only-existing-label: bestaand
     only-existing: Dit maatregelontwerp bevat enkel reeds bestaande verkeerstekens.
@@ -46,3 +46,10 @@ ar-importer:
   insert:
     instructions-header: Tekens en instructies
     content-header: AR-ontwerp toevoegen
+    instruction: Instructie
+    instruction-placeholder: Selecteer instructie
+    article: Artikel
+traffic-measure-concept:
+  main-sign: Hoofdbord
+  road-marking: Wegmarkering
+  traffic-light: Verkeerslicht

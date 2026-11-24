@@ -17,7 +17,10 @@ import insertMeasure, {
 } from '@lblod/say-roadsign-regulation-plugin/plugin/actions/insert-measure';
 import { ZONALITY_OPTIONS } from '@lblod/say-roadsign-regulation-plugin/plugin/constants';
 import { getCurrentBesluitRange } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/decision-utils';
-import { VariableInstanceSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
+import {
+  VariableInstanceSchema,
+  type VariableInstance as SchemaVariableInstance,
+} from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable-instance';
 import type { Variable } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable';
 import { TrafficSignalConceptSchema } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/traffic-signal-concept';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
@@ -239,7 +242,7 @@ export default class ArImporterService extends Service {
               convertSignals(trafficSignals);
             let convertedVariableInstances: Record<
               string,
-              VariableInstance & { __rdfaId: string }
+              SchemaVariableInstance & { __rdfaId: string }
             > = {};
             const templateString = measureTemplates?.[index] ?? '';
             const selectedInstructionUris =

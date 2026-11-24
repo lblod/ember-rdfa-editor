@@ -201,11 +201,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
   };
 
   insertAr = task(
-    async (
-      design: ArDesign,
-      insertPos: ArticleInsertPosition,
-      skipWarnings?: boolean,
-    ) => {
+    async (design: ArDesign, insertPos: ArticleInsertPosition | false) => {
       const monadsResult = await this.arImporter.generateInsertionMonads(
         design,
         insertPos,
@@ -216,9 +212,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
         this.args.instructionVariableQuery,
         this.selectedInstructionUrisByMeasure,
       );
-      if (skipWarnings || monadsResult.warnings.length === 0) {
-        this.doInsert(monadsResult.result);
-      }
+      this.doInsert(monadsResult.result);
     },
   );
   returnToOverView() {
@@ -253,7 +247,6 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
           @designQuery={{@designQuery}}
           @onSelectDesign={{this.selectDesign}}
           @selectedDesign={{this.selectedDesign}}
-          @onReturnToOverview={{this.returnToOverview}}
           @processDocumentHeadlessly={{@processDocumentHeadlessly}}
           @measureDesigns={{this.measureDesigns}}
           @measureTemplates={{this.measureTemplates}}
@@ -274,8 +267,6 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
               @arDesign={{this.selectedDesign}}
               @onInsertAr={{this.insertAr.perform}}
               @insertLoading={{this.insertAr.isRunning}}
-              @articles={{this.articles}}
-              @regulatoryStatementMode={{@regulatoryStatementMode}}
               @insertPosition={{this.insertPosition.value}}
               @closeModal={{this.closeModal}}
               @insertEnabled={{this.allInstructionsSelected}}
