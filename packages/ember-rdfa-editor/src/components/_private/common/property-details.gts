@@ -86,9 +86,13 @@ export default class PropertyDetails extends Component<Sig> {
         class="au-u-padding-left-none au-u-padding-right-none"
         @icon={{ExternalLinkIcon}}
         @skin="link"
+        @wrap={{true}}
         title={{@prop.object.value}}
         {{on "click" (fn this.goToOutgoing @prop)}}
-      ><strong>value:</strong> {{@prop.object.value}}</AuButton>
+      ><strong>value:</strong>
+        <span
+          class="say-property-details__value-id"
+        >{{@prop.object.value}}</span></AuButton>
     {{else}}
       <p><strong>value:</strong> {{@prop.object.value}}</p>
     {{/if}}
