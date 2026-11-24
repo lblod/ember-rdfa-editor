@@ -31,6 +31,8 @@ ar-importer:
     after-article-x: After article {articleNumber}
     select-position: Choose insertion point
     on-cursor: On cursor
+    go-back: Back to the overview list
+    cancel: Cancel
   preview:
     heading: Maatregelpreview
     return-to-overview: Return to overview

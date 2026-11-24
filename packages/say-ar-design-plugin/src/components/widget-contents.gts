@@ -1,18 +1,18 @@
 import Component from '@glimmer/component';
 import { tracked } from 'tracked-built-ins';
 import { restartableTask, timeout } from 'ember-concurrency';
-import type { SayController } from '@lblod/ember-rdfa-editor';
 
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import InsertStep from '#root/components/insert-step.gts';
 import ArDesignOverview from '#root/components/overview.gts';
 import { trackedTask } from 'reactiveweb/ember-concurrency';
+import type { State } from 'reactiveweb/get-promise-state';
 import type {
   ArDesignOverviewSortField,
   ArDesignQuery,
-  ArticlePosition,
   DesignInfo,
-  InstructionVariableQuery,
+  InsertPositionOption,
+  MainSignWithInstruction,
   ProcessDocumentHeadlessly,
 } from '#root/plugin/types.ts';
 
@@ -20,23 +20,20 @@ const FILTER_TIMEOUT_MS = 300;
 
 type Sig = {
   Args: {
-    controller: SayController;
-    onInsert?: () => void;
-    articles: ArticlePosition[];
     designQuery: ArDesignQuery;
+    onSelectDesign: (design: ArDesign) => void;
+    selectedDesign?: ArDesign | null;
+    onReturnToOverview: () => void;
     processDocumentHeadlessly: ProcessDocumentHeadlessly;
-    instructionVariableQuery: InstructionVariableQuery;
-    decisionContext?: {
-      decisionUri: string;
-      decisionType?: string;
-    };
-    regulatoryStatementMode?: boolean;
+    measureDesigns: State<{ signs: MainSignWithInstruction[] }[]>;
+    measureTemplates?: string[];
+    options: InsertPositionOption[];
+    insertPosition: InsertPositionOption;
+    setInsertPosition: (val: InsertPositionOption | null) => void;
   };
 };
 
 export default class ArWidgetContents extends Component<Sig> {
-  @tracked selectedDesign?: ArDesign | null;
-
   @tracked pageNumber: number = 0;
   pageSize: number = 20;
   @tracked sort?: ArDesignOverviewSortField = 'date';
@@ -82,32 +79,23 @@ export default class ArWidgetContents extends Component<Sig> {
     this.pageNumber = pageNumber;
   };
 
-  selectDesign = (design: ArDesign) => {
-    this.selectedDesign = design;
-  };
-
-  returnToOverview = () => {
-    this.selectedDesign = null;
-  };
-
   <template>
-    {{#if this.selectedDesign}}
+    {{#if @selectedDesign}}
       <InsertStep
-        @arDesign={{this.selectedDesign}}
-        @onReturnToOverview={{this.returnToOverview}}
-        @controller={{@controller}}
-        @onInsert={{@onInsert}}
-        @articles={{@articles}}
+        @arDesign={{@selectedDesign}}
+        @onReturnToOverview={{@onReturnToOverview}}
         @processDocumentHeadlessly={{@processDocumentHeadlessly}}
-        @decisionContext={{@decisionContext}}
-        @instructionVariableQuery={{@instructionVariableQuery}}
-        @regulatoryStatementMode={{@regulatoryStatementMode}}
+        @measureDesigns={{@measureDesigns}}
+        @measureTemplates={{@measureTemplates}}
+        @options={{@options}}
+        @selected={{@insertPosition}}
+        @onChange={{@setInsertPosition}}
       />
     {{else}}
       <ArDesignOverview
         @arDesigns={{this.arDesigns.value}}
         @loading={{this.arDesigns.isRunning}}
-        @onShowPreview={{this.selectDesign}}
+        @onShowPreview={{@onSelectDesign}}
         @nameFilter={{this.nameFilter}}
         @setNameFilter={{this.setNameFilter}}
         @resetFilters={{this.resetFilters}}

@@ -31,6 +31,8 @@ ar-importer:
     after-article-x: Na artikel {articleNumber}
     select-position: Kies invoegpositie
     on-cursor: Bij de cursor
+    go-back: Terug naar overzichtslijst
+    cancel: Annuleren
   preview:
     heading: Maatregelpreview
     return-to-overview: Terug naar overzicht
