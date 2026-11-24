@@ -19,7 +19,7 @@ ar-importer:
         date: Last modified
         status: Usage status
       actions:
-        select: Select
+        select: Fill out and add
       statuses:
         used: Used
         unused: Not yet used
@@ -43,3 +43,6 @@ ar-importer:
     error-processing-design: Error when processing signage plan
     warning-unused-signal-concept: Measure {measure} includes the signal {signal} but it is not used in this design
     warning-un-included-signal-concept: Signal {signal} is not included in the measure {measure} but it is used in this design
+  insert:
+    instructions-header: Signs and instructions
+    content-header: Add 'AR'-design

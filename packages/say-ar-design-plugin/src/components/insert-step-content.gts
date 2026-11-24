@@ -51,6 +51,9 @@ export default class InsertStepContent extends Component<Sig> {
   });
 
   <template>
+    <AuHeading @level="3" @skin="4" class='au-u-margin-bottom-small'>
+      {{t "ar-importer.insert.content-header"}}
+     </AuHeading>
     <div class='ar-importer__insert-position-container au-u-margin-bottom'>
       <InsertPositionSelector
         @options={{@options}}

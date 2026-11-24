@@ -19,7 +19,7 @@ ar-importer:
         date: Laatste wijziging
         status: Gebruikstatus
       actions:
-        select: Selecteer
+        select: Invullen en toevoegen
       statuses:
         used: Gebruikt
         unused: Nog niet gebruikt
@@ -43,3 +43,6 @@ ar-importer:
     error-processing-design: Fout bij verwerken van het signalisatieplan
     warning-unused-signal-concept: De mobiliteitsmaatregel {measure} omvat het verkeersteken {signal}, maar dit ontwerp bevat dit verkeersteken niet
     warning-un-included-signal-concept: Verkeersteken {signal} is niet opgenomen in de mobiliteitsmaatregel {measure}, maar wordt wel gebruikt in dit ontwerp
+  insert:
+    instructions-header: Tekens en instructies
+    content-header: AR-ontwerp toevoegen

@@ -23,6 +23,9 @@ export default class InsertStepSidebar extends Component<ArPreviewSignature> {
   }
 
   <template>
+    <AuHeading @level="3" @skin="4" class='au-u-margin-bottom-small'>
+      {{t "ar-importer.insert.instructions-header"}}
+     </AuHeading>
     {{#if @measureDesigns.resolved}}
       {{#each @measureDesigns.resolved as |design index|}}
         <AuHeading @level="4" @skin="4">

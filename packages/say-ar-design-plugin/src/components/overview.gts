@@ -4,7 +4,7 @@ import type { AuMainContainerSignature } from '@appuniversum/ember-appuniversum/
 import ReactiveTable from '#root/components/reactive-table.gts';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { VisibleIcon } from '@appuniversum/ember-appuniversum/components/icons/visible';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -110,7 +110,8 @@ const ArDesignOverview: TOC<ArDesignOverviewSignature> = <template>
             <AuButtonGroup>
               <AuButton
                 @skin="link"
-                @icon={{VisibleIcon}}
+                @icon={{PencilIcon}}
+                @iconAlignment='right'
                 {{on "click" (fn @onShowPreview arDesign)}}
               >{{t "ar-importer.overview.table.actions.select"}}</AuButton>
             </AuButtonGroup>

@@ -1,9 +1,4 @@
 import Component from '@glimmer/component';
-import { on } from '@ember/modifier';
-import t from 'ember-intl/helpers/t';
-import AuToolbar from '@appuniversum/ember-appuniversum/components/au-toolbar';
-import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { ArrowLeftIcon } from '@appuniversum/ember-appuniversum/components/icons/arrow-left';
 import type { State } from 'reactiveweb/get-promise-state';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 import type {
@@ -35,15 +30,6 @@ export default class InsertStep extends Component<ArPreviewSignature> {
 
   <template>
     <div class="ar-importer-preview" ...attributes>
-      <AuToolbar @size="medium" as |Group|>
-        <Group>
-          <AuButton
-            @skin="link"
-            @icon={{ArrowLeftIcon}}
-            {{on "click" this.returnToOverview}}
-          >{{t "ar-importer.preview.return-to-overview"}}</AuButton>
-        </Group>
-      </AuToolbar>
       <div class="au-o-grid ar-importer-preview__grid au-u-margin-none">
         <div
           class="au-o-grid__item ar-importer-preview__pane au-u-1-3 au-u-1-4@medium au-u-1-5@large"
