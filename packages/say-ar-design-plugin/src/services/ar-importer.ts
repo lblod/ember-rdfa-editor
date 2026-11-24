@@ -158,6 +158,7 @@ export default class ArImporterService extends Service {
     regulatoryStatementMode?: boolean,
     measureTemplates?: string[],
     instructionVariableQuery?: InstructionVariableQuery,
+    selectedInstructionUrisByMeasure?: Set<string>[],
   ): Promise<GenerateImportResult> {
     let decisionUri = decisionUriOverride;
     let insertPositionArgs: InsertPositionArgs;
@@ -166,7 +167,7 @@ export default class ArImporterService extends Service {
       decisionUri = decisionRange?.node.attrs['subject'] as string;
       if (
         !regulatoryStatementMode &&
-        (!decisionRange || typeof decisionUri !== 'string' || !insertPos)
+        (!decisionRange || typeof decisionUri !== 'string')
       ) {
         this._notifyError(controller, 'ar-importer.message.error-no-decision');
         return { result: [], warnings: [] };
@@ -175,11 +176,15 @@ export default class ArImporterService extends Service {
           insertPositionArgs = {
             insertFreely: true,
           };
+        } else if (!insertPos) {
+          insertPositionArgs = {
+            insertFreely: true,
+            decisionUri,
+          };
         } else {
-          // insertPos should be handled by the previous if, so just keep TS happy here
           insertPositionArgs = {
             insertFreely: false,
-            position: insertPos ? insertPos.insertMeasureIndex : 0,
+            position: insertPos.insertMeasureIndex,
             decisionUri,
           };
         }
@@ -198,134 +203,141 @@ export default class ArImporterService extends Service {
     try {
       const warnings: string[] = [];
       const measureDesigns = await design.measureDesigns;
-      const appendsToEnd =
-        insertPositionArgs.insertFreely === false &&
-        insertPositionArgs.position === undefined;
-      //TODO: Add comment to explain the reverse
       const monads = (
         await Promise.all(
-          (appendsToEnd ? measureDesigns : [...measureDesigns].reverse()).map(
-            async (measureDesign, index, array) => {
-              const {
-                measureConcept,
-                trafficSignals,
-                variableInstances,
-                unusedSignalConcepts,
-                unIncludedSignalConcepts,
-              } = measureDesign;
-              warnings.push(
-                ...unusedSignalConcepts.map((unused) =>
-                  this.intl.t(
-                    'ar-importer.message.warning-unused-signal-concept',
-                    {
-                      measure: measureConcept.label,
-                      signal: unused.code,
-                    },
-                  ),
+          measureDesigns.map(async (measureDesign, index, array) => {
+            const {
+              measureConcept,
+              trafficSignals,
+              variableInstances,
+              unusedSignalConcepts,
+              unIncludedSignalConcepts,
+            } = measureDesign;
+            warnings.push(
+              ...unusedSignalConcepts.map((unused) =>
+                this.intl.t(
+                  'ar-importer.message.warning-unused-signal-concept',
+                  {
+                    measure: measureConcept.label,
+                    signal: unused.code,
+                  },
                 ),
-              );
-              warnings.push(
-                ...unIncludedSignalConcepts.map((unIncluded) =>
-                  this.intl.t(
-                    'ar-importer.message.warning-un-included-signal-concept',
-                    {
-                      measure: measureConcept.label,
-                      signal: unIncluded.code,
-                    },
-                  ),
+              ),
+            );
+            warnings.push(
+              ...unIncludedSignalConcepts.map((unIncluded) =>
+                this.intl.t(
+                  'ar-importer.message.warning-un-included-signal-concept',
+                  {
+                    measure: measureConcept.label,
+                    signal: unIncluded.code,
+                  },
                 ),
-              );
-              const filteredAndDeduplicatedConcepts =
-                convertSignals(trafficSignals);
-              let convertedVariableInstances = []
-              // TODO: Add comment to explain
-              const templateIndex = appendsToEnd
-                ? index
-                : measureDesigns.length - 1 - index;
-              const templateString = measureTemplates?.[templateIndex] ?? '';
-              // If we have controller we are in insert mode, so we should query and replace all variables
-              if (controller) {
-                const instructionVariables: Variable[] = (
-                  await Promise.all(
-                    trafficSignals.flatMap((signal) =>
-                      signal.trafficSignalConcept.instructions.map(
+              ),
+            );
+            const filteredAndDeduplicatedConcepts =
+              convertSignals(trafficSignals);
+            let convertedVariableInstances: Record<
+              string,
+              VariableInstance & { __rdfaId: string }
+            > = {};
+            const templateString = measureTemplates?.[index] ?? '';
+            const selectedInstructionUris =
+              selectedInstructionUrisByMeasure?.[index];
+            // If we have controller we are in insert mode, so we should query and replace all variables
+            if (controller) {
+              const instructionVariables: Variable[] = (
+                await Promise.all(
+                  trafficSignals.flatMap((signal) =>
+                    signal.trafficSignalConcept.instructions
+                      .filter(
+                        (instruction) =>
+                          !selectedInstructionUris ||
+                          selectedInstructionUris.has(instruction.uri),
+                      )
+                      .map(
                         (instruction) =>
                           instructionVariableQuery?.(instruction.uri) ??
                           Promise.resolve([]),
                       ),
-                    ),
-                  )
-                ).flat();
-                convertedVariableInstances = parseVariables(
-                  instructionVariables,
-                  templateString,
-                  variableInstances,
-                );
-              }
-              const isZonal = Boolean(
-                trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
-              );
-              const zonality = isZonal
-                ? ZONALITY_OPTIONS.ZONAL
-                : ZONALITY_OPTIONS.NON_ZONAL;
-              const onlyExistingSignals = measureDesign.trafficSignals.every(
-                (signal) =>
-                  signal.designStatus &&
-                  TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(
-                    signal.designStatus,
                   ),
+                )
+              ).flat();
+              convertedVariableInstances = parseVariables(
+                instructionVariables,
+                templateString,
+                variableInstances,
               );
-              const isLastMeasureInserted = index === array.length - 1;
-              return [
-                ...(!controller && onlyExistingSignals
-                  ? [
-                      (state: EditorState) => {
-                        const commentText = state.schema.text(
-                          this.intl.t('ar-importer.preview.only-existing'),
-                        );
-                        const cn =
-                          state.schema.nodes['templateComment']?.create(
-                            {},
-                            commentText,
-                          ) ?? commentText;
-                        return {
-                          initialState: state,
-                          transaction: state.tr.insert(
-                            state.selection.to + 1,
-                            cn,
-                          ),
-                          result: true,
-                        };
-                      },
-                    ]
-                  : []),
-                insertMeasure({
-                  arDesignUri: design.uri,
-                  measureDesign: {
-                    uri: measureDesign.uri,
-                    measureConcept: {
-                      uri: measureConcept.uri,
-                      label: `${measureConcept.label}${onlyExistingSignals ? ` (${this.intl.t('ar-importer.preview.only-existing-label')})` : ''}`,
-                      preview: templateString,
-                      zonality,
-                      variableSignage: false,
-                      trafficSignalConcepts: filteredAndDeduplicatedConcepts,
+            }
+            const isZonal = Boolean(
+              trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
+            );
+            const zonality = isZonal
+              ? ZONALITY_OPTIONS.ZONAL
+              : ZONALITY_OPTIONS.NON_ZONAL;
+            const onlyExistingSignals = measureDesign.trafficSignals.every(
+              (signal) =>
+                signal.designStatus &&
+                TRAFFIC_SIGNAL_EXISTING_STATUSES.includes(signal.designStatus),
+            );
+            const isLastMeasureInserted = index === array.length - 1;
+            const insertArgsForMeasure =
+              insertPositionArgs.insertFreely === false &&
+              insertPositionArgs.position !== undefined
+                ? {
+                    ...insertPositionArgs,
+                    position: insertPositionArgs.position + index,
+                  }
+                : insertPositionArgs;
+            return [
+              ...(!controller && onlyExistingSignals
+                ? [
+                    (state: EditorState) => {
+                      const commentText = state.schema.text(
+                        this.intl.t('ar-importer.preview.only-existing'),
+                      );
+                      const cn =
+                        state.schema.nodes['templateComment']?.create(
+                          {},
+                          commentText,
+                        ) ?? commentText;
+                      return {
+                        initialState: state,
+                        transaction: state.tr.insert(
+                          state.selection.to + 1,
+                          cn,
+                        ),
+                        result: true,
+                      };
                     },
-                    trafficSignals: filteredAndDeduplicatedConcepts,
+                  ]
+                : []),
+              insertMeasure({
+                arDesignUri: design.uri,
+                measureDesign: {
+                  uri: measureDesign.uri,
+                  measureConcept: {
+                    uri: measureConcept.uri,
+                    label: `${measureConcept.label}${onlyExistingSignals ? ` (${this.intl.t('ar-importer.preview.only-existing-label')})` : ''}`,
+                    preview: templateString,
+                    zonality,
+                    variableSignage: false,
+                    trafficSignalConcepts: filteredAndDeduplicatedConcepts,
                   },
-                  zonality,
-                  temporal: false,
-                  variables: convertedVariableInstances,
-                  templateString,
-                  ...insertPositionArgs,
-                  articleUriGenerator: () =>
-                    `http://data.lblod.info/artikels/${uuidv4()}`,
-                  multipleInsertion: !isLastMeasureInserted,
-                  regulatoryStatementMode,
-                }),
-              ];
-            },
-          ),
+                  trafficSignals: filteredAndDeduplicatedConcepts,
+                },
+                zonality,
+                temporal: false,
+                variables: convertedVariableInstances,
+                templateString,
+                ...insertArgsForMeasure,
+                articleUriGenerator: () =>
+                  `http://data.lblod.info/artikels/${uuidv4()}`,
+                multipleInsertion: !isLastMeasureInserted,
+                regulatoryStatementMode,
+              }),
+            ];
+          }),
         )
       ).flat();
 

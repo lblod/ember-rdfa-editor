@@ -88,7 +88,8 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
 
   @cached
   get measureDesignSignTree() {
-    return generateDesignSignTree(this.selectedDesign as ArDesign);
+    if (!this.selectedDesign) return Promise.resolve([]);
+    return generateDesignSignTree(this.selectedDesign);
   }
 
   get measureDesigns() {
@@ -101,15 +102,37 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
     );
   }
 
-  get allInstructionsSelected() {
-    const measureDesigns = this.measureDesigns.resolved
-    if(!measureDesigns) return false;
-    for(const signTree of measureDesigns) {
-      const signs = signTree.signs
-      for (const sign of signs) {
-        if(!sign.mainSign.selectedInstruction) return false;
+  get selectedInstructionUrisByMeasure(): Set<string>[] | undefined {
+    return this.measureDesigns.resolved?.map((signTree) => {
+      const uris = new Set<string>();
+      for (const sign of signTree.signs) {
+        if (sign.mainSign.selectedInstruction) {
+          uris.add(sign.mainSign.selectedInstruction.uri);
+        }
         for (const subSign of sign.subSigns) {
-          if (!subSign.selectedInstruction) return false
+          if (subSign.selectedInstruction) {
+            uris.add(subSign.selectedInstruction.uri);
+          }
+        }
+      }
+      return uris;
+    });
+  }
+
+  get allInstructionsSelected() {
+    const measureDesigns = this.measureDesigns.resolved;
+    if (!measureDesigns) return false;
+    for (const signTree of measureDesigns) {
+      const signs = signTree.signs;
+      for (const sign of signs) {
+        if (
+          sign.mainSign.sign.instructions.length &&
+          !sign.mainSign.selectedInstruction
+        )
+          return false;
+        for (const subSign of sign.subSigns) {
+          if (subSign.sign.instructions.length && !subSign.selectedInstruction)
+            return false;
         }
       }
     }
@@ -191,6 +214,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
         this.args.regulatoryStatementMode,
         this.measureTemplates,
         this.args.instructionVariableQuery,
+        this.selectedInstructionUrisByMeasure,
       );
       if (skipWarnings || monadsResult.warnings.length === 0) {
         this.doInsert(monadsResult.result);
@@ -198,7 +222,7 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
     },
   );
   returnToOverView() {
-    this.resetVariables()
+    this.resetVariables();
   }
   resetVariables() {
     this.selectedDesign = undefined;
@@ -240,9 +264,12 @@ export default class ArDesignSidebarWidget extends Component<ArDesignSidebarWidg
       </modal.Body>
       {{#if this.selectedDesign}}
         <modal.Footer>
-          <div class='au-u-flex au-u-flex--between au-u-flex--vertical-center'>
-            <AuButton @skin="link"
-                @icon={{ArrowLeftIcon}} {{on "click" this.returnToOverview}}> {{t "ar-importer.controls.go-back"}} </AuButton>
+          <div class="au-u-flex au-u-flex--between au-u-flex--vertical-center">
+            <AuButton
+              @skin="link"
+              @icon={{ArrowLeftIcon}}
+              {{on "click" this.returnToOverview}}
+            > {{t "ar-importer.controls.go-back"}} </AuButton>
             <InsertControls
               @arDesign={{this.selectedDesign}}
               @onInsertAr={{this.insertAr.perform}}

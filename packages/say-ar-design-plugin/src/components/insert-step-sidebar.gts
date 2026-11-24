@@ -4,7 +4,10 @@ import SignAccordion from '#root/components/sign-accordion.gts';
 import PowerSelect from 'ember-power-select/components/power-select';
 import t from 'ember-intl/helpers/t';
 import { fn } from '@ember/helper';
-import  type {  MainSignWithInstruction, SignWithInstruction} from '#root/plugin/types.ts';
+import type {
+  MainSignWithInstruction,
+  SignWithInstruction,
+} from '#root/plugin/types.ts';
 import { action } from '@ember/object';
 import type Instruction from '#root/plugin/models/instruction.ts';
 import type { State } from 'reactiveweb/get-promise-state';
@@ -23,9 +26,9 @@ export default class InsertStepSidebar extends Component<ArPreviewSignature> {
   }
 
   <template>
-    <AuHeading @level="3" @skin="4" class='au-u-margin-bottom-small'>
+    <AuHeading @level="3" @skin="4" class="au-u-margin-bottom-small">
       {{t "ar-importer.insert.instructions-header"}}
-     </AuHeading>
+    </AuHeading>
     {{#if @measureDesigns.resolved}}
       {{#each @measureDesigns.resolved as |design index|}}
         <AuHeading @level="4" @skin="4">
@@ -63,18 +66,16 @@ function generateArticleNumber(index: number) {
 }
 
 function flattenAndSortSigns(signs: MainSignWithInstruction[]) {
-    const sortedAndFlattedSigns: SignWithInstruction[] = [];
-    const selectedSignsSorted: MainSignWithInstruction[] = [
-      ...signs,
-    ];
-    selectedSignsSorted.sort((signA, signB) => {
-      return signA.mainSign.position - signB.mainSign.position;
-    });
-    for (const sign of selectedSignsSorted) {
-      sortedAndFlattedSigns.push(sign.mainSign);
-      for (const subSign of sign.subSigns.values()) {
-        sortedAndFlattedSigns.push(subSign);
-      }
+  const sortedAndFlattedSigns: SignWithInstruction[] = [];
+  const selectedSignsSorted: MainSignWithInstruction[] = [...signs];
+  selectedSignsSorted.sort((signA, signB) => {
+    return signA.mainSign.position - signB.mainSign.position;
+  });
+  for (const sign of selectedSignsSorted) {
+    sortedAndFlattedSigns.push(sign.mainSign);
+    for (const subSign of sign.subSigns.values()) {
+      sortedAndFlattedSigns.push(subSign);
     }
-    return sortedAndFlattedSigns;
+  }
+  return sortedAndFlattedSigns;
 }

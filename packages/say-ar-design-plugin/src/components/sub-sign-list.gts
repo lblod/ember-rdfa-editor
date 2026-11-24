@@ -1,5 +1,5 @@
 import type { TOC } from '@ember/component/template-only';
-import type {  SignWithInstruction } from '#root/plugin/types.ts';
+import type { SignWithInstruction } from '#root/plugin/types.ts';
 
 type Sig = {
   Args: {

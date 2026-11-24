@@ -14,7 +14,7 @@ const InsertButton: TOC<{
     insertLoading?: boolean;
     onInsertAr: ArInsertFunc;
     insertPosition: ArticleInsertPosition | false;
-    insertEnabled: boolean
+    insertEnabled: boolean;
   };
 }> = <template>
   <AuButton
@@ -32,8 +32,8 @@ export interface ArInsertControlArgs {
   articles: ArticlePosition[];
   regulatoryStatementMode?: boolean;
   insertPosition: ArticleInsertPosition | false;
-  closeModal: () => void
-  insertEnabled: boolean
+  closeModal: () => void;
+  insertEnabled: boolean;
 }
 type Sig = {
   Args: ArInsertControlArgs;
@@ -42,14 +42,16 @@ type Sig = {
 const InsertControls: TOC<Sig> = <template>
   <div class="ar-importer-insert-controls">
 
-      <AuButton @skin='naked' {{on "click" @closeModal}}> {{t "ar-importer.controls.cancel"}} </AuButton>
-      <InsertButton
-        @arDesign={{@arDesign}}
-        @onInsertAr={{@onInsertAr}}
-        @insertLoading={{@insertLoading}}
-        @insertPosition={{@insertPosition}}
-        @insertEnabled={{@insertEnabled}}
-      />
+    <AuButton @skin="naked" {{on "click" @closeModal}}>
+      {{t "ar-importer.controls.cancel"}}
+    </AuButton>
+    <InsertButton
+      @arDesign={{@arDesign}}
+      @onInsertAr={{@onInsertAr}}
+      @insertLoading={{@insertLoading}}
+      @insertPosition={{@insertPosition}}
+      @insertEnabled={{@insertEnabled}}
+    />
   </div>
 </template>;
 

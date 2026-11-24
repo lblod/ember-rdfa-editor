@@ -111,7 +111,7 @@ const ArDesignOverview: TOC<ArDesignOverviewSignature> = <template>
               <AuButton
                 @skin="link"
                 @icon={{PencilIcon}}
-                @iconAlignment='right'
+                @iconAlignment="right"
                 {{on "click" (fn @onShowPreview arDesign)}}
               >{{t "ar-importer.overview.table.actions.select"}}</AuButton>
             </AuButtonGroup>

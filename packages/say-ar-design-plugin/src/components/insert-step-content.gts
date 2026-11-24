@@ -51,10 +51,10 @@ export default class InsertStepContent extends Component<Sig> {
   });
 
   <template>
-    <AuHeading @level="3" @skin="4" class='au-u-margin-bottom-small'>
+    <AuHeading @level="3" @skin="4" class="au-u-margin-bottom-small">
       {{t "ar-importer.insert.content-header"}}
-     </AuHeading>
-    <div class='ar-importer__insert-position-container au-u-margin-bottom'>
+    </AuHeading>
+    <div class="ar-importer__insert-position-container au-u-margin-bottom">
       <InsertPositionSelector
         @options={{@options}}
         @selected={{@selected}}
@@ -62,7 +62,10 @@ export default class InsertStepContent extends Component<Sig> {
       />
     </div>
     <div class="ar-importer-preview__content">
-      <AuHeading @level='4' @skin='6' class='au-u-margin-bottom-small'>{{t 'ar-importer.preview.heading'}} </AuHeading>
+      <AuHeading @level="4" @skin="6" class="au-u-margin-bottom-small">{{t
+          "ar-importer.preview.heading"
+        }}
+      </AuHeading>
       {{#if this.preview.isLoading}}
         <AuLoader @centered={{true}} @hideMessage={{false}}>
           {{t "application.loading"}}
@@ -74,7 +77,7 @@ export default class InsertStepContent extends Component<Sig> {
         </AuAlert>
       {{/if}}
       {{#if this.preview.value}}
-        {{#if this.preview.value.warnings}}
+        {{#if this.preview.value.warnings.length}}
           <AuAlert
             @icon="alert-triangle"
             @skin="warning"
@@ -87,10 +90,9 @@ export default class InsertStepContent extends Component<Sig> {
         {{/if}}
         {{htmlSafe this.preview.value.result}}
       {{/if}}
-      </div>
+    </div>
   </template>
 }
-
 
 const InsertPositionSelector: TOC<{
   Args: {
@@ -106,12 +108,12 @@ const InsertPositionSelector: TOC<{
   <AuLabel for="ar-importer-position-selector">{{t
       "ar-importer.controls.select-position"
     }}:</AuLabel>
-    <PowerSelect
-      id="ar-importer-position-selector"
-      @allowClear={{false}}
-      @onChange={{@onChange}}
-      @selected={{@selected}}
-      @options={{@options}}
-      as |option|
-    >{{option.label}}</PowerSelect>
+  <PowerSelect
+    id="ar-importer-position-selector"
+    @allowClear={{false}}
+    @onChange={{@onChange}}
+    @selected={{@selected}}
+    @options={{@options}}
+    as |option|
+  >{{option.label}}</PowerSelect>
 </template>;

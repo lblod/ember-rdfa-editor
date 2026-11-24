@@ -7,7 +7,10 @@ import {
 } from '#root/plugin/constants.ts';
 import type ArDesign from '#root/plugin/models/ar-design.ts';
 
-import { SignWithInstruction, type MainSignWithInstruction } from '#root/plugin/types.ts';
+import {
+  SignWithInstruction,
+  type MainSignWithInstruction,
+} from '#root/plugin/types.ts';
 
 export function isSubSign(signal: TrafficSignalConcept): boolean {
   if (signal.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) return false;
@@ -17,15 +20,13 @@ export function isSubSign(signal: TrafficSignalConcept): boolean {
   );
 }
 
-function generateMeasureSignTree(
-  measure: MeasureDesign,
-) {
+function generateMeasureSignTree(measure: MeasureDesign) {
   const trafficSignConcepts = measure.trafficSignals;
   if (!trafficSignConcepts.length) return { signs: [] };
   const signsMap: Map<string, MainSignWithInstruction> = new Map();
   const subSigns: TrafficSignal[] = [];
   for (const signal of trafficSignConcepts) {
-    const signalConcept = signal.trafficSignalConcept
+    const signalConcept = signal.trafficSignalConcept;
     if (!signalConcept.uri) continue;
     if (isSubSign(signalConcept)) {
       subSigns.push(signal);
@@ -38,7 +39,8 @@ function generateMeasureSignTree(
   }
   for (const subSign of subSigns) {
     const subSignConcept = subSign.trafficSignalConcept;
-    if (subSignConcept.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN) continue;
+    if (subSignConcept.type !== TRAFFIC_SIGNAL_CONCEPT_TYPES.ROAD_SIGN)
+      continue;
     const mainSigns = subSignConcept.mainSigns;
     for (const mainSign of mainSigns) {
       const previewItem = signsMap.get(mainSign);
@@ -53,9 +55,6 @@ function generateMeasureSignTree(
 }
 
 export default async function generateDesignSignTree(design: ArDesign) {
-    const measureDesigns = await design.measureDesigns
-    return measureDesigns.map(generateMeasureSignTree)
+  const measureDesigns = await design.measureDesigns;
+  return measureDesigns.map(generateMeasureSignTree);
 }
-
-
-
