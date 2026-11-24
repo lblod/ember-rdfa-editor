@@ -65,7 +65,7 @@ import {
   dropdown,
   dropdownView,
 } from '../dummy-nodes';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import {
@@ -88,6 +88,9 @@ import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-comm
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
+import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import { inlineRdfaWithConfig, inlineRdfaWithConfigView } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
 export default class extends Component {
   @service declare intl: IntlService;
@@ -98,10 +101,12 @@ export default class extends Component {
     nodes: {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
+        rdfaAware: true,
+        hasResourceImports: true,
       }),
       paragraph,
 
-      repaired_block: repairedBlockWithConfig(),
+      repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
       list_item: listItemWithConfig(),
       ordered_list: orderedListWithConfig(),
@@ -112,7 +117,7 @@ export default class extends Component {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading,
+      heading: headingWithConfig({ rdfaAware: false }),
       blockquote,
 
       horizontal_rule,
@@ -123,8 +128,8 @@ export default class extends Component {
       image,
 
       hard_break,
-      invisible_rdfa: invisibleRdfaWithConfig(),
-      block_rdfa: blockRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+      inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
       card,
       counter,
       dropdown,
@@ -132,7 +137,6 @@ export default class extends Component {
       link: link(this.linkOptions),
     },
     marks: {
-      inline_rdfa,
       code,
       em,
       strong,
@@ -148,6 +152,7 @@ export default class extends Component {
   get linkOptions() {
     return {
       interactive: true,
+      rdfaAware: true,
     };
   }
 
@@ -161,6 +166,9 @@ export default class extends Component {
       link: linkView(this.linkOptions)(proseController),
       image: imageView(proseController),
       sample_block: sampleBlockView(proseController),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(proseController),
+      block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
+        new BlockRDFaView(args, proseController),
     };
   };
 
@@ -187,6 +195,7 @@ export default class extends Component {
         ],
       }),
       emberApplication({ application: unwrap(getOwner(this)) }),
+      editableNodePlugin(),
       slashCommandsPlugin({
         intl: this.intl,
         getGroups: this.contextualGroupGetters,
