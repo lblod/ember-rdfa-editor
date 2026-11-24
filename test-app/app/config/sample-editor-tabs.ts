@@ -7,7 +7,6 @@ import { SettingsIcon } from '@appuniversum/ember-appuniversum/components/icons/
 import type { EditorTab } from '@lblod/ember-rdfa-editor/components/editor-tabs';
 import EmptyPane from 'test-app/components/sample-ember-nodes/empty-pane';
 import InsertPane from 'test-app/components/sample-ember-nodes/insert-pane';
-import { devToolsTab } from '@lblod/ember-rdfa-editor/plugins/dev-tools/tab';
 
 const sampleEditorTabs: EditorTab[] = [
   {
@@ -34,8 +33,6 @@ const sampleEditorTabs: EditorTab[] = [
     icon: PaperclipIcon,
     panelContent: EmptyPane,
   },
-  devToolsTab,
-
   {
     title: 'Editor settings',
     icon: SettingsIcon,

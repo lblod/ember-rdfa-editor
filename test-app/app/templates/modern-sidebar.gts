@@ -92,6 +92,11 @@ import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/ed
 import { inlineRdfaWithConfig, inlineRdfaWithConfigView } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
+import { devToolsTab } from '@lblod/ember-rdfa-editor/plugins/dev-tools/tab';
+import type { OptionGeneratorConfig, PredicateOptionGeneratorArgs, TargetOptionGeneratorArgs } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
+import { restartableTask, timeout } from 'ember-concurrency';
+import { combineConfigs, documentConfig, lovConfig } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
+
 export default class extends Component {
   @service declare intl: IntlService;
 
@@ -217,6 +222,66 @@ export default class extends Component {
     console.warn('Live toggling plugins is currently not supported');
   }
 
+  get optionGeneratorConfig() {
+    if (this.rdfaEditor) {
+      return combineConfigs(documentConfig(this.rdfaEditor), lovConfig());
+    }
+  }
+
+  subjectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.subjects?.(args)) ?? [];
+      return result;
+    },
+  );
+  predicateOptionGeneratorTask = restartableTask(
+    async (args?: PredicateOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.predicates?.(args)) ?? [];
+      return result;
+    },
+  );
+  objectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.objects?.(args)) ?? [];
+      return result;
+    },
+  );
+  pointerSourcesOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerSources?.(args)) ?? [];
+      return result;
+    },
+  );
+  pointerTargetsOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerTargets?.(args)) ?? [];
+      return result;
+    },
+  );
+
+  optionGeneratorConfigTaskified: OptionGeneratorConfig = {
+    subjects: this.subjectOptionGeneratorTask.perform.bind(this),
+    predicates: this.predicateOptionGeneratorTask.perform.bind(this),
+    objects: this.objectOptionGeneratorTask.perform.bind(this),
+    pointerSources: this.pointerSourcesOptionGeneratorTask.perform.bind(this),
+    pointerTargets: this.pointerTargetsOptionGeneratorTask.perform.bind(this),
+  };
+
+  get editorTabs() {
+    return [
+      ...sampleEditorTabs,
+      devToolsTab({ optionGeneratorConfig: this.optionGeneratorConfigTaskified })
+    ]
+  }
+
   <template>
     <DummyContainer>
       <:header>
@@ -234,7 +299,7 @@ export default class extends Component {
           <:sidebarLeft as |container|>
             <Sidebar
               @controller={{container.controller}}
-              @tabs={{sampleEditorTabs}}
+              @tabs={{this.editorTabs}}
               @placement="left"
               @useNew={{true}}
             />
