@@ -1,13 +1,11 @@
 import { action } from '@ember/object';
 import { inputRules, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
-  invisibleRdfaWithConfig,
   paragraph,
   repairedBlockWithConfig,
   text,
@@ -89,13 +87,24 @@ import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
 import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
-import { inlineRdfaWithConfig, inlineRdfaWithConfigView } from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import {
+  inlineRdfaWithConfig,
+  inlineRdfaWithConfigView,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
 import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
 
 import { devToolsTab } from '@lblod/ember-rdfa-editor/plugins/dev-tools/tab';
-import type { OptionGeneratorConfig, PredicateOptionGeneratorArgs, TargetOptionGeneratorArgs } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
+import type {
+  OptionGeneratorConfig,
+  PredicateOptionGeneratorArgs,
+  TargetOptionGeneratorArgs,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
 import { restartableTask, timeout } from 'ember-concurrency';
-import { combineConfigs, documentConfig, lovConfig } from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
+import {
+  combineConfigs,
+  documentConfig,
+  lovConfig,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
 
 export default class extends Component {
   @service declare intl: IntlService;
@@ -171,7 +180,9 @@ export default class extends Component {
       link: linkView(this.linkOptions)(proseController),
       image: imageView(proseController),
       sample_block: sampleBlockView(proseController),
-      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(proseController),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(
+        proseController,
+      ),
       block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
         new BlockRDFaView(args, proseController),
     };
@@ -278,8 +289,10 @@ export default class extends Component {
   get editorTabs() {
     return [
       ...sampleEditorTabs,
-      devToolsTab({ optionGeneratorConfig: this.optionGeneratorConfigTaskified })
-    ]
+      devToolsTab({
+        optionGeneratorConfig: this.optionGeneratorConfigTaskified,
+      }),
+    ];
   }
 
   <template>
