@@ -1,6 +1,7 @@
 import AttributeEditor from '#root/components/_private/attribute-editor/index.gts';
 import DebugInfo from '#root/components/_private/debug-info/index.gts';
 import DocImportedResourceEditorCard from '#root/components/_private/doc-imported-resource-editor/card.gts';
+import ExternalTripleEditorCard from '#root/components/_private/external-triple-editor/card.gts';
 import ImportedResourceLinkerCard from '#root/components/_private/imported-resource-linker/card.gts';
 // import ExternalTripleEditorCard from '#root/components/_private/external-triple-editor/card.gts';
 import NodeControlsCard from '#root/components/_private/node-controls/card.gts';
@@ -39,17 +40,18 @@ class DevToolsPane extends Component<DevToolsPaneSignature> {
           @optionGeneratorConfig={{@optionGeneratorConfig}}
           @expanded={{false}}
         />
-        {{!-- <DocImportedResourceEditorCard
+        <DocImportedResourceEditorCard
           @controller={{@controller}}
-        /> --}}
-        {{!-- <ImportedResourceLinkerCard
+          @optionGeneratorConfig={{@optionGeneratorConfig}}
+        />
+        <ImportedResourceLinkerCard
           @node={{this.activeNode}}
           @controller={{@controller}}
-        /> --}}
-        {{!-- <ExternalTripleEditorCard
+        />
+        <ExternalTripleEditorCard
           @node={{this.activeNode}}
           @controller={{@controller}}
-        /> --}}
+        />
         <DebugInfo @node={{this.activeNode}} @expanded={{false}} />
         <AttributeEditor
           @node={{this.activeNode}}
