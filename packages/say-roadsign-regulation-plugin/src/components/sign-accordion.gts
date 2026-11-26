@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { type TrafficSignalConcept } from '#root/plugin/schemas/traffic-signal-concept.ts';
 import { type SignPreviewItem } from '#root/plugin/generate-measure-sign-tree.ts';
+import { type MainSignSelection } from '#root/plugin/selected-signs.ts';
 import { fn } from '@ember/helper';
 import AuCheckbox from '@appuniversum/ember-appuniversum/components/au-checkbox';
 import isSelectedSign from '#root/helpers/is-selected-sign.ts';
@@ -30,7 +31,7 @@ function signalLabel(signal: TrafficSignalConcept, intl: IntlService) {
 type Signature = {
   Args: {
     sign: SignPreviewItem;
-    selectedSigns: TrafficSignalConcept[];
+    selectedSigns: Map<string, MainSignSelection>;
     selectMainSign: (sign: TrafficSignalConcept) => void;
     selectSubSign: (
       subSign: TrafficSignalConcept,
