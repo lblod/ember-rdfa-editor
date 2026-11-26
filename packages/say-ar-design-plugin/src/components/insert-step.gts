@@ -26,12 +26,12 @@ const InsertStep: TOC<ArPreviewSignature> = <template>
   <div class="ar-importer-preview" ...attributes>
     <div class="au-o-grid ar-importer-preview__grid au-u-margin-none">
       <div
-        class="au-o-grid__item ar-importer-preview__pane au-u-1-3 au-u-1-4@medium au-u-1-5@large"
+        class="au-o-grid__item ar-importer-preview__pane au-u-1-3"
       >
         <InsertStepSidebar @measureDesigns={{@measureDesigns}} />
       </div>
       <div
-        class="au-o-grid__item ar-importer-preview__pane au-u-2-3 au-u-3-4@medium au-u-4-5@large"
+        class="au-o-grid__item ar-importer-preview__pane au-u-2-3"
       >
         <InsertStepContent
           @arDesign={{@arDesign}}

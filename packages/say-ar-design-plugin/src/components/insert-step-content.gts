@@ -36,7 +36,8 @@ export default class InsertStepContent extends Component<Sig> {
   @service declare arImporter: ArImporterService;
 
   preview = trackedFunction(this, async () => {
-    // TODO: Add comment to explain
+    // Access measureTemplates before the first await so the function gets recalled
+    // everytime this changes
     const measureTemplates = this.args.measureTemplates;
     try {
       return this.arImporter.generatePreview(
