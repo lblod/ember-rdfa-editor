@@ -27,7 +27,7 @@ export default class ModernSidebar extends Component<ModernSidebarSignature> {
   }
 
   <template>
-    <div class="say-sidebar say-sidebar--{{this.placement}}" ...attributes>
+    <div class="say-sidebar" ...attributes>
       <EditorTabs
         @controller={{@controller}}
         @tabs={{@tabs}}
