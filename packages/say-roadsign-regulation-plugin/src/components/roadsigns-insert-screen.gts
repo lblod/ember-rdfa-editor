@@ -128,7 +128,11 @@ class SupplementMeasureStep extends Component<SupplementMeasureStepSig> {
     });
     for (const sign of selectedSignsSorted) {
       signs.push(sign.mainSign);
-      for (const subSign of sign.subSigns.values()) {
+      const subSigns = [...sign.subSigns.values()];
+      subSigns.sort((signA, signB) => {
+        return signA.sign.position - signB.sign.position;
+      });
+      for (const subSign of subSigns) {
         signs.push(subSign);
       }
     }

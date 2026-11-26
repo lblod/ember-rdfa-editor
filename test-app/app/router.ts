@@ -7,6 +7,7 @@ export default class Router extends EmberRouter {
 }
 Router.map(function () {
   this.route('plugins');
+  this.route('modern-sidebar');
   this.route('vendors');
   this.route('backspace');
   this.route('editable-node');

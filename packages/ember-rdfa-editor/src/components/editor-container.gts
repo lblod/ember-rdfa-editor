@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { deprecate } from '@ember/debug';
-import { and, or } from 'ember-truth-helpers';
+import { and, not, or } from 'ember-truth-helpers';
 import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import t from 'ember-intl/helpers/t';
 import type { Option } from '#root/utils/option.ts';
@@ -21,6 +21,11 @@ type Signature = {
     controller?: Option<SayController>;
     editorOptions?: EditorOptions;
     loading?: boolean;
+    /**
+     * Render the new docked sidebar layout. Defaults to the legacy overlay
+     * layout.
+     */
+    useNewLayout?: boolean;
   };
   Blocks: {
     default: [];
@@ -29,6 +34,7 @@ type Signature = {
     /** @deprecated Using aside is deprecated. Pass a controller and use sidebarRight instead */
     aside: [];
     toolbar: [{ controller: SayController }];
+    sidebarLeft: [{ controller: SayController }];
     sidebarRight: [{ controller: SayController }];
   };
 };
@@ -56,6 +62,10 @@ export default class EditorContainer extends Component<Signature> {
     return this.args.editorOptions?.showPaper ?? false;
   }
 
+  get useLegacySidebar() {
+    return !this.args.useNewLayout;
+  }
+
   get showSidebarLeft() {
     return this.args.editorOptions?.showSidebarLeft ?? true;
   }
@@ -68,14 +78,26 @@ export default class EditorContainer extends Component<Signature> {
     return this.args.editorOptions?.showToolbarBottom ?? false;
   }
   <template>
+    {{! Legacy class names (`say-container--sidebar-left` and
+    `say-container--sidebar-right`) are kept for backwards compatibility with
+    consuming apps that target them directly. They are only rendered in the
+    legacy layout. }}
     <div
       class="say-container
         {{if this.showPaper 'say-container--paper'}}
-        {{if this.showSidebarLeft 'say-container--sidebar-left'}}
+        {{if
+          (and
+            this.showSidebarLeft
+            this.useLegacySidebar
+            (not (has-block 'sidebarLeft'))
+          )
+          'say-container--sidebar-left'
+        }}
         {{if
           (and
             (or (has-block 'aside') (has-block 'sidebarRight'))
             this.showSidebarRight
+            this.useLegacySidebar
           )
           'say-container--sidebar-right'
         }}
@@ -95,23 +117,35 @@ export default class EditorContainer extends Component<Signature> {
           </AuLoader>
         {{/if}}
 
+        {{#if this.showSidebarLeft}}
+          {{#if (has-block "sidebarLeft")}}
+            <div class="say-container__sidebar-left">
+              {{#if @controller}}
+                {{yield (hash controller=@controller) to="sidebarLeft"}}
+              {{/if}}
+            </div>
+          {{/if}}
+        {{/if}}
         <div class="say-editor {{if @loading 'au-u-hidden-visually'}}">
           {{yield}}
 
         </div>
-        {{#if
-          (and
-            (or (has-block "aside") (has-block "sidebarRight"))
-            this.showSidebarRight
-          )
-        }}
-          <div class="say-container__aside">
-            {{#if (has-block "aside")}}
-              {{yield to="aside"}}
-            {{else if @controller}}
-              {{yield (hash controller=@controller) to="sidebarRight"}}
-            {{/if}}
-          </div>
+        {{#if this.showSidebarRight}}
+          {{#if (or (has-block "aside") (has-block "sidebarRight"))}}
+            <div
+              class={{if
+                this.useLegacySidebar
+                "say-container__aside"
+                "say-container__sidebar-right"
+              }}
+            >
+              {{#if (has-block "aside")}}
+                {{yield to="aside"}}
+              {{else if @controller}}
+                {{yield (hash controller=@controller) to="sidebarRight"}}
+              {{/if}}
+            </div>
+          {{/if}}
         {{/if}}
       </div>
     </div>

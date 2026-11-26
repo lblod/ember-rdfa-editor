@@ -91,6 +91,7 @@ ember-rdfa-editor:
     more-options: Meer opties
     loading: Aan het laden
     something-went-wrong: Er ging iets fout
+    collapse-sidebar: Zijbalk inklappen
   html-editor:
     toolbar-button:
       label: HTML bewerken

@@ -119,16 +119,24 @@ export default class RoadsignsModal extends Component<Signature> {
     });
     for (let i = 0; i < selections.length; i++) {
       const selection = selections[i];
-      const line: string[] = [`\${${locatieLabel(i)}}`];
+      const line: string[] = [];
       if (selection.mainSign.selectedInstruction) {
-        line.push(selection.mainSign.selectedInstruction.value);
+        line.push(
+          `\${${locatieLabel(i)}} ${selection.mainSign.selectedInstruction.value}`,
+        );
+      } else {
+        line.push(`\${${locatieLabel(i)}}`);
       }
-      for (const subSign of selection.subSigns.values()) {
+      const subSigns = [...selection.subSigns.values()];
+      subSigns.sort((signA, signB) => {
+        return signA.sign.position - signB.sign.position;
+      });
+      for (const subSign of subSigns) {
         if (subSign.selectedInstruction) {
           line.push(subSign.selectedInstruction.value);
         }
       }
-      lines.push(line.join(' '));
+      lines.push(line.join('; '));
     }
     return lines.join(';\n');
   }

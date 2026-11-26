@@ -1,0 +1,216 @@
+@use "@appuniversum/ember-appuniversum/styles/a-tools" as au-tools;
+@use "@appuniversum/ember-appuniversum/styles/a-settings" as au-settings;
+/* ==================================
+   #SAY EDITOR TABS
+   ================================== */
+
+.say-editor-tabs {
+  --say-editor-tabs-ribbon-size: 4.8rem;
+  --say-editor-tabs-panel-width: 32rem;
+  --say-editor-tabs-panel-header-height: 4.8rem;
+  --say-editor-tabs-background: var(--au-gray-100);
+  --say-editor-tabs-active-background: var(--au-gray-300);
+  --say-editor-tabs-border-color: var(--au-gray-300);
+  --say-editor-tabs-panel-background: var(--au-gray-100);
+  --say-editor-tabs-panel-padding: 1.6rem;
+  --say-editor-tabs-panel-shadow:
+    #{0 1px 3px rgba(au-settings.$au-gray-900, 0.1),
+    0 4px 20px rgba(au-settings.$au-gray-900, 0.035),
+    0 1px 1px rgba(au-settings.$au-gray-900, 0.025)};
+  --say-editor-tabs-icon-color: var(--au-gray-800);
+
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  &--panel-left {
+    flex-direction: row-reverse;
+  }
+
+  &--panel-right {
+    flex-direction: row;
+  }
+
+  &--panel-bottom {
+    position: relative;
+    flex-direction: column;
+  }
+}
+
+.say-editor-tabs__ribbon {
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: var(--say-editor-tabs-ribbon-size);
+  min-height: 0;
+  overflow-y: auto;
+  background-color: var(--say-editor-tabs-background);
+}
+
+.say-editor-tabs--panel-left .say-editor-tabs__ribbon {
+  border-left: 1px solid var(--say-editor-tabs-border-color);
+}
+
+.say-editor-tabs--panel-right .say-editor-tabs__ribbon {
+  border-right: 1px solid var(--say-editor-tabs-border-color);
+}
+
+.say-editor-tabs--panel-bottom .say-editor-tabs__ribbon {
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  border-bottom: 1px solid var(--say-editor-tabs-border-color);
+  overflow-x: auto;
+}
+
+.say-editor-tabs__tab {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--say-editor-tabs-ribbon-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--au-gray-800);
+  cursor: pointer;
+
+  &:hover,
+  &.is-active {
+    background-color: var(--say-editor-tabs-active-background);
+  }
+}
+
+.say-editor-tabs--panel-left .say-editor-tabs__tab.is-active {
+  box-shadow: inset 0.3rem 0 0 0 var(--au-gray-900);
+}
+
+.say-editor-tabs--panel-right .say-editor-tabs__tab.is-active {
+  box-shadow: inset -0.3rem 0 0 0 var(--au-gray-900);
+}
+
+.say-editor-tabs--panel-bottom .say-editor-tabs__tab.is-active {
+  box-shadow: inset 0 -0.3rem 0 0 var(--au-gray-900);
+}
+
+.say-editor-tabs--panel-bottom .say-editor-tabs__tab {
+  width: var(--say-editor-tabs-ribbon-size);
+  height: 100%;
+}
+
+.say-editor-tabs__tab-icon {
+  position: relative;
+}
+
+.say-editor-tabs__tab-icon .say-editor-tabs__badge {
+  position: absolute;
+  display: flex;
+  right: -0.6rem;
+  bottom: -0.6rem;
+  width: auto;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  padding: 0 0.3rem;
+  margin: 0;
+  pointer-events: none;
+
+  .au-c-badge__number {
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+.say-editor-tabs__panel {
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  width: var(--say-editor-tabs-panel-width);
+  min-height: 0;
+  background-color: var(--say-editor-tabs-panel-background);
+}
+
+.say-editor-tabs--panel-left .say-editor-tabs__panel {
+  border-left: 1px solid var(--say-editor-tabs-border-color);
+}
+
+.say-editor-tabs--panel-right .say-editor-tabs__panel {
+  border-right: 1px solid var(--say-editor-tabs-border-color);
+}
+
+.say-editor-tabs--panel-bottom .say-editor-tabs__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--au-z-index-beta);
+  max-height: 50vh;
+  box-shadow: var(--say-editor-tabs-panel-shadow);
+}
+
+.say-editor-tabs__panel-header {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: au-settings.$au-unit-small;
+  min-height: var(--say-editor-tabs-panel-header-height);
+  padding: 0.4rem var(--say-editor-tabs-panel-padding);
+  border-bottom: 1px solid var(--say-editor-tabs-border-color);
+}
+
+.say-editor-tabs__panel-heading {
+  display: flex;
+  align-items: center;
+  gap: au-settings.$au-unit-small;
+  min-width: 0;
+}
+
+.say-editor-tabs__panel-title {
+  @include au-tools.au-font-size(au-settings.$au-tiny);
+
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--au-gray-800);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.say-editor-tabs__panel-badge {
+  flex-shrink: 0;
+
+  width: auto;
+  height: 2rem;
+  min-width: 2rem;
+  padding: 0 0.5rem;
+
+  .au-c-badge__number {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+}
+
+.say-editor-tabs__collapse {
+  flex-shrink: 0;
+
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  color: var(--au-gray-700);
+}
+
+.say-editor-tabs__panel-content {
+  flex-grow: 1;
+
+  min-height: 0;
+  padding: var(--say-editor-tabs-panel-padding);
+  overflow-y: auto;
+}
