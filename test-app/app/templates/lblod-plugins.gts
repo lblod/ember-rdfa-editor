@@ -940,9 +940,145 @@ export default class LblodPluginsTemplate extends Component {
             },
           ]),
         },
+        {
+          id: 'variable-filling-test',
+          uri: 'https://data.vlaanderen.be/ns/mobiliteit#aanvullendreglementontwerp/variable-filling-test',
+          name: 'Variable filling test',
+          date: new Date(),
+          measureDesigns: Promise.resolve([
+            {
+              id: 'test-measure-design-c43',
+              uri: 'https://data.vlaanderen.be/ns/mobiliteit#maatregelontwerp/test-measure-design-c43',
+              trafficSignals: [
+                {
+                  id: 'test-traffic-signal-c43',
+                  position: 0,
+                  uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-c43',
+                  designStatus:
+                    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
+                  trafficSignalConcept: {
+                    id: '1c6110b80aad28134ee6cc79cf506a65a0488d1c649841e152ffbdb5031bb5ee',
+                    uri: 'http://data.vlaanderen.be/id/concept/Verkeersbordconcept/1c6110b80aad28134ee6cc79cf506a65a0488d1c649841e152ffbdb5031bb5ee',
+                    code: 'C43',
+                    meaning:
+                      'Vanaf het verkeersbord tot en met het volgend kruispunt, verbod te rijden met een grotere snelheid dan deze die is aangeduid.',
+                    image:
+                      'https://dev.roadsigns.lblod.info/files/11b805f0-e03e-4e5b-8076-fd53ee2a585a/download',
+                    type: 'https://data.vlaanderen.be/ns/mobiliteit#Verkeersbordconcept',
+                    categories: [
+                      {
+                        id: '955a9adc73d076a2a424754cd540b73da8d15fb002ab6c9f115d080edddb57e8',
+                        uri: 'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/955a9adc73d076a2a424754cd540b73da8d15fb002ab6c9f115d080edddb57e8',
+                        label: 'Verbodsbord',
+                      },
+                    ],
+                    instructions: [
+                      {
+                        id: 'e1f75938-5f9d-477c-8c45-79d362968ecf',
+                        uri: 'http://data.lblod.info/templates/e1f75938-5f9d-477c-8c45-79d362968ecf',
+                        value:
+                          'het is verboden voor bestuurders sneller te rijden dan ${snelheidsbeperking} km per uur',
+                        preview:
+                          'het is verboden voor bestuurders sneller te rijden dan ${snelheidsbeperking} km per uur',
+                      },
+                    ],
+                    mainSigns: [],
+                  },
+                },
+                {
+                  id: 'test-traffic-signal-c45',
+                  position: 1,
+                  uri: 'https://data.vlaanderen.be/ns/mobiliteit#ontwerpverkeersteken/test-traffic-signal-c45',
+                  designStatus:
+                    'https://data.vlaanderen.be/id/concept/Verkeerstekenontwerpstatus/467e89ae-0cfc-4a91-b29f-82c3cfc2bc6a',
+                  trafficSignalConcept: {
+                    id: '950eeeaa70a8d7b9c29056a248fa0e673881f37a10fdce925e969828af827272',
+                    uri: 'http://data.vlaanderen.be/id/concept/Verkeersbordconcept/950eeeaa70a8d7b9c29056a248fa0e673881f37a10fdce925e969828af827272',
+                    code: 'C45',
+                    meaning:
+                      'Einde van de snelheidsbeperking opgelegd door het verkeersbord C43.',
+                    image:
+                      'https://dev.roadsigns.lblod.info/files/adba631a-854a-4151-886e-1d9e9f9e7deb/download',
+                    type: 'https://data.vlaanderen.be/ns/mobiliteit#Verkeersbordconcept',
+                    categories: [
+                      {
+                        id: '955a9adc73d076a2a424754cd540b73da8d15fb002ab6c9f115d080edddb57e8',
+                        uri: 'http://data.vlaanderen.be/id/concept/Verkeersbordcategorie/955a9adc73d076a2a424754cd540b73da8d15fb002ab6c9f115d080edddb57e8',
+                        label: 'Verbodsbord',
+                      },
+                    ],
+                    instructions: [
+                      {
+                        id: '0bd15f73-932d-4db8-b804-4d37fc9a9683',
+                        uri: 'http://data.lblod.info/templates/0bd15f73-932d-4db8-b804-4d37fc9a9683',
+                        value:
+                          'het einde van de opgelegde snelheidsbeperking wordt aangeduid',
+                        preview:
+                          'het einde van de opgelegde snelheidsbeperking wordt aangeduid',
+                      },
+                    ],
+                    mainSigns: [],
+                  },
+                },
+              ],
+              measureConcept: {
+                id: '61C04A18E324910008000067',
+                uri: 'http://data.lblod.info/traffic-measure-concepts/61C04A18E324910008000067',
+                label: 'C43-C45',
+                templateString:
+                  '${locatie} \nhet is verboden voor bestuurders sneller te rijden dan ${snelheidsbeperking} km per uur.\n${locatie2} \nhet einde van de opgelegde snelheidsbeperking wordt aangeduid. ',
+                rawTemplateString:
+                  '${locatie} \n${C43}.\n${locatie2} \n${C45}. ',
+              },
+              unusedSignalConcepts: [],
+              unIncludedSignalConcepts: [],
+              variableInstances: [
+                {
+                  id: 'test-variable-instance-locatie-c43',
+                  uri: 'test-variable-instance-locatie-c43',
+                  variable: {
+                    id: '61C04A19E32491000800006C',
+                    uri: 'http://data.lblod.info/mappings/61C04A19E32491000800006C',
+                    type: 'location',
+                    label: 'locatie',
+                    source: 'https://dev.roadsigns.lblod.info/sparql',
+                  },
+                },
+                {
+                  id: 'test-variable-instance-locatie2-c43',
+                  uri: 'test-variable-instance-locatie2-c43',
+                  variable: {
+                    id: '61C04D87E32491000800009A',
+                    uri: 'http://data.lblod.info/mappings/61C04D87E32491000800009A',
+                    type: 'location',
+                    label: 'locatie2',
+                    source: 'https://dev.roadsigns.lblod.info/sparql',
+                  },
+                },
+                {
+                  id: 'test-variable-instance-snelheidsbeperking',
+                  uri: 'test-variable-instance-snelheidsbeperking',
+                  value:
+                    'http://lblod.data.gift/concepts/74c8c4e7-3785-4bd8-8e03-47b6a356d721',
+                  valueLabel: '50',
+                  variable: {
+                    id: '6197B552B48EDB000B000009',
+                    uri: 'http://data.lblod.info/mappings/6197B552B48EDB000B000009',
+                    type: 'codelist',
+                    label: 'snelheidsbeperking',
+                    source: 'https://dev.roadsigns.lblod.info/sparql',
+                    codelist:
+                      'http://lblod.data.gift/concept-schemes/6621be2e-98c6-4b7c-bc99-bb8b4cca879f',
+                  },
+                },
+              ],
+            },
+          ]),
+        },
       ],
       inDocs: {
         'test-ar-design': Promise.resolve(1),
+        'variable-filling-test': Promise.resolve(1),
       },
     });
 
@@ -1033,6 +1169,14 @@ export default class LblodPluginsTemplate extends Component {
         type: 'codelist',
         codelistUri:
           'http://lblod.data.gift/concept-schemes/cfde5b00-332a-4e0f-8791-413a40cec703',
+        source: 'https://dev.roadsigns.lblod.info/sparql',
+      },
+      {
+        uri: 'http://data.lblod.info/mappings/6197B552B48EDB000B000009',
+        label: 'snelheidsbeperking',
+        type: 'codelist',
+        codelistUri:
+          'http://lblod.data.gift/concept-schemes/6621be2e-98c6-4b7c-bc99-bb8b4cca879f',
         source: 'https://dev.roadsigns.lblod.info/sparql',
       },
     ]);
