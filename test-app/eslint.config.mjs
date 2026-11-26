@@ -136,10 +136,7 @@ export default ts.config(
   },
   {
     files: ['e2e/**/*.spec.{js,ts}'],
-    extends: [playwright.recommended],
-    plugins: {
-      playwright,
-    },
+    extends: [playwright.configs['flat/recommended']],
     rules: {
       'playwright/expect-expect': [
         'error',

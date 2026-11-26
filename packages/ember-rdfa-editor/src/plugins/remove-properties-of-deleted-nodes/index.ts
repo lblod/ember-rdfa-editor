@@ -84,8 +84,7 @@ export function removePropertiesOfDeletedNodes() {
         ResolvedPNode,
         Array<
           { backlink: IncomingTriple } & (
-            | { rdfaId: string }
-            | { resource: string }
+            { rdfaId: string } | { resource: string }
           )
         >
       >();

@@ -32,6 +32,7 @@ import { getArticleNodes } from '@lblod/ember-rdfa-editor/utils/_private/lblod-u
 import { generateVariableInstanceUri } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/variable-helpers';
 import { mapObject } from '@lblod/ember-rdfa-editor/utils/map-utils';
 import type { InsertPositionOption } from '../plugin/types.ts';
+import type Owner from '@ember/owner';
 
 type Signature = {
   Args: {
@@ -57,7 +58,7 @@ export default class RoadsignsModal extends Component<Signature> {
   insertPositionOptionFirst: InsertPositionOption;
   insertPositionOptionLast: InsertPositionOption;
 
-  constructor(owner: unknown, args: Signature['Args']) {
+  constructor(owner: Owner, args: Signature['Args']) {
     super(owner, args);
     this.insertPositionOptionFirst = {
       label: this.intl.t(

@@ -60,9 +60,7 @@ type RelationshipEditorDevModalSig = {
     title?: string;
     source: LiteralNodeTerm | ResourceNodeTerm<string>;
     supportedDirections?:
-      | ['property']
-      | ['backlink']
-      | ['property', 'backlink'];
+      ['property'] | ['backlink'] | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     optionGeneratorConfig?: OptionGeneratorConfig;

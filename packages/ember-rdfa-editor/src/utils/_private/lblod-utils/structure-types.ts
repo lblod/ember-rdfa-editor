@@ -14,9 +14,7 @@ import { type Option, optionMap } from '#root/utils/option.ts';
 
 export type StructurePluginOptions = {
   uriGenerator?:
-    | 'uuid4'
-    | 'template-uuid4'
-    | ((structureType: StructureType) => string);
+    'uuid4' | 'template-uuid4' | ((structureType: StructureType) => string);
   fullLengthArticles?: boolean;
   onlyArticleSpecialName?: boolean;
 };

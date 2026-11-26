@@ -63,12 +63,9 @@ export const documentConfig: (
   },
   objects: ({ searchString = '' } = {}) => {
     const resources = getSubjects(controller.mainEditorState);
-    const options = resources.map(
-      (resource) =>
-        ({
-          term: sayDataFactory.resourceNode(resource),
-        }) as ObjectOption,
-    );
+    const options = resources.map<ObjectOption>((resource) => ({
+      term: sayDataFactory.resourceNode(resource),
+    }));
 
     const rdfaIdMapping = rdfaInfoPluginKey.getState(
       controller.mainEditorState,

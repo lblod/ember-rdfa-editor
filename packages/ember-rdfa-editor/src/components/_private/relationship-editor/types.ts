@@ -46,11 +46,7 @@ export type SubjectOptionGenerator =
   TargetOptionGenerator<SubjectOptionTermType>;
 
 type ObjectOptionTermType =
-  | ResourceNodeTerm
-  | LiteralNodeTerm
-  | NamedNode
-  | Literal
-  | ContentLiteralTerm;
+  ResourceNodeTerm | LiteralNodeTerm | NamedNode | Literal | ContentLiteralTerm;
 
 export type ObjectOption = TermOption<ObjectOptionTermType>;
 

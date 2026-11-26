@@ -13,6 +13,7 @@ type Signature = {
     required?: boolean;
     onChange?: (isoDate: IsoDate | null, date: Date | null) => void;
   };
+  Element: HTMLInputElement;
 };
 
 function toDateInputValue(date: IsoDate | Date | undefined) {

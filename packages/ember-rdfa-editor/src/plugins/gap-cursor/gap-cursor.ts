@@ -85,6 +85,8 @@ export class GapCursor extends Selection {
     search: for (;;) {
       if (!mustMove && GapCursor.valid($pos)) return new GapCursor($pos);
       let pos = $pos.pos,
+        // code is taken from prosemirror, not going to mess with it
+        // eslint-disable-next-line no-useless-assignment
         next = null;
       // Scan up from this position
       for (let d = $pos.depth; ; d--) {

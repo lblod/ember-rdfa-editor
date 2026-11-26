@@ -108,9 +108,7 @@ export function rdfaAttrSpec<T extends RdfaAttrConfig>(
   ? typeof rdfaAwareAttrSpec
   : typeof classicRdfaAttrSpec;
 export function rdfaAttrSpec({ rdfaAware = false }: RdfaAttrConfig = {}):
-  | false
-  | typeof rdfaAwareAttrSpec
-  | typeof classicRdfaAttrSpec {
+  false | typeof rdfaAwareAttrSpec | typeof classicRdfaAttrSpec {
   if (rdfaAware) {
     return rdfaAwareAttrSpec;
   } else {
@@ -371,8 +369,7 @@ export function renderInvisibleRdfa(
       // eslint-disable-next-line no-fallthrough
       case 'LiteralNode': {
         const importedResources = renderable.attrs[IMPORTED_RESOURCES_ATTR] as
-          | string[]
-          | undefined;
+          string[] | undefined;
         if (importedResources && 'nodeSize' in renderable) {
           const subjects = getSubjectsFromBacklinksOfRelationship(
             renderable,

@@ -40,9 +40,7 @@ type RelationshipEditorDevModalSig = {
     title?: string;
     sourceAttrs: RdfaAttrs;
     supportedDirections?:
-      | ['property']
-      | ['backlink']
-      | ['property', 'backlink'];
+      ['property'] | ['backlink'] | ['property', 'backlink'];
     onSubmit: (body: SubmissionBody) => unknown;
     onCancel: () => unknown;
     optionGeneratorConfig?: OptionGeneratorConfig;

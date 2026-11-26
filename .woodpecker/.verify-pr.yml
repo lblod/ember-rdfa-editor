@@ -3,7 +3,6 @@ steps:
     image: node:24-slim
     commands:
       - npm config set ignore-scripts true
-      - npm i -g corepack@0.35
       - corepack enable
       - pnpm i --frozen-lockfile
       - pnpm build
@@ -13,13 +12,13 @@ steps:
     image: node:24-slim
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - corepack enable
       - pnpm lint
   test:
     image: danlynn/ember-cli:6.5.0
     depends_on: [install]
     commands:
-      - npm i -g corepack@0.35
+      - corepack enable
       - pnpm test
 when:
   event:
