@@ -44,7 +44,48 @@ type JsonApiResource = {
 type JsonApiDocument = {
   data: JsonApiResource | JsonApiResource[];
   included?: JsonApiResource[];
+  meta?: { count?: number };
+  links?: Record<string, string | null>;
 };
+
+type PageLink = { number: number; href?: string | null };
+
+export type JsonApiTableMeta = {
+  count: number;
+  pagination: {
+    first: PageLink;
+    prev: PageLink | null;
+    next: PageLink | null;
+    last: PageLink;
+  };
+};
+
+export function createTableMeta(
+  document: JsonApiDocument,
+  pageNumber: number,
+  pageSize: number,
+): JsonApiTableMeta | undefined {
+  const count = document.meta?.count;
+  if (typeof count !== 'number') {
+    return undefined;
+  }
+  const lastPage = Math.max(0, Math.ceil(count / pageSize) - 1);
+  const links = document.links ?? {};
+  return {
+    count,
+    pagination: {
+      first: { number: 0, href: links['first'] ?? null },
+      prev: links['prev']
+        ? { number: Math.max(0, pageNumber - 1), href: links['prev'] }
+        : null,
+      next:
+        links['next'] && pageNumber < lastPage
+          ? { number: pageNumber + 1, href: links['next'] }
+          : null,
+      last: { number: lastPage, href: links['last'] ?? null },
+    },
+  };
+}
 
 export async function fetchJsonApiDocument(
   url: string,

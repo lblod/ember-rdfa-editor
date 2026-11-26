@@ -174,6 +174,7 @@ import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsi
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import DummyContainer from 'test-app/components/dummy-container';
 import {
+  createTableMeta,
   documentData,
   fetchJsonApiDocument,
   mapArDesign,
@@ -953,12 +954,24 @@ export default class LblodPluginsTemplate extends Component {
     if (pagination.nameFilter) {
       params.set('filter[name]', pagination.nameFilter);
     }
+    if (pagination.pageSize) {
+      params.set('page[size]', String(pagination.pageSize));
+    }
+    if (pagination.pageNumber) {
+      params.set('page[number]', String(pagination.pageNumber));
+    }
     const query = params.toString();
     const document = await fetchJsonApiDocument(
       `${VKS_DESIGN_SERVICE_BASE_URL}/ar-designs${query ? `?${query}` : ''}`,
     );
     return {
-      designs: documentData(document).map(mapArDesign),
+      designs: Object.assign(documentData(document).map(mapArDesign), {
+        meta: createTableMeta(
+          document,
+          pagination.pageNumber,
+          pagination.pageSize,
+        ),
+      }),
       inDocs: {},
     };
   };
