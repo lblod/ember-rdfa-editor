@@ -313,7 +313,7 @@ export default class extends Component {
             <Sidebar
               @controller={{container.controller}}
               @tabs={{this.editorTabs}}
-              @placement="left"
+              @panelPlacement="right"
               @useNew={{true}}
             />
           </:sidebarLeft>

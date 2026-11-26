@@ -26,7 +26,7 @@ const Sidebar: TOC<SidebarSignature> = <template>
     <ModernSidebar
       @controller={{@controller}}
       @tabs={{@tabs}}
-      @placement={{@placement}}
+      @panelPlacement={{@panelPlacement}}
       ...attributes
     />
   {{else}}

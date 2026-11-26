@@ -18,7 +18,7 @@ An example of such a configuration can be found in https://github.com/lblod/embe
 
 Additionally, the `sidebar` component also expects the following arguments:
 - `controller: SayController`: will be passed to the different tabs/panels
-- `placement?: SidebarPlacement`: position of the sidebar. Can be either 'left' or 'right'. Should be consistent with either the `sidebarLeft` or `sidebarRight` usage.
+- `panelPlacement?: Extract<TabPanelPlacement, 'left' | 'right'>`: position of the panel in relation to the sidebar. Can be either 'left' or 'right'. Should be consistent with either the `sidebarLeft` or `sidebarRight` usage. Default is 'right'
 
 **The new `editor-tabs` component**
 This component does the main work of rendering the tabs and active panel.

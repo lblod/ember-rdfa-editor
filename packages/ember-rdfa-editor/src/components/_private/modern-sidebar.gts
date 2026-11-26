@@ -11,19 +11,15 @@ export type ModernSidebarSignature = {
   Args: {
     controller: SayController;
     tabs: EditorTab[];
-    /** @default 'left' */
-    placement?: SidebarPlacement;
+    /** @default 'right' */
+    panelPlacement?: Extract<TabPanelPlacement, 'left' | 'right'>;
   };
   Element: HTMLDivElement;
 };
 
 export default class ModernSidebar extends Component<ModernSidebarSignature> {
-  get placement(): SidebarPlacement {
-    return this.args.placement ?? 'left';
-  }
-
   get panelPlacement(): TabPanelPlacement {
-    return this.placement === 'left' ? 'right' : 'left';
+    return this.args.panelPlacement ?? 'right';
   }
 
   <template>
