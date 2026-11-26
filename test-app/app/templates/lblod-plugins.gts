@@ -167,12 +167,22 @@ import RoadsignRegulationCard from '@lblod/say-roadsign-regulation-plugin/compon
 import { roadsign_regulation } from '@lblod/say-roadsign-regulation-plugin/plugin/nodes';
 import type { RoadsignRegulationPluginOptions } from '@lblod/say-roadsign-regulation-plugin/plugin/types';
 import type { Variable } from '@lblod/say-roadsign-regulation-plugin/plugin/schemas/variable';
+import { queryVariables } from '@lblod/say-roadsign-regulation-plugin/plugin/queries/variable';
 import ArDesignSidebarWidget from '@lblod/say-ar-design-plugin/components/sidebar-widget';
 
 import SampleToolbarResponsive from 'test-app/components/sample-toolbar-responsive';
 import DevModeToggle from 'test-app/components/dev-mode-toggle';
 import DummyContainer from 'test-app/components/dummy-container';
-import type { DesignInfo } from '@lblod/say-ar-design-plugin/plugin/types';
+import {
+  documentData,
+  fetchJsonApiDocument,
+  mapArDesign,
+  VKS_DESIGN_SERVICE_BASE_URL,
+} from 'test-app/utils/fetchJsonApiDocument';
+import type {
+  ArDesignQuery,
+  DesignInfo,
+} from '@lblod/say-ar-design-plugin/plugin/types';
 import { emptyBlockPlaceholder } from '@lblod/ember-rdfa-editor/plugins/empty-block-placeholder';
 
 const humanReadablePredicateDisplay: DisplayGenerator<OutgoingTriple> = (
@@ -934,6 +944,25 @@ export default class LblodPluginsTemplate extends Component {
         'test-ar-design': Promise.resolve(1),
       },
     });
+
+  arDesignTestWithVks: ArDesignQuery = async (pagination) => {
+    const params = new URLSearchParams();
+    if (pagination.sort) {
+      params.set('sort', pagination.sort);
+    }
+    if (pagination.nameFilter) {
+      params.set('filter[name]', pagination.nameFilter);
+    }
+    const query = params.toString();
+    const document = await fetchJsonApiDocument(
+      `${VKS_DESIGN_SERVICE_BASE_URL}/ar-designs${query ? `?${query}` : ''}`,
+    );
+    return {
+      designs: documentData(document).map(mapArDesign),
+      inDocs: {},
+    };
+  };
+
   instructionVariableQuery = (uri: string): Promise<Variable[]> => {
     if (!uri) {
       return Promise.resolve([]);
@@ -994,6 +1023,14 @@ export default class LblodPluginsTemplate extends Component {
         source: 'https://dev.roadsigns.lblod.info/sparql',
       },
     ]);
+  };
+  instructionVariableQueryWithMow = (uri: string): Promise<Variable[]> => {
+    if (!uri) {
+      return Promise.resolve([]);
+    }
+    return queryVariables('https://dev.roadsigns.lblod.info/sparql', {
+      templateUri: uri,
+    });
   };
   getState = (html: string) => {
     const schema = this.schema;
@@ -1120,8 +1157,8 @@ export default class LblodPluginsTemplate extends Component {
                 <Item>
                   <ArDesignSidebarWidget
                     @controller={{container.controller}}
-                    @designQuery={{this.arDesignTest}}
-                    @instructionVariableQuery={{this.instructionVariableQuery}}
+                    @designQuery={{this.arDesignTestWithVks}}
+                    @instructionVariableQuery={{this.instructionVariableQueryWithMow}}
                     @processDocumentHeadlessly={{this.processDocumentHeadlessly}}
                   />
                 </Item>
