@@ -76,10 +76,10 @@ export default class EditorTabs extends Component<EditorTabsSignature> {
       : undefined;
   }
 
-  private tabDomId(index: number) {
+  private tabDomId = (index: number) => {
     return `${this.uid}-tab-${index}`;
   }
-  private panelDomId(index: number) {
+  private panelDomId = (index: number) => {
     return `${this.uid}-panel-${index}`;
   }
 
