@@ -1,5 +1,4 @@
 import { AlertTriangleIcon } from '@appuniversum/ember-appuniversum/components/icons/alert-triangle';
-import { HtmlIcon } from '@appuniversum/ember-appuniversum/components/icons/html';
 import { LabelIcon } from '@appuniversum/ember-appuniversum/components/icons/label';
 import { PaperclipIcon } from '@appuniversum/ember-appuniversum/components/icons/paperclip';
 import { PlusIcon } from '@appuniversum/ember-appuniversum/components/icons/plus';
@@ -31,11 +30,6 @@ const sampleEditorTabs: EditorTab[] = [
   {
     title: 'Attachments',
     icon: PaperclipIcon,
-    panelContent: EmptyPane,
-  },
-  {
-    title: 'Dev tools',
-    icon: HtmlIcon,
     panelContent: EmptyPane,
   },
   {

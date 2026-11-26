@@ -1,13 +1,11 @@
 import { action } from '@ember/object';
 import { inputRules, type NodeViewConstructor } from '@lblod/ember-rdfa-editor';
 import SayController from '@lblod/ember-rdfa-editor/core/say-controller';
-import { inline_rdfa } from '@lblod/ember-rdfa-editor/marks';
 import {
   blockRdfaWithConfig,
   docWithConfig,
   hard_break,
   horizontal_rule,
-  invisibleRdfaWithConfig,
   paragraph,
   repairedBlockWithConfig,
   text,
@@ -65,7 +63,7 @@ import {
   dropdown,
   dropdownView,
 } from '../dummy-nodes';
-import { heading } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
+import { headingWithConfig } from '@lblod/ember-rdfa-editor/plugins/heading/nodes/heading';
 import { getOwner } from '@ember/owner';
 import { unwrap } from '@lblod/ember-rdfa-editor/utils/option';
 import {
@@ -88,6 +86,25 @@ import { slashCommandsPlugin } from '@lblod/ember-rdfa-editor/plugins/slash-comm
 import { service } from '@ember/service';
 import type IntlService from 'ember-intl/services/intl';
 import TableTooltip from '@lblod/ember-rdfa-editor/components/plugins/table/table-tooltip';
+import { editableNodePlugin } from '@lblod/ember-rdfa-editor/plugins/_private/editable-node';
+import {
+  inlineRdfaWithConfig,
+  inlineRdfaWithConfigView,
+} from '@lblod/ember-rdfa-editor/nodes/inline-rdfa';
+import { BlockRDFaView } from '@lblod/ember-rdfa-editor/nodes/block-rdfa';
+
+import { devToolsTab } from '@lblod/ember-rdfa-editor/plugins/dev-tools/tab';
+import type {
+  OptionGeneratorConfig,
+  PredicateOptionGeneratorArgs,
+  TargetOptionGeneratorArgs,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/types';
+import { restartableTask, timeout } from 'ember-concurrency';
+import {
+  combineConfigs,
+  documentConfig,
+  lovConfig,
+} from '@lblod/ember-rdfa-editor/components/_private/relationship-editor/configs';
 
 export default class extends Component {
   @service declare intl: IntlService;
@@ -98,10 +115,12 @@ export default class extends Component {
     nodes: {
       doc: docWithConfig({
         defaultLanguage: 'nl-BE',
+        rdfaAware: true,
+        hasResourceImports: true,
       }),
       paragraph,
 
-      repaired_block: repairedBlockWithConfig(),
+      repaired_block: repairedBlockWithConfig({ rdfaAware: true }),
 
       list_item: listItemWithConfig(),
       ordered_list: orderedListWithConfig(),
@@ -112,7 +131,7 @@ export default class extends Component {
         cellContent: 'block+',
         inlineBorderStyle: { width: '0.5px', color: '#CCD1D9' },
       }),
-      heading,
+      heading: headingWithConfig({ rdfaAware: false }),
       blockquote,
 
       horizontal_rule,
@@ -123,8 +142,8 @@ export default class extends Component {
       image,
 
       hard_break,
-      invisible_rdfa: invisibleRdfaWithConfig(),
-      block_rdfa: blockRdfaWithConfig(),
+      block_rdfa: blockRdfaWithConfig({ rdfaAware: true }),
+      inline_rdfa: inlineRdfaWithConfig({ rdfaAware: true }),
       card,
       counter,
       dropdown,
@@ -132,7 +151,6 @@ export default class extends Component {
       link: link(this.linkOptions),
     },
     marks: {
-      inline_rdfa,
       code,
       em,
       strong,
@@ -148,6 +166,7 @@ export default class extends Component {
   get linkOptions() {
     return {
       interactive: true,
+      rdfaAware: true,
     };
   }
 
@@ -161,6 +180,11 @@ export default class extends Component {
       link: linkView(this.linkOptions)(proseController),
       image: imageView(proseController),
       sample_block: sampleBlockView(proseController),
+      inline_rdfa: inlineRdfaWithConfigView({ rdfaAware: true })(
+        proseController,
+      ),
+      block_rdfa: (...args: Parameters<NodeViewConstructor>) =>
+        new BlockRDFaView(args, proseController),
     };
   };
 
@@ -187,6 +211,7 @@ export default class extends Component {
         ],
       }),
       emberApplication({ application: unwrap(getOwner(this)) }),
+      editableNodePlugin(),
       slashCommandsPlugin({
         intl: this.intl,
         getGroups: this.contextualGroupGetters,
@@ -208,6 +233,68 @@ export default class extends Component {
     console.warn('Live toggling plugins is currently not supported');
   }
 
+  get optionGeneratorConfig() {
+    if (this.rdfaEditor) {
+      return combineConfigs(documentConfig(this.rdfaEditor), lovConfig());
+    }
+  }
+
+  subjectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.subjects?.(args)) ?? [];
+      return result;
+    },
+  );
+  predicateOptionGeneratorTask = restartableTask(
+    async (args?: PredicateOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.predicates?.(args)) ?? [];
+      return result;
+    },
+  );
+  objectOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result = (await this.optionGeneratorConfig?.objects?.(args)) ?? [];
+      return result;
+    },
+  );
+  pointerSourcesOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerSources?.(args)) ?? [];
+      return result;
+    },
+  );
+  pointerTargetsOptionGeneratorTask = restartableTask(
+    async (args?: TargetOptionGeneratorArgs) => {
+      await timeout(200);
+      const result =
+        (await this.optionGeneratorConfig?.pointerTargets?.(args)) ?? [];
+      return result;
+    },
+  );
+
+  optionGeneratorConfigTaskified: OptionGeneratorConfig = {
+    subjects: this.subjectOptionGeneratorTask.perform.bind(this),
+    predicates: this.predicateOptionGeneratorTask.perform.bind(this),
+    objects: this.objectOptionGeneratorTask.perform.bind(this),
+    pointerSources: this.pointerSourcesOptionGeneratorTask.perform.bind(this),
+    pointerTargets: this.pointerTargetsOptionGeneratorTask.perform.bind(this),
+  };
+
+  get editorTabs() {
+    return [
+      ...sampleEditorTabs,
+      devToolsTab({
+        optionGeneratorConfig: this.optionGeneratorConfigTaskified,
+      }),
+    ];
+  }
+
   <template>
     <DummyContainer>
       <:header>
@@ -225,8 +312,8 @@ export default class extends Component {
           <:sidebarLeft as |container|>
             <Sidebar
               @controller={{container.controller}}
-              @tabs={{sampleEditorTabs}}
-              @placement="left"
+              @tabs={{this.editorTabs}}
+              @panelPlacement="right"
               @useNew={{true}}
             />
           </:sidebarLeft>
