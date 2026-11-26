@@ -9,15 +9,15 @@ catalog:
   "@babel/plugin-proposal-decorators": ^7.29.7
   "@babel/plugin-transform-runtime": ^7.29.7
   "@babel/plugin-transform-typescript": 7.27.0
-  "@babel/runtime": ^7.29.14
+  "@babel/runtime": ^7.29.15
   "@changesets/changelog-github": ^0.5.2
   "@changesets/cli": ^2.31.1
   "@changesets/get-release-plan": ^4.0.16
-  "@codemirror/commands": ^6.11.1
+  "@codemirror/commands": ^6.11.2
   "@codemirror/lang-html": ^6.4.12
   "@codemirror/lang-xml": ^6.1.0
   "@codemirror/state": ^6.7.6
-  "@codemirror/view": ^6.43.15
+  "@codemirror/view": ^6.44.0
   "@curvenote/prosemirror-utils": ^1.0.5
   "@ember/render-modifiers": ^4.0.0
   "@ember-data-types/model": ^5.9.1
@@ -25,20 +25,20 @@ catalog:
   "@ember/test-helpers": ^5.8.0
   "@embroider/addon-dev": ^7.1.6
   "@embroider/addon-shim": ^1.11.0
-  "@embroider/compat": ^4.1.28
+  "@embroider/compat": ^4.1.29
   "@embroider/config-meta-loader": ^1.0.1
   "@embroider/core": ^4.6.10
   "@embroider/legacy-inspector-support": ^0.1.3
   "@embroider/macros": ^1.21.4
   "@embroider/test-setup": ^4.0.0
-  "@embroider/vite": ^1.8.0
+  "@embroider/vite": ^1.8.1
   "@eslint/js": ^10.0.1
   "@floating-ui/dom": ^1.8.0
   "@glimmer/component": ^2.2.1
   "@glimmer/runtime": ^0.94.11
   "@glimmer/tracking": ^1.1.2
   "@glimmer/validator": ^0.95.0
-  "@glint/ember-tsc": ^1.14.3
+  "@glint/ember-tsc": ^1.14.4
   "@glint/template": ^1.11.1
   "@glint/tsserver-plugin": 2.7.16
   "@lblod/ember-rdfa-editor-lblod-plugins": 37.3.0
@@ -74,13 +74,13 @@ catalog:
   "@types/sinon": ^22.0.2
   "@types/uuid": ^11.0.0
   "@types/validator": ^13.15.10
-  "@typescript-eslint/eslint-plugin": ^8.72.2
-  "@typescript-eslint/parser": ^8.72.2
+  "@typescript-eslint/eslint-plugin": ^8.74.0
+  "@typescript-eslint/parser": ^8.74.0
   "@warp-drive-types/core-types": ^5.9.1
   "@warp-drive/core": ^5.9.1
   "@warp-drive/legacy": ^5.9.1
-  autoprefixer: ^10.6.2
-  babel-plugin-ember-template-compilation: ^4.0.1
+  autoprefixer: ^10.7.0
+  babel-plugin-ember-template-compilation: ^4.0.2
   codemirror: ^6.0.2
   common-tags: ^1.8.2
   concurrently: ^10.0.7
@@ -103,7 +103,7 @@ catalog:
   ember-page-title: ^9.1.0
   ember-power-select: ^8.12.2
   ember-power-select-with-create: ^3.1.0
-  ember-qunit: ^9.2.0
+  ember-qunit: ^9.2.1
   ember-resolver: ^13.2.0
   ember-resources: ^7.1.0
   ember-source: ^6.12.1
@@ -113,11 +113,11 @@ catalog:
   ember-truth-helpers: ^5.0.0
   ember-try: ^4.0.0
   ember-velcro: ^2.2.0
-  eslint: ^10.14.0
+  eslint: ^10.15.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-ember: ^13.10.0
+  eslint-plugin-ember: ^13.11.5
   eslint-plugin-import: ^2.32.0
-  eslint-plugin-n: ^18.5.0
+  eslint-plugin-n: ^18.6.0
   eslint-plugin-playwright: ^2.12.2
   eslint-plugin-prettier: ^5.5.7
   eslint-plugin-qunit: ^8.2.6
@@ -126,27 +126,27 @@ catalog:
   globals: ^17.14.0
   iter-tools: npm:iter-tools-es@^7.5.4
   js-beautify: ^2.0.3
-  libphonenumber-js: ^1.13.16
+  libphonenumber-js: ^1.13.17
   linkifyjs: ^4.4.0
   loader.js: ^4.7.0
   mdast-util-to-string: ^4.0.0
   mdn-polyfills: ^5.20.0
   n3: ^2.13.12
   octokit: ^4.1.4
-  postcss: ^8.5.32
+  postcss: ^8.5.33
   prettier: ^3.10.1
   prettier-plugin-ember-template-tag: ^2.1.8
   prosemirror-commands: ^1.7.2
   prosemirror-dev-tools: ^4.3.0
   prosemirror-dropcursor: ^1.8.4
-  prosemirror-inputrules: ^1.5.1
+  prosemirror-inputrules: ^1.7.0
   prosemirror-keymap: ^1.2.3
   prosemirror-model: ^1.25.13
   prosemirror-schema-basic: ^1.2.5
-  prosemirror-schema-list: ^1.6.0
+  prosemirror-schema-list: ^1.6.1
   prosemirror-state: ^1.4.4
   prosemirror-test-builder: ^1.1.1
-  prosemirror-transform: ^1.12.5
+  prosemirror-transform: ^1.12.7
   prosemirror-view: ^1.42.9
   qunit: ^3.0.0
   qunit-dom: ^3.6.0
@@ -154,31 +154,31 @@ catalog:
   react: ^19.3.1
   react-dom: ^19.3.1
   reactiveweb: ^1.9.4
-  relative-to-absolute-iri: ^1.0.8
+  relative-to-absolute-iri: ^1.0.9
   remark-parse: ^11.0.0
   remark-stringify: ^11.0.0
   rimraf: ^6.1.4
-  rollup: ^4.68.2
+  rollup: ^4.68.8
   rollup-plugin-copy: ^3.5.0
   rollup-plugin-sass: ^1.16.0-rc.1
   sass: ^1.108.2
   sinon: ^22.1.0
   static-server: ^2.2.1
-  stylelint: ^18.0.0
-  stylelint-config-standard: ^41.0.0
+  stylelint: ^18.1.0
+  stylelint-config-standard: ^41.1.0
   stylelint-prettier: ^5.1.0
   tracked-built-ins: ^4.1.2
   tracked-toolbox: ^3.0.0
   tsx: ^4.23.15
   typedoc: ^0.28.20
   typescript: ^6.0.3
-  typescript-eslint: ^8.72.2
+  typescript-eslint: ^8.74.0
   unified: ^11.0.5
   uuid: ^14.0.3
   validator: ^13.15.35
   vite: ^8.3.8
   walk-sync: ^4.0.2
-  webpack: ^5.112.2
+  webpack: ^5.113.0
   yup: ^1.7.1
   zod: ^4.6.7
 
