@@ -7,7 +7,7 @@ import EditorTabs, {
 
 export type SidebarPlacement = 'left' | 'right';
 
-type ModernSidebarSignature = {
+export type ModernSidebarSignature = {
   Args: {
     controller: SayController;
     tabs: EditorTab[];
