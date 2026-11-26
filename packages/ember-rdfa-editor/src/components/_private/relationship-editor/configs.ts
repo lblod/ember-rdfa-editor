@@ -174,7 +174,7 @@ const fetchLovApi: (args: {
 }) => {
   const abortController = new AbortController();
   try {
-    const url = `https://lov.linkeddata.es/dataset/lov/api/v2/term/autocomplete?q=${searchString}&type=${type}&page_size=${pageSize}`;
+    const url = `https://lov.linkeddata.es/dataset/api/v2/term/autocomplete?q=${searchString}&type=${type}&page_size=${pageSize}`;
     const response = await fetch(url, { signal: abortController.signal });
     const result = (await response.json()) as Record<string, unknown>;
     const results = result['results'] as Record<string, unknown>[];

@@ -31,6 +31,8 @@ export type FloatingUISignature = {
       strategy?: Strategy;
       useTransform?: boolean;
       middleware?: Middleware[];
+      /** When false, the modifier clears its inline positioning and does nothing. @default true */
+      enabled?: boolean;
     };
     Positional: [];
   };
@@ -47,8 +49,20 @@ const floatingUI: FunctionBasedModifier<FloatingUISignature> =
         placement,
         useTransform = true,
         middleware,
+        enabled = true,
       },
     ) => {
+      if (!enabled) {
+        Object.assign(floatingElement.style, {
+          position: '',
+          top: '',
+          left: '',
+          transform: '',
+          visibility: '',
+        });
+        return;
+      }
+
       if (typeof referenceElement === 'string') {
         const refElement = document.querySelector(referenceElement);
         assert(

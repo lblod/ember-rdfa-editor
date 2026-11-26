@@ -166,6 +166,14 @@
       "types": "./declarations/components/index.d.ts",
       "default": "./dist/components/index.js"
     },
+    "./components/sidebar": {
+      "types": "./declarations/components/sidebar.d.ts",
+      "default": "./dist/components/sidebar.js"
+    },
+    "./components/editor-tabs": {
+      "types": "./declarations/components/editor-tabs.d.ts",
+      "default": "./dist/components/editor-tabs.js"
+    },
     "./components/_private/rdfa-editor": {
       "types": "./declarations/components/_private/rdfa-editor/index.d.ts",
       "default": "./dist/components/_private/rdfa-editor/index.js"
@@ -388,6 +396,8 @@
       "./components/_private/external-triple-editor/card.js": "./dist/_app_/components/_private/external-triple-editor/card.js",
       "./components/_private/external-triple-editor/form.js": "./dist/_app_/components/_private/external-triple-editor/form.js",
       "./components/_private/imported-resource-linker/card.js": "./dist/_app_/components/_private/imported-resource-linker/card.js",
+      "./components/_private/legacy-sidebar.js": "./dist/_app_/components/_private/legacy-sidebar.js",
+      "./components/_private/modern-sidebar.js": "./dist/_app_/components/_private/modern-sidebar.js",
       "./components/_private/node-controls/card.js": "./dist/_app_/components/_private/node-controls/card.js",
       "./components/_private/node-controls/remove-node.js": "./dist/_app_/components/_private/node-controls/remove-node.js",
       "./components/_private/node-controls/wrapping-utils.js": "./dist/_app_/components/_private/node-controls/wrapping-utils.js",
@@ -410,6 +420,7 @@
       "./components/date-picker.js": "./dist/_app_/components/date-picker.js",
       "./components/debug-tools.js": "./dist/_app_/components/debug-tools.js",
       "./components/editor-container.js": "./dist/_app_/components/editor-container.js",
+      "./components/editor-tabs.js": "./dist/_app_/components/editor-tabs.js",
       "./components/editor.js": "./dist/_app_/components/editor.js",
       "./components/ember-node/embedded-editor.js": "./dist/_app_/components/ember-node/embedded-editor.js",
       "./components/ember-node/inline-rdfa.js": "./dist/_app_/components/ember-node/inline-rdfa.js",
