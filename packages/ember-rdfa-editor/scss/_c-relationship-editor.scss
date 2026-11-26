@@ -3,3 +3,9 @@
   overflow: auto;
   text-overflow: ellipsis;
 }
+
+.say-property-details__value-id {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
