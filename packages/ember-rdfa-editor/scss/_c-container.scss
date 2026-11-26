@@ -21,8 +21,18 @@
 
 .say-container__main {
   position: relative;
+  display: flex;
   min-height: 0;
   flex-grow: 1;
+}
+
+.say-container__sidebar-left,
+.say-container__sidebar-right {
+  flex-shrink: 0;
+
+  display: flex;
+  min-height: 0;
+  height: 100%;
 }
 
 .say-container__aside {

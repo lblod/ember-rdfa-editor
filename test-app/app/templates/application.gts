@@ -9,6 +9,7 @@ import BasicDropdownWormhole from 'ember-basic-dropdown/components/basic-dropdow
   <nav class="navbar">
     <LinkTo class="navigation-link" @route="index">Home</LinkTo>
     <LinkTo class="navigation-link" @route="plugins">With Dummy Plugins</LinkTo>
+    <LinkTo class="navigation-link" @route="modern-sidebar">Modern Sidebar</LinkTo>
     <LinkTo class="navigation-link" @route="vendors">Vendor Environment</LinkTo>
     <LinkTo class="navigation-link" @route="editable-node">Editable Nodes POC</LinkTo>
     <LinkTo class="navigation-link" @route="space-invisible">Space Invisible</LinkTo>
