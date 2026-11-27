@@ -42,6 +42,7 @@ function parseVariables(
   instructionVariables: Variable[],
   templateString: string,
   designVariableInstances: VariableInstance[],
+  previewMode: boolean,
 ) {
   const variables = Object.fromEntries(
     designVariableInstances.map((varInstance) => {
@@ -70,15 +71,19 @@ function parseVariables(
   // What should be the default source of location variables?
   const source = locationVariableInstance?.variable.source ?? '';
   const locationVariables: Variable[] = [];
-  for (const match of templateString.matchAll(/\$\{(locatie\d*)\}/g)) {
-    locationVariables.push({
-      uri: `http://data.lblod.info/variable/${uuidv4()}`,
-      label: match[1],
-      type: 'location',
-      source,
-    });
+  if (!previewMode) {
+    for (const match of templateString.matchAll(/\$\{(locatie\d*)\}/g)) {
+      locationVariables.push({
+        uri: `http://data.lblod.info/variable/${uuidv4()}`,
+        label: match[1],
+        type: 'location',
+        source,
+      });
+    }
   }
-  const allVariables = [...instructionVariables, ...locationVariables];
+  const allVariables = previewMode
+    ? instructionVariables
+    : [...instructionVariables, ...locationVariables];
   for (const variable of allVariables) {
     if (variable.type === 'instruction' || variables[variable.label]) {
       continue;
@@ -205,10 +210,11 @@ export default class ArImporterService extends Service {
     }
     try {
       const warnings: string[] = [];
-      const measureDesigns = await design.measureDesigns;
+      const measureDesigns = [...await design.measureDesigns]
       const monads = (
         await Promise.all(
-          measureDesigns.map(async (measureDesign, index, array) => {
+          //If we are inserting freely we have to reverse the array so they get inserted in the correct order
+          (insertPositionArgs.insertFreely ? measureDesigns.reverse() : measureDesigns).map(async (measureDesign, index, array) => {
             const {
               measureConcept,
               trafficSignals,
@@ -244,34 +250,33 @@ export default class ArImporterService extends Service {
               string,
               SchemaVariableInstance & { __rdfaId: string }
             > = {};
-            const templateString = measureTemplates?.[index] ?? '';
+            const indexWithReverseInMind = insertPositionArgs.insertFreely ? (array.length - 1 - index) : index;
+            const templateString = measureTemplates?.[indexWithReverseInMind] ?? '';
             const selectedInstructionUris =
-              selectedInstructionUrisByMeasure?.[index];
-            // If we have controller we are in insert mode, so we should query and replace all variables
-            if (controller) {
-              const instructionVariables: Variable[] = (
-                await Promise.all(
-                  trafficSignals.flatMap((signal) =>
-                    signal.trafficSignalConcept.instructions
-                      .filter(
-                        (instruction) =>
-                          !selectedInstructionUris ||
-                          selectedInstructionUris.has(instruction.uri),
-                      )
-                      .map(
-                        (instruction) =>
-                          instructionVariableQuery?.(instruction.uri) ??
-                          Promise.resolve([]),
-                      ),
-                  ),
-                )
-              ).flat();
-              convertedVariableInstances = parseVariables(
-                instructionVariables,
-                templateString,
-                variableInstances,
-              );
-            }
+              selectedInstructionUrisByMeasure?.[indexWithReverseInMind];
+            const instructionVariables: Variable[] = (
+              await Promise.all(
+                trafficSignals.flatMap((signal) =>
+                  signal.trafficSignalConcept.instructions
+                    .filter(
+                      (instruction) =>
+                        !selectedInstructionUris ||
+                        selectedInstructionUris.has(instruction.uri),
+                    )
+                    .map(
+                      (instruction) =>
+                        instructionVariableQuery?.(instruction.uri) ??
+                        Promise.resolve([]),
+                    ),
+                ),
+              )
+            ).flat();
+            convertedVariableInstances = parseVariables(
+              instructionVariables,
+              templateString,
+              variableInstances,
+              !controller,
+            );
             const isZonal = Boolean(
               trafficSignals.find((s) => s.trafficSignalConcept.code === 'Z'),
             );

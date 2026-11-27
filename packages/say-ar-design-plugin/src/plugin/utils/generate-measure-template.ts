@@ -22,7 +22,7 @@ export default function generateMeasureTemplate(
         line.push(subSign.selectedInstruction.value);
       }
     }
-   lines.push(line.join('; '));
+    lines.push(line.join('; '));
   }
   return lines.join(';\n');
 }
