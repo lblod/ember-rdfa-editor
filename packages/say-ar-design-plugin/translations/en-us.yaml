@@ -1,3 +1,5 @@
+common:
+  loading: Loading...
 ar-importer:
   sidebar-widget:
     label: "'AR'-design"
@@ -19,7 +21,7 @@ ar-importer:
         date: Last modified
         status: Usage status
       actions:
-        select: Select
+        select: Fill out and add
       statuses:
         used: Used
         unused: Not yet used
@@ -31,7 +33,10 @@ ar-importer:
     after-article-x: After article {articleNumber}
     select-position: Choose insertion point
     on-cursor: On cursor
+    go-back: Back to the overview list
+    cancel: Cancel
   preview:
+    heading: AR preview
     return-to-overview: Return to overview
     only-existing-label: existing
     only-existing: This design only includes existing Traffic Signals.
@@ -40,3 +45,13 @@ ar-importer:
     error-processing-design: Error when processing signage plan
     warning-unused-signal-concept: Measure {measure} includes the signal {signal} but it is not used in this design
     warning-un-included-signal-concept: Signal {signal} is not included in the measure {measure} but it is used in this design
+  insert:
+    instructions-header: Signs and instructions
+    content-header: Add 'AR'-design
+    instruction: Instruction
+    instruction-placeholder: Select instruction
+    article: Article
+traffic-measure-concept:
+  main-sign: Main sign
+  road-marking: Road marking
+  traffic-light: Traffic light

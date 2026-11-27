@@ -1,5 +1,5 @@
 import { type AsyncHasMany } from '@warp-drive/legacy/model';
-import type MeasureDesign from './measure-design.ts';
+import type MeasureDesign from '#root/plugin/models/measure-design.ts';
 
 export default interface ArDesign {
   id: string | null;

@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { fn, get } from '@ember/helper';
 import type { AuMainContainerSignature } from '@appuniversum/ember-appuniversum/components/au-main-container';
-import ReactiveTable from './reactive-table.gts';
+import ReactiveTable from '#root/components/reactive-table.gts';
 import AuButtonGroup from '@appuniversum/ember-appuniversum/components/au-button-group';
 import AuButton from '@appuniversum/ember-appuniversum/components/au-button';
-import { VisibleIcon } from '@appuniversum/ember-appuniversum/components/icons/visible';
+import { PencilIcon } from '@appuniversum/ember-appuniversum/components/icons/pencil';
 import AuFormRow from '@appuniversum/ember-appuniversum/components/au-form-row';
 import AuLabel from '@appuniversum/ember-appuniversum/components/au-label';
 import AuHeading from '@appuniversum/ember-appuniversum/components/au-heading';
@@ -14,10 +14,13 @@ import AuLoader from '@appuniversum/ember-appuniversum/components/au-loader';
 import { v4 as uuidv4 } from 'uuid';
 import { CrossIcon } from '@appuniversum/ember-appuniversum/components/icons/cross';
 import { detailedDate } from '@lblod/ember-rdfa-editor/utils/_private/lblod-utils/detailed-date';
-import type ArDesign from '../plugin/models/ar-design.ts';
+import type ArDesign from '#root/plugin/models/ar-design.ts';
 import { on } from '@ember/modifier';
 import t from 'ember-intl/helpers/t';
-import type { ArDesignOverviewSortField, DesignInfo } from '../plugin/types.ts';
+import type {
+  ArDesignOverviewSortField,
+  DesignInfo,
+} from '#root/plugin/types.ts';
 import { trackedFunction } from 'reactiveweb/function';
 import type { TOC } from '@ember/component/template-only';
 
@@ -107,7 +110,8 @@ const ArDesignOverview: TOC<ArDesignOverviewSignature> = <template>
             <AuButtonGroup>
               <AuButton
                 @skin="link"
-                @icon={{VisibleIcon}}
+                @icon={{PencilIcon}}
+                @iconAlignment="right"
                 {{on "click" (fn @onShowPreview arDesign)}}
               >{{t "ar-importer.overview.table.actions.select"}}</AuButton>
             </AuButtonGroup>
@@ -131,7 +135,7 @@ class UsageStatus extends Component<UsageStatusSig> {
   <template>
     {{#if this.count.isPending}}
       <AuLoader @inline={{true}} @hideMessage={{true}}>
-        {{t "application.loading"}}
+        {{t "common.loading"}}
       </AuLoader>
     {{else}}
       {{#if this.count.value}}

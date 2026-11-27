@@ -1,3 +1,5 @@
+common:
+  loading: Aan het laden...
 ar-importer:
   sidebar-widget:
     label: AR-ontwerp
@@ -19,7 +21,7 @@ ar-importer:
         date: Laatste wijziging
         status: Gebruikstatus
       actions:
-        select: Selecteer
+        select: Invullen en toevoegen
       statuses:
         used: Gebruikt
         unused: Nog niet gebruikt
@@ -31,7 +33,10 @@ ar-importer:
     after-article-x: Na artikel {articleNumber}
     select-position: Kies invoegpositie
     on-cursor: Bij de cursor
+    go-back: Terug naar overzichtslijst
+    cancel: Annuleren
   preview:
+    heading: AR preview
     return-to-overview: Terug naar overzicht
     only-existing-label: bestaand
     only-existing: Dit maatregelontwerp bevat enkel reeds bestaande verkeerstekens.
@@ -40,3 +45,13 @@ ar-importer:
     error-processing-design: Fout bij verwerken van het signalisatieplan
     warning-unused-signal-concept: De mobiliteitsmaatregel {measure} omvat het verkeersteken {signal}, maar dit ontwerp bevat dit verkeersteken niet
     warning-un-included-signal-concept: Verkeersteken {signal} is niet opgenomen in de mobiliteitsmaatregel {measure}, maar wordt wel gebruikt in dit ontwerp
+  insert:
+    instructions-header: Tekens en instructies
+    content-header: AR-ontwerp toevoegen
+    instruction: Instructie
+    instruction-placeholder: Selecteer instructie
+    article: Artikel
+traffic-measure-concept:
+  main-sign: Hoofdbord
+  road-marking: Wegmarkering
+  traffic-light: Verkeerslicht

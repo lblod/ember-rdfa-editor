@@ -1,8 +1,8 @@
 import { type HasMany } from '@warp-drive/legacy/model';
-import type MeasureConcept from './measure-concept.ts';
-import type TrafficSignal from './traffic-signal.ts';
-import type VariableInstance from './variable-instance.ts';
-import type TrafficSignalConcept from './traffic-signal-concept.ts';
+import type MeasureConcept from '#root/plugin/models/measure-concept.ts';
+import type TrafficSignal from '#root/plugin/models/traffic-signal.ts';
+import type VariableInstance from '#root/plugin/models/variable-instance.ts';
+import type TrafficSignalConcept from '#root/plugin/models/traffic-signal-concept.ts';
 
 export default interface MeasureDesign {
   id: string | null;

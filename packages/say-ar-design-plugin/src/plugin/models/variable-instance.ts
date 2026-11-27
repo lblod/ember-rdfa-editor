@@ -1,4 +1,4 @@
-import type Variable from './variable.ts';
+import type Variable from '#root/plugin/models/variable.ts';
 
 export default interface VariableInstance {
   id: string | null;
