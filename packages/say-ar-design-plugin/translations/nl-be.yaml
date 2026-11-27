@@ -1,3 +1,5 @@
+common:
+  loading: Aan het laden...
 ar-importer:
   sidebar-widget:
     label: AR-ontwerp

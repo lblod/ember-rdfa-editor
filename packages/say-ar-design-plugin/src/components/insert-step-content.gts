@@ -69,7 +69,7 @@ export default class InsertStepContent extends Component<Sig> {
       </AuHeading>
       {{#if this.preview.isLoading}}
         <AuLoader @centered={{true}} @hideMessage={{false}}>
-          {{t "application.loading"}}
+          {{t "common.loading"}}
         </AuLoader>
       {{/if}}
       {{#if this.preview.isError}}

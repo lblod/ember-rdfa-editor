@@ -19,7 +19,7 @@ const InsertButton: TOC<{
 }> = <template>
   <AuButton
     @loading={{@insertLoading}}
-    @loadingMessage={{t "application.loading"}}
+    @loadingMessage={{t "common.loading"}}
     @disabled={{not @insertEnabled}}
     {{on "click" (fn @onInsertAr @arDesign @insertPosition)}}
   >{{t "ar-importer.controls.insert"}}</AuButton>

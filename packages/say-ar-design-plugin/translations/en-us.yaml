@@ -1,3 +1,5 @@
+common:
+  loading: Loading...
 ar-importer:
   sidebar-widget:
     label: "'AR'-design"

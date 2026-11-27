@@ -135,7 +135,7 @@ class UsageStatus extends Component<UsageStatusSig> {
   <template>
     {{#if this.count.isPending}}
       <AuLoader @inline={{true}} @hideMessage={{true}}>
-        {{t "application.loading"}}
+        {{t "common.loading"}}
       </AuLoader>
     {{else}}
       {{#if this.count.value}}
