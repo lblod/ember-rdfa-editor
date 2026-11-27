@@ -158,8 +158,5 @@
   "exports": {
     "./tests/*": "./tests/*",
     "./*": "./app/*"
-  },
-  "dependencies": {
-    "@types/react": "catalog:"
   }
 }
