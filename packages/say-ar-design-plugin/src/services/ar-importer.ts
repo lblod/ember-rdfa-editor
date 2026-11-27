@@ -210,11 +210,14 @@ export default class ArImporterService extends Service {
     }
     try {
       const warnings: string[] = [];
-      const measureDesigns = [...await design.measureDesigns]
+      const measureDesigns = [...(await design.measureDesigns)];
       const monads = (
         await Promise.all(
           //If we are inserting freely we have to reverse the array so they get inserted in the correct order
-          (insertPositionArgs.insertFreely ? measureDesigns.reverse() : measureDesigns).map(async (measureDesign, index, array) => {
+          (insertPositionArgs.insertFreely
+            ? measureDesigns.reverse()
+            : measureDesigns
+          ).map(async (measureDesign, index, array) => {
             const {
               measureConcept,
               trafficSignals,
@@ -250,8 +253,11 @@ export default class ArImporterService extends Service {
               string,
               SchemaVariableInstance & { __rdfaId: string }
             > = {};
-            const indexWithReverseInMind = insertPositionArgs.insertFreely ? (array.length - 1 - index) : index;
-            const templateString = measureTemplates?.[indexWithReverseInMind] ?? '';
+            const indexWithReverseInMind = insertPositionArgs.insertFreely
+              ? array.length - 1 - index
+              : index;
+            const templateString =
+              measureTemplates?.[indexWithReverseInMind] ?? '';
             const selectedInstructionUris =
               selectedInstructionUrisByMeasure?.[indexWithReverseInMind];
             const instructionVariables: Variable[] = (
