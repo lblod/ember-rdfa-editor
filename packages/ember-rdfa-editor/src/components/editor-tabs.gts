@@ -76,19 +76,19 @@ export default class EditorTabs extends Component<EditorTabsSignature> {
       : undefined;
   }
 
-  private tabDomId(uid: string, index: number) {
-    return `${uid}-tab-${index}`;
+  private tabDomId = (index: number) => {
+    return `${this.uid}-tab-${index}`;
   }
-  private panelDomId(uid: string, index: number) {
-    return `${uid}-panel-${index}`;
+  private panelDomId = (index: number) => {
+    return `${this.uid}-panel-${index}`;
   }
 
   get selectedTabDomId() {
-    return this.tabDomId(this.uid, this.selectedIndex);
+    return this.tabDomId(this.selectedIndex);
   }
 
   get selectedPanelDomId() {
-    return this.panelDomId(this.uid, this.selectedIndex);
+    return this.panelDomId(this.selectedIndex);
   }
 
   get ribbonDomId() {
